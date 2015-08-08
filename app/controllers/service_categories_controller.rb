@@ -9,12 +9,12 @@ class ServiceCategoriesController < ApplicationController
   # GET /service_categories.json
   def index
     if params[:company_id]
-      @service_categories = ServiceCategory.where(:company_id => params[:company_id]).order(order: :asc)
+      @service_categories = ServiceCategory.where(:company_id => params[:company_id]).order(:order, :name)
     else
       if current_user.role_id == Role.find_by_name('Super Admin').id
-        @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id))
+        @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
       else
-        @service_categories = ServiceCategory.where(:company_id => current_user.company_id).order(order: :asc)
+        @service_categories = ServiceCategory.where(:company_id => current_user.company_id).order(:order, :name)
       end
     end
   end

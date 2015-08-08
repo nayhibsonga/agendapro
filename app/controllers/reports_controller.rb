@@ -7,7 +7,7 @@ class ReportsController < ApplicationController
 	layout "admin"
 
 	def index
-		@locations = Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:name)
+		@locations = Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:order, :name)
 	end
 
 	def statuses
@@ -46,7 +46,7 @@ class ReportsController < ApplicationController
 
 	  	render "_location_services", layout: false
 	end
-	
+
 	def provider_services
 		@service_provider = ServiceProvider.find(params[:id])
 

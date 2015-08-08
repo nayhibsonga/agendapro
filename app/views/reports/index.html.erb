@@ -63,7 +63,7 @@
           <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
             <% @locations.each do |location| %>
             <li class="location-listed"> <strong><%= location.name %></strong></li>
-            <% location.service_providers.where(active: true).order(:public_name).each do |service_provider| %>
+            <% location.service_providers.where(active: true).order(:order, :public_name).each do |service_provider| %>
             <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="provider_services<%=service_provider.id%>"><%= service_provider.public_name %></a></li>
             <% end %>
             <% end %>
