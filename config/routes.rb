@@ -351,8 +351,11 @@
       resources :economic_sectors
 
       post 'bookings', to: 'bookings#book_service'
-      put 'bookings', to: 'bookings#edit_booking'
-      delete 'bookings', to: 'bookings#destroy'
+      put 'bookings/:id', to: 'bookings#edit_booking'
+      delete 'bookings/:id', to: 'bookings#destroy'
+
+      get 'promotions', to: 'promotions#index'
+      get 'promotions/:id', to: 'promotions#show'
     end
   end
   # Promotions
