@@ -351,7 +351,7 @@
       resources :economic_sectors
 
       post 'bookings', to: 'bookings#book_service'
-      put 'bookings', to: 'bookings#update'
+      put 'bookings', to: 'bookings#edit_booking'
       delete 'bookings', to: 'bookings#destroy'
     end
   end

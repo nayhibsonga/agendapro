@@ -5,7 +5,7 @@ module Api
       def book_service
 
       	nameArray = []
-        nameArray = booking_parms[:name].split(' ') unless booking_parms[:name].blank?
+        nameArray = booking_params[:name].split(' ') unless booking_params[:name].blank?
 
         first_name = ''
         last_name = ''
@@ -34,19 +34,19 @@ module Api
 	    @bookings = []
 	    @blocked_bookings = []
 
-	    @service_provider = ServiceProvider.find(booking_parms[:service_provider_id])
+	    @service_provider = ServiceProvider.find(booking_params[:service_provider_id])
 	    @selectedLocation = @service_provider.location
-	    @service = Service.find(booking_parms[:service_id])
+	    @service = Service.find(booking_params[:service_id])
 	    @company = @selectedLocation.company
 	    cancelled_id = Status.find_by(name: 'Cancelado').id
 
 	    if @company.company_setting.client_exclusive
-	      if(booking_parms[:client_id])
-	        client = Client.find(booking_parms[:client_id])
-	      elsif Client.where(identification_number: booking_parms[:identification_number], company_id: @company).count > 0
-	        client = Client.where(identification_number: booking_parms[:identification_number], company_id: @company).first
-	        client.email = booking_parms[:email]
-	        client.phone = booking_parms[:phone]
+	      if(booking_params[:client_id])
+	        client = Client.find(booking_params[:client_id])
+	      elsif Client.where(identification_number: booking_params[:identification_number], company_id: @company).count > 0
+	        client = Client.where(identification_number: booking_params[:identification_number], company_id: @company).first
+	        client.email = booking_params[:email]
+	        client.phone = booking_params[:phone]
 	        client.save
 	        if client.errors
 	          puts client.errors.full_messages.inspect
@@ -56,19 +56,19 @@ module Api
 	        return
 	      end
 	    else
-	      if(booking_parms[:client_id])
-	        client = Client.find(booking_parms[:client_id])
-	      elsif Client.where(email: booking_parms[:email], company_id: @company).count > 0
-	        client = Client.where(email: booking_parms[:email], company_id: @company).first
+	      if(booking_params[:client_id])
+	        client = Client.find(booking_params[:client_id])
+	      elsif Client.where(email: booking_params[:email], company_id: @company).count > 0
+	        client = Client.where(email: booking_params[:email], company_id: @company).first
 	        client.first_name = first_name
 	        client.last_name = last_name
-	        client.phone = booking_parms[:phone]
+	        client.phone = booking_params[:phone]
 	        client.save
 	        if client.errors
 	          puts client.errors.full_messages.inspect
 	        end
 	      else
-	        client = Client.new(email: booking_parms[:email], first_name: first_name, last_name: last_name, phone: booking_parms[:phone], company_id: @company.id)
+	        client = Client.new(email: booking_params[:email], first_name: first_name, last_name: last_name, phone: booking_params[:phone], company_id: @company.id)
 	        client.save
 	        if client.errors
 	          puts client.errors.full_messages.inspect
@@ -76,12 +76,12 @@ module Api
 	      end
 	    end
 
-	    if booking_parms[:notes].blank?
-	      booking_parms[:notes] = ''
+	    if booking_params[:notes].blank?
+	      booking_params[:notes] = ''
 	    end
 
-	    if booking_parms[:address] && !booking_parms[:address].empty?
-	      booking_parms[:notes] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
+	    if booking_params[:address] && !booking_params[:address].empty?
+	      booking_params[:notes] += ' - Dirección del cliente (donde se debe realizar el servicio): ' + params[:address]
 	    end
 
 	    #booking_data = JSON.parse(params[:bookings], symbolize_names: true)
@@ -116,7 +116,7 @@ module Api
 	      if(@service.has_sessions)
 	        @has_session_booking = true
 	        @session_booking = SessionBooking.new
-	        session_service = Service.find(booking_parms[:service_id])
+	        session_service = Service.find(booking_params[:service_id])
 	        @session_booking.service_id = session_service.id
 	        @session_booking.client_id = client.id
 	        @session_booking.sessions_amount = session_service.sessions_amount
@@ -127,23 +127,23 @@ module Api
 	        @session_booking.save
 	      end
 
-	      service_provider = ServiceProvider.find(booking_parms[:service_provider_id])
-	      service = Service.find(booking_parms[:service_id])
-	      service_provider.provider_breaks.where("provider_breaks.start < ?", booking_parms[:end].to_datetime).where("provider_breaks.end > ?", booking_parms[:start].to_datetime).each do |provider_break|
-	        if (provider_break.start.to_datetime - booking_parms[:end].to_datetime) * (booking_parms[:start].to_datetime - provider_break.end.to_datetime) > 0
+	      service_provider = ServiceProvider.find(booking_params[:service_provider_id])
+	      service = Service.find(booking_params[:service_id])
+	      service_provider.provider_breaks.where("provider_breaks.start < ?", booking_params[:end].to_datetime).where("provider_breaks.end > ?", booking_params[:start].to_datetime).each do |provider_break|
+	        if (provider_break.start.to_datetime - booking_params[:end].to_datetime) * (booking_params[:start].to_datetime - provider_break.end.to_datetime) > 0
 	            render json: { errors: "El horario que estás tratando de reservas está bloqueado." }, status: 422
 	            next
 	        end
 	      end
-	      service_provider.bookings.where("bookings.start < ?", booking_parms[:end].to_datetime).where("bookings.end > ?", booking_parms[:start].to_datetime).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').each do |provider_booking|
+	      service_provider.bookings.where("bookings.start < ?", booking_params[:end].to_datetime).where("bookings.end > ?", booking_params[:start].to_datetime).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').each do |provider_booking|
 	        unless provider_booking.status_id == cancelled_id
-	          if (provider_booking.start.to_datetime - booking_parms[:end].to_datetime) * (booking_parms[:start].to_datetime - provider_booking.end.to_datetime) > 0
+	          if (provider_booking.start.to_datetime - booking_params[:end].to_datetime) * (booking_params[:start].to_datetime - provider_booking.end.to_datetime) > 0
 	            if !service.group_service || service.id != provider_booking.service_id
 	              if !provider_booking.is_session || (provider_booking.is_session and provider_booking.is_session_booked)
 	                render json: { errors: "La hora que estás tratando de tomar no está disponible." }, status: 422
 	                return
 	              end
-	            elsif service.group_service && service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => booking_parms[:start].to_datetime).where.not(status_id: cancelled_id).count >= service.capacity
+	            elsif service.group_service && service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => booking_params[:start].to_datetime).where.not(status_id: cancelled_id).count >= service.capacity
 	              if !provider_booking.is_session || (provider_booking.is_session and provider_booking.is_session_booked)
 	                render json: { errors: "El servicio grupal ya ha llegado a su capacidad máxima." }, status: 422
 	                return
@@ -155,9 +155,9 @@ module Api
 
 	      if @mobile_user
 	        @booking = Booking.new(
-	          start: booking_parms[:start],
-	          end: booking_parms[:end],
-	          notes: booking_parms[:notes],
+	          start: booking_params[:start],
+	          end: booking_params[:end],
+	          notes: booking_params[:notes],
 	          service_provider_id: service_provider.id,
 	          service_id: service.id,
 	          location_id: @selectedLocation.id,
@@ -165,8 +165,8 @@ module Api
 	          client_id: client.id,
 	          user_id: @mobile_user.id,
 	          web_origin: true,
-	          provider_lock: booking_parms[:provider_lock],
-	          price: booking_parms[:price]
+	          provider_lock: booking_params[:provider_lock],
+	          price: booking_params[:price]
 	        )
 	    else
 	    	render json: { errors: 'Mobile User invalid.' }, status: 422
@@ -409,9 +409,229 @@ module Api
 
 	  end
 
+	  def edit_booking
+
+	    @bookings = []
+	    @blocked_bookings = []
+
+	    @booking = Booking.find(params[:id])
+	    @service_provider = ServiceProvider.find(booking_params[:service_provider_id])
+	    @selectedLocation = @booking.location
+	    @service = @booking.service
+	    @company = @selectedLocation.company
+	    cancelled_id = Status.find_by(name: 'Cancelado').id
+
+	    #Revisar si fue pagada en línea.
+	    #Si lo fue, revisar política de modificación.
+	    if @booking.payed || !@booking.payed_booking.nil?
+	      if !@booking.is_session
+	        if !@company.company_setting.online_cancelation_policy.nil?
+	          ocp = @company.company_setting.online_cancelation_policy
+	          if !ocp.modifiable
+	            render json: { errors: "La empresa permite modificación de las reservas pagadas en línea." }, status: 422
+		        return
+	          else
+	            #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+	            #Mínimo
+	            book_start = DateTime.parse(@booking.start.to_s)
+	            min_hours = (book_start-now)/(60*60)
+	            min_hours = min_hours.to_i.abs
+
+	            if min_hours >= ocp.min_hours.to_i
+	              render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + min_hours + " " + ocp.min_hours + " después." }, status: 422
+		          return
+	            end
+
+	            #Máximo
+	            booking_creation = DateTime.parse(@booking.created_at.to_s)
+	            minutes = (booking_creation.to_time - now.to_time)/(60)
+	            hours = (booking_creation.to_time - now.to_time)/(60*60)
+	            days = (booking_creation.to_time - now.to_time)/(60*60*24)
+	            minutes = minutes.to_i.abs
+	            hours = hours.to_i.abs
+	            days = days.to_i.abs
+	            weeks = days/7
+	            months = days/30
+
+	            #Obtener el máximo
+	            num = ocp.modification_max.to_i
+	            if ocp.modification_unit == TimeUnit.find_by_unit("Minutos").id
+	              if minutes >= num
+	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + num + " " + ocp.modification_unit + " antes." }, status: 422
+		            return
+	              end
+	            elsif ocp.modification_unit == TimeUnit.find_by_unit("Horas").id
+	              if hours >= num
+	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + num + " " + ocp.modification_unit + " antes." }, status: 422
+		            return
+	              end
+	            elsif ocp.modification_unit == TimeUnit.find_by_unit("Semanas").id
+	              if weeks >= num
+	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + num + " " + ocp.modification_unit + " antes." }, status: 422
+		            return
+	              end
+	            elsif ocp.modification_unit == TimeUnit.find_by_unit("Meses").id
+	              if months >= num
+	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + num + " " + ocp.modification_unit + " antes." }, status: 422
+		            return
+	              end
+	            end
+
+	          end
+	        end
+	      end
+	    end
+
+		service_provider = ServiceProvider.find(booking_params[:service_provider_id])
+		service = @service
+		service_provider.provider_breaks.where("provider_breaks.start < ?", booking_params[:end].to_datetime).where("provider_breaks.end > ?", booking_params[:start].to_datetime).each do |provider_break|
+		if (provider_break.start.to_datetime - booking_params[:end].to_datetime) * (booking_params[:start].to_datetime - provider_break.end.to_datetime) > 0
+		    render json: { errors: "El horario que estás tratando de reservas está bloqueado." }, status: 422
+		    next
+		end
+		end
+		service_provider.bookings.where("bookings.start < ?", booking_params[:end].to_datetime).where("bookings.end > ?", booking_params[:start].to_datetime).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').each do |provider_booking|
+		unless provider_booking.status_id == cancelled_id
+		  if (provider_booking.start.to_datetime - booking_params[:end].to_datetime) * (booking_params[:start].to_datetime - provider_booking.end.to_datetime) > 0
+		    if !service.group_service || service.id != provider_booking.service_id
+		      if !provider_booking.is_session || (provider_booking.is_session and provider_booking.is_session_booked)
+		        render json: { errors: "La hora que estás tratando de tomar no está disponible." }, status: 422
+		        return
+		      end
+		    elsif service.group_service && service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => booking_params[:start].to_datetime).where.not(status_id: cancelled_id).count >= service.capacity
+		      if !provider_booking.is_session || (provider_booking.is_session and provider_booking.is_session_booked)
+		        render json: { errors: "El servicio grupal ya ha llegado a su capacidad máxima." }, status: 422
+		        return
+		      end
+		    end
+		  end
+		end
+		end
+
+		@booking.max_changes -= 1
+
+
+	    if @booking.update(booking_params)
+          @mobile_user ? user = @mobile_user.id : user = 0
+          BookingHistory.create(booking_id: @booking.id, action: "Editada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+        else
+        	render json: { errors: @booking.errors.full_messages }, status: 422
+	        return
+        end
+
+	  end
+
+	  def destroy
+	  	@booking = Booking.find(params[:id])
+
+
+		@company = Location.find(@booking.location_id).company
+		@selectedLocation = Location.find(@booking.location_id)
+
+		now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+		booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
+
+		if (booking_start <=> now) < 1
+		redirect_to blocked_cancel_path(:id => @booking.id)
+		return
+		end
+
+		#Revisar si fue pagada en línea.
+		#Si lo fue, revisar política de modificación.
+		if @booking.payed || !@booking.payed_booking.nil?
+			if !@booking.is_session
+			  if !@company.company_setting.online_cancelation_policy.nil?
+			    ocp = @company.company_setting.online_cancelation_policy
+			    if !ocp.cancelable
+			      render json: { errors: "La empresa no permite la anulación de las reservas pagadas en línea." }, status: 422
+		          return
+			    else
+			      #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+			      #Mínimo
+			      book_start = DateTime.parse(@booking.start.to_s)
+			      min_hours = (book_start-now)/(60*60)
+			      min_hours = min_hours.to_i.abs
+
+			      if min_hours >= ocp.min_hours.to_i
+			        render json: { errors: "La empresa permite anulación de las reservas sólo " + min_hours + " horas después." }, status: 422
+		            return
+			      end
+
+			      #Máximo
+			      booking_creation = DateTime.parse(@booking.created_at.to_s)
+			      minutes = (booking_creation.to_time - now.to_time)/(60)
+			      hours = (booking_creation.to_time - now.to_time)/(60*60)
+			      days = (booking_creation.to_time - now.to_time)/(60*60*24)
+			      minutes = minutes.to_i.abs
+			      hours = hours.to_i.abs
+			      days = days.to_i.abs
+			      weeks = days/7
+			      months = days/30
+
+			      #Obtener el máximo
+			      num = ocp.cancel_max.to_i
+			      if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+			        if minutes >= num
+			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + num + " " + ocp.cancel_unit + " antes." }, status: 422
+		              return
+			        end
+			      elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+			        if hours >= num
+			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + num + " " + ocp.cancel_unit + " antes." }, status: 422
+		              return
+			        end
+			      elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+			        if weeks >= num
+			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + num + " " + ocp.cancel_unit + " antes." }, status: 422
+		              return
+			        end
+			      elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+			        if months >= num
+			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + num + " " + ocp.cancel_unit + " antes." }, status: 422
+		              return
+			        end
+			      end
+
+			    end
+			  end
+			end
+		end
+
+		status = @booking.status.id
+		payed = @booking.payed
+		is_booked = @booking.is_session_booked
+		if !@booking.is_session
+			status = Status.find_by(:name => 'Cancelado').id
+			payed = false
+		else
+			is_booked = false
+			@booking.user_session_confirmed = false
+		    @booking.is_session_booked = false
+		end
+
+		if @booking.update(status_id: status, payed: payed, is_session_booked: is_booked)
+
+			if !@booking.payed_booking.nil?
+			  @booking.payed_booking.canceled = true
+			  @booking.payed_booking.save
+			end
+			#flash[:notice] = "Reserva cancelada exitosamente."
+			# BookingMailer.cancel_booking(@booking)
+			@mobile_user ? user = @mobile_user.id : user = 0
+			BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+		else
+			flash[:alert] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
+			render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + num + " " + ocp.cancel_unit + " antes." }, status: 422
+	        return
+		end
+
+	  end
+
 	  private
 
-	  def booking_parms
+	  def booking_params
 	  	params.require(:booking).permit(:service_id, :service_provider_id, :start, :end, :provider_lock, :price, :name, :phone, :email, :notes)
 	  end
 
