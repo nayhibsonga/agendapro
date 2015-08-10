@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150805214438) do
+ActiveRecord::Schema.define(version: 20150806151100) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -369,6 +369,16 @@ ActiveRecord::Schema.define(version: 20150805214438) do
 
   add_index "facebook_pages", ["company_id"], name: "index_facebook_pages_on_company_id", using: :btree
 
+  create_table "favorites", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "location_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "favorites", ["location_id"], name: "index_favorites_on_location_id", using: :btree
+  add_index "favorites", ["user_id"], name: "index_favorites_on_user_id", using: :btree
+
   create_table "last_minute_promos", force: true do |t|
     t.integer  "discount",    default: 0
     t.integer  "hours",       default: 0
@@ -389,7 +399,7 @@ ActiveRecord::Schema.define(version: 20150805214438) do
   add_index "location_outcall_districts", ["location_id"], name: "index_location_outcall_districts_on_location_id", using: :btree
 
   create_table "location_products", force: true do |t|
-    t.integer  "product_id",              null: false
+    t.integer  "product_id"
     t.integer  "location_id",             null: false
     t.integer  "stock",       default: 0
     t.datetime "created_at"
@@ -427,6 +437,9 @@ ActiveRecord::Schema.define(version: 20150805214438) do
     t.string   "email",          default: ""
     t.string   "second_address", default: ""
     t.boolean  "online_booking", default: true
+    t.string   "image1"
+    t.string   "image2"
+    t.string   "image3"
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree

@@ -8,12 +8,12 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers
   # GET /service_providers.json
   def index
-    @locations = Location.where(company_id: current_user.company_id, :active => true).order(order: :asc).accessible_by(current_ability)
-    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability).order(:order)
+    @locations = Location.where(company_id: current_user.company_id, :active => true).order(:order, :name).accessible_by(current_ability)
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability).order(:order, :public_name)
   end
 
   def inactive_index
-    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => false).accessible_by(current_ability)
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => false).accessible_by(current_ability).order(:order, :public_name)
   end
 
   def activate
@@ -59,12 +59,12 @@ class ServiceProvidersController < ApplicationController
     @service_provider.company_id = current_user.company_id
     # @users = User.where(company_id: current_user.company_id)
     # @locations = Location.where(company_id: current_user.company_id)
-    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(:order, :name)
   end
 
   # GET /service_providers/1/edit
   def edit
-    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(:order, :name)
   end
 
   # POST /service_providers
@@ -126,7 +126,7 @@ class ServiceProvidersController < ApplicationController
   end
 
   def location_providers
-    render :json => ServiceProvider.where(:active => true).where('location_id = ?', params[:location]).accessible_by(current_ability).order(:order)
+    render :json => ServiceProvider.where(:active => true).where('location_id = ?', params[:location]).accessible_by(current_ability).order(:order, :public_name)
   end
 
   def provider_time
@@ -136,7 +136,7 @@ class ServiceProvidersController < ApplicationController
 
   def provider_service
     provider = ServiceProvider.find(params[:id])
-    services = provider.services.where(:active => true).order(:name)
+    services = provider.services.where(:active => true).order(:order, :name)
     render :json => services
   end
 
