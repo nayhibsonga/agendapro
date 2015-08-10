@@ -1,31 +1,22 @@
 
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h3 class="modal-title">Detalle de sesión</h3>
-        </div>
-        <div class="modal-body">
-              <dl class="dl-horizontal book-dl">
-                <dt class="dark-gray">¿Qué reservaste?</dt>
-                <dd class="light-gray">
-                    <p><%= @booking.service.name %></p>
-                </dd>
-                <dt class="dark-gray">¿Dónde?</dt>
-                <% second_address = @booking.location.second_address.blank? ? '' : ', ' + @booking.location.second_address %>
-                <dd class="light-gray"><p><%= if !@booking.location.outcall then @booking.location.address+second_address+', '+@booking.location.district.name else "A Domicilio" end %></p></dd>
-                <dt class="dark-gray">¿Con quién?</dt>
-                <dd class="light-gray">
-                    <p><%= @booking.service_provider.public_name %></p>
-                </dd>
-                <dt class="dark-gray">¿Cuándo?</dt>
-                <dd class="light-gray">
-                    <p><%= I18n.l(@booking.start.to_datetime) %></p>
-                </dd>
-                  <% if !@booking.notes.blank? %>
-                  <dt class="dark-gray">Notas</dt>
-                  <dd class="light-gray"><p><%= @booking.notes %></p></dd>
-                  <% end %>
-              </dl>
-        </div>
-        <div class="modal-footer">
-            <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
-        </div>
+<dl class="dl-horizontal book-dl">
+    <dt class="dark-gray">¿Qué reservaste?</dt>
+    <dd class="light-gray">
+        <p><%= @booking.service.name %></p>
+    </dd>
+    <dt class="dark-gray">¿Dónde?</dt>
+        <% second_address = @booking.location.second_address.blank? ? '' : ', ' + @booking.location.second_address %>
+    <dd class="light-gray"><p><%= if !@booking.location.outcall then @booking.location.address+second_address+', '+@booking.location.district.name else "A Domicilio" end %></p></dd>
+    <dt class="dark-gray">¿Con quién?</dt>
+    <dd class="light-gray">
+        <p><%= @booking.service_provider.public_name %></p>
+    </dd>
+    <dt class="dark-gray">¿Cuándo?</dt>
+    <dd class="light-gray">
+        <p><%= I18n.l(@booking.start.to_datetime) %></p>
+    </dd>
+      <% if !@booking.notes.blank? %>
+        <dt class="dark-gray">Notas</dt>
+        <dd class="light-gray"><p><%= @booking.notes %></p></dd>
+      <% end %>
+</dl>

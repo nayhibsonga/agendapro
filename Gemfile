@@ -168,3 +168,6 @@ gem 'omniauth-facebook'
 
 #Geocoder para localizacion por IP
 gem 'geocoder'
+
+#Oink para revisión de memoria
+gem "oink"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150804142619) do
+ActiveRecord::Schema.define(version: 20150806151100) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(version: 20150804142619) do
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
     t.float    "discount",               default: 0.0
+    t.integer  "service_promo_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -282,6 +283,9 @@ ActiveRecord::Schema.define(version: 20150804142619) do
     t.boolean  "allows_optimization",        default: true
     t.boolean  "activate_notes",             default: true,                  null: false
     t.boolean  "receipt_required",           default: true
+    t.float    "online_payment_commission",  default: 5.0
+    t.float    "promo_commission",           default: 10.0
+    t.boolean  "promo_offerer_capable",      default: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -383,6 +387,15 @@ ActiveRecord::Schema.define(version: 20150804142619) do
   add_index "favorites", ["location_id"], name: "index_favorites_on_location_id", using: :btree
   add_index "favorites", ["user_id"], name: "index_favorites_on_user_id", using: :btree
 
+  create_table "last_minute_promos", force: true do |t|
+    t.integer  "discount",    default: 0
+    t.integer  "hours",       default: 0
+    t.integer  "location_id"
+    t.integer  "service_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "location_outcall_districts", force: true do |t|
     t.integer  "location_id"
     t.integer  "district_id"
@@ -397,6 +410,8 @@ ActiveRecord::Schema.define(version: 20150804142619) do
     t.integer  "product_id"
     t.integer  "location_id"
     t.integer  "stock"
+    t.integer  "location_id",             null: false
+    t.integer  "stock",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -693,6 +708,33 @@ ActiveRecord::Schema.define(version: 20150804142619) do
   add_index "products", ["company_id"], name: "index_products_on_company_id", using: :btree
   add_index "products", ["product_category_id"], name: "index_products_on_product_category_id", using: :btree
 
+  create_table "promo_times", force: true do |t|
+    t.integer  "company_setting_id"
+    t.time     "morning_start",      default: '2000-01-01 09:00:00', null: false
+    t.time     "morning_end",        default: '2000-01-01 12:00:00', null: false
+    t.time     "afternoon_start",    default: '2000-01-01 12:00:00', null: false
+    t.time     "afternoon_end",      default: '2000-01-01 18:00:00', null: false
+    t.time     "night_start",        default: '2000-01-01 18:00:00', null: false
+    t.time     "night_end",          default: '2000-01-01 20:00:00', null: false
+    t.integer  "morning_default",    default: 0
+    t.integer  "afternoon_default",  default: 0
+    t.integer  "night_default",      default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active",             default: false
+  end
+
+  create_table "promos", force: true do |t|
+    t.integer  "day_id"
+    t.integer  "morning_discount",   default: 0
+    t.integer  "afternoon_discount", default: 0
+    t.integer  "night_discount",     default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "location_id"
+    t.integer  "service_promo_id"
+  end
+
   create_table "promotions", force: true do |t|
     t.string   "code",       null: false
     t.string   "first_name"
@@ -841,6 +883,22 @@ ActiveRecord::Schema.define(version: 20150804142619) do
 
   add_index "service_payment_logs", ["transaction_type_id"], name: "index_service_payment_logs_on_transaction_type_id", using: :btree
 
+  create_table "service_promos", force: true do |t|
+    t.integer  "service_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "max_bookings",    default: 0
+    t.datetime "morning_start",   default: '2000-01-01 09:00:00', null: false
+    t.datetime "morning_end",     default: '2000-01-01 12:00:00', null: false
+    t.datetime "afternoon_start", default: '2000-01-01 12:00:00', null: false
+    t.datetime "afternoon_end",   default: '2000-01-01 18:00:00', null: false
+    t.datetime "night_start",     default: '2000-01-01 18:00:00', null: false
+    t.datetime "night_end",       default: '2000-01-01 20:00:00', null: false
+    t.datetime "finish_date",     default: '2016-01-01 09:00:00'
+    t.datetime "book_limit_date", default: '2016-01-01 09:00:00'
+    t.boolean  "limit_booking",   default: true
+  end
+
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"
     t.integer  "company_id",                    null: false
@@ -849,7 +907,7 @@ ActiveRecord::Schema.define(version: 20150804142619) do
     t.datetime "updated_at"
     t.boolean  "active",         default: true
     t.integer  "order",          default: 0
-    t.integer  "block_length",   default: 30
+    t.integer  "block_length",   default: 15
     t.boolean  "online_booking", default: true
   end
 
@@ -887,29 +945,36 @@ ActiveRecord::Schema.define(version: 20150804142619) do
   add_index "service_tags", ["tag_id"], name: "index_service_tags_on_tag_id", using: :btree
 
   create_table "services", force: true do |t|
-    t.string   "name",                                null: false
-    t.float    "price",               default: 0.0
-    t.integer  "duration",                            null: false
+    t.string   "name",                                     null: false
+    t.float    "price",                    default: 0.0
+    t.integer  "duration",                                 null: false
     t.text     "description"
-    t.boolean  "group_service",       default: false
+    t.boolean  "group_service",            default: false
     t.integer  "capacity"
-    t.boolean  "waiting_list",        default: false
-    t.integer  "company_id",                          null: false
+    t.boolean  "waiting_list",             default: false
+    t.integer  "company_id",                               null: false
     t.integer  "service_category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",              default: true
-    t.boolean  "show_price",          default: true
-    t.integer  "order",               default: 0
-    t.boolean  "outcall",             default: false
-    t.boolean  "has_discount",        default: false
-    t.float    "discount",            default: 0.0
-    t.boolean  "online_payable",      default: false
-    t.decimal  "comission_value",     default: 0.0,   null: false
-    t.integer  "comission_option",    default: 0,     null: false
-    t.boolean  "online_booking",      default: true
-    t.boolean  "has_sessions",        default: false
+    t.boolean  "active",                   default: true
+    t.boolean  "show_price",               default: true
+    t.integer  "order",                    default: 0
+    t.boolean  "outcall",                  default: false
+    t.boolean  "has_discount",             default: false
+    t.float    "discount",                 default: 0.0
+    t.boolean  "online_payable",           default: false
+    t.decimal  "comission_value",          default: 0.0,   null: false
+    t.integer  "comission_option",         default: 0,     null: false
+    t.boolean  "online_booking",           default: true
+    t.boolean  "has_sessions",             default: false
     t.integer  "sessions_amount"
+    t.boolean  "has_time_discount",        default: false
+    t.boolean  "has_last_minute_discount", default: false
+    t.boolean  "time_promo_active",        default: false
+    t.string   "time_promo_photo",         default: ""
+    t.integer  "active_service_promo_id"
+    t.boolean  "must_be_paid_online",      default: false
+    t.text     "promo_description",        default: ""
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
@@ -922,7 +987,9 @@ ActiveRecord::Schema.define(version: 20150804142619) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "client_id"
-    t.integer  "sessions_amount", default: 0
+    t.integer  "sessions_amount",  default: 0
+    t.integer  "service_promo_id"
+    t.float    "max_discount",     default: 0.0
   end
 
   create_table "staff_codes", force: true do |t|

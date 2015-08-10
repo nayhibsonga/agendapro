@@ -1,3 +1,33 @@
+
+<style type="text/css">
+.hour-title{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  width: 100%;
+  margin-left: 15px;
+  text-align: center;
+  background-color: #eaeaea;
+  color: #505050;
+  border: 1px #ccc solid;
+}
+
+.promo-hour-select{
+  text-align: center;
+}
+
+.time-select{
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.date-select{
+  padding-left: 6px;
+  padding-right: 6px;
+  width: auto;
+  display: inline;
+}
+</style>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
@@ -7,8 +37,978 @@
   </div>
 </div>
 
-<%= render 'form' %>
+<div class="row">
+	<div class="col-md-12">
+	  <ul id="myTab" class="nav nav-pills tab-margin" role="tablist">
+	    <li class="active"><a href="#service" role="tab" data-toggle="tab" class="tab_index promotions_tab_index">Servicio</a></li>
+	    <% if @service.company.company_setting.promo_offerer_capable && @service.company.company_setting.online_payment_capable && @service.company.company_setting.allows_online_payment %>
+	    	<li><a href="#promotions" role="tab" data-toggle="tab" class="tab_index promotions_tab_index">Promociones</a></li>
+	    <% end %>
+	  </ul>
+	</div>
+</div>
+
+<div class="tab-content">
+
+    <!-- Inicio Servicio -->
+
+    <div class="row tab-pane fade in active" id="service">
+		<%= render 'form' %>
+	</div>
+
+	<!-- Fin Servicio -->
+
+
+	<!-- Inicio Promociones -->
+	<% if @service.company.company_setting.promo_offerer_capable && @service.company.company_setting.online_payment_capable && @service.company.company_setting.allows_online_payment %>
+		<div class="row tab-pane fade" id="promotions">
+			<div class="container-fluid">
+				<div class="row" style="padding-left: 20px !important;">
+					<div class="col-md-12">
+						<h3>Promociones</h3>
+
+							<input type="hidden" id="promo_service_id" value="<%= @service.id %>" />
+							
+							<!--<div class="row">
+								<div class="col-md-12">
+									<label>Descuento en reservas de último minuto</label>
+									<span class="help-block">Activa descuentos para este servicio cuando sea agendado pocas horas antes de su realización.</span>
+
+									<% if !@service.has_sessions %>
+										<div class="form-group">
+											<div style="display: inline !important;">
+						                        <label>
+						                        	<% if @service.has_last_minute_discount %>
+						                        		<input type="checkbox" name="has_last_minute_discount" id="has_last_minute_discount" checked/>
+						                        	<% else %>
+						                          		<input type="checkbox" name="has_last_minute_discount" id="has_last_minute_discount" />
+						                          	<% end %>
+						                        </label>
+						                        <span>Permitir</span>
+					                        	<select name="last_minute_discount" id="last_minute_discount" class="promotions-input">
+					                        		<% for i in 0..19 %>
+					                        			<%
+					                        				last_minute_discount = 0
+					                        				last_minute_hours = 0
+					                        				if !@service.last_minute_promos.nil? && @service.last_minute_promos.count > 0
+					                        					last_minute_discount = @service.last_minute_promos.first.discount
+					                        					last_minute_hours = @service.last_minute_promos.first.hours
+					                        				end
+					                        			%>
+					                        			<% if last_minute_discount == (i*5) %>
+					                        				<option value="<%= (i*5).to_s %>" selected><%= (i*5).to_s %> %</option>
+					                        			<% else %>
+					                        				<option value="<%= (i*5).to_s %>"><%= (i*5).to_s %> %</option>
+					                        			<% end %>
+					                        		<% end %>
+					                        	</select>
+					                        	<span>de descuento en reservas de último minuto hechas hasta</span>
+					                        	<select name="last_minute_hours" id="last_minute_hours" class="promotions-input">
+					                        		<% for i in 1..12 %>
+					                        			<% if last_minute_hours == i %>
+					                        				<option value="<%= i.to_s %>" selected><%= i.to_s %> horas</option>
+					                        			<% else %>
+					                        				<option value="<%= i.to_s %>"><%= i.to_s %> horas</option>
+					                        			<% end %>
+					                        		<% end %>
+					                        	</select>
+					                        	<span>antes de la realización del servicio.</span>
+						                    </div>
+										</div>
+									<% else %>
+										<div class="form-group">
+										Este servicio tiene sesiones, por lo que no puede tener promociones de último minuto.
+										</div>
+									<% end %>
+
+								</div>
+							</div>
+
+							<% if !@service.has_sessions %>
+								<div class="row">
+									<div class="col-md-12">
+										<label>En los siguientes locales</label>
+										<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción de último minuto.</span>
+
+										<div class="form-group">
+											
+											<%
+												locations = []
+												@service.service_providers.each do |service_provider|  
+													if !locations.include?(service_provider.location)
+														locations << service_provider.location
+													end
+												end
+											%>
+
+											<% locations.each do |location| %>
+												<div class="checkbox">
+								                    <label>
+								                    	<% if LastMinutePromo.where(:service_id => @service.id, :location_id => location.id).count > 0 || @service.last_minute_promos.nil? || @service.last_minute_promos.count == 0 %>
+								                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
+								                    	<% else %>
+								                    		<input type="checkbox" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
+								                    	<% end %>
+								                    </label>
+								                </div>
+											<% end %>
+
+										</div>
+
+									</div>
+								</div>
+							<% end %>-->
+
+							<% if !@service.has_discount && @service.online_payable && @service.check_company_promos %>
+						
+								<div class="row">
+									<div class="col-md-12">
+										<label>Descuentos en horarios bajos</label>
+										<span class="help-block">Activa descuentos para este servicio según la hora de realización.</span>
+
+										<div class="form-group">
+											<div style="display: inline !important;">
+												<div class="checkbox">
+													<label>
+														<% if @service.has_time_discount %>
+							                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" checked />
+							                          	<% else %>
+							                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" />
+							                          	<% end %>
+							                          	Permitir descuento
+							                        </label>
+						                        </div>
+					                        	
+											</div>
+										</div>
+
+										<div class="form-group">
+											<%
+												promo_time = @service.company.company_setting.promo_time
+											%>
+											<table class="promotions-table">
+												<tr>
+													<th class="first-cell">
+
+													</th>
+													<th>
+														Lunes
+													</th>
+													<th>
+														Martes
+													</th>
+													<th>
+														Miércoles
+													</th>
+													<th>
+														Jueves
+													</th>
+													<th>
+														Viernes
+													</th>
+													<th>
+														Sábado
+													</th>
+													<th>
+														Domingo
+													</th>
+												</tr>
+												<tr>
+
+												<% 
+													service_promo = nil
+													if !@service.active_service_promo_id.nil?
+														service_promo = ServicePromo.find(@service.active_service_promo_id)
+													end
+												%>
+													<td class="first-cell">
+														<span>Mañana</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="morning-edit"><i class="fa fa-pencil-square-o"></i></span><br />
+														<% if service_promo.nil? %>
+															<span class="hours"><span id="morning-start"><%= promo_time.morning_start.strftime "%H:%M" %></span> - <span id="morning-end"><%= promo_time.morning_end.strftime "%H:%M" %></span></span>
+														<% else %>
+															<span class="hours"><%= service_promo.morning_start.strftime "%H:%M" %> - <%= service_promo.morning_end.strftime "%H:%M" %></span>
+														<% end %>
+													</td>
+
+													<%
+														for i in 1..7
+														promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+													%>
+
+														<td>
+															<select id="morning-<%= i.to_s %>" class="promotions-input">
+															<% if promo.nil? %>
+
+																<% for j in 0..19 %>
+																	<% if (j*5) == promo_time.morning_default %>
+																		<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>	
+																	<% else %>
+					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        					<% end %>
+
+															<% else %>
+
+																<% for j in 0..19 %>
+																	<% if (j*5) == promo.morning_discount %>
+					                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+					                        						<% else %>
+					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        					<% end %>
+
+
+															<% end %>
+														</td>
+
+													<% end %>								
+
+												</tr>
+												<tr>
+													<td class="first-cell">
+														<span>Tarde</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="afternoon-edit"><i class="fa fa-pencil-square-o"></i></span><br />
+														<% if service_promo.nil? %>
+															<span class="hours"><%= promo_time.afternoon_start.strftime "%H:%M" %> - <%= promo_time.afternoon_end.strftime "%H:%M" %></span>
+														<% else %>
+															<span class="hours"><%= service_promo.afternoon_start.strftime "%H:%M" %> - <%= service_promo.afternoon_end.strftime "%H:%M" %></span>
+														<% end %>
+													</td>
+
+													<%
+														for i in 1..7
+														promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+													%>
+
+														<td>
+															<select id="afternoon-<%= i.to_s %>" class="promotions-input">
+															<% if promo.nil? %>
+
+																<% for j in 0..19 %>
+																	<% if (j*5) == promo_time.afternoon_default %>
+																		<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+																	<% else %>
+					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        					<% end %>
+
+															<% else %>
+
+																<% for j in 0..19 %>
+																	<% if (j*5) == promo.afternoon_discount %>
+					                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+					                        						<% else %>
+					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        					<% end %>
+
+
+															<% end %>
+														</td>
+
+													<% end %>
+
+												</tr>
+												<tr>
+													<td class="first-cell">
+														<span>Noche</span>&nbsp;&nbsp;<span style="float: right; padding-right: 3px; cursor: pointer;" id="night-edit"><i class="fa fa-pencil-square-o"></i></span><br />
+														<% if service_promo.nil? %>
+															<span class="hours"><%= promo_time.night_start.strftime "%H:%M" %> - <%= promo_time.night_end.strftime "%H:%M" %></span>
+														<% else %>
+															<span class="hours"><%= service_promo.night_start.strftime "%H:%M" %> - <%= service_promo.night_end.strftime "%H:%M" %></span>
+														<% end %>
+													</td>
+													
+													<%
+														for i in 1..7
+														promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+													%>
+
+														<td>
+															<select id="night-<%= i.to_s %>" class="promotions-input">
+															<% if promo.nil? %>
+
+																<% for j in 0..19 %>
+																	<% if (j*5) == promo_time.night_default %>
+																		<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+																	<% else %>
+					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        					<% end %>
+
+															<% else %>
+
+																<% for j in 0..19 %>
+																	<% if (j*5) == promo.night_discount %>
+					                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
+					                        						<% else %>
+					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        					<% end %>
+
+
+															<% end %>
+														</td>
+
+													<% end %>
+
+												</tr>
+											</table>
+										</div>
+
+									</div>
+
+								</div>
+
+
+								<div class="row">
+									<div class="col-md-12">
+										<label>En los siguientes locales</label>
+										<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción por horario.</span>
+
+										<div class="form-group">
+											
+											<%
+												locations = []
+												@service.service_providers.each do |service_provider|  
+													if !locations.include?(service_provider.location)
+														locations << service_provider.location
+													end
+												end
+											%>
+
+											<% locations.each do |location| %>
+												<div class="checkbox">
+								                    <label>
+								                    	<% if Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => location.id).count > 0 || @service.active_service_promo_id.nil? || @service.service_promos.count == 0 || @service.service_promos.nil? %>
+								                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="locations" /> <%= location.name %>
+								                    	<% else %>
+								                    		<input type="checkbox" value="<%= location.id %>" name="locations" /> <%= location.name %>
+								                    	<% end %>
+								                    </label>
+								                </div>
+											<% end %>
+
+										</div>
+
+									</div>
+								</div>
+
+
+								<div class="row">
+									<div class="col-md-12">
+										<label>Promociones disponibles</label>
+										<span class="help-block">Selecciona el stock de reservas que tendrán descuento.</span>
+
+										<div class="form-group">
+											
+											<div class="checkbox">
+												<label>
+													
+													<% if @service.active_service_promo.nil? %>
+						                          		<input type="checkbox" id="limit_booking" name="limit_booking" checked />
+						                          	<% else %>
+						                          		<% if @service.active_service_promo.limit_booking %>
+						                          			<input type="checkbox" id="limit_booking" name="limit_booking" checked />
+						                          		<% else %>
+						                          			<input type="checkbox" id="limit_booking" name="limit_booking" />
+						                          		<% end %>
+						                          	<% end %>
+						                          		Stock limitado.
+						                          		<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Marca la opción para definir un stock máximo, o desmárcala para definir un stock ilimitado."><i class="fa fa-question-circle fa-lg"></i></span>
+						                        </label>
+					                        </div>
+
+											<% if @service.active_service_promo_id.nil? %>
+												<div>
+													
+
+													<div class="input-group" style="width: 160px !important;">
+									                    <input type="number" id="max_bookings" name="max_bookings" value="" class="form-control" />
+									                    <span class="input-group-addon">Reservas</span>
+		                  							</div>
+
+												
+
+												</div>
+											<% else %>
+												<div>
+													<div class="input-group" style="width: 160px !important;">
+									                    <input type="number" id="max_bookings" name="max_bookings" value="<%= @service.active_promo_left_bookings %>" class="form-control" />
+									                    <span class="input-group-addon">Reservas</span>
+			              							</div>
+			              							<% if @service.active_service_promo.limit_booking %>
+														Quedan <%= @service.active_promo_left_bookings.to_s %> reservas disponibles.
+													<% else %>
+														No hay límite de reservas. Edita la opción "stock limitado" e ingresa el stock de reservas para modificar esta opción.
+													<% end %>
+												</div>
+											<% end %>
+											<div style="clear: both;">
+											</div>
+
+										</div>
+
+										<% if !@service.active_service_promo_id.nil? %>
+											<div class="form-group" style="display: none;">
+												<div style="display: inline !important;">
+													<div class="checkbox">
+														<label>
+															
+								                          	<input type="checkbox" id="reset_on_max_change" name="reset_on_max_change" checked />	
+								                          		Editar el stock.
+								                          	<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si marcas esta opción, al cambiar el stock disponible el contador de reservas tomadas volverá a 0. Si no la marcas, se mantendrá el contador de reservas tomadas para la promoción."><i class="fa fa-question-circle fa-lg"></i></span>
+
+								                        </label>
+							                        </div>				                        	
+												</div>
+											</div>
+										<% else %>
+											<div style="display: none;">
+												<input type="checkbox" id="reset_on_max_change" name="reset_on_max_change" checked />
+											</div>
+										<% end %>
+
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-12">
+										<label>Fechas</label>
+										<span class="help-block">Selecciona la duración y la fecha límite para reservar.</span>
+
+										<div class="form-group">
+											<div class="row">
+												<div class="col-md-2">
+													Finaliza el:
+												</div>
+												<div class="col-md-3">
+													<% if !service_promo.nil? %>
+														<% 
+															finish_date_arr = service_promo.finish_date.to_s.split(' ')[0].split('-')
+															finish_date = finish_date_arr[2] + '/' + finish_date_arr[1] + '/' + finish_date_arr[0]
+														%>
+														<input type="text" id="finish_date" name="finish_date" class="form-control" value="<%= finish_date %>" />
+													<% else %>
+														<input type="text" id="finish_date" name="finish_date" class="form-control" />
+													<% end %>
+												</div>
+											</div>
+										</div>
+										<br />
+										<div class="form-group">
+											<div class="row">
+												<div class="col-md-2">
+													Admite reservas hasta:
+												</div>
+												<div class="col-md-3">
+													<% if !service_promo.nil? %>
+														<% 
+															book_limit_date_arr = service_promo.book_limit_date.to_s.split(' ')[0].split('-')
+															book_limit_date = book_limit_date_arr[2] + '/' + book_limit_date_arr[1] + '/' + book_limit_date_arr[0]
+														%>
+														<input type="text" id="book_limit_date" name="book_limit_date" class="form-control" value="<%= book_limit_date %>" />
+													<% else %>
+														<input type="text" id="book_limit_date" name="book_limit_date" class="form-control" />
+													<% end %>
+												</div>
+											</div>
+										</div>
+
+									</div>
+								</div>
+
+							
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<button class="btn btn-green promotions-submit">Guardar</button>
+											<%= link_to 'Cancelar', services_path, :class => "btn btn-default" %>
+										</div>
+									</div>
+								</div>
+
+							<% else %>
+
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<% if @service.has_discount %>
+												Este servicio ya tiene descuento por pago en línea, por lo que no puedes ofrecerlo en promoción.
+											<% else %>
+												Este servicio no se puede pagar en línea, por lo que no puedes ofrecerlo en promoción.
+											<% end %>
+										</div>
+									</div>
+								</div>
+
+							<% end %>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	<% end %>
+
+    <!-- Fin Promociones -->
+
+</div>
+
+<% if !@service.has_discount && @service.online_payable && @service.check_company_promos && @service.company.company_setting.promo_offerer_capable %>
+	<div class="modal" id="timeModal" tabindex="-1" role="basic" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	          <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+	            <h3 class="modal-title">Horarios de la promoción</h3>
+	          </div>
+	          <div class="modal-body">
+
+	          		<%= form_tag(:controller => "services", :action => "set_service_promo_times", :method => "post") do %>
+	          			<input type="hidden" name="service_id" value="<%= @service.id %>" />
+	            		<% if service_promo.nil? %>
+		            		<div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Mañana
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                      <div class="promo-hour-select has-feedback morning-promo-hour">
+			                        <%= time_select "service_promo", "morning_start", {default: promo_time.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "morning_end", {default: promo_time.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                        <span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+			                        <span class="form-control-feedback"></span>
+			                      </div>                 
+			                  </div>
+			                </div>
+
+			                <div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Tarde
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                    <div class="promo-hour-select has-feedback afternoon-promo-hour">
+			                      <%= time_select "service_promo", "afternoon_start", {default: promo_time.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "afternoon_end", {default: promo_time.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                      <span class="help-block"><label id="afternoon-error" class="error" hidden></label></span>
+			                      <span class="form-control-feedback"></span>
+			                    </div>
+			                  </div>
+			                </div>
+
+			                <div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Noche
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                    <div class="promo-hour-select has-feedback night-promo-hour">
+			                      <%= time_select "service_promo", "night_start", {default: promo_time.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "night_end", {default: promo_time.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                      <span class="help-block"><label id="night-error" class="error" hidden></label></span>
+			                      <span class="form-control-feedback"></span>
+			                    </div>
+			                  </div>
+			                </div>
+		                <% else %>
+
+		                	<div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Mañana
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                      <div class="promo-hour-select has-feedback morning-promo-hour">
+			                        <%= time_select "service_promo", "morning_start", {default: service_promo.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "morning_end", {default: service_promo.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                        <span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+			                        <span class="form-control-feedback"></span>
+			                      </div>                 
+			                  </div>
+			                </div>
+
+			                <div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Tarde
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                    <div class="promo-hour-select has-feedback afternoon-promo-hour">
+			                      <%= time_select "service_promo", "afternoon_start", {default: service_promo.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "afternoon_end", {default: service_promo.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                      <span class="help-block"><label id="afternoon-error" class="error" hidden></label></span>
+			                      <span class="form-control-feedback"></span>
+			                    </div>
+			                  </div>
+			                </div>
+
+			                <div class="row">
+			                  <div class="col-md-2">
+			                    <div class="hour-title">
+			                      Noche
+			                    </div>
+			                  </div>
+			                  <div class="col-md-10">
+			                    <div class="promo-hour-select has-feedback night-promo-hour">
+			                      <%= time_select "service_promo", "night_start", {default: service_promo.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "night_end", {default: service_promo.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+			                      <span class="help-block"><label id="night-error" class="error" hidden></label></span>
+			                      <span class="form-control-feedback"></span>
+			                    </div>
+			                  </div>
+			                </div>
+
+		                <% end %>
+					<% end %>
+
+	          </div>
+	          <div class="modal-footer">
+	          		<%= submit_tag 'Guardar', :class => 'btn btn-green edit_promo_times' %>
+	             	<a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
+	          </div>
+	        </div> <!-- /.modal-content -->
+	    </div> <!-- /.modal-dialog -->
+	</div> <!-- /.modal -->
+
+	
+<% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "service" %>
+
+  <script type="text/javascript">
+
+  	var myAlert;
+
+  	$(document).ready(function(){
+  		myAlert = new Alert('.main');
+
+  		$("#finish_date").datepicker({
+          autoSize: true,
+          firstDay: 1,
+          changeMonth: true,
+          changeYear: true,
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          dateFormat: 'dd/mm/yy',
+          onSelect: function(newDate){
+          	
+          }
+    	});
+
+  		$("#book_limit_date").datepicker({
+          autoSize: true,
+          firstDay: 1,
+          changeMonth: true,
+          changeYear: true,
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          dateFormat: 'dd/mm/yy',
+          onSelect: function(newDate){
+          	
+          }
+    	});
+  	});
+
+
+  	$("#morning-edit").click(function(){
+  		$("#timeModal").modal("show");
+  	});
+
+  	$("#afternoon-edit").click(function(){
+  		$("#timeModal").modal("show");
+  	});
+
+  	$("#night-edit").click(function(){
+  		$("#timeModal").modal("show");
+  	});
+
+  	$('.edit_promo_times').click(function(e){
+
+  		var service_id = '<%= @service.id %>';
+
+  		var morning_start = $('#service_promo_morning_start_1i').val() + '-' + $('#service_promo_morning_start_2i').val() + '-' + $('#service_promo_morning_start_3i').val() + 'T' + $('#service_promo_morning_start_4i').val() + ':' + $('#service_promo_morning_start_5i').val() + ':00Z';
+
+  		var morning_end = $('#service_promo_morning_end_1i').val() + '-' + $('#service_promo_morning_end_2i').val() + '-' + $('#service_promo_morning_end_3i').val() + 'T' + $('#service_promo_morning_end_4i').val() + ':' + $('#service_promo_morning_end_5i').val() + ':00Z';
+
+  		var afternoon_start = $('#service_promo_afternoon_start_1i').val() + '-' + $('#service_promo_afternoon_start_2i').val() + '-' + $('#service_promo_afternoon_start_3i').val() + 'T' + $('#service_promo_afternoon_start_4i').val() + ':' + $('#service_promo_afternoon_start_5i').val() + ':00Z';
+
+  		var afternoon_end = $('#service_promo_afternoon_end_1i').val() + '-' + $('#service_promo_afternoon_end_2i').val() + '-' + $('#service_promo_afternoon_end_3i').val() + 'T' + $('#service_promo_afternoon_end_4i').val() + ':' + $('#service_promo_afternoon_end_5i').val() + ':00Z';
+
+  		var night_start = $('#service_promo_night_start_1i').val() + '-' + $('#service_promo_night_start_2i').val() + '-' + $('#service_promo_night_start_3i').val() + 'T' + $('#service_promo_night_start_4i').val() + ':' + $('#service_promo_night_start_5i').val() + ':00Z';
+
+  		var night_end = $('#service_promo_night_end_1i').val() + '-' + $('#service_promo_night_end_2i').val() + '-' + $('#service_promo_night_end_3i').val() + 'T' + $('#service_promo_night_end_4i').val() + ':' + $('#service_promo_night_end_5i').val() + ':00Z';
+
+  		//var datos = $("#timeModal form").serialize();
+
+  		if(timeCheck(morning_start, morning_end, afternoon_start, afternoon_end, night_start, night_end))
+  		{
+  			$.ajax({
+  				url: '/set_service_promo_times',
+  				type: 'post',
+  				data: {service_id: service_id, morning_start: morning_start, morning_end: morning_end, afternoon_start: afternoon_start, afternoon_end: afternoon_end, night_start: night_start, night_end: night_end},
+  				success: function(response)
+  				{
+  					$("#timeModal").modal('hide');
+  					if(response[0] == "ok")
+  					{
+  						myAlert.showAlert(
+						  '<h3>Horarios editados</h3>' +
+						  '<p>Los horarios para el servicio ' + response[1].name + ' se guardaron correctamente.</p>'
+						, function(){
+							location.reload();
+						});
+  					}
+  					else
+  					{
+  						myAlert.showAlert(
+						  '<h3>Error</h3>' +
+						  '<p>Ocurrió un error al guardar los horarios para el servicio ' + response[1].name + '.</p>'
+						, function(){
+							location.reload();
+						});
+  					}
+  				},
+  				error: function()
+  				{
+  					$("#timeModal").modal('hide');
+  					myAlert.showAlert(
+					  '<h3>Error</h3>' +
+					  '<p>Ocurrió un error al guardar los horarios para el servicio ' + response[1].name + '.</p>'
+					, function(){
+						location.reload();
+					});
+  				}
+  			})
+  		}
+
+  	});
+
+
+	function timeCheck(morningStart, morningEnd, afternoonStart, afternoonEnd, nightStart, nightEnd)
+	{
+		var result = morningStart <= morningEnd;
+	    var result1 = afternoonStart <= afternoonEnd;
+	    var result2 = morningEnd <= afternoonStart;
+	    var result3 = nightStart <= nightEnd;
+	    var result4 = afternoonEnd <= nightStart;
+
+
+	    $("#morning-error").empty();
+	    $("#morning-error").hide();
+	    $("#afternoon-error").empty();
+	    $("#afternoon-error").hide();
+	    $("#night-error").empty();
+	    $("#night-error").hide();
+
+	    if (result)
+	    {
+	    	$(".morning-promo-hour").addClass('has-success').removeClass('has-error');
+	    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+	    }
+	    else
+	    {
+	    	$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	$("#morning-error").append("El fin de la mañana no puede ser menor al inicio.");
+	    	$("#morning-error").show();
+	    }
+
+
+	    if (result1 && result2)
+	    {
+	    	$(".afternoon-promo-hour").addClass('has-success').removeClass('has-error');
+	    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+	    }
+	    else
+	    {
+
+	    	$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	var strError = "";
+	    	if(!result1 && result2)
+	    	{
+	    		strError = "El fin de la tarde no puede ser menor al inicio.";
+	    	}
+	    	else if(!result2 && result1)
+	    	{
+	    		strError = "El inicio de la tarde no puede ser menor al fin de la mañana.";
+	    		$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#morning-error").append("El fin de la mañana no puede ser mayor al inicio de la tarde.");
+		    	$("#morning-error").show();
+	    	}
+	    	else
+	    	{
+	    		strError = "El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.";
+	    		$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#morning-error").append("El fin de la mañana no puede ser mayor al inicio de la tarde.");
+		    	$("#morning-error").show();
+	    	}
+	    	$("#afternoon-error").append(strError);
+	    	$("#afternoon-error").show();
+	    }
+
+	    
+
+	    if (result3 && result4)
+	    {
+	    	$(".night-promo-hour").addClass('has-success').removeClass('has-error');
+	    	$(".night-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+	    }
+	    else
+	    {
+
+	    	$(".night-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".night-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	var strError = "";
+	    	if(!result3 && result4)
+	    	{
+	    		strError = "El fin de la noche no puede ser menor al inicio.";
+	    	}
+	    	else if(!result4 && result3)
+	    	{
+	    		strError = "El inicio de la noche no puede ser menor al fin de la tarde.";
+	    		$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#afternoon-error").append("El fin de la tarde no puede ser mayor al inicio de la noche.");
+		    	$("#afternoon-error").show();
+	    	}
+	    	else
+	    	{
+	    		strError = "El inicio de la noche no puede ser menor al fin de la tarde ni mayor al fin de la noche.";
+	    		$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#afternoon-error").append("El fin de la tarde no puede ser mayor al inicio de la noche.");
+		    	$("#afternoon-error").show();
+	    	}
+	    	$("#night-error").append(strError);
+	    	$("#night-error").show();
+	    }
+
+	    return result && result1 && result2 && result3 && result4;
+	}
+
+  	$(".promotions-submit").click(function(e){
+
+  		var service_id = $("#promo_service_id").val();
+  		var has_last_minute_discount = $("#has_last_minute_discount").is(":checked");
+  		var last_minute_discount = $("#last_minute_discount").val();
+  		var last_minute_hours = $("#last_minute_hours").val();
+  		var has_time_discount = $("#has_time_discount").is(":checked");
+  		var reset_on_max_change = $("#reset_on_max_change").is(":checked");
+  		var max_bookings = $("#max_bookings").val();
+  		var morning_discounts = []
+  		morning_discounts[0] = 0
+  		var afternoon_discounts = []
+  		afternoon_discounts[0] = 0
+  		var night_discounts = []
+  		night_discounts[0] = 0
+  		var locations = []
+  		var last_minute_locations = []
+  		var finish_date = $("#finish_date").val();
+  		var book_limit_date = $("#book_limit_date").val();
+  		var limit_booking = $("#limit_booking").is(":checked");
+
+  		for(i = 1; i < 8; i++)
+  		{
+  			morning_discounts[i] = $("#morning-" + i).val();
+  			afternoon_discounts[i] = $("#afternoon-" + i).val();
+  			night_discounts[i] = $("#night-" + i).val();
+  		}
+
+  		$('input[name="locations"]').each(function(){
+  			if ($(this).is(":checked"))
+  			{
+  				locations.push($(this).val());
+  			}
+  		});
+
+  		$('input[name="last_minute_locations"]').each(function(){
+  			if ($(this).is(":checked"))
+  			{
+  				last_minute_locations.push($(this).val());
+  			}
+  		});
+
+  		if (locations.length < 1 && has_time_discount)
+  		{
+  			myAlert.showAlert(
+				'<h3>Selecciona locales</h3>' +
+			  	'<p>Debes seleccionar al menos un local para las promociones por horario.</p>'
+			);
+			return false;
+  		}
+
+  		if (last_minute_locations.length < 1 && has_last_minute_discount)
+  		{
+  			myAlert.showAlert(
+				'<h3>Selecciona locales</h3>' +
+			  	'<p>Debes seleccionar al menos un local para las promociones de último minuto.</p>'
+			);
+			return false;
+  		}
+
+  		if(has_time_discount && (max_bookings == "" || parseInt(max_bookings) < 0) && $("#limit_booking").prop('checked'))
+  		{
+  			myAlert.showAlert(
+				'<h3>Ingresa el stock</h3>' +
+			  	'<p>Debes ingresar el stock de reservas disponibles para la promoción.</p>'
+			);
+			return false;
+  		}
+
+  		$.ajax({
+  			url: "/set_service_promotions",
+  			type: "post",
+  			data: {service_id: service_id, has_last_minute_discount: has_last_minute_discount, last_minute_discount: last_minute_discount, last_minute_hours: last_minute_hours, has_time_discount: has_time_discount, morning_discounts: morning_discounts, afternoon_discounts: afternoon_discounts, night_discounts: night_discounts, locations: locations, last_minute_locations: last_minute_locations, max_bookings: max_bookings, reset_on_max_change: reset_on_max_change, finish_date: finish_date, book_limit_date: book_limit_date, limit_booking: limit_booking},
+  			success: function(response){
+  				if(response[0] == "ok")
+  				{
+  					myAlert.showAlert(
+					  '<h3>Promociones guardadas</h3>' +
+					  '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente.</p>'
+					, function(){
+						location.reload();
+					});
+  					
+  				}
+  				else
+  				{
+  					var errors = "";
+  					for(i=0; i < response[2].length; i++)
+  					{
+  						errors = errors + response[2][i] + "<br />";
+  					}
+
+  					myAlert.showAlert(
+					  '<h3>Ocurrió un error</h3>' +
+					  '<p>No se pudieron guardar las sesiones por las siguientes razones: </p>' +
+					  '<p>' + errors + '</p>',
+						function(){
+							location.reload();
+						}
+					);
+  				}
+  			}
+  		});
+
+  	});
+
+  </script>
+
 <% end %>

@@ -85,17 +85,42 @@
                   <div class="col-md-9">
                     <div class="checkbox">
                       <label>
-                        <%= f.check_box :online_payable %> Este servicio se puede pagar en línea
+                        <%= f.check_box :online_payable %> Este servicio se pude pagar en línea
                       </label>
                     </div>
                   </div>
                 </div>
+                <% if @service.online_payable %>
+                  <div class="form-group" id="must_be_paid_div">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :must_be_paid_online %> Este servicio se debe pagar en línea
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                <% else %>
+                  <div class="form-group" hidden id="must_be_paid_div">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :must_be_paid_online, {:checked=>false} %> Este servicio se debe pagar en línea
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
                 <div class="form-group">
                   <%= f.label :has_discount, "Descuento", class: "col-md-3 control-label" %>
                   <div class="col-md-9">
                     <div class="checkbox">
                       <label>
-                        <%= f.check_box :has_discount %> Tiene descuento por pago en línea en línea
+                        <%= f.check_box :has_discount %> Tiene descuento por pago en línea
                       </label>
                     </div>
                   </div>
@@ -180,7 +205,7 @@
               <div class="form-group has-feedback">
                 <%= f.label :service_category_id, "Categoría de Servicio", class: "col-md-3 control-label" %>
                 <div class="col-md-9">
-                  <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
+                  <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id).order(:order, :name), :id, :name, {}, { class: "form-control" }%>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
@@ -203,8 +228,8 @@
                 <%= f.label :service_provider_ids, "Prestadores de Servicios", class: "col-md-3 control-label" %>
                 <div class="col-md-9">
                   <div class="panel-group" id="service-provider-accordion">
-                    <% Location.accessible_by(current_ability).each do |location| %>
-                      <% @service_providers = ServiceProvider.where(company_id: current_user.company_id, location_id: location.id, :active => true) %>
+                    <% Location.order(:order, :name).accessible_by(current_ability).each do |location| %>
+                      <% @service_providers = ServiceProvider.where(company_id: current_user.company_id, location_id: location.id, :active => true).order(:order, :public_name) %>
                       <% if @service_providers.length > 0 %>
                       <div class="panel panel-default">
                         <div class="panel-heading">
@@ -239,8 +264,8 @@
                 <%= f.label :resource_ids, "Recursos", class: "col-md-3 control-label" %>
                 <div class="col-md-9">
                   <div class="panel-group" id="service-provider-accordion">
-                    <% ResourceCategory.where(company_id: current_user.company_id).each do |resource_category| %>
-                      <% @resources = Resource.where(resource_category_id: resource_category.id) %>
+                    <% ResourceCategory.where(company_id: current_user.company_id).order(:name).each do |resource_category| %>
+                      <% @resources = Resource.where(resource_category_id: resource_category.id).order(:name) %>
                       <% if @resources.length > 0 %>
                       <div class="panel panel-default">
                         <div class="panel-heading">

@@ -1,0 +1,359 @@
+<%= stylesheet_link_tag "search/show-promo" %>
+
+<div class="overview-main">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-sm-12" style="text-align: center;">
+        <%= image_tag "promociones/header_image.png", :alt => "Header", :class => "img-responsive" %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12" style="text-align: right;">
+        <%= link_to "Volver a Promociones de último minuto", get_last_minute_promotions_path %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-6 col-md-6">
+        <div class="promo-title">
+          <%= @service.name %>
+        </div>
+        <div class="promo-description">
+          <%= @service.description %>
+        </div>
+        <div class="google-maps-empresa">
+          <h3><%= @service.company.name %></h3>
+          <div id="map"></div>
+          <div style="margin-top: 5px; margin-bottom: 5px;">
+            <%= image_tag "promociones/pin.png", :alt => "Dirección", :size => "18x26" %>
+            <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
+          </div>
+          <div>
+            <%= image_tag "promociones/phone.png", :alt => "Teléfono", :size => "18x18" %>
+            <%= @location.phone %>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-6 col-md-6">
+        <div class="promo-price">
+          <div class="col-sm-2">
+          </div>
+          <div class="col-sm-8" style="text-align: right;">
+            <table style="width: 100%;">
+              <tr>
+                <td style="vertical-align: bottom; text-align: right; width: 20%;">
+                  <%= image_tag("promociones/flecha.png", :class => "flecha-icon", :size => "60x120") %>
+                </td>
+                <td style="text-align: right; width: 80%;">
+                  <span style="color: #b5b5b5; font-size: 40px;"><strike><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></strike></span><br />
+                  <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "46x60", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 65px;"><%= number_to_currency(@service.price*(100-@service.get_last_minute_discount(@location.id))/100, unit: "", delimiter: ".") %></span><br />
+                  <span style="color: #22c488; font-size: 22px;">Desde <%= @service.get_last_minute_discount(@location.id) %>% de descuento</span><br />
+                  <span>
+                    <button class="btnBook" id="btnPayBook" data-toggle="modal" data-target="#selectProviderModal">Comprar y reservar</button>
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-sm-2">
+          </div>
+          <div style="clear: both;"></div>
+        </div>
+        <div class="social-links">
+          <% 
+            share_text = "Promoción de " + @service.name + " con " + @service.get_last_minute_discount(@location.id).to_s+ "% de descuento en AgendaPro"
+            share_text = url_encode(share_text)
+          %>
+          <a href="http://twitter.com/intent/tweet?status=<%= share_text %>+<%= url_encode(request.original_url) %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/twitter_doble.png", :size => "32x32" %></a> &nbsp;&nbsp; <a href="http://www.facebook.com/sharer.php?u=<%= url_encode(request.original_url) %>
+&t=<%= share_text %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/facebook_doble.png", :size => "32x32" %></a>
+        </div>
+        <div class="details-accordions">
+
+
+
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+
+                <h4 class="panel-title minus">
+
+                  <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+
+                    <%= image_tag "promociones/reloj_doble.png", :size => "30x30" %> &nbsp;&nbsp; Horarios de reserva
+                    
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  
+                    <p style="color: #949292;">Reserva hasta <%= @service.get_last_minute_hours(@location.id) %> antes y obtén un <%= @service.get_last_minute_discount(@location.id) %>% de descuento.</p>
+                      
+
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingThree">
+                <h4 class="panel-title minus">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <%= image_tag "promociones/agendapro_doble.png", :size => "30x30" %> &nbsp;&nbsp;Políticas de la empresa
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                <div class="panel-body">
+                  Políticas
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+    </div>
+
+    <% if @relatedPromos.count > 0 %>
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="promo-title">
+            Ofertas relacionadas
+          </div>
+
+          <% i = 1 %>
+          <div class="row">
+          <% @relatedPromos.each do |promo_detail| %>
+            <div class="col-md-4">
+              <%= render :partial => 'searchs/service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
+            </div>
+            <% if i%3 == 0 %>
+              </div>
+              <div class="row">
+            <% end %>
+            <% i = i + 1 %>
+          <% end %>
+          </div>
+
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+</div>
+
+<div class="modal" id="selectProviderModal" tabindex="-1" role="basic" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close closeBookModal" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reservar</h3>
+      </div>
+      <div class="modal-body">
+
+        <div id="optimizerFirst">
+          <form class="form-horizontal" id="serviceOptimizer">
+              <div class="form-group">
+                <label for="providerOptimizerSelector" class="col-xs-3 control-label">Prestador</label>
+                <div class="col-xs-9">
+                  <select class="form-control" name="providerOptimizerSelector" id="providerOptimizerSelector">
+                    <% if @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).count > 1 %>
+                        <% if @location.company.company_setting.provider_preference != 0 %>
+                            <option value="0">Sin Preferencia</option>
+                        <% end %>
+                    <% end %>
+                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(order: :asc).each do |provider| %>
+
+                      <option value="<%= provider.id %>">
+                          <%= provider.public_name %>
+                      </option>
+
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+              <div id="hours-selection-div">
+
+              </div>
+              <input type="hidden" name="service" value="<%= @service.id %>" />
+          </form>
+        </div>
+
+        <div id="hoursList" style="display: none;">
+          
+        </div>
+
+        <div class="row" id="loader-div" hidden>
+          <p style="text-align: center; margin-top: 40px;">
+            <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer">          
+          <a type="button" class="btn open-calendar-btn" id="openHoursBtn"><i class="fa fa-calendar-o"></i>&nbsp;Elegir hora</a>
+          <a type="button" class="btn hour-selected-btn" id="openPayFormBtn" style="display: none;" disabled="true"><i class="fa fa-usd"></i>&nbsp;Pagar</a>
+          <!--<button type="button" class="btn session-btn" id="openOptimizerBtn"><i class="fa fa-calendar-o"></i>&nbsp;Sugerir hora</button>-->
+          <a href="#" class="btn btn-white" class="closeBookModal" data-dismiss="modal">Cerrar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="hidden" id="locationId" value="<%= @location.id %>" />
+<input type="hidden" id="serviceId" value="<%= @service.id %>" />
+
+<% if user_signed_in? %>
+  <input type="hidden" id="user_id" value="<%= current_user.id %>" />
+<% end %>
+
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "calendar" %>
+<% end %>
+
+<% content_for :scripts do %>
+  
+  <%= javascript_include_tag 'workflow/promotions-calendar' %>
+    
+  <script type="text/javascript">
+
+    
+    var currMarker;
+   
+    //====== Google Map ======//
+    function initializeMap(lat, lng, mapDiv) {
+        var properties = {
+            center: new google.maps.LatLng(lat, lng),
+            zoom:   15,
+            panControl: false,
+            zoomControl: true,
+            zoomControlOptions: {
+                style: google.maps.ZoomControlStyle.SMALL
+            },
+            mapTypeControl: true,
+            mapTypeControlOptions: {
+                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+            },
+            scaleControl: false,
+            streetViewControl: false,
+            overviewMapControl: false,
+            mapTypeId:  google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById(mapDiv), properties);
+    }
+
+    function setMarker(latlng, local) {
+
+      if(currMarker!=null)
+      {
+        currMarker.setMap(null);
+      }
+
+      var image = '<%= asset_path("pin_googlemap.png") %>';
+
+      var marker = new google.maps.Marker({
+                    position: latlng,
+                    icon: image
+                    /*new google.maps.MarkerImage(
+                "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld=|01e19d|FFFFFF",
+                null, null, new google.maps.Point(0, 42))*/
+                  });
+      currMarker = marker;
+      marker.setMap(map);
+
+      var infowindow = new google.maps.InfoWindow({
+          content: local
+        });
+      google.maps.event.addListener(marker, 'click', function() {
+          infowindow.open(map,marker);
+      });
+    }
+
+    function localMap(id) {
+      $.getJSON('/local', {id: id}, function (local) {
+        var latLng = new google.maps.LatLng(local.latitude, local.longitude);
+        map.setCenter(latLng);
+        setMarker(latLng, local.name);
+      });
+    }
+
+
+    $(document).ready(function(){
+      var map;
+      initializeMap(-33.413084, -70.592161, 'map');
+      
+      if ($("#locationId").val() != "") {
+        var localId = $("#locationId").val();
+
+        //loadSchedule(localId);
+        localMap(localId);
+      }
+    });
+
+    $(".promo-service-box").click(function(){
+      console.log($(this).attr("service_id"));
+      $('.show-promo-link[service_id="' + $(this).attr("service_id") + '"][location_id="' + $(this).attr("location_id") + '"]')[0].click();
+    });
+
+
+
+    var promoCalendar;
+
+    function simple_currency(price)
+    {
+      var amount = Math.round(price).toString();
+      //console.log(amount);
+      //console.log(amount.length);
+      var j = 0;
+      var stack = new Array();
+      for(i = amount.length-1; i>=0; i--)
+      {
+        j = j+1;
+        stack.push(amount[i]);
+        if(j == 3 && i>0)
+        {
+          stack.push('.');
+          j = 0;
+        }
+      }
+      var formatted_amount = "$";
+      for(i = stack.length-1; i >=0 ; i--)
+      {
+        formatted_amount = formatted_amount + stack[i];
+      }
+
+      return formatted_amount;
+    }
+
+    $("#selectProviderModal").on('show.bs.modal', function(e){
+      $("#hours-selection-div").empty();
+    });
+
+    $("#openHoursBtn").click(function(){
+
+      var service_id = $("#serviceId").val();
+      var location_id = $("#locationId").val();
+      var service_provider_id = $("#providerOptimizerSelector").val();
+
+      $.ajax({
+        url: '/last_minute_hours?id=' + service_id + "&location_id=" + location_id + "&service_provider_id=" + service_provider_id,
+        type: 'GET',
+        success: function(response){
+          $("#hours-selection-div").empty();
+          $("#hours-selection-div").append(response);
+        },
+        error: function(response){
+          $("#hours-selection-div").empty();
+          alert("Ocurrió un error.");
+        }
+      });
+
+    });
+
+  </script>
+
+<% end %>

@@ -53,6 +53,7 @@ function loadProviderEvents(providerId) {
   return false;
 }
 
+var actualDate = null;
 var dateSelected = null;
 function loadWeekCalendar (startTime, endTime, providerId) {
   //Default values
@@ -145,7 +146,8 @@ function loadWeekCalendar (startTime, endTime, providerId) {
     height: 10000
   });
 
-  loadProviderEvents(providerId);
+  actualDate = actualDate || $('#calendar').fullCalendar('getDate');
+  picker.set('select', actualDate);
 }
 
 var picker;
@@ -160,7 +162,7 @@ $(function() {
     };
   });
   $('#providers-selector').change(function() {
-    providerId = parseInt($('#providers-selector').val());
+    var providerId = parseInt($('#providers-selector').val());
     if (providerId > 0) {
       loadProviderTime(providerId);
     };
@@ -188,6 +190,7 @@ $(function() {
         $('#calendar').fullCalendar('gotoDate', new Date(context.select));
         providerId = parseInt($('#providers-selector').val());
         if (providerId > 0) {
+          actualDate = $('#calendar').fullCalendar('getDate');
           loadProviderEvents(providerId);
         };
       };

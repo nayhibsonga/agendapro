@@ -4,8 +4,10 @@ class CompanySetting < ActiveRecord::Base
 	has_many :payment_method_settings
 	has_many :payment_methods, through: :payment_method_settings
 	belongs_to :bank
+	has_one :promo_time
 	
 	accepts_nested_attributes_for :online_cancelation_policy
+	accepts_nested_attributes_for :promo_time
 
 	accepts_nested_attributes_for :payment_method_settings, :reject_if => :all_blank, :allow_destroy => true
 
