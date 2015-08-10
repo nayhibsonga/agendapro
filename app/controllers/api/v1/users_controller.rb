@@ -109,6 +109,9 @@ module Api
         end
       end
 
+      def searches
+      end
+
       private
       
   	  def check_login_params

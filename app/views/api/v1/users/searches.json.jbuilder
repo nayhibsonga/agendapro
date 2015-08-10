@@ -1,0 +1,1 @@
+json.searches @mobile_user.user_searches.order(created_at: :desc).limit(5).pluck(:search_text)

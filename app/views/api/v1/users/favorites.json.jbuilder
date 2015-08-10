@@ -5,4 +5,6 @@ json.array!(@locations) do |location|
   json.region location.district.city.region.name
   json.country location.district.city.region.country.name
   json.url location_url(location, format: :json)
+  json.logo location.company.logo && location.company.logo.url ? request.protocol + request.host_with_port + location.company.logo.url : ""
+  json.photo location.image1 && location.image1.mobile && location.image1.mobile.url ? request.protocol + request.host_with_port + location.image1.mobile.url : ""
 end

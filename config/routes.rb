@@ -345,11 +345,14 @@
       get 'users/me', to: 'users#mobile_user'
       get 'users/bookings', to: 'users#bookings'
       get 'users/favorites', to: 'users#favorites'
+      get 'users/searches', to: 'users#searches'
       post 'users/oauth', to: 'users#oauth'
       
       resources :economic_sectors
 
       post 'bookings', to: 'bookings#book_service'
+      put 'bookings', to: 'bookings#update'
+      delete 'bookings', to: 'bookings#destroy'
     end
   end
   # Promotions

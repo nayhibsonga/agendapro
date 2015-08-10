@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
 	belongs_to :role
 	belongs_to :company
 
+	has_many :user_searches
+
 	has_many :bookings, dependent: :nullify
 	has_many :booking_histories, dependent: :nullify
 
