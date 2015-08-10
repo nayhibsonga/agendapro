@@ -11,13 +11,14 @@ class LocationsController < ApplicationController
     if current_user.role == Role.find_by(name: "Super Admin")
       @companies = Company.where(active: true, owned: true).order(payment_status_id: :desc)
       # @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(order: :asc)
+      @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
     else
-      @locations = Location.where(company_id: current_user.company_id, :active => true).order(order: :asc).accessible_by(current_ability)
+      @locations = Location.where(company_id: current_user.company_id, :active => true).order(:order, :name).accessible_by(current_ability)
     end
   end
 
   def inactive_index
-    @locations = Location.where(company_id: current_user.company_id, :active => false).order(:name).accessible_by(current_ability)
+    @locations = Location.where(company_id: current_user.company_id, :active => false).order(:order, :name).accessible_by(current_ability)
   end
 
   # GET /locations/1
