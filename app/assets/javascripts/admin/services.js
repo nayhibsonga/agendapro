@@ -182,7 +182,7 @@ $(function() {
 		$('.fa.fa-times').removeClass('fa fa-times');
 	});
 
-	$('#service_online_payable').on('change', function(e){
+	/*$('#service_online_payable').on('change', function(e){
 		if($(this).prop('checked'))
 		{
 			$('#must_be_paid_div').show();
@@ -192,6 +192,29 @@ $(function() {
 			$("#service_must_be_paid_online").prop('checked', false);
 			$("#must_be_paid_div").hide();
 		}
+	});*/
+
+	var radios = $('input[name=online_payable_options]');
+	radios.on('change', function(e) {
+		pay_option = $('input[name=online_payable_options]:checked').val();
+
+		if(pay_option == "no_pay")
+		{
+			$("#service_online_payable").val("0");
+			$("#service_must_be_paid_online").val("0");
+		}
+		else if(pay_option == "may_pay")
+		{
+			$("#service_online_payable").val("1");
+			$("#service_must_be_paid_online").val("0");
+		}
+		else if(pay_option == "must_pay")
+		{
+			$("#service_online_payable").val("1");
+			$("#service_must_be_paid_online").val("1");
+		}
+
+		console.log($('input[name=online_payable_options]:checked').val());
 	});
 
 });

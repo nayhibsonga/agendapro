@@ -699,7 +699,7 @@ div.active > a.btn-green-wf:hover {
 	margin-top: 20px;
 }
 
-#services-selector div{
+#services-selector .services-selector-subdiv{
 
 	background-color: #fff;
 }
@@ -779,6 +779,15 @@ div.active > a.btn-green-wf:hover {
 	border-radius: 6px;
 }
 
+#description-default{
+	padding-left: 8px;
+	padding-top: 8px;
+	padding-right: 8px;
+	font-size: 17px;
+	color: #949292;
+	text-align: justify;
+}
+
 #description-heading{
 	padding-left: 8px;
 	padding-top: 8px;
@@ -823,6 +832,15 @@ div.active > a.btn-green-wf:hover {
 	color: #fd9610;
 }
 
+.open-promotion-popover{
+	height: 45px;
+}
+
+.service-selector-price{
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+}
+
 .popover{
 	width: 100% !important;
 	max-width: 700px !important;
@@ -831,7 +849,7 @@ div.active > a.btn-green-wf:hover {
 	z-index: 99999 !important;
 }
 
-.popover-content, .promotion-popover, .promotion-popover-table{
+.popover-content, .promotion-popover{
 	background-color: #f0f0f0 !important;
 	border: none;
 	z-index: 99999 !important;
@@ -850,6 +868,8 @@ div.active > a.btn-green-wf:hover {
 	font-size: 12px;
 	width: 100%;
 	background-color: #f0f0f0 !important;
+	border: none !important;
+	z-index: 99999 !important;
 }
 .promotion-popover-table td{
 	padding-left: 2px;
@@ -1014,13 +1034,12 @@ div.active > a.btn-green-wf:hover {
 	font-size: 22px;
 	cursor: pointer;
 	border-radius: 6px;
-	color: #22c488;
-	background-color: #fff;
+	background: #22c488;
+	color: #fff;
 }
 
 #new-add-service:hover{
-	background: #22c488;
-	color: #fff;
+	background-color: #1ba970;
 }
 
 .btn-change{

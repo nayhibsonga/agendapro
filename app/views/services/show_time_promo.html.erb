@@ -311,36 +311,23 @@
   </div>
 </div>
 
-<div class="background-repeat contact-footer" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+<footer>
+  <div class="background-repeat workflow-footer">
     <div class="container">
-        <div class="row pull-center">
-            <div class="col-xs-4">
-                <%= image_tag "footer/1.png", size: "22x29" %>
-                <p>Ana María Carrera 5210,
-                  Las Condes, Santiago</p>
-            </div>
-            <div class="col-xs-4">
-                <%= image_tag "footer/2.png", size: "24x19" %>
-                <p>contacto@agendapro.cl</p>
-            </div>
-            <div class="col-xs-4">
-                <%= image_tag "footer/3.png", size: "22x29" %>
-                <p>(+56 9) 5178 5898</p>
-            </div>
+      <div class="row footer">
+        <div class="col-xs-4 col-lg-2 pull-right">
+          <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "115x39", class: "img-responsive pull-right" %>
         </div>
-        <div class="row footer">
-            <div class="col-xs-4 col-lg-2 pull-right">
-                <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "img-responsive pull-right" %>
-            </div>
-            <div class="col-xs-8 col-lg-5 links-footer pull-right">
-                <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
-            </div>
-            <div class="col-xs-12 col-lg-5 copyright-footer">
-                <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
-            </div>
+        <div class="col-xs-8 col-lg-5 links-footer pull-right">
+          <%= link_to "Agrega tu Empresa", home_url(subdomain: false) %> | <%= link_to "Sobre Nosotros", aboutus_url(subdomain: false) %> | <%= link_to "Tutoriales", tutorials_url(subdomain: false) %> | <%= link_to 'Términos y Condiciones', root_url(subdomain: false) << asset_path('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
         </div>
+        <div class="col-xs-12 col-lg-5 copyright-footer">
+          <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+</footer>
 
 <div class="modal" id="selectProviderModal" tabindex="-1" role="basic" aria-hidden="true">
   <div class="modal-dialog">
