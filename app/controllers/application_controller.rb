@@ -126,40 +126,48 @@ class ApplicationController < ActionController::Base
   private
 
   def after_sign_out_path_for(resource_or_scope)
-    root_path
+    localized_root_path
   end
 
   def after_sign_in_path_for(resource)
     if current_user && current_user.company_id && current_user.company_id > 0
-      dashboard_path
+      if current_user.company.country && current_user.company.country.locale
+        dashboard_path(locale: current_user.company.country.locale)
+      else
+        dashboard_path
+      end
     else
       if request.env['omniauth.origin']
         begin
-          url = request.env['omniauth.origin'].gsub(root_path)
+          url = request.env['omniauth.origin'].gsub(localized_root_path)
           Rails.application.routes.recognize_path(url)
           request.env['omniauth.origin']
         rescue
-          root_path
+          localized_root_path
         end
       elsif stored_location_for(resource)
         begin 
-          url = stored_location_for(resource).gsub(root_path)
+          url = stored_location_for(resource).gsub(localized_root_path)
           Rails.application.routes.recognize_path(url)
           stored_location_for(resource)
         rescue
-          root_path
+          localized_root_path
         end
       else
-        root_path
+        localized_root_path
       end
     end
   end
 
   def after_sign_up_path_for(resource)
     if current_user && current_user.company_id && current_user.company_id > 0
-      dashboard_path
+      if current_user.company.country && current_user.company.country.locale
+        dashboard_path(locale: current_user.company.country.locale)
+      else
+        dashboard_path
+      end
     else
-      root_path
+      localized_root_path
     end
   end
 
