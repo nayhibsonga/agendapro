@@ -82,12 +82,17 @@
 		              </div>
 		              <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
 		                <div class="panel-body">
-		                  <p style="color: #949292; font-weight: bold; font-size: 14px;">Quedan <%= @service.active_promo_left_bookings %> reservas disponibles para esta promoción.</p>
-		                  <% if @service.active_promo_left_bookings <= 20 %>
-		                    <p style="color: #949292; font-weight: bold; font-size: 14px;">
-		                      ¡Apúrate y reserva antes que se acaben!
-		                    </p>
+		                  <% if @service.active_service_promo.limit_booking %>
+		                    <p style="color: #949292; font-weight: bold;">Quedan <%= @service.active_promo_left_bookings %> reservas disponibles para esta promoción.</p>
+		                    <% if @service.active_promo_left_bookings <= 20 %>
+		                      <p style="color: #949292; font-weight: bold;">
+		                        ¡Apúrate y reserva antes que se acaben!
+		                      </p>
+		                    <% end %>
+		                  <% else %>
+		                    <p style="color: #949292; font-weight: bold;">Esta promoción no tiene límite de stock.</p>
 		                  <% end %>
+		                  <p style="color: #949292; font-weight: bold;">Esta promoción acaba el <%= I18n.l(@service.active_service_promo.finish_date.to_date) %>, y permite reservar horas hasta el <%= I18n.l(@service.active_service_promo.book_limit_date.to_date) %>.</p>
 		                </div>
 		              </div>
 		            </div>

@@ -109,7 +109,9 @@ class ServicesController < ApplicationController
             @service.save
           end
           if send_promo_notification
-            AdminMailer.notify_promo_creation(@service)
+            if @service.time_promo_active && @service.has_time_discount && !@service.active_service_promo_id.nil?
+              AdminMailer.notify_promo_creation(@service)
+            end
           end
           @service.check_online_discount
           format.html { redirect_to manage_promotions_path, notice: 'Servicio actualizado exitosamente.' }
@@ -125,7 +127,9 @@ class ServicesController < ApplicationController
             @service.save
           end
           if send_promo_notification
-            AdminMailer.notify_promo_creation(@service)
+            if @service.time_promo_active && @service.has_time_discount && !@service.active_service_promo_id.nil?
+              AdminMailer.notify_promo_creation(@service)
+            end
           end
           @service.check_online_discount
           format.html { redirect_to services_path, notice: 'Servicio actualizado exitosamente.' }
@@ -403,6 +407,13 @@ class ServicesController < ApplicationController
             promos_changed = true
           end
 
+          #Alter promo if times changed
+          if ServicePromo.where(:id => last_service_promo.id, :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end]).count < 1
+
+            promos_changed = true
+
+          end
+
           #if params[:limit_booking] != last_service_promo.limit_booking
           #  promos_changed = true
           #end
@@ -414,12 +425,12 @@ class ServicesController < ApplicationController
         if promos_changed
 
           if params[:reset_on_max_change]
-            service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end, :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
+            service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end], :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
           else
             if last_service_promo != nil
-              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => @service.active_promo_left_bookings, :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end, :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
+              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => @service.active_promo_left_bookings, :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end], :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
             else
-              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => @promo_time.morning_start, :morning_end => @promo_time.morning_end, :afternoon_start => @promo_time.afternoon_start, :afternoon_end => @promo_time.afternoon_end, :night_start => @promo_time.night_start, :night_end => @promo_time.night_end, :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
+              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end], :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
             end
           end
 
