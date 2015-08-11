@@ -60,6 +60,13 @@
               <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path, class: "menu-green" %></li>
 							<li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path, class: "menu-green" %></li>
 							<li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
+
+							<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
+		
+								<li><%= link_to '<i class="fa fa-desktop fa-fw"></i> Ver Sitio'.html_safe, root_url(:subdomain => current_user.company.web_address) %></li>
+							
+							<% end %>
+
 							<li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete, class: "menu-orange" %></li>
               <% else %>
 							<li><%= link_to '<i class="fa fa-user"></i> Regístrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
