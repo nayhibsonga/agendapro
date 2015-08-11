@@ -78,7 +78,7 @@ $("#session-booking-select").on('change', function(){
 $('.session-btn-detail').click(function(){
   var booking_id = $(this).attr("booking_id");
   $.ajax({
-    url: 'session_booking_detail?' + booking_id,
+    url: 'session_booking_detail?id=' + booking_id,
     type: "get",
     success: function(response){
       $('#detailModal .modal-body').empty();
