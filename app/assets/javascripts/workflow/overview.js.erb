@@ -164,10 +164,6 @@ $(function() {
     localMap(localId);
   }
 
-  if ($('[name="localRadio"]').length == 1) {
-    $('input[name=localRadio]').trigger('click');
-  }
-
   $('[name="localRadio"]').click(function(e){
 
     var localId = $('input[name=localRadio]:checked').val();
@@ -186,7 +182,28 @@ $(function() {
     $("#phone-number").show();
     $("#phone-address").show();
     $("#phone-info").show();
-    console.log($('.local-phone[localid="'+localId+'"]').val());
-    console.log($('.local-address[localid="'+localId+'"]').val());
-  })
+
+  });
+
+  if ($('[name="localRadio"]').length == 1) {
+    $('input[name=localRadio]').trigger('click');
+    var localId = $('input[name=localRadio]:checked').val();
+    if($(".company-header-center2").length>0)
+    {
+      $(".company-header-left").css("border-right", "1px solid #949292");
+    }
+    else if($(".company-header-center").length>0)
+    {
+      $(".company-header-center").css("border-right", "1px solid #949292");
+    }
+    $("#phone-number").empty();
+    $("#phone-number").append($('.local-phone[localid="'+localId+'"]').text());
+    $("#phone-address").empty();
+    $("#phone-address").append($('.local-address[localid="'+localId+'"]').text());
+    $("#phone-number").show();
+    $("#phone-address").show();
+    $("#phone-info").show();
+  }
+
+
 });
