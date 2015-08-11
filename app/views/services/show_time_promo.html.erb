@@ -333,22 +333,23 @@
     <div class="modal-content">
       <div class="modal-header">
           <button type="button" class="close closeBookModal" data-dismiss="modal">&times;</button>
-          <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reservar</h3>
+          <!--<h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reservar</h3>-->
       </div>
       <div class="modal-body">
 
         <div id="optimizerFirst">
-          <div id="pickerSelectDate">
-            <div class="row">
-              <div class="col-xs-3" style="text-align: right; font-weight: bold;">
-                Inicio
-              </div>
-              <div class="col-xs-9">
+          <div id="pickerSelectDate" hidden>
+
                 <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
-                <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
-                  <input type="hidden" name="selectedLocal" id="selectedLocal" value="<%= @location.id %>" />
-                  <input type="hidden" name="selectedService" id="selectedService" value="<%= @service.id %>" />
-              </div>
+                <input type="hidden" name="selectedLocal" id="selectedLocal" value="<%= @location.id %>" />
+                <input type="hidden" name="selectedService" id="selectedService" value="<%= @service.id %>" />
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <p style="text-align: center; font-weight: bold;">
+                <%= image_tag "promociones/icono_prestador.png" %><br />
+                Elige el prestador con el que te quieres atender<br /> para ver sus horas disponibles.
+              </p>
             </div>
           </div>
           <form class="form-horizontal" id="serviceOptimizer">
