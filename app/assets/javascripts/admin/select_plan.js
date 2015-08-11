@@ -57,17 +57,17 @@ $(function() {
         var new_active_months_left = Math.floor((plan_value_left - plan_month_value - due_amount)/plan_price);
         var new_amount_due = -1 * (((plan_value_left - plan_month_value - due_amount)/plan_price) % 1) * plan_price;
         if (new_active_months_left > 0) {
-          $('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta quedará activa por este y ' + new_active_months_left + ' mes(es) más sin pagar más y, además, quedaran abonados $ ' + Math.round((-1 * new_amount_due)) + ' CLP en tu cuenta, para tu próximo pago.');
+          $('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta quedará activa por este y ' + new_active_months_left + ' mes(es) más sin pagar más y, además, quedaran abonados $ ' + Math.round((-1 * new_amount_due)) + ' en tu cuenta, para tu próximo pago.');
         } else {
-          $('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta activa por este mes sin pagar más y, además, quedaran abonados $ ' + Math.round((-1 * new_amount_due)) + ' CLP en tu cuenta, para tu próximo pago.');
+          $('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta activa por este mes sin pagar más y, además, quedaran abonados $ ' + Math.round((-1 * new_amount_due)) + ' en tu cuenta, para tu próximo pago.');
         }
         $('#plan_mp_button').show();
       } else {
-        $('#plan_explanation').html('Debes pagar $ ' + Math.round(plan_month_value + due_amount - plan_value_left) + ' CLP + IVA, para cambiarte a este plan.');
+        $('#plan_explanation').html('Debes pagar $ ' + Math.round(plan_month_value + due_amount - plan_value_left) + ' + IVA, para cambiarte a este plan.');
         $('#plan_mp_table').show();
       }
     } else {
-      $('#plan_explanation').html('Debes pagar $ ' + Math.round(plan_month_value + due_amount) + ' CLP + IVA, para cambiarte a este plan.');
+      $('#plan_explanation').html('Debes pagar $ ' + Math.round(plan_month_value + due_amount) + ' + IVA, para cambiarte a este plan.');
       $('#plan_mp_table').show();
     }
     $('.plan_mp_link').each(function(i, obj) {

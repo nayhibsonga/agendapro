@@ -6,6 +6,9 @@ class SearchsController < ApplicationController
 	require 'benchmark'
 	include Amatch
 
+
+  	before_action :constraint_locale, only: [:promotions]
+
 	def landing
 		@url_cl = localized_root_path(:locale => 'es_CL')
 		@url_co = localized_root_path(:locale => 'es_CO')
@@ -1335,6 +1338,14 @@ class SearchsController < ApplicationController
 
 			@lat = "-33.4052419" 
 			@lng = "-70.597557"
+			@formatted_address = "Santiago, Región Metropolitana, Chile"
+
+			if Country.find_by(locale: I18n.locale.to_s)
+				@country = Country.find_by(locale: I18n.locale.to_s)
+				@lat = @country.latitude
+				@lng = @country.longitude
+				@formatted_address = @country.formatted_address
+			end
 
 			if params[:latitude] &&  params[:latitude] != ""
 				@lat = params[:latitude]

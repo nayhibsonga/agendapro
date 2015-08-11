@@ -30,7 +30,7 @@
               <td><%= plan.locations %></td>
               <td><%= plan.service_providers %></td>
               <td><%= number_with_delimiter(plan.monthly_mails) %></td>
-              <td><%= number_to_currency(plan.price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> CLP</td>
+              <td><%= number_to_currency(plan.price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %></td>
               <% if @company.plan == Plan.find_by_name("Trial") && plan.price == @price %>
                 <td>¡Este sería tu Plan!</td>
               <% elsif @company.service_providers.where(active: true).count > plan.service_providers || @company.locations.where(active: true).count > plan.locations %>
@@ -51,7 +51,7 @@
               <td><%= @company.plan.locations %></td>
               <td><%= @company.plan.service_providers %></td>
               <td><%= number_with_delimiter(@company.plan.monthly_mails) %></td>
-              <td><%= number_to_currency(@price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> CLP</td>
+              <td><%= number_to_currency(@price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %></td>
               <td>¡Plan Elegido!</td>
             </tr>
           <%  end %>
@@ -75,13 +75,13 @@
       <label>Pagar (IVA incluido):</label>
       <select class="form-control" id="amount_select">
         <option value="0">Elige una opción...</option>
-        <option value="1"><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %> - <%= number_to_currency(@plan_1 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> CLP</option>
-        <option value="2">2 Meses - <%= number_to_currency(@plan_2 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> CLP</option>
-        <option value="3">3 Meses - <%= number_to_currency(@plan_3 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> CLP</option>
-        <option value="4">4 Meses - <%= number_to_currency(@plan_4 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> CLP (<%= number_with_precision(@month_discount_4 * 100, precision: 0) %>% dcto.)</option>
-        <option value="6">6 Meses - <%= number_to_currency(@plan_6 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> CLP (<%= number_with_precision(@month_discount_6 * 100, precision: 0) %>% dcto.)</option>
-        <option value="9">9 Meses - <%= number_to_currency(@plan_9 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> CLP (<%= number_with_precision(@month_discount_9 * 100, precision: 0) %>% dcto.)</option>
-        <option value="12">12 Meses - <%= number_to_currency(@plan_12 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> CLP (<%= number_with_precision(@month_discount_12 * 100, precision: 0) %>% dcto.)</option>
+        <option value="1"><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %> - <%= number_to_currency(@plan_1 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
+        <option value="2">2 Meses - <%= number_to_currency(@plan_2 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
+        <option value="3">3 Meses - <%= number_to_currency(@plan_3 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
+        <option value="4">4 Meses - <%= number_to_currency(@plan_4 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_4 * 100, precision: 0) %>% dcto.)</option>
+        <option value="6">6 Meses - <%= number_to_currency(@plan_6 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_6 * 100, precision: 0) %>% dcto.)</option>
+        <option value="9">9 Meses - <%= number_to_currency(@plan_9 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_9 * 100, precision: 0) %>% dcto.)</option>
+        <option value="12">12 Meses - <%= number_to_currency(@plan_12 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_12 * 100, precision: 0) %>% dcto.)</option>
       </select>
       <p>Y, luego, selecciona el medio de pago haciendo click sobre su imagen:</p>
       <div class="row mp_table">
@@ -194,7 +194,7 @@
             </div>
             <div class="well well-scrollable">
               <p class="text-justify">
-                Yo, <mark class="text-uppercase"><%= if @billing_info.contact then @billing_info.contact else "NOMBRE RESPONSABLE" end %></mark>, con domicilio en <mark class="text-uppercase"><%= if @billing_info.address then @billing_info.address else "DIRECCIÓN" end %></mark>, Chile, en mi calidad de receptor manual de documentos electrónicos, de conformidad con la Resolución Exenta No. 11/ de fecha 14 de febrero de 2003 del Servicio de Impuestos Internos (agregar link a la información) , que estableció el procedimiento para que contribuyentes autorizados para emitir documentos electrónicos puedan también enviarlos por estos medios a receptores manuales, declaro lo siguiente:
+                Yo, <mark class="text-uppercase"><%= if @billing_info.contact then @billing_info.contact else "NOMBRE RESPONSABLE" end %></mark>, con domicilio en <mark class="text-uppercase"><%= if @billing_info.address then @billing_info.address else "DIRECCIÓN" end %></mark>, <%= @company.country.name %>, en mi calidad de receptor manual de documentos electrónicos, de conformidad con la Resolución Exenta No. 11/ de fecha 14 de febrero de 2003 del Servicio de Impuestos Internos (agregar link a la información) , que estableció el procedimiento para que contribuyentes autorizados para emitir documentos electrónicos puedan también enviarlos por estos medios a receptores manuales, declaro lo siguiente:
               </p>
               <p class="text-justify">
                 Por el presente instrumento autorizo a la empresa <mark class="text-uppercase">GUNEI INVESTMENT SPA</mark>, RUT 76.233.336-8, para que la factura correspondiente al uso de la plataforma web AgendaPro, me sea entregada solamente por un medio electrónico, mediante envío a la dirección de e-mail <mark class="text-uppercase"><%= if @billing_info.email then @billing_info.email else "E-MAIL" end %>.</mark>
@@ -265,12 +265,12 @@
                 <% if @company.due_amount >= 0 %>
                 <label class="col-md-3">Deuda Actual</label>
                 <div class="col-md-9">
-                  <%= number_to_currency(@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> CLP
+                  <%= number_to_currency(@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>
                 </div>
                 <% else %>
                 <label class="col-md-3">Saldo a Favor</label>
                 <div class="col-md-9">
-                  <%= number_to_currency(-1*@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> CLP
+                  <%= number_to_currency(-1*@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>
                 </div>
                 <% end %>
               </div>

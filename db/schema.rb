@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150806151100) do
+ActiveRecord::Schema.define(version: 20150811175502) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -291,12 +291,15 @@ ActiveRecord::Schema.define(version: 20150806151100) do
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
 
   create_table "countries", force: true do |t|
-    t.string   "name",                       null: false
+    t.string   "name",                           null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "locale",        default: ""
-    t.string   "flag_photo",    default: ""
-    t.string   "currency_code", default: ""
+    t.string   "locale",            default: ""
+    t.string   "flag_photo",        default: ""
+    t.string   "currency_code",     default: ""
+    t.float    "latitude"
+    t.float    "longitude"
+    t.string   "formatted_address", default: ""
   end
 
   create_table "days", force: true do |t|
@@ -410,8 +413,6 @@ ActiveRecord::Schema.define(version: 20150806151100) do
     t.integer  "product_id"
     t.integer  "location_id"
     t.integer  "stock"
-    t.integer  "location_id",             null: false
-    t.integer  "stock",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1050,6 +1051,15 @@ ActiveRecord::Schema.define(version: 20150806151100) do
 
   add_index "user_providers", ["service_provider_id"], name: "index_user_providers_on_service_provider_id", using: :btree
   add_index "user_providers", ["user_id"], name: "index_user_providers_on_user_id", using: :btree
+
+  create_table "user_searches", force: true do |t|
+    t.integer  "user_id"
+    t.string   "search_text", default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_searches", ["user_id"], name: "index_user_searches_on_user_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "first_name"

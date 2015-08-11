@@ -32,6 +32,24 @@
           </div>
         </div>
         <div class="form-group">
+          <%= f.label :latitude, 'Latitud: ', :class => 'col-md-2 control-label' %>
+          <div class="col-md-4">
+            <%= f.number_field :latitude, step: 'any', :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :longitude, 'Longitud: ', :class => 'col-md-2 control-label' %>
+          <div class="col-md-4">
+            <%= f.number_field :longitude, step: 'any', :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :formatted_address, 'Moneda: ', :class => 'col-md-2 control-label' %>
+          <div class="col-md-4">
+            <%= f.text_field :formatted_address, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
           <%= f.label :flag_photo, "Foto Bandera: ", class: "col-md-2 control-label" %>
           <div class="col-md-4">
             <%= f.file_field :flag_photo, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>

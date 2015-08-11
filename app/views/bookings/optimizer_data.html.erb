@@ -425,12 +425,12 @@
                           <% @bookings.each do |booking| %>
                             <% if booking[:has_discount] %>
                               <p class="light-gray">
-                                Precio normal: <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %> - Descuento: <%= booking[:discount] %>%<br />
+                                Precio normal: <%= number_to_currency(booking[:price], unit: "$", delimiter: ".") %> - Descuento: <%= booking[:discount] %>%<br />
                                 Precio con descuento: <%= number_to_currency(booking[:price]*(100-booking[:discount])/100, unit: "CLP $", delimiter: ".")  %>
                               </p>
                             <% else %>
                               <p class="light-gray">
-                                Precio normal: <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %> - (Sin descuento)<br />
+                                Precio normal: <%= number_to_currency(booking[:price], unit: "$", delimiter: ".") %> - (Sin descuento)<br />
                               </p>
                             <% end %>
                           <% end %>
@@ -440,13 +440,13 @@
                     <tr>
                       <td class="dark-gray">Precio normal</td>
                       <td class="light-gray">
-                        <%= number_to_currency(total_price, unit: "CLP $", delimiter: ".") %>
+                        <%= number_to_currency(total_price, unit: "$", delimiter: ".") %>
                       </td>
                     </tr>
                     <tr>
                       <td class="dark-gray">Precio pago en línea</td>
                       <td class="light-gray">
-                        <%= number_to_currency(online_price, unit: "CLP $", delimiter: ".") %>
+                        <%= number_to_currency(online_price, unit: "$", delimiter: ".") %>
                       </td>
                     </tr>
                   <% else %>
@@ -457,7 +457,7 @@
                           <% if !booking[:show_price] || booking[:price].to_i == 0 %>
                             Preguntar en local<br />
                           <% else %>
-                            <%= number_to_currency(booking[:price], unit: "CLP $", delimiter: ".") %><br />
+                            <%= number_to_currency(booking[:price], unit: "$", delimiter: ".") %><br />
                           <% end %>
                         <% end %>
                       </td>
@@ -489,12 +489,12 @@
               <div class="row">
                 <div class="col-md-6">
                   <div id="discount" style="color: #505050; padding: 5px 5px 5px 5px;">
-                    Precio final: <%= number_to_currency(online_price, unit: "CLP $", delimiter: ".") %>
+                    Precio final: <%= number_to_currency(online_price, unit: "$", delimiter: ".") %>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div id="normal-book" style="color: #505050; padding: 5px 5px 5px 5px; float: right; text-align: right;">
-                    Precio final: <%= number_to_currency(total_price, unit: "CLP $", delimiter: ".") %>
+                    Precio final: <%= number_to_currency(total_price, unit: "$", delimiter: ".") %>
                   </div>
                 </div>
               </div>

@@ -24,10 +24,10 @@ class ApplicationController < ActionController::Base
   protected
 
   def set_locale
-    if current_user && current_user.company_id && current_user.company_id > 0
-      I18n.locale = Company.find(current_user.company_id).country.locale
-    else
-      if params[:locale].blank?
+    if params[:locale].blank?
+      if current_user && current_user.company_id && current_user.company_id > 0
+        I18n.locale = Company.find(current_user.company_id).country.locale
+      else
         requested_location = request_location
         if requested_location == 'CL'
           I18n.locale = :es_CL
@@ -36,9 +36,9 @@ class ApplicationController < ActionController::Base
         else
           I18n.locale = :es
         end
-      else
-        I18n.locale = params[:locale]
       end
+    else
+      I18n.locale = params[:locale]
     end
   end
 
