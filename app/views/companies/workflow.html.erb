@@ -185,7 +185,7 @@
           </div>
         </div>
         <div id="foo4" style="visibility: collapse;">
-          <div class="box-step">
+          <div class="box-step" id="box-step-1">
             <div class="row">
               <div class="col-sm-5">
                 <div class="services-title light-green">
@@ -233,6 +233,9 @@
               <div class="col-sm-3">
                 <div class="panel panel-default">
                   <input id="selectedServiceId" type="hidden" />
+                  <div id="description-default">
+                    Elige un servicio para revisar sus detalles. Haz click en "Agregar servicio" para agregarlo a tu lista de servicios, y en "Elegir horario" para elegir la hora de tu reserva.
+                  </div>
                   <div id="description-heading">
                   </div>
                   <div class="descripcion-body">
@@ -241,12 +244,11 @@
                       </tbody>
                     </table>
                     <div id="description-info" class="light-gray">
-
                     </div>
                   </div>
                 </div>
                 <div>
-                  <button class="btn-add-service" id="new-add-service"><i class="fa fa-plus"></i> Agregar servicio</button>
+                  <button class="btn-add-service" id="new-add-service"><span style="font-size: 18px !important;"><i class="fa fa-plus"></i></span>&nbsp;&nbsp;&nbsp; Agregar servicio</button>
                 </div>
               </div>
               <div class="col-sm-4">
