@@ -414,6 +414,17 @@ module Api
 	    @bookings = []
 	    @blocked_bookings = []
 
+	    @company = Location.find(@booking.location_id).company
+		@selectedLocation = Location.find(@booking.location_id)
+
+		now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+		booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
+
+		if (booking_start <=> now) < 1
+			render json: { errors: "La empresa permite edición de las reservas sólo " + @company.company_setting.before_edit_booking + " horas antes de la misma." }, status: 422
+		    return
+		end
+
 	    @booking = Booking.find(params[:id])
 	    @service_provider = ServiceProvider.find(booking_params[:service_provider_id])
 	    @selectedLocation = @booking.location
@@ -488,7 +499,7 @@ module Api
 		service_provider.provider_breaks.where("provider_breaks.start < ?", booking_params[:end].to_datetime).where("provider_breaks.end > ?", booking_params[:start].to_datetime).each do |provider_break|
 		if (provider_break.start.to_datetime - booking_params[:end].to_datetime) * (booking_params[:start].to_datetime - provider_break.end.to_datetime) > 0
 		    render json: { errors: "El horario que estás tratando de reservas está bloqueado." }, status: 422
-		    next
+		    return
 		end
 		end
 		service_provider.bookings.where("bookings.start < ?", booking_params[:end].to_datetime).where("bookings.end > ?", booking_params[:start].to_datetime).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').each do |provider_booking|
@@ -538,8 +549,8 @@ module Api
 		booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
 
 		if (booking_start <=> now) < 1
-		redirect_to blocked_cancel_path(:id => @booking.id)
-		return
+			render json: { errors: "La empresa permite anulación de las reservas sólo " + @company.company_setting.before_edit_booking + " horas antes de la misma." }, status: 422
+		    return
 		end
 
 		#Revisar si fue pagada en línea.
