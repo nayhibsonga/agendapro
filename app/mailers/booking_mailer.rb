@@ -101,6 +101,10 @@ class BookingMailer < ActionMailer::Base
 									:content => number_to_phone(book_info.location.phone)
 								},
 								{
+									:name => 'CANEDIT',
+									:content => book_info.location.company.company_setting.can_edit
+								},
+								{
 									:name => 'EDIT',
 									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
 								},
@@ -305,6 +309,10 @@ class BookingMailer < ActionMailer::Base
 								{
 									:name => 'LOCATIONPHONE',
 									:content => number_to_phone(book_info.location.phone)
+								},
+								{
+									:name => 'CANEDIT',
+									:content => book_info.location.company.company_setting.can_edit
 								},
 								{
 									:name => 'EDIT',
@@ -664,14 +672,6 @@ class BookingMailer < ActionMailer::Base
 						:content => number_to_phone(book_info.location.phone)
 					},
 					{
-						:name => 'EDIT',
-						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CANCEL',
-						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
 						:name => 'CLIENT',
 						:content => true
 					}
@@ -869,6 +869,10 @@ class BookingMailer < ActionMailer::Base
 								{
 									:name => 'LOCATIONPHONE',
 									:content => number_to_phone(book_info.location.phone)
+								},
+								{
+									:name => 'CANEDIT',
+									:content => book_info.location.company.company_setting.can_edit
 								},
 								{
 									:name => 'EDIT',
@@ -1097,6 +1101,10 @@ class BookingMailer < ActionMailer::Base
 									:content => true
 								},
 								{
+									:name => 'CANEDIT',
+									:content => data[:user][:can_edit]
+								},
+								{
 									:name => 'CANCEL',
 									:content => data[:user][:cancel]
 								}
@@ -1239,14 +1247,6 @@ class BookingMailer < ActionMailer::Base
 					:content => payed_booking.punto_pagos_confirmation.approvement_date
 				},
 				{
-					:name => 'EDIT',
-					:content => booking_edit_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
-				},
-				{
-					:name => 'CANCEL',
-					:content => booking_cancel_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
-				},
-				{
 					:name => 'CLIENT',
 					:content => client.first_name + ' ' + client.last_name
 				}
@@ -1304,14 +1304,6 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'DATE',
 					:content => payed_booking.punto_pagos_confirmation.approvement_date
-				},
-				{
-					:name => 'EDIT',
-					:content => booking_edit_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
-				},
-				{
-					:name => 'CANCEL',
-					:content => booking_cancel_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
 				},
 				{
 					:name => 'CLIENT',
@@ -1688,6 +1680,10 @@ class BookingMailer < ActionMailer::Base
 								{
 									:name => 'CLIENT',
 									:content => true
+								},
+								{
+									:name => 'CANEDIT',
+									:content => data[:user][:can_edit]
 								},
 								{
 									:name => 'CANCEL',
