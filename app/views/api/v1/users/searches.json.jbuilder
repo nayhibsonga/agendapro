@@ -1,1 +1,1 @@
-json.searches @mobile_user.user_searches.order(created_at: :desc).limit(5).pluck(:search_text)
+json.array! @mobile_user.user_searches.order(created_at: :desc).pluck(:search_text).uniq[0..4]
