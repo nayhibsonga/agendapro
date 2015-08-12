@@ -414,8 +414,12 @@ module Api
 	    @bookings = []
 	    @blocked_bookings = []
 
-	    @company = Location.find(@booking.location_id).company
-		@selectedLocation = Location.find(@booking.location_id)
+	    @booking = Booking.find(params[:id])
+	    @service_provider = ServiceProvider.find(booking_params[:service_provider_id])
+	    @selectedLocation = @booking.location
+	    @service = @booking.service
+	    @company = @selectedLocation.company
+	    cancelled_id = Status.find_by(name: 'Cancelado').id
 
 		now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 		booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
@@ -424,13 +428,6 @@ module Api
 			render json: { errors: "La empresa permite edición de las reservas sólo " + @company.company_setting.before_edit_booking + " horas antes de la misma." }, status: 422
 		    return
 		end
-
-	    @booking = Booking.find(params[:id])
-	    @service_provider = ServiceProvider.find(booking_params[:service_provider_id])
-	    @selectedLocation = @booking.location
-	    @service = @booking.service
-	    @company = @selectedLocation.company
-	    cancelled_id = Status.find_by(name: 'Cancelado').id
 
 	    #Revisar si fue pagada en línea.
 	    #Si lo fue, revisar política de modificación.
