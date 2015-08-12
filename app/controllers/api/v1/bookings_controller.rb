@@ -425,7 +425,7 @@ module Api
 		booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
 
 		if (booking_start <=> now) < 1
-			render json: { errors: "La empresa permite edición de las reservas sólo " + @company.company_setting.before_edit_booking + " horas antes de la misma." }, status: 422
+			render json: { errors: "La empresa permite edición de las reservas sólo " + @company.company_setting.before_edit_booking.to_s + " horas antes de la misma." }, status: 422
 		    return
 		end
 
@@ -447,7 +447,7 @@ module Api
 	            min_hours = min_hours.to_i.abs
 
 	            if min_hours >= ocp.min_hours.to_i
-	              render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + min_hours + " " + ocp.min_hours + " después." }, status: 422
+	              render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + ocp.min_hours + " " + ocp.min_hours + " después." }, status: 422
 		          return
 	            end
 
@@ -466,22 +466,22 @@ module Api
 	            num = ocp.modification_max.to_i
 	            if ocp.modification_unit == TimeUnit.find_by_unit("Minutos").id
 	              if minutes >= num
-	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + num + " " + ocp.modification_unit + " antes." }, status: 422
+	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + ocp.modification_max + " " + ocp.modification_unit + " antes." }, status: 422
 		            return
 	              end
 	            elsif ocp.modification_unit == TimeUnit.find_by_unit("Horas").id
 	              if hours >= num
-	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + num + " " + ocp.modification_unit + " antes." }, status: 422
+	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + ocp.modification_max + " " + ocp.modification_unit + " antes." }, status: 422
 		            return
 	              end
 	            elsif ocp.modification_unit == TimeUnit.find_by_unit("Semanas").id
 	              if weeks >= num
-	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + num + " " + ocp.modification_unit + " antes." }, status: 422
+	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + ocp.modification_max + " " + ocp.modification_unit + " antes." }, status: 422
 		            return
 	              end
 	            elsif ocp.modification_unit == TimeUnit.find_by_unit("Meses").id
 	              if months >= num
-	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + num + " " + ocp.modification_unit + " antes." }, status: 422
+	                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + ocp.modification_max + " " + ocp.modification_unit + " antes." }, status: 422
 		            return
 	              end
 	            end
@@ -546,7 +546,7 @@ module Api
 		booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
 
 		if (booking_start <=> now) < 1
-			render json: { errors: "La empresa permite anulación de las reservas sólo " + @company.company_setting.before_edit_booking + " horas antes de la misma." }, status: 422
+			render json: { errors: "La empresa permite anulación de las reservas sólo " + @company.company_setting.before_edit_booking.to_s + " horas antes de la misma." }, status: 422
 		    return
 		end
 
@@ -568,7 +568,7 @@ module Api
 			      min_hours = min_hours.to_i.abs
 
 			      if min_hours >= ocp.min_hours.to_i
-			        render json: { errors: "La empresa permite anulación de las reservas sólo " + min_hours + " horas después." }, status: 422
+			        render json: { errors: "La empresa permite anulación de las reservas sólo " + ocp.min_hours + " horas después." }, status: 422
 		            return
 			      end
 
@@ -587,22 +587,22 @@ module Api
 			      num = ocp.cancel_max.to_i
 			      if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
 			        if minutes >= num
-			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + num + " " + ocp.cancel_unit + " antes." }, status: 422
+			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + ocp.cancel_max + " " + ocp.cancel_unit + " antes." }, status: 422
 		              return
 			        end
 			      elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
 			        if hours >= num
-			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + num + " " + ocp.cancel_unit + " antes." }, status: 422
+			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + ocp.cancel_max + " " + ocp.cancel_unit + " antes." }, status: 422
 		              return
 			        end
 			      elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
 			        if weeks >= num
-			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + num + " " + ocp.cancel_unit + " antes." }, status: 422
+			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + ocp.cancel_max + " " + ocp.cancel_unit + " antes." }, status: 422
 		              return
 			        end
 			      elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
 			        if months >= num
-			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + num + " " + ocp.cancel_unit + " antes." }, status: 422
+			          render json: { errors: "La empresa permite anulación de las reservas sólo hasta " + ocp.cancel_max + " " + ocp.cancel_unit + " antes." }, status: 422
 		              return
 			        end
 			      end
