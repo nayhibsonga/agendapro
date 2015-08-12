@@ -513,7 +513,7 @@ module Api
 
 		if @booking.is_session
 			@booking.is_session_booked = true
-			@booking.is_session_confirmed = true
+			@booking.user_session_confirmed = true
 		end
 
 
