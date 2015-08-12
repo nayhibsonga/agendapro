@@ -11,7 +11,7 @@
 		<li><%= link_to '<i class="fa fa-calendar fa-fw"></i> Mi Agenda'.html_safe, my_agenda_url(subdomain: false) %></li>
 		<li><%= link_to '<i class="fa fa-user fa-fw"></i> Editar Perfil'.html_safe, edit_user_registration_url(subdomain: false) %></li>
 		<li><%= link_to '<i class="fa fa-question fa-fw"></i> Tutoriales'.html_safe, tutorials_url(subdomain: false) %></li>
-		<% if current_user.company_id > 0 %>
+		<% if current_user.company_id && current_user.company_id > 0 %>
 		
 		<li><%= link_to '<i class="fa fa-desktop fa-fw"></i> Ver Sitio'.html_safe, root_url(:subdomain => current_user.company.web_address) %></li>
 		
