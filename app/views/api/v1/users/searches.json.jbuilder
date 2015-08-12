@@ -1,1 +1,1 @@
-json.array! @mobile_user.user_searches.order(created_at: :desc).pluck(:search_text).uniq[0..4]
+json.array! @mobile_user.user_searches.where.not(search_text: nil).order(created_at: :desc).pluck(:search_text).uniq[0..4]
