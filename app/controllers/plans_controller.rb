@@ -70,7 +70,7 @@ class PlansController < ApplicationController
   def select_plan
     @due_payment = false
     @company = Company.find(current_user.company_id)
-    @plans = Plan.where(:custom => false, country_id: @company.country.id)
+    @plans = Plan.where(:custom => false)
     @company.billing_info ? @billing_info = @company.billing_info : @billing_info = BillingInfo.new
     @company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
     @sales_tax = NumericParameter.find_by_name("sales_tax").value
