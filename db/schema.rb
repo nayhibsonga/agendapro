@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150812143306) do
+ActiveRecord::Schema.define(version: 20150811175502) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes"
-    t.text     "company_comment"
+    t.text     "notes",               default: ""
+    t.text     "company_comment",     default: ""
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -115,7 +115,6 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
-    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
@@ -123,7 +122,6 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.integer  "service_promo_id"
     t.integer  "payment_id"
     t.float    "discount",               default: 0.0
-    t.integer  "service_promo_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -288,7 +286,6 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.float    "online_payment_commission",  default: 5.0
     t.float    "promo_commission",           default: 10.0
     t.boolean  "promo_offerer_capable",      default: false
-    t.boolean  "can_edit",                   default: true
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -302,7 +299,8 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.string   "currency_code",     default: ""
     t.float    "latitude"
     t.float    "longitude"
-    t.string   "formatted_address", default: ""  end
+    t.string   "formatted_address", default: ""
+  end
 
   create_table "days", force: true do |t|
     t.string   "name",       null: false
@@ -382,11 +380,9 @@ ActiveRecord::Schema.define(version: 20150812143306) do
 
   add_index "facebook_pages", ["company_id"], name: "index_facebook_pages_on_company_id", using: :btree
 
-  create_table "last_minute_promos", force: true do |t|
-    t.integer  "discount",    default: 0
-    t.integer  "hours",       default: 0
+  create_table "favorites", force: true do |t|
+    t.integer  "user_id"
     t.integer  "location_id"
-    t.integer  "service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -452,6 +448,9 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.string   "email",          default: ""
     t.string   "second_address", default: ""
     t.boolean  "online_booking", default: true
+    t.string   "image1"
+    t.string   "image2"
+    t.string   "image3"
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
@@ -973,7 +972,7 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.boolean  "has_time_discount",        default: false
     t.boolean  "has_last_minute_discount", default: false
     t.boolean  "time_promo_active",        default: false
-    t.string   "time_promo_photo",         default: ""
+    t.string   "time_promo_photo"
     t.integer  "active_service_promo_id"
     t.boolean  "must_be_paid_online",      default: false
     t.text     "promo_description",        default: ""

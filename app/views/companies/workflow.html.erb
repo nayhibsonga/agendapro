@@ -179,7 +179,7 @@
         <div id="foo4" style="visibility: collapse;">
           <div class="box-step" id="box-step-1">
             <div class="row">
-              <div class="col-sm-5">
+              <div class="col-lg-5 col-sm-10 col-sm-offset-1 col-lg-offset-0">
                 <div class="services-title light-green">
                   Elegir servicio
                 </div>
@@ -187,7 +187,7 @@
                   Seleccione un servicio
                 </div>
               </div>
-              <div class="col-sm-3">
+              <div class="col-lg-3 col-sm-10 col-sm-offset-1 col-lg-offset-0">
                 <div class="services-title light-green">
                   Detalle
                 </div>
@@ -195,7 +195,7 @@
                   Detalle del servicio
                 </div>
               </div>
-              <div class="col-sm-4">
+              <div class="col-lg-4 col-sm-10 col-sm-offset-1 col-lg-offset-0">
                 <div class="services-title light-green">
                   Elegir prestador
                 </div>
@@ -217,12 +217,33 @@
               <% end %>
             </div>
             <div class="row">
-              <div class="col-sm-5">
+
+              <div class="col-sm-10 col-sm-offset-1 col-lg-offset-0 visible-sm">
+                  <div class="services-title light-green">
+                    Elegir servicio
+                  </div>
+                  <div class="services-subtitle light-gray">
+                    Seleccione un servicio
+                  </div>
+              </div>
+
+              <div class="col-lg-5 col-sm-10 col-sm-offset-1 col-lg-offset-0">
                 <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
                   <span style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></span>
                 </div>
               </div>
-              <div class="col-sm-3">
+
+              <div class="col-sm-10 col-sm-offset-1 col-lg-offset-0 visible-sm">
+                <div class="services-title light-green">
+                  Detalle
+                </div>
+                <div class="services-subtitle light-gray">
+                  Detalle del servicio
+                </div>
+              </div>
+
+              <div class="col-lg-3 col-sm-10 col-sm-offset-1 col-lg-offset-0">
+
                 <div class="panel panel-default">
                   <input id="selectedServiceId" type="hidden" />
                   <div id="description-default">
@@ -243,7 +264,17 @@
                   <button class="btn-add-service" id="new-add-service"><span style="font-size: 18px !important;"><i class="fa fa-plus"></i></span>&nbsp;&nbsp;&nbsp; Agregar servicio</button>
                 </div>
               </div>
-              <div class="col-sm-4">
+
+              <div class="col-sm-10 col-sm-offset-1 col-lg-offset-0 visible-sm">
+                <div class="services-title light-green">
+                  Elegir prestador
+                </div>
+                <div class="services-subtitle light-gray">
+                  Selecciona staff para el servicio
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-sm-10 col-sm-offset-1 col-lg-offset-0">
                 <div class="row">
 
                   <div class="col-sm-12" id="selected-services">
