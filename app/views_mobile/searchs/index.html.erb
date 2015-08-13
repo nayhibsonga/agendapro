@@ -216,7 +216,7 @@
             <div class="item <%= if index == 0 then 'active' end %>">
               <div>
                 <a href="http://<%= company.web_address %>.agendapro.cl/">
-                  <%= image_tag company.logo_url.to_s, alt: company.name, size: "169x121" %>
+                  <%= image_tag company.logo.page.url.to_s, alt: company.name, size: "169x121" %>
                 </a>
               </div>
             </div>

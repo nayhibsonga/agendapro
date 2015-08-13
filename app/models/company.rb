@@ -2,6 +2,7 @@ class Company < ActiveRecord::Base
 
 	belongs_to :plan
 	belongs_to :payment_status
+	belongs_to :country
 
 	has_many :company_economic_sectors
 	has_many :economic_sectors, :through => :company_economic_sectors
@@ -24,9 +25,9 @@ class Company < ActiveRecord::Base
 
 	has_many :payment_accounts, dependent: :destroy
 
-	validates :name, :web_address, :plan, :payment_status, :presence => true
+	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
-	validates_uniqueness_of :web_address
+	validates_uniqueness_of :web_address, scope: :country_id
 
 	mount_uploader :logo, LogoUploader
 
@@ -139,7 +140,7 @@ class Company < ActiveRecord::Base
 	def self.add_due_amount
 		month_days = Time.now.days_in_month
 		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id)).where('due_date IS NOT NULL').each do |company|
-			company.due_amount += company.plan.price/month_days
+			company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price/month_days
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 6, details: "OK add_due_amount")
 			else

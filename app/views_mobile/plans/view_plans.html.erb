@@ -22,7 +22,7 @@
                     <h2><%= plan.name %></h2>
                     <hr class="pricing-hr">
                     <div class="price">
-                        $<%= number_with_precision(plan.price, precision: 0, separator: '', delimiter: '.') %><small>/Mes</small>
+                        $<%= number_with_precision(plan.plan_countries.find_by(country_id: Country.find_by(locale: I18n.locale.to_s)).price, precision: 0, separator: '', delimiter: '.') %><small>/Mes</small>
                         <span>(+ IVA)</span>
                     </div>
                     <p><%= plan.locations %> Local(es)<br /><%= plan.service_providers %> Staffs </p>

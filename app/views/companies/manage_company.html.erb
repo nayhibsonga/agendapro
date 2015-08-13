@@ -71,7 +71,7 @@
                   <dt>Plan</dt>
                   <dd><%= @company.plan.name %></dd>
                   <dt>Costo</dt>
-                  <dd><%= @company.plan.price %></dd>
+                  <dd><%= @company.plan.plan_countries.find_by(country_id: @company.country.id).price %></dd>
                   <dt>Locales</dt>
                   <dd><%= @company.locations.where(:active => true).count %></dd>
                   <dt>Última fecha de pago</dt>

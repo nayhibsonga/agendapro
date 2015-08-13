@@ -108,8 +108,7 @@ $(function() {
     var input = document.getElementById('inputLocalization');
     var input2 = document.getElementById('inputLocalization2');
     var options = {
-      types: ['geocode'],
-      componentRestrictions: {country: 'cl'}
+      types: ['geocode']
     };
     var geocoder = new google.maps.Geocoder();
     var autocomplete = new google.maps.places.Autocomplete(input, options);

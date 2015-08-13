@@ -2,16 +2,12 @@
 <div class="workflow-header">
   <div class="container">
 
-  
+
     <div class="row">
       <% if !@company.description.blank? %>
         <div class="col-md-4 company-header-left company-header">
         	<div class="col-md-3">
-				<% if @company.logo_url %>
-					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
-				<% else %>
-					<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80", :class => "img-responsive" %>
-				<% end %>
+				<%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
 			</div>
 			<div class="col-md-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
 				<%= @company.name %>
@@ -23,9 +19,9 @@
           </div>
         </div>
         <div class="col-md-4 company-header-right company-header">
-          
+
           <% if @selectedLocation %>
-            <div id="phone-info">         
+            <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-number">
                 <%= @selectedLocation.phone %>
@@ -33,7 +29,7 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-              </span>       
+              </span>
             </div>
           <% else %>
             <div id="phone-info" hidden>
@@ -49,20 +45,16 @@
       <% else %>
         <div class="col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
 			<div class="col-md-3">
-				<% if @company.logo_url %>
-					<%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
-				<% else %>
-					<%= image_tag 'Iso_Pro_Color.png', :alt => 'AgendaPro', :size => "80x80", :class => "img-responsive" %>
-				<% end %>
+				<%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
 			</div>
 			<div class="col-md-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
 				<%= @company.name %>
 			</div>
         </div>
         <div class="col-md-8 company-header-center2 company-header">
-          
+
           <% if @selectedLocation %>
-            <div id="phone-info">         
+            <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-number">
                 <%= @selectedLocation.phone %>
@@ -70,7 +62,7 @@
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
-              </span>       
+              </span>
             </div>
           <% else %>
             <div id="phone-info" hidden>
@@ -117,8 +109,8 @@
 							<div class="col-md-1">
 							</div>
 							<div class="col-md-10">
-							
-								
+
+
 									<div class="book-title"><%= @booking.client.first_name %>, tu reserva fue recibida exitosamente</div>
 									<p class="light-gray">
 										Tu reserva fue actualizada exitosamente.
@@ -126,7 +118,7 @@
 									<p style="margin-bottom: 20px;">
 										<span class="light-gray">Agendar nuevamente</span> &nbsp;<a href="<%= root_url(:host => @url) %>"><i class="fa fa-calendar-o fa-lg light-green"></i></a>
 									</p>
-									
+
 									<div class="book-subheader dark-gray">Resumen de tu Reserva</div>
 
 									<!--
@@ -192,7 +184,7 @@
 										<dd class="light-gray"><%= @booking.notes %></dd>
 										<% end %>
 									</dl>
-									
+
 									<div class="book-subheader dark-gray">Tus Datos</div>
 
 									<!--<div class="row">
@@ -240,7 +232,7 @@
 										<dd class="light-gray"><%= @booking.client.phone %></dd>
 										<% end %>
 									</dl>
-								
+
 								<div>
 									<%= image_tag("logos/logo2.png", :class=> "bottom-logo") %>
 								</div>
@@ -264,7 +256,7 @@
 					</div>
 
 				<% end %>
-				
+
 			</div>
 		</div>
 	</section>

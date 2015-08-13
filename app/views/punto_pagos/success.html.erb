@@ -19,7 +19,7 @@
 										<dt>¿Cuántos meses pagaste?</dt>
 										<dd><%= number_with_precision(@billing_log.amount, precision: 0) %></dd>
 										<dt>¿Cuánto costó?</dt>
-										<dd><%= number_to_currency(@billing_log.payment, unit: "CLP $", delimiter: ".")%></dd>
+										<dd><%= number_to_currency(@billing_log.payment, unit: "$", delimiter: ".")%></dd>
 										<dt>Código de la Transacción</dt>
 										<dd><%= @billing_log.trx_id %></dd>
 										<dt>¿Dudas o consultas?</dt>
@@ -33,7 +33,7 @@
 										<dt>Plan Nuevo</dt>
 										<dd>Plan <%= Plan.find(@plan_log.new_plan_id).name %></dd>
 										<dt>¿Cuánto costó?</dt>
-										<dd><%= number_to_currency(PuntoPagosConfirmation.find_by_trx_id(@plan_log.trx_id).amount, unit: "CLP $", delimiter: ".")%></dd>
+										<dd><%= number_to_currency(PuntoPagosConfirmation.find_by_trx_id(@plan_log.trx_id).amount, unit: "$", delimiter: ".")%></dd>
 										<dt>Código de la Transacción</dt>
 										<dd><%= @plan_log.trx_id %></dd>
 										<dt>¿Dudas o consultas?</dt>
@@ -55,10 +55,10 @@
 										<dd><%= @company.months_active_left.to_i %> (Incluyendo mes actual)</dd>
 										<% if @company.due_amount >= 0 %>
 								        <dt>Deuda Actual</dt>
-								        <dd><%= number_to_currency(@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
+								        <dd><%= number_to_currency(@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%></dd>
 								        <% else %>
 								        <dt>Saldo a Favor</dt>
-								        <dd><%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
+								        <dd><%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%></dd>
 								        <% end %>
 									</dl>
 								<% else %>
@@ -163,7 +163,7 @@
 												Total a pagar:
 											</dt>
 											<dd class="light-gray">
-												<%= number_to_currency(@bookings.first.payed_booking.punto_pagos_confirmation.amount, unit: "CLP $", delimiter: ".") %>
+												<%= number_to_currency(@bookings.first.payed_booking.punto_pagos_confirmation.amount, unit: "$", delimiter: ".") %>
 											</dd>
 											<dt class="dark-gray">
 												Número de tarjeta:
