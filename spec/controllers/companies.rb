@@ -84,7 +84,7 @@ describe CompaniesController do
 	let(:params) do
 		{
 			:id => @company.id,
-			:amount => @new_plan.price,
+			:amount => @new_plan.plan_countries.find_by(country_id: @company.country.id).price,
 			:date => @date,
 			:transaction_type_id => @transaction_type.id,
 			:new_plan_id => @new_plan.id,

@@ -53,8 +53,7 @@
             share_text = "Promoción de " + @service.name + " con " + @service.get_max_time_discount.to_s + "% de descuento en AgendaPro"
             share_text = url_encode(share_text)
           %>
-          <a href="http://twitter.com/intent/tweet?status=<%= share_text %>+<%= url_encode(request.original_url) %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/twitter_doble.png", :size => "32x32" %></a> &nbsp;&nbsp; <a href="http://www.facebook.com/sharer.php?u=<%= url_encode(request.original_url) %>
-&t=<%= share_text %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/facebook_doble.png", :size => "32x32" %></a>
+          <a href="http://twitter.com/intent/tweet?status=<%= share_text %>+<%= url_encode(request.original_url) %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/twitter_doble.png", :size => "32x32" %></a> &nbsp;&nbsp; <a href="<%= url_encode(request.original_url) %>" id="facebookShare"><%= image_tag "promociones/facebook_doble.png", :size => "32x32" %></a>
         </div>
 
         <div class="details-accordions">
@@ -266,7 +265,7 @@
       </div>
       <div class="col-xs-6 col-md-6">
         <div class="promo-image" style="margin-top: 15px;">
-          <%= image_tag @service.time_promo_photo.url.to_s, :alt => "Loader", :size => "554x302", :class => "img-responsive" %>
+          <%= image_tag @service.time_promo_photo.url.to_s, :alt => "Loader", :size => "554x302", :class => "img-responsive", :id => "promo_photo" %>
         </div>
         <div class="google-maps-empresa">
           <h3><%= @service.company.name %></h3>
@@ -311,27 +310,46 @@
   </div>
 </div>
 
+<footer>
+  <div class="background-repeat workflow-footer">
+    <div class="container">
+      <div class="row footer">
+        <div class="col-xs-4 col-lg-2 pull-right">
+          <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "115x39", class: "img-responsive pull-right" %>
+        </div>
+        <div class="col-xs-8 col-lg-5 links-footer pull-right">
+          <%= link_to "Agrega tu Empresa", home_url(subdomain: false) %> | <%= link_to "Sobre Nosotros", aboutus_url(subdomain: false) %> | <%= link_to "Tutoriales", tutorials_url(subdomain: false) %> | <%= link_to 'Términos y Condiciones', root_url(subdomain: false) << asset_path('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
+        </div>
+        <div class="col-xs-12 col-lg-5 copyright-footer">
+          <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
 <div class="modal" id="selectProviderModal" tabindex="-1" role="basic" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
           <button type="button" class="close closeBookModal" data-dismiss="modal">&times;</button>
-          <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reservar</h3>
+          <!--<h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reservar</h3>-->
       </div>
       <div class="modal-body">
 
         <div id="optimizerFirst">
-          <div id="pickerSelectDate">
-            <div class="row">
-              <div class="col-xs-3" style="text-align: right; font-weight: bold;">
-                Inicio
-              </div>
-              <div class="col-xs-9">
+          <div id="pickerSelectDate" hidden>
+
                 <input id="initialPickerDate" value="<%= I18n.l(DateTime.now.to_date) %>" hidden />
-                <span id="pickerSelected" style="color: #949292;"><%= I18n.l(DateTime.now.to_date) %></span>&nbsp;&nbsp;
-                  <input type="hidden" name="selectedLocal" id="selectedLocal" value="<%= @location.id %>" />
-                  <input type="hidden" name="selectedService" id="selectedService" value="<%= @service.id %>" />
-              </div>
+                <input type="hidden" name="selectedLocal" id="selectedLocal" value="<%= @location.id %>" />
+                <input type="hidden" name="selectedService" id="selectedService" value="<%= @service.id %>" />
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <p style="text-align: center; font-weight: bold;">
+                <%= image_tag "promociones/icono_prestador.png" %><br />
+                Elige el prestador con el que te quieres atender<br /> para ver sus horas disponibles.
+              </p>
             </div>
           </div>
           <form class="form-horizontal" id="serviceOptimizer">
@@ -792,5 +810,43 @@
   <%= javascript_include_tag 'validations/home/promo' %>
   <%= javascript_include_tag 'promo/promo' %>
   <%= javascript_include_tag 'split-name' %>
+
+    <script type="text/javascript">
+
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '<%= ENV["FACEBOOK_APP_ID"] %>',
+          xfbml      : true,
+          version    : 'v2.1'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+
+      document.getElementById('facebookShare').onclick = function(e) {
+        e.preventDefault();
+        var share_url = document.getElementById('facebookShare').href;
+        var share_text = "Promoción de <%= @service.name %> con <%= @service.get_max_time_discount.to_s %> % de descuento en <%= @service.company.name %>.";
+        var picture_href = $("#promo_photo").get(0).src;
+        console.log(picture_href);
+        FB.ui({
+          display: 'popup',
+          method: 'share',
+          picture: picture_href,
+          name: 'Promoción en AgendaPro',
+          caption: 'AgendaPro',
+          description: share_text,
+          href: share_url
+        }, function(response){});
+      }
+
+
+  </script>
     
 <% end %>

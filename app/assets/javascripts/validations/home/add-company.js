@@ -21,7 +21,18 @@ $(function() {
 				minlength: 3,
 				maxlength: 200,
 				alphaNumeric: $('#company_web_address').val(),
-				remote: '/check_company'
+				remote: {
+					url: "/check_company",
+					type: "get",
+					data: {
+					  web_address: function() {
+					    return $( "#company_web_address" ).val();
+					  },
+					  country_id: function() {
+					    return $( "#company_country_id" ).val();
+					  }
+					}
+				}
 			},
 			'company[logo]': {
 				filesize: 3145728
@@ -52,6 +63,9 @@ $(function() {
 		}
 	});
 
+	$('#company_country_id').change(function() {
+		$('#company_web_address').valid();
+	});
 
 
 });

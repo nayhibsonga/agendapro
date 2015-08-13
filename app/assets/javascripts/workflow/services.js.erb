@@ -55,7 +55,7 @@ function currency(price)
 			j = 0;
 		}
 	}
-	var formatted_amount = "CLP $ ";
+	var formatted_amount = "$ ";
 	for(i = stack.length-1; i >=0 ; i--)
 	{
 		formatted_amount = formatted_amount + stack[i];
@@ -108,7 +108,14 @@ function loadStep1 (service_id) {
 					servicePrice = '';
 					if ($('#online_capabilities').data('online-payment-capable') && ((service.has_time_discount && $('#online_capabilities').data('promo-offerer-capable')) || (service.has_discount && service.online_payable && service.discount > 0)))
 					{
-						serviceDiscount = '<%= image_tag("promociones/icono_promociones.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;';						
+						serviceDiscount = '<div class="col-sm-1 open-promotion-popover" rel="popover" service_id="' + service.id + '" data-toggle="popover" data-placement="right" data-content="">' +
+										'<%= image_tag("promociones/icono_promociones.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' +
+									'</div>';				
+					}
+					else
+					{
+						serviceDiscount = '<div class="col-sm-1 open-promotion-popover">&nbsp;' +
+									'</div>';
 					}
 					if(service.show_price && service.price > 0)
 					{
@@ -123,13 +130,12 @@ function loadStep1 (service_id) {
 											'<input type="radio" name="serviceRadio" value="' + service.id + '" data-outcall="'+service.outcall+'">' +
 											'<p>' + service.name_with_small_outcall + '</p>' +
 										'</label>' +
-									'</div><div class="col-sm-3">' +
+									'</div><div class="col-sm-3 service-selector-price">' +
 										servicePrice +
 									'</div><div class="col-sm-3">' +
 										'<%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' + service.duration + ' min' +
-									'</div><div class="col-sm-1 open-promotion-popover" rel="popover" service_id="' + service.id + '" data-toggle="popover" data-placement="right" data-content="">' +
-										serviceDiscount +
 									'</div>' +
+									serviceDiscount
 								'</div></div>' +
 							'</div>' +
 						'</li>';
@@ -152,11 +158,19 @@ function loadStep1 (service_id) {
 
 									$('.open-promotion-popover[service_id="' + service.id + '"]').css("cursor", "pointer");
 
-									/*$('.open-promotion-popover').on('shown.bs.popover', function(e){
+									$('.open-promotion-popover').on('shown.bs.popover', function(e){
 										var oldTop = $(document).scrollTop();
-										$('#foo4').height($("#foo4").height() + 30);
+										$('#box-step-1').height($("#box-step-1").height() + 10);
+										$("#foo4").trigger('updateSizes');
 										$(document).scrollTop(oldTop);
-									});*/
+									});
+
+									$('.open-promotion-popover').on('hidden.bs.popover', function(e){
+										var oldTop = $(document).scrollTop();
+										$('#box-step-1').height($("#box-step-1").height() - 10);
+										$("#foo4").trigger('updateSizes');
+										$(document).scrollTop(oldTop);
+									});
 
 								}
 							});
@@ -166,13 +180,13 @@ function loadStep1 (service_id) {
 
 				//====== Insertando acordeon
 				$('#services-selector').append(
-					'<div class="panel panel-default">' +
-						'<div class="panel-heading dark-gray">' +
+					'<div class="panel panel-default services-selector-subdiv">' +
+						'<div class="panel-heading dark-gray services-selector-subdiv">' +
 							'<h3 class="panel-title minus collapsed" data-toggle="collapse" data-parent="#services-selector" href="#body' + service_hash.id + '">' +
 								'<a >' + service_hash.category + '</a>' +
 							'</h3>' +
 						'</div>' +
-						'<div id="body' + service_hash.id + '" class="panel-collapse collapse light-gray">' +
+						'<div id="body' + service_hash.id + '" class="panel-collapse collapse light-gray services-selector-subdiv">' +
 							'<ul class="list-group" id="services-selector' + service_hash.id + '">' +
 								servicesHTML +
 							'</ul>' +
@@ -915,7 +929,7 @@ function loadStep3 () {
 
 						$("#summary").append(
 							'<tr>' +
-								'<td class="dark-gray">Costo pago en línea</td>' +
+								'<td class="dark-gray">Precio pago en línea</td>' +
 								'<td class="light-gray">' + simple_currency(total_price) + '</td>' +
 							'</tr>'
 						);
@@ -932,7 +946,7 @@ function loadStep3 () {
 
 						$("#summary").append(
 							'<tr>' +
-								'<td class="dark-gray">Costo sólo pago en local</td>' +
+								'<td class="dark-gray">Precio sólo pago en local</td>' +
 								'<td class="light-gray">' + simple_currency(just_book_price) + '</td>' +
 							'</tr>'
 						);
@@ -1433,6 +1447,8 @@ function loadDescription (serviceId) {
 		current_service = service;
 
 		$("#selectedServiceId").val(service.id);
+
+		$("#description-default").hide();
 
 		$("#description-heading").empty();
 		$("#description-heading").append(service.name);
@@ -2153,7 +2169,7 @@ function blockBookingBufferHour () {
 			}
 
 		});
-		$("#foo4").trigger('update');			
+		$("#foo4").trigger('updateSizes');			
 	}
 }
 
@@ -2319,11 +2335,13 @@ $("#sessions-help").click(function(){
 $("#staffCollapse").on("shown.bs.collapse", function(){
   $("#openStaffCollapseIcon").hide();
   $("#closeStaffCollapseIcon").show();
+  $("#foo4").trigger('updateSizes');
 });
 
 $("#staffCollapse").on("hidden.bs.collapse", function(){
   $("#openStaffCollapseIcon").show();
   $("#closeStaffCollapseIcon").hide();
+  $("#foo4").trigger('updateSizes');
 });
 
 

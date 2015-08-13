@@ -183,7 +183,7 @@
         <div class="col-xs-10">
           <div id="carousel">
             <% @companies.each do |company| %>
-              <a href="http://<%= company.web_address %>.agendapro.cl/"><%= image_tag company.logo_url.to_s, :size => "169x169", :alt => company.name %></a>
+              <a href="http://<%= company.web_address %>.agendapro.cl/"><%= image_tag company.logo.page.url.to_s, :size => "169x169", :alt => company.name %></a>
             <% end %>
           </div>
         </div>
@@ -388,7 +388,7 @@
           <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
         </div>
         <div class="col-sm-5 text-right links-footer">
-          <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
+          <%= link_to "Agrega tu Empresa", home_url(subdomain: false) %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
         </div>
         <div class="col-sm-2">
           <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "pull-right" %>

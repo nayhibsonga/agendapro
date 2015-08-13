@@ -203,11 +203,9 @@
                     </div>
                   </div>
                   <div class="col-md-3">
-                    <% if @company.logo_url %>
                     <div class="company-logo">
-                      <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
+                      <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name %>
                     </div>
-                    <% end %>
                   </div>
                 </div>
                 <div class="row">

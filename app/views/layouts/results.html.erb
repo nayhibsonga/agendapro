@@ -100,7 +100,7 @@
 						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
 							<i class="fa fa-bars"></i>
 						</button>
-            <%= link_to root_url(subdomain: false), class: 'navbar-brand', id: 'agendapro-brand' do %>
+            <%= link_to localized_root_url(subdomain: false), class: 'navbar-brand', id: 'agendapro-brand' do %>
               <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '127x43' %>
             <% end %>
 					</div>
@@ -109,7 +109,7 @@
 						<ul class="nav navbar-nav navbar-right" id="menu">
 							<li>
 								<% if current_page?(get_promotions_path) || current_page?(show_time_promo_path) %>
-									<%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "navbar-form", id: "promotions-form") do %>
+									<%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "navbar-form promo-input-search", id: "promotions-form") do %>
 		                                <%= hidden_field_tag :latitude, params[:latitude] %>
 		                                <%= hidden_field_tag :longitude, params[:longitude] %>
 		                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
@@ -155,6 +155,8 @@
                                 <li><a href="#" data-toggle="modal" data-target="#signup-modal" class="menu-green"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
                             <% end %>
 							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
+							<li><%= link_to image_tag("search/landing/chile.png", alt: "Chile", size: "24x16", :class => I18n.locale == 'es_CL'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CL'})), class: "i18n-flag" %></li>
+            				<li><%= link_to image_tag("search/landing/colombia.png", alt: "Colombia", size: "24x16", :class => I18n.locale == 'es_CO'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CO'})), class: "i18n-flag" %></li>
 						</ul>
 					</div>
 				</div>

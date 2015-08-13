@@ -32,12 +32,6 @@
           </div>
         </div>
         <div class="form-group">
-          <%= f.label :price, 'Precio CLP:', :class => 'col-md-2 control-label' %>
-          <div class="col-md-4">
-            <%= f.number_field :price, :required => true, :class => 'form-control' %>
-          </div>
-        </div>
-        <div class="form-group">
           <%= f.label :monthly_mails, 'E-mails Mensuales', class: 'col-md-2 control-label' %>
           <div class="col-md-4">
             <%= f.number_field :monthly_mails, required: true, min: 0, class: 'form-control' %>
@@ -61,6 +55,17 @@
             </div>
           </div>
         </div>
+        <% Country.all.each do |country| %>
+          <%= f.fields_for :plan_countries, @plan.plan_countries.find_or_initialize_by(country_id: country.id) do |layer_field| %>
+            <%= layer_field.hidden_field :country_id, value: country.id.to_s %>
+            <div class="form-group">
+              <%= layer_field.label :price, country.name, class: 'col-md-2 control-label' %>
+              <div class="col-md-4">
+                <%= layer_field.number_field :price, required: true, min: 0, class: 'form-control' %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
         <div class="form-group">
           <div class="actions col-md-offset-2 col-md-4">
             <%= f.submit 'Guardar', :class => 'btn btn-green' %>

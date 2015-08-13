@@ -44,6 +44,12 @@ class Location < ActiveRecord::Base
 
   has_many :payments, dependent: :destroy
 
+  has_many :favorites, dependent: :destroy
+  has_many :favorite_users, through: :favorites, source: :user
+
+  mount_uploader :image1, LocationImagesUploader
+  mount_uploader :image2, LocationImagesUploader
+  mount_uploader :image3, LocationImagesUploader
 
   accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
