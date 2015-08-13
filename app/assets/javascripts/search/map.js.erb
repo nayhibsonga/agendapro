@@ -29,8 +29,7 @@ function initializeMap (lat, lng, mapDiv) {
 
 function setMarker (latlng, local, n) {
     var marker;
-    var image_url = 'assets/search/pin_map'+n+'.png';
-    //var image = <%= asset_path(image_url) %>;
+    var image_url = 'http://agendapro.co/assets/search/pin_map'+n+'.png';
     marker = new google.maps.Marker({
         position: latlng,
         map: map,
