@@ -24,7 +24,7 @@ class SessionBooking < ActiveRecord::Base
       if bookings[0].location.company.logo.email.url.include? "logo_vacio"
         @data[:logo] = Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
       else
-        @data[:logo] = Base64.encode64(File.read(bookings[0].location.company.logo.email.url))
+        @data[:logo] = Base64.encode64(File.read('public' + bookings[0].location.company.logo.email.url))
       end
 
 		# USER
