@@ -140,7 +140,7 @@ class Company < ActiveRecord::Base
 	def self.add_due_amount
 		month_days = Time.now.days_in_month
 		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id)).where('due_date IS NOT NULL').each do |company|
-			company.due_amount += company.plan.price/month_days
+			company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price/month_days
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 6, details: "OK add_due_amount")
 			else

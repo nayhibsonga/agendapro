@@ -66,7 +66,7 @@
                           <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
                           <td><%= company.plan.name %></td>
                           <td><%= company.locations.count %></td>
-                          <td>$<%= company.plan.price %></td>
+                          <td>$<%= company.plan.plan_countries.find_by(country_id: company.country.id).price %></td>
                         </tr>
                       <% end %>
                     </tbody>

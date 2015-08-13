@@ -90,7 +90,7 @@ class PuntoPagosController < ApplicationController
     puts params[:plan_id]
     puts payment_method
     company = Company.find(current_user.company_id)
-    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.price
+    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
     new_plan = Plan.find(plan_id)
     sales_tax = NumericParameter.find_by_name("sales_tax").value
     day_number = Time.now.day
