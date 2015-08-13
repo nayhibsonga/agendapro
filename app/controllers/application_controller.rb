@@ -9,11 +9,7 @@ class ApplicationController < ActionController::Base
 
   include Mobu::DetectMobile
 
-  before_filter do
-    resource = controller_name.singularize.to_sym
-    method = "#{resource}_params"
-    params[resource] &&= send(method) if respond_to?(method, true)
-  end
+  before_filter :permitted_params
 
   before_filter :set_locale
 
@@ -64,6 +60,12 @@ class ApplicationController < ActionController::Base
     unless Country.all.pluck(:locale).include? (I18n.locale.to_s)
       redirect_to landing_path(redirect_params: params.inspect)
     end
+  end
+
+  def permitted_params
+    resource = controller_name.singularize.to_sym
+    method = "#{resource}_params"
+    params[resource] &&= send(method) if respond_to?(method, true)
   end
   
   def quick_add

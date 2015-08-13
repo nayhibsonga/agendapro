@@ -1,4 +1,4 @@
-Agendapro::Application.routes.draw do
+ Agendapro::Application.routes.draw do
 
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
@@ -64,6 +64,8 @@ Agendapro::Application.routes.draw do
     resources :receipt_types
     resources :company_payment_methods
     resources :payment_methods
+
+    resources :favorite_locations, only: [:index, :create, :destroy]
 
     namespace :admin do
       get '', :to => 'dashboard#index', :as => '/'
@@ -349,7 +351,39 @@ Agendapro::Application.routes.draw do
     get '', :to => 'searchs#index', :as => 'localized_root'
     get 'landing', :to => 'searchs#landing', :as => 'landing'
 
+  end
 
+  namespace :api, defaults: {format: 'json'} do
+    namespace :v1 do
+
+      resources :locations, only: [:index, :show]
+      get 'locations_search', to: 'locations#search'
+      post 'locations/:id/favorite', to: 'locations#favorite'
+
+      resources :services, only: [:show]
+      get 'services/:id/service_providers', to: 'services#service_providers'
+
+      get 'service_providers/:id/available_hours', to: 'service_providers#available_hours'
+
+      post 'users/session', to: 'users#login'
+      post 'users/registration', to: 'users#create'
+      put 'users/me', to: 'users#edit'
+      get 'users/me', to: 'users#mobile_user'
+      get 'users/bookings', to: 'users#bookings'
+      get 'users/favorites', to: 'users#favorites'
+      get 'users/searches', to: 'users#searches'
+      post 'users/oauth', to: 'users#oauth'
+      
+      resources :economic_sectors
+
+      post 'bookings', to: 'bookings#book_service'
+      get 'bookings/:id', to: 'bookings#show'
+      put 'bookings/:id', to: 'bookings#edit_booking'
+      delete 'bookings/:id', to: 'bookings#destroy'
+
+      get 'promotions', to: 'promotions#index'
+      get 'promotions/:id', to: 'promotions#show'
+    end
   end
 
   root :to => 'searchs#index'

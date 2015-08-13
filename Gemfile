@@ -128,6 +128,7 @@ gem 'prawn-table'
 
 # Facebook
 gem "fbgraph"
+gem "fb_graph"
 
 # Advertencias en validaciones
 # gem 'validation_scopes'
@@ -168,6 +169,9 @@ gem 'omniauth-facebook'
 
 #Geocoder para localizacion por IP
 gem 'geocoder'
+
+#Gema para CORS API
+gem 'rack-cors'
 
 #Oink para revisión de memoria
 gem "oink"

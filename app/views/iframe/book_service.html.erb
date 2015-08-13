@@ -4,11 +4,7 @@
       <% if !@company.description.blank? %>
         <div class="col-sm-4 company-header-left company-header">
           <div class="col-sm-3">
-            <% if @company.logo_url %>
-              <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
-            <% else %>
-              <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo img-responsive" %>
-            <% end %>
+            <%= image_tag @company.lgo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
           </div>
           <div class="col-sm-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
             <%= @company.name %>
@@ -44,11 +40,7 @@
       <% else %>
         <div class="col-sm-4 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="col-sm-3">
-            <% if @company.logo_url %>
-              <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
-            <% else %>
-              <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo img-responsive" %>
-            <% end %>
+            <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
           </div>
           <div class="col-sm-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
             <%= @company.name %>
@@ -195,7 +187,7 @@
         <% else %>
           <% if @try_register %>
             <div class="col-sm-5">
-              
+
               <div class="suggest-register" style="height: 100%;">
                 <div class="row">
                   <div class="col-sm-12">
@@ -216,7 +208,7 @@
 
                       <div class="row">
                         <div class="col-sm-2">
-                          
+
                         </div>
                         <div class="col-sm-8">
                           <div class="has-feedback">
@@ -271,7 +263,7 @@
 
                         </div>
                       </div>
-        
+
                       <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-8">
                           <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right' %>

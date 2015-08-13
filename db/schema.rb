@@ -300,8 +300,7 @@ ActiveRecord::Schema.define(version: 20150811175502) do
     t.string   "currency_code",     default: ""
     t.float    "latitude"
     t.float    "longitude"
-    t.string   "formatted_address", default: ""
-  end
+    t.string   "formatted_address", default: ""  end
 
   create_table "days", force: true do |t|
     t.string   "name",       null: false

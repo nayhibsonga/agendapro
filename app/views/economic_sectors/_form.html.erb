@@ -23,6 +23,31 @@
       <%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
     </div>
   </div>
+  <div class="form-group">
+    <%= f.label :mobile_preview, "Foto App Móvil: ", class: "col-md-2 control-label" %>
+    <div class="col-md-4">
+      <%= f.file_field :mobile_preview, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+    </div>
+    <div class="col-md-4">
+      <% if @economic_sector.mobile_preview.url.nil? %>
+        No se ha subido foto
+      <% else %>
+        Foto actual: <%= image_tag @economic_sector.mobile_preview.url.to_s, :alt => "", :class => "img-responsive" %>
+      <% end %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :show_in_home, 'Mostrar en Home: ', :class => 'col-md-2 control-label' %>
+    <div class="col-md-4">
+       <%= f.check_box :show_in_home, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :show_in_company, 'Mostrar en Configuraciones: ', :class => 'col-md-2 control-label' %>
+    <div class="col-md-4">
+      <%= f.check_box :show_in_company, :class => 'form-control' %>
+    </div>
+  </div>
   <legend>Diccionario</legend>
   <% @economic_sector.economic_sectors_dictionaries.build %>
   <%= f.fields_for :economic_sectors_dictionaries do |dictionary| %>

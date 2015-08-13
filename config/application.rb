@@ -56,5 +56,12 @@ module Agendapro
     config.i18n.load_path += Dir[Rails.root.join('config','locales', '*.{rb,yml}').to_s]
     config.i18n.fallbacks = {"es_CL" => "es"}
     config.i18n.default_locale = :"es"
+
+    config.middleware.insert_before 0, "Rack::Cors" do
+      allow do
+        origins '*'
+        resource '/api*', :headers => :any, :methods => [:get, :post, :put, :delete, :options]
+      end
+    end
   end
 end
