@@ -150,7 +150,7 @@ class ClientsController < ApplicationController
 
   def history
     @client = Client.find(params[:id])
-    @bookings = @client.bookings.where('is_session = false or (is_session = true and is_session_booked = true)')
+    @bookings = @client.bookings.where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc)
   end
 
   def bookings_history
