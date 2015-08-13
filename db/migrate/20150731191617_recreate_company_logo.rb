@@ -1,14 +1,9 @@
 class RecreateCompanyLogo < ActiveRecord::Migration
   def change
     Company.all.each do |company|
-		begin
-			company.logo.cache_stored_file!
-			company.logo.retrieve_from_cache!(company.logo.cache_name)
-			company.logo.recreate_versions!
-			company.save!
-		rescue => e
-			puts  "ERROR: YourModel: #{company.id} -> #{e.to_s}"
-		end
-	end
+      if (!company.logo.url.include? 'logo_vacio') && File.exist?('public' + company.logo.url)
+        company.logo.recreate_versions!
+      end
+    end
   end
 end

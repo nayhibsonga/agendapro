@@ -26,30 +26,29 @@ var currMarker = null;
 
 //====== Google Map ======//
 function initializeMap(lat, lng, mapDiv) {
-    var properties = {
-        center: new google.maps.LatLng(lat, lng),
-        zoom:   15,
-        panControl: false,
-        zoomControl: true,
-        zoomControlOptions: {
-            style: google.maps.ZoomControlStyle.SMALL
-        },
-        mapTypeControl: true,
-        mapTypeControlOptions: {
-            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-        },
-        scaleControl: false,
-        streetViewControl: false,
-        overviewMapControl: false,
-        mapTypeId:  google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById(mapDiv), properties);
+  var properties = {
+    center: new google.maps.LatLng(lat, lng),
+    zoom:   15,
+    panControl: false,
+    zoomControl: true,
+    zoomControlOptions: {
+      style: google.maps.ZoomControlStyle.SMALL
+    },
+    mapTypeControl: true,
+    mapTypeControlOptions: {
+      style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+    },
+    scaleControl: false,
+    streetViewControl: false,
+    overviewMapControl: false,
+    mapTypeId:  google.maps.MapTypeId.ROADMAP
+  };
+  map = new google.maps.Map(document.getElementById(mapDiv), properties);
 }
 
 function setMarker(latlng, local) {
 
-  if(currMarker!=null)
-  {
+  if(currMarker != null) {
     currMarker.setMap(null);
   }
 
@@ -91,6 +90,35 @@ function loadOutcallDistricts(id) {
   });
 }
 
+function carousel () {
+  $('#carousel').carouFredSel({
+    items: 1,
+    circular: true,
+    direction: "left",
+    width: "100%",
+    height: "auto",
+    responsive: true,
+    pagination: {
+      container: ".carousel-pager",
+      anchorBuilder: function (nr) {
+        return '<a href="#' + nr + '"><i class="fa fa-circle-o"></i></a>';
+      }
+    }
+  });
+}
+
+$(function(){
+  var loaded = 0;
+  var length = $('#carousel > img').length;
+  $('#carousel > img').load(function () {
+    ++loaded;
+    if (loaded == length) {
+      carousel();
+      $('#carousel > img').removeClass('img-responsive');
+    };
+  });
+});
+
 var myAlert;
 $(function() {
   myAlert = new Alert('.main');
@@ -111,6 +139,15 @@ $(function() {
     var id = event.target.getAttribute('value');
     loadSchedule(id);
     localMap(id);
+    $.getJSON('/local', {id: id}, function (local) {
+      $('#carousel').trigger('stop');
+      $('#carousel').trigger('destroy');
+      $('#carousel').empty();
+      $('#carousel').append('<img alt="' + local.name + '" src="' + local.image1.url + '">');
+      $('#carousel').append('<img alt="' + local.name + '" src="' + local.image2.url + '">');
+      $('#carousel').append('<img alt="' + local.name + '" src="' + local.image3.url + '">');
+      carousel();
+    });
 
     if ($('#localOption' + id).data('outcall') == true) {
       $('#outcallDistricts').empty();
@@ -126,6 +163,19 @@ $(function() {
 
     $('.local-seleccionado').removeClass('local-seleccionado');
     $('#localOption' + id).parents('tr').addClass('local-seleccionado');
+
+    if($(".company-header-center2").length>0) {
+      $(".company-header-left").css("border-right", "1px solid #949292");
+    } else if($(".company-header-center").length>0) {
+      $(".company-header-center").css("border-right", "1px solid #949292");
+    }
+    $("#phone-number").empty();
+    $("#phone-number").append($('.local-phone[localid="'+id+'"]').text());
+    $("#phone-address").empty();
+    $("#phone-address").append($('.local-address[localid="'+id+'"]').text());
+    $("#phone-number").show();
+    $("#phone-address").show();
+    $("#phone-info").show();
   });
 
   $('#boton-agendar').click(function (event) {
@@ -156,7 +206,7 @@ $(function() {
 
   var map;
   initializeMap(-33.413084, -70.592161, 'map');
-  
+
   if ($('[name="localRadio"]').is(':checked')) {
     var localId = $('input[name=localRadio]:checked').val();
 
