@@ -2398,11 +2398,7 @@ class CompaniesController < ApplicationController
 	end
 
 	def check_company_web_address
-		begin
-		@company = Company.find_by(:web_address => params[:user][:company_attributes][:web_address])
-		rescue
-			@company = Company.find_by(:web_address => params[:company][:web_address])
-		end
+		@company = Company.find_by(:web_address => params[:web_address], country_id: params[:country_id])
 		render :json => @company.nil?
 	end
 
