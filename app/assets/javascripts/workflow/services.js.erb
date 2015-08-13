@@ -2410,9 +2410,23 @@ $(function () {
 		{
 			if($(".bloque-hora").size() == 0)
 			{
-				$("#next").trigger("click");
-				reload_times =reload_times + 1;
-				$("#next").attr("disabled", false);
+				//Check that resulting date wouldn't be greater than after_date
+
+				var resulting_date = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate() + 7)
+
+				if(resulting_date < after_date)
+				{
+					$("#next").trigger("click");
+					reload_times =reload_times + 1;
+					$("#next").attr("disabled", false);
+				}
+				else
+				{
+					myAlert.showAlert(
+			            '<h3>No hay horarios disponibles</h3>' +
+			            '<p>Lo sentimos, no hay más horarios disponibles después de la semana del ' + after_date.toLocaleDateString() + '.</p>'
+			        );
+				}
 			}
 		}
 		else
@@ -2438,8 +2452,6 @@ $(function () {
 
 
 			day_str = after_date.getFullYear() + "-" + (parseInt(after_date.getMonth())+1) + "-" + after_date.getDate();
-
-
 
 			data = {local: localId, serviceStaff: JSON.stringify(selects), date: day_str};
 
