@@ -344,15 +344,15 @@ Agendapro::Application.routes.draw do
     get '/last_minute_hours', :to => 'services#last_minute_hours'
 
     # Root
-    get '/', :to => 'searchs#index', :as => 'localized_root2', :constraints => { :subdomain => 'www' }
-    get '/', :to => 'companies#overview', :constraints => { :subdomain => /.+/ }
-    get '/', :to => 'searchs#index', :as => 'localized_root'
-    get '/landing', :to => 'searchs#landing', :as => 'landing'
+    get '', :to => 'searchs#index', :as => 'localized_root2', :constraints => { :subdomain => 'www' }
+    get '', :to => 'companies#overview', :constraints => { :subdomain => /.+/ }
+    get '', :to => 'searchs#index', :as => 'localized_root'
+    get 'landing', :to => 'searchs#landing', :as => 'landing'
 
 
   end
 
-  root :to => 'searchs#index', locale: nil
+  root :to => 'searchs#index'
 
 
   # The priority is based upon order of creation: first created -> highest priority.

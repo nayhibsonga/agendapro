@@ -630,7 +630,7 @@ class CompaniesController < ApplicationController
 
 		# => Domain parser
 		host = request.host_with_port
-		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length] + '/' + I18n.locale.to_s
 
 		#Selected local from fase II
 		if(params[:local])

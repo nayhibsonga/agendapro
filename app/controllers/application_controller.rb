@@ -25,7 +25,9 @@ class ApplicationController < ActionController::Base
 
   def set_locale
     if params[:locale].blank?
-      if current_user && current_user.company_id && current_user.company_id > 0
+      if Country.find_by(locale: I18n.locale.to_s)
+        I18n.locale = I18n.locale
+      elsif current_user && current_user.company_id && current_user.company_id > 0
         I18n.locale = Company.find(current_user.company_id).country.locale
       else
         requested_location = request_location
@@ -44,7 +46,7 @@ class ApplicationController < ActionController::Base
 
   def request_location
     if Rails.env.test? || Rails.env.development?
-      return nil
+      return "CO"
     else
       if request.location
         return request.location.country_code
