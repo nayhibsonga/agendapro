@@ -274,21 +274,23 @@
 															<% if promo.nil? %>
 
 																<% for j in 0..19 %>
-																	<% if (j*5) == promo_time.morning_default %>
-																		<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>	
-																	<% else %>
-					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+																	<% if (j*5) != promo_time.morning_default %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
 					                        						<% end %>
+					                        						<% if promo_time.morning_default >= (j*5) && promo_time.morning_default < ((j+1)*5) %>
+																		<option value="<%= promo_time.morning_default.to_s %> %" selected><%= promo_time.morning_default.to_s + ' %' %></option>
+																	<% end %>
 					                        					<% end %>
 
 															<% else %>
 
 																<% for j in 0..19 %>
-																	<% if (j*5) == promo.morning_discount %>
-					                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
-					                        						<% else %>
-					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+					                        						<% if (j*5) != promo.morning_discount %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
 					                        						<% end %>
+					                        						<% if promo.morning_discount >= (j*5) && promo.morning_discount < ((j+1)*5) %>
+																		<option value="<%= promo.morning_discount.to_s %> %" selected><%= promo.morning_discount.to_s + ' %' %></option>
+																	<% end %>
 					                        					<% end %>
 
 
@@ -354,21 +356,23 @@
 															<% if promo.nil? %>
 
 																<% for j in 0..19 %>
-																	<% if (j*5) == promo_time.afternoon_default %>
-																		<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
-																	<% else %>
-					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+																	<% if (j*5) != promo_time.afternoon_default %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
 					                        						<% end %>
+					                        						<% if promo_time.afternoon_default >= (j*5) && promo_time.afternoon_default < ((j+1)*5) %>
+																		<option value="<%= promo_time.afternoon_default.to_s %> %" selected><%= promo_time.afternoon_default.to_s + ' %' %></option>
+																	<% end %>
 					                        					<% end %>
 
 															<% else %>
 
 																<% for j in 0..19 %>
-																	<% if (j*5) == promo.afternoon_discount %>
-					                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
-					                        						<% else %>
-					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+					                        						<% if (j*5) != promo.afternoon_discount %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
 					                        						<% end %>
+					                        						<% if promo.afternoon_discount >= (j*5) && promo.afternoon_discount < ((j+1)*5) %>
+																		<option value="<%= promo.afternoon_discount.to_s %> %" selected><%= promo.afternoon_discount.to_s + ' %' %></option>
+																	<% end %>
 					                        					<% end %>
 
 
@@ -431,21 +435,23 @@
 															<% if promo.nil? %>
 
 																<% for j in 0..19 %>
-																	<% if (j*5) == promo_time.night_default %>
-																		<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
-																	<% else %>
-					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+																	<% if (j*5) != promo_time.night_default %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
 					                        						<% end %>
+					                        						<% if promo_time.night_default >= (j*5) && promo_time.night_default < ((j+1)*5) %>
+																		<option value="<%= promo_time.night_default.to_s %> %" selected><%= promo_time.night_default.to_s + ' %' %></option>
+																	<% end %>
 					                        					<% end %>
 
 															<% else %>
 
 																<% for j in 0..19 %>
-																	<% if (j*5) == promo.night_discount %>
-					                        							<option value="<%= (j*5).to_s %>" selected><%= (j*5).to_s + ' %' %></option>
-					                        						<% else %>
-					                        							<option value="<%= (j*5).to_s %>"><%= (j*5).to_s + ' %' %></option>
+					                        						<% if (j*5) != promo.night_discount %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
 					                        						<% end %>
+					                        						<% if promo.night_discount >= (j*5) && promo.night_discount < ((j+1)*5) %>
+																		<option value="<%= promo.night_discount.to_s %> %" selected><%= promo.night_discount.to_s + ' %' %></option>
+																	<% end %>
 					                        					<% end %>
 
 
@@ -656,404 +662,14 @@
 
 </div>
 
-<% if !@service.has_discount && @service.online_payable && @service.check_company_promos && @service.company.company_setting.promo_offerer_capable %>
-	<div class="modal" id="timeModal" tabindex="-1" role="basic" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	          <div class="modal-header">
-	            <button type="button" class="close" data-dismiss="modal">&times;</button>
-	            <h3 class="modal-title">Horarios de la promoción</h3>
-	          </div>
-	          <div class="modal-body">
-
-	          		<%= form_tag(:controller => "services", :action => "set_service_promo_times", :method => "post") do %>
-	          			<input type="hidden" name="service_id" value="<%= @service.id %>" />
-	            		<% if service_promo.nil? %>
-		            		<div class="row">
-			                  <div class="col-md-2">
-			                    <div class="hour-title">
-			                      Mañana
-			                    </div>
-			                  </div>
-			                  <div class="col-md-10">
-			                      <div class="promo-hour-select has-feedback morning-promo-hour">
-			                        <%= time_select "service_promo", "morning_start", {default: promo_time.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "morning_end", {default: promo_time.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-			                        <span class="help-block"><label id="morning-error" class="error" hidden></label></span>
-			                        <span class="form-control-feedback"></span>
-			                      </div>                 
-			                  </div>
-			                </div>
-
-			                <div class="row">
-			                  <div class="col-md-2">
-			                    <div class="hour-title">
-			                      Tarde
-			                    </div>
-			                  </div>
-			                  <div class="col-md-10">
-			                    <div class="promo-hour-select has-feedback afternoon-promo-hour">
-			                      <%= time_select "service_promo", "afternoon_start", {default: promo_time.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "afternoon_end", {default: promo_time.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-			                      <span class="help-block"><label id="afternoon-error" class="error" hidden></label></span>
-			                      <span class="form-control-feedback"></span>
-			                    </div>
-			                  </div>
-			                </div>
-
-			                <div class="row">
-			                  <div class="col-md-2">
-			                    <div class="hour-title">
-			                      Noche
-			                    </div>
-			                  </div>
-			                  <div class="col-md-10">
-			                    <div class="promo-hour-select has-feedback night-promo-hour">
-			                      <%= time_select "service_promo", "night_start", {default: promo_time.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "night_end", {default: promo_time.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-			                      <span class="help-block"><label id="night-error" class="error" hidden></label></span>
-			                      <span class="form-control-feedback"></span>
-			                    </div>
-			                  </div>
-			                </div>
-		                <% else %>
-
-		                	<div class="row">
-			                  <div class="col-md-2">
-			                    <div class="hour-title">
-			                      Mañana
-			                    </div>
-			                  </div>
-			                  <div class="col-md-10">
-			                      <div class="promo-hour-select has-feedback morning-promo-hour">
-			                        <%= time_select "service_promo", "morning_start", {default: service_promo.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "morning_end", {default: service_promo.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-			                        <span class="help-block"><label id="morning-error" class="error" hidden></label></span>
-			                        <span class="form-control-feedback"></span>
-			                      </div>                 
-			                  </div>
-			                </div>
-
-			                <div class="row">
-			                  <div class="col-md-2">
-			                    <div class="hour-title">
-			                      Tarde
-			                    </div>
-			                  </div>
-			                  <div class="col-md-10">
-			                    <div class="promo-hour-select has-feedback afternoon-promo-hour">
-			                      <%= time_select "service_promo", "afternoon_start", {default: service_promo.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "afternoon_end", {default: service_promo.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-			                      <span class="help-block"><label id="afternoon-error" class="error" hidden></label></span>
-			                      <span class="form-control-feedback"></span>
-			                    </div>
-			                  </div>
-			                </div>
-
-			                <div class="row">
-			                  <div class="col-md-2">
-			                    <div class="hour-title">
-			                      Noche
-			                    </div>
-			                  </div>
-			                  <div class="col-md-10">
-			                    <div class="promo-hour-select has-feedback night-promo-hour">
-			                      <%= time_select "service_promo", "night_start", {default: service_promo.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= time_select "service_promo", "night_end", {default: service_promo.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
-			                      <span class="help-block"><label id="night-error" class="error" hidden></label></span>
-			                      <span class="form-control-feedback"></span>
-			                    </div>
-			                  </div>
-			                </div>
-
-		                <% end %>
-					<% end %>
-
-	          </div>
-	          <div class="modal-footer">
-	          		<%= submit_tag 'Guardar', :class => 'btn btn-green edit_promo_times' %>
-	             	<a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
-	          </div>
-	        </div> <!-- /.modal-content -->
-	    </div> <!-- /.modal-dialog -->
-	</div> <!-- /.modal -->
-
-	
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "jquery.editable-select" %>
 <% end %>
 
 <% content_for :scripts do %>
+
   <%= javascript_include_tag "service" %>
-
-  <script type="text/javascript">
-
-  	var myAlert;
-
-  	$(document).ready(function(){
-  		myAlert = new Alert('.main');
-
-  		$("#finish_date").datepicker({
-          autoSize: true,
-          firstDay: 1,
-          changeMonth: true,
-          changeYear: true,
-          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          prevText: 'Atrás',
-          nextText: 'Adelante',
-          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-          today: 'Hoy',
-          clear: '',
-          dateFormat: 'dd/mm/yy',
-          onSelect: function(newDate){
-          	
-          }
-    	});
-
-  		$("#book_limit_date").datepicker({
-          autoSize: true,
-          firstDay: 1,
-          changeMonth: true,
-          changeYear: true,
-          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          prevText: 'Atrás',
-          nextText: 'Adelante',
-          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-          today: 'Hoy',
-          clear: '',
-          dateFormat: 'dd/mm/yy',
-          onSelect: function(newDate){
-          	
-          }
-    	});
-  	});
-
-
-	function timeCheck(morningStart, morningEnd, afternoonStart, afternoonEnd, nightStart, nightEnd)
-	{
-		var result = morningStart <= morningEnd;
-	    var result1 = afternoonStart <= afternoonEnd;
-	    var result2 = morningEnd <= afternoonStart;
-	    var result3 = nightStart <= nightEnd;
-	    var result4 = afternoonEnd <= nightStart;
-
-
-	    $("#morning-error").empty();
-	    $("#morning-error").hide();
-	    $("#afternoon-error").empty();
-	    $("#afternoon-error").hide();
-	    $("#night-error").empty();
-	    $("#night-error").hide();
-
-	    if (result)
-	    {
-	    	$(".morning-promo-hour").addClass('has-success').removeClass('has-error');
-	    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
-	    }
-	    else
-	    {
-	    	$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
-	    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
-	    	$("#morning-error").append("El fin de la mañana no puede ser menor al inicio.");
-	    	$("#morning-error").show();
-	    }
-
-
-	    if (result1 && result2)
-	    {
-	    	$(".afternoon-promo-hour").addClass('has-success').removeClass('has-error');
-	    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
-	    }
-	    else
-	    {
-
-	    	$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
-	    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
-	    	var strError = "";
-	    	if(!result1 && result2)
-	    	{
-	    		strError = "El fin de la tarde no puede ser menor al inicio.";
-	    	}
-	    	else if(!result2 && result1)
-	    	{
-	    		strError = "El inicio de la tarde no puede ser menor al fin de la mañana.";
-	    		$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
-		    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
-		    	$("#morning-error").append("El fin de la mañana no puede ser mayor al inicio de la tarde.");
-		    	$("#morning-error").show();
-	    	}
-	    	else
-	    	{
-	    		strError = "El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.";
-	    		$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
-		    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
-		    	$("#morning-error").append("El fin de la mañana no puede ser mayor al inicio de la tarde.");
-		    	$("#morning-error").show();
-	    	}
-	    	$("#afternoon-error").append(strError);
-	    	$("#afternoon-error").show();
-	    }
-
-	    
-
-	    if (result3 && result4)
-	    {
-	    	$(".night-promo-hour").addClass('has-success').removeClass('has-error');
-	    	$(".night-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
-	    }
-	    else
-	    {
-
-	    	$(".night-promo-hour").removeClass('has-success').addClass('has-error');
-	    	$(".night-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
-	    	var strError = "";
-	    	if(!result3 && result4)
-	    	{
-	    		strError = "El fin de la noche no puede ser menor al inicio.";
-	    	}
-	    	else if(!result4 && result3)
-	    	{
-	    		strError = "El inicio de la noche no puede ser menor al fin de la tarde.";
-	    		$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
-		    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
-		    	$("#afternoon-error").append("El fin de la tarde no puede ser mayor al inicio de la noche.");
-		    	$("#afternoon-error").show();
-	    	}
-	    	else
-	    	{
-	    		strError = "El inicio de la noche no puede ser menor al fin de la tarde ni mayor al fin de la noche.";
-	    		$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
-		    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
-		    	$("#afternoon-error").append("El fin de la tarde no puede ser mayor al inicio de la noche.");
-		    	$("#afternoon-error").show();
-	    	}
-	    	$("#night-error").append(strError);
-	    	$("#night-error").show();
-	    }
-
-	    return result && result1 && result2 && result3 && result4;
-	}
-
-  	$(".promotions-submit").click(function(e){
-
-  		var service_id = $("#promo_service_id").val();
-  		var has_last_minute_discount = $("#has_last_minute_discount").is(":checked");
-  		var last_minute_discount = $("#last_minute_discount").val();
-  		var last_minute_hours = $("#last_minute_hours").val();
-  		var has_time_discount = $("#has_time_discount").is(":checked");
-  		var reset_on_max_change = $("#reset_on_max_change").is(":checked");
-  		var max_bookings = $("#max_bookings").val();
-  		var morning_discounts = []
-  		morning_discounts[0] = 0
-  		var afternoon_discounts = []
-  		afternoon_discounts[0] = 0
-  		var night_discounts = []
-  		night_discounts[0] = 0
-  		var locations = []
-  		var last_minute_locations = []
-  		var finish_date = $("#finish_date").val();
-  		var book_limit_date = $("#book_limit_date").val();
-  		var limit_booking = $("#limit_booking").is(":checked");
-  		var morning_start = $('#service_promo_morning_start_1i').val() + '-' + $('#service_promo_morning_start_2i').val() + '-' + $('#service_promo_morning_start_3i').val() + 'T' + $('#service_promo_morning_start_4i').val() + ':' + $('#service_promo_morning_start_5i').val() + ':00Z';
-
-  		var morning_end = $('#service_promo_morning_end_1i').val() + '-' + $('#service_promo_morning_end_2i').val() + '-' + $('#service_promo_morning_end_3i').val() + 'T' + $('#service_promo_morning_end_4i').val() + ':' + $('#service_promo_morning_end_5i').val() + ':00Z';
-
-  		var afternoon_start = $('#service_promo_afternoon_start_1i').val() + '-' + $('#service_promo_afternoon_start_2i').val() + '-' + $('#service_promo_afternoon_start_3i').val() + 'T' + $('#service_promo_afternoon_start_4i').val() + ':' + $('#service_promo_afternoon_start_5i').val() + ':00Z';
-
-  		var afternoon_end = $('#service_promo_afternoon_end_1i').val() + '-' + $('#service_promo_afternoon_end_2i').val() + '-' + $('#service_promo_afternoon_end_3i').val() + 'T' + $('#service_promo_afternoon_end_4i').val() + ':' + $('#service_promo_afternoon_end_5i').val() + ':00Z';
-
-  		var night_start = $('#service_promo_night_start_1i').val() + '-' + $('#service_promo_night_start_2i').val() + '-' + $('#service_promo_night_start_3i').val() + 'T' + $('#service_promo_night_start_4i').val() + ':' + $('#service_promo_night_start_5i').val() + ':00Z';
-
-  		var night_end = $('#service_promo_night_end_1i').val() + '-' + $('#service_promo_night_end_2i').val() + '-' + $('#service_promo_night_end_3i').val() + 'T' + $('#service_promo_night_end_4i').val() + ':' + $('#service_promo_night_end_5i').val() + ':00Z';
-
-  		for(i = 1; i < 8; i++)
-  		{
-  			morning_discounts[i] = $("#morning-" + i).val();
-  			afternoon_discounts[i] = $("#afternoon-" + i).val();
-  			night_discounts[i] = $("#night-" + i).val();
-  		}
-
-  		$('input[name="locations"]').each(function(){
-  			if ($(this).is(":checked"))
-  			{
-  				locations.push($(this).val());
-  			}
-  		});
-
-  		$('input[name="last_minute_locations"]').each(function(){
-  			if ($(this).is(":checked"))
-  			{
-  				last_minute_locations.push($(this).val());
-  			}
-  		});
-
-  		if (locations.length < 1 && has_time_discount)
-  		{
-  			myAlert.showAlert(
-				'<h3>Selecciona locales</h3>' +
-			  	'<p>Debes seleccionar al menos un local para las promociones por horario.</p>'
-			);
-			return false;
-  		}
-
-  		if (last_minute_locations.length < 1 && has_last_minute_discount)
-  		{
-  			myAlert.showAlert(
-				'<h3>Selecciona locales</h3>' +
-			  	'<p>Debes seleccionar al menos un local para las promociones de último minuto.</p>'
-			);
-			return false;
-  		}
-
-  		if(has_time_discount && (max_bookings == "" || parseInt(max_bookings) < 0) && $("#limit_booking").prop('checked'))
-  		{
-  			myAlert.showAlert(
-				'<h3>Ingresa el stock</h3>' +
-			  	'<p>Debes ingresar el stock de reservas disponibles para la promoción.</p>'
-			);
-			return false;
-  		}
-
-  		if(timeCheck(morning_start, morning_end, afternoon_start, afternoon_end, night_start, night_end))
-  		{
-
-	  		$.ajax({
-	  			url: "/set_service_promotions",
-	  			type: "post",
-	  			data: {service_id: service_id, has_last_minute_discount: has_last_minute_discount, last_minute_discount: last_minute_discount, last_minute_hours: last_minute_hours, has_time_discount: has_time_discount, morning_discounts: morning_discounts, afternoon_discounts: afternoon_discounts, night_discounts: night_discounts, locations: locations, last_minute_locations: last_minute_locations, max_bookings: max_bookings, reset_on_max_change: reset_on_max_change, finish_date: finish_date, book_limit_date: book_limit_date, limit_booking: limit_booking, morning_start: morning_start, morning_end: morning_end, afternoon_start: afternoon_start, afternoon_end: afternoon_end, night_start: night_start, night_end: night_end},
-	  			success: function(response){
-	  				if(response[0] == "ok")
-	  				{
-	  					myAlert.showAlert(
-						  '<h3>Promociones guardadas</h3>' +
-						  '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente.</p>'
-						, function(){
-							location.reload();
-						});
-	  					
-	  				}
-	  				else
-	  				{
-	  					var errors = "";
-	  					for(i=0; i < response[2].length; i++)
-	  					{
-	  						errors = errors + response[2][i] + "<br />";
-	  					}
-
-	  					myAlert.showAlert(
-						  '<h3>Ocurrió un error</h3>' +
-						  '<p>No se pudieron guardar las sesiones por las siguientes razones: </p>' +
-						  '<p>' + errors + '</p>',
-							function(){
-								location.reload();
-							}
-						);
-	  				}
-	  			}
-	  		});
-
-		}
-
-  	});
-
-  </script>
+  <%= javascript_include_tag "promo/service-promo" %>
+  <%= javascript_include_tag "promo/jquery.editable-select" %>
 
 <% end %>

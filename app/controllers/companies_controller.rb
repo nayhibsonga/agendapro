@@ -811,7 +811,7 @@ class CompaniesController < ApplicationController
 					            if !@service.group_service || @service.id != provider_booking.service_id
 					              provider_free = false
 					              break
-					            elsif @service.group_service && @service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => @service.id, :start => start_time_block).count >= @service.capacity
+					            elsif @service.group_service && @service.id == provider_booking.service_id && provider.bookings.where(:service_id => @service.id, :start => start_time_block).count >= @service.capacity
 					              provider_free = false
 					              break
 					            end
@@ -1089,7 +1089,7 @@ class CompaniesController < ApplicationController
 					          if !@service.group_service || @service.id != provider_booking.service_id
 					            provider_free = false
 					            break
-					          elsif @service.group_service && @service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => @service.id, :start => start_time_block).count >= @service.capacity
+					          elsif @service.group_service && @service.id == provider_booking.service_id && provider.bookings.where(:service_id => @service.id, :start => start_time_block).count >= @service.capacity
 					            provider_free = false
 					            break
 					          end
