@@ -10,7 +10,7 @@
     <% @locations.each do |location| %>
     <div class="col-xs-12">
       <div class="box-search">
-        <a href="<%= url_for(:host => @url, :local => location.id, :controller => 'companies', :action => 'workflow', locale: I18n.locale.to_s) %>">
+        <a href="<%= url_for(:host => @url, :local => location.id, :controller => 'companies', :action => 'workflow') %>">
           <div class="bloque-local" data-location="<%= location.id %>">
             <h3><%= location.name %></h3>
             <p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
