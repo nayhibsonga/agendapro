@@ -1,5 +1,5 @@
 # AgendaPro #
-![AgendaPro](http://agendapro.cl/assets/logos/logo2.png)
+![AgendaPro](http://agendapro.co/assets/logos/logo2.png)
 
 ## Ruby version ##
 ### Install RVM ###
