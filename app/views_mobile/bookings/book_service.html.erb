@@ -8,10 +8,8 @@
       <% end %>
       <div class="pull-center">
         <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro' %>
-        <% if @company.logo_url %>
         <div class="vertical-divider"></div>
-        <%= image_tag @company.logo_url.to_s, :alt => @company.name %>
-        <% end %>
+        <%= image_tag @company.logo.page.url.to_s, :alt => @company.name %>
       </div>
     </div>
   </div>

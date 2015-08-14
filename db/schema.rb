@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes",               default: ""
-    t.text     "company_comment",     default: ""
+    t.text     "notes"
+    t.text     "company_comment"
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -115,6 +115,7 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
+    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
@@ -192,8 +193,10 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.date     "due_date"
     t.boolean  "owned",               default: true
     t.boolean  "show_in_home",        default: false
+    t.integer  "country_id"
   end
 
+  add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
   add_index "companies", ["payment_status_id"], name: "index_companies_on_payment_status_id", using: :btree
   add_index "companies", ["plan_id"], name: "index_companies_on_plan_id", using: :btree
 
@@ -290,10 +293,15 @@ ActiveRecord::Schema.define(version: 20150812143306) do
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
 
   create_table "countries", force: true do |t|
-    t.string   "name",       null: false
+    t.string   "name",                           null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
+    t.string   "locale",            default: ""
+    t.string   "flag_photo",        default: ""
+    t.string   "currency_code",     default: ""
+    t.float    "latitude"
+    t.float    "longitude"
+    t.string   "formatted_address", default: ""  end
 
   create_table "days", force: true do |t|
     t.string   "name",       null: false
@@ -347,9 +355,12 @@ ActiveRecord::Schema.define(version: 20150812143306) do
   add_index "districts", ["city_id"], name: "index_districts_on_city_id", using: :btree
 
   create_table "economic_sectors", force: true do |t|
-    t.string   "name",       null: false
+    t.string   "name",                           null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "show_in_home",    default: true
+    t.boolean  "show_in_company", default: true
+    t.string   "mobile_preview",  default: ""
   end
 
   create_table "economic_sectors_dictionaries", force: true do |t|
@@ -373,6 +384,18 @@ ActiveRecord::Schema.define(version: 20150812143306) do
   create_table "favorites", force: true do |t|
     t.integer  "user_id"
     t.integer  "location_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "favorites", ["location_id"], name: "index_favorites_on_location_id", using: :btree
+  add_index "favorites", ["user_id"], name: "index_favorites_on_user_id", using: :btree
+
+  create_table "last_minute_promos", force: true do |t|
+    t.integer  "discount",    default: 0
+    t.integer  "hours",       default: 0
+    t.integer  "location_id"
+    t.integer  "service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -641,6 +664,17 @@ ActiveRecord::Schema.define(version: 20150812143306) do
   add_index "payments", ["payment_method_type_id"], name: "index_payments_on_payment_method_type_id", using: :btree
   add_index "payments", ["receipt_type_id"], name: "index_payments_on_receipt_type_id", using: :btree
 
+  create_table "plan_countries", force: true do |t|
+    t.integer  "plan_id"
+    t.integer  "country_id"
+    t.float    "price"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "plan_countries", ["country_id"], name: "index_plan_countries_on_country_id", using: :btree
+  add_index "plan_countries", ["plan_id"], name: "index_plan_countries_on_plan_id", using: :btree
+
   create_table "plan_logs", force: true do |t|
     t.integer  "prev_plan_id", null: false
     t.integer  "new_plan_id",  null: false
@@ -659,7 +693,6 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.boolean  "custom",            default: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "price",             default: 0.0,   null: false
     t.boolean  "special",           default: false
     t.integer  "monthly_mails",     default: 5000,  null: false
   end
@@ -1032,6 +1065,15 @@ ActiveRecord::Schema.define(version: 20150812143306) do
   add_index "user_providers", ["service_provider_id"], name: "index_user_providers_on_service_provider_id", using: :btree
   add_index "user_providers", ["user_id"], name: "index_user_providers_on_user_id", using: :btree
 
+  create_table "user_searches", force: true do |t|
+    t.integer  "user_id"
+    t.string   "search_text", default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_searches", ["user_id"], name: "index_user_searches_on_user_id", using: :btree
+
   create_table "users", force: true do |t|
     t.string   "first_name"
     t.string   "last_name"
@@ -1053,6 +1095,7 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.string   "provider"
     t.string   "uid"
     t.boolean  "receives_offers",        default: true
+    t.string   "mobile_token"
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree

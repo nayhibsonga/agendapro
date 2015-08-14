@@ -1,6 +1,6 @@
 <% if user_signed_in? && current_user.company_id && current_user.company_id > 0  %>
   <script type="text/javascript">
-    window.location.href="/dashboard"
+    window.location.href="<%= url_for(controller: 'dashboard', action: 'index', locale: I18n.locale.to_s ) %>"
   </script>
 <% elsif user_signed_in? %>
   <script type="text/javascript">
@@ -13,7 +13,7 @@
 		<div class="col-md-5 col-sm-offset-1">
 			<div class="row signup-feature">
 				<div class="col-sm-12">
-					<h1>ÚNETE A LA RED DE RESERVAS MÁS GRANDE DE CHILE Y AUMENTA TUS VENTAS.<br /></h1>
+					<h1>ÚNETE A LA RED DE RESERVAS MÁS GRANDE DE <%= (I18n.t 'country.name').upcase %> Y AUMENTA TUS VENTAS.<br /></h1>
 				</div>
 			</div>
 			<div class="row signup-feature">
@@ -94,12 +94,20 @@
 				<%= f.fields_for :company_attributes do |builder| %>
 					<!-- start: Companny Settings -->
 					<%= builder.fields_for :company_setting_attributes do |settings| %>
-						<%= settings.hidden_field :before_booking, :value => 24 %>
+						<%= settings.hidden_field :before_booking, :value => 3 %>
 						<%= settings.hidden_field :after_booking, :value => 6 %>
 					<% end %>
 					<!-- end: Company Settings -->
 					<%= builder.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Trial").first.id %>
 					<%= builder.hidden_field :plan_id, :value => Plan.find_by(:name => 'Trial').id %>
+					<div class="form-group has-feedback">
+						<%= builder.label :country_id, 'País de la Compañía', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= builder.collection_select :country_id, Country.all, :id, :name, { selected: Country.find_by(locale: I18n.locale.to_s).id, placeholder: 'Elige el país donde está tu empresa' },  { :class => 'form-control' } %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+						</div>
+					</div>
 					<div class="form-group has-feedback">
 						<%= builder.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
@@ -151,7 +159,7 @@
 		<div class="col-md-5 col-sm-offset-1">
 			<div class="row signup-feature">
 				<div class="col-sm-12">
-					<h1>ÚNETE A LA RED DE SERVICIOS MÁS GRANDE DE CHILE Y RECIBE LAS MEJORES PROMOCIONES.<br /></h1>
+					<h1>ÚNETE A LA RED DE SERVICIOS MÁS GRANDE DE <%= (I18n.t 'country.name').upcase %> Y RECIBE LAS MEJORES PROMOCIONES.<br /></h1>
 				</div>
 			</div>
 			<div class="row signup-feature">

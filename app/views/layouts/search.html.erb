@@ -8,9 +8,9 @@
 		<meta charset="utf-8">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>AgendaPro</title>
-		<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+		<meta name="description" content="AgendaPro - Sistema de gestión de reservas y clientes online para empresas.">
 		<meta name="author" content="AgendaPro">
-		<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+		<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online, gestion, sistema de gestion, software de gestion, peluqueria, spa, centro de estetica">
 		<%= csrf_meta_tags %>
 		<!-- end: Meta -->
 
@@ -73,7 +73,7 @@
 						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
 							<i class="fa fa-bars"></i>
 						</button>
-            <%= link_to root_url(subdomain: false), class: 'navbar-brand', id: 'agendapro-brand' do %>
+            <%= link_to localized_root_url(subdomain: false), class: 'navbar-brand', id: 'agendapro-brand' do %>
 							<%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => '127x43' %>
 						<% end %>
 					</div>
@@ -92,6 +92,8 @@
                                 <li><a href="#" data-toggle="modal" data-target="#signup-modal" class="menu-green"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
                             <% end %>
 							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
+							<li><%= link_to image_tag("search/landing/chile.png", alt: "Chile", size: "24x16", :class => I18n.locale == 'es_CL'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CL'})), class: "i18n-flag" %></li>
+            				<li><%= link_to image_tag("search/landing/colombia.png", alt: "Colombia", size: "24x16", :class => I18n.locale == 'es_CO'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CO'})), class: "i18n-flag" %></li>
 						</ul>
 					</div>
 				</div>

@@ -1,5 +1,6 @@
 class PlansController < ApplicationController
   before_action :set_plan, only: [:show, :edit, :update, :destroy]
+  before_action :constraint_locale, only: [:view_plans]
   before_action :authenticate_user!, except: [:view_plans]
   before_action :quick_add, except: [:view_plans, :select_plan]
   before_action :verify_is_super_admin, except: [:view_plans, :select_plan]
@@ -68,10 +69,10 @@ class PlansController < ApplicationController
 
   def select_plan
     @due_payment = false
-    @plans = Plan.where(:custom => false)
     @company = Company.find(current_user.company_id)
+    @plans = Plan.where(:custom => false)
     @company.billing_info ? @billing_info = @company.billing_info : @billing_info = BillingInfo.new
-    @company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:price).first.price : @price = @company.plan.price
+    @company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
     @sales_tax = NumericParameter.find_by_name("sales_tax").value
     @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
     @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
@@ -92,7 +93,11 @@ class PlansController < ApplicationController
   end
 
   def view_plans
-    @plans = Plan.where(custom: false).order(:price)
+    @plans = Plan.where(custom: false).order(:service_providers)
+    @country = Country.find_by(locale: I18n.locale.to_s)
+    unless @country
+      redirect_to landing_path(redirect_params: params.inspect)
+    end
     render layout: "home"
   end
 
@@ -124,6 +129,6 @@ class PlansController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def plan_params
-      params.require(:plan).permit(:name, :locations, :service_providers, :custom, :price, :special, :monthly_mails)
+      params.require(:plan).permit(:name, :locations, :service_providers, :custom, :special, :monthly_mails, plan_countries_attributes: [:id, :country_id, :price])
     end
 end

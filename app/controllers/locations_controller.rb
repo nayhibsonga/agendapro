@@ -8,7 +8,9 @@ class LocationsController < ApplicationController
   # GET /locations
   # GET /locations.json
   def index
-    if current_user.role_id == Role.find_by_name('Super Admin').id
+    if current_user.role == Role.find_by(name: "Super Admin")
+      @companies = Company.where(active: true, owned: true).order(payment_status_id: :desc)
+      # @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(order: :asc)
       @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
     else
       @locations = Location.where(company_id: current_user.company_id, :active => true).order(:order, :name).accessible_by(current_ability)
@@ -63,25 +65,39 @@ class LocationsController < ApplicationController
   # PATCH/PUT /locations/1
   # PATCH/PUT /locations/1.json
   def update
-    @location_times = Location.find(params[:id]).location_times
-    @location_times.each do |location_time|
-      location_time.location_id = nil
-      location_time.save
-    end
-    @location = Location.find(params[:id])
-    respond_to do |format|
-      if @location.update(location_params)
-        @location_times.destroy_all
-        flash[:notice] = 'Local actualizado exitosamente.'
-        format.html { redirect_to locations_path }
-        format.json { render :json => @location }
-      else
-        @location_times.each do |location_time|
-          location_time.location_id = @location.id
-          location_time.save
+    if current_user.role == Role.find_by(name: 'Super Admin')
+      respond_to do |format|
+        if @location.update(location_params)
+          flash[:notice] = 'Local actualizado exitosamente.'
+          format.html { redirect_to locations_path }
+          format.json { render :json => @location }
+        else
+          puts @location.errors.full_messages
+          format.html { redirect_to locations_path, alert: 'No se pudo guardar el local.' }
+          format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
         end
-        format.html { redirect_to locations_path, alert: 'No se pudo guardar el local.' }
-        format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
+      end
+    else
+      @location_times = Location.find(params[:id]).location_times
+      @location_times.each do |location_time|
+        location_time.location_id = nil
+        location_time.save
+      end
+      @location = Location.find(params[:id])
+      respond_to do |format|
+        if @location.update(location_params)
+          @location_times.destroy_all
+          flash[:notice] = 'Local actualizado exitosamente.'
+          format.html { redirect_to locations_path }
+          format.json { render :json => @location }
+        else
+          @location_times.each do |location_time|
+            location_time.location_id = @location.id
+            location_time.save
+          end
+          format.html { redirect_to locations_path, alert: 'No se pudo guardar el local.' }
+          format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
+        end
       end
     end
   end
@@ -540,6 +556,6 @@ class LocationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def location_params
-      params.require(:location).permit(:name, :address, :second_address, :phone, :outcall, :longitude, :latitude, :company_id, :online_booking, :email, :district_id, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
+      params.require(:location).permit(:name, :address, :second_address, :phone, :outcall, :longitude, :latitude, :company_id, :online_booking, :email, :district_id, :image1, :remove_image1, :image2, :remove_image2, :image3, :remove_image3, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
     end
 end

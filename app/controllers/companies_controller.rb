@@ -1,6 +1,7 @@
 class CompaniesController < ApplicationController
   before_action :verify_is_active, only: [:overview, :workflow]
 	before_action :set_company, only: [:show, :edit, :update, :destroy, :edit_payment]
+	before_action :constraint_locale, only: [:overview, :workflow]
 	before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address, :select_hour, :user_data, :select_promo_hour]
 	before_action :quick_add, except: [:new, :overview, :workflow, :add_company, :check_company_web_address, :select_hour, :user_data, :select_promo_hour]
 	before_action :verify_is_super_admin, only: [:index, :edit_payment, :new, :edit, :manage, :manage_company, :new_payment, :add_payment, :update_company, :get_year_incomes, :incomes, :locations, :monthly_locations, :deactivate_company]
@@ -508,7 +509,7 @@ class CompaniesController < ApplicationController
 	def add_month
 		company = Company.find(params[:id])
 		if company.payment_status == PaymentStatus.find_by_name("Trial")
-			company.plan = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:price).first
+			company.plan = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first
 		end
         company.months_active_left += 1
         company.due_amount = 0.0
@@ -602,9 +603,9 @@ class CompaniesController < ApplicationController
 
 	##### Workflow #####
 	def overview
-		@company = Company.find_by(web_address: request.subdomain)
+		@company = Company.find_by(web_address: request.subdomain, country_id: Country.find_by_locale(I18n.locale.to_s))
 		if @company.nil?
-			@company = Company.find_by(web_address: request.subdomain.gsub(/www\./i, ''))
+			@company = Company.find_by(web_address: request.subdomain.gsub(/www\./i, ''), country_id: Country.find_by_locale(I18n.locale.to_s))
 			if @company.nil?
 				flash[:alert] = "No existe la compañia buscada."
 
@@ -627,9 +628,15 @@ class CompaniesController < ApplicationController
 		end
 		@locations = Location.where(:active => true, online_booking: true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
 
+		@has_images = false
+		@locations.each do |location|
+			tmp = !(location.image1.url.include? "rectangulo_gris.png") || !(location.image2.url.include? "rectangulo_gris.png") || !(location.image3.url.include? "rectangulo_gris.png")
+			@has_images = tmp && @has_images
+		end
+
 		# => Domain parser
 		host = request.host_with_port
-		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length] + '/' + I18n.locale.to_s
 
 		#Selected local from fase II
 		if(params[:local])
@@ -638,16 +645,14 @@ class CompaniesController < ApplicationController
 				@selectedLocation = Location.find(@selectedLocal)
 			else
 				flash[:alert] = "Lo sentimos, el local ingresado no existe."
-
-				#host = request.host_with_port
-				#domain = host[host.index(request.domain)..host.length]
-
-				#redirect_to root_url(:host => domain)
-				#return
 			end
+		else
+			@selectedLocation = @locations.first
+			@selectedLocal = @selectedLocation.id
 		end
 
 		if mobile_request?
+			@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 			if params[:local]
 				redirect_to workflow_path(:local => params[:local])
 				return
@@ -662,9 +667,9 @@ class CompaniesController < ApplicationController
 	end
 
 	def workflow
-		@company = Company.find_by(web_address: request.subdomain)
+		@company = Company.find_by(web_address: request.subdomain, country_id: Country.find_by_locale(I18n.locale.to_s))
 		if @company.nil?
-			@company = Company.find_by(web_address: request.subdomain.gsub(/www\./i, ''))
+			@company = Company.find_by(web_address: request.subdomain.gsub(/www\./i, ''), country_id: Country.find_by_locale(I18n.locale.to_s))
 			if @company.nil?
 				flash[:alert] = "No existe la compañia buscada."
 
@@ -810,7 +815,7 @@ class CompaniesController < ApplicationController
 					            if !@service.group_service || @service.id != provider_booking.service_id
 					              provider_free = false
 					              break
-					            elsif @service.group_service && @service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => @service.id, :start => start_time_block).count >= @service.capacity
+					            elsif @service.group_service && @service.id == provider_booking.service_id && provider.bookings.where(:service_id => @service.id, :start => start_time_block).count >= @service.capacity
 					              provider_free = false
 					              break
 					            end
@@ -1088,7 +1093,7 @@ class CompaniesController < ApplicationController
 					          if !@service.group_service || @service.id != provider_booking.service_id
 					            provider_free = false
 					            break
-					          elsif @service.group_service && @service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => @service.id, :start => start_time_block).count >= @service.capacity
+					          elsif @service.group_service && @service.id == provider_booking.service_id && provider.bookings.where(:service_id => @service.id, :start => start_time_block).count >= @service.capacity
 					            provider_free = false
 					            break
 					          end
@@ -2397,11 +2402,7 @@ class CompaniesController < ApplicationController
 	end
 
 	def check_company_web_address
-		begin
-		@company = Company.find_by(:web_address => params[:user][:company_attributes][:web_address])
-		rescue
-			@company = Company.find_by(:web_address => params[:company][:web_address])
-		end
+		@company = Company.find_by(:web_address => params[:web_address], country_id: params[:country_id])
 		render :json => @company.nil?
 	end
 

@@ -1,11 +1,7 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12 col-sm-2">
-      <% if @company.logo_url %>
-      <%= image_tag @company.logo_url.to_s, :alt => @company.name, class: 'company-logo' %>
-      <% else %>
-      <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', class: 'company-logo' %>
-      <% end %>
+      <%= image_tag @company.logo.page.url.to_s, :alt => @company.name, class: 'company-logo' %>
       <button class="btn btn-wide btn-green"><i class="fa fa-caret-left"></i> Información</button>
       <button class="btn btn-wide btn-orange hidden">Reservar <i class="fa fa-caret-right"></i></button>
     </div>

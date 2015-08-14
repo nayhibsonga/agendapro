@@ -26,7 +26,7 @@ class DashboardController < ApplicationController
 
 		@services = Service.where(:company_id => current_user.company_id)
 
-		@potential_session_bookings = SessionBooking.where('client_id is not null').where(service_id: @services).order('updated_at desc')
+		@potential_session_bookings = SessionBooking.where('client_id is not null').where(service_id: @services).order('updated_at desc').limit(20)
 		@session_bookings = []
 
 		@potential_session_bookings.each do |session_booking|

@@ -1,0 +1,418 @@
+	var myAlert;
+
+  	$(document).ready(function(){
+  		myAlert = new Alert('.main');
+
+  		$("#finish_date").datepicker({
+          autoSize: true,
+          firstDay: 1,
+          changeMonth: true,
+          changeYear: true,
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          dateFormat: 'dd/mm/yy',
+          onSelect: function(newDate){
+          	
+          }
+    	});
+
+  		$("#book_limit_date").datepicker({
+          autoSize: true,
+          firstDay: 1,
+          changeMonth: true,
+          changeYear: true,
+          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          today: 'Hoy',
+          clear: '',
+          dateFormat: 'dd/mm/yy',
+          onSelect: function(newDate){
+          	
+          }
+    	});
+
+  		
+  		for(pi_index = 1; pi_index < 8; pi_index++)
+  		{
+	    	$('#morning-' + pi_index).editableSelect({ 
+	    		effects: 'default',
+	    		onShow: function () {
+			        $(".es-list li").show();
+			    }
+	    	});
+
+	    	$('#afternoon-' + pi_index).editableSelect({ 
+	    		effects: 'default',
+	    		onShow: function () {
+			        $(".es-list li").show();
+			    }
+	    	});
+
+	    	$('#night-' + pi_index).editableSelect({ 
+	    		effects: 'default',
+	    		onShow: function () {
+			        $(".es-list li").show();
+			    }
+	    	});
+    	}
+
+    	$(".promotions-input").keyup(function() {
+		    var reg = /\d+\s%$/g;
+    		if(reg.test($(this).val()))
+    		{
+    			$(this).removeClass("error");
+    		}
+    		else
+    		{
+    			$(this).addClass("error");
+    		}
+		});
+
+  	});
+
+
+	function timeCheck(morningStart, morningEnd, afternoonStart, afternoonEnd, nightStart, nightEnd)
+	{
+		var result = morningStart <= morningEnd;
+	    var result1 = afternoonStart <= afternoonEnd;
+	    var result2 = morningEnd <= afternoonStart;
+	    var result3 = nightStart <= nightEnd;
+	    var result4 = afternoonEnd <= nightStart;
+
+
+	    $("#morning-error").empty();
+	    $("#morning-error").hide();
+	    $("#afternoon-error").empty();
+	    $("#afternoon-error").hide();
+	    $("#night-error").empty();
+	    $("#night-error").hide();
+
+	    if (result)
+	    {
+	    	$(".morning-promo-hour").addClass('has-success').removeClass('has-error');
+	    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+	    }
+	    else
+	    {
+	    	$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	$("#morning-error").append("El fin de la mañana no puede ser menor al inicio.");
+	    	$("#morning-error").show();
+	    }
+
+
+	    if (result1 && result2)
+	    {
+	    	$(".afternoon-promo-hour").addClass('has-success').removeClass('has-error');
+	    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+	    }
+	    else
+	    {
+
+	    	$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	var strError = "";
+	    	if(!result1 && result2)
+	    	{
+	    		strError = "El fin de la tarde no puede ser menor al inicio.";
+	    	}
+	    	else if(!result2 && result1)
+	    	{
+	    		strError = "El inicio de la tarde no puede ser menor al fin de la mañana.";
+	    		$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#morning-error").append("El fin de la mañana no puede ser mayor al inicio de la tarde.");
+		    	$("#morning-error").show();
+	    	}
+	    	else
+	    	{
+	    		strError = "El inicio de la tarde no puede ser menor al fin de la mañana ni mayor al fin de la tarde.";
+	    		$(".morning-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".morning-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#morning-error").append("El fin de la mañana no puede ser mayor al inicio de la tarde.");
+		    	$("#morning-error").show();
+	    	}
+	    	$("#afternoon-error").append(strError);
+	    	$("#afternoon-error").show();
+	    }
+
+	    
+
+	    if (result3 && result4)
+	    {
+	    	$(".night-promo-hour").addClass('has-success').removeClass('has-error');
+	    	$(".night-promo-hour").children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+	    }
+	    else
+	    {
+
+	    	$(".night-promo-hour").removeClass('has-success').addClass('has-error');
+	    	$(".night-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+	    	var strError = "";
+	    	if(!result3 && result4)
+	    	{
+	    		strError = "El fin de la noche no puede ser menor al inicio.";
+	    	}
+	    	else if(!result4 && result3)
+	    	{
+	    		strError = "El inicio de la noche no puede ser menor al fin de la tarde.";
+	    		$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#afternoon-error").append("El fin de la tarde no puede ser mayor al inicio de la noche.");
+		    	$("#afternoon-error").show();
+	    	}
+	    	else
+	    	{
+	    		strError = "El inicio de la noche no puede ser menor al fin de la tarde ni mayor al fin de la noche.";
+	    		$(".afternoon-promo-hour").removeClass('has-success').addClass('has-error');
+		    	$(".afternoon-promo-hour").children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+		    	$("#afternoon-error").append("El fin de la tarde no puede ser mayor al inicio de la noche.");
+		    	$("#afternoon-error").show();
+	    	}
+	    	$("#night-error").append(strError);
+	    	$("#night-error").show();
+	    }
+
+	    return result && result1 && result2 && result3 && result4;
+	}
+
+  	$(".promotions-submit").click(function(e){
+
+  		var service_id = $("#promo_service_id").val();
+  		var has_last_minute_discount = $("#has_last_minute_discount").is(":checked");
+  		var last_minute_discount = $("#last_minute_discount").val();
+  		var last_minute_hours = $("#last_minute_hours").val();
+  		var has_time_discount = $("#has_time_discount").is(":checked");
+  		var reset_on_max_change = $("#reset_on_max_change").is(":checked");
+  		var max_bookings = $("#max_bookings").val();
+  		var morning_discounts = []
+  		morning_discounts[0] = 0
+  		var afternoon_discounts = []
+  		afternoon_discounts[0] = 0
+  		var night_discounts = []
+  		night_discounts[0] = 0
+  		var locations = []
+  		var last_minute_locations = []
+  		var finish_date = $("#finish_date").val();
+  		var book_limit_date = $("#book_limit_date").val();
+  		var limit_booking = $("#limit_booking").is(":checked");
+  		var morning_start = $('#service_promo_morning_start_1i').val() + '-' + $('#service_promo_morning_start_2i').val() + '-' + $('#service_promo_morning_start_3i').val() + 'T' + $('#service_promo_morning_start_4i').val() + ':' + $('#service_promo_morning_start_5i').val() + ':00Z';
+
+  		var morning_end = $('#service_promo_morning_end_1i').val() + '-' + $('#service_promo_morning_end_2i').val() + '-' + $('#service_promo_morning_end_3i').val() + 'T' + $('#service_promo_morning_end_4i').val() + ':' + $('#service_promo_morning_end_5i').val() + ':00Z';
+
+  		var afternoon_start = $('#service_promo_afternoon_start_1i').val() + '-' + $('#service_promo_afternoon_start_2i').val() + '-' + $('#service_promo_afternoon_start_3i').val() + 'T' + $('#service_promo_afternoon_start_4i').val() + ':' + $('#service_promo_afternoon_start_5i').val() + ':00Z';
+
+  		var afternoon_end = $('#service_promo_afternoon_end_1i').val() + '-' + $('#service_promo_afternoon_end_2i').val() + '-' + $('#service_promo_afternoon_end_3i').val() + 'T' + $('#service_promo_afternoon_end_4i').val() + ':' + $('#service_promo_afternoon_end_5i').val() + ':00Z';
+
+  		var night_start = $('#service_promo_night_start_1i').val() + '-' + $('#service_promo_night_start_2i').val() + '-' + $('#service_promo_night_start_3i').val() + 'T' + $('#service_promo_night_start_4i').val() + ':' + $('#service_promo_night_start_5i').val() + ':00Z';
+
+  		var night_end = $('#service_promo_night_end_1i').val() + '-' + $('#service_promo_night_end_2i').val() + '-' + $('#service_promo_night_end_3i').val() + 'T' + $('#service_promo_night_end_4i').val() + ':' + $('#service_promo_night_end_5i').val() + ':00Z';
+
+  		var reg = /\d+\s%$/g;
+
+  		for(i = 1; i < 8; i++)
+  		{
+
+  			reg.lastIndex = 0;
+
+  			if(!reg.test($("#morning-" + i).val()))
+  			{
+
+  				$("#morning-" + i).addClass("error");
+
+  				myAlert.showAlert(
+				'<h3>Error de descuento</h3>' +
+			  	'<p>Si ingresas un descuento personalizado, asegúrate que sea de la forma "XX %".</p>'
+				);
+				return false;
+  			}
+  			else
+  			{
+  				$("#morning-" + i).removeClass("error");
+  			}
+
+  			reg.lastIndex = 0;
+
+  			if(!reg.test($("#afternoon-" + i).val()))
+  			{
+
+  				$("#afternoon-" + i).addClass("error");
+
+  				myAlert.showAlert(
+				'<h3>Error de descuento</h3>' +
+			  	'<p>Si ingresas un descuento personalizado, asegúrate que sea de la forma "XX %".</p>'
+				);
+				return false;
+  			}
+  			else
+  			{
+  				$("#afternoon-" + i).removeClass("error");
+  			}
+
+  			reg.lastIndex = 0;
+
+  			if(!reg.test($("#night-" + i).val()))
+  			{
+  				$("#night-" + i).addClass("error");
+
+  				myAlert.showAlert(
+				'<h3>Error de descuento</h3>' +
+			  	'<p>Si ingresas un descuento personalizado, asegúrate que sea de la forma "XX %".</p>'
+				);
+				return false;
+  			}
+  			else
+  			{
+  				$("#night-" + i).removeClass("error");
+  			}
+
+  			reg.lastIndex = 0;
+
+  			morning_discounts[i] = $("#morning-" + i).val().replace("%", " ").trim();
+  			afternoon_discounts[i] = $("#afternoon-" + i).val().replace("%", " ").trim();
+  			night_discounts[i] = $("#night-" + i).val().replace("%", " ").trim();
+
+  			if(parseInt(morning_discounts[i]) > 99)
+  			{
+
+  				$("#morning-" + i).addClass("error");
+
+  				myAlert.showAlert(
+				'<h3>Error de descuento</h3>' +
+			  	'<p>El descuento no puede ser mayor que 99%.</p>'
+				);
+				return false;
+  			}
+  			else
+  			{
+  				$("#morning-" + i).removeClass("error");
+  			}
+
+  			if(parseInt(afternoon_discounts[i]) > 99)
+  			{
+
+  				$("#afternoon-" + i).addClass("error");
+
+  				myAlert.showAlert(
+				'<h3>Error de descuento</h3>' +
+			  	'<p>El descuento no puede ser mayor que 99%.</p>'
+				);
+				return false;
+  			}
+  			else
+  			{
+  				$("#afternoon-" + i).removeClass("error");
+  			}
+
+  			if(parseInt(night_discounts[i]) > 99)
+  			{
+
+  				$("#night-" + i).addClass("error");
+
+  				myAlert.showAlert(
+				'<h3>Error de descuento</h3>' +
+			  	'<p>El descuento no puede ser mayor que 99%.</p>'
+				);
+				return false;
+  			}
+  			else
+  			{
+  				$("#night-" + i).removeClass("error");
+  			}
+
+  		}
+
+  		$('input[name="locations"]').each(function(){
+  			if ($(this).is(":checked"))
+  			{
+  				locations.push($(this).val());
+  			}
+  		});
+
+  		$('input[name="last_minute_locations"]').each(function(){
+  			if ($(this).is(":checked"))
+  			{
+  				last_minute_locations.push($(this).val());
+  			}
+  		});
+
+  		if (locations.length < 1 && has_time_discount)
+  		{
+  			myAlert.showAlert(
+				'<h3>Selecciona locales</h3>' +
+			  	'<p>Debes seleccionar al menos un local para las promociones por horario.</p>'
+			);
+			return false;
+  		}
+
+  		if (last_minute_locations.length < 1 && has_last_minute_discount)
+  		{
+  			myAlert.showAlert(
+				'<h3>Selecciona locales</h3>' +
+			  	'<p>Debes seleccionar al menos un local para las promociones de último minuto.</p>'
+			);
+			return false;
+  		}
+
+  		if(has_time_discount && (max_bookings == "" || parseInt(max_bookings) < 0) && $("#limit_booking").prop('checked'))
+  		{
+  			myAlert.showAlert(
+				'<h3>Ingresa el stock</h3>' +
+			  	'<p>Debes ingresar el stock de reservas disponibles para la promoción.</p>'
+			);
+			return false;
+  		}
+
+  		if(timeCheck(morning_start, morning_end, afternoon_start, afternoon_end, night_start, night_end))
+  		{
+
+	  		$.ajax({
+	  			url: "/set_service_promotions",
+	  			type: "post",
+	  			data: {service_id: service_id, has_last_minute_discount: has_last_minute_discount, last_minute_discount: last_minute_discount, last_minute_hours: last_minute_hours, has_time_discount: has_time_discount, morning_discounts: morning_discounts, afternoon_discounts: afternoon_discounts, night_discounts: night_discounts, locations: locations, last_minute_locations: last_minute_locations, max_bookings: max_bookings, reset_on_max_change: reset_on_max_change, finish_date: finish_date, book_limit_date: book_limit_date, limit_booking: limit_booking, morning_start: morning_start, morning_end: morning_end, afternoon_start: afternoon_start, afternoon_end: afternoon_end, night_start: night_start, night_end: night_end},
+	  			success: function(response){
+	  				if(response[0] == "ok")
+	  				{
+	  					myAlert.showAlert(
+						  '<h3>Promociones guardadas</h3>' +
+						  '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente.</p>'
+						, function(){
+							location.reload();
+						});
+	  					
+	  				}
+	  				else
+	  				{
+	  					var errors = "";
+	  					for(i=0; i < response[2].length; i++)
+	  					{
+	  						errors = errors + response[2][i] + "<br />";
+	  					}
+
+	  					myAlert.showAlert(
+						  '<h3>Ocurrió un error</h3>' +
+						  '<p>No se pudieron guardar las sesiones por las siguientes razones: </p>' +
+						  '<p>' + errors + '</p>',
+							function(){
+								location.reload();
+							}
+						);
+	  				}
+	  			}
+	  		});
+
+		}
+
+  	});

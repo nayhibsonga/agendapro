@@ -38,7 +38,18 @@ $(function() {
 				required: true,
 				minlength: 3,
 				maxlength: 200,
-				remote: '/check_company'
+				remote: {
+					url: "/check_company",
+					type: "get",
+					data: {
+					  web_address: function() {
+					    return $( "#user_company_attributes_web_address" ).val();
+					  },
+					  country_id: function() {
+					    return $( "#user_company_attributes_country_id" ).val();
+					  }
+					}
+				}
 			},
 			terms: {
 				required: true
@@ -70,4 +81,7 @@ $(function() {
 		}
 	});
 
+	$('#user_company_attributes_country_id').change(function() {
+		$('#user_company_attributes_web_address').valid();
+	});
 });

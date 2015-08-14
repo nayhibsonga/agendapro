@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
 	belongs_to :role
 	belongs_to :company
 
+	has_many :user_searches
+
 	has_many :bookings, dependent: :nullify
 	has_many :booking_histories, dependent: :nullify
 
@@ -14,6 +16,9 @@ class User < ActiveRecord::Base
 
 	has_many :user_providers, dependent: :destroy
 	has_many :service_providers, :through => :user_providers
+
+	has_many :favorites, dependent: :destroy
+	has_many :favorite_locations, through: :favorites, source: :location
 
 	accepts_nested_attributes_for :company
 
@@ -54,6 +59,12 @@ class User < ActiveRecord::Base
 			if !self.service_providers.empty?
 				errors.add(:base, "Este tipo de usuario no debe tener ningún prestador asociado.")
 			end
+		end
+	end
+
+	def request_mobile_token
+		while self.mobile_token.blank? || User.where(mobile_token: self.mobile_token).where.not(id: self.id).count > 0
+			self.mobile_token = SecureRandom.base64(32)
 		end
 	end
 

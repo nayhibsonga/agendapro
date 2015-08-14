@@ -65,11 +65,11 @@ class BookingMailer < ActionMailer::Base
 		}
 
 		# => Logo empresa
-		if book_info.location.company.logo_url
+		if !book_info.location.company.logo.email.url.include? "logo_vacio"
 			message[:images] = [{
-							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:type => 'image/png',
 							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
 						}]
 		end
 
@@ -274,17 +274,17 @@ class BookingMailer < ActionMailer::Base
 			]
 		}
 
-		if !book_info.notes.blank?
-			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
+		# => Logo empresa
+		if !book_info.location.company.logo.email.url.include? "logo_vacio"
+			message[:images] = [{
+							:type => 'image/png',
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
+						}]
 		end
 
-		# => Logo empresa
-		if book_info.location.company.logo_url
-			message[:images] = [{
-							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
-							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-						}]
+		if !book_info.notes.blank?
+			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
 		second_address = ''
@@ -482,17 +482,17 @@ class BookingMailer < ActionMailer::Base
 			]
 		}
 
-		if !book_info.notes.blank?
-			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
+		# => Logo empresa
+		if !book_info.location.company.logo.email.url.include? "logo_vacio"
+			message[:images] = [{
+							:type => 'image/png',
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
+						}]
 		end
 
-		# => Logo empresa
-		if book_info.location.company.logo_url
-			message[:images] = [{
-							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
-							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-						}]
+		if !book_info.notes.blank?
+			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
 		# Notificacion service provider
@@ -635,17 +635,17 @@ class BookingMailer < ActionMailer::Base
 			]
 		}
 
-		if !book_info.notes.blank?
-			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
+		# => Logo empresa
+		if !book_info.location.company.logo.email.url.include? "logo_vacio"
+			message[:images] = [{
+							:type => 'image/png',
+							:name => 'LOGO',
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
+						}]
 		end
 
-		# => Logo empresa
-		if book_info.location.company.logo_url
-			message[:images] = [{
-							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
-							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-						}]
+		if !book_info.notes.blank?
+			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
 		second_address = ''
@@ -839,12 +839,12 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# => Logo empresa
-		if book_info.location.company.logo_url
-			message[:images][0] = {
-							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+		if !book_info.location.company.logo.email.url.include? "logo_vacio"
+			message[:images] = [{
+							:type => 'image/png',
 							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
-						}
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
+						}]
 		end
 
 		second_address = ''
@@ -1015,19 +1015,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:type => 'image/png',
 					:name => 'LOGO',
-					:content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+					:content => Base64.encode64(File.read(booking_data[:logo].to_s))
 				}
 			]
 		}
-
-		# => Logo empresa
-		if booking_data[:logo]
-			message[:images] = [{
-							:type => MIME::Types.type_for(booking_data[:logo]).first.content_type,
-							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + booking_data[:logo].to_s))
-						}]
-		end
 
 		# => Send mail
 		send_mail(template_name, template_content, message)
@@ -1843,11 +1834,11 @@ class BookingMailer < ActionMailer::Base
 		}
 
 		# => Logo empresa
-		if book_info.location.company.logo_url
+		if !book_info.location.company.logo.email.url.include? "logo_vacio"
 			message[:images] = [{
-							:type => MIME::Types.type_for(book_info.location.company.logo_url).first.content_type,
+							:type => 'image/png',
 							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo_url.to_s))
+							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
 						}]
 		end
 
