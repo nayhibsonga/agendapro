@@ -171,7 +171,7 @@ function loadStep1 (service_id) {
 									$('.open-promotion-popover[service_id="' + service.id + '"]').css("cursor", "pointer");
 
 									$('.open-promotion-popover').on('shown.bs.popover', function(e){
-										if ($(window).width() > 780)
+										if ($(window).width() > 770)
 										{
 											var oldTop = $(document).scrollTop();
 											$('#box-step-1').height($("#box-step-1").height() + 10);
@@ -181,7 +181,7 @@ function loadStep1 (service_id) {
 									});
 
 									$('.open-promotion-popover').on('hidden.bs.popover', function(e){
-										if ($(window).width() > 780)
+										if ($(window).width() > 770)
 										{
 											
 											var oldTop = $(document).scrollTop();
@@ -2067,6 +2067,15 @@ $('body').on('click', '[name="changeProvider"]', function(event){
 
 $("#new-add-service").click(function(){
 	addService($("#selectedServiceId").val());
+	if ($(window).width() < 770)
+	{
+		var oldTop = $(document).scrollTop();
+		$('#foo4').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
+		$("html, body").animate({ scrollTop: $(document).height() }, 500);
+		
+		//$("#hour-select-div").focus();
+	}
 });
 
 
