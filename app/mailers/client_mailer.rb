@@ -45,11 +45,11 @@ class ClientMailer < ActionMailer::Base
 	}
 
 	# => Logo empresa
-	if Company.find(current_user.company_id).logo_url
+	if !Company.find(current_user.company_id).logo.email.url.include? "logo_vacio"
 		company_logo = {
-			:type => MIME::Types.type_for(Company.find(current_user.company_id).logo_url).first.content_type,
+			:type => 'image/png',
 			:name => 'LOGO',
-			:content => Base64.encode64(File.read('public' + Company.find(current_user.company_id).logo_url.to_s))
+			:content => Base64.encode64(File.read('public' + Company.find(current_user.company_id).logo.email.url.to_s))
 		}
 		message[:images] = [company_logo]
 	end

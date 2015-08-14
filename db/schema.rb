@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20150812143306) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes"
-    t.text     "company_comment"
+    t.text     "notes",               default: ""
+    t.text     "company_comment",     default: ""
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -108,19 +108,17 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.integer  "client_id"
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
+    t.integer  "max_changes",            default: 2
     t.boolean  "payed",                  default: false
     t.string   "trx_id",                 default: ""
-    t.integer  "max_changes",            default: 2
     t.string   "token",                  default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
-    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.integer  "service_promo_id"
     t.integer  "payment_id"
     t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
@@ -266,16 +264,16 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.boolean  "booking_history",            default: true
     t.boolean  "staff_code",                 default: false
     t.integer  "monthly_mails",              default: 0,                     null: false
+    t.boolean  "deal_activate",              default: false
+    t.string   "deal_name",                  default: ""
+    t.boolean  "deal_overcharge",            default: true
     t.boolean  "allows_online_payment",      default: false
     t.string   "account_number",             default: ""
     t.string   "company_rut",                default: ""
     t.string   "account_name",               default: ""
     t.integer  "account_type",               default: 3
     t.integer  "bank_id"
-    t.boolean  "deal_activate",              default: false
-    t.string   "deal_name",                  default: ""
-    t.boolean  "deal_overcharge",            default: true
-    t.boolean  "deal_exclusive",             default: false
+    t.boolean  "deal_exclusive",             default: true
     t.integer  "deal_quantity",              default: 0
     t.integer  "deal_constraint_option",     default: 0
     t.integer  "deal_constraint_quantity",   default: 0
@@ -302,7 +300,8 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.string   "currency_code",     default: ""
     t.float    "latitude"
     t.float    "longitude"
-    t.string   "formatted_address", default: ""  end
+    t.string   "formatted_address", default: ""
+  end
 
   create_table "days", force: true do |t|
     t.string   "name",       null: false
@@ -382,11 +381,9 @@ ActiveRecord::Schema.define(version: 20150812143306) do
 
   add_index "facebook_pages", ["company_id"], name: "index_facebook_pages_on_company_id", using: :btree
 
-  create_table "last_minute_promos", force: true do |t|
-    t.integer  "discount",    default: 0
-    t.integer  "hours",       default: 0
+  create_table "favorites", force: true do |t|
+    t.integer  "user_id"
     t.integer  "location_id"
-    t.integer  "service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -452,6 +449,9 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.string   "email",          default: ""
     t.string   "second_address", default: ""
     t.boolean  "online_booking", default: true
+    t.string   "image1"
+    t.string   "image2"
+    t.string   "image3"
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
