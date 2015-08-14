@@ -3576,7 +3576,7 @@ class BookingsController < ApplicationController
             providers.each do |provider|
 
               provider_min_pt = provider.provider_times.where(day_id: dateTimePointer.cwday).order('open asc').first
-              if dateTimePointer.strftime("%H:%M") < provider_min_pt.open.strftime("%H:%M")
+              if !provider_min_pt.nil? && dateTimePointer.strftime("%H:%M") < provider_min_pt.open.strftime("%H:%M")
                 dateTimePointer = provider_min_pt.open
                 dateTimePointer = DateTime.new(date.year, date.mon, date.mday, dateTimePointer.hour, dateTimePointer.min)
                 #dateTimePointer = provider.provider_times.where(day_id: dateTimePointer.cwday).order('open asc').first.open.to_datetime
