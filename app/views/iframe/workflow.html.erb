@@ -48,7 +48,7 @@
       <% if !@company.description.blank? %>
         <div class="col-xs-5 col-md-4 company-header-left company-header">
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-xs-4 col-md-3">
               <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
             </div>
             <div class="col-xs-8 col-md-9">
@@ -99,7 +99,7 @@
       <% else %>
         <div class="col-xs-5 col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-xs-4 col-md-3">
               <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
             </div>
             <div class="col-xs-8 col-md-9">
@@ -177,9 +177,9 @@
           </div>
         </div>
         <div id="foo4" style="visibility: collapse;">
-          <div class="box-step">
+          <div class="box-step" id="box-step-1">
             <div class="row">
-              <div class="col-sm-5">
+              <div class="col-md-5 col-sm-10 col-sm-offset-1 col-md-offset-0 hidden-sm hidden-xs">
                 <div class="services-title light-green">
                   Elegir servicio
                 </div>
@@ -187,7 +187,7 @@
                   Seleccione un servicio
                 </div>
               </div>
-              <div class="col-sm-3">
+              <div class="col-md-3 col-sm-10 col-sm-offset-1 col-md-offset-0 hidden-sm hidden-xs">
                 <div class="services-title light-green">
                   Detalle
                 </div>
@@ -195,7 +195,7 @@
                   Detalle del servicio
                 </div>
               </div>
-              <div class="col-sm-4">
+              <div class="col-md-4 col-sm-10 col-sm-offset-1 col-md-offset-0 hidden-sm hidden-xs">
                 <div class="services-title light-green">
                   Elegir prestador
                 </div>
@@ -217,14 +217,38 @@
               <% end %>
             </div>
             <div class="row">
-              <div class="col-sm-5">
+
+              <div class="col-sm-10 col-sm-offset-1 col-md-offset-0 visible-sm visible-xs">
+                  <div class="services-title light-green">
+                    Elegir servicio
+                  </div>
+                  <div class="services-subtitle light-gray">
+                    Seleccione un servicio
+                  </div>
+              </div>
+
+              <div class="col-md-5 col-sm-10 col-sm-offset-1 col-md-offset-0">
                 <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
                   <span style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></span>
                 </div>
               </div>
-              <div class="col-sm-3">
+
+              <div class="col-sm-10 col-sm-offset-1 col-md-offset-0 visible-sm visible-xs">
+                <div class="services-title light-green">
+                  Detalle
+                </div>
+                <div class="services-subtitle light-gray">
+                  Detalle del servicio
+                </div>
+              </div>
+
+              <div class="col-md-3 col-sm-10 col-sm-offset-1 col-md-offset-0">
+
                 <div class="panel panel-default">
                   <input id="selectedServiceId" type="hidden" />
+                  <div id="description-default">
+                    Elige un servicio para revisar sus detalles. Haz click en "Agregar servicio" para agregarlo a tu lista de servicios, y en "Elegir horario" para elegir la hora de tu reserva.
+                  </div>
                   <div id="description-heading">
                   </div>
                   <div class="descripcion-body">
@@ -233,15 +257,24 @@
                       </tbody>
                     </table>
                     <div id="description-info" class="light-gray">
-
                     </div>
                   </div>
                 </div>
                 <div>
-                  <button class="btn-add-service" id="new-add-service"><i class="fa fa-plus"></i> Agregar servicio</button>
+                  <button class="btn-add-service" id="new-add-service"><span style="font-size: 18px !important;"><i class="fa fa-plus"></i></span>&nbsp;&nbsp;&nbsp; Agregar servicio</button>
                 </div>
               </div>
-              <div class="col-sm-4">
+
+              <div class="col-sm-10 col-sm-offset-1 col-md-offset-0 visible-sm visible-xs">
+                <div class="services-title light-green">
+                  Elegir prestador
+                </div>
+                <div class="services-subtitle light-gray">
+                  Selecciona staff para el servicio
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-10 col-sm-offset-1 col-md-offset-0">
                 <div class="row">
 
                   <div class="col-sm-12" id="selected-services">
@@ -249,7 +282,7 @@
                   </div>
 
                 </div>
-                <div class="btn-change btn-next" style="margin-top: 10px;">
+                <div class="btn-change btn-next" style="margin-top: 10px;" id="hour-select-div">
                   <a class="next2 next-btn">Elegir horario <i class="fa fa-chevron-right next-arrow"></i></a>
                 </div>
               </div>
@@ -390,7 +423,7 @@
               </div>
             </div>
             <div class="row" style="margin-left: 0px !important;">
-              <%= form_tag("/iframe/book_service", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
+              <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
               <div class="col-md-6">
                 <!-- INICIO FORM -->
                 <div id="form-datos">

@@ -1042,11 +1042,26 @@
 
         if (e.date < limit_date && e.date < after_date)
         {
+
+          
+
           if($(".bloque-hora").size() == 0)
           {
-            $("#next").trigger("click");
-            reload_times++;
+            var resulting_date = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate() + 7)
+
+            if(resulting_date < limit_date && resulting_date < after_date)
+            {
+              $("#next").trigger("click");
+              reload_times++;
+            }
+            else
+            {
+              $("#past_date_alert").show();
+
+              window.setTimeout(function(){ $("#past_date_alert").hide(); }, 3000);
+            }
           }
+          
 
         }
         else
