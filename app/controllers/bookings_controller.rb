@@ -1431,7 +1431,7 @@ class BookingsController < ApplicationController
           prepayed = 'No'
         end
 
-        if booking.is_session
+        if booking.is_session && booking.session_booking
           is_session = true
           session_index = 1
           Booking.where(:session_booking_id => booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|

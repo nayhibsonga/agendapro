@@ -1,6 +1,6 @@
 <% if user_signed_in? && current_user.company_id && current_user.company_id > 0  %>
   <script type="text/javascript">
-    window.location.href="/dashboard"
+    window.location.href="<%= url_for(controller: 'dashboard', action: 'index', locale: I18n.locale.to_s ) %>"
   </script>
 <% elsif user_signed_in? %>
   <script type="text/javascript">
