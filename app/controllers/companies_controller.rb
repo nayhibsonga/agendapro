@@ -652,6 +652,7 @@ class CompaniesController < ApplicationController
 		end
 
 		if mobile_request?
+			@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 			if params[:local]
 				redirect_to workflow_path(:local => params[:local])
 				return
