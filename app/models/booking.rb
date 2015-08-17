@@ -64,10 +64,10 @@ class Booking < ActiveRecord::Base
   def payment_timeout
     if !self.payed and self.trx_id != "" and self.payed_booking.nil?
       if self.is_session && !self.session_booking_id.nil?
-        if SessionBooking.find(self.session_booking_id)
+        if SessionBooking.where(id: self.session_booking_id).count > 0
           session_booking = SessionBooking.find(self.session_booking_id)
           session_booking.delete
-          if !self.service_promo_id.nil? && ServicePromo.find(self.service_promo_id)
+          if !self.service_promo_id.nil? && ServicePromo.where(id: self.service_promo_id).count > 0
             service_promo = ServicePromo.find(self.service_promo_id)
             service_promo.max_bookings = service_promo.max_bookings + 1
             service_promo.save
@@ -102,7 +102,7 @@ class Booking < ActiveRecord::Base
   end
 
   def provider_in_break_warning
-    self.service_provider.provider_breaks.each do |provider_break|
+    self.service_provider.provider_breaks.where("provider_breaks.start < ?", self.end.to_datetime).where("provider_breaks.end > ?", self.start.to_datetime).each do |provider_break|
       if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
         warnings.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido")
         return
@@ -113,7 +113,7 @@ class Booking < ActiveRecord::Base
   def bookings_overlap_warning
     cancelled_id = Status.find_by(name: 'Cancelado').id
     unless self.status_id == cancelled_id
-      self.service_provider.bookings.each do |provider_booking|
+      self.service_provider.bookings.where("bookings.start < ?", self.end.to_datetime).where("bookings.end > ?", self.start.to_datetime).each do |provider_booking|
         if provider_booking != self
           unless provider_booking.status_id == cancelled_id
             if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
@@ -148,7 +148,7 @@ class Booking < ActiveRecord::Base
           end
           used_resource = 0
           group_services = []
-          self.location.bookings.each do |location_booking|
+          self.location.bookings.where("bookings.start < ?", self.end.to_datetime).where("bookings.end > ?", self.start.to_datetime).each do |location_booking|
             if location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start - self.end) * (self.start - location_booking.end) > 0
               if location_booking.service.resources.include?(resource)
                 if !location_booking.service.group_service
@@ -256,7 +256,7 @@ class Booking < ActiveRecord::Base
     unless self.location.company.company_setting.provider_overcapacity
       cancelled_id = Status.find_by(name: 'Cancelado').id
       unless self.status_id == cancelled_id
-        self.service_provider.bookings.each do |provider_booking|
+        self.service_provider.bookings.where("bookings.start < ?", self.end.to_datetime).where("bookings.end > ?", self.start.to_datetime).each do |provider_booking|
           if provider_booking != self
             unless provider_booking.status_id == cancelled_id
               if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0

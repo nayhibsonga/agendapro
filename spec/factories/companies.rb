@@ -14,6 +14,7 @@ FactoryGirl.define do
 		due_amount 				0.0
 		due_date				nil
 		owned 					true
+		country
 
     end
 
