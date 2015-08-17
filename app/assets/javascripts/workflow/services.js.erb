@@ -1017,7 +1017,7 @@ function loadStep3 () {
 
 						$("#summary").append(
 							'<tr>' +
-								'<td class="dark-gray">Costo pago en local</td>' +
+								'<td class="dark-gray">Precio en local</td>' +
 								'<td class="light-gray">' + simple_currency(just_book_price) + '</td>' +
 							'</tr>'
 						);
@@ -1045,7 +1045,7 @@ function loadStep3 () {
 
 						$("#summary").append(
 							'<tr>' +
-								'<td class="dark-gray">Costo total&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="El costo total considera el precio a prepagar en línea, más el costo que deberás pagar en el local por aquellos servicios que no pueden ser prepagados."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
+								'<td class="dark-gray">Precio total&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="El precio total considera el precio a prepagar en línea, más el precio que deberás pagar en el local por aquellos servicios que no pueden ser prepagados."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
 								'<td class="light-gray">' + simple_currency(not_payable_price + total_price) + '</td>' +
 							'</tr>'
 						);
@@ -1062,7 +1062,7 @@ function loadStep3 () {
 						{
 							$("#summary").append(
 								'<tr>' +
-									'<td class="dark-gray">Pago pendiente en local&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="Existen servicios que no pueden ser pagados en línea. Deberás cancelar su costo el día de la reserva en el local."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
+									'<td class="dark-gray">Pago pendiente en local&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="Existen servicios que no pueden ser pagados en línea. Deberás cancelar su precio el día de la reserva en el local."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
 									'<td class="light-gray">' + simple_currency(not_payable_price) + '</td>' +
 								'</tr>'
 							);
@@ -1895,6 +1895,15 @@ function blockService(service)
 
 function addService(service_id){
 
+
+	if(service_id == "")
+	{
+		myAlert.showAlert(
+		  '<h3>Selecciona un servicio</h3>' +
+		  '<p>Selecciona un servicio antes de agregarlo.</p>'
+		);
+		return false;
+	}
 
 	$.getJSON('/service', {id: service_id}, function (service) {
 
