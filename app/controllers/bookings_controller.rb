@@ -3506,7 +3506,7 @@ class BookingsController < ApplicationController
 
       while (dateTimePointer < limit_date)
 
-        logger.debug "DTP: " + dateTimePointer.to_s
+        #logger.debug "DTP: " + dateTimePointer.to_s
 
         serviceStaffPos = 0
         bookings = []
@@ -3519,11 +3519,11 @@ class BookingsController < ApplicationController
           #Get providers min
           min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(:location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
 
-          logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
-          logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
+          #logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
+          #logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
 
           if !min_pt.nil? && min_pt.open.strftime("%H:%M") > dateTimePointer.strftime("%H:%M")
-            logger.debug "Changing dtp"
+            #logger.debug "Changing dtp"
             dateTimePointer = min_pt.open
             dateTimePointer = DateTime.new(date.year, date.mon, date.mday, dateTimePointer.hour, dateTimePointer.min)
           end
@@ -3534,7 +3534,7 @@ class BookingsController < ApplicationController
           service_sum = service.duration.minutes
 
           minHour = now
-          logger.debug "min_hours: " + minHour.to_s
+          #logger.debug "min_hours: " + minHour.to_s
           if !params[:admin] && minHour <= DateTime.now
             minHour += company_setting.before_booking.hours
           end
@@ -3542,7 +3542,7 @@ class BookingsController < ApplicationController
             service_valid = true
           end
 
-          logger.debug "min_hours: " + minHour.to_s
+          #logger.debug "min_hours: " + minHour.to_s
 
           # Hora dentro del horario del local
 
