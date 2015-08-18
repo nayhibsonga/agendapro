@@ -54,7 +54,7 @@ class Client < ActiveRecord::Base
   end
 
   def mail_uniqueness
-    if self.email.nil?
+    if self.email.nil? || self.email == ""
       return
     end
     Client.where(company_id: self.company_id, email: self.email).each do |client|
@@ -65,7 +65,7 @@ class Client < ActiveRecord::Base
   end
 
   def record_uniqueness
-    if self.record.nil?
+    if self.record.nil? || self.record == ""
       return
     end
     Client.where(company_id: self.company_id, record: self.record).each do |client|
@@ -76,7 +76,7 @@ class Client < ActiveRecord::Base
   end
 
   def identification_uniqueness
-    if self.identification_number.nil?
+    if self.identification_number.nil? || self.identification_number = ""
       return
     end
     Client.where(company_id: self.company_id, identification_number: self.identification_number).each do |client|
