@@ -4,7 +4,7 @@
       <% if !@company.description.blank? %>
         <div class="col-sm-4 company-header-left company-header">
           <div class="col-sm-3">
-            <%= image_tag @company.lgo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
+            <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
           </div>
           <div class="col-sm-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
             <%= @company.name %>

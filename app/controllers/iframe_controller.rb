@@ -49,7 +49,7 @@ class IframeController < ApplicationController
 
 	def overview
 		if params[:signed_request]
-			app_secret = "4f46d0f4f4c36a03ead5ced6c0f0ff87"
+			app_secret = ENV["FACEBOOK_APP_SECRET"]
 			signed_request = FBGraph::Canvas.parse_signed_request(app_secret, params[:signed_request])
 			@admin = signed_request["page"]["admin"]
 			@page_id = signed_request["page"]["id"]
