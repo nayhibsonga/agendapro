@@ -321,7 +321,7 @@
         </div>
       </div>
       <div class="col-sm-6">
-        <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
+        <%= form_tag("/pcontact", method: "post", id: 'contact' ) do %>
           <%= hidden_field_tag :source, "search" %>
           <%= hidden_field_tag :inputName %>
           <%= hidden_field_tag :inputLastname %>

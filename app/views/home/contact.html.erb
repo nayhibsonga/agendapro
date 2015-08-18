@@ -13,7 +13,7 @@
                 <iframe width="100%" height="400" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0" src="https://mapsengine.google.com/map/u/0/embed?mid=zxyVW9hDKDEg.kYaUAImoWzTg&amp;hl=es-419&amp;z=17"></iframe>
             </div>
             <div class="contact_form col-md-6">
-            	<%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
+            	<%= form_tag("/pcontact", method: "post", id: 'contact' ) do %>
                 <%= hidden_field_tag :source, "contact" %>
                     <%= hidden_field_tag :inputName %>
                     <%= hidden_field_tag :inputLastname %>
