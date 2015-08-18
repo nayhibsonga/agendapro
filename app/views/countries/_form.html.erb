@@ -32,6 +32,12 @@
           </div>
         </div>
         <div class="form-group">
+          <%= f.label :domain, 'Dominio: ', :class => 'col-md-2 control-label' %>
+          <div class="col-md-4">
+            <%= f.text_field :domain, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
           <%= f.label :latitude, 'Latitud: ', :class => 'col-md-2 control-label' %>
           <div class="col-md-4">
             <%= f.number_field :latitude, step: 'any', :class => 'form-control' %>

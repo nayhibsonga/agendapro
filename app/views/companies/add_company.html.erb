@@ -48,7 +48,7 @@
 				<div class="form-group has-feedback">
 					<%= f.label :country_id, 'País de la Compañía', :class => 'col-sm-4 control-label' %>
 					<div class="col-sm-8">
-						<%= f.collection_select :country_id, Country.all, :id, :name, { selected: Country.find_by(locale: I18n.locale.to_s).id, placeholder: 'Elige el país donde está tu empresa' },  { :class => 'form-control' } %>
+						<%= f.select :country_id, options_for_select(Country.all.map{ |c| [c.name, c.id, {'data-domain'=>c.domain}] }, selected_key = Country.find_by(locale: I18n.locale.to_s).id), { }, { class: "form-control" } %>
 					<span class="help-block"></span>
 					<span class="form-control-feedback"></span>
 					</div>
@@ -119,6 +119,10 @@
 			tmp = tmp.replace(/ñ/gi, 'n');	//Special ñ*/
 			tmp = tmp.replace(/[^a-z0-9]/gi,'');
 			$('#company_web_address').val(tmp);
+		});
+
+		$('#company_country_id').change(function() {
+			$('span.input-group-addon').html('.agendapro' + $('#company_country_id option:selected').data("domain"));
 		});
 	});
 

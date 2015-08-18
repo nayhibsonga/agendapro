@@ -35,7 +35,7 @@
     <div class="col-md-9">
       <div class="input-group">
         <%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
-        <span class="input-group-addon">.agendapro<%= I18n.t 'country.domain' %></span>
+        <span class="input-group-addon">.agendapro<%= @company.country.domain %></span>
       </div>
       <span class="help-block"></span>
       <span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>

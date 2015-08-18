@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150811175502) do
+ActiveRecord::Schema.define(version: 20150818214042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20150811175502) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes",               default: ""
-    t.text     "company_comment",     default: ""
+    t.text     "notes"
+    t.text     "company_comment"
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -109,17 +109,17 @@ ActiveRecord::Schema.define(version: 20150811175502) do
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
     t.integer  "max_changes",            default: 2
-    t.integer  "deal_id"
     t.boolean  "payed",                  default: false
     t.string   "trx_id",                 default: ""
     t.string   "token",                  default: ""
+    t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
+    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.integer  "payment_id"
     t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
   end
@@ -260,28 +260,25 @@ ActiveRecord::Schema.define(version: 20150811175502) do
     t.boolean  "provider_overcapacity",      default: true,                  null: false
     t.boolean  "resource_overcapacity",      default: true,                  null: false
     t.integer  "booking_confirmation_time",  default: 1,                     null: false
+    t.integer  "max_changes",                default: 2
     t.boolean  "booking_history",            default: true
     t.boolean  "staff_code",                 default: false
-    t.integer  "max_changes",                default: 2
+    t.integer  "monthly_mails",              default: 0,                     null: false
     t.boolean  "deal_activate",              default: false
     t.string   "deal_name",                  default: ""
     t.boolean  "deal_overcharge",            default: true
-    t.integer  "monthly_mails",              default: 0,                     null: false
-    t.boolean  "deal_exclusive",             default: false
-    t.integer  "deal_quantity",              default: 0
-    t.integer  "deal_constraint_option",     default: 0
-    t.integer  "deal_constraint_quantity",   default: 0
-    t.boolean  "deal_identification_number", default: false
-    t.boolean  "deal_required",              default: false,                 null: false
     t.boolean  "allows_online_payment",      default: false
     t.string   "account_number",             default: ""
     t.string   "company_rut",                default: ""
     t.string   "account_name",               default: ""
     t.integer  "account_type",               default: 3
     t.integer  "bank_id"
-    t.string   "locations",                  default: "Lugares",             null: false
-    t.string   "services",                   default: "Servicios",           null: false
-    t.string   "staff",                      default: "Staff",               null: false
+    t.boolean  "deal_exclusive",             default: true
+    t.integer  "deal_quantity",              default: 0
+    t.integer  "deal_constraint_option",     default: 0
+    t.integer  "deal_constraint_quantity",   default: 0
+    t.boolean  "deal_identification_number", default: false
+    t.boolean  "deal_required",              default: false,                 null: false
     t.boolean  "online_payment_capable",     default: false
     t.boolean  "allows_optimization",        default: true
     t.boolean  "activate_notes",             default: true,                  null: false
@@ -303,6 +300,7 @@ ActiveRecord::Schema.define(version: 20150811175502) do
     t.float    "latitude"
     t.float    "longitude"
     t.string   "formatted_address", default: ""
+    t.string   "domain",            default: ""
   end
 
   create_table "days", force: true do |t|
@@ -414,8 +412,8 @@ ActiveRecord::Schema.define(version: 20150811175502) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-    t.integer  "location_id",             null: false
-    t.integer  "stock",       default: 0
+    t.integer  "location_id"
+    t.integer  "stock"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -905,16 +903,14 @@ ActiveRecord::Schema.define(version: 20150811175502) do
 
   create_table "service_providers", force: true do |t|
     t.integer  "location_id"
-    t.integer  "company_id",                      null: false
+    t.integer  "company_id",                    null: false
     t.string   "public_name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",           default: true
-    t.integer  "order",            default: 0
-    t.integer  "block_length",     default: 15
-    t.decimal  "comission_value",  default: 0.0,  null: false
-    t.integer  "comission_option", default: 0,    null: false
-    t.boolean  "online_booking",   default: true
+    t.boolean  "active",         default: true
+    t.integer  "order",          default: 0
+    t.integer  "block_length",   default: 15
+    t.boolean  "online_booking", default: true
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
