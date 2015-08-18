@@ -27,7 +27,6 @@ class LocationImagesUploader < CarrierWave::Uploader::Base
 
   # Process files as they are uploaded:
   process :convert => 'png'
-  process :resize_and_pad => [1024, 550]
 
   # def scale(width, height)
   #   # do something
