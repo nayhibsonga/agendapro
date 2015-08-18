@@ -175,7 +175,7 @@
                       <%= f.label :web_address, 'Dirección Sitio AgendaPro' %>
                       <div class="input-group">
                         <%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
-                        <span class="input-group-addon">.agendapro.cl</span>
+                        <span class="input-group-addon">.agendapro<%= I18n.t 'country.domain' %></span>
                       </div>
                       <span class="help-block"></span>
                       <span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
@@ -567,7 +567,7 @@
           <div class="row">
             <div class="col-md-12">
               <h3 class="text-green">Agrega el botón AgendaPro</h3>
-              <pre class="pre-scrollable">&lt;a class="btn btn-green btn-lg" href="http://<%= @web_address %>.agendapro.cl" target="_blank" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:0;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:10px;padding-bottom:10px;padding-right:16px;padding-left:16px;font-size:18px;line-height:1.33;border-radius:6px;color:#ffffff;background-color:#22c488;border-color:#1ba970;" &gt;Reserva Online&lt;/a&gt;</pre>
+              <pre class="pre-scrollable">&lt;a class="btn btn-green btn-lg" href="http://<%= @web_address %>.agendapro<%= I18n.t 'country.domain' %>" target="_blank" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:0;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:10px;padding-bottom:10px;padding-right:16px;padding-left:16px;font-size:18px;line-height:1.33;border-radius:6px;color:#ffffff;background-color:#22c488;border-color:#1ba970;" &gt;Reserva Online&lt;/a&gt;</pre>
             </div>
           </div>
         </div>

@@ -121,7 +121,7 @@
 						<div class="col-sm-8">
 							<div class="input-group">
 								<%= builder.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio (requerido)' %>
-								<span class="input-group-addon signup-addon">.agendapro.cl</span>
+								<span class="input-group-addon signup-addon">.agendapro<%= I18n.t 'country.domain' %></span>
 							</div>
 						</div>
 						<div class="col-sm-offset-4 col-sm-8">
@@ -132,7 +132,7 @@
 						<div class="col-sm-offset-4 col-sm-8">
 							<div class="checkbox">
 								<label>
-									<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.cl/Term_y_Cond_AgendaPro122014.pdf" target="_blank">Términos y Condiciones</a>.
+									<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.co/Term_y_Cond_AgendaPro122014.pdf" target="_blank">Términos y Condiciones</a>.
 								</label>
 								<span class="help-block"></span>
 							</div>
