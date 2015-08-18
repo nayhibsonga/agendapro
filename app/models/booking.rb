@@ -58,7 +58,9 @@ class Booking < ActiveRecord::Base
 	end
 
   def wait_for_payment
-    self.delay(run_at: 10.minutes.from_now).payment_timeout
+    if self.trx_id != ""
+      self.delay(run_at: 10.minutes.from_now).payment_timeout
+    end
   end
 
   def payment_timeout
@@ -358,7 +360,7 @@ class Booking < ActiveRecord::Base
     if self.is_session && !self.is_session_booked
       return
     end
-    
+
     if self.location.company.company_setting.deal_activate
       unless self.location.company.company_setting.deal_overcharge
         cancelled_id = Status.find_by(name: 'Cancelado').id
