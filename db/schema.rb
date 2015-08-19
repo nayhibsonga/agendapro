@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20150818214042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -286,7 +286,6 @@ ActiveRecord::Schema.define(version: 20150818214042) do
     t.float    "online_payment_commission",  default: 5.0
     t.float    "promo_commission",           default: 10.0
     t.boolean  "promo_offerer_capable",      default: false
-    t.boolean  "can_edit",                   default: true
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
