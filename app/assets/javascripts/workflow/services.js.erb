@@ -612,62 +612,73 @@ function loadStep2() {
 
 			bookDetailsDiscountPrice = bookDetails.price;
 
-			
-			if(bookDetails.has_discount && bookDetails.has_time_discount)
+			if(bookDetails.show_price)
 			{
-				if(bookDetails.discount > bookDetails.time_discount)
+				if(bookDetails.has_discount && bookDetails.has_time_discount)
+				{
+					if(bookDetails.discount > bookDetails.time_discount)
+					{
+						book_discount = bookDetails.discount;
+						bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
+						$("#selected-hour-body").append(
+							'<b>' + bookDetails.service_name + '</b><br />' +
+							'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+							'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %>  <strike>' + simple_currency(bookDetails.price) + '</strike>  <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
+						);
+					}
+					else
+					{
+						book_discount = bookDetails.time_discount;
+						is_time_discount = true;
+						bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
+						$("#selected-hour-body").append(
+							'<b>' + bookDetails.service_name + '</b><br />' +
+							'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+							'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> ' + '<span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span>' + ' (' + bookDetails.time_discount + ' % off) <br /></div>'
+						);
+					}
+				}
+				else if(bookDetails.has_discount && !bookDetails.has_time_discount)
 				{
 					book_discount = bookDetails.discount;
 					bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
 					$("#selected-hour-body").append(
-						'<b>' + bookDetails.service_name + '</b><br />' +
-						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
-						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %>  <strike>' + simple_currency(bookDetails.price) + '</strike>  <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
-					);
+							'<b>' + bookDetails.service_name + '</b><br />' +
+							'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+							'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
+						);
 				}
-				else
+				else if(!bookDetails.has_discount && bookDetails.has_time_discount)
 				{
 					book_discount = bookDetails.time_discount;
 					is_time_discount = true;
 					bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
 					$("#selected-hour-body").append(
+							'<b>' + bookDetails.service_name + '</b><br />' +
+							'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+							'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.time_discount + ' % off) <br /></div>'
+						);
+				}
+				else
+				{
+					book_discount = 0;
+					$("#selected-hour-body").append(
 						'<b>' + bookDetails.service_name + '</b><br />' +
-						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
-						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> ' + '<span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span>' + ' (' + bookDetails.time_discount + ' % off) <br /></div>'
+						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> ' + simple_currency(bookDetails.price) + '<br /></div>'
 					);
 				}
-			}
-			else if(bookDetails.has_discount && !bookDetails.has_time_discount)
-			{
-				book_discount = bookDetails.discount;
-				bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
-				$("#selected-hour-body").append(
-						'<b>' + bookDetails.service_name + '</b><br />' +
-						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
-						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
-					);
-			}
-			else if(!bookDetails.has_discount && bookDetails.has_time_discount)
-			{
-				book_discount = bookDetails.time_discount;
-				is_time_discount = true;
-				bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
-				$("#selected-hour-body").append(
-						'<b>' + bookDetails.service_name + '</b><br />' +
-						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
-						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.time_discount + ' % off) <br /></div>'
-					);
 			}
 			else
 			{
 				book_discount = 0;
+				is_time_discount = false;
 				$("#selected-hour-body").append(
 					'<b>' + bookDetails.service_name + '</b><br />' +
-					'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
-					'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> ' + simple_currency(bookDetails.price) + '<br /></div>'
+					'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd +
+					'</div>'
 				);
 			}
-			
 			
 			if(!sessions_service)
 			{
