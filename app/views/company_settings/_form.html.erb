@@ -295,13 +295,13 @@
                       <span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
                       <%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
                     </div>
-                  </div>
-                  <div class="col-md-6">
                     <div class="form-group">
                       <%= f.label :booking_confirmation_time, 'Recordatorios' %>
                       <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
                       <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
                     </div>
+                  </div>
+                  <div class="col-md-6">
                     <div class="form-group has-feedback">
                       <%= f.label :before_booking, 'Tiempo Mínimo de Reserva' %>
                       <span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
@@ -321,14 +321,6 @@
                       <span class="help-block"></span>
                     </div>
                     <div class="form-group">
-                      <div class="checkbox">
-                        <label>
-                          <%= f.check_box :can_edit %> Reservas Editables
-                        </label>
-                        <span class="help-block">Habilita esta opción para que el usuario pueda editar o cancelar las reservas que reliza.</span>
-                      </div>
-                    </div>
-                    <div class="form-group">
                       <%= f.label :before_edit_booking, 'Política de Edición de Reservas' %>
                       <span class="help-block">Horas mínimas requeridas para que un cliente edite o cancele su reserva. No se podrá editar o cancelar reservas con menos anticipación.</span>
                       <div class="input-group">
@@ -338,6 +330,14 @@
                       <span class="help-block"></span>
                     </div>
                     <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :can_edit %> Reservas Editables
+                        </label>
+                        <span class="help-block">Habilita esta opción para que el usuario pueda editar las reservas que reliza.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
                       <%= f.label :max_changes, 'Ediciones Maximas' %>
                       <span class="help-block">Cantidad de veces que un cliente puede editar su reserva.</span>
                       <div class="input-group">
@@ -345,6 +345,14 @@
                         <span class="input-group-addon">Veces</span>
                       </div>
                       <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        <%= f.check_box :can_cancel %> Reservas Cancelables
+                      </label>
+                      <span class="help-block">Habilita esta opción para que el usuario pueda cancelar las reservas que reliza.</span>
+                    </div>
                     </div>
                   </div>
                 </div>

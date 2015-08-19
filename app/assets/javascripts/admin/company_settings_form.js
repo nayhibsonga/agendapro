@@ -16,18 +16,18 @@ $(function () {
 
   if ($('#company_setting_can_edit').prop('checked')) {
     var thisGroup = $('#company_setting_can_edit').closest('.form-group');
-    thisGroup.nextAll().removeClass('hidden');
+    thisGroup.next().removeClass('hidden');
   } else{
     var thisGroup = $('#company_setting_can_edit').closest('.form-group');
-    thisGroup.nextAll().addClass('hidden');
+    thisGroup.next().addClass('hidden');
   };
 
   $('#company_setting_can_edit').change(function () {
     var thisGroup = $(this).closest('.form-group');
     if ($(this).prop('checked')) {
-      thisGroup.nextAll().removeClass('hidden');
+      thisGroup.next().removeClass('hidden');
     } else{
-      thisGroup.nextAll().addClass('hidden');
+      thisGroup.next().addClass('hidden');
     };
   });
 
