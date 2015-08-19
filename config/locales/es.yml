@@ -207,3 +207,4 @@ es:
     page_gap: "&hellip;"
   country:
     name: 'Latinoamérica'
+    domain: '.co'

@@ -103,7 +103,7 @@
 					<div class="form-group has-feedback">
 						<%= builder.label :country_id, 'País de la Compañía', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
-							<%= builder.collection_select :country_id, Country.all, :id, :name, { selected: Country.find_by(locale: I18n.locale.to_s).id, placeholder: 'Elige el país donde está tu empresa' },  { :class => 'form-control' } %>
+							<%= builder.select :country_id, options_for_select(Country.all.map{ |c| [c.name, c.id, {'data-domain'=>c.domain}] }, selected_key = Country.find_by(locale: I18n.locale.to_s).id), { placeholder: 'Elige el país donde está tu empresa' }, { class: "form-control" } %>
 						<span class="help-block"></span>
 						<span class="form-control-feedback"></span>
 						</div>
@@ -121,7 +121,7 @@
 						<div class="col-sm-8">
 							<div class="input-group">
 								<%= builder.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio (requerido)' %>
-								<span class="input-group-addon signup-addon">.agendapro.cl</span>
+								<span class="input-group-addon signup-addon">.agendapro<%= I18n.t 'country.domain' %></span>
 							</div>
 						</div>
 						<div class="col-sm-offset-4 col-sm-8">
@@ -132,7 +132,7 @@
 						<div class="col-sm-offset-4 col-sm-8">
 							<div class="checkbox">
 								<label>
-									<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.cl/Term_y_Cond_AgendaPro122014.pdf" target="_blank">Términos y Condiciones</a>.
+									<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.co/Term_y_Cond_AgendaPro122014.pdf" target="_blank">Términos y Condiciones</a>.
 								</label>
 								<span class="help-block"></span>
 							</div>
@@ -322,6 +322,10 @@
 			tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
 			tmp = tmp.replace(/[^a-z0-9]/gi,'');
 			$('#user_company_attributes_web_address').val(tmp);
+		});
+
+		$('#user_company_attributes_country_id').change(function() {
+			$('span.input-group-addon.signup-addon').html('.agendapro' + $('#user_company_attributes_country_id option:selected').data("domain"));
 		});
 	});
 

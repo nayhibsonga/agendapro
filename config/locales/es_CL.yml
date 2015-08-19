@@ -11,3 +11,4 @@ es_CL:
         unit: $
   country:
     name: 'Chile'
+    domain: '.cl'

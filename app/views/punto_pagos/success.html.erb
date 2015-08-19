@@ -63,7 +63,7 @@
 									</dl>
 								<% else %>
 
-									<% if @bookings.first.payed_booking.nil? || @bookings.first.payed_booking.punto_pagos_confirmation.nil? %>
+									<% if @bookings.nil? || @bookings.first.payed_booking.nil? || @bookings.first.payed_booking.punto_pagos_confirmation.nil? %>
 
 
 										<h4>Tu transferencia está siendo procesada.</h4>

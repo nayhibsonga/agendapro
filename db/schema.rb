@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150812143306) do
+ActiveRecord::Schema.define(version: 20150818214042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,7 +120,6 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.integer  "payment_id"
     t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
   end
@@ -287,7 +286,6 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.float    "online_payment_commission",  default: 5.0
     t.float    "promo_commission",           default: 10.0
     t.boolean  "promo_offerer_capable",      default: false
-    t.boolean  "can_edit",                   default: true
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -301,7 +299,9 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.string   "currency_code",     default: ""
     t.float    "latitude"
     t.float    "longitude"
-    t.string   "formatted_address", default: ""  end
+    t.string   "formatted_address", default: ""
+    t.string   "domain",            default: ""
+  end
 
   create_table "days", force: true do |t|
     t.string   "name",       null: false
@@ -400,18 +400,6 @@ ActiveRecord::Schema.define(version: 20150812143306) do
     t.datetime "updated_at"
   end
 
-  add_index "favorites", ["location_id"], name: "index_favorites_on_location_id", using: :btree
-  add_index "favorites", ["user_id"], name: "index_favorites_on_user_id", using: :btree
-
-  create_table "last_minute_promos", force: true do |t|
-    t.integer  "discount",    default: 0
-    t.integer  "hours",       default: 0
-    t.integer  "location_id"
-    t.integer  "service_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "location_outcall_districts", force: true do |t|
     t.integer  "location_id"
     t.integer  "district_id"
@@ -424,8 +412,8 @@ ActiveRecord::Schema.define(version: 20150812143306) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-    t.integer  "location_id",             null: false
-    t.integer  "stock",       default: 0
+    t.integer  "location_id"
+    t.integer  "stock"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -108,13 +108,13 @@ function loadStep1 (service_id) {
 					servicePrice = '';
 					if ($('#online_capabilities').data('online-payment-capable') && ((service.has_time_discount && $('#online_capabilities').data('promo-offerer-capable')) || (service.has_discount && service.online_payable && service.discount > 0)))
 					{
-						serviceDiscount = '<div class="col-sm-1 open-promotion-popover" rel="popover" service_id="' + service.id + '" data-toggle="popover" data-placement="right" data-content="">' +
+						serviceDiscount = '<div class="col-sm-2 open-promotion-popover" rel="popover" service_id="' + service.id + '" data-toggle="popover" data-placement="right" data-content="">' +
 										'<%= image_tag("promociones/icono_promociones.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' +
 									'</div>';				
 					}
 					else
 					{
-						serviceDiscount = '<div class="col-sm-1 open-promotion-popover">&nbsp;' +
+						serviceDiscount = '<div class="col-sm-2 open-promotion-popover">&nbsp;' +
 									'</div>';
 					}
 					if(service.show_price && service.price > 0)
@@ -125,14 +125,14 @@ function loadStep1 (service_id) {
 						'<li class="list-group-item">' +
 							'<div class="radio">' +
 								'<div style="width: 95%"><div class="row">' +
-									'<div class="col-sm-5">' +
+									'<div class="col-sm-4">' +
 										'<label>' +
 											'<input type="radio" name="serviceRadio" value="' + service.id + '" data-outcall="'+service.outcall+'">' +
-											'<p>' + service.name_with_small_outcall + '</p>' +
+											'<p class="service-selector-text">' + service.name_with_small_outcall + '</p>' +
 										'</label>' +
-									'</div><div class="col-sm-3 service-selector-price">' +
+									'</div><div class="col-sm-3 service-selector-price service-selector-text">' +
 										servicePrice +
-									'</div><div class="col-sm-3">' +
+									'</div><div class="col-sm-3 service-selector-text">' +
 										'<%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' + service.duration + ' min' +
 									'</div>' +
 									serviceDiscount
@@ -149,27 +149,47 @@ function loadStep1 (service_id) {
 
 									$("#services-popovers-contents").append(response);
 
-									$('.open-promotion-popover[service_id="' + service.id + '"]').popover({
-										html: true,
-										content: $('.service-popover-content[service_id="' + service.id + '"]').html(),
-										placement: 'right',
-										trigger: 'hover'
-									});
+									if ($(window).width() < 770)
+									{
+										$('.open-promotion-popover[service_id="' + service.id + '"]').popover({
+											html: true,
+											content: $('.service-popover-content[service_id="' + service.id + '"]').html(),
+											placement: 'bottom',
+											trigger: 'hover'
+										});
+									}
+									else
+									{
+										$('.open-promotion-popover[service_id="' + service.id + '"]').popover({
+											html: true,
+											content: $('.service-popover-content[service_id="' + service.id + '"]').html(),
+											placement: 'right',
+											trigger: 'hover'
+										});
+									}
 
 									$('.open-promotion-popover[service_id="' + service.id + '"]').css("cursor", "pointer");
 
 									$('.open-promotion-popover').on('shown.bs.popover', function(e){
-										var oldTop = $(document).scrollTop();
-										$('#box-step-1').height($("#box-step-1").height() + 10);
-										$("#foo4").trigger('updateSizes');
-										$(document).scrollTop(oldTop);
+										if ($(window).width() > 770)
+										{
+											var oldTop = $(document).scrollTop();
+											$('#box-step-1').height($("#box-step-1").height() + 10);
+											$("#foo4").trigger('updateSizes');
+											$(document).scrollTop(oldTop);
+										}
 									});
 
 									$('.open-promotion-popover').on('hidden.bs.popover', function(e){
-										var oldTop = $(document).scrollTop();
-										$('#box-step-1').height($("#box-step-1").height() - 10);
-										$("#foo4").trigger('updateSizes');
-										$(document).scrollTop(oldTop);
+										if ($(window).width() > 770)
+										{
+											
+											var oldTop = $(document).scrollTop();
+											$('#box-step-1').height($("#box-step-1").height() - 10);
+											$("#foo4").trigger('updateSizes');
+											$(document).scrollTop(oldTop);
+
+										}
 									});
 
 								}
@@ -193,6 +213,14 @@ function loadStep1 (service_id) {
 						'</div>' +
 					'</div>'
 				);
+
+				//Reduce font-size if width is lower than 1100px
+				if ($(window).width() < 1100)
+				{
+					$(".service-selector-text").css('font-size', '14px');
+					$("promotion-hour-icon").css('height', '14px');
+					$("promotion-hour-icon").css('width', '14px');
+				}
 
 			};
 		});
@@ -218,10 +246,24 @@ function loadStep1 (service_id) {
         		var settings = $('#bookingForm').validate().settings;
         		delete settings.rules.address;
 			}
-			var oldTop = $(document).scrollTop();
-			$('#foo4').trigger('updateSizes');
-			$(document).scrollTop(oldTop);
-			loadDescription(serviceId);
+
+			console.log($(window).width());
+			if ($(window).width() > 1200)
+			{
+				var oldTop = $(document).scrollTop();
+				$('#foo4').trigger('updateSizes');
+				$(document).scrollTop(oldTop);
+				loadDescription(serviceId);
+			}
+			else
+			{
+
+				var oldTop = $(document).scrollTop();
+				$('#foo4').trigger('updateSizes');
+				$(document).scrollTop(oldTop);
+				loadDescription(serviceId);
+				$("#new-add-service").focus();
+			}
 		});
 
 		var oldTop = $(document).scrollTop();
@@ -975,7 +1017,7 @@ function loadStep3 () {
 
 						$("#summary").append(
 							'<tr>' +
-								'<td class="dark-gray">Costo pago en local</td>' +
+								'<td class="dark-gray">Precio en local</td>' +
 								'<td class="light-gray">' + simple_currency(just_book_price) + '</td>' +
 							'</tr>'
 						);
@@ -1003,7 +1045,7 @@ function loadStep3 () {
 
 						$("#summary").append(
 							'<tr>' +
-								'<td class="dark-gray">Costo total&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="El costo total considera el precio a prepagar en línea, más el costo que deberás pagar en el local por aquellos servicios que no pueden ser prepagados."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
+								'<td class="dark-gray">Precio total&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="El precio total considera el precio a prepagar en línea, más el precio que deberás pagar en el local por aquellos servicios que no pueden ser prepagados."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
 								'<td class="light-gray">' + simple_currency(not_payable_price + total_price) + '</td>' +
 							'</tr>'
 						);
@@ -1020,7 +1062,7 @@ function loadStep3 () {
 						{
 							$("#summary").append(
 								'<tr>' +
-									'<td class="dark-gray">Pago pendiente en local&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="Existen servicios que no pueden ser pagados en línea. Deberás cancelar su costo el día de la reserva en el local."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
+									'<td class="dark-gray">Pago pendiente en local&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="Existen servicios que no pueden ser pagados en línea. Deberás cancelar su precio el día de la reserva en el local."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
 									'<td class="light-gray">' + simple_currency(not_payable_price) + '</td>' +
 								'</tr>'
 							);
@@ -1558,6 +1600,7 @@ function loadDescription (serviceId) {
 			$("#reservar2").hide();
 			$("#reservar1").show();
 		}*/
+
 	});
 }
 
@@ -1853,6 +1896,15 @@ function blockService(service)
 function addService(service_id){
 
 
+	if(service_id == "")
+	{
+		myAlert.showAlert(
+		  '<h3>Selecciona un servicio</h3>' +
+		  '<p>Selecciona un servicio antes de agregarlo.</p>'
+		);
+		return false;
+	}
+
 	$.getJSON('/service', {id: service_id}, function (service) {
 
 		if(blockService(service))
@@ -2024,6 +2076,15 @@ $('body').on('click', '[name="changeProvider"]', function(event){
 
 $("#new-add-service").click(function(){
 	addService($("#selectedServiceId").val());
+	if ($(window).width() < 992)
+	{
+		var oldTop = $(document).scrollTop();
+		$('#foo4').trigger('updateSizes');
+		$(document).scrollTop(oldTop);
+		$("html, body").animate({ scrollTop: $(document).height() }, 500);
+		
+		//$("#hour-select-div").focus();
+	}
 });
 
 
@@ -2390,9 +2451,23 @@ $(function () {
 		{
 			if($(".bloque-hora").size() == 0)
 			{
-				$("#next").trigger("click");
-				reload_times =reload_times + 1;
-				$("#next").attr("disabled", false);
+				//Check that resulting date wouldn't be greater than after_date
+
+				var resulting_date = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate() + 7)
+
+				if(resulting_date < after_date)
+				{
+					$("#next").trigger("click");
+					reload_times =reload_times + 1;
+					$("#next").attr("disabled", false);
+				}
+				else
+				{
+					myAlert.showAlert(
+			            '<h3>No hay horarios disponibles</h3>' +
+			            '<p>Lo sentimos, no hay más horarios disponibles después de la semana del ' + after_date.toLocaleDateString() + '.</p>'
+			        );
+				}
 			}
 		}
 		else
@@ -2418,8 +2493,6 @@ $(function () {
 
 
 			day_str = after_date.getFullYear() + "-" + (parseInt(after_date.getMonth())+1) + "-" + after_date.getDate();
-
-
 
 			data = {local: localId, serviceStaff: JSON.stringify(selects), date: day_str};
 

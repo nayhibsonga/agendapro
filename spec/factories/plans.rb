@@ -6,7 +6,6 @@ FactoryGirl.define do
     	locations				1 
     	service_providers		1 
     	custom					false 
-    	price					14900.0
     	special					false 
     	monthly_mails			5000
 
@@ -15,7 +14,6 @@ FactoryGirl.define do
 		    locations 			1
 		    service_providers 	30
 		    custom 				false
-		    price 				24900.0
 		    special 			false
 		    monthly_mails		5000
     	end
@@ -25,7 +23,6 @@ FactoryGirl.define do
 		    locations 			1
 		    service_providers 	2
 		    custom 				true
-		    price 				14900.0
 		    special 			false
 		    monthly_mails		5000
     	end
@@ -35,7 +32,6 @@ FactoryGirl.define do
 		    locations 			3
 		    service_providers 	90
 		    custom 				false
-		    price 				49900.0
 		    special 			false
 		    monthly_mails		15000
     	end
@@ -45,7 +41,6 @@ FactoryGirl.define do
 		    locations 			5
 		    service_providers 	90
 		    custom 				true
-		    price 				0.0
 		    special 			false
 		    monthly_mails		495000
     	end
@@ -55,7 +50,6 @@ FactoryGirl.define do
 		    locations 			2
 		    service_providers 	60
 		    custom 				false
-		    price 				39900.0
 		    special 			true
 		    monthly_mails		10000
     	end

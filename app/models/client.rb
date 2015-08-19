@@ -54,7 +54,10 @@ class Client < ActiveRecord::Base
   end
 
   def mail_uniqueness
-    Client.where(company_id: self.company_id).each do |client|
+    if self.email.nil? || self.email == ""
+      return
+    end
+    Client.where(company_id: self.company_id, email: self.email).each do |client|
       if self.email && self.email != "" && client != self && client.email != "" && self.email == client.email
         errors.add(:base, "No se pueden crear dos clientes con el mismo email.")
       end
@@ -62,7 +65,10 @@ class Client < ActiveRecord::Base
   end
 
   def record_uniqueness
-    Client.where(company_id: self.company_id).each do |client|
+    if self.record.nil? || self.record == ""
+      return
+    end
+    Client.where(company_id: self.company_id, record: self.record).each do |client|
       if self.record && self.record != "" && client != self && client.record != "" && self.record == client.record
         errors.add(:base, "No se pueden crear dos clientes con el mismo número de ficha.")
       end
@@ -70,7 +76,10 @@ class Client < ActiveRecord::Base
   end
 
   def identification_uniqueness
-    Client.where(company_id: self.company_id).each do |client|
+    if self.identification_number.nil? || self.identification_number = ""
+      return
+    end
+    Client.where(company_id: self.company_id, identification_number: self.identification_number).each do |client|
       if self.identification_number && self.identification_number != "" && client != self && client.identification_number != "" && self.identification_number == client.identification_number
         errors.add(:base, "No se pueden crear dos clientes con el mismo RUT.")
       end
