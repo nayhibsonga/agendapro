@@ -220,6 +220,7 @@
     get '/location_time', :to => 'locations#location_time'
     get '/get_booking', :to => 'bookings#get_booking'
     get '/get_booking_info', :to => 'bookings#get_booking_info'
+    get "/book", :to => 'bookings#book_service'
     post "/book", :to => 'bookings#book_service'
     get '/book_error', :to => 'bookings#book_error', :as => 'book_error'
     post '/remove_bookings', :to => 'bookings#remove_bookings'
@@ -373,7 +374,7 @@
       get 'users/favorites', to: 'users#favorites'
       get 'users/searches', to: 'users#searches'
       post 'users/oauth', to: 'users#oauth'
-      
+
       resources :economic_sectors
 
       post 'bookings', to: 'bookings#book_service'
