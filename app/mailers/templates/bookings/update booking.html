@@ -618,12 +618,14 @@
         *|END:IF|*
         <tr>
           <td colspan="2">
-            *|IF:CANEDIT=true|*
             <div class="pull-center">
+              *|IF:EDIT|*
               <a class="btn btn-lg btn-orange" href="*|EDIT|*" target="_blank">Modificar Reserva</a>
+              *|END:IF|*
+              *|IF:CANCEL|*
               <a class="btn btn-lg btn-red" href="*|CANCEL|*" target="_blank">Cancelar Reserva</a>
+              *|END:IF|*
             </div>
-            *|END:IF|*
           </td>
         </tr>
         *|IF:SIGNATURE|*
