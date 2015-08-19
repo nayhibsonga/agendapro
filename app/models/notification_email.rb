@@ -86,7 +86,7 @@ class NotificationEmail < ActiveRecord::Base
 
   def self.booking_summary
     where(summary: true).each do |notification|
-      if notification.company.active 
+      if notification.company.active
         if notification.receptor_type == 0 # Company summary
           today_schedule = ''
           Booking.where(location_id: Location.where(company: notification.company, active: true).select(:id)).where("DATE(start) = DATE(?)", Time.now).where.not(status: Status.find_by(name: 'Cancelado')).order(:start).each do |booking|
@@ -115,7 +115,8 @@ class NotificationEmail < ActiveRecord::Base
             name: notification.company.name,
             to: notification.email,
             company: notification.company.name,
-            url: notification.company.web_address
+            url: notification.company.web_address,
+            domain: notification.company.country.domain
           }
           if booking_data[:logo].include? "logo_vacio"
             booking_data[:logo] = 'app/assets/images/logos/logodoble2.png'
@@ -152,7 +153,8 @@ class NotificationEmail < ActiveRecord::Base
               name: location.name,
               to: notification.email,
               company: notification.company.name,
-              url: notification.company.web_address
+              url: notification.company.web_address,
+              domain: notification.company.country.domain
             }
             if booking_summary.length > 0 or today_schedule.length > 0
               BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)
@@ -186,7 +188,8 @@ class NotificationEmail < ActiveRecord::Base
               name: provider.public_name,
               to: notification.email,
               company: notification.company.name,
-              url: notification.company.web_address
+              url: notification.company.web_address,
+              domain: notification.company.country.domain
             }
             if booking_summary.length > 0 or today_schedule.length > 0
               BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)
