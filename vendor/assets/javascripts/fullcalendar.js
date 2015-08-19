@@ -3523,8 +3523,16 @@ function ResourceView(element, calendar, viewName) {
         minutes = time.getHours()*60 + time.getMinutes() - minMinute,
         slotI = Math.floor(minutes / slotMinutes),
         slotTop = slotTopCache[slotI];
-        if (slotTop === undefined) {
-            slotTop = slotTopCache[slotI] = slotTable.find('tr:eq(' + slotI + ') td div')[0].offsetTop; //.position().top; // need this optimization???
+        if (slotTop === undefined) {       	
+        	if (slotTable.find('tr:eq(' + slotI + ') td div')[0] !== undefined)
+        	{
+
+            	slotTop = slotTopCache[slotI] = slotTable.find('tr:eq(' + slotI + ') td div')[0].offsetTop; //.position().top; // need this optimization???
+        	}
+        	else
+        	{
+        		slotTop = minutes; 
+        	}
         }
         return Math.max(0, Math.round(
             slotTop - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
@@ -5055,9 +5063,18 @@ function AgendaView(element, calendar, viewName) {
 			minutes = time.getHours()*60 + time.getMinutes() - minMinute,
 			slotI = Math.floor(minutes / slotMinutes),
 			slotTop = slotTopCache[slotI];
+
 		if (slotTop === undefined) {
-			slotTop = slotTopCache[slotI] = slotTable.find('tr:eq(' + slotI + ') td div')[0].offsetTop; //.position().top; // need this optimization???
+			if (slotTable.find('tr:eq(' + slotI + ') td div')[0] !== undefined)
+        	{        		
+				slotTop = slotTopCache[slotI] = slotTable.find('tr:eq(' + slotI + ') td div')[0].offsetTop; //.position().top; // need this optimization???
+			}
+			else
+        	{
+        		slotTop = minutes;       		
+        	}
 		}
+
 		return Math.max(0, Math.round(
 			slotTop - 1 + slotHeight * ((minutes % slotMinutes) / slotMinutes)
 		));
