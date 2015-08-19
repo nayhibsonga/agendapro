@@ -840,11 +840,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if !book_info.location.company.logo.email.url.include? "logo_vacio"
-			message[:images] = [{
+			message[:images][0] = {
 							:type => 'image/png',
 							:name => 'LOGO',
 							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
-						}]
+						}
 		end
 
 		second_address = ''
