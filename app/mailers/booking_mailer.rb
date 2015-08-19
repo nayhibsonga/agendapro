@@ -44,6 +44,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'SIGNATURE',
 					:content => book_info.location.company.company_setting.signature
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => book_info.location.company.country.domain
 				}
 			],
 			:merge_vars => [],
@@ -254,6 +258,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'OLD_START',
 					:content => l(old_start)
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => book_info.location.company.country.domain
 				}
 			],
 			:merge_vars => [],
@@ -469,6 +477,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'URL',
 					:content => book_info.service_provider.company.web_address
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => book_info.location.company.country.domain
 				}
 			],
 			:merge_vars => [],
@@ -622,6 +634,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'SIGNATURE',
 					:content => book_info.location.company.company_setting.signature
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => book_info.location.company.country.domain
 				}
 			],
 			:merge_vars => [],
@@ -816,6 +832,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'SIGNATURE',
 					:content => book_info.location.company.company_setting.signature
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => book_info.location.company.country.domain
 				}
 			],
 			:merge_vars => [],
@@ -840,11 +860,11 @@ class BookingMailer < ActionMailer::Base
 
 		# => Logo empresa
 		if !book_info.location.company.logo.email.url.include? "logo_vacio"
-			message[:images] = [{
+			message[:images][0] = {
 							:type => 'image/png',
 							:name => 'LOGO',
 							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
-						}]
+						}
 		end
 
 		second_address = ''
@@ -1008,6 +1028,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'TODAY',
 					:content => today_schedule
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => booking_data[:domain]
 				}
 			],
 			:tags => ['booking', 'booking_summary'],
@@ -1048,6 +1072,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'SIGNATURE',
 					:content => data[:signature]
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => data[:domain]
 				}
 			],
 			:merge_vars => [],
@@ -1240,6 +1268,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'CLIENT',
 					:content => client.first_name + ' ' + client.last_name
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => payed_booking.bookings.first.location.company.country.domain
 				}
 
 			],
@@ -1299,6 +1331,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'CLIENT',
 					:content => client.first_name + ' ' + client.last_name
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => payed_booking.bookings.first.location.company.country.domain
 				}
 
 			],
@@ -1367,6 +1403,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'DATE',
 					:content => payed_booking.punto_pagos_confirmation.approvement_date
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => payed_booking.bookings.first.location.company.country.domain
 				}
 			],
 			:tags => ['payment'],
@@ -1449,6 +1489,10 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'DATE',
 						:content => payed_booking.punto_pagos_confirmation.approvement_date
+					},
+					{
+						:domain => 'DOMAIN',
+						:content => payed_booking.bookings.first.location.company.country.domain
 					}
 				],
 				:tags => ['payment'],
@@ -1625,6 +1669,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'SIGNATURE',
 					:content => data[:signature]
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => data[:domain]
 				}
 			],
 			:merge_vars => [],
@@ -1813,6 +1861,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'SIGNATURE',
 					:content => book_info.location.company.company_setting.signature
+				},
+				{
+					:domain => 'DOMAIN',
+					:content => book_info.location.company.country.domain
 				}
 			],
 			:merge_vars => [],

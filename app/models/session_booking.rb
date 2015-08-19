@@ -19,6 +19,7 @@ class SessionBooking < ActiveRecord::Base
 			bookings = self.booked_bookings.order(:start)
 			@data[:company] = bookings[0].location.company.name
 			@data[:url] = bookings[0].location.company.web_address
+      @data[:domain] = bookings[0].location.company.country.domain
 			@data[:signature] = bookings[0].location.company.company_setting.signature
 			@data[:type] = 'image/png'
       if bookings[0].location.company.logo.email.url.include? "logo_vacio"
