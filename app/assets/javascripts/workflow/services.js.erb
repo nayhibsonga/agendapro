@@ -1029,7 +1029,9 @@ function loadStep3 () {
 						$(".submitBtn").show();
 						$("#normal-book").empty();
 						$("#normal-book").append(
-							'Precio final: ' + currency(just_book_price)
+							if (just_book_price > 0) {
+								'Precio final: ' + currency(just_book_price)
+							}
 						);
 					}
 					else if(must_pay)
