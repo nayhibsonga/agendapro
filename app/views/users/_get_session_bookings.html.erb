@@ -13,7 +13,7 @@
 						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
 					</div>
 					<div class="col-md-4 session-row-btns">
-						<span><a class="btn session-btn session-btn-edit" data-target="#bookModal" data-toggle="modal" href="book_session_form?id=<%= booking.id %>"disabled>Editar</a><button class="btn session-btn session-btn-delete"disabled>Cancelar</button></span>
+						<span><a class="btn session-btn session-btn-edit" data-target="#bookModal" data-toggle="modal" href="book_session_form?id=<%= booking.id %>" >Editar</a><button class="btn session-btn session-btn-delete" >Cancelar</button></span>
 					</div>
 				</div>
 			<% else %>
@@ -26,8 +26,8 @@
 						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
 					</div>
 					<div class="col-md-4 session-row-btns">
-						<a class="btn session-btn session-btn-detail" data-target="#detailModal" data-toggle="modal" href="session_booking_detail?id=<%= booking.id %>" disabled>Ver detalle</a>
-						<button class="btn session-btn session-btn-validate" disabled>Validar</button>
+						<a class="btn session-btn session-btn-detail" data-target="#detailModal" data-toggle="modal" href="session_booking_detail?id=<%= booking.id %>" >Ver detalle</a>
+						<button class="btn session-btn session-btn-validate" >Validar</button>
 					</div>
 				</div>
 			<% end %>
@@ -41,7 +41,7 @@
 						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
 				</div>
 				<div class="col-md-4 session-row-btns">
-					<a class="btn session-btn session-btn-detail" data-target="#detailModal" data-toggle="modal" href="session_booking_detail?id=<%= booking.id %>" disabled>Ver detalle</a>
+					<a class="btn session-btn session-btn-detail" data-target="#detailModal" data-toggle="modal" href="session_booking_detail?id=<%= booking.id %>" >Ver detalle</a>
 				</div>
 			</div>
 		<% end %>
@@ -57,7 +57,7 @@
 				
 			</div>
 			<div class="col-md-4 session-row-btns">
-				<a class="btn session-btn session-btn-book" data-target="#bookModal" data-toggle="modal" href="book_session_form?id=<%= booking.id %>" disabled>Reservar</a>
+				<a class="btn session-btn session-btn-book" data-target="#bookModal" data-toggle="modal" href="book_session_form?id=<%= booking.id %>" >Reservar</a>
 			</div>
 		</div>
 
@@ -134,7 +134,7 @@
 	});
 
 	$(".session-btn-delete").click(function(){
-		$(".session-btn").attr("disabled", "disabled");
+		//$(".session-btn").attr("disabled", "disabled");
 		var booking_id = $(this).closest(".session-row").attr("booking_id");
 		$.ajax({
 			type: "post",

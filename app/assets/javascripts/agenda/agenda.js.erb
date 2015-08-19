@@ -89,7 +89,7 @@ $('.session-btn-detail').click(function(){
 });
 
 $(".session-btn-delete").click(function(){
-  $(".session-btn").attr("disabled", "disabled");
+  //$(".session-btn").attr("disabled", "disabled");
   var booking_id = $(this).closest(".session-row").attr("booking_id");
   $.ajax({
     type: "post",
@@ -585,7 +585,7 @@ $("#nextButton").click(function(){
       $("#loader-div").show();
       $(".staff").hide();
       $(".change-bar").hide();
-      $("#nextButton").attr("disabled", "disabled");
+      $("#nextButton").attr("disabled", true);
 
       $.ajax({
           url: "update_book_session",
