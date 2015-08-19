@@ -234,7 +234,7 @@ function loadServiceStaff (service_id, location_id, provider_preference, service
 
   $.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
 
-    providerSelector.attr('disabled', true);
+    //providerSelector.attr('disabled', true);
     providerSelector.empty();
     $('.changeStaff').empty();
 
@@ -275,7 +275,7 @@ function loadServiceStaff (service_id, location_id, provider_preference, service
       providerSelector.children('option[value="' + service_provider_id + '"]').attr("selected", true);
     }
 
-    providerSelector.attr('disabled', false);
+    //providerSelector.attr('disabled', false);
     $("#bookModal").modal('show');
   });
 }
@@ -585,7 +585,7 @@ $("#nextButton").click(function(){
       $("#loader-div").show();
       $(".staff").hide();
       $(".change-bar").hide();
-      $("#nextButton").attr("disabled", true);
+      //$("#nextButton").attr("disabled", true);
 
       $.ajax({
           url: "update_book_session",
@@ -655,7 +655,7 @@ $(document).on('calendarBuilded', function (e) {
       if($(".bloque-hora").size() == 0)
       {
         $("#next").trigger("click");
-        $("#next").attr("disabled", false);
+        //$("#next").attr("disabled", false);
       }
     }
     else
