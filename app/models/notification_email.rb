@@ -156,6 +156,9 @@ class NotificationEmail < ActiveRecord::Base
               url: notification.company.web_address,
               domain: notification.company.country.domain
             }
+            if booking_data[:logo].include? "logo_vacio"
+              booking_data[:logo] = 'app/assets/images/logos/logodoble2.png'
+            end
             if booking_summary.length > 0 or today_schedule.length > 0
               BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)
             end
@@ -191,6 +194,9 @@ class NotificationEmail < ActiveRecord::Base
               url: notification.company.web_address,
               domain: notification.company.country.domain
             }
+            if booking_data[:logo].include? "logo_vacio"
+              booking_data[:logo] = 'app/assets/images/logos/logodoble2.png'
+            end
             if booking_summary.length > 0 or today_schedule.length > 0
               BookingMailer.booking_summary(booking_data, booking_summary, today_schedule)
             end

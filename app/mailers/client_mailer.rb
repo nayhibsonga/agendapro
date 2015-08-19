@@ -51,11 +51,11 @@ class ClientMailer < ActionMailer::Base
 	}
 
 	# => Logo empresa
-	if company.logo_url
+	if !company.logo.email.url.include? "logo_vacio"
 		company_logo = {
-			:type => MIME::Types.type_for(company.logo_url).first.content_type,
+			:type => 'image/png',
 			:name => 'LOGO',
-			:content => Base64.encode64(File.read('public' + company.logo_url.to_s))
+			:content => Base64.encode64(File.read('public' + company.logo.email.url.to_s))
 		}
 		message[:images] = [company_logo]
 	end
