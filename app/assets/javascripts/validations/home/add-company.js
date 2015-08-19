@@ -21,7 +21,18 @@ $(function() {
 				minlength: 3,
 				maxlength: 200,
 				alphaNumeric: $('#company_web_address').val(),
-				remote: '/check_company'
+				remote: {
+					url: "/check_company",
+					type: "get",
+					data: {
+					  web_address: function() {
+					    return $( "#company_web_address" ).val();
+					  },
+					  country_id: function() {
+					    return $( "#company_country_id" ).val();
+					  }
+					}
+				}
 			},
 			'company[logo]': {
 				filesize: 3145728
@@ -52,17 +63,9 @@ $(function() {
 		}
 	});
 
-	$('#company_name').one('change', function() {
-		var tmp = $('#company_name').val();
-		tmp = tmp.replace(/ /g, '');	//Space
-		tmp = tmp.replace(/[áäâà]/gi, 'a');	//special a
-		tmp = tmp.replace(/[éëêè]/gi, 'e');	//Special e
-		tmp = tmp.replace(/[íïîì]/gi, 'i');	//Special i
-		tmp = tmp.replace(/[óöôò]/gi, 'o');	//Special o
-		tmp = tmp.replace(/[úüûù]/gi, 'u');	//Special u
-		tmp = tmp.replace(/ñ/gi, 'n');	//Special ñ
-		tmp = tmp.toLowerCase();
-		$('#company_web_address').val(tmp);
+	$('#company_country_id').change(function() {
+		$('#company_web_address').valid();
 	});
+
 
 });

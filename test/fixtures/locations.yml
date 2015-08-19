@@ -1,25 +1,52 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  adress: MyString
-  phone: MyString
-  latitude: 1.5
-  longitude: 1.5
-  country_id: 1
-  region_id: 1
-  city_id: 1
-  district_id: 1
-  company_id: 1
+location_1:
+  name: Location1
+  address: Elisa Cole 10
+  phone: +56993215098
+  latitude: -33.4448416
+  longitude: -70.6332227
+  district: district_5
+  company: company_1
+  active: true
+  order: 0
+  outcall: false
+  email: "iegomez@agendapro.cl"
+  notification: true
+  booking_configuration_email: 0
+  second_address:
+  online_booking: true
 
-two:
-  name: MyString
-  adress: MyString
-  phone: MyString
-  latitude: 1.5
-  longitude: 1.5
-  country_id: 1
-  region_id: 1
-  city_id: 1
-  district_id: 1
-  company_id: 1
+location_2:
+  name: Location2
+  address: Apoquindo 3000
+  phone: +56993215098
+  latitude: -33.4172287
+  longitude: -70.5985262
+  district: district_1
+  company: company_2
+  active: true
+  order: 0
+  outcall: false
+  email: "iegomez@agendapro.cl"
+  notification: true
+  booking_configuration_email: 0
+  second_address:
+  online_booking: true
+
+location_3:
+  name: Location3
+  address: Providencia 2000
+  phone: +56993215098
+  latitude: -33.4350761
+  longitude: -70.6249434
+  district: district_2
+  company: company_3
+  active: true
+  order: 0
+  outcall: false
+  email: "iegomez@agendapro.cl"
+  notification: true
+  booking_configuration_email: 0
+  second_address:
+  online_booking: true

@@ -1,29 +1,12 @@
-@font-face {
-	font-family: TradeGothic;
-	src: url('/assets/Trade Gothic LT Condensed No. 18.ttf');
-	src: url('/assets/Trade Gothic LT Condensed No. 18.ttf?#iefix') format('truetype'),
-	url('/assets/Trade Gothic LT Condensed No. 18.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
-}
-@font-face {
-	font-family: FranklinGothic;
-	src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf');
-	src: url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf?#iefix') format('truetype'),
-	url('/assets/ITC Franklin Gothic LT Book Extra Compressed.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
-}
-
 html,
 body {
-	font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	font-family: 'Roboto Condensed', sans-serif;
 	background: #ffffff;
 	font-size: 17px;
 }
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
-	font-family: TradeGothic, FranklinGothic, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	font-family: 'Roboto Condensed', sans-serif;
 	line-height: 1.1;
 }
 h1, .h1 {
@@ -43,6 +26,10 @@ h5, .h5 {
 }
 h6, .h6 {
   font-size: 0.81em;
+}
+
+a {
+	color: #22c488;
 }
 
 .pull-center {
@@ -107,6 +94,12 @@ h6, .h6 {
 .help-block > label.error {
 	font-weight: normal;
 }
+.datetime-select {
+  display: inline-block;
+  padding-left: 6px;
+  padding-right: 6px;
+  width: calc(100% / 3 - 3px);
+}
 
 /*Modals*/
 .modal {
@@ -135,6 +128,12 @@ h6, .h6 {
 	color: #ffffff;
 	background-color: transparent;
 }
+
+.login-title{
+	color: #22c488;
+	font-size: 18px;
+}
+
 @media screen and (max-width: 767px) {
 	/* General styles for all menus */
 	.navbar-default .navbar-collapse,

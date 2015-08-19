@@ -2,6 +2,7 @@ class Company < ActiveRecord::Base
 
 	belongs_to :plan
 	belongs_to :payment_status
+	belongs_to :country
 
 	has_many :company_economic_sectors
 	has_many :economic_sectors, :through => :company_economic_sectors
@@ -20,12 +21,13 @@ class Company < ActiveRecord::Base
 	has_many :company_from_email, dependent: :destroy
 	has_many :staff_codes, dependent: :destroy
 	has_many :deals, dependent: :destroy
+	has_many :company_payment_methods, dependent: :destroy
 
 	has_many :payment_accounts, dependent: :destroy
 
-	validates :name, :web_address, :plan, :payment_status, :presence => true
+	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
-	validates_uniqueness_of :web_address
+	validates_uniqueness_of :web_address, scope: :country_id
 
 	mount_uploader :logo, LogoUploader
 
@@ -102,7 +104,7 @@ class Company < ActiveRecord::Base
 	def self.payment_inactive
 		where(payment_status_id: PaymentStatus.find_by_name("Bloqueado").id).where('due_date < ?', (1.months+15.days).ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Inactivo").id
-			comapny.due_amount = 0.0
+			company.due_amount = 0.0
 			company.active = false
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 4, details: "OK payment_inactive")
@@ -119,7 +121,7 @@ class Company < ActiveRecord::Base
 	def self.end_trial
 		month_days = Time.now.days_in_month
 		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where('created_at <= ?', 1.months.ago).each do |company|
-			plan_id = Plan.where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:price).first.id
+			plan_id = Plan.where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
 			company.plan_id = plan_id
 			company.due_date = Time.now
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
@@ -138,7 +140,7 @@ class Company < ActiveRecord::Base
 	def self.add_due_amount
 		month_days = Time.now.days_in_month
 		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id)).where('due_date IS NOT NULL').each do |company|
-			company.due_amount += company.plan.price/month_days
+			company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price/month_days
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 6, details: "OK add_due_amount")
 			else
@@ -153,7 +155,7 @@ class Company < ActiveRecord::Base
 
 	def update_online_payment
 
-		if !self.online_payment_capable
+		if !self.company_setting.online_payment_capable
 			self.company_setting.allows_online_payment = false
 		end
 

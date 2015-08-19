@@ -2,9 +2,11 @@ class Client < ActiveRecord::Base
   belongs_to :company
 
   has_many :client_comments, dependent: :destroy
+  has_many :session_bookings, dependent: :destroy
   has_many :bookings, dependent: :destroy
+  has_many :payments, dependent: :destroy
 
-  validate :client_mail_uniqueness, :client_identification_uniqueness
+  validate :mail_uniqueness, :identification_uniqueness, :record_uniqueness, :minimun_info
 
   after_update :client_notification
 
@@ -21,7 +23,7 @@ class Client < ActiveRecord::Base
           valid = true
         end
         if !valid
-          Booking.where('bookings.start >= ?', Time.now - 4.hours).where(client_id: self.id).each do |booking|
+          Booking.where('bookings.start >= ?', Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where(client_id: self.id).each do |booking|
             if booking.send_mail
               booking.send_mail = false
               booking.save
@@ -51,24 +53,51 @@ class Client < ActiveRecord::Base
     return false
   end
 
-  def client_mail_uniqueness
-    Client.where(company_id: self.company_id).each do |client|
+  def mail_uniqueness
+    if self.email.nil? || self.email == ""
+      return
+    end
+    Client.where(company_id: self.company_id, email: self.email).each do |client|
       if self.email && self.email != "" && client != self && client.email != "" && self.email == client.email
         errors.add(:base, "No se pueden crear dos clientes con el mismo email.")
       end
     end
   end
 
-  def client_identification_uniqueness
-    Client.where(company_id: self.company_id).each do |client|
+  def record_uniqueness
+    if self.record.nil? || self.record == ""
+      return
+    end
+    Client.where(company_id: self.company_id, record: self.record).each do |client|
+      if self.record && self.record != "" && client != self && client.record != "" && self.record == client.record
+        errors.add(:base, "No se pueden crear dos clientes con el mismo número de ficha.")
+      end
+    end
+  end
+
+  def identification_uniqueness
+    if self.identification_number.nil? || self.identification_number = ""
+      return
+    end
+    Client.where(company_id: self.company_id, identification_number: self.identification_number).each do |client|
       if self.identification_number && self.identification_number != "" && client != self && client.identification_number != "" && self.identification_number == client.identification_number
         errors.add(:base, "No se pueden crear dos clientes con el mismo RUT.")
       end
     end
   end
 
+  def minimun_info
+    if self.first_name.blank?
+      errors.add(:base, "El cliente debe tener un nombre.")
+    end
+    if self.last_name.blank? && self.email.blank? && self.phone.blank?
+      errors.add(:base, "El cliente debe contener, por lo menos, un apellido, una dirección email o un teléfono.")
+    end
+  end
+
   def self.search(search, company_id)
     if search
+      search_raw = search
       search_rut = search.gsub(/[.-]/, "")
       search_array = search.gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').split(' ')
       search_array2 = []
@@ -78,7 +107,7 @@ class Client < ActiveRecord::Base
         end
       end
       clients1 = where(company_id: company_id).where('first_name ILIKE ANY ( array[:s] )', :s => search_array2).where('last_name ILIKE ANY ( array[:s] )', :s => search_array2).pluck(:id).uniq
-      clients2 = where(company_id: company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR email ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s OR replace(replace(identification_number, '.', ''), '-', '') ILIKE :r", :s => "%#{search}%", :r => "%#{search_rut}%").pluck(:id).uniq
+      clients2 = where(company_id: company_id).where("CONCAT(unaccent(first_name), ' ', unaccent(last_name)) ILIKE unaccent(:s) OR unaccent(first_name) ILIKE unaccent(:s) OR unaccent(last_name) ILIKE unaccent(:s) OR unaccent(record) ILIKE unaccent(:t) OR unaccent(email) ILIKE unaccent(:t) OR replace(replace(identification_number, '.', ''), '-', '') ILIKE :r", :s => "%#{search}%", :r => "%#{search_rut}%", :t => "%#{search_raw}%").pluck(:id).uniq
       where(id: (clients1 + clients2).uniq)
     else
       all
@@ -145,7 +174,7 @@ class Client < ActiveRecord::Base
     end
   end
   def self.import(file, company_id)
-    allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year"]
+    allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
     spreadsheet = open_spreadsheet(file)
     if !spreadsheet.nil?
       header = spreadsheet.row(1)
@@ -165,8 +194,7 @@ class Client < ActiveRecord::Base
         end
 
         if row["phone"] && row["phone"] != ""
-
-          row["phone"] = row["phone"].to_i.to_s
+          row["phone"] = row["phone"].to_s.chomp('.0')
         end
 
         if row["address"] && row["address"] != ""
@@ -199,6 +227,14 @@ class Client < ActiveRecord::Base
 
         if row["birth_year"] && row["birth_year"] != ""
           row["birth_year"] = row["birth_year"].to_i
+        end
+
+        if row["record"] && row["record"] != ""
+          row["record"] = row["record"].to_s.chomp('.0')
+        end
+
+        if row["second_phone"] && row["second_phone"] != ""
+          row["second_phone"] = row["second_phone"].to_s.chomp('.0')
         end
 
         if row["identification_number"] && row["identification_number"] != ""

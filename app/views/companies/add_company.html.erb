@@ -45,12 +45,20 @@
 						<span class="form-control-feedback"></span>
 					</div>
 				</div>
+				<div class="form-group has-feedback">
+					<%= f.label :country_id, 'País de la Compañía', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.select :country_id, options_for_select(Country.all.map{ |c| [c.name, c.id, {'data-domain'=>c.domain}] }, selected_key = Country.find_by(locale: I18n.locale.to_s).id), { }, { class: "form-control" } %>
+					<span class="help-block"></span>
+					<span class="form-control-feedback"></span>
+					</div>
+				</div>
 				<div class="form-group">
 					<%= f.label :web_address, 'Dirección Web', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">	
 							<div class="input-group">
 								<%= f.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio' %>
-								<span class="input-group-addon">.agendapro.cl</span>
+								<span class="input-group-addon">.agendapro<%= I18n.t 'country.domain' %></span>
 							</div>
 						</div>	
 					<div class="col-sm-offset-4 col-sm-8">
@@ -63,7 +71,7 @@
 					<div class="col-sm-offset-4 col-sm-8">
 						<div class="checkbox">
 							<label>
-								<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.cl/Term_y_Cond_AgendaPro122014.pdf" target="_balnk">Términos y Condiciones</a>.
+								<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.co/Term_y_Cond_AgendaPro122014.pdf" target="_balnk">Términos y Condiciones</a>.
 								<span class="help-block"></span>
 							</label>
 						</div>
@@ -86,5 +94,36 @@
 
 <script type="text/javascript">
 
+	$(function () {
+		$('#company_name').on('change', function() {
+			var tmp = $('#company_name').val();
+			tmp = tmp.toLowerCase();
+			tmp = tmp.replace(/[áäâà]/gi, 'a');	//special a
+			tmp = tmp.replace(/[éëêè]/gi, 'e');	//Special e
+			tmp = tmp.replace(/[íïîì]/gi, 'i');	//Special i
+			tmp = tmp.replace(/[óöôò]/gi, 'o');	//Special o
+			tmp = tmp.replace(/[úüûù]/gi, 'u');	//Special u
+			tmp = tmp.replace(/ñ/gi, 'n');	//Special ñ*/
+			tmp = tmp.replace(/[^a-z0-9]/gi,'');
+			$('#company_web_address').val(tmp);
+		});
+
+		$('#company_web_address').on('change', function() {
+			var tmp = $('#company_web_address').val();
+			tmp = tmp.toLowerCase();
+			tmp = tmp.replace(/[áäâà]/gi, 'a');	//special a
+			tmp = tmp.replace(/[éëêè]/gi, 'e');	//Special e
+			tmp = tmp.replace(/[íïîì]/gi, 'i');	//Special i
+			tmp = tmp.replace(/[óöôò]/gi, 'o');	//Special o
+			tmp = tmp.replace(/[úüûù]/gi, 'u');	//Special u
+			tmp = tmp.replace(/ñ/gi, 'n');	//Special ñ*/
+			tmp = tmp.replace(/[^a-z0-9]/gi,'');
+			$('#company_web_address').val(tmp);
+		});
+
+		$('#company_country_id').change(function() {
+			$('span.input-group-addon').html('.agendapro' + $('#company_country_id option:selected').data("domain"));
+		});
+	});
 
 </script>

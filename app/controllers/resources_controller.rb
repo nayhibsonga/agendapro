@@ -19,20 +19,20 @@ class ResourcesController < ApplicationController
   # GET /resources/new
   def new
     if ResourceCategory.where(company_id: current_user.company_id).count == 0
-      ResourceCategory.create(name: "Sin Categoría", company_id: current_user.company_id)
+      ResourceCategory.create(name: "Otros", company_id: current_user.company_id)
     end
     @resource_category = ResourceCategory.new
     @resource = Resource.new
     @resource.resource_locations.build
     @resource_categories = ResourceCategory.where(company_id: current_user.company_id).order(:name)
-    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order)
+    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
   end
 
   # GET /resources/1/edit
   def edit
     @resource_category = ResourceCategory.new
     @resource_categories = ResourceCategory.where(company_id: current_user.company_id).order(:name)
-    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order)
+    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
   end
 
   # POST /resources
@@ -44,7 +44,8 @@ class ResourcesController < ApplicationController
 
     respond_to do |format|
       if @resource.save
-        format.html { redirect_to resources_path, notice: 'Recurso creado exitosamente.' }
+        flash[:notice] = 'Recurso creado exitosamente.'
+        format.html { redirect_to resources_path }
         format.json { render :json => @resource }
       else
         format.html { render action: 'new' }
@@ -60,7 +61,8 @@ class ResourcesController < ApplicationController
 
     respond_to do |format|
       if @resource.update(resource_params)
-        format.html { redirect_to resources_path, notice: 'Recurso actualizado exitosamente.' }
+        flash[:notice] = 'Recurso actualizado exitosamente.'
+        format.html { redirect_to resources_path }
         format.json { render :json => @resource }
       else
         format.html { render action: 'edit' }

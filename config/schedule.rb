@@ -1,8 +1,10 @@
+set :output, "log/cron.log"
+
 every 1.days, :at => '6 am' do
   runner "Booking.booking_reminder"
 end
 
-every :month, :at => '12 am' do
+every '0 3 1 * *' do
   runner "CompanySetting.monthly_mails"
 end
 
@@ -25,6 +27,5 @@ every '0 5 1 * *' do
 end
 
 every 1.days, :at => '5:30 am' do
-	runner "Location.booking_summary"
-	runner "ServiceProvider.booking_summary"
+	runner "NotificationEmail.booking_summary"
 end

@@ -1,4 +1,5 @@
 function loadServices (provider) {
+  var selectedService =  $('#booking_service').val();
   $('#booking_service').prop('disabled', true);
   $.getJSON('/provider_services', {id: provider}, function (services) {
     $('#booking_service').empty();
@@ -7,9 +8,13 @@ function loadServices (provider) {
         '<option value="' + service.id + '">' + service.name + '</option>'
       );
     });
+    $('#booking_service option[value="' + selectedService + '"]').prop('selected', true);
   }).always(function () {
     $('#booking_service').prop('disabled', false);
   });
+
+  checkClientSessions();
+
 }
 
 function loadServiceData (service_id) {
@@ -31,6 +36,9 @@ function loadServiceData (service_id) {
     };
     $('#end').val(hour + ':' + min);
   });
+
+  checkClientSessions();
+
 }
 
 function saveBooking (typeURL, booking_id) {
@@ -53,18 +61,27 @@ function saveBooking (typeURL, booking_id) {
     "notes": $('#booking_notes').val(),
     "company_comment": $('#booking_company_comment').val()
   }
+
+  if($("#has_sessions").val() == "1")
+  {
+    JSONData["session_booking_id"] = $('[name="sessions-choice"]:checked').val();
+  }
+
+  var bookingJSON = {"bookings": [JSONData]};
+  if (typeURL != 'POST') {
+    bookingJSON = {"booking": JSONData};
+  }
+  
   $.ajax({
     type: typeURL,
     url: '/bookings' + booking_id + '.json',
-    data: {
-      "booking": JSONData
-    },
+    data: bookingJSON,
     dataType: 'json',
     success: function(booking){
       window.location.href = "/bookings/"
     },
     error: function(xhr){
-      var errors = $.parseJSON(xhr.responseText).errors;
+      var errors = $.parseJSON(xhr.responseText).errors[0].errors;
       var errores = 'Error\n';
       for (i in errors) {
         errores += '*' + errors[i] + '\n';
@@ -123,6 +140,7 @@ $(function () {
 
   $('#email').change(function (event) {
     validateMail();
+    checkClientSessions();
   });
 
   $('#name').autocomplete({
@@ -145,6 +163,11 @@ $(function () {
       $('#identification_number').val(client.identification_number);
       $('#name').blur();
       validateMail();
+      checkClientSessions();
+    },
+    open: function(event, ui)
+    {
+      $(".ui-helper-hidden-accessible").hide();
     }
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -170,6 +193,12 @@ $(function () {
       $('#identification_number').val(client.identification_number);
       $('#email').blur();
       validateMail();
+      checkClientSessions();
+      $(".ui-helper-hidden-accessible").hide();
+    },
+    open: function(event, ui)
+    {
+      $(".ui-helper-hidden-accessible").hide();
     }
   }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
@@ -183,5 +212,111 @@ $(function () {
     $('#email').val('');
     $('#send_mail').prop('checked', false);
     $('#phone').val('');
+    checkClientSessions();
   });
 });
+
+function checkClientSessions()
+{
+  //modalChange();
+  if($("#is_edit_modal").val() == "0")
+  {
+
+    $("#sessions-info").empty();
+    $("#sessions-row").hide();
+    $("#add-service-btn").show();
+    $("#has_sessions").val("0");
+
+    if (parseInt($('#booking_client').val()) > 0)
+    {
+      if(parseInt($("#booking_service").val()) > 0)
+      {
+        $.ajax({
+          type: "get",
+          url: "/clients_check_sessions?id=" + $('#booking_client').val() + "&service_id=" + $("#booking_service").val(),
+          success: function(response)
+          {
+            var service = response[0]
+            var sessions_bookings = response[1]
+
+            if (service.has_sessions)
+            {
+              if (sessions_bookings.length > 0)
+              {
+                $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+              }
+              else
+              {
+                $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+              }
+              $("#sessions-row").show();
+              $("#add-service-btn").hide();
+              $("#has_sessions").val("1");
+              if(sessions_bookings.length > 0)
+              {
+                var index = 0;
+                $.each(sessions_bookings, function (key, session_booking) {
+                  var nextSession = session_booking.sessions_taken + 1;
+                  if(index == 0)
+                  {
+                    $("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '" checked />&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+                  }
+                  else
+                  {
+                    $("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '">&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+                  }
+                  index = index + 1;
+                });
+              }
+            }
+          }
+        });
+      }
+    }
+    else
+    {
+      if(parseInt($("#booking_service").val()) > 0)
+      {
+        $.ajax({
+          type: "get",
+          url: "/services/" + $("#booking_service").val() + ".json",
+          success: function(service)
+          {
+            console.log(service.name + " has sessions: " + service.has_sessions);
+            if(service.has_sessions)
+            {
+              $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar una nueva reserva y agendar la primera sesión.');
+              $("#sessions-row").show();
+              $("#add-service-btn").hide();
+              $("#has_sessions").val("1");
+            }
+          }
+        });
+      }
+    }
+  }
+  else
+  {
+    if(parseInt($("#booking_service").val()) > 0)
+    {
+      $.ajax({
+        type: "get",
+        url: "/services/" + $("#booking_service").val() + ".json",
+        success: function(service)
+        {
+          if(service.has_sessions)
+          {
+            $("#sessions-info").empty();
+            $("#sessions-info").append("Esta reserva corresponde a una sesión de un servicio.");
+            $("#sessions-row").show();
+          }
+          else
+          {
+            $("#sessions-info").empty();
+            $("#sessions-row").hide();
+          }
+        }
+      });
+    }
+  }
+}

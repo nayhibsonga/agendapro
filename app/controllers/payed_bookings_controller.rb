@@ -15,23 +15,33 @@ class PayedBookingsController < ApplicationController
   		#Organizar por compañía para hacer una sola transferencia:
   		#Pagos pendiente de payed_bookings sumados por empresa.
   		@companies_pending_payment = Array.new
+  		@other_companies_pending_payment = Array.new
 
   		#Comisión que se le cobra a la empresa por el pago en línea
-  		commission = NumericParameter.find_by_name("online_payment_commission").value
+  		#commission = NumericParameter.find_by_name("online_payment_commission").value
+
   		now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 
   		Company.all.each do |company|
-
   			c_user = User.find_by_company_id(company.id)
+  			commission = company.company_setting.online_payment_commission
   			
   			if !c_user.nil? and c_user.role_id != Role.find_by_name("Super Admin")
+  				
   				cancel_max = 0
+  				limit_date = now
   				if !company.company_setting.online_cancelation_policy.nil?
 	  				cancel_max = company.company_setting.online_cancelation_policy.cancel_max
+	  				if company.company_setting.online_cancelation_policy.cancelable
+	  					limit_date = now-cancel_max.hours
+	  				end
 	  			end
-	  			limit_date = now-cancel_max.hours
-	  			pending_count = PayedBooking.where(:transfer_complete => false, :canceled => false, :booking_id => Booking.where('"bookings".created_at < ?', limit_date).where(:location_id => Location.where(:company_id => company.id))).count
-	  			if pending_count > 0
+
+	  			limit_date = limit_date + eval(ENV["TIME_ZONE_OFFSET"])
+
+	  			pending_payed_bookings = PayedBooking.where(:transfer_complete => false, :canceled => false, :id => Booking.where('"bookings".created_at < ?', limit_date).where(:location_id => Location.where(:company_id => company.id)).pluck('distinct payed_booking_id'))
+	  			if pending_payed_bookings.count > 0
+
 		  			payment_account = PaymentAccount.new
 		  			if(PaymentAccount.where(:company_id => company.id, :status => false).count > 0)
 		  				payment_account = PaymentAccount.where(:company_id => company.id, :status => false).first  			
@@ -43,36 +53,59 @@ class PayedBookingsController < ApplicationController
 			  		payment_account.gain_amount = 0
 			  		
 
-		  		 	company.locations.each do |loc|
-		  		 		loc.bookings.each do |booking|
+			  		#Get company's payed_bookings instead of bookings, because bookings share payed_bookings
+			  		pending_payed_bookings.each do |payed_booking|
+			  			if payment_account.company_id.nil?
+  		 					payment_account.name = company.company_setting.account_name
+  		 					payment_account.rut = company.company_setting.company_rut
+  		 					payment_account.number = company.company_setting.account_number
+  		 					payment_account.company = company
+  		 					payment_account.bank_code = company.company_setting.bank.code
+  		 					payment_account.account_type = company.company_setting.account_type
+  		 				end
+  		 				payment_account.amount = payment_account.amount + payed_booking.punto_pagos_confirmation.amount
+  		 				if !payed_booking.bookings.first.service_promo_id.nil?
+  		 					commission = company.company_setting.promo_commission
+  		 				end
+  		 				payment_account.company_amount = payment_account.amount*(100-commission)/100		 				
+  		 				payed_booking.payment_account = payment_account
+  		 				payed_booking.save
+			  		end
 
-		  		 			if(!booking.payed_booking.nil? && booking.payed_booking.canceled == false)
+		  		 	# company.locations.each do |loc|
+		  		 	# 	loc.bookings.each do |booking|
+
+		  		 	# 		if(!booking.payed_booking.nil? && booking.payed_booking.canceled == false)
 		  		 				
-		  		 				if payment_account.company_id.nil?
-		  		 					payment_account.name = company.company_setting.account_name
-		  		 					payment_account.rut = company.company_setting.company_rut
-		  		 					payment_account.number = company.company_setting.account_number
-		  		 					payment_account.company = company
-		  		 					payment_account.bank_code = company.company_setting.bank.code
-		  		 					payment_account.account_type = company.company_setting.account_type
-		  		 				end
+		  		 	# 			if payment_account.company_id.nil?
+		  		 	# 				payment_account.name = company.company_setting.account_name
+		  		 	# 				payment_account.rut = company.company_setting.company_rut
+		  		 	# 				payment_account.number = company.company_setting.account_number
+		  		 	# 				payment_account.company = company
+		  		 	# 				payment_account.bank_code = company.company_setting.bank.code
+		  		 	# 				payment_account.account_type = company.company_setting.account_type
+		  		 	# 			end
 		  		 				
-		  		 				payment_account.amount = payment_account.amount + booking.payed_booking.punto_pagos_confirmation.amount
-		  		 				payment_account.company_amount = payment_account.amount*(100-commission)/100
+		  		 	# 			payment_account.amount = payment_account.amount + booking.payed_booking.punto_pagos_confirmation.amount
+		  		 	# 			payment_account.company_amount = payment_account.amount*(100-commission)/100
 
 		  		 				
-		  		 				booking.payed_booking.payment_account = payment_account
-		  		 				booking.payed_booking.save
+		  		 	# 			booking.payed_booking.payment_account = payment_account
+		  		 	# 			booking.payed_booking.save
 			  		 			
-		  		 			end
-		  		 		end
-		  		 	end
+		  		 	# 		end
+		  		 	# 	end
+		  		 	# end
 
 		  		 	payment_account.gain_amount = payment_account.amount-payment_account.company_amount
 
 		  		 	if !payment_account.amount.nil? and payment_account.amount > 0
 		  		 		payment_account.save
-		  		 		@companies_pending_payment << payment_account
+		  		 		if payment_account.bank_code != Bank.find_by_name("Otro").code
+		  		 			@companies_pending_payment << payment_account
+		  		 		else
+		  		 			@other_companies_pending_payment << payment_account
+		  		 		end
 		  		 	else
 		  		 		#payment_account.destroy
 		  		 	end
@@ -80,6 +113,8 @@ class PayedBookingsController < ApplicationController
   		 	end
 
   		end
+
+  		@all_pending_transfers = PayedBooking.where(:transfer_complete => false, :canceled => false).order('updated_at DESC').limit(25)
 
   		@transfered_payments = PaymentAccount.where(:status => true)
 
@@ -115,7 +150,7 @@ class PayedBookingsController < ApplicationController
 
 	    filename = filename + "_" + start_date + "_" + end_date + ".csv"
 
-	    if params[:type] == "admin_pending" || params[:type] == "admin_transfered"
+	    if params[:type] == "admin_pending" || params[:type] == "admin_transfered" || params[:type] == "other_admin_pending"
 	    	send_data PaymentAccount.to_csv(params[:type], params[:start_date], params[:end_date]), filename: filename
 	    else
 	    	send_data PayedBooking.to_csv(params[:type], params[:start_date], params[:end_date]), filename: filename
@@ -159,8 +194,10 @@ class PayedBookingsController < ApplicationController
 		@payment_account.status = true
 		@payment_account.payed_bookings.each do |payed_booking|
 			payed_booking.transfer_complete = true
-			payed_booking.booking.status_id = Status.find_by_name("Pagado").id
-			payed_booking.booking.save
+			payed_booking.bookings.each do |booking|
+				booking.status_id = Status.find_by_name("Pagado").id
+				booking.save
+			end
 			payed_booking.save
 		end
 		if @payment_account.save
@@ -194,8 +231,10 @@ class PayedBookingsController < ApplicationController
 			payment_account.status = true
 			payment_account.payed_bookings.each do |payed_booking|
 				payed_booking.transfer_complete = true
-				payed_booking.booking.status_id = Status.find_by_name("Pagado").id
-				payed_booking.booking.save
+				payed_booking.bookings.each do |booking|
+					booking.status_id = Status.find_by_name("Pagado").id
+					booking.save
+				end
 				payed_booking.save
 			end
 			if payment_account.save
@@ -220,8 +259,10 @@ class PayedBookingsController < ApplicationController
 		@payment_account.status = false
 		@payment_account.payed_bookings.each do |payed_booking|
 			payed_booking.transfer_complete = false
-			payed_booking.booking.status_id = Status.find_by_name("Pagado").id
-			payed_booking.booking.save
+			payed_booking.bookings.each do |booking|
+				booking.status_id = Status.find_by_name("Pagado").id
+				booking.save
+			end
 			payed_booking.save
 		end
 		if @payment_account.save
@@ -247,8 +288,10 @@ class PayedBookingsController < ApplicationController
 			payment_account.status = false
 			payment_account.payed_bookings.each do |payed_booking|
 				payed_booking.transfer_complete = false
-				payed_booking.booking.status_id = Status.find_by_name("Pagado").id
-				payed_booking.booking.save
+				payed_booking.bookings.each do |booking|
+					booking.status_id = Status.find_by_name("Pagado").id
+					booking.save
+				end
 				payed_booking.save
 			end
 			if payment_account.save
@@ -329,6 +372,8 @@ class PayedBookingsController < ApplicationController
 				end
 			end
 		end
+
+		@company_setting = current_user.company.company_setting
 	end
 
 	def edit
@@ -336,9 +381,15 @@ class PayedBookingsController < ApplicationController
 	end
 
 	def update
+		error = false
 		@payed_booking = PayedBooking.find(params[:id])
-		@payed_booking.booking.status_id = Status.find(params[:status_id]).id
-		if @payed_booking.booking.save
+		@payed_booking.bookings.each do |booking|
+			booking.status_id = Status.find(params[:status_id]).id
+			if !booking.save
+				error = true
+			end
+		end
+		if !error
 			redirect_to action: 'edit', id: @payed_booking.id, notice: 'Se ha editado correctamente.'
 		else
 			redirect_to action: 'edit', id: @payed_booking.id, alert: 'Ha ocurrido un error en la edición.'

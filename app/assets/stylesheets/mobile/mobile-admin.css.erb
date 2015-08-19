@@ -76,6 +76,21 @@ body {
   border-color: #CD4E31;
 }
 
+.btn-grey {
+	color: #ffffff;
+	background-color: #cacaca;
+	border-color: #707070;
+}
+.btn-grey:hover,
+.btn-grey:focus,
+.btn-grey.focus,
+.btn-grey:active,
+.btn-grey.active {
+  color: #ffffff;
+  background-color: #707070;
+  border-color: #575757;
+}
+
 /*** Calendar **/
 .background-green {
 	background-color: #22c488;
@@ -232,6 +247,14 @@ body {
 	font-size:1.3333333333333333em;
 	line-height:.75em;
 	vertical-align:-15%
+}
+td.fc-widget-content.active {
+	background-color: #22c488;
+	color: #ffffff;
+}
+td.fc-widget-content.active > div {
+	text-align: center;
+	line-height: 3.5;
 }
 
 /*** view booking ***/

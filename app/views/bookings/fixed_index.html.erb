@@ -19,13 +19,13 @@
 </div>
 <br />
 <div class="row well well-sm">
-	<div class="col-md-3">
+	<div class="col-sm-5">
 		<%= link_to '<< Anterior', '#', class: 'pull-right', id: 'prev-day' %>
 	</div>
-	<div class="col-md-6 text-center">
-		<label id="date-label"></label>
+	<div class="col-sm-2 text-center">
+		<input type="text" id="dp" class="form-control">
 	</div>
-	<div class="col-md-3">
+	<div class="col-sm-5">
 		<%= link_to 'Siguiente >>', '#', class: 'pull-left', id: 'next-day' %>
 	</div>
 </div>
@@ -50,8 +50,13 @@
 
 <% content_for :scripts do %>
 	<%= javascript_include_tag "admin/fixed_bookings" %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+	<%= javascript_include_tag "jquery-ui.min.js" %>
 <% end %>
 <% content_for :stylesheets do %>
 	<%= stylesheet_link_tag "admin/admin-calendar" %>
+	<style type="text/css">
+	#dp {
+		padding-top: 6px;
+	}
+	</style>
 <% end %>

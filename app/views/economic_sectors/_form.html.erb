@@ -1,54 +1,83 @@
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <div class="col-md-12">
+    </div>
+  </div>
+</div>
+
 <%= form_for @economic_sector, :html => {:class => 'form-horizontal'} do |f| %>
-	<% if @economic_sector.errors.any? %>
-		<div id="error_explanation">
-			<h2><%= pluralize(@economic_sector.errors.count, "error") %> no permitió que el sector económico fuera creado:</h2>
+  <% if @economic_sector.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@economic_sector.errors.count, "error") %> no permitió que el sector económico fuera creado:</h2>
+      <ul>
+        <% @economic_sector.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-			<ul>
-			<% @economic_sector.errors.full_messages.each do |msg| %>
-				<li><%= msg %></li>
-			<% end %>
-			</ul>
-		</div>
-	<% end %>
-
-	<div class="form-group">
-		<%= f.label :name, 'Nombre: ', :class => 'col-sm-3 control-label' %>
-		<div class="col-sm-4">
-			<%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
-		</div>
-	</div>
-
-	<h3>Diccionario</h3>
-	<% @economic_sector.economic_sectors_dictionaries.build %>
-	<%= f.fields_for :economic_sectors_dictionaries do |dictionary| %>
-		<%= render 'economic_sectors_dictionary_fields', :f => dictionary %>
-	<% end %>
-	<div class="form-group">
-		<div class="actions col-sm-offset-3 col-sm-4">   
-			<%= link_to_add_association 'Agregar Diccionario', f, :economic_sectors_dictionaries, :class => "btn btn-primary btn-sm" %>
-		</div>
-	</div>
-
-	<div class="form-group">
-		<div class="actions col-sm-offset-3 col-sm-4">
-			<%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-			<%= link_to 'Cancelar', economic_sectors_path, class: "btn btn-danger" %>    
-		</div>
-	</div>
+  <div class="form-group">
+    <%= f.label :name, 'Nombre: ', :class => 'col-md-2 control-label' %>
+    <div class="col-md-4">
+      <%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :mobile_preview, "Foto App Móvil: ", class: "col-md-2 control-label" %>
+    <div class="col-md-4">
+      <%= f.file_field :mobile_preview, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+    </div>
+    <div class="col-md-4">
+      <% if @economic_sector.mobile_preview.url.nil? %>
+        No se ha subido foto
+      <% else %>
+        Foto actual: <%= image_tag @economic_sector.mobile_preview.url.to_s, :alt => "", :class => "img-responsive" %>
+      <% end %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :show_in_home, 'Mostrar en Home: ', :class => 'col-md-2 control-label' %>
+    <div class="col-md-4">
+       <%= f.check_box :show_in_home, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :show_in_company, 'Mostrar en Configuraciones: ', :class => 'col-md-2 control-label' %>
+    <div class="col-md-4">
+      <%= f.check_box :show_in_company, :class => 'form-control' %>
+    </div>
+  </div>
+  <legend>Diccionario</legend>
+  <% @economic_sector.economic_sectors_dictionaries.build %>
+  <%= f.fields_for :economic_sectors_dictionaries do |dictionary| %>
+    <%= render 'economic_sectors_dictionary_fields', :f => dictionary %>
+  <% end %>
+  <div class="form-group">
+    <div class="col-md-offset-2 col-md-4">
+      <%= link_to_add_association 'Agregar Diccionario', f, :economic_sectors_dictionaries, :class => "btn btn-white btn-sm" %>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="actions col-md-offset-2 col-md-4">
+      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+      <%= link_to 'Cancelar', economic_sectors_path, class: "btn btn-default" %>
+    </div>
+  </div>
 <% end %>
 
 <% content_for :scripts do %>
-<%= javascript_include_tag :cocoon %> 
-<script type="text/javascript">
-	$(function() {
-		$('.remove_fields').click( function (event) {
-			$(event.target).closest('.form-group').hide();
-		});
-	});
-	$('form').on('cocoon:after-insert', function(e, insertedItem) {
-		$('.remove_fields').click( function (event) {
-			$(event.target).closest('.form-group').hide();
-		});
-	});
-</script>
+  <%= javascript_include_tag :cocoon %>
+  <script type="text/javascript">
+    $(function() {
+      $('.remove_fields').click( function (event) {
+        $(event.target).closest('.form-group').hide();
+      });
+    });
+    $('form').on('cocoon:after-insert', function(e, insertedItem) {
+      $('.remove_fields').click( function (event) {
+        $(event.target).closest('.form-group').hide();
+      });
+    });
+  </script>
 <% end %>

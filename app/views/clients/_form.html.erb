@@ -1,237 +1,336 @@
-<div class="container">
-  <%= form_for @client, html: {class: "form-horizontal" } do |f| %>
-	<% if @client.errors.any? %>
-	  <div id="error_explanation">
-		<h2><%= pluralize(@client.errors.count, "error") %> no permitió que el cliente fuera guardado:</h2>
-		<ul>
-		<% @client.errors.full_messages.each do |msg| %>
-		<li><%= msg %></li>
-		<% end %>
-		</ul>
-	  </div>
-	<% end %>
-  	<div class="row">
-		<div class="col-md-6 well">
-		  <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
-		  <div class="form-group">
-			<%= f.label :can_book, "¿Puede reservar?", class: "col-sm-3 control-label" %>
-			<div class="col-sm-9">
-				<%= f.check_box :can_book, class: "check_box" %>
-			</div>
-		  </div>
-		  <% end %>
-		  <div class="form-group has-feedback">
-			<%= f.label :email, "E-mail", class: "col-sm-3 control-label" %>
-			<div class="col-sm-9">
-			  <%= f.text_field :email, :autofocus => true, class: "form-control" %>
-			  <span class="help-block"></span>
-			  <span class="form-control-feedback"></span>
-			</div>
-		  </div>
-		  <div class="form-group has-feedback">
-			<%= f.label :first_name, "Nombre", class: "col-sm-3 control-label" %>
-			<div class="col-sm-9">
-			  <%= f.text_field :first_name, class: "form-control" %>
-			  <span class="help-block"></span>
-				<span class="form-control-feedback"></span>
-			</div>
-		  </div>
-		  <div class="form-group has-feedback">
-			<%= f.label :last_name, "Apellido", class: "col-sm-3 control-label" %>
-			<div class="col-sm-9">
-				<%= f.text_field :last_name, class: "form-control" %>
-				<span class="help-block"></span>
-				<span class="form-control-feedback"></span>
-			</div>
-		  </div>
-		  <div class="form-group has-feedback">
-			<%= f.label :identification_number, "RUT", class: "col-sm-3 control-label" %>
-			<div class="col-sm-9">
-				<%= f.text_field :identification_number, class: "form-control" %>
-				<span class="help-block"></span>
-				<span class="form-control-feedback"></span>
-			</div>
-		  </div>
-		  <div class="form-group has-feedback">
-			<%= f.label :phone, "Teléfono", class: "col-sm-3 control-label" %>
-			<div class="col-sm-9">
-				<%= f.text_field :phone, class: "form-control" %>
-				<span class="help-block"></span>
-				<span class="form-control-feedback"></span>
-			</div>
-		  </div>
-		  <div class="form-group has-feedback">
-			<%= f.label :address, "Dirección", class: "col-sm-3 control-label" %>
-			<div class="col-sm-9">
-				<%= f.text_field :address, class: "form-control" %>
-				<span class="help-block"></span>
-				<span class="form-control-feedback"></span>
-			</div>
-		  </div>
-		  <div class="form-group has-feedback">
-			<%= f.label :district, "Comuna", class: "col-sm-3 control-label" %>
-			<div class="col-sm-9">
-				<%= f.text_field :district, class: "form-control" %>
-				<span class="help-block"></span>
-				<span class="form-control-feedback"></span>
-			</div>
-		  </div>
-		  <div class="form-group has-feedback">
-			<%= f.label :city, "Ciudad", class: "col-sm-3 control-label" %>
-			<div class="col-sm-9">
-				<%= f.text_field :city, class: "form-control" %>
-				<span class="help-block"></span>
-				<span class="form-control-feedback"></span>
-			</div>
-		  </div>
-		  <div class="form-group">
-			<%= f.label :birth_day, "Cumpleaños", class: "col-sm-3 control-label" %>
-			<div class="col-sm-2">
-				<%= f.select :birth_day, [['01',1], ['02',2], ['03',3], ['04',4], ['05',5], ['06',6], ['07',7], ['08',8], ['09',9], ['10',10], ['11',11], ['12',12], ['13',13], ['14',14], ['15',15], ['16',16], ['17',17], ['18',18], ['19',19], ['20',20], ['21',21], ['22',22], ['23',23], ['24',24], ['25',25], ['26',26], ['27',27], ['28',28], ['29',29], ['30',30], ['31',31]], {prompt: "Día..."}, { class: "form-control date-select"} %>
-			</div>
-			<div class="col-sm-3">
-				<%= f.select :birth_month, [['Enero',1], ['Febrero',2], ['Marzo',3], ['Abril',4], ['Mayo',5], ['Junio',6], ['Julio',7], ['Agosto',8], ['Septiembre',9], ['Octubre',10], ['Noviembre',11], ['Diciembre',12]], {prompt: "Mes..."}, { class: "form-control date-select"} %>
-			
-			</div>
-			<div class="col-sm-3">
-				<%= f.select :birth_year, options_for_select(Time.now.year.downto(Time.now.year-100).map {|s| ["#{s}", s]}, selected: @client.birth_year), {prompt: "Año..."}, { class: "form-control date-select"} %>
-			
-			</div>
-		  </div>
-		  <div class="form-group has-feedback">
-			<%= f.label :age, "Edad", class: "col-sm-3 control-label" %>
-			<div class="col-sm-9">
-				<%= f.number_field :age, class: "form-control", :min => 0 %>
-				<span class="help-block"></span>
-				<span class="form-control-feedback"></span>
-			</div>
-		  </div>
-		  <div class="form-group">
-			<%= f.label :gender, "Género", class: "col-sm-3 control-label" %>
-			<div class="col-sm-9">
-				<%= f.select :gender, [['No especificado',0], ['Femenino',1], ['Masculino',2]], { }, { class: "form-control"} %>
-			</div>
-		  </div>
-		  <div class="form-group">
-			<div class="col-md-6 col-md-offset-3">
-			  <%= f.submit 'Guardar', :class => 'btn btn-agendapro-claro' %>
-			  <%= link_to 'Cancelar', clients_path, class: "btn btn-default" %>  
-			</div>
-		  </div>
-		</div>	
-  	<% end %>
+<style>
+.well {
+  overflow: hidden;
+}
+</style>
 
-	<% if @client.id %>
-	  <div class="col-md-6">
-		<div class="panel panel-info">
-		  <div class="panel-heading">
-			<h3 class="panel-title">
-			  Reservas Pasadas
-			</h3>
-		  </div>
-		  <div class="panel-body fixed-panel">
-			<table class="table">
-			  <tbody>
-				<tr>
-				  <th>Fecha</th>
-				  <th>Local</th>
-				  <th>Servicio</th>
-				  <th>Estado</th>
-				</tr>
-				<% @lastBookings.each do |booking| %>
-				<tr>
-				  <td><%= l booking.start, format: :short %></td>
-				  <td><%= booking.location.name %></td>
-				  <td><%= booking.service.name %></td>
-				  <td><%= booking.status.name %></td>
-				</tr>
-				<% end %>
-			  </tbody>
-			</table>
-		  </div>
-		</div>
-		<div class="panel panel-info">
-		  <div class="panel-heading">
-			<h3 class="panel-title">
-			  Próximas Reservas
-			</h3>
-		  </div>
-		  <div class="panel-body fixed-panel">
-			<table class="table">
-			  <tbody>
-				<tr>
-				  <th>Fecha</th>
-				  <th>Local</th>
-				  <th>Servicio</th>
-				  <th>Estado</th>
-				</tr>
-				<% @activeBookings.each do |booking| %>
-				<tr>
-				  <td><%= l booking.start, format: :short %></td>
-				  <td><%= booking.location.name %></td>
-				  <td><%= booking.service.name %></td>
-				  <td><%= booking.status.name %></td>
-				</tr>
-				<% end %>
-			  </tbody>
-			</table>
-		  </div>
-		</div>
-		<%= link_to "Ver Historial Completo", client_history_path(:id => @client.id) %>      
-	  </div>
-	<% end %>
+<div class="container-fluid">
+      <div class="row">
+        <%= form_for @client, html: {class: "form-horizontal" } do |f| %>
+          <% if @client.errors.any? %>
+            <div id="error_explanation">
+              <h2 class="text-green"><%= pluralize(@client.errors.count, "error") %> no permitió que el cliente fuera guardado:</h2>
+              <ul>
+                <% @client.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+          <% if @client.id %>
+          <div class="col-md-6">
+          <div class="well">
+          <% else %>
+          <div class="well">
+          <div class="col-md-6">
+          <% end %>
+              <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
+              <div class="form-group">
+                <%= f.label :can_book, "¿Puede reservar?", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.check_box :can_book, class: "check_box" %>
+                </div>
+              </div>
+              <% end %>
+              <div class="form-group has-feedback">
+                <%= f.label :record, "Número de Cliente", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :record, :autofocus => true, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :email, "E-mail", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :email, :autofocus => true, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :first_name, "Nombre", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :first_name, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :last_name, "Apellido", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :last_name, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :identification_number, "RUT", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :identification_number, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :phone, "Teléfono", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :phone, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :second_phone, "Teléfono 2", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :second_phone, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <% if !@client.id %>
+              </div>
+              <div class="col-md-6">
+              <% end %>
+              <div class="form-group has-feedback">
+                <%= f.label :address, "Dirección", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :address, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :district, "Comuna", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :district, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :city, "Ciudad", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.text_field :city, class: "form-control" %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group">
+                <%= f.label :birth_day, "Cumpleaños", class: "col-sm-3 control-label" %>
+                <div class="col-sm-3">
+                  <%= f.select :birth_day, [['01',1], ['02',2], ['03',3], ['04',4], ['05',5], ['06',6], ['07',7], ['08',8], ['09',9], ['10',10], ['11',11], ['12',12], ['13',13], ['14',14], ['15',15], ['16',16], ['17',17], ['18',18], ['19',19], ['20',20], ['21',21], ['22',22], ['23',23], ['24',24], ['25',25], ['26',26], ['27',27], ['28',28], ['29',29], ['30',30], ['31',31]], {prompt: "Día..."}, { class: "form-control"} %>
+                </div>
+                <div class="col-sm-3">
+                  <%= f.select :birth_month, [['Enero',1], ['Febrero',2], ['Marzo',3], ['Abril',4], ['Mayo',5], ['Junio',6], ['Julio',7], ['Agosto',8], ['Septiembre',9], ['Octubre',10], ['Noviembre',11], ['Diciembre',12]], {prompt: "Mes..."}, { class: "form-control"} %>
+                </div>
+                <div class="col-sm-3">
+                  <%= f.select :birth_year, options_for_select(Time.now.year.downto(Time.now.year-100).map {|s| ["#{s}", s]}, selected: @client.birth_year), {prompt: "Año..."}, { class: "form-control"} %>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :age, "Edad", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.number_field :age, class: "form-control", :min => 0 %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group">
+                <%= f.label :gender, "Género", class: "col-sm-3 control-label" %>
+                <div class="col-sm-9">
+                  <%= f.select :gender, [['No especificado',0], ['Femenino',1], ['Masculino',2]], { }, { class: "form-control"} %>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-md-6 col-md-offset-3">
+                  <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                  <%= link_to 'Cancelar', clients_path, class: "btn btn-default" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        <% if @client.id %>
+        <div class="col-md-6">
+          <div class="panel panel-green">
+            <div class="panel-heading">
+              <h3 class="panel-title">Reservas Pasadas</h3>
+            </div>
+            <div class="panel-body panel-scrollable" style="max-height: 220px !important;">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Local</th>
+                    <th>Servicio</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @lastBookings.each do |booking| %>
+                  <tr>
+                    <td><%= l booking.start, format: :short %></td>
+                    <td><%= booking.location.name %></td>
+                    <td>
+                      <% if !booking.is_session %>
+                        <%= booking.service.name %>
+                      <% else %>
+                        <% 
+                            index = 1
+                            session_index = "Sesión "
+                            session_booking = booking.session_booking
+                            session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
+
+                                if b.id == booking.id
+                                    session_index = session_index + index.to_s
+                                    break
+                                end
+                                index = index + 1
+                            end
+
+                            session_index = session_index + " de " + session_booking.sessions_amount.to_s
+
+                        %>
+
+                        <%= booking.service.name %><br /><%= "(" + session_index + ")" %>
+                      <% end %>
+                    </td>
+                    <td><%= booking.status.name %></td>
+                  </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel panel-green">
+            <div class="panel-heading">
+              <h3 class="panel-title">Próximas Reservas</h3>
+            </div>
+            <div class="panel-body panel-scrollable" style="max-height: 230px !important;">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Local</th>
+                    <th>Servicio</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @activeBookings.each do |booking| %>
+                  <tr>
+                    <td><%= l booking.start, format: :short %></td>
+                    <td><%= booking.location.name %></td>
+                    <td>
+                      <% if !booking.is_session %>
+                        <%= booking.service.name %>
+                      <% else %>
+                        <% 
+                            index = 1
+                            session_index = "Sesión "
+                            session_booking = booking.session_booking
+                            session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
+
+                                if b.id == booking.id
+                                    session_index = session_index + index.to_s
+                                    break
+                                end
+                                index = index + 1
+                            end
+
+                            session_index = session_index + " de " + session_booking.sessions_amount.to_s
+
+                        %>
+
+                        <%= booking.service.name %><br /><%= "(" + session_index + ")" %>
+                      <% end %>
+                    </td>
+                    <td><%= booking.status.name %></td>
+                  </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel panel-green">
+            <div class="panel-heading">
+              <h3 class="panel-title">Sesiones</h3>
+            </div>
+            <div class="panel-body panel-scrollable" style="max-height: 230px !important;">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Servicio</th>
+                    <th>Local</th>
+                    <th>Agendadas</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @sessionBookings.each do |session_booking| %>
+                  <tr>
+                    <td><%= session_booking.service.name %></td>
+                    <td><%= session_booking.bookings.first.location.name %></td>
+                    <td><%= session_booking.sessions_taken %></td>
+                    <td><%= session_booking.sessions_amount %></td>
+                  </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <%= link_to '<i class="fa fa-eye"></i> Historial Completo'.html_safe, client_history_path(:id => @client.id), class: "btn btn-white" %>
+        </div>
+        <% end %>
   </div>
-  
   <div class="row">
-	<% if @client.id %>
-	  <div class="col-md-12">
-		<div class="panel panel-info">
-		  <div class="panel-heading">
-			<h3 class="panel-title">
-			  Comentarios acerca del Cliente
-			</h3>
-		  </div>
-		  <div class="panel-body">
-			<table class="table">
-			  <tbody>
-				<tr>
-				  <th class="col-md-9">
-					<div class="form-group has-feedback">
-					  <label class="col-sm-2 control-label">Comentario: </label>
-					  <div class="col-sm-9">
-						<textarea class="form-control" id="client_comment_comment" name="client_comment_comment" rows="5"></textarea>
-						<span class="help-block"></span>
-						<span class="form-control-feedback"></span>
-					  </div>
-					</div>
-					<input id="client_comment_client_id" type="hidden" value="<%= @client.id %>" />
-				  </th>
-				  <th class="col-md-3">
-					<div class="form-group">
-					  <button class="btn btn-agendapro-oscuro" id="new_comment_button">Agregar</button>
-					</div>
-				  </th>
-				</tr>
-				<% @client_comments.each do |client_comment| %>
-				<tr>
-				  <td id="comment<%= client_comment.id %>"><%= client_comment.comment.gsub("\n", "<br />").html_safe %></td>
-				  <td><%= l client_comment.created_at, format: :short %><br />
-					<%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, '#', :class => 'btn btn-warning btn-xs', :id => 'edit_button'+client_comment.id.to_s %>
-					<%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, '#', :class => 'btn btn-danger btn-xs', :id => 'destroy_button'+client_comment.id.to_s %>
-				  </td>
-				</tr>
-				<% end %>
-			  </tbody>
-			</table>
-		  </div>
-		</div>
-	  </div>
-	<% end %>
+    <div class="col-md-12">
+      <% if @client.id %>
+      <div class="panel panel-green">
+        <div class="panel-heading">
+          <h3 class="panel-title">Comentarios acerca del Cliente</h3>
+        </div>
+        <div class="panel-body">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td class="col-md-9">
+                  <div class="form-group has-feedback">
+                    <label class="col-sm-2 control-label">Comentario: </label>
+                    <div class="col-sm-9">
+                      <textarea class="form-control" id="client_comment_comment" name="client_comment_comment" rows="5"></textarea>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+                  <input id="client_comment_client_id" type="hidden" value="<%= @client.id %>" />
+                </td>
+                <td class="col-md-3">
+                  <div class="form-group">
+                    <button class="btn btn-green" id="new_comment_button">Agregar</button>
+                  </div>
+                </td>
+              </tr>
+              <% @client_comments.each do |client_comment| %>
+              <tr>
+                <td id="comment<%= client_comment.id %>"><%= client_comment.comment.gsub("\n", "<br />").html_safe %></td>
+                <td>
+                  <p><%= l client_comment.created_at - eval(ENV["TIME_ZONE_OFFSET"]), format: :long %></p>
+                  <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, '#', :class => 'btn btn-orange btn-sm', :id => 'edit_button' + client_comment.id.to_s %>
+                  <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, '#', :class => 'btn btn-red btn-sm', :id => 'destroy_button' + client_comment.id.to_s %>
+                </td>
+              </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <% end %>
+    </div>
   </div>
-  
-  <% content_for :scripts do %>
-	<%= javascript_include_tag "clients" %>
-	<%= stylesheet_link_tag "jquery-ui-1.10.4" %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min" %>
-  <% end %>
 </div>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "clients" %>
+<% end %>

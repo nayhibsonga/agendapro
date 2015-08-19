@@ -1,9 +1,12 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  description: MyText
+transaction_type_1:
+    name: Webpay
+    description: El usuario paga por Webpay
+transaction_type_2:
+    name: Transferencia
+    description: El usuario paga por trasferencia bancaria
+transaction_type_3:
+    name: Otra
+    description: El usuario paga por otro medio
 
-two:
-  name: MyString
-  description: MyText

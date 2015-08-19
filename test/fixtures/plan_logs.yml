@@ -1,13 +1,2 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  date: 2013-12-09
-  prev_plan_id: 1
-  new_plan_id: 1
-  company_id: 1
-
-two:
-  date: 2013-12-09
-  prev_plan_id: 1
-  new_plan_id: 1
-  company_id: 1

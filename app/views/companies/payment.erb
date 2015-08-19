@@ -47,7 +47,7 @@
 
 <div style="margin-top: 10px;">
 	<%= form_tag({ :controller => 'companies', :action => 'modify_payment'}, method: "post") do %>
-	
+
 		<input type="hidden" name="id" value="<%= @record.id %>" />
 		<div class="row">
 			<div class="col-sm-3">
@@ -100,7 +100,7 @@
 				Haz los cambios necesarios que reflejen el pago.
 			</div>
 			<div class="col-sm-3">
-				
+
 			</div>
 		</div>
 		<div class="row" style="margin-top: 10px;">
@@ -121,7 +121,7 @@
 				<small>Selecciona un nuevo plan si quieres cambiarlo.</small>
 			</div>
 			<div class="col-sm-5">
-				
+
 			</div>
 		</div>
 		<div class="row" style="margin-top: 10px;">
@@ -142,7 +142,7 @@
 				<small>Selecciona un nuevo estado si quieres cambiarlo.</small>
 			</div>
 			<div class="col-sm-5">
-				
+
 			</div>
 		</div>
 		<div class="row" style="margin-top: 10px;">
@@ -184,24 +184,27 @@
 </div>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+	<%= javascript_include_tag "jquery-ui.min.js" %>
 
 
 	<script type="text/javascript">
 
-		
+
 			$("#datepicker").datepicker({
-	          monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-	          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-	          prevText: 'Atrás',
-	          nextText: 'Adelante',
-	          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-	          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vie', 'Sáb'],
-	          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mier', 'Jue', 'Vie', 'Sáb'],
-	          today: 'Hoy',
-	          clear: '',
-	          firstDay: 1,
-	          dateFormat: 'yy-mm-dd',
+				autoSize: true,
+				firstDay: 1,
+				changeMonth: true,
+				changeYear: true,
+				monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+				monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+				prevText: 'Atrás',
+				nextText: 'Adelante',
+				dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+				dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+				dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+				today: 'Hoy',
+				clear: '',
+	        	dateFormat: 'yy-mm-dd'
 	      	});
 
 			$("#datepicker").each(function(){
@@ -209,7 +212,7 @@
 				$(this).datepicker('option', 'altField', altField);
 			});
 
-			
-		
+
+
 	</script>
 <% end %>

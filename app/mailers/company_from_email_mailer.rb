@@ -5,6 +5,8 @@ class CompanyFromEmailMailer < ActionMailer::Base
 	def confirm_email (email, current_user)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
+		company = Company.find(current_user.company_id)
+
 		# => Template
 		template_name = 'companysetting'
 		template_content = []
@@ -28,12 +30,16 @@ class CompanyFromEmailMailer < ActionMailer::Base
 				},
 				{
 					:name => 'COMPANYNAME',
-					:content => Company.find(current_user.company_id).name
+					:content => company.name
 				},
 				{
 					:name => 'URL',
-					:content => Company.find(current_user.company_id).web_address
-				}
+					:content => company.web_address
+				},
+			{
+				:domain => 'DOMAIN',
+				:content => company.country.domain
+			}
 			],
 			:tags => ['companysetting'],
 			:images => [

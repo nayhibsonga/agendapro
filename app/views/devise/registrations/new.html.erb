@@ -1,106 +1,333 @@
-<div class="row">
-	<section class="hgroup">
-		<h2>Regístrate</h2>
-		<h2 class="section_header">Sólo necesitaremos un poco de información. <%= "¡Es absolutamente gratis!" unless params[:plan] || params[:user][:company_attributes][:plan_id] %></h2>
-	</section>
-	<div class="col-sm-8 col-md-9">
-		<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => 'form-horizontal well', :multipart => true } do |f| %>
-			<!-- start: User -->
-			<%= f.hidden_field :role_id, :value => Role.where(:name => "Administrador General").first.id %>
-			<%= f.hidden_field :first_name %>
-			<%= f.hidden_field :last_name %>
-			<div class="form-group has-feedback">
-				<label for="user_full_name" class="col-sm-4 control-label">Nombre</label>
-				<div class="col-sm-8">
-					<input type="text" id="user_full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
-					<span class="help-block"></span>
-					<span class="form-control-feedback"></span>
+<% if user_signed_in? && current_user.company_id && current_user.company_id > 0  %>
+  <script type="text/javascript">
+    window.location.href="<%= url_for(controller: 'dashboard', action: 'index', locale: I18n.locale.to_s ) %>"
+  </script>
+<% elsif user_signed_in? %>
+  <script type="text/javascript">
+    window.location.href="/"
+  </script>
+<% end %>
+
+<% if params[:company] && params[:company] == 'true' %>
+	<div class="row">
+		<div class="col-md-5 col-sm-offset-1">
+			<div class="row signup-feature">
+				<div class="col-sm-12">
+					<h1>ÚNETE A LA RED DE RESERVAS MÁS GRANDE DE <%= (I18n.t 'country.name').upcase %> Y AUMENTA TUS VENTAS.<br /></h1>
 				</div>
 			</div>
-			<div class="form-group has-feedback">
-				<%= f.label :email, 'E-mail', :class => 'col-sm-4 control-label' %>
-				<div class="col-sm-8">
-					<%= f.email_field :email, :required => true, :class => 'form-control', placeholder: 'ejemplo@dominio.com (requerido)' %>
-					<span class="help-block"></span>
-					<span class="form-control-feedback"></span>
+			<div class="row signup-feature">
+				<div class="col-sm-2">
+					<p><%= image_tag "home/landing1.png", :alt => "Caracteristica 1", :class => "img-responsive" %></p>
+				</div>
+				<div class="col-sm-9">
+					<p class="text-justify">Aumenta tus ventas asegurando pagos por adelantado y reduce al mínimo el tiempo de gestión de tu negocio.</p>
 				</div>
 			</div>
-			<div class="form-group has-feedback">
-				<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
-				<div class="col-sm-8">
-					<%= f.password_field :password, :required => true, :class => 'form-control', placeholder: 'Contraseña (requerido)' %>
-					<span class="help-block"></span>
-					<span class="form-control-feedback"></span>
+			<br />
+			<div class="row signup-feature">
+				<div class="col-sm-2">
+					<p><%= image_tag "home/landing2.png", :alt => "Caracteristica 2", :class => "img-responsive" %></p>
+				</div>
+				<div class="col-sm-9">
+					<p class="text-justify">Enfócate en hacer crecer tu negocio y deja que nosotros te ayudemos a manejarlo.</p>
 				</div>
 			</div>
-			<div class="form-group has-feedback">
-				<%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
-				<div class="col-sm-8">
-					<%= f.password_field :password_confirmation, :required => true, :class => 'form-control', placeholder: 'Contraseña (requerido)' %>
-					<span class="help-block"></span>
-					<span class="form-control-feedback"></span>
+			<br />
+			<div class="row signup-feature">
+				<div class="col-sm-2">
+					<p><%= image_tag "home/landing3.png", :alt => "Caracteristica 3", :class => "img-responsive" %></p>
+				</div>
+				<div class="col-sm-9">
+					<p class="text-justify">Con nuestros recordatorios automáticos te aseguras que tus clientes lleguen puntualmentea sus horas y con nuestro sistema de promociones envía las mejores ofertas directamente a su correo.</p>
 				</div>
 			</div>
-			<!-- end: User -->
-			<% if params[:plan] || params[:user][:company_attributes][:plan_id] %>
-			<!-- start: Company -->
-			<%= f.fields_for :company_attributes do |builder| %>
-				<!-- start: Companny Settings -->
-				<%= builder.fields_for :company_setting_attributes do |settings| %>
-					<%= settings.hidden_field :before_booking, :value => 24 %>
-					<%= settings.hidden_field :after_booking, :value => 6 %>
-				<% end %>
-				<!-- end: Company Settings -->
-				<%= builder.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Trial").first.id %>
-				<%= builder.hidden_field :plan_id, :value => Plan.find_by(:name => 'Trial').id %>
+		</div>
+		<div class="col-md-5">
+			<div class="row well well-square signup-well">
+				<div class="col-sm-12">
+					<h2>¡Regístrate!</h2>
+					<p>Y en 3 simples pasos ya estarás recibiendo tus reservas de forma automática.</p>
+				</div>
+			</div>
+
+			<div class="row">
+			<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => 'form-horizontal well well-square', :multipart => true } do |f| %>
+				<!-- start: User -->
+				<%= f.hidden_field :role_id, :value => Role.where(:name => "Administrador General").first.id %>
+				<%= f.hidden_field :first_name %>
+				<%= f.hidden_field :last_name %>
 				<div class="form-group has-feedback">
-					<%= builder.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
+					<label for="user_full_name" class="col-sm-4 control-label">Nombre</label>
 					<div class="col-sm-8">
-						<%= builder.text_field :name, :required => true, :class => 'form-control', placeholder: 'AgendaPro SpA (requerido)' %>
-					<span class="help-block"></span>
-					<span class="form-control-feedback"></span>
+						<input type="text" id="user_full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
 					</div>
 				</div>
 				<div class="form-group has-feedback">
-					<%= builder.label :web_address, 'Mini-sitio AgendaPro', :class => 'col-sm-4 control-label' %>
+					<%= f.label :email, 'E-mail', :class => 'col-sm-4 control-label' %>
 					<div class="col-sm-8">
-						<div class="input-group">
-							<%= builder.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio (requerido)' %>
-							<span class="input-group-addon">.agendapro.cl</span>
+						<%= f.email_field :email, :required => true, :class => 'form-control', placeholder: 'ejemplo@dominio.com (requerido)' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group has-feedback">
+					<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.password_field :password, :required => true, :class => 'form-control', placeholder: 'Contraseña (requerido)' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group has-feedback">
+					<%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.password_field :password_confirmation, :required => true, :class => 'form-control', placeholder: 'Contraseña (requerido)' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<!-- end: User -->
+				<!-- start: Company -->
+				<%= f.fields_for :company_attributes do |builder| %>
+					<!-- start: Companny Settings -->
+					<%= builder.fields_for :company_setting_attributes do |settings| %>
+						<%= settings.hidden_field :before_booking, :value => 3 %>
+						<%= settings.hidden_field :after_booking, :value => 6 %>
+					<% end %>
+					<!-- end: Company Settings -->
+					<%= builder.hidden_field :payment_status_id, :value => PaymentStatus.where(:name => "Trial").first.id %>
+					<%= builder.hidden_field :plan_id, :value => Plan.find_by(:name => 'Trial').id %>
+					<div class="form-group has-feedback">
+						<%= builder.label :country_id, 'País de la Compañía', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= builder.select :country_id, options_for_select(Country.all.map{ |c| [c.name, c.id, {'data-domain'=>c.domain}] }, selected_key = Country.find_by(locale: I18n.locale.to_s).id), { placeholder: 'Elige el país donde está tu empresa' }, { class: "form-control" } %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
 						</div>
 					</div>
-					<div class="col-sm-offset-4 col-sm-8">
+					<div class="form-group has-feedback">
+						<%= builder.label :name, 'Nombre de la Compañia', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<%= builder.text_field :name, :required => true, :class => 'form-control', placeholder: 'AgendaPro SpA (requerido)' %>
 						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+						</div>
 					</div>
-				</div>
-				<div class="form-group has-feedback">
-					<div class="col-sm-offset-4 col-sm-8">
-						<div class="checkbox">
-							<label>
-								<input type="checkbox" id="terms" name="terms" required> Acepto los <a href="http://www.agendapro.cl/Term_y_Cond_AgendaPro122014.pdf" target="_balnk">Términos y Condiciones</a>.
-							</label>
+					<div class="form-group has-feedback">
+						<%= builder.label :web_address, 'Mini-sitio AgendaPro', :class => 'col-sm-4 control-label' %>
+						<div class="col-sm-8">
+							<div class="input-group">
+								<%= builder.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio (requerido)' %>
+								<span class="input-group-addon signup-addon">.agendapro<%= I18n.t 'country.domain' %></span>
+							</div>
+						</div>
+						<div class="col-sm-offset-4 col-sm-8">
 							<span class="help-block"></span>
 						</div>
 					</div>
+					<div class="form-group has-feedback">
+						<div class="col-sm-offset-4 col-sm-8">
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="terms" name="terms" required> Acepto los <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>.
+								</label>
+								<span class="help-block"></span>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-4 col-sm-8">
+							<%= f.submit 'Regístrate', :class => 'btn btn-orange', onclick: "ga('send', 'event', 'Empresas', 'Sign-Up Empresas', 'Registro desde Landing');" %>
+						</div>
+					</div>
+				<!-- end: Company -->
+				<% end %>
+			<% end %>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-10 col-sm-offset-1">
+			<h3><%= image_tag "home/landing_photo.png", :alt => "Imagen PC AgendaPro", :class => "img-responsive center-block" %></h3>
+		</div>
+	</div>
+<% else %>
+	<div class="row">
+		<div class="col-md-5 col-sm-offset-1">
+			<div class="row signup-feature">
+				<div class="col-sm-12">
+					<h1>ÚNETE A LA RED DE SERVICIOS MÁS GRANDE DE <%= (I18n.t 'country.name').upcase %> Y RECIBE LAS MEJORES PROMOCIONES.<br /></h1>
 				</div>
-				<div class="form-group">
-					<div class="col-sm-offset-4 col-sm-8">
-						<%= f.submit 'Regístrate', :class => 'btn btn-orange' %>
+			</div>
+			<div class="row signup-feature">
+				<div class="col-sm-2">
+					<p><%= image_tag "home/landing1.png", :alt => "Caracteristica 1", :class => "img-responsive" %></p>
+				</div>
+				<div class="col-sm-9">
+					<p class="text-justify">Olvídate de las complicaciones y deja tu reserva pagada desde el momento que reservas.</p>
+				</div>
+			</div>
+			<br />
+			<div class="row signup-feature">
+				<div class="col-sm-2">
+					<p><%= image_tag "home/landing2.png", :alt => "Caracteristica 2", :class => "img-responsive" %></p>
+				</div>
+				<div class="col-sm-9">
+					<p class="text-justify">Encuentra los mejores servicios cerca tuyo e infórmate de nuestras promociones especiales directamente en tu correo.</p>
+				</div>
+			</div>
+			<br />
+			<div class="row signup-feature">
+				<div class="col-sm-2">
+					<p><%= image_tag "home/landing3.png", :alt => "Caracteristica 3", :class => "img-responsive" %></p>
+				</div>
+				<div class="col-sm-9">
+					<p class="text-justify">Nunca más olvidaras una reserva, te enviaremos un recordatorio antes de la realizacion de tu reserva.</p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-5">
+			<div class="row well well-square signup-well">
+				<div class="col-sm-12">
+					<h2>¡Regístrate!</h2>
+					<p>Y descubre los beneficios que tenemos para ti.</p>
+				</div>
+			</div>
+
+			<div class="row">
+			<%= form_for resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => 'form-horizontal well', :multipart => true } do |f| %>
+
+
+				<div class="row">
+					<div class="col-sm-12">
+						<span class="login-title"><p style="text-align: center;">Regístrate con tus cuentas de Facebook o Google</p></span>
 					</div>
 				</div>
+				<div class="row" style="margin-top: 20px; padding-bottom: 20px; margin-bottom: 10px; border-bottom: 1px solid #949292;">
+					<div class="col-sm-2">
+					</div>
+					<div class="col-sm-4">
+						<!--<a class="btn btn-block btn-social btn-facebook pull-right" href="users/auth/facebook">
+							<i class="fa fa-facebook"></i> Entra con Facebook
+						</a>-->
+						<%= link_to '<i class="fa fa-facebook"></i> Facebook'.html_safe, social_login_url('facebook'), { :class => "btn btn-block btn-social btn-facebook pull-right" }  %>
+					</div>
+					<div class="col-sm-4">
+						<!--<a class="btn btn-block btn-social btn-google-plus" href="users/auth/google_oauth2">
+							<i class="fa fa-google"></i> Entra con Google
+						</a>-->
+						<%= link_to '<i class="fa fa-google"></i> Google'.html_safe, social_login_url('google_oauth2'), { :class => "btn btn-block btn-social btn-google-plus" }  %>
+					</div>
+					<div class="col-sm-2">
+					</div>
+				</div>
+				<div class="row" style="margin-bottom: 15px;">
+					<div class="col-sm-12">
+						<span class="login-title"><p style="text-align: center;">O crea tu propia cuenta</p></span>
+					</div>
+				</div>
+
+
+				<%= f.hidden_field :role_id, :value => Role.where(:name => "Usuario Registrado").first.id %>
+				<%= f.hidden_field :first_name %>
+				<%= f.hidden_field :last_name %>
+				<div class="form-group has-feedback">
+					<label for="user_full_name" class="col-sm-4 control-label">Nombre</label>
+					<div class="col-sm-8">
+						<input type="text" id="user_full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group has-feedback">
+					<%= f.label :email, 'E-mail', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.email_field :email, :required => true, :class => 'form-control', placeholder: 'ejemplo@dominio.com (requerido)' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group has-feedback">
+					<%= f.label :password, 'Contraseña', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.password_field :password, :required => true, :class => 'form-control', placeholder: 'Contraseña (requerido)' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group has-feedback">
+					<%= f.label :password_confirmation, 'Confirmar Contraseña', :class => 'col-sm-4 control-label' %>
+					<div class="col-sm-8">
+						<%= f.password_field :password_confirmation, :required => true, :class => 'form-control', placeholder: 'Contraseña (requerido)' %>
+						<span class="help-block"></span>
+						<span class="form-control-feedback"></span>
+					</div>
+				</div>
+				<div class="form-group has-feedback">
+			        <%= f.label :receives_offers, 'Recibir ofertas en mi mail', :class => 'col-sm-4 control-label' %>
+			        <div class="col-sm-4">
+			          <%= f.check_box :receives_offers, :required => true%>
+			        </div>
+			    </div>
+				<div class="form-group">
+                   <div class="col-sm-offset-4 col-sm-8">
+                           <%= f.submit 'Regístrate', :class => 'btn btn-orange', onclick: "ga('send', 'event', 'Usuarios', 'Sign-In Usuarios', 'Registro desde Landing');" %>
+                   </div>
+               </div>
 			<% end %>
-			<!-- end: Company -->
-			<% end %>
-		<% end %>
+			</div>
+		</div>
 	</div>
-</div>
+	<div class="row">
+		<div class="col-sm-10 col-sm-offset-1">
+			<h3><%= image_tag "home/carousel2.jpg", :alt => "Imagen PC AgendaPro", :class => "img-responsive center-block" %></h3>
+		</div>
+	</div>
+<% end %>
 
 <% content_for :scripts do %>
+<%= javascript_include_tag 'validations/validate' %>
 <%= javascript_include_tag 'validations/home/new-user' %>
 <%= javascript_include_tag 'split-name' %>
 <script type="text/javascript">
 	$(function () {
 		split_name('#user_full_name', '#user_first_name', '#user_last_name', '#new_user');
 	});
+
+	$(function () {
+		$('#user_company_attributes_name').on('change', function() {
+			var tmp = $('#user_company_attributes_name').val();
+			tmp = tmp.toLowerCase();
+			tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
+			tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
+			tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
+			tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
+			tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
+			tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
+			tmp = tmp.replace(/[^a-z0-9]/gi,'');
+			$('#user_company_attributes_web_address').val(tmp);
+		});
+
+		$('#user_company_attributes_web_address').on('change', function() {
+			var tmp = $('#user_company_attributes_web_address').val();
+			tmp = tmp.toLowerCase();
+			tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
+			tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
+			tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
+			tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
+			tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
+			tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
+			tmp = tmp.replace(/[^a-z0-9]/gi,'');
+			$('#user_company_attributes_web_address').val(tmp);
+		});
+
+		$('#user_company_attributes_country_id').change(function() {
+			$('span.input-group-addon.signup-addon').html('.agendapro' + $('#user_company_attributes_country_id option:selected').data("domain"));
+		});
+	});
+
 </script>
 <% end %>

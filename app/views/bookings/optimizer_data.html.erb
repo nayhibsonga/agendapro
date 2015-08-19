@@ -1,0 +1,580 @@
+<div class="workflow-header">
+  <div class="container">
+    <div class="row">
+      <% if !@company.description.blank? %>
+        <div class="col-md-4 company-header-left company-header">
+          <div class="row">
+            <div class="col-md-3">
+              <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
+            </div>
+            <div class="col-md-9">
+              <div class="row">
+
+                <% if @company.name.length < 11 %>
+                  <div class="col-md-12 company-name">
+                    <span style="margin-left: 10px !important;">
+                      <%= @company.name %>
+                    </span>
+                  </div>
+                <% else %>
+                  <div class="col-md-12 company-name">
+                      <%= @company.name %>
+                  </div>
+                <% end %>
+
+              </div>
+              <% if @company.name.length < 11 %>
+                <br />
+              <% end %>
+              <div class="row header-btns">
+                <div class="col-md-12">
+                  <div class="header-btn inactive">
+                    <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
+                  </div>
+                  <div class="header-btn active" style="float: left;">
+                    <a href="#" id="boton-servicio" class="btn btn-default btn-green-wf">Servicios</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 company-header-center company-header">
+          <div class="header-description">
+            <%= @company.description %>
+          </div>
+        </div>
+        <div class="col-md-4 company-header-right company-header">
+          <% if @local %>
+            <div id="phone-info">
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @local.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@local.outcall then @local.address+', '+@local.district.name else "A Domicilio" end %>
+                <br><%= if !@local.second_address.blank? then @local.second_address else '' end %>
+              </span>
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+      <% else %>
+        <div class="col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
+          <div class="row">
+            <div class="col-md-3">
+              <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
+            </div>
+            <div class="col-md-9">
+
+              <div class="row">
+                <% if @company.name.length < 11 %>
+                  <div class="col-md-12 company-name">
+                    <span style="margin-left: 10px !important;">
+                      <%= @company.name %>
+                    </span>
+                  </div>
+                <% else %>
+                  <div class="col-md-12 company-name">
+                      <%= @company.name %>
+                  </div>
+                <% end %>
+              </div>
+              <% if @company.name.length < 11 %>
+                <br />
+              <% end %>
+
+              <div class="row header-btns">
+                <div class="col-md-12">
+                  <div class="header-btn inactive">
+                    <a href="#" id="boton-locales" class="btn btn-default btn-green-wf">Lugares</a>
+                  </div>
+                  <div class="header-btn active" style="float: left;">
+                    <a href="#" id="boton-servicio" class="btn btn-default btn-green-wf">Servicios</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8 company-header-center2 company-header">
+          <% if @local %>
+            <div id="phone-info">
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number">
+                <%= @local.phone %>
+              </span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address">
+                <%= if !@local.outcall then @local.address+', '+@local.district.name else "A Domicilio" end %>
+                <br><%= if !@local.second_address.blank? then @local.second_address else '' end %>
+              </span>
+            </div>
+          <% else %>
+            <div id="phone-info" hidden>
+              <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-number"></span><br />
+              <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
+              <span id="phone-address"></span>
+            </div>
+          <% end %>
+          <div style="clear: both;"></div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div clas="row" id="espacio-workflow">
+    <div class="col-md-12">
+      <div class="row" style="margin-left: 0px !important;">
+        <div class="col-md-6">
+          <div class="subtitulos-workflow">Ingresa tus datos &nbsp;<i class="fa fa-file-text-o gray-icon"></i></div>
+        </div>
+      </div>
+      <div class="row" style="margin-left: 0px !important;">
+        <div class="col-md-6">
+          <!-- INICIO FORM -->
+          <div id="form-datos">
+            <div class="datos-heading">
+              Datos de la reserva
+            </div>
+            <div class="panel-body">
+              <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
+                <input type="hidden" name="bookings" id="bookings" value="<%= @string_bookings %>">
+                <input type="hidden" name="location" id="location" value="<%= @local.id %>">
+                <input type="hidden" name="origin" id="origin" value="true">
+                <input type="hidden" name="payment" id="payment" value="0">
+                <div id="user-data">
+                  <% if user_signed_in? %>
+                  <%= hidden_field_tag :user_id, current_user.id %>
+                  <% end %>
+                  <%= hidden_field_tag :firstName, if user_signed_in? then current_user.first_name else nil end %>
+                  <%= hidden_field_tag :lastName, if user_signed_in? then current_user.last_name else nil end %>
+                  <div class="row">
+                    <div class="col-md-12 dark-gray">
+                      Nombre
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group has-feedback">
+                        <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)" <%= 'disabled' if @local.company.company_setting.client_exclusive %>>
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 dark-gray">
+                      Email
+                    </div>
+                    <div class="col-md-6 dark-gray">
+                      Teléfono
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group has-feedback">
+                        <%= email_field_tag(:email, if user_signed_in? then current_user.email else nil end, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group has-feedback">
+                        <%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <% if @local.company.company_setting.client_exclusive %>
+                  <div id="identificationNumber" class="form-group has-feedback">
+                    <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
+                    <div class="col-sm-9">
+                      <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+                <% end %>
+                <% if @outcall %>
+                <div class="form-group has-feedback">
+                  <%= label_tag(:address, "Dirección", class: "col-sm-3 control-label") %>
+                  <div class="col-sm-9">
+                    <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
+                <% end %>
+                <div class="row">
+                  <div class="col-md-12 dark-gray">
+                    Comentario
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" style="margin-top: 20px;">
+                  <div class="col-md-6">
+                    <div class="btn-change btn-prev">
+                      <%= link_to '<i class="fa fa-chevron-left prev-arrow"></i> Volver'.html_safe, workflow_path(local: @local.id), class: 'prev2 prev-btn' %>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <% if !@local.company.company_setting.allows_online_payment %>
+                      <button type="submit" id="submitBtn">Reservar</button>
+                    <% end %>
+                  </div>
+                </div>
+
+
+                  <!-- MODALES -->
+
+                    <!-- MODAL MEDIO DE PAGO -->
+                      <div class="modal fade" id="medio-de-pago" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" style="color: #505050 !important;">Elige el medio de pago</h4>
+                            </div>
+                            <div class="modal-body" style="color: #505050 !important;">
+
+                              <div class="row">
+                                <div class="col-md-4">
+                                  <input type="radio" name="mp" value="04" class="mp_radio" id="mp_radio_04" />
+                                  <label for="mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" /></label>
+                                </div>
+                                <!-- <div class="col-md-4">
+                                  <input type="radio" name="mp" value="05" class="mp_radio" id="mp_radio_05" />
+                                  <label for="mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" /></label>
+                                </div> -->
+                                <!-- <div class="col-md-4">
+                                  <input type="radio" name="mp" value="06" class="mp_radio" id="mp_radio_06" />
+                                  <label for="mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" /></label>
+                                </div> -->
+                              </div>
+                              <div class="row">
+                                <div class="col-md-4">
+                                  <input type="radio" name="mp" value="07" class="mp_radio" id="mp_radio_07" />
+                                  <label for="mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" /></label>
+                                </div>
+                                <div class="col-md-4">
+                                  <input type="radio" name="mp" value="03" class="mp_radio" id="mp_radio_03" />
+                                  <label for="mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" /></label>
+                                </div>
+                                <div class="col-md-4">
+                                  <input type="radio" name="mp" value="01" style="display: none !important;" class="mp_radio" id="mp_radio_01" />
+                                  <label for="mp_radio_01"><image style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" /></label>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-12" style="padding-left: 10px; padding-top: 10px;">
+                                  <p>Antes de pagar, asegúrate de leer la política de pagos en línea de la empresa: <a href="#" id="policy-link" style="color: #505050 !important;"><b>ver.</b></a></p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="modal-pay" id="select-medio">Confirmar pago</button>
+                            </div>
+                          </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                      </div><!-- /.modal -->
+                      <!-- FIN MODAL MEDIO DE PAGO -->
+
+                      <!-- MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+                      <div class="modal fade" id="online-policy" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" style="color: #505050 !important;">Política de modificación/cancelación de reservas pagadas en línea.</h4>
+                            </div>
+                            <div class="modal-body" style="color: #505050 !important;">
+                              <h3>Modificación:</h3>
+                              <% if !@local.company.company_setting.online_cancelation_policy.modifiable %>
+                                <p>La empresa no permite modificar reservas pagadas en línea.</p>
+                              <% else %>
+                                <p>La reserva se puede modificar:</p>
+                                <p>- Hasta <%= @local.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
+                                - Hasta <%= @local.company.company_setting.online_cancelation_policy.modification_max.to_s %> <%= TimeUnit.find(@local.company.company_setting.online_cancelation_policy.modification_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
+                                <p>
+                                  Si no cumple con alguna de las dos restricciones, no podrá modificar su reserva.
+                                  <br />
+                                  Además, la empresa permite modificar la reserva un máximo de <%= @local.company.company_setting.max_changes.to_s %> veces.
+                                </p>
+                              <% end %>
+
+                              <h3>Cancelación:</h3>
+                              <% if !@local.company.company_setting.online_cancelation_policy.cancelable %>
+                                <p>La empresa no permite cancelar reservas pagadas en línea.</p>
+                              <% else %>
+                                <p>La reserva se puede cancelar:</p>
+                                <p>- Hasta <%= @local.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
+                                - Hasta <%= @local.company.company_setting.online_cancelation_policy.cancel_max.to_s %> <%= TimeUnit.find(@local.company.company_setting.online_cancelation_policy.cancel_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
+                                <p>Si no cumple con alguna de las dos restricciones, no podrá cancelar su reserva.</p>
+                                <br />
+                                <p>
+                                  Si cancela su reserva, se le devolverá un 90% del monto cancelado debido a los costos de transacción.
+                                </p>
+                              <% end %>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            </div>
+                          </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                      </div><!-- /.modal -->
+                      <!-- FIN MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+
+                  <!-- FIN MODALES -->
+
+
+              <% end %>
+            </div>
+          </div>
+          <!-- FIN FORM -->
+        </div>
+        <div class="col-md-6">
+          <div id="resumen-reserva">
+            <div class="resumen-heading">
+              Resumen de tu Reserva
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                <tbody id="summary">
+                  <tr style="border-top: 0px !important;">
+                    <td style="border-top: 0px !important;" class="dark-gray">¿Qué estoy reservando?</td>
+                    <td style="border-top: 0px !important;" class="light-gray">
+                      <% @bookings.each do |booking| %>
+                      <p class="light-gray"><%= booking[:service_name] %></p>
+                      <% end %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="dark-gray">¿Dónde?</td>
+                    <td class="light-gray"><%= @local.address %> , <%= @local.district.name %></td>
+                  </tr>
+                  <tr>
+                    <td class="dark-gray">¿Con quién?</td>
+                    <td class="light-gray">
+                      <% @bookings.each do |booking| %>
+                      <p class="light-gray"><%= booking[:provider_name] %></p>
+                      <% end %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="dark-gray">¿Cuándo?</th>
+                    <td class="light-gray">
+                      <% @bookings.each do |booking| %>
+                      <p class="light-gray"><%= l booking[:start].to_datetime %></p>
+                      <% end %>
+                    </td>
+                  </tr>
+
+                  <%
+                    total_price = 0
+                    online_price = 0
+                    if @local.company.company_setting.allows_online_payment
+                      all_payable = true
+                      @bookings.each do |booking|
+                        if !booking[:online_payable] || !booking[:show_price] || booking[:price].to_i == 0
+                          all_payable = false
+                        else
+                          if booking[:has_discount]
+                            online_price = online_price + (booking[:price]*(100-booking[:discount])/100)
+                          else
+                            online_price = online_price + booking[:price]
+                          end
+                        end
+                        total_price = total_price + booking[:price]
+                      end
+                    end
+                  %>
+                  <% if all_payable %>
+                    <tr>
+                      <td class="dark-gray">Precios</td>
+                      <td class="light-gray">
+
+                          <% @bookings.each do |booking| %>
+                            <% if booking[:has_discount] %>
+                              <p class="light-gray">
+                                Precio normal: <%= number_to_currency(booking[:price], unit: "$", delimiter: ".") %> - Descuento: <%= booking[:discount] %>%<br />
+                                Precio con descuento: <%= number_to_currency(booking[:price]*(100-booking[:discount])/100, unit: "CLP $", delimiter: ".")  %>
+                              </p>
+                            <% else %>
+                              <p class="light-gray">
+                                Precio normal: <%= number_to_currency(booking[:price], unit: "$", delimiter: ".") %> - (Sin descuento)<br />
+                              </p>
+                            <% end %>
+                          <% end %>
+
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="dark-gray">Precio normal</td>
+                      <td class="light-gray">
+                        <%= number_to_currency(total_price, unit: "$", delimiter: ".") %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="dark-gray">Precio pago en línea</td>
+                      <td class="light-gray">
+                        <%= number_to_currency(online_price, unit: "$", delimiter: ".") %>
+                      </td>
+                    </tr>
+                  <% else %>
+                    <tr>
+                      <td class="dark-gray">Precios</td>
+                      <td class="light-gray">
+                        <% @bookings.each do |booking| %>
+                          <% if !booking[:show_price] || booking[:price].to_i == 0 %>
+                            Preguntar en local<br />
+                          <% else %>
+                            <%= number_to_currency(booking[:price], unit: "$", delimiter: ".") %><br />
+                          <% end %>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="reservar2" style="margin-top: 20px;">
+            <!--<div class="row">
+              <div class="col-md-6">
+
+                <a href="#" id="openPayOptions">Seleccionar opción de pago</a>
+
+              </div>
+            </div>-->
+            <% if @local.company.company_setting.allows_online_payment and all_payable %>
+              <div class="row">
+                <div class="col-md-6">
+                  <div>
+                    <button type="submit" data-loading-text = "Cargando" class="payBtn">Pagar</button>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div id="discount" style="color: #505050; padding: 5px 5px 5px 5px;">
+                    Precio final: <%= number_to_currency(online_price, unit: "$", delimiter: ".") %>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div id="normal-book" style="color: #505050; padding: 5px 5px 5px 5px; float: right; text-align: right;">
+                    Precio final: <%= number_to_currency(total_price, unit: "$", delimiter: ".") %>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div style="color: #505050; padding: 5px 5px 5px 5px;">
+                    <a href="#" id="open-online-policy" data-toggle="modal" data-target="#online-policy" style="color: #505050 !important; border-top: 1px solid #949292; padding-top: 5px;"><b><%= image_tag 'icono_pago.png', :alt => 'Pago' %>Política de pagos en línea.</b></a>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div style="color: #505050; padding: 5px 5px 5px 5px; float: right; text-align: right;">
+                  </div>
+                </div>
+              </div>
+            <% elsif  @local.company.company_setting.allows_online_payment %>
+              <div class="row">
+                <div class="col-md-6 col-md-offset-6">
+                  <button type="submit" data-loading-text="Cargando..." class="submitBtn">Reservar</button>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+  </div>
+</div>
+
+<%= content_tag "div", id: "workflow_url", data: {url: @url, location_id: @local.id} do %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'split-name' %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/home/workflow' %>
+  <script type="text/javascript">
+    $(function() {
+      compose_name('#full_name', '#firstName', '#lastName');
+      split_name('#full_name', '#firstName', '#lastName');
+
+      $(".payBtn").click(function(e){
+        e.preventDefault();
+        $("#payment").val("1");
+        $("#bookingForm").submit();
+      });
+
+      $(".submitBtn").click(function(e){
+        e.preventDefault();
+        $("#payment").val("0");
+        $("#bookingForm").submit();
+      });
+
+      $("#policy-link").click(function(e){
+        e.preventDefault();
+        $("#medio-de-pago").modal('hide');
+        $("#online-policy").modal('show');
+      });
+
+      $('#select-medio').click(function(){
+        console.log('clicked select medio');
+        var is_selected = false;
+        $('.mp_radio').each(function(){
+          if($(this).prop('checked'))
+          {
+            is_selected = true;
+            console.log(is_selected);
+          }
+        });
+        if(is_selected)
+        {
+          console.log("Entra");
+          $("#medio-de-pago").modal('hide');
+          $('#bookingForm').submit();
+        }
+      });
+
+      $('#boton-servicio').click(function () {
+        window.location.href = 'http://' + $('#workflow_url').data('url') + '/workflow?local=' + $('#workflow_url').data('location-id').toString();
+      });
+      $('#boton-locales').click(function () {
+        window.location.href = 'http://' + $('#workflow_url').data('url') + '/?local=' + $('#workflow_url').data('location-id').toString();
+      });
+
+    });
+  </script>
+<% end %>

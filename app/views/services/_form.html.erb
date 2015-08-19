@@ -1,40 +1,40 @@
-<div class="container">
-  <div class="row"> 
-    <%= form_for @service, html: {class: "form-horizontal" } do |f| %>
-      <% if @service.errors.any? %>
-        <div id="error_explanation">
-          <h3><%= pluralize(@service.errors.count, "error") %> no permitió que el servicio fuera creado:</h3>
-          <ul>
-          <% @service.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
-          <% end %>
-          </ul>
-        </div>
-      <% end %>
-      <div class="col-md-12">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <%= form_for @service, html: {class: "form-horizontal" } do |f| %>
+        <% if @service.errors.any? %>
+          <div id="error_explanation">
+            <h3><%= pluralize(@service.errors.count, "error") %> no permitió que el servicio fuera creado:</h3>
+            <ul>
+              <% @service.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
         <div class="row">
           <div class="col-md-6">
             <h3>Servicio</h3>
             <div class="well">
               <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
               <div class="form-group">
-                <%= f.label :company_id, "Empresa", class: "col-sm-3 control-label" %>
-                <div class="col-sm-9">
+                <%= f.label :company_id, "Empresa", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
                   <%= f.collection_select :company_id, Company.where(owned: false).order(:name), :id, :name, {}, { class: "form-control", required: true} %>
                 </div>
               </div>
               <% end %>
               <div class="form-group has-feedback">
-                <%= f.label :name, "Nombre", class: "col-sm-3 control-label" %>
-                <div class="col-sm-9">
+                <%= f.label :name, "Nombre", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
                   <%= f.text_field :name, :autofocus => true, class: "form-control", placeholder: 'Nombre (requerido)' %>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
               </div>
               <div class="form-group">
-                <%= f.label :price, "Precio", class: "col-sm-3 control-label" %>
-                <div class="col-sm-9">
+                <%= f.label :price, "Precio", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
                   <div class="input-group">
                     <span class="input-group-addon">$</span>
                     <%= f.number_field :price, class: "form-control", :min => 0, placeholder: '0 (requerido)' %>
@@ -49,25 +49,24 @@
                 </div>
               </div>
               <div class="form-group has-feedback">
-                <%= f.label :comission_value, 'Comisión de Venta', class: "col-sm-3 control-label" %>
-                <div class="col-sm-5">
-                  <%= f.number_field :comission_value, :class => 'form-control', placeholder: '' %> 
+                <%= f.label :comission_value, 'Comisión de Venta', class: "col-md-3 control-label" %>
+                <div class="col-md-5">
+                  <%= f.number_field :comission_value, :class => 'form-control', placeholder: '' %>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-md-3">
                   <%= f.select :comission_option, options_for_select([["%", 0], ["$", 1]], selected: @service.comission_option ), {}, {class: "form-control" } %>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
-                <div class="col-sm-1">
-                  <span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Esto es la cantidad de tiempo, desde el momento en que se efectuó la reserva, que el cliente tendrá para cancelarla, siempre y cuando no se encuentre dentro del límite previo a la hora del servicio."><i class="fa fa-question-circle fa-lg"></i></span>
+                <div class="col-md-1">
+                  <span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si los prestadores que hacen este servicio perciben una comisión al realizarlo, puedes definir esto acá y después ver en la sección 'Reportes' el detalle de estas comisiones. Se pueden definir tanto como un porcentaje del precio del servicio o un valor fijo."><i class="fa fa-question-circle fa-lg"></i></span>
                 </div>
               </div>
-              
               <div class="form-group">
-                <%= f.label :duration, "Duración", class: "col-sm-3 control-label" %>
-                <div class="col-sm-9">
+                <%= f.label :duration, "Duración", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
                   <div class="input-group">
                     <%= f.number_field :duration, class: "form-control", :in => 5...1440, :step => 5, placeholder: '5 (requerido)' %>
                     <span class="input-group-addon">Minutos</span>
@@ -80,33 +79,54 @@
                   </div>
                 </div>
               </div>
-
               <% if current_user.company.company_setting.allows_online_payment %>
 
+
                 <div class="form-group">
-                <%= f.label :online_payable, "Pago en línea", class: "col-sm-3 control-label" %>
-                  <div class="col-sm-9">
+                  <%= f.label :online_payable, "Pago en línea", class: "col-md-3 control-label" %>
+                  <div class="col-md-9">
                     <div class="checkbox">
-                      <label>
-                        <%= f.check_box :online_payable %> Este servicio se puede pagar en línea
+                      <label style="margin-left: -20px;">
+                        <% if !@service.online_payable && !@service.must_be_paid_online %>
+                          <input type="radio" name="online_payable_options" value="no_pay" data-outcall="false" checked="checked">&nbsp;Este servicio <b>no se puede</b> pagar en línea
+                        <% else %>
+                          <input type="radio" name="online_payable_options" value="no_pay" data-outcall="false">&nbsp;Este servicio <b>no se puede</b> pagar en línea
+                        <% end %>
+                      </label>
+                    </div>
+                    <div class="checkbox">
+                      <label style="margin-left: -20px;">
+                        <% if @service.online_payable && !@service.must_be_paid_online %>
+                          <input type="radio" name="online_payable_options" value="may_pay" data-outcall="false" checked="checked">&nbsp;Este servicio <b>sí se puede</b> pagar en línea
+                        <% else %>
+                          <input type="radio" name="online_payable_options" value="may_pay" data-outcall="false">&nbsp;Este servicio <b>sí se puede</b> pagar en línea
+                        <% end %>
+                      </label>
+                    </div>
+                    <div class="checkbox">
+                      <label style="margin-left: -20px;">
+                        <% if @service.online_payable && @service.must_be_paid_online %>
+                          <input type="radio" name="online_payable_options" value="must_pay" data-outcall="false" checked="checked">&nbsp;Este servicio <b>se debe</b> pagar en línea
+                        <% else %>
+                          <input type="radio" name="online_payable_options" value="must_pay" data-outcall="false">&nbsp;Este servicio <b>se debe</b> pagar en línea
+                        <% end %>
                       </label>
                     </div>
                   </div>
                 </div>
 
                 <div class="form-group">
-                <%= f.label :has_discount, "Descuento", class: "col-sm-3 control-label" %>
-                  <div class="col-sm-9">
+                  <%= f.label :has_discount, "Descuento", class: "col-md-3 control-label" %>
+                  <div class="col-md-9">
                     <div class="checkbox">
                       <label>
-                        <%= f.check_box :has_discount %> Tiene descuento por pago en línea en línea
+                        <%= f.check_box :has_discount %> Tiene descuento por pago en línea
                       </label>
                     </div>
                   </div>
                 </div>
-
                 <div class="form-group">
-                  <div class="col-sm-9 col-sm-offset-3">
+                  <div class="col-md-9 col-md-offset-3">
                     <div class="input-group">
                       <%= f.number_field :discount, class: "form-control", min: 0, placeholder: '0 (requerido)' %>
                       <span class="input-group-addon">%</span>
@@ -115,21 +135,43 @@
                   </div>
                 </div>
 
-              <% end %>
+                <% if @service.online_payable %>
+                  <input type="hidden" name="service[online_payable]" id="service_online_payable" value="1" />
+                <% else %>
+                  <input type="hidden" name="service[online_payable]" id="service_online_payable" value="0" />
+                <% end %>
 
+                <% if @service.must_be_paid_online %>
+                  <input type="hidden" name="service[must_be_paid_online]" id="service_must_be_paid_online" value="1" />
+                <% else %>
+                  <input type="hidden" name="service[must_be_paid_online]" id="service_must_be_paid_online" value="0" />
+                <% end %>
+
+              <% end %>
             </div>
           </div>
           <div class="col-md-6">
             <h3>Detalles del Servicio</h3>
             <div class="well">
               <div class="form-group">
-                <%= f.label :description, "Descripción", class: "col-sm-3 control-label" %>
-                <div class="col-sm-9">
+                <%= f.label :description, "Descripción", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
                   <%= f.text_area :description, class: "form-control" %>
                 </div>
               </div>
+              <% if current_user.company.company_setting.activate_workflow %>
               <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-9">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :online_booking %> Este servicio se puede reservar Online
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <% end %>
+              <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
                   <div class="checkbox">
                     <label>
                       <%= f.check_box :group_service %> Servicio Grupal
@@ -138,11 +180,31 @@
                 </div>
               </div>
               <div class="form-group hidden">
-                <%= f.label :capacity, "Capacidad", class: "col-sm-3 control-label" %>
-                <div class="col-sm-9">
+                <%= f.label :capacity, "Capacidad", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
                   <div class="input-group">
                     <%= f.number_field :capacity, class: "form-control", :min => 2, disabled: true, placeholder: '2 (requerido)' %>
                     <span class="input-group-addon">Personas</span>
+                  </div>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :has_sessions %> Este servicio tiene sesiones
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group hidden">
+                <%= f.label :sessions_amount, "Cantidad", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
+                  <div class="input-group">
+                    <%= f.number_field :sessions_amount, class: "form-control", :min => 2, disabled: true, placeholder: '2 (requerido)' %>
+                    <span class="input-group-addon">Sesiones</span>
                   </div>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
@@ -152,38 +214,35 @@
               <% if @service.service_category.nil? then @service.build_service_category end %>
               <%= f.fields_for :service_category do |builder| %>
                 <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
-              <% end %> 
+              <% end %>
               <div class="form-group has-feedback">
-                <%= f.label :service_category_id, "Categoría de Servicio", class: "col-sm-3 control-label" %>
-                <div class="col-sm-9">
-                  <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
+                <%= f.label :service_category_id, "Categoría de Servicio", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
+                  <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id).order(:order, :name), :id, :name, {}, { class: "form-control" }%>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
               </div>
               <% if current_user.role_id != Role.find_by_name("Super Admin").id %>
               <div class="form-group">
-                <div class="col-sm-offset-3 col-sm-9">
-                  <button type="button" class="btn btn-sm btn-agendapro-claro" data-toggle="modal" data-target="#serviceCategoryModal"><i class="fa fa-plus"></i> Nueva Categoría de Servicio</button>
+                <div class="col-md-offset-3 col-md-9">
+                  <button type="button" class="btn btn-sm btn-green" data-toggle="modal" data-target="#serviceCategoryModal"><i class="fa fa-plus"></i> Nueva Categoría de Servicio</button>
                 </div>
               </div>
               <% end %>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-md-12">
         <div class="row">
-          <div class="col-md-12">
-            <h3>Prestadores y Recursos</h3>
-            <div class="row well">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <%= f.label :service_provider_ids, "Prestadores de Servicios", class: "col-sm-4 control-label" %>
-                  <div class="col-sm-8">
-                    <div class="panel-group" id="service-provider-accordion">
-                      <% Location.accessible_by(current_ability).each do |location| %>
-                      <% @service_providers = ServiceProvider.where(company_id: current_user.company_id, location_id: location.id, :active => true) %>
+          <div class="col-md-6">
+            <h3>Prestadores</h3>
+            <div class="well">
+              <div class="form-group">
+                <%= f.label :service_provider_ids, "Prestadores de Servicios", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
+                  <div class="panel-group" id="service-provider-accordion">
+                    <% Location.order(:order, :name).accessible_by(current_ability).each do |location| %>
+                      <% @service_providers = ServiceProvider.where(company_id: current_user.company_id, location_id: location.id, :active => true).order(:order, :public_name) %>
                       <% if @service_providers.length > 0 %>
                       <div class="panel panel-default">
                         <div class="panel-heading">
@@ -197,7 +256,7 @@
                             <%= f.collection_check_boxes :service_provider_ids, @service_providers, :id, :public_name, {}, {class: "check_boxes"} do |b|%>
                               <div class="checkbox">
                                 <label>
-                                <%= b.check_box %> <%= b.object.public_name %>
+                                  <%= b.check_box %> <%= b.object.public_name %>
                                 </label>
                               </div>
                             <% end %>
@@ -205,18 +264,21 @@
                         </div>
                       </div>
                       <% end %>
-                      <% end %>
-                    </div>
+                    <% end %>
                   </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <%= f.label :resource_ids, "Recursos", class: "col-sm-4 control-label" %>
-                  <div class="col-sm-8">
-                    <div class="panel-group" id="service-provider-accordion">
-                      <% ResourceCategory.where(company_id: current_user.company_id).each do |resource_category| %>
-                      <% @resources = Resource.where(resource_category_id: resource_category.id) %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h3>Recursos</h3>
+            <div class="well">
+              <div class="form-group">
+                <%= f.label :resource_ids, "Recursos", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
+                  <div class="panel-group" id="service-provider-accordion">
+                    <% ResourceCategory.where(company_id: current_user.company_id).order(:name).each do |resource_category| %>
+                      <% @resources = Resource.where(resource_category_id: resource_category.id).order(:name) %>
                       <% if @resources.length > 0 %>
                       <div class="panel panel-default">
                         <div class="panel-heading">
@@ -238,7 +300,22 @@
                         </div>
                       </div>
                       <% end %>
-                      <% end %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="well">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <div class="col-md-9 col-md-offset-3">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', services_path, class: "btn btn-white" %>
                     </div>
                   </div>
                 </div>
@@ -246,54 +323,38 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-md-12">
-        <div class="well">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <div class="col-md-8 col-md-offset-4">
-                  <%= f.submit 'Guardar', :class => 'btn btn-agendapro-oscuro' %>
-                  <%= link_to 'Cancelar', services_path, class: "btn btn-default" %>  
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    <% end %>
-  </div>
-</div>
-
-<div class="modal fade" id="serviceCategoryModal" tabindex="-1" role="dialog" aria-labelledby="serviceCategoryModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title serviceCategory-modal-title" id="serviceCategoryModalLabel">Crear Categorías de Servicios</h4>
-      </div>
-      <div class="modal-body break-modal-body">
-        <%= form_for ServiceCategory.new, html: {class: "form-horizontal"} do |sc| %>
-          <div class="form-group has-feedback">
-            <%= sc.label :name, "Nueva Categoría", class: "col-sm-3 control-label" %>
-            <div class="col-sm-6">
-              <%= sc.text_field :name, :class => 'form-control', :placeholder => 'Categoría (requerido)'%>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-            <div class="col-sm-3">
-              <input class="btn btn-agendapro-claro" id="saveServiceCategryButton" type="button" value="Guardar" data-loading-text="Guardando...">
-            </div>
-          </div>
-        <% end %>
-      </div>
-      <div class="modal-footer break-modal-footer">
-        <button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>
-      </div>
+      <% end %>
     </div>
   </div>
 </div>
 
-<% content_for :scripts do %>
-  <%= javascript_include_tag "service" %>
+<% content_for :modals do %>
+  <div class="modal fade" id="serviceCategoryModal" tabindex="-1" role="dialog" aria-labelledby="serviceCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title serviceCategory-modal-title" id="serviceCategoryModalLabel">Crear Categorías de Servicios</h4>
+        </div>
+        <div class="modal-body break-modal-body">
+          <%= form_for ServiceCategory.new, html: {class: "form-horizontal"} do |sc| %>
+            <div class="form-group has-feedback">
+              <%= sc.label :name, "Nueva Categoría", class: "col-md-3 control-label" %>
+              <div class="col-md-6">
+                <%= sc.text_field :name, :class => 'form-control', :placeholder => 'Categoría (requerido)'%>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+              <div class="col-md-3">
+                <input class="btn btn-green" id="saveServiceCategryButton" type="button" value="Guardar" data-loading-text="Guardando...">
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div class="modal-footer break-modal-footer">
+          <button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <% end %>

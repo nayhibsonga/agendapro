@@ -1,0 +1,46 @@
+<div class="row" id="navegacion-workflow">
+  <div class="col-md-12">
+    <div class="container" style="color: #505050 !important; padding-top: 5px;">
+     <i class="fa fa-clock-o gray-icon">&nbsp;&nbsp;<span style="font-size: 24px !important; margin-top: -5px;">Cancelar reserva</span></i>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="container">
+    <div clas="row" id="espacio-workflow">
+      <div class="col-md-12" id="staff-calendar">
+          <% unless params[:id] %>
+            <div class="panel panel-info">
+              <div class="calendar-head">
+                <div class="panel-title" style="padding-left: 10px; font-size: 22px; font-weight: bold;">
+                  ¿Estás seguro de querer cancelar todos los servicios?
+                </div>
+              </div>
+              <div class="panel-body" style="max-height: 350px; overflow-y: auto;">
+                <p style="padding-left: 10px; padding-top: 8px; color: #505050;">Si cancelas tu reserva, otra persona podrá utilizar la hora liberada.</p>
+              </div>
+            </div>
+            <%= form_tag("/cancel_all_booking", method: "post", role: "form", class: "form-horizontal", id: "edit_form" ) do %>
+              <input type="hidden" name="id" id="id" value="<%= @booking.id %>">
+              <button type="submit" class="submitBtn">Cancelar Reserva</button>
+            <% end %>
+          <% else %>
+            <div class="panel panel-info">
+              <div class="calendar-head">
+                <div class="panel-title" style="padding-left: 10px; font-size: 22px; font-weight: bold;">
+                  Servicios cancelados
+                </div>
+              </div>
+              <div class="panel-body">
+                <p style="padding-left: 10px; padding-top: 8px; color: #505050;">Tu reserva fue cancelada exitosamente</p>
+              </div>
+            </div>
+          <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= content_tag "div", id: "booking", data: {booking: @booking} do %>
+<% end %>

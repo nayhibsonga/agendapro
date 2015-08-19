@@ -1,17 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  code: MyString
-  quantity: 1
-  active: false
-  constraint_option: 1
-  constraint_quantity: 1
-  company_id_id: 
-
-two:
-  code: MyString
-  quantity: 1
-  active: false
-  constraint_option: 1
-  constraint_quantity: 1
-  company_id_id: 
+deal_1:
+  code: 76.233.336-8
+  quantity: 0
+  active: true
+  constraint_option: 2
+  constraint_quantity: 2
+  company: company_1

@@ -1,373 +1,378 @@
 var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 var hourOptions = '<option value="00">00</option>'+
-		'<option value="01">01</option>'+
-		'<option value="02">02</option>'+
-		'<option value="03">03</option>'+
-		'<option value="04">04</option>'+
-		'<option value="05">05</option>'+
-		'<option value="06">06</option>'+
-		'<option value="07">07</option>'+
-		'<option value="08">08</option>'+
-		'<option value="09">09</option>'+
-		'<option value="10">10</option>'+
-		'<option value="11">11</option>'+
-		'<option value="12">12</option>'+
-		'<option value="13">13</option>'+
-		'<option value="14">14</option>'+
-		'<option value="15">15</option>'+
-		'<option value="16">16</option>'+
-		'<option value="17">17</option>'+
-		'<option value="18">18</option>'+
-		'<option value="19">19</option>'+
-		'<option value="20">20</option>'+
-		'<option value="21">21</option>'+
-		'<option value="22">22</option>'+
-		'<option value="23">23</option>';
+    '<option value="01">01</option>'+
+    '<option value="02">02</option>'+
+    '<option value="03">03</option>'+
+    '<option value="04">04</option>'+
+    '<option value="05">05</option>'+
+    '<option value="06">06</option>'+
+    '<option value="07">07</option>'+
+    '<option value="08">08</option>'+
+    '<option value="09">09</option>'+
+    '<option value="10">10</option>'+
+    '<option value="11">11</option>'+
+    '<option value="12">12</option>'+
+    '<option value="13">13</option>'+
+    '<option value="14">14</option>'+
+    '<option value="15">15</option>'+
+    '<option value="16">16</option>'+
+    '<option value="17">17</option>'+
+    '<option value="18">18</option>'+
+    '<option value="19">19</option>'+
+    '<option value="20">20</option>'+
+    '<option value="21">21</option>'+
+    '<option value="22">22</option>'+
+    '<option value="23">23</option>';
 var minuteOptions = '<option value="00">00</option>'+
-		'<option value="15">15</option>'+
-		'<option value="30">30</option>'+
-		'<option value="45">45</option>';
+    '<option value="05">05</option>'+
+    '<option value="10">10</option>'+
+    '<option value="15">15</option>'+
+    '<option value="20">20</option>'+
+    '<option value="25">25</option>'+
+    '<option value="30">30</option>'+
+    '<option value="35">35</option>'+
+    '<option value="40">40</option>'+
+    '<option value="45">45</option>'+
+    '<option value="50">50</option>'+
+    '<option value="55">55</option>';
 
 function buildDay (value) {
-	$('#providerTable').append(
-		'<tr>' +
-			'<th>' +
-				'<div class="checkbox">' +
-					'<label>' +
-						'<input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')" class="dayCheckbox"> ' + days[value - 1] + ':' +
-					'</label>' +
-				'</div>' +
-			'</th>' +
-			'<th>' +
-				'<form class="form-inline" role="form">' +
-					'<div class="form-group">' +
-						'<select class="form-control time-select" id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">' +
-							hourOptions +
-						'</select>' +
-					'</div> : ' +
-					'<div class="form-group">' +
-						'<select class="form-control time-select" id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">' +
-							minuteOptions +
-						'</select>' +
-					'</div>' +
-				'</form>' +
-			'</th>' +
-			'<th>' +
-				'<form class="form-inline" role="form">' +
-					'<div class="form-group">' +
-						'<select class="form-control time-select" id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">' +
-							hourOptions +
-						'</select>' +
-					'</div> : ' +
-					'<div class="form-group">' +
-						'<select class="form-control time-select" id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">' +
-							minuteOptions +
-						'</select>' +
-					'</div>' +
-				'</form>' +
-			'</th>' +
-			'<th></th>' +
-		'</tr>'
-	);
+  $('#providerTable').append(
+    '<tr>' +
+      '<th>' +
+        '<div class="checkbox">' +
+          '<label>' +
+            '<input type="checkbox" name="dayStatus'+ value +'" id="dayStatusId'+ value +'" value="0" onchange="changeDayStatus('+ value +')" class="dayCheckbox"> ' + days[value - 1] + ':' +
+          '</label>' +
+        '</div>' +
+      '</th>' +
+      '<th>' +
+        '<form class="form-inline" role="form">' +
+          '<div class="form-group">' +
+            '<select class="form-control time-select" id="openHourId'+ value +'" name="openHour'+ value +'" disabled="disabled">' +
+              hourOptions +
+            '</select>' +
+          '</div> : ' +
+          '<div class="form-group">' +
+            '<select class="form-control time-select" id="openMinuteId'+ value +'" name="openMinute'+ value +'" disabled="disabled">' +
+              minuteOptions +
+            '</select>' +
+          '</div>' +
+        '</form>' +
+      '</th>' +
+      '<th>' +
+        '<form class="form-inline" role="form">' +
+          '<div class="form-group">' +
+            '<select class="form-control time-select" id="closeHourId'+ value +'" name="closeHour'+ value +'" disabled="disabled">' +
+              hourOptions +
+            '</select>' +
+          '</div> : ' +
+          '<div class="form-group">' +
+            '<select class="form-control time-select" id="closeMinuteId'+ value +'" name="closeMinute'+ value +'" disabled="disabled">' +
+              minuteOptions +
+            '</select>' +
+          '</div>' +
+        '</form>' +
+      '</th>' +
+      '<th></th>' +
+    '</tr>'
+  );
 }
 
 function addBreak (value, openTime, closeTime) {
-	if ($('tr.break'+value).length > 0) {
-		breakCount =  +$('tr.break' + value + ':last').find('a').attr('id').replace(value+'removeBreak','') + 1;
-	}
-	else {
-		breakCount = 1
-	}
-	var position;
-	if ($('.break' + value).length > 0) {
-		position = $('.break' + value + ':last');
-	}
-	else {
-		position = $('#dayStatusId' + value).closest('tr');
-	}
-	position.after(
-		'<tr class="break' + value + '">' +
-			'<th>Descanso:</th>' +
-			'<th>' +
-				'<form class="form-inline" role="form">' +
-					'<div class="form-group">' +
-						'<select class="form-control time-select" id="'+value+'openHourId'+ breakCount+'" name="'+value+'openHour'+ breakCount+'">' +
-							hourOptions +
-						'</select>' +
-					'</div> : ' +
-					'<div class="form-group">' +
-						'<select class="form-control time-select" id="'+value+'openMinuteId'+breakCount+'" name="'+value+'openMinute'+breakCount+'">' +
-							minuteOptions +
-						'</select>' +
-					'</div>' +
-				'</form>' +
-			'</th>' +
-			'<th>' +
-				'<form class="form-inline" role="form">' +
-					'<div class="form-group">' +
-						'<select class="form-control time-select" id="'+value+'closeHourId'+breakCount+'" name="'+value+'closeHour'+breakCount+'">' +
-							hourOptions +
-						'</select>' +
-					'</div> : ' +
-					'<div class="form-group">' +
-						'<select class="form-control time-select" id="'+value+'closeMinuteId'+breakCount+'" name="'+value+'closeMinute'+breakCount+'">' +
-							minuteOptions +
-						'</select>' +
-					'</div>' +
-				'</form>' +
-			'</th>' +
-			'<th>' +
-				'<a id="'+value+'removeBreak'+breakCount+'" class="btn btn-danger"><i class="fa fa-trash-o"></i></a>' +
-			'</th>' +
-		'</tr>'
-	);
+  if ($('tr.break'+value).length > 0) {
+    breakCount =  +$('tr.break' + value + ':last').find('a').attr('id').replace(value+'removeBreak','') + 1;
+  }
+  else {
+    breakCount = 1
+  }
+  var position;
+  if ($('.break' + value).length > 0) {
+    position = $('.break' + value + ':last');
+  }
+  else {
+    position = $('#dayStatusId' + value).closest('tr');
+  }
+  position.after(
+    '<tr class="break' + value + '">' +
+      '<th>Descanso:</th>' +
+      '<th>' +
+        '<form class="form-inline" role="form">' +
+          '<div class="form-group">' +
+            '<select class="form-control time-select" id="'+value+'openHourId'+ breakCount+'" name="'+value+'openHour'+ breakCount+'">' +
+              hourOptions +
+            '</select>' +
+          '</div> : ' +
+          '<div class="form-group">' +
+            '<select class="form-control time-select" id="'+value+'openMinuteId'+breakCount+'" name="'+value+'openMinute'+breakCount+'">' +
+              minuteOptions +
+            '</select>' +
+          '</div>' +
+        '</form>' +
+      '</th>' +
+      '<th>' +
+        '<form class="form-inline" role="form">' +
+          '<div class="form-group">' +
+            '<select class="form-control time-select" id="'+value+'closeHourId'+breakCount+'" name="'+value+'closeHour'+breakCount+'">' +
+              hourOptions +
+            '</select>' +
+          '</div> : ' +
+          '<div class="form-group">' +
+            '<select class="form-control time-select" id="'+value+'closeMinuteId'+breakCount+'" name="'+value+'closeMinute'+breakCount+'">' +
+              minuteOptions +
+            '</select>' +
+          '</div>' +
+        '</form>' +
+      '</th>' +
+      '<th>' +
+        '<a id="'+value+'removeBreak'+breakCount+'" class="btn btn-red"><i class="fa fa-trash-o"></i></a>' +
+      '</th>' +
+    '</tr>'
+  );
 
-	$('#'+value+'removeBreak'+breakCount).click(function(event) {
-		$(event.target).closest('tr').remove();
-	});
-	if (openTime != null){
-		$('#'+value+'openHourId'+breakCount+' option[value="'+openTime[0]+'"]').attr("selected",true);
-		$('#'+value+'openMinuteId'+breakCount+' option[value="'+openTime[1]+'"]').attr("selected",true);	
-	}
-	if (closeTime != null) {
-		$('#'+value+'closeHourId'+breakCount+' option[value="'+closeTime[0]+'"]').attr("selected",true);
-		$('#'+value+'closeMinuteId'+breakCount+' option[value="'+closeTime[1]+'"]').attr("selected",true);	
-	}
+  $('#'+value+'removeBreak'+breakCount).click(function(event) {
+    $(event.target).closest('tr').remove();
+  });
+  if (openTime != null){
+    $('#'+value+'openHourId'+breakCount+' option[value="'+openTime[0]+'"]').attr("selected",true);
+    $('#'+value+'openMinuteId'+breakCount+' option[value="'+openTime[1]+'"]').attr("selected",true);
+  }
+  if (closeTime != null) {
+    $('#'+value+'closeHourId'+breakCount+' option[value="'+closeTime[0]+'"]').attr("selected",true);
+    $('#'+value+'closeMinuteId'+breakCount+' option[value="'+closeTime[1]+'"]').attr("selected",true);
+  }
 }
 
 function sortByKey(array, key) {
-	return array.sort(function(a, b) {
-		var x = a[key]; var y = b[key];
-		return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-	});
+  return array.sort(function(a, b) {
+    var x = a[key]; var y = b[key];
+    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+  });
 }
 
 function initialize() {
-	for(var i = 1; i < 8; ++i) {
-		buildDay(i);
-	}
+  for(var i = 1; i < 8; ++i) {
+    buildDay(i);
+  }
 
-	if ( $('#title').length > 0 ) {
-		var providerTimesData = $('#provider_times_data').data('provider-times');
-		var breaksArray = [0,0,0,0,0,0,0];
-		providerTimesData = sortByKey(providerTimesData,'open');
-		providerTimesData = sortByKey(providerTimesData,'day_id');
-		$.each(providerTimesData, function(index,providerTime) {
-			breaksArray[(providerTime.day_id - 1)] += 1;
-		});
-		for (i in breaksArray) {
-			if (breaksArray[i] > 0) {
-				var arrayCounter = 0;
-				for (var j=0;j<i;j++) {
-					arrayCounter += breaksArray[j];
-				}
-				var value = providerTimesData[arrayCounter].day_id;
-				$('#dayStatusId'+ value).prop('checked', true);
-				$('#dayStatusId'+ value).val(1);
-				$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-agendapro-claro"><i class="fa fa-plus"></i></a>');
-				
-				$('#openHourId'+ value).prop('disabled', false);
-				$('#openMinuteId'+ value).prop('disabled', false);
-				$('#closeHourId'+ value).prop('disabled', false);
-				$('#closeMinuteId'+ value).prop('disabled', false);
-				var openTime = new Date(Date.parse(providerTimesData[arrayCounter].open)).toUTCString().split(" ")[4].split(":");
-				$('#openHourId'+ value +' option[value="'+openTime[0]+'"]').attr("selected",true);
-				$('#openMinuteId'+ value +' option[value="'+openTime[1]+'"]').attr("selected",true);
-				for (var j=arrayCounter;j<arrayCounter+breaksArray[i] - 1;j++) {
-					var openTime = new Date(Date.parse(providerTimesData[j].close)).toUTCString().split(" ")[4].split(":");
-					var closeTime = new Date(Date.parse(providerTimesData[j+1].open)).toUTCString().split(" ")[4].split(":");
-					addBreak(value, openTime, closeTime);
-				}
-				var closeTime = new Date(Date.parse(providerTimesData[arrayCounter+breaksArray[i]-1].close)).toUTCString().split(" ")[4].split(":");
-				$('#closeHourId'+ value +' option[value="'+closeTime[0]+'"]').attr("selected",true);
-				$('#closeMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
-			}
-		}
-	};
+  if ( $('#title').length > 0 ) {
+    var providerTimesData = $('#provider_times_data').data('provider-times');
+    var breaksArray = [0,0,0,0,0,0,0];
+    $.each(providerTimesData, function(index,providerTime) {
+      breaksArray[(providerTime.day_id - 1)] += 1;
+    });
+    for (i in breaksArray) {
+      if (breaksArray[i] > 0) {
+        var arrayCounter = 0;
+        for (var j=0;j<i;j++) {
+          arrayCounter += breaksArray[j];
+        }
+        var value = providerTimesData[arrayCounter].day_id;
+        $('#dayStatusId'+ value).prop('checked', true);
+        $('#dayStatusId'+ value).val(1);
+        $('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" onclick="addBreak('+value+')" class="btn btn-green"><i class="fa fa-plus"></i></a>');
+
+        $('#openHourId'+ value).prop('disabled', false);
+        $('#openMinuteId'+ value).prop('disabled', false);
+        $('#closeHourId'+ value).prop('disabled', false);
+        $('#closeMinuteId'+ value).prop('disabled', false);
+        var openTime = new Date(Date.parse(providerTimesData[arrayCounter].open)).toUTCString().split(" ")[4].split(":");
+        $('#openHourId'+ value +' option[value="'+openTime[0]+'"]').attr("selected",true);
+        $('#openMinuteId'+ value +' option[value="'+openTime[1]+'"]').attr("selected",true);
+        for (var j=arrayCounter;j<arrayCounter+breaksArray[i] - 1;j++) {
+          var openTime = new Date(Date.parse(providerTimesData[j].close)).toUTCString().split(" ")[4].split(":");
+          var closeTime = new Date(Date.parse(providerTimesData[j+1].open)).toUTCString().split(" ")[4].split(":");
+          addBreak(value, openTime, closeTime);
+        }
+        var closeTime = new Date(Date.parse(providerTimesData[arrayCounter+breaksArray[i]-1].close)).toUTCString().split(" ")[4].split(":");
+        $('#closeHourId'+ value +' option[value="'+closeTime[0]+'"]').attr("selected",true);
+        $('#closeMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
+      }
+    }
+  };
 }
 
 function loadLocalTime (times) {
-	var header_table = $('#providerTable tr:first');
-	$('#providerTable').empty();
-	$('#providerTable').append(header_table);
-	for(var i = 1; i < 8; ++i) {
-		buildDay(i);
-	};
-	$.each(times, function (key, time) {
-		$('#openHourId'+ time.day_id).prop('disabled', false);
-		$('#openMinuteId'+ time.day_id).prop('disabled', false);
-		$('#closeHourId'+ time.day_id).prop('disabled', false);
-		$('#closeMinuteId'+ time.day_id).prop('disabled', false);
+  var header_table = $('#providerTable tr:first');
+  $('#providerTable').empty();
+  $('#providerTable').append(header_table);
+  for(var i = 1; i < 8; ++i) {
+    buildDay(i);
+  };
+  $.each(times, function (key, time) {
+    $('#openHourId'+ time.day_id).prop('disabled', false);
+    $('#openMinuteId'+ time.day_id).prop('disabled', false);
+    $('#closeHourId'+ time.day_id).prop('disabled', false);
+    $('#closeMinuteId'+ time.day_id).prop('disabled', false);
 
-		var openTime = new Date(Date.parse(time.open)).toUTCString().split(" ")[4].split(":");
-		$('#openHourId'+ time.day_id +' option[value="'+openTime[0]+'"]').attr("selected",true);
-		$('#openMinuteId'+ time.day_id +' option[value="'+openTime[1]+'"]').attr("selected",true);
-		var closeTime = new Date(Date.parse(time.close)).toUTCString().split(" ")[4].split(":");
-		$('#closeHourId'+ time.day_id +' option[value="'+closeTime[0]+'"]').attr("selected",true);
-		$('#closeMinuteId'+ time.day_id +' option[value="'+closeTime[1]+'"]').attr("selected",true);
+    var openTime = new Date(Date.parse(time.open)).toUTCString().split(" ")[4].split(":");
+    $('#openHourId'+ time.day_id +' option[value="'+openTime[0]+'"]').attr("selected",true);
+    $('#openMinuteId'+ time.day_id +' option[value="'+openTime[1]+'"]').attr("selected",true);
+    var closeTime = new Date(Date.parse(time.close)).toUTCString().split(" ")[4].split(":");
+    $('#closeHourId'+ time.day_id +' option[value="'+closeTime[0]+'"]').attr("selected",true);
+    $('#closeMinuteId'+ time.day_id +' option[value="'+closeTime[1]+'"]').attr("selected",true);
 
-		$('#dayStatusId' + time.day_id).prop('checked', true);
-		changeDayStatus(time.day_id);
-	});
+    $('#dayStatusId' + time.day_id).prop('checked', true);
+    changeDayStatus(time.day_id);
+  });
 }
 
 function changeDayStatus(value) {
-	if ($('#dayStatusId'+ value).val() == 0) {
-		$('#openHourId'+ value).prop('disabled', false);
-		$('#openMinuteId'+ value).prop('disabled', false);
-		$('#closeHourId'+ value).prop('disabled', false);
-		$('#closeMinuteId'+ value).prop('disabled', false);
-		$('#dayStatusId'+ value).val(1);
-		$('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-agendapro-claro"><i class="fa fa-plus"></i></a>');
-		$('#addBreakdiv'+value).click(function() {
-			addBreak(value);
-		});
-	}
-	else if ($('#dayStatusId'+ value).val() == 1) {
-		$('#openHourId'+ value).prop('disabled', true);
-		$('#openMinuteId'+ value).prop('disabled', true);
-		$('#closeHourId'+ value).prop('disabled', true);
-		$('#closeMinuteId'+ value).prop('disabled', true);
-		$('#dayStatusId'+ value).val(0);
-		$('tr.break'+value).remove();
-		$('#addBreakdiv'+value).remove();
-	}
+  if ($('#dayStatusId'+ value).val() == 0) {
+    $('#openHourId'+ value).prop('disabled', false);
+    $('#openMinuteId'+ value).prop('disabled', false);
+    $('#closeHourId'+ value).prop('disabled', false);
+    $('#closeMinuteId'+ value).prop('disabled', false);
+    $('#dayStatusId'+ value).val(1);
+    $('#dayStatusId'+value).closest('tr').children().last().append('<a id="addBreakdiv'+value+'" class="btn btn-green"><i class="fa fa-plus"></i></a>');
+    $('#addBreakdiv'+value).click(function() {
+      addBreak(value);
+    });
+  }
+  else if ($('#dayStatusId'+ value).val() == 1) {
+    $('#openHourId'+ value).prop('disabled', true);
+    $('#openMinuteId'+ value).prop('disabled', true);
+    $('#closeHourId'+ value).prop('disabled', true);
+    $('#closeMinuteId'+ value).prop('disabled', true);
+    $('#dayStatusId'+ value).val(0);
+    $('tr.break'+value).remove();
+    $('#addBreakdiv'+value).remove();
+  }
 }
 
 function createProvider() {
-	saveProvider('POST','');
+  saveProvider('POST','');
 }
 
 function updateProvider() {
-	var providerId = $('#id_data').data('id');
-	saveProvider('PATCH','/'+providerId);
+  var providerId = $('#id_data').data('id');
+  saveProvider('PATCH','/'+providerId);
 }
 
 function saveProvider(method,extraURL) {
-	var enabledDays = [];
-	$("input.dayCheckbox").each( function() {
-		if ($( this ).val() == 1) {
-			enabledDays.push($(this).attr('id').slice(-1));
-		}
-	});
-	var enabledServices = [];
-	$("input.check_boxes").each( function() {
-		if ($(this).prop('checked')) {
-			enabledServices.push($(this).val());
-		}
-	});
-	var provider_times = [];
-	for (i in enabledDays) {
-		day = enabledDays[i];
-		if ($('tr.break'+day).length > 0) {
-			breaks = [];
-			$('tr.break'+day).each( function() {
-				breaks.push([$(this).find('.form-control')[0].value+":"+$(this).find('.form-control')[1].value, $(this).find('.form-control')[2].value+":"+$(this).find('.form-control')[3].value]);
-			});
-			breaks = breaks.sort();
-			var provider_time = {"open":"2000-01-01T"+ $('#openHourId'+day).val() +":"+ $('#openMinuteId'+day).val() +":00Z","close":"2000-01-01T"+ breaks[0][0] +":00Z","day_id":parseInt(day)};
-			provider_times.push(provider_time);
-			for (j in breaks) {
-				if (j < breaks.length - 1) {
-					var provider_time = {"open":"2000-01-01T"+ breaks[+j][1] +":00Z","close":"2000-01-01T"+ breaks[+j+1][0] +":00Z","day_id":parseInt(day)};
-					provider_times.push(provider_time);
-				}
-			}
-			var provider_time = {"open":"2000-01-01T"+ breaks[breaks.length - 1][1] +":00Z","close":"2000-01-01T"+ $('#closeHourId'+day).val() +":"+ $('#closeMinuteId'+day).val() +":00Z","day_id":parseInt(day)};
-			provider_times.push(provider_time);
-		}
-		else {
-			var provider_time = {"open":"2000-01-01T"+ $('#openHourId'+day).val() +":"+ $('#openMinuteId'+day).val() +":00Z","close":"2000-01-01T"+ $('#closeHourId'+day).val() +":"+ $('#closeMinuteId'+day).val() +":00Z","day_id":parseInt(day)};
-			provider_times.push(provider_time);
-		}
-	}
-	var providerJSON  = {
-		"public_name": $('#service_provider_public_name').val(),
-		"notification_email": $('#service_provider_notification_email').val(),
-		"location_id": parseInt($('#service_provider_location_id').val()),
-		"block_length": $("#service_provider_block_length").val(),
-		"service_ids": enabledServices,
-		"provider_times_attributes": provider_times,
-		"booking_configuration_email": $('#service_provider_booking_configuration_email').val(),
-	};
-	
-	$.ajax({
-		type: method,
-		url: ' /service_providers'+ extraURL +'.json',
-		data: { "service_provider": providerJSON },
-		dataType: 'json',
-		success: function(){
-			document.location.href = '/service_providers/';
-		},
-		error: function(xhr){
-			var errores = $.parseJSON(xhr.responseText).errors;
-			var errorList = '';
-			for (i in errores) {
-				errorList += '<li>' + errores[i] + '</li>'
-			}
-			alertId.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
-		}
-	});
+  var enabledDays = [];
+  $("input.dayCheckbox").each( function() {
+    if ($( this ).val() == 1) {
+      enabledDays.push($(this).attr('id').slice(-1));
+    }
+  });
+  var enabledServices = [];
+  $("input.check_boxes").each( function() {
+    if ($(this).prop('checked')) {
+      enabledServices.push($(this).val());
+    }
+  });
+  var provider_times = [];
+  for (i in enabledDays) {
+    day = enabledDays[i];
+    if ($('tr.break'+day).length > 0) {
+      breaks = [];
+      $('tr.break'+day).each( function() {
+        breaks.push([$(this).find('.form-control')[0].value+":"+$(this).find('.form-control')[1].value, $(this).find('.form-control')[2].value+":"+$(this).find('.form-control')[3].value]);
+      });
+      breaks = breaks.sort();
+      var provider_time = {"open":"2000-01-01T"+ $('#openHourId'+day).val() +":"+ $('#openMinuteId'+day).val() +":00Z","close":"2000-01-01T"+ breaks[0][0] +":00Z","day_id":parseInt(day)};
+      provider_times.push(provider_time);
+      for (j in breaks) {
+        if (j < breaks.length - 1) {
+          var provider_time = {"open":"2000-01-01T"+ breaks[+j][1] +":00Z","close":"2000-01-01T"+ breaks[+j+1][0] +":00Z","day_id":parseInt(day)};
+          provider_times.push(provider_time);
+        }
+      }
+      var provider_time = {"open":"2000-01-01T"+ breaks[breaks.length - 1][1] +":00Z","close":"2000-01-01T"+ $('#closeHourId'+day).val() +":"+ $('#closeMinuteId'+day).val() +":00Z","day_id":parseInt(day)};
+      provider_times.push(provider_time);
+    }
+    else {
+      var provider_time = {"open":"2000-01-01T"+ $('#openHourId'+day).val() +":"+ $('#openMinuteId'+day).val() +":00Z","close":"2000-01-01T"+ $('#closeHourId'+day).val() +":"+ $('#closeMinuteId'+day).val() +":00Z","day_id":parseInt(day)};
+      provider_times.push(provider_time);
+    }
+  }
+  var providerJSON  = {
+    "public_name": $('#service_provider_public_name').val(),
+    "location_id": parseInt($('#service_provider_location_id').val()),
+    "block_length": $("#service_provider_block_length").val(),
+    "service_ids": enabledServices,
+    "provider_times_attributes": provider_times,
+    "online_booking": $('#service_provider_online_booking').prop('checked')
+  };
+
+  $.ajax({
+    type: method,
+    url: ' /service_providers'+ extraURL +'.json',
+    data: { "service_provider": providerJSON },
+    dataType: 'json',
+    success: function(){
+      document.location.href = '/service_providers/';
+    },
+    error: function(xhr){
+      var errores = $.parseJSON(xhr.responseText).errors;
+      var errorList = '';
+      for (i in errores) {
+        errorList += '<li>' + errores[i] + '</li>'
+      }
+      alertId.showAlert(
+        '<h3>Error</h3>' +
+        '<ul>' +
+          errorList +
+        '</ul>'
+      );
+    }
+  });
 }
 
 var alertId;
 $(function() {
-	alertId = new Alert();
+  alertId = new Alert();
 
-  	initialize();
+  initialize();
 
-  	$('.buttonProvider').click(function() {
-  		if (!$('form').valid()) {
-  			return false;
-  		};
-		if ( $('#title').length > 0 ) {
-			updateProvider();
-		}
-		else {
-			createProvider();
-		}
-		return false;
-	});
+  $('.buttonProvider').click(function() {
+    if (!$('form').valid()) {
+      return false;
+    };
+    if ( $('#title').length > 0 ) {
+      updateProvider();
+    }
+    else {
+      createProvider();
+    }
+    return false;
+  });
 
-	$('input.check_boxes').each(function () {
-		var prop = true;
-		$(this).parents('.panel-body').find('input.check_boxes').each( function () {
-			prop = prop && $(this).prop('checked');
-		});
-		$(this).parents('.panel').find('input[name="selectCategory"]').prop('checked', prop);
-	});
+  $('input.check_boxes').each(function () {
+    var prop = true;
+    $(this).parents('.panel-body').find('input.check_boxes').each( function () {
+      prop = prop && $(this).prop('checked');
+    });
+    $(this).parents('.panel').find('input[name="selectCategory"]').prop('checked', prop);
+  });
 
-	$('input[name="selectCategory"]').change(function (event) {
-		var id = $(event.target).attr('id').replace('selectCategory', '');
-		$('#service-category' + id).find('input.check_boxes').each( function () {
-			if ($(event.target).prop('checked')) {
-				$(this).prop('checked', true);
-			}
-			else {
-				$(this).prop('checked', false);
-			}
-		});
-	});
+  $('input[name="selectCategory"]').change(function (event) {
+    var id = $(event.target).attr('id').replace('selectCategory', '');
+    $('#service-category' + id).find('input.check_boxes').each( function () {
+      if ($(event.target).prop('checked')) {
+        $(this).prop('checked', true);
+      }
+      else {
+        $(this).prop('checked', false);
+      }
+    });
+  });
 
-	$('input.check_boxes').change(function (event) {
-		var prop = true;
-		$(event.target).parents('.panel-body').find('input.check_boxes').each( function () {
-			prop = prop && $(this).prop('checked');
-		});
-		$(event.target).parents('.panel').find('input[name="selectCategory"]').prop('checked', prop);
-	});
+  $('input.check_boxes').change(function (event) {
+    var prop = true;
+    $(event.target).parents('.panel-body').find('input.check_boxes').each( function () {
+      prop = prop && $(this).prop('checked');
+    });
+    $(event.target).parents('.panel').find('input[name="selectCategory"]').prop('checked', prop);
+  });
 
-	$('#service_provider_location_id').change(function (event) {
-		var locationId = event.target.value;
-		if (locationId) {
-			$.getJSON('/location_time', {id: locationId}, function (times) {
-				loadLocalTime(times);
-			});
-		}
-	});
+  $('#service_provider_location_id').change(function (event) {
+    var locationId = event.target.value;
+    if (locationId) {
+      $.getJSON('/location_time', {id: locationId}, function (times) {
+        loadLocalTime(times);
+      });
+    }
+  });
 });

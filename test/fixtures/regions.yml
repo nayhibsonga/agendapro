@@ -1,7 +1,47 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-
-two:
-  name: MyString
+region_1:
+    name: II - Región de Antofagasta
+    country: country_1
+region_2:
+    name: III - Región de Atacama
+    country: country_1
+region_3:
+    name: I - Región de Tarapacá
+    country: country_1
+region_4:
+    name: IV - Región de Coquimbo
+    country: country_1
+region_5:
+    name: IX - Región de la Araucanía
+    country: country_1
+region_6:
+    name: VIII - Región del Biobío
+    country: country_1
+region_7:
+    name: VII - Región del Maule
+    country: country_1
+region_8:
+    name: VI - Región del Libertador General Bernardo O'Higgins
+    country: country_1
+region_9:
+    name: V - Región de Valparaíso
+    country: country_1
+region_10:
+    name: XI - Región Aysén del General Carlos Ibañez del Campo
+    country: country_1
+region_11:
+    name: XIII - Región Metropolitana
+    country: country_1
+region_12:
+    name: XII - Región de Magallanes y de la Antártica Chilena
+    country: country_1
+region_13:
+    name: XIV - Región de Los Ríos
+    country: country_1
+region_14:
+    name: X - Región de Los Lagos
+    country: country_1
+region_15:
+    name: XV - Región de Arica y Parinacota
+    country: country_1

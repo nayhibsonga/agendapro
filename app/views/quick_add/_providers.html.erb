@@ -1,0 +1,56 @@
+<fieldset class="content-fill below-1 below-2 below-3" id="fieldset_step4" <%= 'style="display: none;" disabled'.html_safe if @company.services.where(active: true).count < 1 %>>
+  <section class="green-background">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h2 class="text-center">¿Quiénes son las personas que prestan los distintos servicios que ofreces?</h2>
+          <p class="text-center text-dark-green">Por favor ingrésalas a continuación (máximo <%= @company.plan.service_providers %>)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="container">
+      <!-- Local -->
+      <div class="row">
+        <div class="col-sm-12 text-center">
+          <table id="service_providers" class="table">
+            <tr>
+              <th>Nombre</th>
+              <th>Local</th>
+              <th></th>
+            </tr>
+            <% @company.service_providers.where(active: true).each do |service_provider| %>
+            <tr id="service_provider_<%= service_provider.id %>">
+              <td><%= service_provider.public_name %></td>
+              <td><%= service_provider.location.name %></td>
+              <td><button id="service_provider_delete_<%= service_provider.id %>" class="btn btn-danger btn-xs service-provider-delete-btn"><i class="fa fa-trash-o"></i></button></td>
+            </tr>
+            <% end %>
+          </table>
+        </div>
+        <div class="col-sm-12 text-center">
+          <%= form_for @service_provider, html: {class: "form-inline" } do |f| %>
+            <div class="form-group">
+              <%= f.label :public_name, "Nombre: ", class: "control-label" %>
+              <%= f.text_field :public_name, class: "form-control" %>
+            </div>
+            <div class="form-group">
+              <%= f.label :location_id, "Local: ", class: "control-label" %>
+              <%= f.collection_select :location_id, Location.where(company_id: current_user.company_id, active: true), :id, :name, {}, { class: "form-control" }%>
+            </div>
+            <button id="update_service_provider_button" class="btn btn-green">Guardar</button>
+            <i id="update_service_provider_spinner" class="fa fa-spinner fa-spin" style="display:none;"></i>
+          <% end %>
+        </div>
+        <div class="col-sm-12 text-center">
+          <a id="next_provider_button" class="btn btn-orange btn-lg next-button" <%= 'disabled' if @company.service_providers.where(active: true).count < 1 %>>Siguiente Paso</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</fieldset>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/quick_add/providers" %>
+<% end %>

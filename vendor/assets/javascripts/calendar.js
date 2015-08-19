@@ -1,3 +1,4 @@
+var ajaxRequest;
 function Calendar (source, getData) {
 
 	// Default Values
@@ -16,6 +17,14 @@ function Calendar (source, getData) {
 
 	// Generate Calendar
 	var generateCalendar = function (date) {
+
+		onload = false;
+
+		$('#staff-selector-spinner').show();
+		$('#staff-selector > .list-group-item').hide();
+		$('.days-row').hide();
+		$('.horario').html('<div style="color: rgb(204, 204, 204); text-align: center;"><i class="fa fa-spinner fa-spin fa-lg"></i></div>');
+
 		$('.columna-dia').remove();
 		$('.clear').remove();
 		clickEvent = null;
@@ -40,12 +49,89 @@ function Calendar (source, getData) {
 				sunday = weekDay;
 			}
 		};
-		generateWeek(monday);
 
-		// Tittle calculation
-		generateTittle(monday, sunday);
+		if (ajaxRequest != null) {
+			ajaxRequest.abort();
+		}
+		sources.data.date = formatDate(monday);
 		
+		ajaxRequest = $.getJSON(sources.source, sources.data, function (data, status) {
+			$('.days-row').html(data.days_row);
+			$('.horario').html(data.panel_body);
+			$('.bloque-hora').click(function (e) {
+				var element = $(e.currentTarget);
+				if (element.hasClass('hora-disponible')) {
+					// Activate block
+					$('.hora-activo').addClass('hora-disponible').removeClass('hora-activo');
+					element.removeClass('hora-disponible').addClass('hora-activo');
+
+					// Event
+					var details = {
+						time: new Date(),
+						message: 'Hour ' + element.data('start') + ' - ' + element.data('end') + ' click on day ' + element.parent().data('date'),
+						date: element.parent().data('date'),
+						start: element.data('start'),
+						end: element.data('end'),
+						provider: element.data('provider'),
+						objectDate: parseDate(element.parent().data('date'), element.data('start'))
+						// status: hours.status
+					};
+					$.event.trigger({
+						type: 'hourClick',
+						time: details.time,
+						message: details.message,
+						date: details.date,
+						start: details.start,
+						end: details.end,
+						provider: details.provider,
+						// status: details.status,
+						objectDate: details.objectDate
+					});
+					clickEvent = details;
+				}
+			});
+
+			// Tittle calculation
+			generateTittle(monday, sunday);
+
+			$('.days-row').show();
+			calculateWidth();
+			$('#next').removeAttr('disabled');
+			$('#prev').removeAttr('disabled');
+			$.event.trigger({
+				type: 'calendarBuilded'
+			});
+			$('#foo4').trigger('updateSizes');
+			$('#staff-selector-spinner').hide();
+			$('#staff-selector > .list-group-item').show();
+		});
+
 		return now;
+	}
+
+	function getScrollbarWidth() {
+	    var outer = document.createElement("div");
+	    outer.style.visibility = "hidden";
+	    outer.style.width = "100px";
+	    outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+
+	    document.body.appendChild(outer);
+
+	    var widthNoScroll = outer.offsetWidth;
+	    // force scrollbars
+	    outer.style.overflow = "scroll";
+
+	    // add innerdiv
+	    var inner = document.createElement("div");
+	    inner.style.width = "100%";
+	    outer.appendChild(inner);        
+
+	    var widthWithScroll = inner.offsetWidth;
+
+	    // remove divs
+	    outer.parentNode.removeChild(outer);
+
+	    return widthNoScroll - widthWithScroll;
 	}
 
 	// Tittle calculation
@@ -70,12 +156,17 @@ function Calendar (source, getData) {
 	// Generate Week
 	var available_hour;
 	var generateWeek = function (monday) {
+
+		if (ajaxRequest != null) {
+			ajaxRequest.abort();
+		}
 		sources.data.date = formatDate(monday);
-		$.getJSON(sources.source, sources.data, function (data, status) {
+		
+		ajaxRequest = $.getJSON(sources.source, sources.data, function (data, status) {
 			available_hour = false;
 
 			$(".days-row").empty();
-			
+
 			$.each(data, function(day, day_blocks){
 				var date = parseDate(day);
 				var dayNumber = date.getDay();
@@ -86,7 +177,7 @@ function Calendar (source, getData) {
 				}
 			});
 
-			
+
 
 			var pos = 0;
 			$.each(data, function (day, day_blocks) {
@@ -125,7 +216,13 @@ function Calendar (source, getData) {
 			calculateWidth();
 			$('#next').removeAttr('disabled');
 			$('#prev').removeAttr('disabled');
+			$.event.trigger({
+				type: 'calendarBuilded'
+			});
+			$('#foo4').trigger('updateSizes');
 		});
+		$('#staff-selector-spinner').hide();
+		$('#staff-selector > .list-group-item').show();
 	}
 
 	// Generate Hours
@@ -224,10 +321,11 @@ function Calendar (source, getData) {
 		var count = $('.columna-dia').length;
 		var width = (100 / count);
 		$('.columna-dia').css('width', width + '%');
-		
+
 		var width2 = $(".horario")[0].clientWidth/count;
 		$('.dia-semana').css('width', width2);
-		$('.dia-semana:last').css('width', width2-1);
+
+		$('.dia-semana').last().css('width', $(".horario")[0].clientWidth/count - 1);
 	}
 
 	var correctNumber = function (number) {

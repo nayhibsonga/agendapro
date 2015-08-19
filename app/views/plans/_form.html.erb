@@ -1,72 +1,78 @@
-<%= form_for @plan, :html => {:class => 'form-horizontal'} do |f| %>
-  <% if @plan.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@plan.errors.count, "error") %> no permitió que se creara el plan:</h2>
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <div class="col-md-12">
+      <%= form_for @plan, :html => {:class => 'form-horizontal'} do |f| %>
+        <% if @plan.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@plan.errors.count, "error") %> no permitió que se creara el plan:</h2>
+            <ul>
+              <% @plan.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
 
-      <ul>
-      <% @plan.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
+        <div class="form-group">
+          <%= f.label :name, 'Nombre:', :class => 'col-md-2 control-label' %>
+          <div class="col-md-4">
+            <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :locations, '# Locales:', :class => 'col-md-2 control-label' %>
+          <div class="col-md-4">
+            <%= f.number_field :locations, :in => 1...1000, :required => true, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :service_providers, '# Prestadores de Servicios:', :class => 'col-md-2 control-label' %>
+          <div class="col-md-4">
+            <%= f.number_field :service_providers, :in => 1...1000, :required => true, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :monthly_mails, 'E-mails Mensuales', class: 'col-md-2 control-label' %>
+          <div class="col-md-4">
+            <%= f.number_field :monthly_mails, required: true, min: 0, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-offset-2 col-md-4">
+            <div class="checkbox">
+              <label>
+                <%= f.check_box :custom %> Custom
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-offset-2 col-md-4">
+            <div class="checkbox">
+              <label>
+                <%= f.check_box :special %> Especial
+              </label>
+            </div>
+          </div>
+        </div>
+        <% Country.all.each do |country| %>
+          <%= f.fields_for :plan_countries, @plan.plan_countries.find_or_initialize_by(country_id: country.id) do |layer_field| %>
+            <%= layer_field.hidden_field :country_id, value: country.id.to_s %>
+            <div class="form-group">
+              <%= layer_field.label :price, country.name, class: 'col-md-2 control-label' %>
+              <div class="col-md-4">
+                <%= layer_field.number_field :price, required: true, min: 0, class: 'form-control' %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+        <div class="form-group">
+          <div class="actions col-md-offset-2 col-md-4">
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+            <%= link_to 'Cancelar', plans_path, class: "btn btn-default" %>
+          </div>
+        </div>
       <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="form-group">
-    <%= f.label :name, 'Nombre:', :class => 'col-sm-3 control-label' %>
-    <div class="col-sm-4">
-      <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control' %>
     </div>
   </div>
-
-  <div class="form-group">
-    <%= f.label :locations, '# Locales:', :class => 'col-sm-3 control-label' %>
-    <div class="col-sm-4">
-      <%= f.number_field :locations, :in => 1...1000, :required => true, :class => 'form-control' %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :service_providers, '# Prestadores de Servicios:', :class => 'col-sm-3 control-label' %>
-    <div class="col-sm-4">
-      <%= f.number_field :service_providers, :in => 1...1000, :required => true, :class => 'form-control' %>
-    </div>
-  </div>
-  <div class="form-group">
-    <%= f.label :price, 'Precio CLP:', :class => 'col-sm-3 control-label' %>
-    <div class="col-sm-4">
-      <%= f.number_field :price, :required => true, :class => 'form-control' %>
-    </div>
-  </div>
-  <div class="form-group">
-    <%= f.label :monthly_mails, 'E-mails Mensuales', class: 'col-sm-3 control-label' %>
-    <div class="col-sm-4">
-      <%= f.number_field :monthly_mails, required: true, min: 0, class: 'form-control' %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-sm-offset-3 col-sm-4">
-      <div class="checkbox">
-        <label>
-          <%= f.check_box :custom %> Custom
-        </label>
-      </div>
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-3 col-sm-4">
-      <div class="checkbox">
-        <label>
-          <%= f.check_box :special %> Especial
-        </label>
-      </div>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <div class="actions col-sm-offset-3 col-sm-4">
-      <%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-      <%= link_to 'Cancelar', plans_path, class: "btn btn-danger" %>
-    </div>
-  </div>
-<% end %>
+</div>

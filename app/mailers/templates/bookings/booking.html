@@ -233,10 +233,11 @@
       }
     </style>
     <style type="text/css">
+      @import url(http://fonts.googleapis.com/css?family=Roboto+Condensed:300);
       /* Containers */
       html,
       body {
-        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-family: 'Roboto Condensed', sans-serif;
         font-size: 12px;
         font-weight: 300;
         color: #505050;
@@ -245,7 +246,7 @@
       table {
         width: 100%;
         max-width: 100%;
-        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        font-family: 'Roboto Condensed', sans-serif;
         font-size: 12px;
         font-weight: 300;
         color: #505050;
@@ -378,10 +379,6 @@
       .footer > td > p {
         margin: 0;
       }
-      .logo {
-        width: 50%;
-        max-width: 118px;
-      }
       .footer img {
         margin-left: -1px;
         margin-right: 10px;
@@ -456,7 +453,7 @@
         <tr class="header">
           <td colspan="2">
             *|IF:URL|*
-            <a href="http://*|URL|*.agendapro.cl" target="_blanck">*|URL|*.agendapro.cl</a>
+            <a href="http://*|URL|*.agendapro*|DOMAIN|*" target="_blanck">*|URL|*.agendapro*|DOMAIN|*</a>
             *|END:IF|*
           </td>
         </tr>
@@ -494,7 +491,7 @@
                   <tr>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/what.png" alt="¿Qué Reservaste?">
+                        <img src="http://agendapro.co/assets/email/what.png" alt="¿Qué Reservaste?">
                       </div>
                       <div class="text-box">
                         <p style="color: #ffffff;"><b>¿Qué Reservaste?</b></p>
@@ -503,7 +500,7 @@
                     </td>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/when.png" alt="¿Cuando?">
+                        <img src="http://agendapro.co/assets/email/when.png" alt="¿Cuando?">
                       </div>
                       <div class="text-box">
                         <p style="color: #ffffff;"><b>¿Cuándo?</b></p>
@@ -514,7 +511,7 @@
                   <tr>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/where.png" alt="¿Dónde?">
+                        <img src="http://agendapro.co/assets/email/where.png" alt="¿Dónde?">
                       </div>
                       <div class="text-box">
                         <p style="color: #ffffff;"><b>¿Dónde?</b></p>
@@ -523,7 +520,7 @@
                     </td>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/question.png" alt="Consultas">
+                        <img src="http://agendapro.co/assets/email/question.png" alt="Consultas">
                       </div>
                       <div class="text-box">
                         <p style="color: #ffffff;"><b>Consultas</b></p>
@@ -534,16 +531,16 @@
                   <tr>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
+                        <img src="http://agendapro.co/assets/email/who.png" alt="¿Con Quién?">
                       </div>
                       <div class="text-box">
-                        <p style="color: #ffffff;"><b>¿Con Quien?</b></p>
+                        <p style="color: #ffffff;"><b>¿Con Quién?</b></p>
                         <p>*|SERVICEPROVIDER|*</p>
                       </div>
                     </td>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/notes.png" alt="Notas">
+                        <img src="http://agendapro.co/assets/email/notes.png" alt="Notas">
                       </div>
                       <div class="text-box">
                         <p style="color: #ffffff;"><b>Notas</b></p>
@@ -570,7 +567,7 @@
                   <tr>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/what.png" alt="¿Qué Reservaste?">
+                        <img src="http://agendapro.co/assets/email/what.png" alt="¿Qué Reservaste?">
                       </div>
                       <div class="text-box">
                         <p style="color: #ffffff;"><b>¿Qué Reservaron?</b></p>
@@ -581,7 +578,7 @@
                   <tr>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/when.png" alt="¿Cuando?">
+                        <img src="http://agendapro.co/assets/email/when.png" alt="¿Cuando?">
                       </div>
                       <div class="text-box">
                         <p style="color: #ffffff;"><b>¿Cuándo?</b></p>
@@ -592,10 +589,10 @@
                   <tr>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/who.png" alt="¿Con Quien?">
+                        <img src="http://agendapro.co/assets/email/who.png" alt="¿Con Quién?">
                       </div>
                       <div class="text-box">
-                        <p style="color: #ffffff;"><b>¿Quien?</b></p>
+                        <p style="color: #ffffff;"><b>¿Quién?</b></p>
                         <p>*|CLIENTNAME|*</p>
                       </div>
                     </td>
@@ -603,7 +600,7 @@
                   <tr>
                     <td>
                       <div class="icon-box">
-                        <img src="http://agendapro.cl/assets/email/notes.png" alt="Notas">
+                        <img src="http://agendapro.co/assets/email/notes.png" alt="Notas">
                       </div>
                       <div class="text-box">
                         <p style="color: #ffffff;"><b>Notas</b></p>

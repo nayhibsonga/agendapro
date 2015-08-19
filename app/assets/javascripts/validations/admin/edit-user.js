@@ -1,5 +1,5 @@
 $(function() {
-	$('[id^="edit_user_"]').validate({
+	$('[id^="edit_user"]').validate({
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},

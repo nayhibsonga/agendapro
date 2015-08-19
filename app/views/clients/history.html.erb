@@ -1,41 +1,36 @@
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <section class="hgroup">
-      <h2>Historial Reservas <%= @client.email %></h2>
-      <h2 class="section_header">En esta sección se muestran todas las reservas hechas para este cliente, identificando por el e-mail ingresado en la reserva.</h2>
-      <div class="line-breadcrumb">
-        <ul class="breadcrumb pull-right">
-            <li><%= link_to "Resumen", dashboard_path %> </li>
-            <li><%= link_to "Clientes", clients_path %> </li>
-            <li><%= link_to @client.email, edit_client_path(@client) %> </li>
-            <li class="active">Historial Cliente</li>
-        </ul>
+    <div class="col-md-12">
+      <h2 class="text-green">Historial Reservas <%= @client.email %></h2>
+      <p>En esta sección se muestran todas las reservas hechas para este cliente, identificando por el e-mail ingresado en la reserva.</p>
     </div>
-    </section>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-green">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Servicio</th>
+            <th>Prestador</th>
+            <th>Estado</th>
+            <th>Nota Cliente</th>
+            <th>Nota Interna</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @bookings.each do |booking| %>
+            <tr>
+              <td><%= l booking.start, format: :long %></td>
+              <td><%= booking.service.name %></td>
+              <td><%= booking.service_provider.public_name %></td>
+              <td><%= booking.status.name %></td>
+              <td><%= booking.notes %></td>
+              <td><%= booking.company_comment %></td>
+            </tr>
+           <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
-
-<table class="table">
-	<thead>
-		<tr>
-			<th>Fecha</th>
-			<th>Servicio</th>
-			<th>Prestador</th>
-			<th>Estado</th>
-			<th>Nota Cliente</th>
-			<th>Nota Interna</th>
-		</tr>
-	</thead>
-	<tbody>
-		<% @bookings.each do |booking| %>
-			<tr>
-				<td><%= l booking.start, format: :short %></td>
-				<td><%= booking.service.name %></td>
-				<td><%= booking.service_provider.public_name %></td>
-				<td><%= booking.status.name %></td>
-				<td><%= booking.notes %></td>
-				<td><%= booking.company_comment %></td>
-			</tr>
-		 <% end %>
-	</tbody>
-</table>

@@ -1,0 +1,107 @@
+<div class="row">
+  <div class="col-sm-3">
+    <div class="well revenue1">
+      <h4>Recaudación:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@payments.sum(:amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+      <p class="revenue-description">(Dando <%= @payments.average(:discount) ? @payments.average(:discount).round(2) : '0' %> % de descuento promedio en <%= @payments.count %> pagos)</p>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="well revenue">
+      <h4>Recaudación por Reservas:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@payments.sum(:bookings_amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+      <p class="revenue-description">(Dando <%= @payments.average(:bookings_discount) ? @payments.average(:bookings_discount).round(2) : '0'  %> % de descuento promedio en <%= @payments.sum(:bookings_quantity) %> reservas)</p>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="well revenue">
+      <h4>Recaudación por Tratamientos:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@payments.sum(:sessions_amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+      <p class="revenue-description">(Dando <%= @payments.average(:sessions_discount) ? @payments.average(:sessions_discount).round(2) : '0'  %> % de descuento promedio en <%= @payments.sum(:sessions_quantity) %> tratamientos)</p>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="well revenue">
+      <h4>Recaudación por Productos:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@payments.sum(:products_amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+      <p class="revenue-description">(Dando <%= @payments.average(:products_discount) ? @payments.average(:products_discount).round(2) : '0'  %> % de descuento promedio en <%= @payments.sum(:products_quantity) %> productos)</p>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Fecha de Pago</th>
+          <th>Local</th>
+          <th>Cliente</th>
+          <th>Detalle</th>
+          <th># Comp.</th>
+          <th>Medio de Pago</th>
+          <th>Monto</th>
+          <th>Descuento</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @payments.each do |payment| %>
+        <tr>
+          <td><%= payment.payment_date.strftime('%d-%m-%Y') %></td>
+          <td><%= payment.location ? payment.location.name : '' %></td>
+          <td><%= payment.client.first_name %> <%= payment.client.last_name %></td>
+          <td><button class="btn btn-green btn-xs" id="payment_details_button_<%= payment.id %>">Vista Rápida</button></td>
+          <td><%= payment.receipt_number %></td>
+          <td><%= payment.payment_method ? payment.payment_method.name : '' %></td>
+          <td><%= number_to_currency(payment.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+          <td><%= payment.discount.round(2) %> %</td>
+          <td><button class="btn btn-warning btn-xs" onclick="loadPayment(<%= payment.id %>);"><i class="fa fa-pencil"></i></button> <button class="btn btn-red btn-xs" onclick="destroyPayment(<%= payment.id %>);"><i class="fa fa-trash-o"></i></button></td>
+        </tr>
+        <% bookings_text = ''
+        sessions_text = ''
+        products_text = '' %>
+        <% payment.bookings.where(is_session: false, session_booking_id: nil).each do |booking|
+          bookings_text += '* ' + booking.service.name + ' con ' + booking.service_provider.public_name + ' (' + booking.start.strftime('%R %d-%m-%Y') + ') ' + number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
+        end %>
+        <% payment.bookings.where.not(is_session: false, session_booking_id: nil).pluck(:session_booking_id).uniq.each do |session_booking_id|
+          booking = SessionBooking.find(session_booking_id).bookings.first
+          if booking
+            sessions_text += '* ' + booking.service.name + ' con ' + booking.service_provider.public_name + ' (' + SessionBooking.find(session_booking_id).bookings.count.to_s + ' reservas) ' + number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
+          end
+        end %>
+        <% payment.payment_products.each do |payment_product|
+          products_text += '* ' + payment_product.product.name + ' ' + number_to_currency(payment_product.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
+        end %>
+        <% qtip_text = ''
+        if bookings_text != '' then qtip_text += '<strong>Reservas:</strong><br/>' + bookings_text + '<br/>' end
+        if sessions_text != '' then qtip_text += '<strong>Tratamientos:</strong><br/>' + sessions_text + '<br/>' end
+        if products_text != '' then qtip_text += '<strong>Productos:</strong><br/>' + products_text + '<br/>' end %>
+        <script type="text/javascript">
+          $('#payment_details_button_<%= payment.id %>').qtip({
+             show: {
+                event: 'click mouseover focus'
+              },
+             content: {
+              button: true,
+              text: '<%= qtip_text.html_safe %>',
+              title: 'Detalles del Pago'
+             },
+             position: {
+              my: 'bottom center',  // el triángulo sale de abajo al medio
+              at: 'top center' // se ubica arriba del elemento en cuestión
+             },
+             style: {
+              classes: 'qtip-bootstrap'
+             },
+             hide: {
+              event: 'click mouseleave mouseout unfocus',
+              leave: true,
+              fixed: true
+            }
+          })
+        </script>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

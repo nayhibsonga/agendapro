@@ -1,110 +1,92 @@
-
-<div class="row companies_header">
-	<ul class="nav nav-tabs">
-
-		<li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
-
-		<li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
-
-		<li class="active"><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
-
-		<li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
-
-		<li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
-
-		<li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
-
-	</ul>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Clientes y locales</h2>
+    </div>
+  </div>
 </div>
-
-<div class="row" style="margin-top: 10px; margin-bottom: 10px;">
-	<div class="col-md-12">
-		<div class="form-group">
-			<div class="col-md-2">
-				<select id="year-select" name="year" class="form-control">
-					<% current = DateTime.now.year.to_i %>
-					<% for i in 2014..current do %>
-						<% if i == @year %>
-							<option value="<%= i %>" selected><%= i.to_s %></option>
-						<% else %>
-							<option value="<%= i %>"><%= i.to_s %></option>
-						<% end %>
-					<% end %>
-				</select>
-			</div>
-			<div class="col-md-2">
-				<span class="form-control">
-					<a id="year-select-link" href="/companies_locations?year=<%= @year %>">Obtener locales</a>
-				</span>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-md-12">
-		<div class="companies_incomes_header">
-			<h3>Locales para el año <%= @year %></h3>
-		</div>
-		<% for i in 1..12 do %>
-			<% companies = @companies_arr[i]['companies'] %>
-			
-			<% if !companies.nil? && companies.count > 0 %>
-				<h4><%= @companies_arr[i]['month'] %></h4>
-				<div class="scrollable" style="max-height: 200px;">
-					<table class="companies-table">
-						<tr class="companies-table-header">
-							<th>
-								Empresa
-							</th>
-							<th>
-								Plan actual
-							</th>
-							<th>
-								Locales
-							</th>
-							<th>
-								Monto
-							</th>
-						</tr>
-						<% companies.each do |company| %>
-							<tr>
-								<td>
-									<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
-								</td>
-								<td>
-									<%= company.plan.name %>
-								</td>
-								<td>
-									<%= company.locations.count %>
-								</td>
-								<td>
-									$<%= company.plan.price %>
-								</td>
-							</tr>
-						<% end %>
-					</table>
-				</div>
-			<% else %>
-				
-			<% end %>
-
-		<% end %>
-
-	</div>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Navegation Tabs -->
+    <div class="col-md-2">
+      <ul class="nav nav-pills nav-stacked tab-margin">
+        <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
+        <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
+        <li class="active"><a id="companies_locations" href="/companies_locations">Clientes y locales</a></li>
+        <li><a id="companies_monthly_locations" href="/companies_monthly_locations">Locales mensuales</a></li>
+        <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
+        <li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
+      </ul>
+    </div>
+    <!-- Panels -->
+    <div class="col-md-10 left-panel">
+      <div class="tab-margin">
+        <div class="row">
+          <div class="col-md-3">
+            <select id="year-select" name="year" class="form-control col-md-4">
+              <% current = DateTime.now.year.to_i %>
+              <% for i in 2014..current do %>
+                <% if i == @year %>
+                  <option value="<%= i %>" selected><%= i.to_s %></option>
+                <% else %>
+                  <option value="<%= i %>"><%= i.to_s %></option>
+                <% end %>
+              <% end %>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <a id="year-select-link" href="/companies_locations?year=<%= @year %>" class="btn btn-white">Obtener locales</a>
+          </div>
+        </div>
+        <h3>Locales para el año <%= @year %></h3>
+        <div class="panel-group" id="accordion">
+          <% for i in 1..12 do %>
+            <% companies = @companies_arr[i]['companies'] %>
+            <% if !companies.nil? && companies.count > 0 %>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= i %>">
+                  <a><%= @companies_arr[i]['month'] %></a>
+                </h4>
+              </div>
+              <div id="collapse<%= i %>" class="panel-collapse collapse">
+                <div class="panel-body panel-scrollable">
+                  <table class="table table-bordered table-green">
+                    <thead>
+                      <tr>
+                        <th>Empresa</th>
+                        <th>Plan actual</th>
+                        <th>Locales</th>
+                        <th>Monto</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% companies.each do |company| %>
+                        <tr>
+                          <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
+                          <td><%= company.plan.name %></td>
+                          <td><%= company.locations.count %></td>
+                          <td>$<%= company.plan.plan_countries.find_by(country_id: company.country.id).price %></td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
-
-	<script type="text/javascript">
-		$("#year-select").on('change', function(){
-			
-			var year = $(this).val();
-			$("#year-select-link").attr("href", "/companies_locations?year=" + year);
-			
-		});
-
-	</script>
-
+  <script type="text/javascript">
+    $("#year-select").on('change', function(){
+      var year = $(this).val();
+      $("#year-select-link").attr("href", "/companies_locations?year=" + year);
+    });
+  </script>
 <% end %>

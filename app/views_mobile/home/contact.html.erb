@@ -7,7 +7,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
+            <%= form_tag("/pcontact", method: "post", id: 'contact' ) do %>
                 <%= hidden_field_tag :inputName %>
                 <%= hidden_field_tag :inputLastname %>
                 <div class="form-group has-feedback">
@@ -45,9 +45,8 @@
                 </div>
                 <div class="background-box">
                     <%= image_tag "footer/1.png" %>
-                    <p>Nuestra Señora de los
-                     Angeles 185, Oficina D,
-                      Las Condes, Santiago</p>
+                    <p>Ana María Carrera 5210,
+                        Las Condes, Santiago</p>
                 </div>
                 <div class="background-box">
                     <%= image_tag "footer/2.png" %>

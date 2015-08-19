@@ -19,13 +19,13 @@
     <!-- end: Mobile Specific -->
 
     <!-- start: CSS -->
+    <%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
     <%= stylesheet_link_tag "mobile" %>
     <%= stylesheet_link_tag "mobile/mobile-home" %>
     <%= yield :stylesheets %>
     <!-- end: CSS -->
 
-    <!-- Fav and touch icons -->
-    <%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
+    <%= render 'layouts/icons' %>
   </head>
 
   <body>
@@ -38,9 +38,9 @@
             <button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
               <i class="fa fa-bars"></i>
             </button>
-            <a href="<%= root_without_subdomain %>" class="navbar-brand">
+            <% link_to root_url(subdomain: false), class: 'navbar-brand' do %>
               <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>
-            </a>
+            <% end %>
           </div>
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right collapse navbar-collapse" id="navbar-menu">
@@ -54,9 +54,14 @@
               <li class="divider"></li>
               <% if user_signed_in? %>
               <% if current_user.company_id %>
-                <li><%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, dashboard_path, class: "menu-green" %></li>
+                <li><%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, dashboard_url(subdomain: false) , class: "menu-green" %></li>
               <% end %>
-              <!-- <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path, class: "menu-green" %></li> -->
+              <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path, class: "menu-green" %></li>
+              <% if current_user.company_id %>
+    
+              <li><%= link_to '<i class="fa fa-desktop fa-fw"></i> Ver Sitio'.html_safe, root_url(:subdomain => current_user.company.web_address), class: "menu-green" %></li>
+              
+              <% end %>
               <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path, class: "menu-green" %></li>
               <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete, class: "menu-orange" %></li>
               <% else %>

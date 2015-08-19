@@ -1,0 +1,30 @@
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <div class="col-md-12">
+      <%= form_for @payment_method, :html => {:class => 'form-horizontal'} do |f| %>
+        <% if @payment_method.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@payment_method.errors.count, "error") %> prohibited this payment method from being saved:</h2>
+            <ul>
+              <% @payment_method.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+        <div class="form-group">
+          <%= f.label :name, "Nombre: ", class: "col-md-2 control-label" %>
+          <div class="col-md-4">
+            <%= f.text_field :name, :autofocus => true, class: "form-control" %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="actions col-md-offset-2 col-md-4">
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+            <%= link_to 'Cancelar', payment_methods_path, class: "btn btn-default" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

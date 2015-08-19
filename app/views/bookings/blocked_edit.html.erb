@@ -11,6 +11,8 @@
 				<p>
 					<% if @reason == "company" %>
 						La empresa <strong><%= @company.name %></strong> sólo permite modificar reservas hasta <strong><%= @company.company_setting.before_edit_booking %></strong> horas antes.
+					<% elsif @reason == "promo" %>
+						No se permite modificar horas reservadas en promoción.
 					<% else %>
 						<% if !@company.company_setting.online_cancelation_policy.modifiable %>
 							La empresa <strong><%= @company.name %></strong> no permite modificar reservas pagadas en línea.
@@ -38,7 +40,7 @@
 							<dd><%= @booking.service_provider.public_name %></dd>
 							<dt>¿Cuándo?</dt>
 							<dd><%= l @booking.start %></dd>
-							<% if !@booking.notes.empty? %>
+							<% if !@booking.notes.blank? %>
 							<dt>Notas</dt>
 							<dd><%= @booking.notes %></dd>
 							<% end %>
@@ -48,11 +50,11 @@
 						<dl class="dl-horizontal">
 							<dt>Nombre</dt>
 							<dd><%= @booking.client.first_name %> <%= @booking.client.last_name %></dd>
-							<% if !@booking.client.email.empty? %>
+							<% if !@booking.client.email.blank? %>
 							<dt>E-mail</dt>
 							<dd><%= @booking.client.email %></dd>
 							<% end %>
-							<% if !@booking.client.phone.empty? %>
+							<% if !@booking.client.phone.blank? %>
 							<dt>Teléfono</dt>
 							<dd><%= @booking.client.phone %></dd>
 							<% end %>

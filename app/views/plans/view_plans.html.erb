@@ -25,7 +25,7 @@
                         <%= image_tag "home/elmaspopular.png", :alt => "Special Tag", :class => "img-responsive special_tag", size: "86x127" %>
                         <h3><strong><%= plan.name %></strong></h3>
                         <hr class="pricing-hr">
-                        <div class="the_price"><span>$</span><%= number_with_precision(plan.price, precision: 0, separator: '', delimiter: '.') %><small>/Mes<br>(+ IVA)</small></div>
+                        <div class="the_price"><span><%= @country.currency_code %> $</span><%= number_with_precision(plan.plan_countries.find_by(country_id: @country.id).price, precision: 0, separator: '', delimiter: '.') %><small>/Mes<br>(+ IVA)</small></div>
                         <div class="the_offerings">
                             <p>
                                 <strong>¡Primer mes GRATIS!</strong><br />
@@ -45,7 +45,7 @@
 <section>
     <div class="container">
         <div class="row text-center">
-            <h1><%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:plan => Plan.find_by_name("Trial").id, :company => true), :class => "btn btn-orange btn-lg" %></h1>
+            <h3><%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:company => true), :class => "btn-orange" %></h3>
         </div>
     </div>
 </section>

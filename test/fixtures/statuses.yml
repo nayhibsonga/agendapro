@@ -1,9 +1,20 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  description: MyText
-
-two:
-  name: MyString
-  description: MyText
+status_1:
+    name: Reservado
+    description: Reserva asignada
+status_2:
+    name: Pagado
+    description: Cliente pre-pago la cita
+status_3:
+    name: Cancelado
+    description: Reserva sólo ha sido agendada
+status_4:
+    name: No Asiste
+    description: Cliente no llego a la cita
+status_5:
+    name: Confirmado
+    description: La reserva ha sido confirmada por el cliente
+status_6:
+    name: Asiste
+    description: Reserva ha sido realizada correctamente

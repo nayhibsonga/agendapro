@@ -1,59 +1,41 @@
 <div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<h3 class="panel-title">Reservas por Servicio</h3>
-			</div>
-			<div class="panel-body scrollable">
-				<table class="table">
-					<thead class="head-white">
-						<th>Servicio</th>
-						<th>Reservas Última Semana</th>
-						<th>Reservas Último Mes</th>
-					</thead>
-					<tbody>
-						<% @services.order(:name).each do |service| %>
-						<tr>
-							<td>
-							<%= service.name %>
-							</td>
-							<td>
-								<%= int_with_variation(service_booking_count(0, 0, service.id), service_booking_count(0, 1, service.id)) %>
-							</td>
-							<td>
-								<%= int_with_variation(service_booking_count(1, 0, service.id), service_booking_count(1, 1, service.id)) %>
-							</td>
-						</tr>
-						<% end %>
-						<tr>
-							<td><strong>Total</strong>
-							</td>
-							<td><strong>
-								<%= int_with_variation(booking_count(0, 0, current_user.company_id), booking_count(0, 1, current_user.company_id)) %>
-							</strong></td>
-							<td><strong>
-								<%= int_with_variation(booking_count(1, 0, current_user.company_id), booking_count(1, 1, current_user.company_id)) %>
-							</strong></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
+  <div class="col-md-12">
+    <div class="panel panel-green">
+      <div class="panel-heading">
+        <h3 class="panel-title">Reservas por Servicio</h3>
+      </div>
+      <div class="panel-body panel-scrollable">
+        <table class="table table-summary">
+          <thead>
+            <tr>
+              <th>Servicio</th>
+              <th>Reservas</th>
+              <th>Reservas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @services.order(:name).each do |service| %>
+              <tr>
+                <td><%= service.name %></td>
+                <td><%= service_booking_count(@from, @to, @status_ids, @option, service.id) %></td>
+                <td><%= number_to_currency(service_booking_revenue(@from, @to, @status_ids, @option, service.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total</td>
+              <td><%= booking_count(@from, @to, @status_ids, @option, current_user.company_id) %></td>
+              <td><%= number_to_currency(booking_revenue(@from, @to, @status_ids, @option, current_user.company_id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="row">
-	<div class="col-md-6">
-		<%= pie_chart status_booking_ranking3(0, 0, 0, current_user.company_id), library: { title: "Ranking Servicio Utilizados Última Semana" }  %>
-	</div>
-	<div class="col-md-6">
-		<%= pie_chart status_booking_ranking3(1, 0, 0, current_user.company_id), library: { title: "Ranking Servicio Utilizados Último Mes" }  %>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-6">
-		<%= pie_chart status_booking_ranking3(0, 1, 0, current_user.company_id), library: { title: "Ranking Servicio Utilizados Semana Anterior" }  %>
-	</div>
-	<div class="col-md-6">
-		<%= pie_chart status_booking_ranking3(1, 1, 0, current_user.company_id), library: { title: "Ranking Servicio Utilizados Mes Anterior" }  %>
-	</div>
+  <div class="col-md-12">
+    <%= pie_chart status_booking_ranking3(@from, @to, @status_ids, @option, current_user.company_id), library: { title: "Ranking Servicio Utilizados" } %>
+  </div>
 </div>

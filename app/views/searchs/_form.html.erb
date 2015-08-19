@@ -5,8 +5,8 @@
     		<%= label_tag(:district, "Busca, encuentra y reserva servicios en", :class => "control-label texto-localizacion") %>
           <a href="#" data-toggle="modal" data-target="#modalLocation"><span class="label label-warning" id="span-location" data-toggle="tooltip"><i class="fa fa-chevron-right"></i></span></a>
           <input type="hidden" id="district" name="district">
-          <input type="hidden" id="latitude" name="latitude" value="-33.412819">
-          <input type="hidden" id="longitude" name="longitude" value="-70.591945">
+          <input type="hidden" id="latitude" name="latitude" value="-33.413673">
+          <input type="hidden" id="longitude" name="longitude" value="-70.573426">
       </div>
     </div><!-- /.row -->
 	</div>
@@ -57,8 +57,8 @@
 <% end %>
 
 <% content_for :scripts do %>
-  <%= stylesheet_link_tag "jquery-ui-1.10.4" %>
-  <%= javascript_include_tag "jquery-ui-1.10.4.min.js" %>
+  <%= stylesheet_link_tag "jquery-ui" %>
+  <%= javascript_include_tag "jquery-ui.min" %>
   <script type="text/javascript">
     $(function () {
       $('#span-location').tooltip({

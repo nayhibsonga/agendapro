@@ -20,17 +20,36 @@
 		<!-- end: Mobile Specific -->
 
         <!-- start: CSS -->
+        <%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
         <%= stylesheet_link_tag "search" %>
-        <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
 		<%= yield :stylesheets %>
         <!-- end: CSS -->
 
+        <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+        <!-- Begin Inspectlet Embed Code -->
+        <script type="text/javascript" id="inspectletjs">
+        window.__insp = window.__insp || [];
+        __insp.push(['wid', 1883420541]);
+        (function() {
+        function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+        if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+        else window.addEventListener('load', __ldinsp, false);
+        })();
+        </script>
+        <!-- End Inspectlet Embed Code -->
+		<!-- start: Facebook Tracker-->
+		<%= render 'layouts/facebook_tracker' %>
+		<!-- end: Facebook Tracker-->
+        <% end %>
+
 		<!-- start: JavaScript-->
-		<%= javascript_include_tag "home-head" %><!-- Removido -->
+		<%= javascript_include_tag "home-head" %>
 		<!-- end: JavaScript-->
 
-		<!-- Fav and touch icons -->
-		<%= favicon_link_tag "favicon.png", :rel => "shortcut icon" %>
+
+		<%= yield :head_scripts %>
+
+		<%= render 'layouts/icons' %>
 
 	</head>
 
@@ -81,29 +100,54 @@
 						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
 							<i class="fa fa-bars"></i>
 						</button>
-						<a href="<%= root_without_subdomain %>" class="navbar-brand" id="agendapro-brand">
-							<%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '127x43' %>
-						</a>
+            <%= link_to localized_root_url(subdomain: false), class: 'navbar-brand', id: 'agendapro-brand' do %>
+              <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '127x43' %>
+            <% end %>
 					</div>
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar">
 						<ul class="nav navbar-nav navbar-right" id="menu">
 							<li>
-								<%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "navbar-form", id: "search-form") do %>
-                                <%= hidden_field_tag :latitude, params[:latitude], :required => "true" %>
-                                <%= hidden_field_tag :longitude, params[:longitude], :required => "true" %>
-                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization], :required => "true" %>
-								<div class="input-group">
-                                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Buscar...", :required => "true" %>
-                                    <span class="input-group-btn">
-                                        <button id="search_btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
-                                    </span>
-                                </div>
+								<% if current_page?(get_promotions_path) || current_page?(show_time_promo_path) %>
+									<%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "navbar-form promo-input-search", id: "promotions-form") do %>
+		                                <%= hidden_field_tag :latitude, params[:latitude] %>
+		                                <%= hidden_field_tag :longitude, params[:longitude] %>
+		                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+										<div class="input-group">
+		                                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Buscar..." %>
+		                                    <span class="input-group-btn">
+		                                        <button id="promotions-search-btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+		                                    </span>
+		                                </div>
+	                                <% end %>
+	                            <% elsif current_page?(get_last_minute_promotions_path) %>
+	                            	<%= form_tag({controller: "searchs", action: "last_minute_promotions"}, method: "GET", class: "navbar-form", id: "last-minute-promotions-form") do %>
+		                                <%= hidden_field_tag :latitude, params[:latitude] %>
+		                                <%= hidden_field_tag :longitude, params[:longitude] %>
+		                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+										<div class="input-group">
+		                                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Buscar..." %>
+		                                    <span class="input-group-btn">
+		                                        <button id="promotions-search-btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+		                                    </span>
+		                                </div>
+	                                <% end %>
+								<% else %>
+									<%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "navbar-form promo-input-search", id: "search-form") do %>
+		                                <%= hidden_field_tag :latitude, params[:latitude], :required => "true" %>
+		                                <%= hidden_field_tag :longitude, params[:longitude], :required => "true" %>
+		                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization], :required => "true" %>
+										<div class="input-group">
+		                                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Buscar...", :required => "true" %>
+		                                    <span class="input-group-btn">
+		                                        <button id="search_btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+		                                    </span>
+		                                </div>
+	                                <% end %>
                                 <% end %>
 							</li>
-							<li><%= link_to "Servicios", "/#servicios" %></li>
-							<li><%= link_to "Qué Hacemos", "/#quehacemos" %></li>
 							<li><%= link_to "Contacto", "/#contacto" %></li>
+							<li><%= link_to "Promociones", get_promotions_path, :class => "nav-bar-orange" %></li>
 							<% if user_signed_in? %>
                                 <%= render 'layouts/home_dropdown' %>
                             <% else %>
@@ -111,6 +155,8 @@
                                 <li><a href="#" data-toggle="modal" data-target="#signup-modal" class="menu-green"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
                             <% end %>
 							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
+							<li><%= link_to image_tag("search/landing/chile.png", alt: "Chile", size: "24x16", :class => I18n.locale == 'es_CL'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CL'})), class: "i18n-flag" %></li>
+            				<li><%= link_to image_tag("search/landing/colombia.png", alt: "Colombia", size: "24x16", :class => I18n.locale == 'es_CO'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CO'})), class: "i18n-flag" %></li>
 						</ul>
 					</div>
 				</div>
@@ -144,7 +190,7 @@
 							<%= render 'layouts/facebook' %>
 							<h3>AgendaPro - Sistema de Reservas Online</h3>
 							<p>
-								<span class="txt-footer"><i class="fa fa-map-marker"></i> Nuestra Se&ntilde;ora de los Angeles 185, Oficina D, Las Condes, Santiago </span>
+								<span class="txt-footer"><i class="fa fa-map-marker"></i> Ana María Carrera 5210, Las Condes, Santiago </span>
 								<span class="txt-footer"><i class="fa fa-phone"></i> (+56 9) 5178 5898 </span>
 								<span><i class="fa fa-envelope"></i> contacto@agendapro.cl </span>
 							</p>
@@ -157,7 +203,7 @@
 					<div class="row">
 						<div class="col-sm-6 col-md-6"> &copy; Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</div>
 						<div class="text-right col-sm-6 col-md-6">
-							<%= link_to 'Sobre Nosotros', '/about_us', :target => :blank %> | <%= link_to 'Términos y Condiciones', '/Term_y_Cond_AgendaPro122014.pdf', :target => :blank %>
+							<%= link_to 'Sobre Nosotros', '/about_us', :target => :blank %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
 						</div>
                         <% if mobile_browser? %>
                         <div class="col-xs-12">
@@ -170,14 +216,23 @@
 		</footer> -->
 
 		<!-- start: JavaScript-->
-		<%= javascript_include_tag "search" %>
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 		<% javascript_include_tag "jquery.browser.min" %><!-- Removido -->
 		<% javascript_include_tag "browser-detect" %><!-- Removido -->
+		<%= javascript_include_tag "search" %>
+		<script type="text/javascript">
+			$('a').click(function() {
+				$('.alert').hide();
+			});
+		</script>
 		<%= yield :scripts %>
 		<!--Start of Zopim Live Chat Script-->
 		<%= javascript_include_tag 'zopim' %>
 		<!--End of Zopim Live Chat Script-->
+
+		<!--Start of Crazy Egg Script-->
+		<%= javascript_include_tag 'crazy_egg' %>
+		<!--End of Crazy Egg Script-->
 
 		<!--<script>
           // $( "#menu-display" ).click(function() {
