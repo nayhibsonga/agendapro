@@ -1057,13 +1057,15 @@ function loadStep3 () {
 					{
 
 
-
-						$("#summary").append(
-							'<tr>' +
-								'<td class="dark-gray">Precio en local</td>' +
-								'<td class="light-gray">' + simple_currency(just_book_price) + '</td>' +
-							'</tr>'
-						);
+						if(just_book_price > 0)
+						{
+							$("#summary").append(
+								'<tr>' +
+									'<td class="dark-gray">Precio en local</td>' +
+									'<td class="light-gray">' + simple_currency(just_book_price) + '</td>' +
+								'</tr>'
+							);
+						}
 
 						$(".payBtn").hide();
 						$("#open-online-policy").hide();
