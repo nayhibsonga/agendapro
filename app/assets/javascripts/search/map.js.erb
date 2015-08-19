@@ -1,4 +1,5 @@
 //====== Map ======//
+var latLongs;
 function initializeMap (lat, lng, mapDiv) {
 
     var properties = {
@@ -85,18 +86,33 @@ $(function() {
     //initializeMap(-33.413084, -70.592161, 'map');
     
     var fullBounds = new google.maps.LatLngBounds();
+    latLongs = [];
 
     var i = 1;
     $.each($('#results').data('results'), function (key, local) {
         loadSchedule(local.id);
         var latLng = new google.maps.LatLng(local.latitude, local.longitude);
-        if (!local.outcall) {
+
+        var addLatLng = true;
+        for(l_i = 0; l_i < latLongs.length; l_i++)
+        {
+            if(latLongs[l_i].lat() == latLng.lat() && latLongs[l_i].lng() == latLng.lng())
+            {
+                addLatLng = false;
+                break;
+            } 
+        }
+
+        if (!local.outcall && addLatLng) {
+            latLongs.push(latLng);
             setMarker(latLng, local.name, i);
         }
         i++;
 
         fullBounds.extend(latLng);
     });
+
+    console.log(latLongs);
 
     if (!fullBounds.isEmpty()) {
         fitMarkers(fullBounds);
