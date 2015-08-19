@@ -27,7 +27,7 @@ class SearchsController < ApplicationController
 		if cookies[:formatted_address]
 			@formatted_address = cookies[:formatted_address].unpack("C*").pack("U*")
 		end
-		@companies =  Company.where(show_in_home: true).where.not(logo: nil)
+		@companies =  Company.where(show_in_home: true, country_id: Country.find_by(locale: I18n.locale.to_s)).where.not(logo: nil)
 		render layout: "search"
 	end
 

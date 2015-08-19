@@ -133,7 +133,7 @@
 		                                </div>
 	                                <% end %>
 								<% else %>
-									<%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "navbar-form", id: "search-form") do %>
+									<%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "navbar-form promo-input-search", id: "search-form") do %>
 		                                <%= hidden_field_tag :latitude, params[:latitude], :required => "true" %>
 		                                <%= hidden_field_tag :longitude, params[:longitude], :required => "true" %>
 		                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization], :required => "true" %>

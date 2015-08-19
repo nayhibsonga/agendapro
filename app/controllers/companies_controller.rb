@@ -160,7 +160,7 @@ class CompaniesController < ApplicationController
 
 		if @company.company_setting.promo_time.nil?
 			promo_time = PromoTime.new
-			promo_time.company_setting_id = @company_setting.id
+			promo_time.company_setting_id = @company.company_setting.id
 			promo_time.save
 		end
 
