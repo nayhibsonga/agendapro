@@ -2223,7 +2223,7 @@ class CompaniesController < ApplicationController
 					block_hour[:provider] = available_provider
 					block_hour[:booking_id] = @booking.id
 
-					
+
 					if status == 'available' && !@booking.session_booking.service_promo_id.nil? && @booking.session_booking.max_discount > 0
 
 						block_hour[:has_discount] = false
@@ -2311,7 +2311,7 @@ class CompaniesController < ApplicationController
 					end
 
 					provider_times_first_open_start = provider_times_first_open_end
-					
+
 				end
 			end
     	end
@@ -2333,7 +2333,15 @@ class CompaniesController < ApplicationController
 
 
 	def user_data
-
+		if params[:location].blank?
+			flash[:alert] = "Lo sentimos, el local ingresado no existe."
+			redirect_to :action => "overview"
+			return
+		elsif params[:service].blank? or params[:staff].blank? or params[:start].blank? or params[:end].blank? or params[:time_discount].blank? or params[:discount].blank? or params[:service_promo_id].blank? or params[:origin].blank? or params[:provider_lock].blank?
+			flash[:alert] = "Error ingresando los datos."
+			redirect_to workflow_path(:local => params[:location])
+			return
+		end
 		@location = Location.find(params[:location])
 		@company = @location.company
 		@service = Service.find(params[:service])

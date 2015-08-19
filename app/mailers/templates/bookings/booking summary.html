@@ -378,10 +378,6 @@
       .footer > td > p {
         margin: 0;
       }
-      .logo {
-        width: 50%;
-        max-width: 200px;
-      }
       .footer img {
         margin-left: -1px;
         margin-right: 10px;
@@ -437,7 +433,7 @@
         <tr class="header">
           <td colspan="2">
             *|IF:URL|*
-            <a href="http://*|URL|*.agendapro.cl" target="_blanck">*|URL|*.agendapro.cl</a>
+            <a href="http://*|URL|*.agendapro*|DOMAIN|*" target="_blanck">*|URL|*.agendapro*|DOMAIN|*</a>
             *|END:IF|*
           </td>
         </tr>
