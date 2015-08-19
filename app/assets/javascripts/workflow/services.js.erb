@@ -680,6 +680,7 @@ function loadStep2() {
 				);
 			}
 			
+			
 			if(!sessions_service)
 			{
 				addBooking(e, k, book_discount, is_time_discount);
@@ -789,7 +790,7 @@ function loadStep3 () {
 	              '</tr>'
 	            );
 
-	            if($('#online_capabilities').data('online-payment-capable'))
+	            if($('#online_capabilities').data('online-payment-capable') && actual_booking.show_price)
 	            {
 		            $('#summary').append(
 		              '<tr>' + 
@@ -817,17 +818,28 @@ function loadStep3 () {
 	        	}
 	        	else
 	        	{
-	        		$('#summary').append(
-		              '<tr>' + 
-		                '<td class="dark-gray">Precio</td><td class="light-gray">' + simple_currency(price) + '</td>' +
-		              '</tr>'
-		            );
+	        		if(actual_booking.show_price)
+	        		{
+		        		$('#summary').append(
+			              '<tr>' + 
+			                '<td class="dark-gray">Precio</td><td class="light-gray">' + simple_currency(price) + '</td>' +
+			              '</tr>'
+			            );
+		        	}
+		        	else
+		        	{
+		        		$('#summary').append(
+			              '<tr>' + 
+			                '<td class="dark-gray">Precio</td><td class="light-gray">Preguntar en local</td>' +
+			              '</tr>'
+			            );
+		        	}
 		            $(".payBtn").hide();
 					$("#open-online-policy").hide();
 					$("#discount").empty();
 	        	}
 
-	        	if(!actual_booking.online_payable)
+	        	if(!actual_booking.online_payable || !actual_booking.show_price)
 	        	{
 	        		$(".payBtn").hide();
 					$("#open-online-policy").hide();
@@ -863,6 +875,7 @@ function loadStep3 () {
 					var just_book_price = 0;
 					var not_payable_price = 0;
 					var prices_str = '';
+					var ask_in_location = false;
 
 					times_str = times_str + formattedTime(booking_buffer[0].start) + '.<br />';
 
@@ -877,7 +890,7 @@ function loadStep3 () {
 
 						services_str = services_str + booking.service_name + ' con ' + booking.provider_name + '.<br />';
 						
-						if(booking.has_discount && discount > 0 && booking.online_payable)
+						if(booking.has_discount && discount > 0 && booking.online_payable && booking.show_price)
 						{
 							
 
@@ -931,15 +944,16 @@ function loadStep3 () {
 									may_pay = true;
 									total_price = total_price + Math.round(price);
 								}
+								just_book_price = just_book_price + price;
 							}
 							else
 							{
 								prices_str = prices_str + 'Preguntar en local<br />';
-								
+								ask_in_location = true;
 								some_not_payable = true;
 							}
 						}
-						just_book_price = just_book_price + price;
+						
 					}
 
 
@@ -1020,6 +1034,24 @@ function loadStep3 () {
 						$("#normal-book").append(
 							'Precio final: ' + currency(just_book_price)
 						);
+
+						if(ask_in_location)
+						{
+							$("#summary").append(
+							'<tr>' +
+								'<td class="dark-gray">Otros</td>' +
+								'<td class="light-gray">Pregunta en local por los servicios sin precio publicado.</td>' +
+							'</tr>'
+							);
+
+							$("#discount").append(
+								'<br/>Pregunta en local por los servicios sin precio publicado'
+							);
+
+							$("#normal-book").append(
+								'<br/>Pregunta en local por los servicios sin precio publicado'
+							);
+						}
 					}
 					else if(!may_pay && !must_pay)
 					{
@@ -1042,6 +1074,21 @@ function loadStep3 () {
 						$("#normal-book").append(
 							'Precio final: ' + currency(just_book_price)
 						);
+
+						if(ask_in_location)
+						{
+							$("#summary").append(
+							'<tr>' +
+								'<td class="dark-gray">Otros</td>' +
+								'<td class="light-gray">Pregunta en local por los servicios sin precio publicado.</td>' +
+							'</tr>'
+							);
+
+							$("#normal-book").append(
+								'<br/>Pregunta en local por los servicios sin precio publicado'
+							);
+						}
+
 					}
 					else if(must_pay)
 					{
@@ -1071,11 +1118,28 @@ function loadStep3 () {
 
 						if(some_not_payable)
 						{
+							if(not_payable_price > 0)
+							{
+								$("#summary").append(
+									'<tr>' +
+										'<td class="dark-gray">Pago pendiente en local&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="Existen servicios que no pueden ser pagados en línea. Deberás cancelar su precio el día de la reserva en el local."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
+										'<td class="light-gray">' + simple_currency(not_payable_price) + '</td>' +
+									'</tr>'
+								);
+							}
+						}
+
+						if(ask_in_location)
+						{
 							$("#summary").append(
-								'<tr>' +
-									'<td class="dark-gray">Pago pendiente en local&nbsp;' + '<span style="cursor: pointer; float: right;" data-toggle="tooltip" data-placement="right" title="Existen servicios que no pueden ser pagados en línea. Deberás cancelar su precio el día de la reserva en el local."><i class="fa fa-question-circle fa-lg"></i></span></td>' +
-									'<td class="light-gray">' + simple_currency(not_payable_price) + '</td>' +
-								'</tr>'
+							'<tr>' +
+								'<td class="dark-gray">Otros</td>' +
+								'<td class="light-gray">Pregunta en local por los servicios sin precio publicado.</td>' +
+							'</tr>'
+							);
+
+							$("#discount").append(
+								'<br/>Pregunta en local por los servicios sin precio publicado'
 							);
 						}
 
@@ -1098,6 +1162,8 @@ function loadStep3 () {
 			var price = actual_booking.price;
 			var min_discount = actual_booking.discount; 
 			var must_pay = false;
+			var ask_in_location = false;
+
 			for(i = 0; i < sessions_buffer.length; i++)
 			{
 				times_str = times_str + formattedTime(sessions_buffer[i].start) + ' con ' + sessions_buffer[i].provider_name + '.<br />';
@@ -1151,7 +1217,7 @@ function loadStep3 () {
 				'</tr>'
 			);
 
-			if($('#online_capabilities').data('online-payment-capable'))
+			if($('#online_capabilities').data('online-payment-capable') && actual_booking.show_price)
 			{
 				$('#summary').append(
 					'<tr>' + 
@@ -1179,17 +1245,28 @@ function loadStep3 () {
 			}
 			else
 			{
-				$('#summary').append(
-					'<tr>' + 
-					  '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
-					'</tr>'
-				);
+				if(actual_booking.show_price)
+				{
+					$('#summary').append(
+						'<tr>' + 
+						  '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
+						'</tr>'
+					);
+				}
+				else
+	        	{
+	        		$('#summary').append(
+		              '<tr>' + 
+		                '<td class="dark-gray">Precio</td><td class="light-gray">Preguntar en local</td>' +
+		              '</tr>'
+		            );
+	        	}
 				$(".payBtn").hide();
 				$("#open-online-policy").hide();
 				$("#discount").empty();
 			}
 
-			if(!actual_booking.online_payable)
+			if(!actual_booking.online_payable || !actual_booking.show_price)
         	{
         		$(".payBtn").hide();
 				$("#open-online-policy").hide();
@@ -2420,6 +2497,11 @@ $("#staffCollapse").on("hidden.bs.collapse", function(){
 var myAlert;
 $(function () {
 	myAlert  = new Alert();
+
+	if ($(window).width() <= 1100)
+	{
+		$("#new-add-service").css("font-size", "17px");
+	}
 
 	////////////////
 	// IMPORTANTE //
