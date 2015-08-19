@@ -2410,6 +2410,11 @@ var myAlert;
 $(function () {
 	myAlert  = new Alert();
 
+	if ($(window).width() <= 1100)
+	{
+		$("#new-add-service").css("font-size", "17px");
+	}
+
 	////////////////
 	// IMPORTANTE //
 	// Por un tema de confusión del calendario de horas del WF, se dejaron TODAS las consultas AJAX de esta página no-asíncronas.
