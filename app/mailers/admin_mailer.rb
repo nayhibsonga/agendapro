@@ -55,7 +55,7 @@ class AdminMailer < ActionMailer::Base
 					:content => locations
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => service.company.country.domain
 				}
 			],
