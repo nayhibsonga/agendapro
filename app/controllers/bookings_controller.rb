@@ -2818,9 +2818,14 @@ class BookingsController < ApplicationController
     @booking = Booking.find(id)
     @company = Location.find(@booking.location_id).company
     @selectedLocation = Location.find(@booking.location_id)
-    if @booking.update(:status => Status.find_by(:name => 'Confirmado'))
-      current_user ? user = current_user.id : user = 0
-      BookingHistory.create(booking_id: @booking.id, action: "Confirmada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+
+    status_confirmed = Status.find_by(:name => 'Confirmado')
+
+    if @booking.status_id != status_confirmed.id
+      if @booking.update(:status => status_confirmed)
+        current_user ? user = current_user.id : user = 0
+        BookingHistory.create(booking_id: @booking.id, action: "Confirmada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+      end
     end
     render layout: 'workflow'
   end
@@ -2832,11 +2837,14 @@ class BookingsController < ApplicationController
     @bookings = Booking.where(location_id: booking.location_id).where(booking_group: booking.booking_group)
     @company = Location.find(booking.location_id).company
     @selectedLocation = Location.find(booking.location_id)
+    status_confirmed = Status.find_by(:name => 'Confirmado')
 
     @bookings.each do |b|
-      if b.update(:status => Status.find_by(:name => 'Confirmado'))
-        current_user ? user = current_user.id : user = 0
-        BookingHistory.create(booking_id: b.id, action: "Confirmada por Cliente", start: b.start, status_id: b.status_id, service_id: b.service_id, service_provider_id: b.service_provider_id, user_id: user, notes: b.notes, company_comment: b.company_comment)
+      if b.status_id != status_confirmed.id
+        if b.update(:status => Status.find_by(:name => 'Confirmado'))
+          current_user ? user = current_user.id : user = 0
+          BookingHistory.create(booking_id: b.id, action: "Confirmada por Cliente", start: b.start, status_id: b.status_id, service_id: b.service_id, service_provider_id: b.service_provider_id, user_id: user, notes: b.notes, company_comment: b.company_comment)
+        end
       end
     end
     render layout: 'workflow'

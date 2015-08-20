@@ -46,7 +46,7 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.location.company.company_setting.signature
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],
@@ -256,7 +256,7 @@ class BookingMailer < ActionMailer::Base
 					:content => l(old_start)
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],
@@ -471,7 +471,7 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.service_provider.company.web_address
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],
@@ -628,7 +628,7 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.location.company.company_setting.signature
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],
@@ -834,7 +834,7 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.location.company.company_setting.signature
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],
@@ -988,6 +988,93 @@ class BookingMailer < ActionMailer::Base
 		end
 	end
 
+	def multiple_booking_reminder (data)
+		# => Template
+		template_name = 'Multiple Booking Reminder'
+		template_content = []
+
+		# => Message
+		message = {
+			:from_email => 'no-reply@agendapro.cl',
+			:from_name => data[:company_name],
+			:subject => 'Confirma tus reservas en ' + data[:company_name],
+			:to => [],
+			:headers => { 'Reply-To' => data[:reply_to] },
+			:global_merge_vars => [
+				{
+					:name => 'URL',
+					:content => data[:url]
+				},
+				{
+					:name => 'COMPANYNAME',
+					:content => data[:company_name]
+				},
+				{
+					:name => 'SIGNATURE',
+					:content => data[:signature]
+				},
+				{
+					:name => 'DOMAIN',
+					:content => data[:domain]
+				}
+			],
+			:merge_vars => [],
+			:tags => ['booking', 'new_booking'],
+			:images => [
+				{
+					:type => data[:type],
+					:name => 'LOGO',
+					:content => data[:logo]
+				}
+			]
+		}
+
+		# Notificacion cliente
+		if data[:user][:send_mail]
+			message[:to] = [{
+								:email => data[:user][:email],
+								:name => data[:user][:name],
+								:type => 'to'
+							}]
+			message[:merge_vars] = [{
+							:rcpt => data[:user][:email],
+							:vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => data[:user][:where]
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(data[:user][:phone])
+								},
+								{
+									:name => 'BOOKINGS',
+									:content => data[:user][:user_table]
+								},
+								{
+									:name => 'CLIENTNAME',
+									:content => data[:user][:name]
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								},
+								{
+									:name => 'CANCELALL',
+									:content => data[:user][:cancel_all]
+								},
+								{
+									:name => 'CONFIRMALL',
+									:content => data[:user][:confirm_all]
+								}
+							]
+						}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
+	end
+
 	def booking_summary (booking_data, booking_summary, today_schedule)
 		# => Template
 		template_name = 'Booking Summary'
@@ -1026,7 +1113,7 @@ class BookingMailer < ActionMailer::Base
 					:content => today_schedule
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => booking_data[:domain]
 				}
 			],
@@ -1070,7 +1157,7 @@ class BookingMailer < ActionMailer::Base
 					:content => data[:signature]
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => data[:domain]
 				}
 			],
@@ -1118,10 +1205,6 @@ class BookingMailer < ActionMailer::Base
 								{
 									:name => 'CANCEL',
 									:content => data[:user][:cancel]
-								},
-								{
-									:name => 'CONFIRMALL',
-									:content => data[:user][:confirm_all]
 								}
 							]
 						}]
@@ -1274,7 +1357,7 @@ class BookingMailer < ActionMailer::Base
 					:content => client.first_name + ' ' + client.last_name
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => payed_booking.bookings.first.location.company.country.domain
 				}
 
@@ -1345,7 +1428,7 @@ class BookingMailer < ActionMailer::Base
 					:content => client.first_name + ' ' + client.last_name
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => payed_booking.bookings.first.location.company.country.domain
 				}
 
@@ -1417,7 +1500,7 @@ class BookingMailer < ActionMailer::Base
 					:content => payed_booking.punto_pagos_confirmation.approvement_date
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => payed_booking.bookings.first.location.company.country.domain
 				}
 			],
@@ -1503,7 +1586,7 @@ class BookingMailer < ActionMailer::Base
 						:content => payed_booking.punto_pagos_confirmation.approvement_date
 					},
 					{
-						:domain => 'DOMAIN',
+						:name => 'DOMAIN',
 						:content => payed_booking.bookings.first.location.company.country.domain
 					}
 				],
@@ -1683,7 +1766,7 @@ class BookingMailer < ActionMailer::Base
 					:content => data[:signature]
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => data[:domain]
 				}
 			],
@@ -1871,7 +1954,7 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.location.company.company_setting.signature
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],
