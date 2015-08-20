@@ -1558,7 +1558,7 @@ class BookingsController < ApplicationController
   end
 
   def book_service
-    
+
     if params[:location].blank?
       flash[:alert] = "Lo sentimos, el local ingresado no existe."
       redirect_to root_path
@@ -3907,6 +3907,10 @@ class BookingsController < ApplicationController
                 end
               end
 
+            end
+
+            if params[:edit] && status == 'hora-promocion'
+              should_add = false
             end
 
             if should_add
