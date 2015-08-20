@@ -106,6 +106,13 @@ ActiveRecord::Schema.define(version: 20150818214042) do
     t.boolean  "web_origin",             default: false
     t.boolean  "send_mail",              default: true
     t.integer  "client_id"
+    t.float    "price",               default: 0.0
+    t.boolean  "provider_lock",       default: false
+    t.integer  "max_changes",         default: 2
+    t.integer  "deal_id"
+    t.boolean  "payed",               default: false
+    t.string   "trx_id",              default: ""
+    t.string   "token",               default: ""
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
     t.boolean  "payed",                  default: false
@@ -907,10 +914,19 @@ ActiveRecord::Schema.define(version: 20150818214042) do
     t.string   "public_name"
     t.datetime "created_at"
     t.datetime "updated_at"
+<<<<<<< HEAD
+    t.boolean  "active",                      default: true
+    t.integer  "order",                       default: 0
+    t.integer  "block_length",                default: 30
+    t.integer  "booking_configuration_email", default: 0
+    t.decimal  "comission_value",             default: 0.0,  null: false
+    t.integer  "comission_option",            default: 0,    null: false
+=======
     t.boolean  "active",         default: true
     t.integer  "order",          default: 0
     t.integer  "block_length",   default: 15
     t.boolean  "online_booking", default: true
+>>>>>>> ea01ac8474fa51869f9e65fa78ae079da4d08fc2
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
