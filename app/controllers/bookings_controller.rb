@@ -2184,7 +2184,6 @@ class BookingsController < ApplicationController
               if new_booking.save
                 @bookings << new_booking
                 current_user ? user = current_user.id : user = 0
-                BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
                 logger.debug "Creada 4"
               else
                 @errors << new_booking.errors.full_messages
@@ -2265,7 +2264,6 @@ class BookingsController < ApplicationController
           if new_booking.save
             @bookings << new_booking
             current_user ? user = current_user.id : user = 0
-            BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
             logger.debug "Creada 5"
           else
             @errors << new_booking.errors.full_messages

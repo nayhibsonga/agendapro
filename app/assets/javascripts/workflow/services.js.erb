@@ -1031,9 +1031,12 @@ function loadStep3 () {
 
 						$(".submitBtn").show();
 						$("#normal-book").empty();
-						$("#normal-book").append(
-							'Precio final: ' + currency(just_book_price)
-						);
+						if(just_book_price > 0)
+						{
+							$("#normal-book").append(
+								'Precio final: ' + currency(just_book_price)
+							);
+						}
 
 						if(ask_in_location)
 						{

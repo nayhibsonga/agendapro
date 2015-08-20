@@ -424,7 +424,7 @@
             </div>
             <div class="row" style="margin-left: 0px !important;">
               <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
-              <div class="col-md-6">
+              <div class="col-sm-6">
                 <!-- INICIO FORM -->
                 <div id="form-datos">
                   <div class="datos-heading">
@@ -445,12 +445,12 @@
                       <%= hidden_field_tag :firstName, current_user.first_name %>
                       <%= hidden_field_tag :lastName, current_user.last_name %>
                       <div class="row">
-                        <div class="col-md-12 dark-gray">
+                        <div class="col-sm-12 dark-gray">
                           Nombre
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                           <div class="form-group has-feedback">
                             <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
                             <span class="help-block"></span>
@@ -459,22 +459,16 @@
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-6 dark-gray">
-                          Email
-                        </div>
-                        <div class="col-md-6 dark-gray">
-                          Teléfono
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-md-offset-0 col-sm-12 dark-gray">
+                          Email<br />
                           <div class="form-group has-feedback">
                             <%= email_field_tag(:email, current_user.email, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                           </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-md-offset-0 col-sm-12 dark-gray">
+                          Teléfono<br />
                           <div class="form-group has-feedback">
                             <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
                             <span class="help-block"></span>
@@ -482,17 +476,25 @@
                           </div>
                         </div>
                       </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          
+                        </div>
+                        <div class="col-sm-6">
+                          
+                        </div>
+                      </div>
                     </div>
                     <% else %>
                       <%= hidden_field_tag :firstName %>
                       <%= hidden_field_tag :lastName %>
                       <div class="row">
-                        <div class="col-md-12 dark-gray">
+                        <div class="col-sm-12 dark-gray">
                           Nombre
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                           <div class="form-group has-feedback">
                             <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
                             <span class="help-block"></span>
@@ -527,12 +529,12 @@
                     <% end %>
                     <% if @location.company.company_setting.client_exclusive %>
                       <div class="row">
-                        <div class="col-md-12 dark-gray">
+                        <div class="col-sm-12 dark-gray">
                           RUT
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                           <div class="form-group has-feedback">
                             <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
                             <span class="help-block"></span>
@@ -543,12 +545,12 @@
                     <% end %>
                     <% if @location.company.company_setting.deal_activate %>
                       <div class="row">
-                        <div class="col-md-12 dark-gray">
+                        <div class="col-sm-12 dark-gray">
                           <%= !@location.company.company_setting.deal_name.blank? ? @location.company.company_setting.deal_name : "Convenio" %>
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                           <div class="form-group has-feedback">
                             <%= text_field_tag(:deal_code, nil, :class => "form-control light-gray" ) %>
                             <span class="help-block"></span>
@@ -559,12 +561,12 @@
                     <% end %>
                     <div id="outcallAddress" class="row form-group has-feedback">
                       <div class="row">
-                        <div class="col-md-12 dark-gray">
+                        <div class="col-sm-12 dark-gray">
                           Dirección
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                           <div class="form-group has-feedback">
                             <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
                             <span class="help-block"></span>
@@ -575,12 +577,12 @@
                     </div>
                     <% if @location.company.company_setting.activate_notes %>
                     <div class="row">
-                      <div class="col-md-12 dark-gray">
+                      <div class="col-sm-12 dark-gray">
                         Comentario
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-md-12">
+                      <div class="col-sm-12">
                         <div class="form-group">
                           <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
                         </div>
@@ -589,7 +591,7 @@
                     <% end %>
                     <% if !user_signed_in? %>
                     <div class="row">
-                      <div class="col-md-12">
+                      <div class="col-sm-12">
                         <div class="checkbox">
                           <label>
                             <%= check_box_tag :mailing_option, true, class: 'checkbox' %> Quiero recibir promociones a mi email
