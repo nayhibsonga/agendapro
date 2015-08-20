@@ -3909,6 +3909,10 @@ class BookingsController < ApplicationController
 
             end
 
+            if params[:edit] && status == "hora-promocion"
+              should_add = false
+            end
+
             if should_add
               if !hours_array.include?(new_hour)
 
