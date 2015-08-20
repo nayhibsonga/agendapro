@@ -398,9 +398,11 @@
                   <div id="error">
                     <div class="book-title">Errores</div>
                     <ul class="list-unstyled">
+                    <% if @errors %>
                       <% @errors.each do |msg| %>
                       <li class="light-gray"><%= msg %></li>
                       <% end %>
+                    <% end %>
                     </ul>
                   </div>
 
@@ -424,8 +426,10 @@
             <div id="error">
               <div class="book-title">Errores</div>
               <ul class="list-unstyled">
-                <% @errors.each do |msg| %>
-                <li class="light-gray"><%= msg %></li>
+                <% if @errors %>
+                  <% @errors.each do |msg| %>
+                  <li class="light-gray"><%= msg %></li>
+                  <% end %>
                 <% end %>
               </ul>
             </div>
