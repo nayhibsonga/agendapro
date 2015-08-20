@@ -978,7 +978,7 @@ class BookingsController < ApplicationController
         end
       end
     end
-    
+
     if ServiceProvider.where(:id => booking_params[:service_provider_id])
       new_booking_params[:location_id] = ServiceProvider.find(booking_params[:service_provider_id]).location.id
     end
@@ -1559,6 +1559,15 @@ class BookingsController < ApplicationController
 
   def book_service
 
+    if params[:location].blank?
+      flash[:alert] = "Lo sentimos, el local ingresado no existe."
+      redirect_to root_path
+      return
+    elsif params[:bookings].blank?
+      flash[:alert] = "Error ingresando los datos."
+      redirect_to workflow_path(:local => params[:location])
+      return
+    end
 
     @bookings = []
     @errors = []
@@ -2069,7 +2078,7 @@ class BookingsController < ApplicationController
                   if booking.end.to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
 
                     if !(service_promo.morning_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-                      
+
                       new_book_discount = promo.morning_discount
 
                     elsif !(service_promo.afternoon_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
@@ -2175,7 +2184,6 @@ class BookingsController < ApplicationController
               if new_booking.save
                 @bookings << new_booking
                 current_user ? user = current_user.id : user = 0
-                BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
                 logger.debug "Creada 4"
               else
                 @errors << new_booking.errors.full_messages
@@ -2218,7 +2226,7 @@ class BookingsController < ApplicationController
                 service_promo.save
               end
             end
-          end     
+          end
 
           PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de varios servicios a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
           redirect_to resp.payment_process_url and return
@@ -2256,7 +2264,6 @@ class BookingsController < ApplicationController
           if new_booking.save
             @bookings << new_booking
             current_user ? user = current_user.id : user = 0
-            BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
             logger.debug "Creada 5"
           else
             @errors << new_booking.errors.full_messages
@@ -2400,7 +2407,7 @@ class BookingsController < ApplicationController
           service_promo = ServicePromo.find(booking.service_promo_id)
           service_promo.max_bookings = service_promo.max_bookings + 1
           service_promo.save
-        end       
+        end
         booking.delete
       end
     end
@@ -2425,7 +2432,7 @@ class BookingsController < ApplicationController
 
     #   if !@are_session_bookings
     #     @tried_bookings.each do |booking|
-          
+
     #         fake_booking = Booking.new(booking.attributes.to_options)
     #         @bookings << fake_booking
     #         booking.delete
@@ -2433,7 +2440,7 @@ class BookingsController < ApplicationController
     #     end
     #   else
 
-    #     booked_correct = Booking.where(:id => params[:bookings]).where(:is_session_booked => true) 
+    #     booked_correct = Booking.where(:id => params[:bookings]).where(:is_session_booked => true)
     #     service = @tried_bookings.first.service
 
     #     session_bookings = SessionBooking.where(:client_id => @tried_bookings.first.client_id)
@@ -3427,7 +3434,7 @@ class BookingsController < ApplicationController
     if params[:session_booking_id] && params[:session_booking_id] != ""
       session_booking = SessionBooking.find(params[:session_booking_id])
     end
-    
+
     if params[:date] && params[:date] != ""
       current_date = params[:date]
     else
@@ -3489,7 +3496,7 @@ class BookingsController < ApplicationController
         next
       end
 
-      
+
 
       dateTimePointer = dtp.open
       dateTimePointer = DateTime.new(date.year, date.mon, date.mday, dateTimePointer.hour, dateTimePointer.min)
@@ -3757,7 +3764,7 @@ class BookingsController < ApplicationController
                 end
 
                 serviceStaffPos += 1
-                               
+
                 if dateTimePointer < provider.provider_times.where(day_id: dateTimePointer.cwday).order('open asc').first.open
                   dateTimePointer = provider.provider_times.where(day_id: dateTimePointer.cwday).order('open asc').first.open
                 else
@@ -3811,7 +3818,7 @@ class BookingsController < ApplicationController
           status = "hora-disponible"
 
           if has_time_discount
-            if session_booking.nil? 
+            if session_booking.nil?
               status = "hora-promocion"
             end
           end
@@ -3835,7 +3842,7 @@ class BookingsController < ApplicationController
           if params[:mandatory_discount]
 
             if has_time_discount
-             
+
 
               new_hour = {
                 index: book_index,
@@ -3902,6 +3909,10 @@ class BookingsController < ApplicationController
 
             end
 
+            if params[:edit] && status == 'hora-promocion'
+              should_add = false
+            end
+
             if should_add
               if !hours_array.include?(new_hour)
 
@@ -3927,7 +3938,7 @@ class BookingsController < ApplicationController
 
       #if loop_times > 16
       #  break
-      #end     
+      #end
 
     #end
 
@@ -4066,7 +4077,7 @@ class BookingsController < ApplicationController
             span_diff = hour_diff - 8
             top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
           end
-          
+
 
           if hour[:status] != "hora-promocion"
 
@@ -4107,7 +4118,7 @@ class BookingsController < ApplicationController
     days_count = @days_count
 
     render  :json => { panel_body: week_blocks, days_row: days_row, days_count: days_count, book_summaries: book_summaries, current_date: current_date}
-    # 
+    #
 
   end
 

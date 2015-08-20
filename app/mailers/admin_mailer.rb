@@ -53,6 +53,10 @@ class AdminMailer < ActionMailer::Base
 				{
 					:name => 'LOCATIONS',
 					:content => locations
+				},
+				{
+					:name => 'DOMAIN',
+					:content => service.company.country.domain
 				}
 			],
 			:merge_vars => [],
