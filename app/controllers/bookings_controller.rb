@@ -1558,11 +1558,12 @@ class BookingsController < ApplicationController
   end
 
   def book_service
+
     if params[:location].blank?
       flash[:alert] = "Lo sentimos, el local ingresado no existe."
       redirect_to root_path
       return
-    elsif params[:service].blank? or params[:provider].blank? or params[:start].blank? or params[:end].blank? or params[:origin].blank? or params[:provider_lock].blank? or params[:max_discount].blank? or params[:has_sessions].blank? or params[:bookings].blank? or params[:first_name].blank? or params[:last_name].blank? or params[:user].blank? or params[:email].blank? or params[:phone].blank? or params[:payment].blank?
+    elsif params[:bookings].blank?
       flash[:alert] = "Error ingresando los datos."
       redirect_to workflow_path(:local => params[:location])
       return
