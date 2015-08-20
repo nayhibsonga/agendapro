@@ -1118,6 +1118,10 @@ class BookingMailer < ActionMailer::Base
 								{
 									:name => 'CANCEL',
 									:content => data[:user][:cancel]
+								},
+								{
+									:name => 'CONFIRMALL',
+									:content => data[:user][:confirm_all]
 								}
 							]
 						}]

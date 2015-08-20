@@ -1307,6 +1307,7 @@ class Booking < ActiveRecord::Base
       @user[:send_mail] = bookings[bookings.length - 1].send_mail
       @user[:email] = bookings[0].client.email
       @user[:cancel] = helper.cancel_all_booking_url(:confirmation_code => bookings[0].confirmation_code)
+      @user[:confirm_all] = helper.confirm_all_bookings_url(:confirmation_code => bookings[0].confirmation_code)
 
       @user_table = ''
       bookings.each do |book|

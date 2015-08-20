@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form]
-  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours]
+  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours]
   before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
   layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :transfer_error_cancel, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
 
@@ -2821,6 +2821,23 @@ class BookingsController < ApplicationController
     if @booking.update(:status => Status.find_by(:name => 'Confirmado'))
       current_user ? user = current_user.id : user = 0
       BookingHistory.create(booking_id: @booking.id, action: "Confirmada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+    end
+    render layout: 'workflow'
+  end
+
+  def confirm_all_bookings
+    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+    id = crypt.decrypt_and_verify(params[:confirmation_code])
+    booking = Booking.find(id)
+    @bookings = Booking.where(location_id: booking.location_id).where(booking_group: booking.booking_group)
+    @company = Location.find(booking.location_id).company
+    @selectedLocation = Location.find(booking.location_id)
+
+    @bookings.each do |b|
+      if b.update(:status => Status.find_by(:name => 'Confirmado'))
+        current_user ? user = current_user.id : user = 0
+        BookingHistory.create(booking_id: b.id, action: "Confirmada por Cliente", start: b.start, status_id: b.status_id, service_id: b.service_id, service_provider_id: b.service_provider_id, user_id: user, notes: b.notes, company_comment: b.company_comment)
+      end
     end
     render layout: 'workflow'
   end
