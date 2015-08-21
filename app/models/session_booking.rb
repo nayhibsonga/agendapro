@@ -1,5 +1,5 @@
 class SessionBooking < ActiveRecord::Base
-	has_many :bookings
+	has_many :bookings, dependent: :destroy
 	has_many :booked_bookings, -> { where is_session_booked: true, user_session_confirmed: true}, class_name: "Booking"
 	has_many :unbooked_bookings, -> { where is_session_booked: false}, class_name: "Booking"
 	has_many :unvalidated_bookings, -> { where is_session_booked: true, user_session_confirmed: false}, class_name: "Booking"
