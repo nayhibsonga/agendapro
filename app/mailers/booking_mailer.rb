@@ -46,7 +46,7 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.location.company.company_setting.signature
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],

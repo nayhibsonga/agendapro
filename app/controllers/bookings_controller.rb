@@ -1558,11 +1558,12 @@ class BookingsController < ApplicationController
   end
 
   def book_service
+
     if params[:location].blank?
       flash[:alert] = "Lo sentimos, el local ingresado no existe."
       redirect_to root_path
       return
-    elsif params[:service].blank? or params[:provider].blank? or params[:start].blank? or params[:end].blank? or params[:origin].blank? or params[:provider_lock].blank? or params[:max_discount].blank? or params[:has_sessions].blank? or params[:bookings].blank? or params[:first_name].blank? or params[:last_name].blank? or params[:user].blank? or params[:email].blank? or params[:phone].blank? or params[:payment].blank?
+    elsif params[:bookings].blank?
       flash[:alert] = "Error ingresando los datos."
       redirect_to workflow_path(:local => params[:location])
       return
@@ -2183,7 +2184,6 @@ class BookingsController < ApplicationController
               if new_booking.save
                 @bookings << new_booking
                 current_user ? user = current_user.id : user = 0
-                BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
                 logger.debug "Creada 4"
               else
                 @errors << new_booking.errors.full_messages
@@ -2264,7 +2264,6 @@ class BookingsController < ApplicationController
           if new_booking.save
             @bookings << new_booking
             current_user ? user = current_user.id : user = 0
-            BookingHistory.create(booking_id: new_booking.id, action: "Creada por Cliente", start: new_booking.start, status_id: new_booking.status_id, service_id: new_booking.service_id, service_provider_id: new_booking.service_provider_id, user_id: user, notes: new_booking.notes, company_comment: new_booking.company_comment)
             logger.debug "Creada 5"
           else
             @errors << new_booking.errors.full_messages
@@ -3908,6 +3907,10 @@ class BookingsController < ApplicationController
                 end
               end
 
+            end
+
+            if params[:edit] && status == 'hora-promocion'
+              should_add = false
             end
 
             if should_add

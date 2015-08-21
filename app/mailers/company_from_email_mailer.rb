@@ -37,7 +37,7 @@ class CompanyFromEmailMailer < ActionMailer::Base
 					:content => company.web_address
 				},
 			{
-				:domain => 'DOMAIN',
+				:name => 'DOMAIN',
 				:content => company.country.domain
 			}
 			],
