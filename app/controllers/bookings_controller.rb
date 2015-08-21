@@ -3999,7 +3999,7 @@ class BookingsController < ApplicationController
 
             end
 
-            if params[:edit] && status == "hora-promocion"
+            if params[:edit] && status == 'hora-promocion'
               should_add = false
             end
 
