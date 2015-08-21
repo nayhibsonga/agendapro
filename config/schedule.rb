@@ -1,7 +1,7 @@
 set :output, "log/cron.log"
 
 every 1.days, :at => '6 am' do
-  runner "Booking.booking_reminder"
+  runner "Client.bookings_reminder"
 end
 
 every '0 3 1 * *' do
