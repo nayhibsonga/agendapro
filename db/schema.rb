@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150818214042) do
+ActiveRecord::Schema.define(version: 20150819191003) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -293,6 +293,8 @@ ActiveRecord::Schema.define(version: 20150818214042) do
     t.float    "online_payment_commission",  default: 5.0
     t.float    "promo_commission",           default: 10.0
     t.boolean  "promo_offerer_capable",      default: false
+    t.boolean  "can_edit",                   default: true
+    t.boolean  "can_cancel",                 default: true
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree

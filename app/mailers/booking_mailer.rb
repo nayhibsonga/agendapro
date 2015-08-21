@@ -105,19 +105,24 @@ class BookingMailer < ActionMailer::Base
 									:content => number_to_phone(book_info.location.phone)
 								},
 								{
-									:name => 'EDIT',
-									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CANCEL',
-									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
 									:name => 'CLIENT',
 									:content => true
 								}
 							]
 						}]
+
+			if book_info.location.company.company_setting.can_edit
+				message[:merge_vars][0][:vars] << {
+					:name => 'EDIT',
+					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
+			if book_info.location.company.company_setting.can_cancel
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -315,19 +320,24 @@ class BookingMailer < ActionMailer::Base
 									:content => number_to_phone(book_info.location.phone)
 								},
 								{
-									:name => 'EDIT',
-									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CANCEL',
-									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
 									:name => 'CLIENT',
 									:content => true
 								}
 							]
 						}]
+
+			if book_info.location.company.company_setting.can_edit
+				message[:merge_vars][0][:vars] << {
+					:name => 'EDIT',
+					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
+			if book_info.location.company.company_setting.can_cancel
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -680,14 +690,6 @@ class BookingMailer < ActionMailer::Base
 						:content => number_to_phone(book_info.location.phone)
 					},
 					{
-						:name => 'EDIT',
-						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CANCEL',
-						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
 						:name => 'CLIENT',
 						:content => true
 					}
@@ -891,14 +893,6 @@ class BookingMailer < ActionMailer::Base
 									:content => number_to_phone(book_info.location.phone)
 								},
 								{
-									:name => 'EDIT',
-									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CANCEL',
-									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
 									:name => 'CONFIRM',
 									:content => confirm_booking_url(:confirmation_code => book_info.confirmation_code)
 								},
@@ -908,6 +902,19 @@ class BookingMailer < ActionMailer::Base
 								}
 						  ]
 						}]
+
+			if book_info.location.company.company_setting.can_edit
+				message[:merge_vars][0][:vars] << {
+					:name => 'EDIT',
+					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
+			if book_info.location.company.company_setting.can_cancel
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -1201,13 +1208,16 @@ class BookingMailer < ActionMailer::Base
 								{
 									:name => 'CLIENT',
 									:content => true
-								},
-								{
-									:name => 'CANCEL',
-									:content => data[:user][:cancel]
 								}
 							]
 						}]
+
+			if data[:user][:can_cancel]
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => data[:user][:cancel]
+				}
+			end
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -1345,14 +1355,6 @@ class BookingMailer < ActionMailer::Base
 					:content => payed_booking.punto_pagos_confirmation.approvement_date
 				},
 				{
-					:name => 'EDIT',
-					:content => booking_edit_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
-				},
-				{
-					:name => 'CANCEL',
-					:content => booking_cancel_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
-				},
-				{
 					:name => 'CLIENT',
 					:content => client.first_name + ' ' + client.last_name
 				},
@@ -1414,14 +1416,6 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'DATE',
 					:content => payed_booking.punto_pagos_confirmation.approvement_date
-				},
-				{
-					:name => 'EDIT',
-					:content => booking_edit_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
-				},
-				{
-					:name => 'CANCEL',
-					:content => booking_cancel_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
 				},
 				{
 					:name => 'CLIENT',
@@ -1814,13 +1808,16 @@ class BookingMailer < ActionMailer::Base
 								{
 									:name => 'CLIENT',
 									:content => true
-								},
-								{
-									:name => 'CANCEL',
-									:content => data[:user][:cancel]
 								}
 							]
 						}]
+
+			if data[:user][:can_cancel]
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => data[:user][:cancel]
+				}
+			end
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -2017,19 +2014,24 @@ class BookingMailer < ActionMailer::Base
 									:content => validate_session_form_url(:confirmation_code => book_info.confirmation_code)
 								},
 								{
-									:name => 'EDIT',
-									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CANCEL',
-									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
 									:name => 'CLIENT',
 									:content => true
 								}
 							]
 						}]
+
+			if book_info.location.company.company_setting.can_edit
+				message[:merge_vars][0][:vars] << {
+					:name => 'EDIT',
+					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
+			if book_info.location.company.company_setting.can_cancel
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
 		end
 
 		# => Send mail
