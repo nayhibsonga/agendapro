@@ -37,9 +37,9 @@ $(function () {
       contentType: false,
       processData: false,
       success: function (result) {
-        window.console.log(result);
         d = new Date();
         $('#company-form img').attr("src", result+"?ts="+d.getTime());
+        $("#company_logo").val('');
       },
       error: function (xhr) {
         var errors = $.parseJSON(xhr.responseText).errors;
