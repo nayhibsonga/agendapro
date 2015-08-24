@@ -146,6 +146,22 @@ class UsersController < ApplicationController
     render :json => @user.nil?
   end
 
+  def delete_session_booking
+    @result = ""
+    session_booking = SessionBooking.find(params[:session_booking_id])
+    if !session_booking.service_promo_id.nil? || session_booking.bookings.first.payed
+      #Forn now, can't delete when payed
+      @result << "payed"
+    end
+    if session_booking.delete
+      @result << "ok"
+    else
+      @result << "error"
+    end
+
+    render :json => @result
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user

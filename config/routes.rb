@@ -264,6 +264,9 @@
     get '/cancel_all_booking', :to => 'bookings#cancel_all_booking', :as => 'cancel_all_booking'
     post '/cancel_all_booking', :to => 'bookings#cancel_all_booking'
     get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
+    get '/confirm_all_bookings', :to => 'bookings#confirm_all_bookings', :as => 'confirm_all_bookings'
+    get '/confirm_error', :to => 'bookings#confirm_error', :as => 'confirm_error'
+    get '/confirm_success', :to => 'bookings#confirm_success', :as => 'confirm_success'
     get '/blocked_edit', :to => 'bookings#blocked_edit', :as => 'blocked_edit'
     get '/blocked_cancel', :to => 'bookings#blocked_cancel', :as => 'blocked_cancel'
 

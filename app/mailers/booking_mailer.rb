@@ -105,19 +105,24 @@ class BookingMailer < ActionMailer::Base
 									:content => number_to_phone(book_info.location.phone)
 								},
 								{
-									:name => 'EDIT',
-									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CANCEL',
-									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
 									:name => 'CLIENT',
 									:content => true
 								}
 							]
 						}]
+
+			if book_info.location.company.company_setting.can_edit
+				message[:merge_vars][0][:vars] << {
+					:name => 'EDIT',
+					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
+			if book_info.location.company.company_setting.can_cancel
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -256,7 +261,7 @@ class BookingMailer < ActionMailer::Base
 					:content => l(old_start)
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],
@@ -315,19 +320,24 @@ class BookingMailer < ActionMailer::Base
 									:content => number_to_phone(book_info.location.phone)
 								},
 								{
-									:name => 'EDIT',
-									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CANCEL',
-									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
 									:name => 'CLIENT',
 									:content => true
 								}
 							]
 						}]
+
+			if book_info.location.company.company_setting.can_edit
+				message[:merge_vars][0][:vars] << {
+					:name => 'EDIT',
+					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
+			if book_info.location.company.company_setting.can_cancel
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -471,7 +481,7 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.service_provider.company.web_address
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],
@@ -628,7 +638,7 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.location.company.company_setting.signature
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],
@@ -678,14 +688,6 @@ class BookingMailer < ActionMailer::Base
 					{
 						:name => 'LOCATIONPHONE',
 						:content => number_to_phone(book_info.location.phone)
-					},
-					{
-						:name => 'EDIT',
-						:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-					},
-					{
-						:name => 'CANCEL',
-						:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
 					},
 					{
 						:name => 'CLIENT',
@@ -834,7 +836,7 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.location.company.company_setting.signature
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],
@@ -891,14 +893,6 @@ class BookingMailer < ActionMailer::Base
 									:content => number_to_phone(book_info.location.phone)
 								},
 								{
-									:name => 'EDIT',
-									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CANCEL',
-									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
 									:name => 'CONFIRM',
 									:content => confirm_booking_url(:confirmation_code => book_info.confirmation_code)
 								},
@@ -908,6 +902,19 @@ class BookingMailer < ActionMailer::Base
 								}
 						  ]
 						}]
+
+			if book_info.location.company.company_setting.can_edit
+				message[:merge_vars][0][:vars] << {
+					:name => 'EDIT',
+					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
+			if book_info.location.company.company_setting.can_cancel
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -988,72 +995,16 @@ class BookingMailer < ActionMailer::Base
 		end
 	end
 
-	def booking_summary (booking_data, booking_summary, today_schedule)
+	def multiple_booking_reminder (data)
 		# => Template
-		template_name = 'Booking Summary'
-		template_content = []
-
-		# => Message
-		message = {
-			:from_email => 'no-reply@agendapro.cl',
-			:from_name => 'AgendaPro',
-			:subject => 'Resumen de Reservas',
-			:to => [
-				{
-					:email => booking_data[:to],
-					:type => 'to'
-				}
-			],
-			:global_merge_vars => [
-				{
-					:name => 'COMPANYNAME',
-					:content => booking_data[:company]
-				},
-				{
-					:name => 'URL',
-					:content => booking_data[:url]
-				},
-				{
-					:name => 'NAME',
-					:content => booking_data[:name]
-				},
-				{
-					:name => 'SUMMARY',
-					:content => booking_summary
-				},
-				{
-					:name => 'TODAY',
-					:content => today_schedule
-				},
-				{
-					:domain => 'DOMAIN',
-					:content => booking_data[:domain]
-				}
-			],
-			:tags => ['booking', 'booking_summary'],
-			:images => [
-				{
-					:type => 'image/png',
-					:name => 'LOGO',
-					:content => Base64.encode64(File.read(booking_data[:logo].to_s))
-				}
-			]
-		}
-
-		# => Send mail
-		send_mail(template_name, template_content, message)
-	end
-
-	def multiple_booking_mail (data)
-		# => Template
-		template_name = 'Multiple Booking'
+		template_name = 'Multiple Booking Reminder'
 		template_content = []
 
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => data[:company_name],
-			:subject => 'Nueva Reserva en ' + data[:company_name],
+			:subject => 'Confirma tus reservas en ' + data[:company_name],
 			:to => [],
 			:headers => { 'Reply-To' => data[:reply_to] },
 			:global_merge_vars => [
@@ -1070,7 +1021,7 @@ class BookingMailer < ActionMailer::Base
 					:content => data[:signature]
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => data[:domain]
 				}
 			],
@@ -1116,11 +1067,157 @@ class BookingMailer < ActionMailer::Base
 									:content => true
 								},
 								{
-									:name => 'CANCEL',
-									:content => data[:user][:cancel]
+									:name => 'CANCELALL',
+									:content => data[:user][:cancel_all]
+								},
+								{
+									:name => 'CONFIRMALL',
+									:content => data[:user][:confirm_all]
 								}
 							]
 						}]
+
+			# => Send mail
+			send_mail(template_name, template_content, message)
+		end
+	end
+
+	def booking_summary (booking_data, booking_summary, today_schedule)
+		# => Template
+		template_name = 'Booking Summary'
+		template_content = []
+
+		# => Message
+		message = {
+			:from_email => 'no-reply@agendapro.cl',
+			:from_name => 'AgendaPro',
+			:subject => 'Resumen de Reservas',
+			:to => [
+				{
+					:email => booking_data[:to],
+					:type => 'to'
+				}
+			],
+			:global_merge_vars => [
+				{
+					:name => 'COMPANYNAME',
+					:content => booking_data[:company]
+				},
+				{
+					:name => 'URL',
+					:content => booking_data[:url]
+				},
+				{
+					:name => 'NAME',
+					:content => booking_data[:name]
+				},
+				{
+					:name => 'SUMMARY',
+					:content => booking_summary
+				},
+				{
+					:name => 'TODAY',
+					:content => today_schedule
+				},
+				{
+					:name => 'DOMAIN',
+					:content => booking_data[:domain]
+				}
+			],
+			:tags => ['booking', 'booking_summary'],
+			:images => [
+				{
+					:type => 'image/png',
+					:name => 'LOGO',
+					:content => Base64.encode64(File.read(booking_data[:logo].to_s))
+				}
+			]
+		}
+
+		# => Send mail
+		send_mail(template_name, template_content, message)
+	end
+
+	def multiple_booking_mail (data)
+		# => Template
+		template_name = 'Multiple Booking'
+		template_content = []
+
+		# => Message
+		message = {
+			:from_email => 'no-reply@agendapro.cl',
+			:from_name => data[:company_name],
+			:subject => 'Nueva Reserva en ' + data[:company_name],
+			:to => [],
+			:headers => { 'Reply-To' => data[:reply_to] },
+			:global_merge_vars => [
+				{
+					:name => 'URL',
+					:content => data[:url]
+				},
+				{
+					:name => 'COMPANYNAME',
+					:content => data[:company_name]
+				},
+				{
+					:name => 'SIGNATURE',
+					:content => data[:signature]
+				},
+				{
+					:name => 'DOMAIN',
+					:content => data[:domain]
+				}
+			],
+			:merge_vars => [],
+			:tags => ['booking', 'new_booking'],
+			:images => [
+				{
+					:type => data[:type],
+					:name => 'LOGO',
+					:content => data[:logo]
+				}
+			]
+		}
+
+		# Notificacion cliente
+		if data[:user][:send_mail]
+			message[:to] = [{
+								:email => data[:user][:email],
+								:name => data[:user][:name],
+								:type => 'to'
+							}]
+			message[:merge_vars] = [{
+							:rcpt => data[:user][:email],
+							:vars => [
+								{
+									:name => 'LOCALADDRESS',
+									:content => data[:user][:where]
+								},
+								{
+									:name => 'LOCATIONPHONE',
+									:content => number_to_phone(data[:user][:phone])
+								},
+								{
+									:name => 'BOOKINGS',
+									:content => data[:user][:user_table]
+								},
+								{
+									:name => 'CLIENTNAME',
+									:content => data[:user][:name]
+								},
+								{
+									:name => 'CLIENT',
+									:content => true
+								}
+							]
+						}]
+
+			if data[:user][:can_cancel]
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => data[:user][:cancel]
+				}
+			end
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -1258,19 +1355,11 @@ class BookingMailer < ActionMailer::Base
 					:content => payed_booking.punto_pagos_confirmation.approvement_date
 				},
 				{
-					:name => 'EDIT',
-					:content => booking_edit_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
-				},
-				{
-					:name => 'CANCEL',
-					:content => booking_cancel_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
-				},
-				{
 					:name => 'CLIENT',
 					:content => client.first_name + ' ' + client.last_name
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => payed_booking.bookings.first.location.company.country.domain
 				}
 
@@ -1329,19 +1418,11 @@ class BookingMailer < ActionMailer::Base
 					:content => payed_booking.punto_pagos_confirmation.approvement_date
 				},
 				{
-					:name => 'EDIT',
-					:content => booking_edit_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
-				},
-				{
-					:name => 'CANCEL',
-					:content => booking_cancel_url(:confirmation_code => payed_booking.bookings.first.confirmation_code)
-				},
-				{
 					:name => 'CLIENT',
 					:content => client.first_name + ' ' + client.last_name
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => payed_booking.bookings.first.location.company.country.domain
 				}
 
@@ -1413,7 +1494,7 @@ class BookingMailer < ActionMailer::Base
 					:content => payed_booking.punto_pagos_confirmation.approvement_date
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => payed_booking.bookings.first.location.company.country.domain
 				}
 			],
@@ -1499,7 +1580,7 @@ class BookingMailer < ActionMailer::Base
 						:content => payed_booking.punto_pagos_confirmation.approvement_date
 					},
 					{
-						:domain => 'DOMAIN',
+						:name => 'DOMAIN',
 						:content => payed_booking.bookings.first.location.company.country.domain
 					}
 				],
@@ -1679,7 +1760,7 @@ class BookingMailer < ActionMailer::Base
 					:content => data[:signature]
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => data[:domain]
 				}
 			],
@@ -1727,13 +1808,16 @@ class BookingMailer < ActionMailer::Base
 								{
 									:name => 'CLIENT',
 									:content => true
-								},
-								{
-									:name => 'CANCEL',
-									:content => data[:user][:cancel]
 								}
 							]
 						}]
+
+			if data[:user][:can_cancel]
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => data[:user][:cancel]
+				}
+			end
 
 			# => Send mail
 			send_mail(template_name, template_content, message)
@@ -1867,7 +1951,7 @@ class BookingMailer < ActionMailer::Base
 					:content => book_info.location.company.company_setting.signature
 				},
 				{
-					:domain => 'DOMAIN',
+					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
 				}
 			],
@@ -1930,19 +2014,24 @@ class BookingMailer < ActionMailer::Base
 									:content => validate_session_form_url(:confirmation_code => book_info.confirmation_code)
 								},
 								{
-									:name => 'EDIT',
-									:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
-									:name => 'CANCEL',
-									:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-								},
-								{
 									:name => 'CLIENT',
 									:content => true
 								}
 							]
 						}]
+
+			if book_info.location.company.company_setting.can_edit
+				message[:merge_vars][0][:vars] << {
+					:name => 'EDIT',
+					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
+			if book_info.location.company.company_setting.can_cancel
+				message[:merge_vars][0][:vars] << {
+					:name => 'CANCEL',
+					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+				}
+			end
 		end
 
 		# => Send mail
