@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150818214042) do
+ActiveRecord::Schema.define(version: 20150819191003) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,13 +106,6 @@ ActiveRecord::Schema.define(version: 20150818214042) do
     t.boolean  "web_origin",             default: false
     t.boolean  "send_mail",              default: true
     t.integer  "client_id"
-    t.float    "price",               default: 0.0
-    t.boolean  "provider_lock",       default: false
-    t.integer  "max_changes",         default: 2
-    t.integer  "deal_id"
-    t.boolean  "payed",               default: false
-    t.string   "trx_id",              default: ""
-    t.string   "token",               default: ""
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
     t.boolean  "payed",                  default: false
@@ -293,6 +286,8 @@ ActiveRecord::Schema.define(version: 20150818214042) do
     t.float    "online_payment_commission",  default: 5.0
     t.float    "promo_commission",           default: 10.0
     t.boolean  "promo_offerer_capable",      default: false
+    t.boolean  "can_edit",                   default: true
+    t.boolean  "can_cancel",                 default: true
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -914,12 +909,9 @@ ActiveRecord::Schema.define(version: 20150818214042) do
     t.string   "public_name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",                      default: true
-    t.integer  "order",                       default: 0
-    t.integer  "block_length",                default: 30
-    t.integer  "booking_configuration_email", default: 0
-    t.decimal  "comission_value",             default: 0.0,  null: false
-    t.integer  "comission_option",            default: 0,    null: false
+    t.boolean  "active",         default: true
+    t.integer  "order",          default: 0
+    t.integer  "block_length",   default: 15
     t.boolean  "online_booking", default: true
   end
 

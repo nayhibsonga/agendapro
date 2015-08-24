@@ -10,6 +10,105 @@ class Client < ActiveRecord::Base
 
   after_update :client_notification
 
+  def self.bookings_reminder
+
+    canceled_status = Status.find_by_name("Cancelado")
+
+    #Send all services from same client (each company has diferent clients)
+    Client.where(id: Booking.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).each do |client|
+
+      #Send a reminder for each location
+      client.company.locations.each do |location|
+
+        potential_bookings = client.bookings.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
+
+        potential_bookings.each do |booking|
+
+          booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
+
+          if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start) && booking.send_mail
+
+            if booking.is_session
+              if booking.is_session_booked and booking.user_session_confirmed
+                bookings << booking
+              end
+            else
+              bookings << booking
+            end
+
+          end
+
+        end
+
+        if bookings.count > 0
+          if bookings.count > 1
+            #Send multiple bookings reminder
+            send_multiple_reminder(bookings)
+          else
+            #Send regular reminder
+            BookingMailer.book_reminder_mail(booking)
+          end
+        end
+
+      end
+
+    end
+
+  end
+
+
+  def self.send_multiple_reminder(bookings)
+
+    helper = Rails.application.routes.url_helpers
+    @data = {}
+
+    # GENERAL
+      @data[:company_name] = bookings[0].location.company.name
+      @data[:reply_to] = bookings[0].location.email
+      @data[:url] = bookings[0].location.company.web_address
+      @data[:signature] = bookings[0].location.company.company_setting.signature
+      @data[:domain] = bookings[0].location.company.country.domain
+      @data[:type] = 'image/png'
+      if bookings[0].location.company.logo.email.url.include? "logo_vacio"
+        @data[:logo] = Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+      else
+        @data[:logo] = Base64.encode64(File.read('public' + bookings[0].location.company.logo.email.url))
+      end
+
+    # USER
+      @user = {}
+      @user[:where] = bookings[0].location.address + ', ' + bookings[0].location.district.name
+      @user[:phone] = bookings[0].location.phone
+      @user[:name] = bookings[0].client.first_name
+      @user[:send_mail] = bookings[bookings.length - 1].send_mail
+      @user[:email] = bookings[0].client.email
+      @user[:cancel_all] = helper.cancel_all_booking_url(:confirmation_code => bookings[0].confirmation_code)
+      @user[:confirm_all] = helper.confirm_all_bookings_url(:confirmation_code => bookings[0].confirmation_code)
+
+      @user_table = ''
+      bookings.each do |book|
+        @user_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service_provider.public_name + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' +
+              '<a class="btn btn-xs btn-orange" target="_blank" href="' + helper.booking_edit_url(:confirmation_code => book.confirmation_code) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd9610;border-color:#db7400; width: 90%;">Editar</a>' +
+              '<a class="btn btn-xs btn-red" target="_blank" href="' + helper.booking_cancel_url(:confirmation_code => book.confirmation_code) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd633f;border-color:#e55938; width: 90%;">Cancelar</a>' +
+              '<a class="btn btn-xs btn-red" target="_blank" href="' + helper.confirm_booking_url(:confirmation_code => book.confirmation_code) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#0f91cf;border-color:#0b587b; width: 90%;">Confirmar</a>' +
+            '</td>' +
+          '</tr>'
+      end
+
+      @user[:user_table] = @user_table
+
+      @data[:user] = @user
+
+      BookingMailer.multiple_booking_reminder(@data)
+
+  end
+
+
   def client_notification
     if changed_attributes['email']
       if self.email

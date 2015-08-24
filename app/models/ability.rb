@@ -81,6 +81,9 @@ class Ability
     can :edit_booking_post, Booking
     can :cancel_booking, Booking
     can :confirm_booking, Booking
+    can :confirm_all_bookings, Booking
+    can :confirm_error, Booking
+    can :confirm_success, Booking
 
     # Search
     can :get_districts, District
