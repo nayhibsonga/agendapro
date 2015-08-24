@@ -425,7 +425,7 @@
                           </div>
                         </div>
                         <div class="form-group">
-                          <%= builder.label :district, "Comuna", class: "col-sm-4 control-label" %>
+                          <%= builder.label :district, (I18n.t('district')).capitalize, class: "col-sm-4 control-label" %>
                           <div class="col-sm-8">
                             <%= builder.text_field :district, class: "form-control" %>
                           </div>

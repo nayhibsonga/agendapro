@@ -52,7 +52,7 @@ module Api
 	          puts client.errors.full_messages.inspect
 	        end
 	      else
-	        render json: { errors: "El RUT ingresado no está autorizado para reservar." }, status: 422
+	        render json: { errors:  I18n.t('ci') + " ingresado no está autorizado para reservar." }, status: 422
 	        return
 	      end
 	    else
