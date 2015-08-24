@@ -175,7 +175,7 @@ class Client < ActiveRecord::Base
   end
 
   def identification_uniqueness
-    if self.identification_number.nil? || self.identification_number = ""
+    if self.identification_number.nil? || self.identification_number == ""
       return
     end
     Client.where(company_id: self.company_id, identification_number: self.identification_number).each do |client|
