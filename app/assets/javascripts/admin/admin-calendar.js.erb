@@ -2443,6 +2443,7 @@ $(function() {
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
 			checkClientSessions();
+			loadBookingPayment(0);
 		},
 		focus: function (event, ui) {
 			event.preventDefault();
@@ -2494,6 +2495,61 @@ $(function() {
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
+			checkClientSessions();
+			loadBookingPayment(0);
+		},
+		focus: function (event, ui) {
+			event.preventDefault();
+			var client = eval("(" + ui.item.value + ")");
+			$("#booking_client_email").val(client.email);
+		}
+	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+	};
+
+	$("#booking_client_identification_number").autocomplete({
+		source: '/clients_rut_suggestion',
+		appendTo: '#rut_suggestions',
+		autoFocus: false,
+		minLength: 3,
+		select: function( event, ui ) {
+			event.preventDefault();
+			var client = eval("(" + ui.item.value + ")");
+			$('#booking_client_first_name').val(client.first_name);
+			$('#booking_client_last_name').val(client.last_name);
+			$('#booking_client_phone').val(client.phone);
+			$('#booking_client_email').val(client.email);
+			$('#booking_client_id').val(client.id);
+			$('#booking_client_identification_number').val(client.identification_number);
+			$('#booking_client_address').val(client.address);
+			$('#booking_client_district').val(client.district);
+			$('#booking_client_city').val(client.city);
+			$('#booking_client_birth_day option[value="'+client.birth_day+'"]').prop('selected', true);
+			$('#booking_client_birth_month option[value="'+client.birth_month+'"]').prop('selected', true);
+			$('#booking_client_birth_year option[value="'+client.birth_year+'"]').prop('selected', true);
+			$('#booking_client_age').val(client.age);
+			$('#booking_client_second_phone').val(client.second_phone);
+			$('#booking_client_record').val(client.record);
+			$('.client_link').attr('href','/clients/' + client.id + '/edit');
+			$('.client_link').html('Ir a la ficha del cliente...');
+			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
+			if (validEmail($("#booking_client_email").val())) {
+				$('#booking_send_mail').prop('disabled', false);
+				$('#booking_send_mail').val(1);
+				$('#booking_send_mail').prop('checked', true);
+				$('label[for=booking_send_mail]').removeClass('disabled');
+			}
+			else {
+				$('#booking_send_mail').val(0);
+				$('#booking_send_mail').prop('checked', false);
+				$('#booking_send_mail').prop('disabled', true);
+				$('label[for=booking_send_mail]').addClass('disabled');
+			}
+			$('#xButton').prop('disabled', false);
+			$('#full_name').prop('disabled', true);
+			$('#full_name').val(client.first_name+' '+client.last_name);
+			loadClientHistory(0);
+			checkClientSessions();
 			loadBookingPayment(0);
 		},
 		focus: function (event, ui) {
