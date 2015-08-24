@@ -2,7 +2,7 @@
 
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
-  scope "(:locale)", locale: /es|es_CL|es_CO|es_PA/ do
+  scope "(:locale)", locale: /es|es_CL|es_CO/ do
 
     # devise_for :users, controllers: {registrations: 'registrations', omniauth_callbacks: "omniauth_callbacks"}
 

@@ -12,3 +12,6 @@ es_CL:
   country:
     name: 'Panamá'
     domain: '.co/es_PA'
+  district: 'localidad'
+  ditricts: 'localidades'
+  ci: 'cedula'
