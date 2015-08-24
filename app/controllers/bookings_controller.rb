@@ -3616,8 +3616,8 @@ class BookingsController < ApplicationController
           #Get providers min
           min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(:location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
 
-          #logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
-          #logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
+          logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
+          logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
 
           if !min_pt.nil? && min_pt.open.strftime("%H:%M") > dateTimePointer.strftime("%H:%M")
             #logger.debug "Changing dtp"
@@ -3667,7 +3667,15 @@ class BookingsController < ApplicationController
             if serviceStaff[serviceStaffPos][:provider] != "0"
               providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
             else
-              providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
+              #Check if providers have same day open
+              #If they do, choose the one with less ocupations to start with
+              #If they don't, choose the one that starts earlier.
+              if service.check_providers_day_times(dateTimePointer)
+                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+              else
+                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+              end
             end
 
             providers.each do |provider|
