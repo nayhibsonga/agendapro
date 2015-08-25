@@ -1,3 +1,30 @@
+Date.isLeapYear = function (year) { 
+    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+};
+
+Date.getDaysInMonth = function (year, month) {
+    return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+};
+
+Date.prototype.isLeapYear = function () { 
+    return Date.isLeapYear(this.getFullYear()); 
+};
+
+Date.prototype.getDaysInMonth = function () { 
+    return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
+};
+
+Date.prototype.addMonths = function (value) {
+    var n = this.getDate();
+    this.setDate(1);
+    this.setMonth(this.getMonth() + value);
+    this.setDate(Math.min(n, this.getDaysInMonth()));
+    return this;
+};
+
+var now_date = new Date();
+var after_date = now_date.addMonths(parseInt($("#after_booking").val()));
+
 var calendar;
 var selected = false;
 
@@ -154,6 +181,75 @@ var myAlert;
 $(function () {
 	myAlert  = new Alert('.main');
 	loadCalendar();
+
+
+	$(document).on('calendarBuilded', function (e) {
+
+		/*
+			If there are no hours for this week,
+			go to next week.
+		*/
+
+
+		
+		if (e.date < after_date)
+		{
+			if($(".bloque-hora").size() == 0)
+			{
+				//Check that resulting date wouldn't be greater than after_date
+
+				var resulting_date = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate() + 7)
+
+				if(resulting_date < after_date)
+				{
+					$("#next").trigger("click");
+					//reload_times =reload_times + 1;
+					$("#next").attr("disabled", false);
+				}
+				else
+				{
+					myAlert.showAlert(
+			            '<h3>No hay horarios disponibles</h3>' +
+			            '<p>Lo sentimos, no hay más horarios disponibles después de la semana del ' + after_date.toLocaleDateString() + '.</p>'
+			        );
+				}
+			}
+		}
+		else
+		{
+
+			var day = new Date(after_date.getFullYear(), after_date.getMonth(), after_date.getDate());
+
+		  	var localId = $('#booking').data('booking').location_id;
+			var selects = [];
+
+			selects.push({
+			  service: $('#booking').data('booking').service_id,
+			  provider: $('#booking').data('booking').service_provider_id
+			});
+
+
+			var data;
+
+			day_str = after_date.getFullYear() + "-" + (parseInt(after_date.getMonth())+1) + "-" + after_date.getDate();
+
+			data = {local: localId, serviceStaff: JSON.stringify(selects), date: day_str, edit: true};
+
+			if (calendar) {
+				calendar.rebuild('/promotion_hours', data);
+			}
+			else {
+				calendar = new PromoCalendar('/promotion_hours', data);
+			}
+
+
+			myAlert.showAlert(
+	            '<h3>No hay horarios disponibles</h3>' +
+	            '<p>Lo sentimos, no hay más horarios disponibles después de la semana del ' + after_date.toLocaleDateString() + '.</p>'
+	        );
+		}
+	});
+
 
 	$('#edit_form').submit(function (event) {
 		if (!selected) {
