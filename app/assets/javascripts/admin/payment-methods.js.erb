@@ -247,9 +247,9 @@ function loadBookingPayment(booking_id) {
 	else {
 		$('#delete_payment_button').hide();
 		$('#payment_client_id').val('');
-		$("#full_name").val('');
-		$("#full_name").prop('disabled', false);
-		$('#xButton').prop('disabled', true);
+		$("#payment_full_name").val('');
+		$("#payment_full_name").prop('disabled', false);
+		$('#payment_xButton').prop('disabled', true);
 		$('#client_location_row').show();
 		loadPaymentSettings();
 		calculateTotals(false);
