@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150819191003) do
+ActiveRecord::Schema.define(version: 20150825201152) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -288,6 +288,7 @@ ActiveRecord::Schema.define(version: 20150819191003) do
     t.boolean  "promo_offerer_capable",      default: false
     t.boolean  "can_edit",                   default: true
     t.boolean  "can_cancel",                 default: true
+    t.boolean  "use_identification_number",  default: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
