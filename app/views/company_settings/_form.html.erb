@@ -435,6 +435,14 @@
                     <div class="form-group">
                       <div class="checkbox">
                         <label>
+                          <%= f.check_box :use_identification_number %> Usar <%= I18n.t('ci') %> en Reserva
+                        </label>
+                        <span class="help-block">Al activar esta opción, en el dialogo de reserva tendrás, además de los campos por defecto, disponible un campo <%= I18n.t('ci') %>, el que también te permitirá buscar clientes por <%= I18n.t('ci') %>.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
                           <%= f.check_box :staff_code %> Exigir Código de Staff
                         </label>
                         <span class="help-block">Al activar esta opción, al hacer modificaciones en las reservas, se exigirá un código de empleado que debe coincidir exactamente con algún código permitido. Los códigos permitidos son definidos exclusivamente en la tabla a continuación.</span>
