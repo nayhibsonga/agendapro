@@ -28,6 +28,7 @@
     <%= yield :stylesheets %>
     <!-- end: CSS -->
 
+    <!-- start: JavaScript-->
     <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
     <!-- Begin Inspectlet Embed Code -->
     <script type="text/javascript" id="inspectletjs">
@@ -41,8 +42,8 @@
     </script>
     <!-- End Inspectlet Embed Code -->
     <% end %>
-
     <%= yield :head_scripts %>
+    <!-- end: JavaScript-->
 
     <%= render 'layouts/icons' %>
   </head>
@@ -257,8 +258,6 @@
       </script>
     <!--<![endif]-->
     <%= yield :scripts %>
-    <!-- end: JavaScript-->
-
     <script type="text/javascript">
       $(document).ready(function(){
         if ($('#payment_data').data('due-payment') == true) {
@@ -344,9 +343,9 @@
         });
       });
     </script>
-
 		<!--Start of Crazy Egg Script-->
 		<%= javascript_include_tag 'crazy_egg' %>
 		<!--End of Crazy Egg Script-->
+    <!-- end: JavaScript-->
 	</body>
 </html>

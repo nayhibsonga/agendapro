@@ -768,6 +768,18 @@ tr.tr-disabled td {
   color: #a5a5a5;
   background-color: transparent;
 }
+.email-dropdown {
+  text-overflow: clip;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 220px;
+  display: inline-block;
+}
+.email-dropdown + i {
+  position: relative;
+  top: -5px;
+}
 @media (min-width: 768px) {
   .navbar-admin .navbar-nav > li > a,
   .navbar-admin .navbar-nav > li > a:focus {
@@ -779,6 +791,9 @@ tr.tr-disabled td {
   .dropdown-menu > li > a {
     padding: 3px 10px;
     font-size: 12px;
+  }
+  .email-dropdown {
+    max-width: 140px;
   }
 }
 @media (min-width: 992px) {
@@ -793,6 +808,9 @@ tr.tr-disabled td {
     padding: 3px 15px;
     font-size: 13px;
   }
+  .email-dropdown {
+    max-width: 240px;
+  }
 }
 @media (min-width: 1200px) {
   .navbar-admin .navbar-nav > li > a,
@@ -805,6 +823,9 @@ tr.tr-disabled td {
   .dropdown-menu > li > a {
     padding: 3px 20px;
     font-size: inherit;
+  }
+  .email-dropdown {
+    max-width: 300px;
   }
 }
 
