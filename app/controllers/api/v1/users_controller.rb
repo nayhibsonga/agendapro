@@ -10,12 +10,12 @@ module Api
         @user = User.new(user_params)
         @user.role = Role.find_by_name("Usuario Registrado")
         @user.request_mobile_token
-        render :json => @user.errors.full_messages, :status=>422 unless @user.save
+        render :json => { error: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
       end
 
       def edit
         @user = @mobile_user
-        render json: { error: @user.errors.full_messages }, status: 422 if !@user.update(user_params.except(:email))
+        render json: { error: @user.errors.full_messages.inspect }, status: 422 if !@user.update(user_params.except(:email))
       end
 
       def login
@@ -23,7 +23,7 @@ module Api
         if @user && @user.valid_password?(params[:password])
           if @user.mobile_token.blank?
             @user.request_mobile_token
-            render json: { error: @user.errors.full_messages }, status: 422 if !@user.save
+            render json: { error: @user.errors.full_messages.inspect }, status: 422 if !@user.save
           end
         else
           render json: { error: 'Invalid User' }, status: 403
@@ -95,11 +95,11 @@ module Api
               @user.role = Role.find_by_name('Usuario Registrado')
               @user.provider = 'facebook'
               @user.request_mobile_token
-              render :json => @user.errors.full_messages, :status=>422 unless @user.save
+              render :json => { error: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
             else
               @user = User.new(email: fb_user.raw_attributes[:email], first_name: fb_user.raw_attributes[:first_name], last_name: fb_user.raw_attributes[:last_name], role_id: Role.find_by_name('Usuario Registrado').id, uid: fb_user.raw_attributes[:id], provider: 'facebook', password: SecureRandom.base64(16))
               @user.request_mobile_token
-              render :json => @user.errors.full_messages, :status=>422 unless @user.save
+              render :json => { error: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
             end
           end
         elsif params[:device] == 'google_oauth2'

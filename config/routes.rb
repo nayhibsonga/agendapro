@@ -368,6 +368,7 @@
       get 'services/:id/service_providers', to: 'services#service_providers'
 
       get 'service_providers/:id/available_hours', to: 'service_providers#available_hours'
+      get 'service_providers/:id/available_days', to: 'service_providers#available_days'
 
       post 'users/session', to: 'users#login'
       post 'users/registration', to: 'users#create'
