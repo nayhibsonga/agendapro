@@ -7,7 +7,7 @@
   </div>
 </div>
 
-<div class="container-fluid background-grey" style="margin: 30px 0 15px;">
+<!-- <div class="container-fluid background-grey" style="margin: 30px 0 15px;">
   <div class="row">
     <div class="col-md-12">
       <%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get", class: "form-horizontal" do %>
@@ -44,7 +44,7 @@
       <% end %>
     </div>
   </div>
-</div>
+</div> -->
 
 <div class="container-fluid">
   <div class="row" style="margin-bottom: 15px;">
@@ -64,7 +64,80 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-2">
+      <h4>Filtros</h4>
+      <%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get" do %>
+        <div class="form-group">
+          <label>Locales</label>
+          <% @locations.each do |location| %>
+          <div class="checkbox">
+            <label>
+              <%= check_box_tag "locations[]", location.id, params[:locations] && params[:locations].include?(location.id.to_s) %> <%= location.name %>
+            </label>
+          </div>
+          <% end %>
+        </div>
+        <div class="form-group">
+          <label>Prestadores</label>
+          <% @service_providers.each do |provider| %>
+          <div class="checkbox">
+            <label>
+              <%= check_box_tag "providers[]", provider.id, params[:providers] && params[:providers].include?(provider.id.to_s) %> <%= provider.public_name %>
+            </label>
+          </div>
+          <% end %>
+        </div>
+        <div class="form-group">
+          <label>Servicios</label>
+          <% @services.each do |service| %>
+          <div class="checkbox">
+            <label>
+              <%= check_box_tag "services[]", service.id, params[:services] && params[:services].include?(service.id.to_s) %> <%= service.name %>
+            </label>
+          </div>
+          <% end %>
+        </div>
+        <div class="form-group">
+          <label>Estado</label>
+          <% Status.all.each do |status| %>
+          <div class="checkbox">
+            <label>
+              <%= check_box_tag "statuses[]", status.id, params[:statuses] && params[:statuses].include?(status.id.to_s) %> <%= status.name %>
+            </label>
+          </div>
+          <% end %>
+        </div>
+        <div class="form-group">
+          <label>Genero</label>
+          <div class="checkbox">
+            <label>
+              <%= check_box_tag "gender[]", 0, params[:gender] && params[:gender].include?("0") %> No Especificado
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <%= check_box_tag "gender[]", 1, params[:gender] && params[:gender].include?("1") %> Femenino
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <%= check_box_tag "gender[]", 2, params[:gender] && params[:gender].include?("2") %> Masculino
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Cumpleaños</label>
+          <%= text_field_tag :from, params[:from], class: "form-control", placeholder: "Desde" %>
+          <%= text_field_tag :to, params[:to], class: "form-control", placeholder: "Hasta" %>
+        </div>
+        <div class="form-group">
+          <label>Palabra</label>
+          <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o RUT..." %>
+        </div>
+        <button class="btn btn-green btn-bloc" type="submit" action="/clients" value="client_filter"><i class="fa fa-filter"></i><span> Filtrar</span></button>
+      <% end %>
+    </div>
+    <div class="col-md-10">
       <table class="table table-bordered table-green">
         <caption id="mails" data-monthly-mails="<%= @monthly_mails %>" data-monthly-mails-sent="<%= @monthly_mails_sent %>">E-mails enviados <%= number_with_delimiter(@monthly_mails_sent) %> de <%= number_with_delimiter(@monthly_mails) %></caption>
         <thead>
@@ -106,7 +179,7 @@
     <div class="col-sm-2 col-md-2">
       <button id="import_clients" type="button" class="btn btn-white" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
     </div>
-    <div class="col-sm-6 col-md-6 pagination">
+    <div class="col-sm-6 col-md-6">
       <%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
     </div>
     <div class="col-sm-4 col-md-4">

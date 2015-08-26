@@ -212,39 +212,40 @@ class Client < ActiveRecord::Base
       all
     end
   end
-  def self.filter_location(location)
-    if location && (location != '')
-      where(id: Booking.where(location_id: location).pluck(:client_id))
+
+  def self.filter_location(locations)
+    if !locations.blank?
+      where(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
     else
       all
     end
   end
-  def self.filter_provider(provider)
-    if provider && (provider != '')
-      where(id: Booking.where(service_provider_id: provider).pluck(:client_id))
+
+  def self.filter_provider(providers)
+    if !providers.blank?
+      where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
     else
       all
     end
   end
-  def self.filter_service(service)
-    if service && (service != '')
-      where(id: Booking.where(service_id: service).pluck(:client_id))
+
+  def self.filter_service(services)
+    if !services.blank?
+      where(id: Booking.where(service_id: Service.find(services)).select(:client_id))
     else
       all
     end
   end
+
   def self.filter_gender(gender)
-    if gender && gender != ''
-      if gender != "0"
-        where(:gender => gender)
-      else
-        where('gender != ? and gender != ? or gender IS NULL', 1, 2)
-      end
+    if !gender.blank?
+      where(gender: gender)
     else
       all
     end
   end
-  def self.filter_birthdate(option)
+
+  def self.filter_birthdate(from, to)
     if option && (["0","1","2"].include? option)
       if option == "0"
         where(birth_day: Time.now.day, birth_month: Time.now.month)
@@ -264,6 +265,15 @@ class Client < ActiveRecord::Base
       all
     end
   end
+
+  def self.filter_status(statuses)
+    if !statuses.blank?
+      where(id: Booking.where(status_id: Status.find(statuses)).select(:client_id))
+    else
+      all
+    end
+  end
+
   def self.to_csv(options = {})
     CSV.generate(options) do |csv|
       csv << column_names
@@ -272,6 +282,7 @@ class Client < ActiveRecord::Base
       end
     end
   end
+
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
     spreadsheet = open_spreadsheet(file)
@@ -413,6 +424,7 @@ class Client < ActiveRecord::Base
       message = "Error en el archivo de importación, archivo inválido o lista vacía."
     end
   end
+
   def self.open_spreadsheet(file)
     case File.extname(file.original_filename)
     when ".csv" then Roo::Csv.new(file.path, file_warning: :ignore)
