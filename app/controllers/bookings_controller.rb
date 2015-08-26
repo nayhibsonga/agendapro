@@ -2708,7 +2708,7 @@ class BookingsController < ApplicationController
                       provider_free = false
                       break
                     end
-                  elsif @service.group_service && @service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => @service.id, :start => start_time_block).where.not(status_id: Status.find_by_name('Cancelado')).count >= @service.capacity
+                  elsif @service.group_service && @service.id == provider_booking.service_id && provider.bookings.where(:service_id => @service.id, :start => start_time_block).where.not(status_id: Status.find_by_name('Cancelado')).count >= @service.capacity
                     if !provider_booking.is_session || (provider_booking.is_session and provider_booking.is_session_booked)
                       provider_free = false
                       break
