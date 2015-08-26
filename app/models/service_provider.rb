@@ -122,6 +122,14 @@ class ServiceProvider < ActiveRecord::Base
 		end
 	end
 
+	def provider_booking_day_open(date)
+		if self.provider_times.where(:day_id => date.cwday).count > 0
+			return self.provider_times.find_by_day_id(date.cwday).open
+		else
+			return DateTime.new(date.year, date.month, date.day, 23, 59, 59)
+		end
+	end
+
 	def self.available_hours_week_html(service_provider_id, service_id, location_id, start_date)
 		week_days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
 		require 'date'
