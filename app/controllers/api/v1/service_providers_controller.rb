@@ -357,11 +357,12 @@ module Api
 			#   }
 			# }
 
-			@available_days = Array.new
+			@available_days = Array.new(7) { Hash.new }
 
 			(Date.today.at_beginning_of_week..Date.today.at_end_of_week).each do |wdate|
 				# Variable Data
 				day = wdate.cwday
+				@available_days[day - 1] = { date: wdate, available: false }
 				ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
 				location_times = @location.location_times.where(day_id: day).order(:open)
 
@@ -484,7 +485,7 @@ module Api
 						block_hour[:hour] = hour
 						block_hour[:service_provider_id] = available_provider
 
-						@available_days << { date: wdate, available: true } if status == 'available'
+						@available_days[day - 1] = { date: wdate, available: true } if status == 'available'
 						break if status == 'available'
 						location_times_first_open_start = location_times_first_open_start + service_duration.minutes
 					end
