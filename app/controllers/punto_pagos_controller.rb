@@ -17,19 +17,19 @@ class PuntoPagosController < ApplicationController
 
   def generate_transaction
 
-  	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0, 15]
+    trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0, 15]
 
-  	amount = '10000.00'
+    amount = '10000.00'
     payment_method = '03'
-  	req = PuntoPagos::Request.new()
-  	resp = req.create(trx_id, amount, payment_method)
+    req = PuntoPagos::Request.new()
+    resp = req.create(trx_id, amount, payment_method)
 
-  	if resp.success?
-  		redirect_to resp.payment_process_url
+    if resp.success?
+      redirect_to resp.payment_process_url
     else
       puts resp.get_error
       redirect_to punto_pagos_failure_path
-  	end
+    end
   end
 
   def generate_company_transaction
@@ -370,7 +370,10 @@ class PuntoPagosController < ApplicationController
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
         end
-      elsif Booking.find_by_trx_id(params[:trx_id])
+      elsif Booking.where(:trx_id => params[:trx_id]).count > 0
+
+        #We are sure there is a booking. Get it.
+        first_booking = Booking.where(:trx_id => params[:trx_id]).first
 
         #Creamos el registro de la reserva pagada.
 
@@ -380,13 +383,95 @@ class PuntoPagosController < ApplicationController
         payed_booking.save
 
         bookings = Array.new
+        first_session = true
+
+        #Pending params:
+        # => amount
+
+        payment = Payment.new
+        payment.company_id = first_booking.service.company.id
+        payment.receipt_type_id = ReceiptType.find_by_name("Boleta").id
+        payment.receipt_number = params[:numero_operacion]
+        payment.amount = params[:monto]
+
+        if params[:medio_pago] == "3"
+          payment.payment_method_id = PaymentMethod.find_by_name("Tarjeta de Crédito").id
+          payment.payment_method_number = params[:codigo_autorizacion]
+          payment.payment_method_type_id = PaymentMethodType.find_by_name("Sin información").id
+          payment.installments = params[:num_cuotas]
+        else
+          payment.payment_method_id = PaymentMethod.find_by_name("Tarjeta de Débito").id
+          payment.payment_method_number = params[:codigo_autorizacion]
+        end
+
+        payment.payment_date = DateTime.now.to_date
+        payment.location_id = first_booking.location_id
+        payment.client_id = first_booking.client_id
+
+        sum_normal_price = 0
+
         Booking.where(:trx_id => params[:trx_id]).each do |booking|
-          booking.status_id = Status.find_by(:name => "Pagado").id
+
+          #Instead of generating status "Pagado", mark it as "Reservado" and generate a Payment containing all bookings
+          #If they are sessions, assign the Payment to their SessionBooking once
+
+          if(!booking.is_session)
+            sum_normal_price = sum_normal_price + booking.service.price
+            #book_discount = ((booking.service.price - booking.price)/booking.service.price).round(0)
+          else
+            if first_session
+              #If it's the first sessions, generate the payment for it's SessionBooking
+              #If not, it's already been assigned
+              first_session = false
+
+            end
+          end
+
+          booking.status_id = Status.find_by(:name => "Reservado").id
           booking.payed = true
           booking.payed_booking = payed_booking
+          booking.discount = (1 - booking.price/booking.service.price).round(2)*100
           booking.save
           bookings << booking
         end
+
+        # if first_booking.is_session
+        #   book_discount = (1 - payment.amount/first_booking.service.price).round(2)*100
+        #   payment.sessions_amount = payment.amount
+        #   payment.sessions_discount = book_discount
+        #   payment.sessions_quantity = bookings.count
+        #   payment.products_amount = 0.0
+        #   payment.products_discount = 0.0
+        #   payment.products_quantity = 0
+        #   payment.bookings_amount = 0.0
+        #   payment.bookings_discount = 0.0
+        #   payment.bookings_quantity = 0
+        # else
+        #   book_discount = (1 - payment.amount/sum_normal_price).round(2)*100
+        #   payment.bookings_amount = payment.amount
+        #   payment.bookings_quantity = bookings.count
+        #   payment.bookings_discount = book_discount
+        #   payment.sessions_amount = 0.0
+        #   payment.sessions_discount = 0.0
+        #   payment.sessions_quantity = 0
+        #   payment.products_amount = 0.0
+        #   payment.products_discount = 0.0
+        #   payment.products_quantity = 0
+        # end
+
+        # payment.quantity = bookings.count
+        # payment.discount = book_discount
+
+        payment.bookings = bookings
+
+        #Now assign payment to all bookings (normal or session)
+        #If model is changed, then assign it to SessonBooking if they are sessions
+        #bookings.each do |booking|
+        #  booking.payment_id = payment.id
+        #  booking.save
+        #end
+
+        payment.save
 
         if bookings.count > 0
 
@@ -412,6 +497,9 @@ class PuntoPagosController < ApplicationController
         
       end
     end
+
+    render :layout => false
+
   end
 
 end

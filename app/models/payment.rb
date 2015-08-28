@@ -67,7 +67,8 @@ class Payment < ActiveRecord::Base
     products_discount = products_total > 0 ? 100 - 100 * products_amount / products_total : 0
 
     amount = bookings_amount + sessions_amount + products_amount
-    quantity = bookings_quantity + sessions_quantity + products_quantity
+    #Don't add sessions_quantity, it's implied in bookings
+    quantity = bookings_quantity + products_quantity
     discount = ( bookings_total + sessions_total + products_total ) > 0 ? 100 - 100 * amount / ( bookings_total + sessions_total + products_total ) : 0
 
     self.update_columns(amount: amount, discount: discount, quantity: quantity, bookings_amount: bookings_amount, bookings_quantity: bookings_quantity, bookings_discount: bookings_discount, sessions_amount: sessions_amount, sessions_quantity: sessions_quantity, sessions_discount: sessions_discount, products_amount: products_amount, products_quantity: products_quantity, products_discount: products_discount)
