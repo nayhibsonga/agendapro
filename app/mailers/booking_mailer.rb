@@ -1432,7 +1432,7 @@ class BookingMailer < ActionMailer::Base
 				{
 					:type => 'image/png',
 					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					:content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
 				},
 				{
 					:type => 'image/png',
@@ -1503,7 +1503,7 @@ class BookingMailer < ActionMailer::Base
 				{
 					:type => 'image/png',
 					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					:content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
 				},
 				{
 					:type => 'image/png',
@@ -1589,7 +1589,7 @@ class BookingMailer < ActionMailer::Base
 					{
 						:type => 'image/png',
 						:name => 'company_img.jpg',
-						:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+						:content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
 					},
 					{
 						:type => 'image/png',
@@ -1650,7 +1650,7 @@ class BookingMailer < ActionMailer::Base
 					{
 						:type => 'image/png',
 						:name => 'company_img.jpg',
-						:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+						:content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
 					},
 					{
 						:type => 'image/png',
@@ -1719,7 +1719,7 @@ class BookingMailer < ActionMailer::Base
 					{
 						:type => 'image/png',
 						:name => 'company_img.jpg',
-						:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+						:content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
 					},
 					{
 						:type => 'image/png',
