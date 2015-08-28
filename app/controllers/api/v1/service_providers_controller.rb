@@ -359,7 +359,7 @@ module Api
 
 			@available_days = Array.new(7) { Hash.new }
 
-			(Date.today.at_beginning_of_week..Date.today.at_end_of_week).each do |wdate|
+			(@date.at_beginning_of_week..@date.at_end_of_week).each do |wdate|
 				# Variable Data
 				day = wdate.cwday
 				@available_days[day - 1] = { date: wdate, available: false }

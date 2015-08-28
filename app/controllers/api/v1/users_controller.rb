@@ -109,14 +109,14 @@ module Api
           else
             if User.find_by_email(g_user[:email])
               @user = User.find_by_email(g_user[:email])
-              @user.first_name = g_user[:name]
+              @user.first_name = g_user[:given_name]
               @user.last_name = g_user[:family_name]
               @user.uid = g_user[:id]
               @user.provider = 'google_oauth2'
               @user.request_mobile_token
               render :json => { error: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
             else
-              @user = User.new(email: g_user[:email], first_name: g_user[:first_name], last_name: g_user[:last_name], role_id: Role.find_by_name('Usuario Registrado').id, uid: g_user[:id], provider: 'facebook', password: SecureRandom.base64(16))
+              @user = User.new(email: g_user[:email], first_name: g_user[:given_name], last_name: g_user[:last_name], role_id: Role.find_by_name('Usuario Registrado').id, uid: g_user[:id], provider: 'facebook', password: SecureRandom.base64(16))
               @user.request_mobile_token
               render :json => { error: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
             end
