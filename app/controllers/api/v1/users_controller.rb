@@ -82,7 +82,7 @@ module Api
       end
 
       def oauth
-        puts "oauth"
+        Rails.logger.info "oauth"
         if params[:device] == 'facebook'
           fb_user = FbGraph::User.me(params[:access_token]).fetch(fields: [:email, :first_name, :last_name, :id])
           if fb_user.raw_attributes[:email].blank?
@@ -103,9 +103,9 @@ module Api
             end
           end
         elsif params[:device] == 'google_oauth2'
-          puts 'google_oauth'
+          Rails.logger.info 'google_oauth'
           g_user = JSON.load(open("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + params[:access_token]))
-          puts g_user.inspect
+          Rails.logger.info g_user.inspect
           if g_user["email"].blank?
             render json: { error_html: 'Lo sentimos, tu cuenta de Google no tiene un correo electrónico asociado, por lo que no podremos registrarte' }, status: 403
           else
@@ -124,7 +124,7 @@ module Api
             end
           end
         else
-          puts "invalid device"
+          Rails.logger.info "invalid device"
           render json: { error: 'Invalid Device' }, status: 403
         end
       end
