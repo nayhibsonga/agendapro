@@ -92,7 +92,6 @@ module Api
               @user.first_name = fb_user.raw_attributes[:first_name]
               @user.last_name = fb_user.raw_attributes[:last_name]
               @user.uid = fb_user.raw_attributes[:id]
-              @user.role = Role.find_by_name('Usuario Registrado')
               @user.provider = 'facebook'
               @user.request_mobile_token
               render :json => { error: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
@@ -104,6 +103,7 @@ module Api
           end
         elsif params[:device] == 'google_oauth2'
           g_user = JSON.load(open("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + params[:access_token]))
+          puts g_user.inspect
           if g_user[:email].blank?
             render json: { error_html: 'Lo sentimos, tu cuenta de Facebook no tiene un correo electrónico asociado, por lo que no podremos registrarte' }, status: 403
           else
@@ -112,8 +112,7 @@ module Api
               @user.first_name = g_user[:name]
               @user.last_name = g_user[:family_name]
               @user.uid = g_user[:id]
-              @user.role = Role.find_by_name('Usuario Registrado')
-              @user.provider = 'facebook'
+              @user.provider = 'google_oauth2'
               @user.request_mobile_token
               render :json => { error: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
             else
