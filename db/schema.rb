@@ -162,7 +162,7 @@ ActiveRecord::Schema.define(version: 20150826211609) do
     t.string   "district",              default: ""
     t.string   "city",                  default: ""
     t.integer  "age"
-    t.integer  "gender",                default: 0
+    t.integer  "gender",                default: 0,    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "identification_number", default: ""
