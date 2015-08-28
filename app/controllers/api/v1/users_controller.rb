@@ -20,7 +20,7 @@ module Api
 
       def login
         @user = User.find_by_email(params[:email])
-        if @user.valid_password?(params[:password])
+        if @user && @user.valid_password?(params[:password])
           if @user.mobile_token.blank?
             @user.request_mobile_token
             render json: { error: @user.errors.full_messages }, status: 422 if !@user.save
