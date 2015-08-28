@@ -512,9 +512,10 @@ module Api
 
 			@available_days = Array.new
 
-			(Date.today.at_beginning_of_week..Date.today.at_end_of_week).each do |wdate|
+			(@date.at_beginning_of_week..@date.at_end_of_week).each do |wdate|
 				# Variable Data
 				day = wdate.cwday
+				@available_days[day - 1] = { date: wdate, available: false }
 				provider_times = provider.provider_times.where(day_id: day).order(:open)
 
 				if provider_times.length > 0
@@ -653,7 +654,7 @@ module Api
 						block_hour[:hour] = hour
 						block_hour[:service_provider_id] = available_provider
 
-						@available_days << { date: wdate, available: true } if status == 'available'
+						@available_days[day - 1] = { date: wdate, available: true } if status == 'available'
 						break if status == 'available'
 						provider_times_first_open_start = provider_times_first_open_end
 					end

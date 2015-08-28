@@ -82,11 +82,10 @@ module Api
       end
 
       def oauth
-        Rails.logger.info "oauth"
         if params[:device] == 'facebook'
           fb_user = FbGraph::User.me(params[:access_token]).fetch(fields: [:email, :first_name, :last_name, :id])
           if fb_user.raw_attributes[:email].blank?
-            render json: { error_html: 'Lo sentimos, tu cuenta de Facebook no tiene un correo electrónico asociado, por lo que no podremos registrarte' }, status: 403
+            render json: { errors_html: 'Lo sentimos, tu cuenta de Facebook no tiene un correo electrónico asociado, por lo que no podremos registrarte' }, status: 403
           else
             if User.find_by_email(fb_user.raw_attributes[:email])
               @user = User.find_by_email(fb_user.raw_attributes[:email])
@@ -95,19 +94,18 @@ module Api
               @user.uid = fb_user.raw_attributes[:id]
               @user.provider = 'facebook'
               @user.request_mobile_token
-              render :json => { error: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
+              render :json => { errors_html: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
             else
               @user = User.new(email: fb_user.raw_attributes[:email], first_name: fb_user.raw_attributes[:first_name], last_name: fb_user.raw_attributes[:last_name], role_id: Role.find_by_name('Usuario Registrado').id, uid: fb_user.raw_attributes[:id], provider: 'facebook', password: SecureRandom.base64(16))
               @user.request_mobile_token
-              render :json => { error: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
+              render :json => { errors_html: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
             end
           end
         elsif params[:device] == 'google_oauth2'
-          Rails.logger.info 'google_oauth'
-          g_user = JSON.load(open("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + params[:access_token]))
+          g_user = JSON.load(open("https://www.googleapis.com/oauth2/v2/userinfo?fields=email%2Cfamily_name%2Cgiven_name%2Cid&alt=json&access_token=" + params[:access_token]))
           Rails.logger.info g_user.inspect
           if g_user["email"].blank?
-            render json: { error_html: 'Lo sentimos, tu cuenta de Google no tiene un correo electrónico asociado, por lo que no podremos registrarte' }, status: 403
+            render json: { errors_html: 'Lo sentimos, tu cuenta de Google no tiene un correo electrónico asociado, por lo que no podremos registrarte' }, status: 403
           else
             if User.find_by_email(g_user["email"])
               @user = User.find_by_email(g_user["email"])
@@ -116,15 +114,14 @@ module Api
               @user.uid = g_user["id"]
               @user.provider = 'google_oauth2'
               @user.request_mobile_token
-              render :json => { error: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
+              render :json => { errors_html: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
             else
               @user = User.new(email: g_user["email"], first_name: g_user["given_name"], last_name: g_user["last_name"], role_id: Role.find_by_name('Usuario Registrado').id, uid: g_user["id"], provider: 'facebook', password: SecureRandom.base64(16))
               @user.request_mobile_token
-              render :json => { error: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
+              render :json => { errors_html: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
             end
           end
         else
-          Rails.logger.info "invalid device"
           render json: { error: 'Invalid Device' }, status: 403
         end
       end
