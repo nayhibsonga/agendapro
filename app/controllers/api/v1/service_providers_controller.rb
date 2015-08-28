@@ -30,7 +30,7 @@ module Api
 
 			# Variable Data
 			day = @date.cwday
-			ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
+			ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
 			location_times = @location.location_times.where(day_id: day).order(:open)
 
 			if location_times.length > 0
@@ -363,7 +363,7 @@ module Api
 				# Variable Data
 				day = wdate.cwday
 				@available_days[day - 1] = { date: wdate, available: false }
-				ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
+				ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
 				location_times = @location.location_times.where(day_id: day).order(:open)
 
 				if location_times.length > 0

@@ -102,8 +102,7 @@ module Api
             end
           end
         elsif params[:device] == 'google_oauth2'
-          g_user = JSON.load(open("https://www.googleapis.com/oauth2/v2/userinfo?fields=email%2Cfamily_name%2Cgiven_name%2Cid&alt=json&access_token=" + params[:access_token]))
-          Rails.logger.info g_user.inspect
+          g_user = JSON.load(open("https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=" + params[:access_token]))
           if g_user["email"].blank?
             render json: { errors_html: 'Lo sentimos, tu cuenta de Google no tiene un correo electrónico asociado, por lo que no podremos registrarte' }, status: 403
           else
