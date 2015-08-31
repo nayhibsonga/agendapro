@@ -533,11 +533,15 @@ function loadStep2() {
 		if (added_services[k].has_sessions)
 		{
 			sessions_service = true;
-			loadStaffForSessions(added_services[k].id);
+			loadStaffForSessions(added_services[k].id, $(".selected-service .selected-service-provider").val());
 			sessions_left = added_services[k].sessions_amount;
 		}
 		else
 		{
+			if(added_services.length < 2)
+			{
+				loadStaffForSessions(added_services[k].id, $(".selected-service .selected-service-provider").val());
+			}
 			sessions_service = false;
 			sessions_left = 0;
 		}
@@ -561,6 +565,12 @@ function loadStep2() {
 		$(".changeStaffPanel").hide();
 		$("#sessions-left").empty();
 		$("#has_sessions").val("0");
+
+		if (added_services.length < 2)
+		{
+			$(".changeStaffPanel").show();
+		}
+
 	}
 
 	$(".selected-service").each(function() {
@@ -2081,7 +2091,7 @@ function loadServiceStaff (service_id) {
   });
 }
 
-function loadStaffForSessions(service_id)
+function loadStaffForSessions(service_id, given_provider)
 {
 	var serviceId = service_id;
 
@@ -2090,22 +2100,44 @@ function loadStaffForSessions(service_id)
 
   	$.getJSON('/providers_services', {id: serviceId, local: localId}, function (providers) {
 
-	    $(".changeStaff").empty();
+	    //$(".changeStaff").empty();
+
+	    $("#changeProviderSelect").empty();
 
 	    if (providerPreference != 1) {
 	      if (providers.length > 1) {
-	        $(".changeStaff").append(
+
+	      	if(given_provider == "0")
+	      	{
+	      		$("#changeProviderSelect").append('<option value="0" selected>Sin preferencia</option');
+	      	}
+	      	else
+	      	{
+	      		$("#changeProviderSelect").append('<option value="0">Sin preferencia</option');
+	      	}
+	      	
+	        /*$(".changeStaff").append(
 	          '<div class="radio">' +
                   '<label>' +
                     '<p><input type="radio" name="changeProvider" value="0" style="cursor: pointer;" />Sin preferencia</p>' +
                   '</label>' +
                 '</div>'
-	        );
+	        );*/
 	      }
 	    }
 	    if (providerPreference != 2) {
 	      $.each(providers, function (key, provider) {
-	        $(".changeStaff").append(
+
+	      	if(given_provider == provider.id)
+	      	{
+	      		$("#changeProviderSelect").append('<option value="' + provider.id + '" selected>' + provider.public_name + '</option');
+	      	}
+	      	else
+	      	{
+	      		$("#changeProviderSelect").append('<option value="' + provider.id + '">' + provider.public_name + '</option');
+	      	}
+	        
+	        /*$(".changeStaff").append(
 	          '<div class="radio">' +
                 '<label>' +
                   '<p>' +
@@ -2113,13 +2145,55 @@ function loadStaffForSessions(service_id)
                   '</p>' +
                 '</label>' +
               '</div>'
-	        );
+	        );*/
 	      });
 	    }
 
 	});
 
 }
+
+$('#changeProviderSelect').on('change', function(event){
+	$("#loader-div").show();
+	var localId = $('#selectedLocal').data('local').id;
+	var selects = [];
+	var start_date = $("#optimizerDateSelector").val();
+	
+	$("#selected-hour-body").empty();
+
+	$(".selected-service").each(function() {
+		var provider = $("#changeProviderSelect").val();
+		var service_id = $(this).attr("service_id");
+
+		selects.push({
+			service: service_id,
+			provider: provider
+		});
+	});
+
+	var data;
+
+  	if($("#pickerSelected").val()!="")
+  	{
+    	data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#pickerSelected").val()}
+  	}
+  	else
+  	{
+    	data = {local: localId, serviceStaff: JSON.stringify(selects)}
+  	}
+
+  	if (promoCalendar) {
+    	promoCalendar.rebuild('/promotion_hours', data);
+  	}
+  	else {
+    	promoCalendar = new PromoCalendar('/promotion_hours', data);
+  	}
+
+  	$("#loader-div").hide();
+
+  	blockBookingBufferHour();
+
+});
 
 $('body').on('click', '[name="changeProvider"]', function(event){
 
