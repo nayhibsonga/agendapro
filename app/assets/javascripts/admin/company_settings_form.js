@@ -28,32 +28,34 @@ $(function () {
   });
 
   $("#company_logo").change(function (){
-    var formId = $('#company-form').prop('id');
-    $.ajax({
-      type: 'POST',
-      url: '/quick_add/update_company',
-      data: new FormData(document.getElementById(formId)),
-      mimeType: 'multipart/form-data',
-      contentType: false,
-      processData: false,
-      success: function (result) {
-        window.console.log(result);
-        d = new Date();
-        $('#company-form img').attr("src", result+"?ts="+d.getTime());
-      },
-      error: function (xhr) {
-        var errors = $.parseJSON(xhr.responseText).errors;
-        var errorList = '';
-        for (i in errors) {
-          errorList += '* ' + errors[i] + '\n'
-        }
-        alert(
-          'Error\n' +
-          '--------' +
-          errorList
-        );
-      },
-    });
+    if ($("#company_logo").valid()) {
+      var formId = $('#company-form').prop('id');
+      $.ajax({
+        type: 'POST',
+        url: '/quick_add/update_company',
+        data: new FormData(document.getElementById(formId)),
+        mimeType: 'multipart/form-data',
+        contentType: false,
+        processData: false,
+        success: function (result) {
+          d = new Date();
+          $('#company-form img').attr("src", result+"?ts="+d.getTime());
+          $("#company_logo").val('');
+        },
+        error: function (xhr) {
+          var errors = $.parseJSON(xhr.responseText).errors;
+          var errorList = '';
+          for (i in errors) {
+            errorList += '* ' + errors[i] + '\n'
+          }
+          alert(
+            'Error\n' +
+            '--------' +
+            errorList
+          );
+        },
+      });
+    };
   });
 
   if ($('#company_setting_can_edit').prop('checked')) {

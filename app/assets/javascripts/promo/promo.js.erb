@@ -279,7 +279,7 @@
         var sessionEndTime = sessionEnd[1].split(":")[0] + ":" + sessionEnd[1].split(":")[1];
 
         $("#sessions-summary-tr").append(
-          '<td class="session-summary"><span class="remove-session" index="' + i + '" style="cursor: pointer;"><div class="session-title"><i class="fa fa-times"></i></span>&nbsp;&nbsp;Sesión ' + (i+1) + '</div><div class="session-time"><i class="fa fa-calendar"></i>&nbsp;' + sessionStartDate + '<br /><i class="fa fa-clock-o"></i>&nbsp;' + sessionStartTime + " - " + sessionEndTime + '</div></td>'
+          '<td class="session-summary"><span class="remove-session" index="' + i + '" style="cursor: pointer;"><div class="session-title"><i class="fa fa-times-circle"></i>&nbsp;</span>&nbsp;&nbsp;Sesión ' + (i+1) + '</div><div class="session-time"></i>&nbsp;' + sessionStartDate + '<br />&nbsp;' + sessionStartTime + " - " + sessionEndTime + '</div></td>'
         );
       }
 
@@ -379,6 +379,8 @@
       });
 
       var data;
+
+      $('[name="changeProvider"] option[value="' + $("#providerOptimizerSelector").val() + '"]').attr("selected", true);
 
       if($("#pickerSelected").val()!="")
       {
@@ -939,7 +941,7 @@
       back2();
     });
 
-    $('[name="changeProvider"]').on('click', function(event){
+    $('[name="changeProvider"]').on('change', function(event){
 
       var localId = $("#locationId").val();
       
@@ -953,10 +955,10 @@
 
       selects.push({
         service: $("#serviceId").val(),
-        provider: $('input[name="changeProvider"]:checked').val()
+        provider: $('[name="changeProvider"]').val()
       });
 
-      $('#providerOptimizerSelector option[value="' + $('input[name="changeProvider"]:checked').val() + '"]').attr("selected", true);
+      $('#providerOptimizerSelector option[value="' + $('[name="changeProvider"]').val() + '"]').attr("selected", true);
 
       var data;
 

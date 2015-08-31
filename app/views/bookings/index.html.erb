@@ -239,13 +239,16 @@
                     <div class="col-md-6">
                       <% if @booking.client.nil? then @booking.build_client end %>
                       <%= f.fields_for :client do |builder| %>
-                        <%= content_tag "div", id: "client_exclusive_data", data: { client_exclusive: Company.find(current_user.company_id).company_setting.client_exclusive } do %>
+                        <%= content_tag "div", id: "client_exclusive_data", data: { client_exclusive: @company_setting.client_exclusive } do %>
                         <% end %>
-                        <% if @company_setting.client_exclusive %>
-                        <div class="form-group">
+                        <% if @company_setting.client_exclusive || @company_setting.use_identification_number %>
+                        <div class="form-group has-feedback">
                           <%= builder.label :identification_number, "RUT", class: "col-sm-4 control-label" %>
                           <div class="col-sm-8">
-                            <%= builder.text_field :identification_number, class: "form-control", disabled: true %>
+                            <%= builder.text_field :identification_number, class: "form-control", disabled: @company_setting.client_exclusive %>
+                            <ul id="rut_suggestions"></ul>
+                            <span class="help-block"></span>
+                            <ul id="full_name_suggestions"></ul>
                           </div>
                         </div>
                         <% end %>
@@ -382,7 +385,7 @@
                             <%= builder.text_field :last_name, class: "form-control" %>
                           </div>
                         </div>
-                        <% if !@company_setting.client_exclusive %>
+                        <% unless @company_setting.client_exclusive || @company_setting.use_identification_number %>
                         <div class="form-group has-feedback">
                           <%= builder.label :identification_number, "RUT", class: "col-sm-4 control-label" %>
                           <div class="col-sm-8">

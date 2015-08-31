@@ -432,33 +432,34 @@
             <div class="col-md-3">
 
               <div class="changeStaffPanel" style="margin-bottom: 10px;">
-                <div id="changeStaffTitle" style="display: inline;">
-                  <a data-toggle="collapse" href="#staffCollapse" aria-expanded="false" aria-controls="staffCollapse">
+                <div id="changeStaffTitle" style="display: inline; color: #22c488;">
                     Cambiar prestador
-                    <span style="float: right; color: #22c488;"><i class="fa fa-plus-circle" id="openStaffCollapseIcon"></i><i class="fa fa-minus-circle" id="closeStaffCollapseIcon" style="display: none;"></i></span>
-                  </a>
                 </div>
-                <div class="collapse" id="staffCollapse">
+                <div>
                   <div class="changeStaff" style="margin-top: 5px;">
-
+                    <select name="changeProvider" class="form-control">
                     <% if @location.company.company_setting.provider_preference != 0 %>
-                      <div class="radio">
+                      <!--<div class="radio">
                         <label>
                           <p><input type="radio" name="changeProvider" value="0" style="cursor: pointer;" />Sin preferencia</p>
                         </label>
-                      </div>
+                      </div>-->
+                      <option value="0">Sin preferencia</option>
                     <% end %>
                     <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(order: :asc).each do |provider| %>
-                        <div class="radio">
+                        <!--<div class="radio">
                           <label>
                             <p>
                               <input type="radio" name="changeProvider" value="<%= provider.id %>" style="cursor: pointer;" />
                             <%= provider.public_name %>
                             </p>
                           </label>
-                        </div>
-
+                        </div>-->
+                        <option value="<%= provider.id %>">
+                          <%= provider.public_name %>
+                        </option>
                     <% end %>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -497,7 +498,12 @@
                 </div>
               </div>
               <div class="col-md-3 col-xs-12" id="current-discount-div" style="bottom: 0px !important; color: #949292;" hidden>
-                  Descuento a aplicar: <span id="current-discount" style="color: #22c488;">0%</span>
+                  <div style="margin-top: 31px; padding-top: 25px; height: 87px; background-color: #FEEAD1; font-weight: bold;">
+                    <div style="text-align: center;">
+                      Descuento a aplicar: <span id="current-discount" style="color: #22c488;">0%</span>
+                    </div>
+                    
+                  </div>
                   <div><label id="booking-error" style="color: #fd633f;"></label></div>
               </div>
             </div>
