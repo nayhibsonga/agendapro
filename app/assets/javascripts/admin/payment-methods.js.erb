@@ -605,6 +605,68 @@ function get_product_index() {
 	return product_index;
 }
 
+/*
+*
+* Functions for bookings not booked
+*
+*/
+
+//function setServiceAttributes(service_id){
+	//var location_id = parseInt($('#locals-selector').val())
+//}
+
+function loadPaymentServices(){
+	$("#not_booked_service").empty();
+	$("#not_booked_service").append('<option value="">Ninguno</option>');
+	$.getJSON('/location_services/', {location: parseInt($('#locals-selector').val()) }, function (services) {
+		$.each(services, function (key, service) {
+			$("#not_booked_service").append('<option value="' + service.id + '">' + service.name + '</option>');
+		});
+	});
+}
+
+function loadServiceProviders(){
+	if($("not_booked_service").val() == "")
+	{
+		return false;
+	}
+	$("#not_booked_provider").empty();
+	$("#not_booked_provider").append('<option value="">Ninguno</option>');
+	$.getJSON('/providers_services/', {id: parseInt($("#not_booked_service").val()),local: parseInt($('#locals-selector').val()) }, function (providers) {
+		$.each(providers, function (key, provider) {
+			$("#not_booked_provider").append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+		});
+	});
+}
+
+function getServicePrice(){
+	if($("#not_booked_service").val() == "")
+	{
+		return false;
+	}
+	$.getJSON('/services/' + $("#not_booked_service").val(), function (service) {
+		$("#not_booked_price").val(service.price);
+	});
+}
+
+function addNotBooked(){
+
+	var final_price = $("#not_booked_price").val();
+	console.log(final_price);
+	if($("#not_booked_discount").val() != "")
+	{
+		final_price = parseInt(final_price)*(100 - parseInt($("#not_booked_discount").val()))/100; 
+	}
+
+	console.log(final_price);
+
+	$('#payment-bookings-table').prepend('<tr class="payment-booking-tr"><td><input type="checkbox" class="payment-booking-checkbox" value="" /></td><td><div class="table-fixed">' + $("#not_booked_service option:selected").text() + '</div></td><td><div class="table-fixed">' + $("#not_booked_provider option:selected").text() + '</div></td><td><div class="table-fixed">Por agendar</div></td><td><div class="table-fixed">Por agendar</div></td><td><div class="table-fixed" data-price="' + $("#not_booked_price").val() + '">$ ' + $("#not_booked_price").val() + '</div></td><td><div class="input-group"><input type="number" class="form-control payment-booking-input" value="' + $("#not_booked_discount").val() + '" ><span class="input-group-addon">%</span></div></td><td><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control payment-booking-input" value="' + final_price + '"></div></td></tr>');
+
+	calculateTotals(false);
+	$('#paymentBookingModal').modal('hide');
+}
+
+
 $(function() {
 	$("#payment_payment_date").datepicker({
 		dateFormat: 'dd-mm-yy',
@@ -654,7 +716,17 @@ $(function() {
 		$('#bookingModal #myTab').hide();
 		$('#bookingModal .booking-modal-footer').hide();
 		$('#bookingModal #payment_client_group').show();
+		loadPaymentServices();
 		$('#bookingModal').modal('show');
+	});
+
+	$("#addNotBooked").click(function(e){
+		addNotBooked();
+	});
+
+	$("#not_booked_service").on('change', function(e){
+		loadServiceProviders();
+		getServicePrice();
 	});
 
 	$('#new_payment').submit(function(e) {

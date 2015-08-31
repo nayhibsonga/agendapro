@@ -1012,29 +1012,103 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
-          <h3 class="modal-title" id="paymentBookingModalTitle" style="line-height: 1.1;">Agregar Reserva al Pago</h3>
+          <h3 class="modal-title" id="paymentBookingModalTitle" style="line-height: 1.1;">Agregar Servicio al Pago</h3>
         </div>
         <div class="modal-body" id="paymentBookingModalBody">
+
           <div class="row">
             <div class="col-md-12">
-              <div class="fixed-table">
-                <h4>Agregar al Pago:</h4>
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th>Servicio</th>
-                      <th>Prestador</th>
-                      <th>Fecha</th>
-                      <th>Hora</th>
-                      <th>Precio Normal</th>
-                      <th>Descuento</th>
-                      <th>Precio</th>
-                    </tr>
-                  </thead>
-                  <tbody id="payment-past-bookings-table">
-                  </tbody>
-                </table>
+
+              <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#bookedTable" aria-controls="bookedTable" role="tab" data-toggle="tab">Reservas</a></li>
+                <li role="presentation"><a href="#serviceTable" aria-controls="serviceTable" role="tab" data-toggle="tab">Servicios</a></li>
+              </ul>
+
+              <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="bookedTable" style="margin-top: 15px;">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="fixed-table">
+                        <h4>Agregar al Pago:</h4>
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th></th>
+                              <th>Servicio</th>
+                              <th>Prestador</th>
+                              <th>Fecha</th>
+                              <th>Hora</th>
+                              <th>Precio Normal</th>
+                              <th>Descuento</th>
+                              <th>Precio</th>
+                            </tr>
+                          </thead>
+                          <tbody id="payment-past-bookings-table">
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="serviceTable" style="margin-top: 15px;">
+                  <div class="row">
+                    <div class="col-md-12">
+                      
+                      <div class="form-group">
+                        <label for="service" class="col-xs-2 control-label">Servicio</label>
+                        <div class="col-xs-3">
+                          <select class="form-control" id="not_booked_service" name="service">
+                            <option value=""></option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <br />
+
+                      <div class="form-group">
+                        <label for="provider" class="col-xs-2 control-label">Prestador</label>
+                        <div class="col-xs-3">
+                          <select class="form-control" id="not_booked_provider" name="provider">
+                              <option value=""></option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <br />
+
+                      <div class="form-group">
+                        <label for="price" class="col-xs-2 control-label">Precio</label>
+                        <div class="col-xs-3">
+                          <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            <input class="form-control" type="number" id="not_booked_price" name="price" value="" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <br />
+
+                      <div class="form-group">
+                        <label for="discount" class="col-xs-2 control-label">Descuento</label>
+                        <div class="col-xs-3">
+                          <div class="input-group">
+                            <input class="form-control" type="number" id="not_booked_discount" name="discount" value="" />
+                            <span class="input-group-addon">%</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <br />
+
+                      <div class="form-group">
+                        <div class="col-xs-3 col-xs-offset-2">
+                          <button id="addNotBooked" class="btn">Agregar</button>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
