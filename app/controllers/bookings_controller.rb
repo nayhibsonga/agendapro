@@ -1398,9 +1398,11 @@ class BookingsController < ApplicationController
 
     events = Array.new
 
-    @bookings = Booking.where(:service_provider_id => @providers).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
+    @cancelled_id = Status.find_by_name('Cancelado').id
+
+    @bookings = Booking.where('bookings.service_provider_id IN (?)', @providers.pluck(:id)).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').includes(:client).includes(:service).includes(:session_booking)
     @bookings.each do |booking|
-      if booking.status_id != Status.find_by_name('Cancelado').id
+      if booking.status_id != @cancelled_id
         event = Hash.new
         booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
         booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
@@ -1450,7 +1452,7 @@ class BookingsController < ApplicationController
         if booking.is_session && booking.session_booking
           is_session = true
           session_index = 1
-          Booking.where(:session_booking_id => booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+          Booking.where(:session_booking_id => booking.session_booking_id, :is_session_booked => true).order('start asc').each do |b|
             if b.id == booking.id
               break
             else
