@@ -4205,7 +4205,7 @@ class BookingsController < ApplicationController
           if serviceStaff[serviceStaffPos][:provider] != "0"
             providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
           else
-            providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+            providers = ServiceProvider.where(id: service.service_providers.pluck(:id), online_booking: true, location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
           end
 
           providers.each do |provider|
