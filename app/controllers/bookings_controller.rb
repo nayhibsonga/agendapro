@@ -3524,7 +3524,7 @@ class BookingsController < ApplicationController
           service = Service.find(serviceStaff[serviceStaffPos][:service])
 
           #Get providers min
-          min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(:location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
+          min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
 
           #logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
           #logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
@@ -3577,7 +3577,7 @@ class BookingsController < ApplicationController
             if serviceStaff[serviceStaffPos][:provider] != "0"
               providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
             else
-              providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+              providers = ServiceProvider.where(active: true, online_booking: true, id: service.service_providers.pluck(:id), location_id: local.id).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
             end
 
             providers.each do |provider|
@@ -4205,7 +4205,7 @@ class BookingsController < ApplicationController
           if serviceStaff[serviceStaffPos][:provider] != "0"
             providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
           else
-            providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+            providers = ServiceProvider.where(id: service.service_providers.pluck(:id), online_booking: true, location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
           end
 
           providers.each do |provider|
