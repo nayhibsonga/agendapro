@@ -471,7 +471,9 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	loadProviderEvents(providerId);
 }
 
+var ajaxRequest;
 function loadProviderEvents(providerId) {
+	$('#small_loader_header').remove();
 	$(".fc-button").css("display", "none");
 	$(".fc-header-center").append('<span id="small_loader_header"><i class="fa fa-spinner fa-spin"></i> </span>');
 	var localId = parseInt($('#locals-selector').val());
@@ -480,7 +482,12 @@ function loadProviderEvents(providerId) {
 	var startParam = start.getFullYear()+'-'+(start.getMonth()+1)+'-'+start.getDate();
 	var endParam = end.getFullYear()+'-'+(end.getMonth()+1)+'-'+end.getDate();
 	$('#calendar').fullCalendar('removeEvents');
-	$.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (events_list) {
+
+	if (ajaxRequest != null) {
+		ajaxRequest.abort();
+	}
+	
+	ajaxRequest = $.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (events_list) {
 		$('#calendar').fullCalendar('addEventSource', events_list);
 		$('#small_loader_header').remove();
 		$(".fc-button").css("display", "inline-block");
