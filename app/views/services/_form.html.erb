@@ -74,7 +74,7 @@
                   <span class="help-block"></span>
                   <div class="checkbox">
                     <label>
-                      <%= f.check_box :outcall %> Servicio a domicilio <br /><small id="outcallTip" class="hidden">Si el servicio no pertenece a una sucursal exclusivamente a domicilio, recomendamos ingresar las comunas que se atienden en la descripción.</small>
+                      <%= f.check_box :outcall %> Servicio a domicilio <br /><small id="outcallTip" class="hidden">Si el servicio no pertenece a una sucursal exclusivamente a domicilio, recomendamos ingresar las <%= (I18n.t('district')) %> que se atienden en la descripción.</small>
                     </label>
                   </div>
                 </div>

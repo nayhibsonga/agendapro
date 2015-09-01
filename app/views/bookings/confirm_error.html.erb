@@ -1,0 +1,62 @@
+<div class="main">
+	<section class="pricing_wrapper">
+		<div class="container">
+			<div class="well well-lg">
+				<% if @bookings.count == 0 %>
+					<h3><%= @booking.client.first_name %>, no pudimos confirmar tu reserva.</h3>
+				<% else %>
+					<h3><%= @booking.client.first_name %>, no pudimos confirmar tus reservas.</h3>
+				<% end %>
+				<hr>
+				<div class="row">
+					<div class="col-md-6">
+						<hr>
+						
+
+						<% if @bookings.count == 0 %>
+
+							<p>
+								Lo sentimos, no pudimos confirmar tu reserva porque 
+								<% if @booking.status_id == Status.find_by_name('Asiste').id %>
+									ya asististe a ella.
+								<% elsif @booking.status_id == Status.find_by_name('Cancelado').id %>
+									fue cancelada.
+								<% elsif @booking.status_id == Status.find_by_name('No Asiste').id %>
+									ya ocurrió y no asististe.
+								<% elsif @booking.start <= DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) %>
+									ya ocurrió.
+								<% else %>
+									ocurrió un error inesperado.
+								<% end %>
+							</p>
+
+						<% else %>
+							
+							<p style="text-align: justify;">
+								Lo sentimos, no pudimos confirmar alguna de tus reservas porque <%= @reason %> Te presentamos el estado de tus reservas para que las modifiques de manera singular:
+							</p>
+							<p>
+							<table>
+							<% @bookings.each do |booking| %>
+
+								<tr>
+			                      <td class="dark-gray" style="padding-right: 10px;"><%= booking.service.name %> con <%= booking.service_provider.public_name %>:</td>
+			                      <td class="light-gray">
+			                        <%= booking.status.name %>
+			                      </td>
+			                     </tr>
+							<% end %>
+							</table>
+							</p>
+						<% end %>
+
+
+					</div>
+					<div class="col-md-6">
+						<%= image_tag("backgrounds/error.png", :class => "center-block", size: "232x253") %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>

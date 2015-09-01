@@ -13,17 +13,17 @@
     <div class="col-md-2">
       <ul id="myTab" class="nav nav-pills nav-stacked tab-margin" role="tablist">
         <li role="presentation"><a id="company_link" href="#company" role="tab" data-toggle="pill" data-title="Empresa" data-description="Configura el nombre de empresa, descripción, url de tu mini-sitio, logo y política de cancelación.">Empresa</a></li>
-        <li role="presentation"><a id="minisite_link" href="#minisite" role="tab" data-toggle="pill" data-title="Reservas" data-description="Habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu vase de datos puedan reservar.">Reservas</a></li>
+        <li role="presentation"><a id="minisite_link" href="#minisite" role="tab" data-toggle="pill" data-title="Reservas" data-description="Habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.">Reservas</a></li>
         <li role="presentation"><a id="calendar_link" href="#calendar" role="tab" data-toggle="pill" data-title="Calendario" data-description="Controla el tamaño, el tiempo, de cada bloque del horario en la sección calendario.">Calendario</a></li>
         <li role="presentation"><a id="email_link" href="#emails" role="tab" data-toggle="pill" data-title="E-mails" data-description="Configura la dirección desde donde se envían los correos masivos (Remitentes) y la firma de estos.">E-mails</a></li>
         <li role="presentation"><a id="embedded_link" href="#embedded" role="tab" data-toggle="pill" data-title="Facebook / Web" data-description="Agrega una pestaña de reservas a la página de facebook de tu empresa.">Facebook / Web</a></li>
         <% if current_user.company.company_setting.online_payment_capable %>
         <li role="presentation"><a id="payment_link" href="#online-payment" role="tab" data-toggle="pill" data-title="Pago Online" data-description="Habilita el pago en línea, configura si es editable o cancelable una reserva pagada">Pago Online</a></li>
-        
+
         <% if current_user.company.company_setting.promo_offerer_capable %>
           <li role="presentation"><a id="promotions_link" href="#promotions" role="tab" data-toggle="pill" data-title="Promociones" data-description="Configura los distintos horarios para ofrecer tus servicios en promoción.">Promociones</a></li>
         <% end %>
-        
+
         <% end %>
         <% if current_user.company.company_setting.deal_activate %>
         <li role="presentation"><a id="deal_link" href="#deals" role="tab" data-toggle="pill" data-title="Convenios" data-description="Configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.">Convenios</a></li>
@@ -66,7 +66,7 @@
                   <%= image_tag 'admin/2.png', class: 'media-object media-image' %>
                 </div>
                 <div class="media-body">
-                  <span class="text-green">Reservas:</span> habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu vase de datos puedan reservar.
+                  <span class="text-green">Reservas:</span> habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@
             </div>
             <% end %>
           </div>
-          
+
           <div class="row">
 
             <% if current_user.company.company_setting.online_payment_capable && current_user.company.company_setting.promo_offerer_capable %>
@@ -295,15 +295,15 @@
                       <span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
                       <%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
                     </div>
-                  </div>
-                  <div class="col-md-6">
                     <div class="form-group">
                       <%= f.label :booking_confirmation_time, 'Recordatorios' %>
                       <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
                       <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
                     </div>
+                  </div>
+                  <div class="col-md-6">
                     <div class="form-group has-feedback">
-                      <%= f.label :before_booking, 'Tiempo Mínimo de Reserva:' %>
+                      <%= f.label :before_booking, 'Tiempo Mínimo de Reserva' %>
                       <span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
                       <div class="input-group">
                         <%= f.number_field :before_booking, :in => 1...169, :required => true, :class => 'form-control' %>
@@ -312,7 +312,7 @@
                       <span class="help-block"></span>
                     </div>
                     <div class="form-group">
-                      <%= f.label :after_booking, 'Tiempo Máximo a Futuro:' %>
+                      <%= f.label :after_booking, 'Tiempo Máximo a Futuro' %>
                       <span class="help-block">Tiempo máximo que una persona puede reservar a futuro. No se permiten reservas para más de X meses a futuro.</span>
                       <div class="input-group">
                         <%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
@@ -321,7 +321,7 @@
                       <span class="help-block"></span>
                     </div>
                     <div class="form-group">
-                      <%= f.label :before_edit_booking, 'Política de Edición de Reservas:' %>
+                      <%= f.label :before_edit_booking, 'Política de Edición de Reservas' %>
                       <span class="help-block">Horas mínimas requeridas para que un cliente edite o cancele su reserva. No se podrá editar o cancelar reservas con menos anticipación.</span>
                       <div class="input-group">
                         <%= f.number_field :before_edit_booking, :in => 1...169, :required => true, :class => 'form-control' %>
@@ -330,13 +330,29 @@
                       <span class="help-block"></span>
                     </div>
                     <div class="form-group">
-                      <%= f.label :max_changes, 'Ediciones Maximas:' %>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :can_edit %> Reservas Editables
+                        </label>
+                        <span class="help-block">Habilita esta opción para que el usuario pueda editar las reservas que reliza.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :max_changes, 'Ediciones Maximas' %>
                       <span class="help-block">Cantidad de veces que un cliente puede editar su reserva.</span>
                       <div class="input-group">
                         <%= f.number_field :max_changes, :min => 0, :required => true, :class => 'form-control' %>
                         <span class="input-group-addon">Veces</span>
                       </div>
                       <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                    <div class="checkbox">
+                      <label>
+                        <%= f.check_box :can_cancel %> Reservas Cancelables
+                      </label>
+                      <span class="help-block">Habilita esta opción para que el usuario pueda cancelar las reservas que reliza.</span>
+                    </div>
                     </div>
                   </div>
                 </div>
@@ -414,6 +430,14 @@
                           <%= f.check_box :booking_history %> Historial de Modificaciones de Reservas
                         </label>
                         <span class="help-block">Si activas esta opción, se guardará un historial de modificaciones para cada reserva. Este historial es exclusivamente visible por el Administrador General y el Administrador de Local, para las reservas de el(los) local(es) al que este asociado.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :use_identification_number %> Usar <%= I18n.t('ci') %> en Reserva
+                        </label>
+                        <span class="help-block">Al activar esta opción, en el dialogo de reserva tendrás, además de los campos por defecto, disponible un campo <%= I18n.t('ci') %>, el que también te permitirá buscar clientes por <%= I18n.t('ci') %>.</span>
                       </div>
                     </div>
                     <div class="form-group">
@@ -756,7 +780,7 @@
                         <%= p.time_select :morning_start, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= p.time_select :morning_end, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
                         <span class="help-block"><label id="morning-error" class="error" hidden></label></span>
                         <span class="form-control-feedback"></span>
-                      </div>                 
+                      </div>
                   </div>
                   <div class="col-md-2">
                     <div class="form-group">

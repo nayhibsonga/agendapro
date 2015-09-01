@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
   before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form]
-  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours]
+  before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :confirm_error, :confirm_success, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours]
   before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
   layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :transfer_error_cancel, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
 
@@ -269,8 +269,10 @@ class BookingsController < ApplicationController
       if should_create_sessions
 
         session_booking.client_id = @booking.client_id
-        if User.find_by_email(buffer_params[:client_email])
-          session_booking.user_id = User.find_by_email(buffer_params[:client_email]).id
+        if buffer_params[:client_email] && buffer_params[:client_email] != ""
+          if User.find_by_email(buffer_params[:client_email])
+            session_booking.user_id = User.find_by_email(buffer_params[:client_email]).id
+          end
         end
 
         session_booking.save
@@ -290,16 +292,18 @@ class BookingsController < ApplicationController
         #Ele if it's an existing session, just save the SessionBooking
         if should_create_sessions
 
-          sessions_missing = session_booking.sessions_amount - 1
-          sessions_ratio = "Sesión 1 de " + @booking.service.sessions_amount.to_s
+          if !session_booking.nil?
+            sessions_missing = session_booking.sessions_amount - 1
+            sessions_ratio = "Sesión 1 de " + @booking.service.sessions_amount.to_s
 
-          for i in 0..sessions_missing-1
-            new_booking = @booking.dup
-            new_booking.is_session = true
-            new_booking.is_session_booked = false
-            new_booking.user_session_confirmed = false
-            new_booking.session_booking_id = session_booking.id
-            new_booking.save
+            for i in 0..sessions_missing-1
+              new_booking = @booking.dup
+              new_booking.is_session = true
+              new_booking.is_session_booked = false
+              new_booking.user_session_confirmed = false
+              new_booking.session_booking_id = session_booking.id
+              new_booking.save
+            end
           end
 
         elsif !session_booking.nil?
@@ -988,13 +992,14 @@ class BookingsController < ApplicationController
     #If updated by admin, mark for user validation
     #Also, check if client was changed and update SessionBooking and all sessions
     if @booking.is_session
+      new_booking_params[:session_booking_id] = @booking.session_booking_id
       if @booking.payed
         @booking.user_session_confirmed = false
       else
         @booking.user_session_confirmed = true
       end
-      session_booking_index = @booking.session_booking.sessions_taken + 1
-      sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
+      #session_booking_index = @booking.session_booking.sessions_taken
+      #sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
     end
     respond_to do |format|
       if @booking.update(new_booking_params)
@@ -1036,6 +1041,17 @@ class BookingsController < ApplicationController
               @booking.send_validate_mail
             end
           end
+
+          session_index = 1
+          Booking.where(:session_booking_id => @booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+            if b.id == @booking.id
+              break
+            else
+              session_index = session_index + 1
+            end
+          end
+
+          sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
 
         else
 
@@ -1382,9 +1398,11 @@ class BookingsController < ApplicationController
 
     events = Array.new
 
-    @bookings = Booking.where(:service_provider_id => @providers).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
+    @cancelled_id = Status.find_by_name('Cancelado').id
+
+    @bookings = Booking.where('bookings.service_provider_id IN (?)', @providers.pluck(:id)).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').includes(:client).includes(:service).includes(:session_booking)
     @bookings.each do |booking|
-      if booking.status_id != Status.find_by_name('Cancelado').id
+      if booking.status_id != @cancelled_id
         event = Hash.new
         booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
         booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
@@ -1434,7 +1452,7 @@ class BookingsController < ApplicationController
         if booking.is_session && booking.session_booking
           is_session = true
           session_index = 1
-          Booking.where(:session_booking_id => booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+          Booking.where(:session_booking_id => booking.session_booking_id, :is_session_booked => true).order('start asc').each do |b|
             if b.id == booking.id
               break
             else
@@ -2692,7 +2710,7 @@ class BookingsController < ApplicationController
                       provider_free = false
                       break
                     end
-                  elsif @service.group_service && @service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => @service.id, :start => start_time_block).where.not(status_id: Status.find_by_name('Cancelado')).count >= @service.capacity
+                  elsif @service.group_service && @service.id == provider_booking.service_id && provider.bookings.where(:service_id => @service.id, :start => start_time_block).where.not(status_id: Status.find_by_name('Cancelado')).count >= @service.capacity
                     if !provider_booking.is_session || (provider_booking.is_session and provider_booking.is_session_booked)
                       provider_free = false
                       break
@@ -2818,9 +2836,99 @@ class BookingsController < ApplicationController
     @booking = Booking.find(id)
     @company = Location.find(@booking.location_id).company
     @selectedLocation = Location.find(@booking.location_id)
-    if @booking.update(:status => Status.find_by(:name => 'Confirmado'))
+
+    status_confirmed = Status.find_by(:name => 'Confirmado')
+    status_reservado = Status.find_by_name('Reservado')
+    status_pagado = Status.find_by_name('Pagado')
+
+    if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > @booking.start || (@booking.status_id != status_reservado.id && @booking.status_id != status_pagado.id)
+      if @booking.status_id == status_confirmed.id
+        redirect_to confirm_success_path(:id => @booking.id)
+        return
+      else
+        redirect_to confirm_error_path(:id => @booking.id)
+        return
+      end
+    end
+
+
+    if @booking.update(:status => status_confirmed)
       current_user ? user = current_user.id : user = 0
       BookingHistory.create(booking_id: @booking.id, action: "Confirmada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+    else
+      redirect_to confirm_error_path(:id => @booking.id)
+      return
+    end
+
+    redirect_to confirm_success_path(:id => @booking.id)
+    return
+  end
+
+  def confirm_all_bookings
+    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+    id = crypt.decrypt_and_verify(params[:confirmation_code])
+    booking = Booking.find(id)
+    @bookings = Booking.where(location_id: booking.location_id).where(booking_group: booking.booking_group)
+    @company = Location.find(booking.location_id).company
+    @selectedLocation = Location.find(booking.location_id)
+
+    status_confirmed = Status.find_by(:name => 'Confirmado')
+    status_reservado = Status.find_by_name('Reservado')
+    status_pagado = Status.find_by_name('Pagado')
+
+    @bookings.each do |b|
+      if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > b.start || (b.status_id != status_reservado.id && b.status_id != status_pagado.id)
+        if b.status_id != status_confirmed.id
+          reason = ""
+          if b.status_id == Status.find_by_name("Asiste").id
+            reason = "ya asististe a ella."
+          elsif b.status_id == Status.find_by_name("Cancelado").id
+            reason = "fue cancelada."
+          elsif b.status_id == Status.find_by_name("No asiste").id
+            reason = "ya ocurrió y no asististe."
+          else
+            reason = "ya ocurrió."
+          end
+          redirect_to confirm_error_path(:id => @bookings.first.id, :group_confirm => true, :reason => reason)
+          return
+        end
+      end
+    end
+
+    @bookings.each do |b|
+      if b.status_id != status_confirmed.id
+        if b.update(:status => Status.find_by(:name => 'Confirmado'))
+          current_user ? user = current_user.id : user = 0
+          BookingHistory.create(booking_id: b.id, action: "Confirmada por Cliente", start: b.start, status_id: b.status_id, service_id: b.service_id, service_provider_id: b.service_provider_id, user_id: user, notes: b.notes, company_comment: b.company_comment)
+        else
+          redirect_to confirm_error_path(:id => @bookings.first.id, :group_confirm => true, :reason => "ocurrió un error inesperado.")
+          return
+        end
+      end
+    end
+    redirect_to confirm_success_path(:id => @bookings.first.id, :group_confirm => true)
+    return
+  end
+
+  def confirm_error
+    @booking = Booking.find(params[:id])
+    @company = Location.find(@booking.location_id).company
+    @selectedLocation = Location.find(@booking.location_id)
+    @bookings = []
+    if params[:group_confirm]
+      @bookings = Booking.where(:location_id => @booking.location_id, :booking_group => @booking.booking_group)
+      @reason = params[:reason]
+    end
+    render layout: 'workflow'
+  end
+
+  def confirm_success
+    @booking = Booking.find(params[:id])
+    @company = Location.find(@booking.location_id).company
+    @selectedLocation = Location.find(@booking.location_id)
+    @bookings = []
+    if params[:group_confirm]
+      @bookings = Booking.where(:location_id => @booking.location_id, :booking_group => @booking.booking_group)
     end
     render layout: 'workflow'
   end
@@ -3526,8 +3634,8 @@ class BookingsController < ApplicationController
           #Get providers min
           min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
 
-          #logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
-          #logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
+          logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
+          logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
 
           if !min_pt.nil? && min_pt.open.strftime("%H:%M") > dateTimePointer.strftime("%H:%M")
             #logger.debug "Changing dtp"
@@ -3577,7 +3685,15 @@ class BookingsController < ApplicationController
             if serviceStaff[serviceStaffPos][:provider] != "0"
               providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
             else
-              providers = ServiceProvider.where(active: true, online_booking: true, id: service.service_providers.pluck(:id), location_id: local.id).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
+              #Check if providers have same day open
+              #If they do, choose the one with less ocupations to start with
+              #If they don't, choose the one that starts earlier.
+              if service.check_providers_day_times(dateTimePointer)
+                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+              else
+                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+              end
             end
 
             providers.each do |provider|
@@ -3702,7 +3818,7 @@ class BookingsController < ApplicationController
                   bookings.last[:time_discount] = 0
                 end
 
-                if service.has_time_discount && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable
+                if service.has_time_discount && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable && service.time_promo_active
 
                   promo = Promo.where(:day_id => date.cwday, :service_promo_id => service.active_service_promo_id, :location_id => local.id).first
 
@@ -4091,10 +4207,18 @@ class BookingsController < ApplicationController
 
           else
 
-            if top_margin > 0
-              week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></div>'
+            if @week_blocks.count > 5
+              if top_margin > 0
+                week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div>&nbsp;' + hour[:start_block] + '</span></div>'
+              else
+                week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div>&nbsp;' + hour[:start_block] + '</span></span></div>'
+              end
             else
-              week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></span></div>'
+              if top_margin > 0
+                week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px; font-size: 14px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></div>'
+              else
+                week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px; font-size: 14px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></span></div>'
+              end
             end
           end
 

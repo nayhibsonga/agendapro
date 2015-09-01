@@ -14,6 +14,67 @@ $(function () {
     };
   });
 
+  $('#company_web_address').on('change', function() {
+    var tmp = $('#company_web_address').val();
+    tmp = tmp.toLowerCase();
+    tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
+    tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
+    tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
+    tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
+    tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
+    tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
+    tmp = tmp.replace(/[^a-z0-9]/gi,'');
+    $('#company_web_address').val(tmp);
+  });
+
+  $("#company_logo").change(function (){
+    if ($("#company_logo").valid()) {
+      var formId = $('#company-form').prop('id');
+      $.ajax({
+        type: 'POST',
+        url: '/quick_add/update_company',
+        data: new FormData(document.getElementById(formId)),
+        mimeType: 'multipart/form-data',
+        contentType: false,
+        processData: false,
+        success: function (result) {
+          d = new Date();
+          $('#company-form img').attr("src", result+"?ts="+d.getTime());
+          $("#company_logo").val('');
+        },
+        error: function (xhr) {
+          var errors = $.parseJSON(xhr.responseText).errors;
+          var errorList = '';
+          for (i in errors) {
+            errorList += '* ' + errors[i] + '\n'
+          }
+          alert(
+            'Error\n' +
+            '--------' +
+            errorList
+          );
+        },
+      });
+    };
+  });
+
+  if ($('#company_setting_can_edit').prop('checked')) {
+    var thisGroup = $('#company_setting_can_edit').closest('.form-group');
+    thisGroup.next().removeClass('hidden');
+  } else{
+    var thisGroup = $('#company_setting_can_edit').closest('.form-group');
+    thisGroup.next().addClass('hidden');
+  };
+
+  $('#company_setting_can_edit').change(function () {
+    var thisGroup = $(this).closest('.form-group');
+    if ($(this).prop('checked')) {
+      thisGroup.next().removeClass('hidden');
+    } else{
+      thisGroup.next().addClass('hidden');
+    };
+  });
+
   $('#fromEmail').on('hidden.bs.modal', function (e) {
     validator.resetForm();
     $('.has-success').removeClass('has-success');
@@ -129,7 +190,6 @@ $(function () {
     }
   });
 
-
   $("#company_setting_online_cancelation_policy_attributes_modifiable").change(function(){
     var mod_can = false;
 
@@ -177,19 +237,6 @@ $(function () {
     } else {
       $('.min-hours-div').addClass('hidden');
     }
-  });
-
-  $('#company_web_address').on('change', function() {
-    var tmp = $('#company_web_address').val();
-    tmp = tmp.toLowerCase();
-    tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
-    tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
-    tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
-    tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
-    tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
-    tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
-    tmp = tmp.replace(/[^a-z0-9]/gi,'');
-    $('#company_web_address').val(tmp);
   });
 
   CKEDITOR.replace(company_setting_signature);

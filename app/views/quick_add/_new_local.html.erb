@@ -61,7 +61,7 @@
               </div>
             </div>
             <div class="form-group has-feedback">
-              <%= f.label :district, "Comuna: ", class: "col-sm-3 control-label" %>
+              <%= f.label :district, (I18n.t('district')).capitalize + ": ", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
                 <%= f.collection_select :district_id, District.all, :id, :name, {}, { class: "form-control", :disabled => true }%>
                 <span class="help-block"></span>

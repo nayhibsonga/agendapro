@@ -2,7 +2,7 @@
 
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
-  scope "(:locale)", locale: /es|es_CL|es_CO|es_PA/ do
+  scope "(:locale)", locale: /es|es_CL|es_CO/ do
 
     # devise_for :users, controllers: {registrations: 'registrations', omniauth_callbacks: "omniauth_callbacks"}
 
@@ -264,6 +264,9 @@
     get '/cancel_all_booking', :to => 'bookings#cancel_all_booking', :as => 'cancel_all_booking'
     post '/cancel_all_booking', :to => 'bookings#cancel_all_booking'
     get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
+    get '/confirm_all_bookings', :to => 'bookings#confirm_all_bookings', :as => 'confirm_all_bookings'
+    get '/confirm_error', :to => 'bookings#confirm_error', :as => 'confirm_error'
+    get '/confirm_success', :to => 'bookings#confirm_success', :as => 'confirm_success'
     get '/blocked_edit', :to => 'bookings#blocked_edit', :as => 'blocked_edit'
     get '/blocked_cancel', :to => 'bookings#blocked_cancel', :as => 'blocked_cancel'
 
@@ -365,6 +368,7 @@
       get 'services/:id/service_providers', to: 'services#service_providers'
 
       get 'service_providers/:id/available_hours', to: 'service_providers#available_hours'
+      get 'service_providers/:id/available_days', to: 'service_providers#available_days'
 
       post 'users/session', to: 'users#login'
       post 'users/registration', to: 'users#create'

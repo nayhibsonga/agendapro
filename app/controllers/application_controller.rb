@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
 
   def request_location
     if Rails.env.test? || Rails.env.development?
-      return "CO"
+      return "CL"
     else
       if request.location
         return request.location.country_code

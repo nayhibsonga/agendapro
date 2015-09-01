@@ -106,7 +106,8 @@ function loadStep1 (service_id) {
 					//====== Generando Radios
 					serviceDiscount = "";
 					servicePrice = '';
-					if ($('#online_capabilities').data('online-payment-capable') && ((service.has_time_discount && $('#online_capabilities').data('promo-offerer-capable')) || (service.has_discount && service.online_payable && service.discount > 0)))
+					
+					if ($('#online_capabilities').data('online-payment-capable') && ((service.time_promo_active && service.has_time_discount && $('#online_capabilities').data('promo-offerer-capable')) || (service.has_discount && service.online_payable && service.discount > 0)))
 					{
 						serviceDiscount = '<div class="col-sm-2 open-promotion-popover" rel="popover" service_id="' + service.id + '" data-toggle="popover" data-placement="right" data-content="">' +
 										'<%= image_tag("promociones/icono_promociones.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' +
@@ -140,7 +141,7 @@ function loadStep1 (service_id) {
 							'</div>' +
 						'</li>';
 
-						if ($('#online_capabilities').data('online-payment-capable') && ((service.has_time_discount && $('#online_capabilities').data('promo-offerer-capable')) || (service.has_discount && service.online_payable && service.discount > 0)))
+						if ($('#online_capabilities').data('online-payment-capable') && ((service.time_promo_active && service.has_time_discount && $('#online_capabilities').data('promo-offerer-capable')) || (service.has_discount && service.online_payable && service.discount > 0)))
 						{
 							$.ajax({
 								type: "get",

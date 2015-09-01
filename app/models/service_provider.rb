@@ -25,6 +25,12 @@ class ServiceProvider < ActiveRecord::Base
 
 	validate :new_plan_service_providers, :on => :create
 
+	after_save :location_bookings
+
+	def location_bookings
+		Booking.where(service_provider_id: self.id).update_all(location_id: self.location_id)
+	end
+
 	def plan_service_providers
 		if self.active_changed? && self.active
 			if self.company.service_providers.where(active:true).count >= self.company.plan.service_providers
@@ -119,6 +125,14 @@ class ServiceProvider < ActiveRecord::Base
 			return occupation
 		else
 			return 0
+		end
+	end
+
+	def provider_booking_day_open(date)
+		if self.provider_times.where(:day_id => date.cwday).count > 0
+			return self.provider_times.find_by_day_id(date.cwday).open
+		else
+			return DateTime.new(date.year, date.month, date.day, 23, 59, 59)
 		end
 	end
 
