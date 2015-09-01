@@ -3634,8 +3634,8 @@ class BookingsController < ApplicationController
           #Get providers min
           min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
 
-          logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
-          logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
+          # logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
+          # logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
 
           if !min_pt.nil? && min_pt.open.strftime("%H:%M") > dateTimePointer.strftime("%H:%M")
             #logger.debug "Changing dtp"
