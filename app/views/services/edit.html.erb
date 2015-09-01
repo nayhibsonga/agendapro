@@ -639,12 +639,14 @@
 							<% else %>
 
 								<div class="row">
-									<div class="col-md-12">
+									<div class="col-md-8">
 										<div class="form-group">
 											<% if @service.has_discount %>
 												Este servicio ya tiene descuento por pago en línea, por lo que no puedes ofrecerlo en promoción.
-											<% else %>
+											<% elsif !@service.online_payable %>
 												Este servicio no se puede pagar en línea, por lo que no puedes ofrecerlo en promoción.
+											<% else %>
+												Aún no has configurado las promociones. Entra a Configuraciones, a la sección de Promociones, para configurar el horario y activar las promociones. Si la opción no te aparece, ponte en contacto con nosotros para habilitar las promociones. 
 											<% end %>
 										</div>
 									</div>

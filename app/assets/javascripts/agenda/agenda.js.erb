@@ -862,6 +862,14 @@ $('#modal_search').click(function() {
   $('#search-form').submit();
 });
 
+/*$("#btn-delete-session-booking").click(function(){
+  var sb_id = $("#session-booking-select").val();
+  if(confirm("¿Estás seguro que deseas eliminar el tratamiento?"))
+  {
+    
+  }
+});*/
+
 <% if @lat && @lng && @formatted_address %>
 
   $('#latitude').val(<%= @lat %>);

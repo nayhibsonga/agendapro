@@ -63,7 +63,7 @@
           </div>
         </div>
         <div class="form-group">
-          <%= f.label :district, "Comuna", class: "col-xs-3 control-label" %>
+          <%= f.label :district, (I18n.t('district')).capitalize, class: "col-xs-3 control-label" %>
           <div class="col-xs-9">
             <%= f.text_field :district, class: "form-control" %>
             <span class="help-block"></span>
