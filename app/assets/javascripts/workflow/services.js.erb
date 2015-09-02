@@ -673,11 +673,22 @@ function loadStep2() {
 				else
 				{
 					book_discount = 0;
-					$("#selected-hour-body").append(
-						'<b>' + bookDetails.service_name + '</b><br />' +
-						'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
-						'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> ' + simple_currency(bookDetails.price) + '<br /></div>'
-					);
+					if(bookDetails.price > 0)
+					{
+						$("#selected-hour-body").append(
+							'<b>' + bookDetails.service_name + '</b><br />' +
+							'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+							'<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> ' + simple_currency(bookDetails.price) + '<br /></div>'
+						);
+					}
+					else
+					{
+						$("#selected-hour-body").append(
+							'<b>' + bookDetails.service_name + '</b><br />' +
+							'<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd +
+							'</div>'
+						);
+					}
 				}
 			}
 			else
@@ -829,7 +840,7 @@ function loadStep3 () {
 	        	}
 	        	else
 	        	{
-	        		if(actual_booking.show_price)
+	        		if(actual_booking.show_price && actual_booking.price > 0)
 	        		{
 		        		$('#summary').append(
 			              '<tr>' + 
@@ -941,7 +952,7 @@ function loadStep3 () {
 						else
 						{
 				
-							if(booking.show_price)
+							if(booking.show_price && booking.price > 0)
 							{
 								prices_str = prices_str + simple_currency(price) + '<br />';
 								
