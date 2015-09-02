@@ -54,7 +54,7 @@
     <div class="col-sm-offset-8 col-md-offset-8 col-sm-2 col-md-2">
       <% if @from_collection.first %>
         <% if @monthly_mails_sent < @monthly_mails %>
-          <%= link_to '<i class="fa fa-envelope"></i> Enviar E-mail'.html_safe, send_mail_path(search: params[:search], location: params[:location], provider: params[:provider], service: params[:service], gender: params[:gender], option: params[:option]), class: "btn btn-white pull-right", id: 'sendMail' %>
+          <%= link_to '<i class="fa fa-envelope"></i> Enviar E-mail'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white pull-right", id: 'sendMail' %>
         <% else %>
           <p class="text-right">Has alcanzado el limite de e-mails.</p>
         <% end %>
@@ -84,7 +84,10 @@
         <div class="filter-body">
           <div class="form-group <%= 'hidden' if not params[:locations] %>" id="filterLocations">
             <div class="panel panel-green">
-              <div class="panel-heading">Locales</div>
+              <div class="panel-heading">
+                Locales
+                <a class="pull-right" href="#" data-target="#addFilterLocations"><i class="fa fa-times"></i></a>
+              </div>
               <ul class="list-group">
                 <% @locations.each do |location| %>
                 <li class="list-group-item">
@@ -100,7 +103,10 @@
           </div>
           <div class="form-group <%= 'hidden' if not params[:providers] %>" id="filterProviders">
             <div class="panel panel-green">
-              <div class="panel-heading">Prestadores</div>
+              <div class="panel-heading">
+                Prestadores
+                <a class="pull-right" href="#" data-target="#addFilterProviders"><i class="fa fa-times"></i></a>
+              </div>
               <ul class="list-group">
                 <% @service_providers.each do |provider| %>
                 <li class="list-group-item">
@@ -116,7 +122,10 @@
           </div>
           <div class="form-group <%= 'hidden' if not params[:services] %>" id="filterServices">
             <div class="panel panel-green">
-              <div class="panel-heading">Servicios</div>
+              <div class="panel-heading">
+                Servicios
+                <a class="pull-right" href="#" data-target="#addFilterServices"><i class="fa fa-times"></i></a>
+              </div>
               <ul class="list-group">
                 <% @services.each do |service| %>
                 <li class="list-group-item">
@@ -132,7 +141,10 @@
           </div>
           <div class="form-group <%= 'hidden' if not params[:statuses] %>" id="filterStatuses">
             <div class="panel panel-green">
-              <div class="panel-heading">Estado</div>
+              <div class="panel-heading">
+                Estado
+                <a class="pull-right" href="#" data-target="#addFilterStatuses"><i class="fa fa-times"></i></a>
+              </div>
               <ul class="list-group">
                 <% Status.all.each do |status| %>
                 <li class="list-group-item">
@@ -148,7 +160,10 @@
           </div>
           <div class="form-group <%= 'hidden' if not params[:gender] %>" id="filterGender">
             <div class="panel panel-green">
-              <div class="panel-heading">Genero</div>
+              <div class="panel-heading">
+                Genero
+                <a class="pull-right" href="#addFilterGender" data-target="#"><i class="fa fa-times"></i></a>
+              </div>
               <ul class="list-group">
                 <li class="list-group-item">
                   <div class="checkbox">
@@ -176,7 +191,10 @@
           </div>
           <div class="form-group <%= 'hidden' if params[:from].blank? and params[:to].blank? %>" id="filterBirthday">
             <div class="panel panel-green">
-              <div class="panel-heading">Cumpleaños</div>
+              <div class="panel-heading">
+                Cumpleaños
+                <a class="pull-right" href="#" data-target="#addFilterBirthday"><i class="fa fa-times"></i></a>
+              </div>
               <ul class="list-group">
                 <li class="list-group-item">
                   <%= text_field_tag :from, params[:from], class: "form-control", placeholder: "Desde" %>
@@ -189,7 +207,10 @@
           </div>
           <div class="form-group <%= 'hidden' if params[:search].blank? %>" id="filterSearch">
             <div class="panel panel-green">
-              <div class="panel-heading">Palabra</div>
+              <div class="panel-heading">
+                Palabra
+                <a class="pull-right" href="#addFilterSearch" data-target="#"><i class="fa fa-times"></i></a>
+              </div>
               <ul class="list-group">
                 <li class="list-group-item">
                   <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o RUT..." %>
@@ -251,8 +272,8 @@
     <div class="col-sm-4 col-md-4">
       <p class="text-right">
         Descargar este listado de clientes:
-        <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", location: params[:location], provider: params[:provider], gender: params[:gender]), class: "btn btn-white" %>
-        <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_path(format: "xls", location: params[:location], provider: params[:provider], gender: params[:gender]), class: "btn btn-white" %>
+        <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white" %>
+        <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_path(format: "xls", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white" %>
       </p>
     </div>
   </div>
