@@ -1,11 +1,11 @@
-<div class="container-fluid">
+<!-- <div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
       <h2 class="text-green">Clientes de la Empresa</h2>
       <p>Acá podrás agregar y editar clientes de tu empresa. Los clientes generados son válidos para todos los locales de tu compañía. Las personas que reserven en tu portal AgendaPro serán agregadas automáticamente.</p>
     </div>
   </div>
-</div>
+</div> -->
 
 <!-- <div class="container-fluid background-grey" style="margin: 30px 0 15px;">
   <div class="row">
@@ -64,80 +64,146 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-2">
-      <h4>Filtros</h4>
+    <div class="col-md-3">
       <%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get" do %>
-        <div class="form-group">
-          <label>Locales</label>
-          <% @locations.each do |location| %>
-          <div class="checkbox">
-            <label>
-              <%= check_box_tag "locations[]", location.id, params[:locations] && params[:locations].include?(location.id.to_s) %> <%= location.name %>
-            </label>
-          </div>
-          <% end %>
-        </div>
-        <div class="form-group">
-          <label>Prestadores</label>
-          <% @service_providers.each do |provider| %>
-          <div class="checkbox">
-            <label>
-              <%= check_box_tag "providers[]", provider.id, params[:providers] && params[:providers].include?(provider.id.to_s) %> <%= provider.public_name %>
-            </label>
-          </div>
-          <% end %>
-        </div>
-        <div class="form-group">
-          <label>Servicios</label>
-          <% @services.each do |service| %>
-          <div class="checkbox">
-            <label>
-              <%= check_box_tag "services[]", service.id, params[:services] && params[:services].include?(service.id.to_s) %> <%= service.name %>
-            </label>
-          </div>
-          <% end %>
-        </div>
-        <div class="form-group">
-          <label>Estado</label>
-          <% Status.all.each do |status| %>
-          <div class="checkbox">
-            <label>
-              <%= check_box_tag "statuses[]", status.id, params[:statuses] && params[:statuses].include?(status.id.to_s) %> <%= status.name %>
-            </label>
-          </div>
-          <% end %>
-        </div>
-        <div class="form-group">
-          <label>Genero</label>
-          <div class="checkbox">
-            <label>
-              <%= check_box_tag "gender[]", 0, params[:gender] && params[:gender].include?("0") %> No Especificado
-            </label>
-          </div>
-          <div class="checkbox">
-            <label>
-              <%= check_box_tag "gender[]", 1, params[:gender] && params[:gender].include?("1") %> Femenino
-            </label>
-          </div>
-          <div class="checkbox">
-            <label>
-              <%= check_box_tag "gender[]", 2, params[:gender] && params[:gender].include?("2") %> Masculino
-            </label>
+        <div class="form-group filter-header">
+          <strong>Filtrar</strong>
+          <div class="dropdwn pull-right">
+            <button class="btn btn-green dropdown-toggle" type="button" id="addFilter" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus"></i></button>
+            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="addFilter" style="top: initial;">
+              <li class="<%= 'hidden' if params[:locations] %>"><a href="#" id="addFilterLocations" data-target="#filterLocations">Por Local</a></li>
+              <li class="<%= 'hidden' if params[:providers] %>"><a href="#" id="addFilterProviders" data-target="#filterProviders">Por Prestador</a></li>
+              <li class="<%= 'hidden' if params[:services] %>"><a href="#" id="addFilterServices" data-target="#filterServices">Por Servicio</a></li>
+              <li class="<%= 'hidden' if params[:statuses] %>"><a href="#" id="addFilterStatuses" data-target="#filterStatuses">Por Estado</a></li>
+              <li class="<%= 'hidden' if params[:gender] %>"><a href="#" id="addFilterGender" data-target="#filterGender">Por Género</a></li>
+              <li class="<%= 'hidden' if !params[:from].blank? and !params[:to].blank? %>"><a href="#" id="addFilterBirthday" data-target="#filterBirthday">Por Cumpleaños</a></li>
+              <li class="<%= 'hidden' if !params[:search].blank? %>"><a href="#" id="addFilterSearch" data-target="#filterSearch">Por Palabras</a></li>
+            </ul>
           </div>
         </div>
-        <div class="form-group">
-          <label>Cumpleaños</label>
-          <%= text_field_tag :from, params[:from], class: "form-control", placeholder: "Desde" %>
-          <%= text_field_tag :to, params[:to], class: "form-control", placeholder: "Hasta" %>
+        <div class="filter-body">
+          <div class="form-group <%= 'hidden' if not params[:locations] %>" id="filterLocations">
+            <div class="panel panel-green">
+              <div class="panel-heading">Locales</div>
+              <ul class="list-group">
+                <% @locations.each do |location| %>
+                <li class="list-group-item">
+                  <div class="checkbox">
+                    <label>
+                      <%= check_box_tag "locations[]", location.id, params[:locations] && params[:locations].include?(location.id.to_s) %> <%= location.name %>
+                    </label>
+                  </div>
+                </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group <%= 'hidden' if not params[:providers] %>" id="filterProviders">
+            <div class="panel panel-green">
+              <div class="panel-heading">Prestadores</div>
+              <ul class="list-group">
+                <% @service_providers.each do |provider| %>
+                <li class="list-group-item">
+                  <div class="checkbox">
+                    <label>
+                      <%= check_box_tag "providers[]", provider.id, params[:providers] && params[:providers].include?(provider.id.to_s) %> <%= provider.public_name %>
+                    </label>
+                  </div>
+                </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group <%= 'hidden' if not params[:services] %>" id="filterServices">
+            <div class="panel panel-green">
+              <div class="panel-heading">Servicios</div>
+              <ul class="list-group">
+                <% @services.each do |service| %>
+                <li class="list-group-item">
+                  <div class="checkbox">
+                    <label>
+                      <%= check_box_tag "services[]", service.id, params[:services] && params[:services].include?(service.id.to_s) %> <%= service.name %>
+                    </label>
+                  </div>
+                </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group <%= 'hidden' if not params[:statuses] %>" id="filterStatuses">
+            <div class="panel panel-green">
+              <div class="panel-heading">Estado</div>
+              <ul class="list-group">
+                <% Status.all.each do |status| %>
+                <li class="list-group-item">
+                  <div class="checkbox">
+                    <label>
+                      <%= check_box_tag "statuses[]", status.id, params[:statuses] && params[:statuses].include?(status.id.to_s) %> <%= status.name %>
+                    </label>
+                  </div>
+                </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group <%= 'hidden' if not params[:gender] %>" id="filterGender">
+            <div class="panel panel-green">
+              <div class="panel-heading">Genero</div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <div class="checkbox">
+                    <label>
+                      <%= check_box_tag "gender[]", 0, params[:gender] && params[:gender].include?("0") %> No Especificado
+                    </label>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="checkbox">
+                    <label>
+                      <%= check_box_tag "gender[]", 1, params[:gender] && params[:gender].include?("1") %> Femenino
+                    </label>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="checkbox">
+                    <label>
+                      <%= check_box_tag "gender[]", 2, params[:gender] && params[:gender].include?("2") %> Masculino
+                    </label>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group <%= 'hidden' if params[:from].blank? and params[:to].blank? %>" id="filterBirthday">
+            <div class="panel panel-green">
+              <div class="panel-heading">Cumpleaños</div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <%= text_field_tag :from, params[:from], class: "form-control", placeholder: "Desde" %>
+                </li>
+                <li class="list-group-item">
+                  <%= text_field_tag :to, params[:to], class: "form-control", placeholder: "Hasta" %>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group <%= 'hidden' if params[:search].blank? %>" id="filterSearch">
+            <div class="panel panel-green">
+              <div class="panel-heading">Palabra</div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o RUT..." %>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Palabra</label>
-          <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o RUT..." %>
+        <div class="form-group filter-footer">
+          <button class="btn btn-green btn-bloc" type="submit" action="/clients" value="client_filter"><i class="fa fa-filter"></i><span> Filtrar</span></button>
         </div>
-        <button class="btn btn-green btn-bloc" type="submit" action="/clients" value="client_filter"><i class="fa fa-filter"></i><span> Filtrar</span></button>
       <% end %>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-9">
       <table class="table table-bordered table-green">
         <caption id="mails" data-monthly-mails="<%= @monthly_mails %>" data-monthly-mails-sent="<%= @monthly_mails_sent %>">E-mails enviados <%= number_with_delimiter(@monthly_mails_sent) %> de <%= number_with_delimiter(@monthly_mails) %></caption>
         <thead>

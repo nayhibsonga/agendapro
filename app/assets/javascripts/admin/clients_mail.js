@@ -35,27 +35,15 @@ $(function () {
     today: 'Hoy',
     clear: ''
   });
-	// $('#location').change( function () {
-	// 	var localId = $('#location').val();
-	// 	if ($('#location').val() > 0) {
-	// 		$.getJSON('/local_providers', {location: localId }, function (providersArray) {
-	// 			$('#provider').empty();
-	// 			$('#provider').append('<option value="">Elige un Prestador...</option>');
-	// 			$.each(providersArray, function (key, provider) {
-	// 				$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
-	// 			});
-	// 		});
-	// 	}
-	// 	else {
-	// 		$.getJSON('/service_providers.json', function (providersArray) {
-	// 			$('#provider').empty();
-	// 			$('#provider').append('<option value="">Elige un Prestador...</option>');
-	// 			$.each(providersArray, function (key, provider) {
-	// 				$('#provider').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
-	// 			});
-	// 		});
-	// 	}
-	// });
+
+  $('#addFilter + .dropdown-menu > li > a').click(function (event) {
+  	event.preventDefault();
+  	menu = $(event.target);
+  	menu.parent().addClass('hidden');
+  	target = menu.data('target');
+  	$(target).removeClass('hidden');
+  });
+
 	$('#file').change( function () {
 		if ($('#file').val()) {
 			$('#import_button').removeAttr("disabled");

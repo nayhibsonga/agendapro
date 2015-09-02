@@ -931,6 +931,39 @@ tr[class*="break"] {
   background-color: #eeeeee;
 }
 
+.filter-header,
+.filter-body,
+.filter-footer {
+  padding: 10px 15px;
+  font-size: 15px;
+  border: 1px solid #e3e3e3;
+  background: #f5f5f5;
+}
+.filter-header {
+  padding-bottom: 5px;
+  border-bottom: 1px solid transparent;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  font-size: 18px;
+  margin-bottom: 0;
+  line-height: 2;
+}
+.filter-body {
+  background: transparent;
+  min-height: 50px;
+  max-height: 1221px;
+  overflow-y: auto;
+}
+.filter-footer {
+  padding-top: 5px;
+  border-top: 1px solid transparent;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.filter-body > .form-group > .panel {
+  margin-bottom: 0;
+}
+
 /*
   ================================
   =========== Reports ============
