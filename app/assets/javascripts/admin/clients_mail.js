@@ -1,6 +1,8 @@
 $(function () {
-  $("#from").datepicker({
-    dateFormat: 'dd-mm-yy',
+  $("#from_display").datepicker({
+    dateFormat: 'dd M',
+    altField: '#from',
+    altFormat: 'dd-mm-yy',
     autoSize: false,
     firstDay: 1,
     monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -13,16 +15,18 @@ $(function () {
     today: 'Hoy',
     clear: '',
     onSelect: function(newDate){
-      nextDate = $("#from").datepicker("getDate");
+      nextDate = $("#from_display").datepicker("getDate");
       nextDate.setFullYear(nextDate.getFullYear() + 1);
-      $('#to').datepicker("option", {
+      $('#to_display').datepicker("option", {
         minDate: newDate,
         maxDate: nextDate
       });
     }
   });
-  $("#to").datepicker({
-    dateFormat: 'dd-mm-yy',
+  $("#to_display").datepicker({
+    dateFormat: 'dd M',
+    altField: '#to',
+    altFormat: 'dd-mm-yy',
     autoSize: false,
     firstDay: 1,
     monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],

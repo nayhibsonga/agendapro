@@ -161,10 +161,12 @@
               </div>
               <ul class="list-group">
                 <li class="list-group-item">
-                  <%= text_field_tag :from, params[:from], class: "form-control", placeholder: "Desde" %>
+                  <%= text_field_tag :from_display, params[:from_display], class: "form-control", placeholder: "Desde" %>
+                  <%= hidden_field_tag :from, params[:from], class: "form-control" %>
                 </li>
                 <li class="list-group-item">
-                  <%= text_field_tag :to, params[:to], class: "form-control", placeholder: "Hasta" %>
+                  <%= text_field_tag :to_display, params[:to_display], class: "form-control", placeholder: "Hasta" %>
+                  <%= hidden_field_tag :to, params[:to], class: "form-control" %>
                 </li>
               </ul>
             </div>
