@@ -14,6 +14,7 @@ class Client < ActiveRecord::Base
 
     canceled_status = Status.find_by_name("Cancelado")
     bookings = Array.new
+    single_booking = Booking.new
 
     #Send all services from same client (each company has diferent clients)
     Client.where(id: Booking.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).each do |client|
@@ -24,6 +25,8 @@ class Client < ActiveRecord::Base
         potential_bookings = client.bookings.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
 
         potential_bookings.each do |booking|
+
+          single_booking = booking
 
           booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
 
@@ -47,7 +50,7 @@ class Client < ActiveRecord::Base
             send_multiple_reminder(bookings)
           else
             #Send regular reminder
-            BookingMailer.book_reminder_mail(booking)
+            BookingMailer.book_reminder_mail(single_booking)
           end
         end
 
