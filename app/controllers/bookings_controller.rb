@@ -2883,7 +2883,7 @@ class BookingsController < ApplicationController
             reason = "ya asististe a ella."
           elsif b.status_id == Status.find_by_name("Cancelado").id
             reason = "fue cancelada."
-          elsif b.status_id == Status.find_by_name("No asiste").id
+          elsif b.status_id == Status.find_by_name("No Asiste").id
             reason = "ya ocurrió y no asististe."
           else
             reason = "ya ocurrió."

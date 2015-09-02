@@ -72,6 +72,7 @@
               <li><%= link_to '<i class="fa fa-calendar"></i> Agregar Reserva'.html_safe, '#', id: "createBooking" %></li>
               <li><%= link_to '<i class="fa fa-times"></i> Bloquear Horario'.html_safe, '#', id: "createBreak" %></li>
               <li><%= link_to '<i class="fa fa-dollar"></i> Agregar Pago'.html_safe, '#', id: "createPayment" %></li>
+              <li><%= link_to '<i class="fa fa-dollar"></i> Agregar Pago'.html_safe, '#', id: "createPaymentBtn" %></li>
             </ul>
           </div>
         </div>
@@ -1007,7 +1008,7 @@
     </div>
   </div>
 
-  <div class="modal fade modalOverModal" id="paymentBookingModal" tabindex="-1" role="dialog" aria-labelledby="Agregar Reserva al Pago" aria-hidden="true">
+  <!--<div class="modal fade modalOverModal" id="paymentBookingModal" tabindex="-1" role="dialog" aria-labelledby="Agregar Reserva al Pago" aria-hidden="true">
     <div class="modal-dialog" style="width: auto;">
       <div class="modal-content">
         <div class="modal-header">
@@ -1119,6 +1120,10 @@
       </div>
     </div>
   </div>
+  -->
+  
+  <%= render :partial => 'payment_modals', :locals => {:company => @company} %>
+
 <% end %>
 
 <% content_for :scripts do %>

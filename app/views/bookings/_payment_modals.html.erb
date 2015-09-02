@@ -1,0 +1,369 @@
+<div class="modal fade modalOverModal" id="paymentModalIntro" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="paymentModalIntroTitle" style="line-height: 1.1;">Pago</h3>
+      </div>
+      <div class="modal-body" id="paymentModalIntroBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <div class="payment-form-div">
+              <label for="payment_cashier" class="col-xs-3 control-label">Cobrador</label>
+              <div class="col-xs-9">
+                <input type="text" class="form-control" id="payment_cashier" name="payment_cashier" />
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+
+            <div class="payment-form-div">
+              <label for="payment_client" class="col-xs-3 control-label">Cliente</label>
+              <div class="col-xs-9">
+                <input type="text" class="form-control" id="payment_client" name="payment_client" />
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+        <button type="button" class="btn payment-btn-next" aria-label="Siguiente">Siguiente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade modalOverModal paymentModalStep" id="paymentModal1" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="paymentModal1Title" style="line-height: 1.1;">Pago</h3>
+      </div>
+      <div class="modal-body" id="paymentModal1Body">
+
+        <div class="payment-modals-bar">
+          <%= image_tag 'backgrounds/payment_header_background.png', :class => 'img-responsive' %>
+        </div>
+
+        <div class="row">
+          
+          <div class="col-xs-2">
+            <button type="button" class="btn btn-default add-item-btn" id="addServiceBtn">Servicio&nbsp;<i class="fa fa-plus"></i></button><br />
+            <button type="button" class="btn btn-default add-item-btn" id="addProductBtn">Producto&nbsp;<i class="fa fa-plus"></i></button>
+          </div>
+          <div class="col-xs-10">
+
+            <div class="paymentClientPastBookings" hidden>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="fixed-table">
+                    <h4>Agregar al Pago:</h4>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th>Servicio</th>
+                          <th>Prestador</th>
+                          <th>Fecha</th>
+                          <th>Hora</th>
+                          <th>Precio Normal</th>
+                          <th>Descuento</th>
+                          <th>Precio</th>
+                        </tr>
+                      </thead>
+                      <tbody id="payment-past-bookings-table">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="paymentModalBookingForm" hidden>
+
+            </div>
+
+            <div class="paymentModalProductForm" hidden>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
+        <button type="button" class="btn payment-btn-next" aria-label="Siguiente">Siguiente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade modalOverModal paymentModalStep" id="paymentModal2" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="paymentModal2Title" style="line-height: 1.1;">Pago</h3>
+      </div>
+      <div class="modal-body" id="paymentModal2Body">
+
+        <div class="payment-modals-bar">
+          <%= image_tag 'backgrounds/payment_header_background.png', :class => 'img-responsive' %>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-2">
+            <table class="payment-total-table">
+              <tr>
+                <td class="payment-total-title">
+                  Total:
+                </td>
+                <td class="payment-total-amount">
+                  $17.000
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-xs-2">
+            <div class="method-btn selected">
+              <a href="#cash_method_details" class="method-btn-name">Efectivo</a>
+            </div>
+          </div>
+          <div class="col-xs-2">
+            <div class="method-btn">
+              <a href="#check_method_details" class="method-btn-name">Cheque</a>
+            </div>
+          </div>
+          <div class="col-xs-2">
+            <div class="method-btn">
+              <a href="#credit_card_method_details" class="method-btn-name">Tarjeta de crédito</a>
+            </div>
+          </div>
+          <div class="col-xs-2">
+            <div class="method-btn">
+              <a href="#debt_card_method_details" class="method-btn-name">Tarjeta de débito</a>
+            </div>
+          </div>
+          <div class="col-xs-2">
+            <div class="method-btn">
+              <a href="#other_method_details" class="method-btn-name">Otro</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top: 15px; margin-bottom: 15px;">
+          <div class="col-xs-1">
+
+          </div>
+          <div class="col-xs-5">
+
+            <div class="payment-form-div">
+              <label for="payment_paid_amount" class="col-xs-3 control-label">Paga con</label>
+              <div class="col-xs-9">
+                  <input type="number" class="form-control" id="payment_paid_amount" name="payment_paid_amount" />
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+
+            <div class="payment-form-div">
+              <label for="payment_cost" class="col-xs-3 control-label">A pagar</label>
+              <div class="col-xs-9">
+                  <input type="number" class="form-control" id="payment_cost" name="payment_cost" />
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+
+            <div class="payment-form-div">
+              <label for="payment_return" class="col-xs-3 control-label">Vuelto</label>
+              <div class="col-xs-9">
+                  <input type="number" class="form-control" id="payment_return" name="payment_return" />
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+
+          </div>
+          <div class="col-xs-5">
+
+            <div id="cash_method_details" class="payment_method_details">
+
+            </div>
+
+            <div id="check_method_details" class="payment_method_details" hidden>
+              <div class="payment-form-div">
+                <label for="payment_check_bank" class="col-xs-3 control-label">Banco</label>
+                <div class="col-xs-9">
+                  <select class="form-control" id="payment_check_bank" name="payment_check_bank">
+                    <% Bank.all.order(:name).each do |bank| %>
+                      <option value="<%= bank.id %>"><%= bank.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+              <div class="payment-form-div">
+                <label for="payment_check_number" class="col-xs-3 control-label">Código de autorización</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_check_number" name="payment_check_number" />
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+            </div>
+
+            <div id="credit_card_method_details" class="payment_method_details" hidden>
+
+              <div class="payment-form-div">
+                <label for="payment_method_type" class="col-xs-3 control-label">Tipo de tarjeta</label>
+                <div class="col-xs-9">
+                  <select class="form-control" id="payment_method_type" name="payment_method_type">
+                    <% PaymentMethodType.all.order(:name).each do |payment_method_type| %>
+                      <option value="<%= payment_method_type.id %>"><%= payment_method_type.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div">
+                <label for="payment_credit_card_number" class="col-xs-3 control-label">Código de autorización</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_credit_card_number" name="payment_credit_card_number" />
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div">
+                <label for="payment_credit_card_dues_number" class="col-xs-3 control-label">Cuotas</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_credit_card_dues_number" name="payment_credit_card_dues_number" />
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+            </div>
+
+            <div id="debt_card_method_details" class="payment_method_details" hidden>
+              <div class="payment-form-div">
+                <label for="payment_debt_card_number" class="col-xs-3 control-label">Código de autorización</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_debt_card_number" name="payment_debt_card_number" />
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+            </div>
+
+            <div id="other_method_details" class="payment_method_details" hidden>
+              <div class="payment-form-div">
+                <label for="payment_other_method_type" class="col-xs-3 control-label">Otro medio de pago</label>
+                <div class="col-xs-9">
+                  <select class="form-control" id="payment_other_method_type" name="payment_other_method_type">
+                    <% company.company_payment_methods.order(:name).each do |cpm| %>
+                      <option value="<%= cpm.id %>"><%= cpm.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+              <div class="payment-form-div">
+                <label for="payment_other_method_number" class="col-xs-3 control-label">Código de autorización</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_other_method_number" name="payment_other_method_number" />
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-xs-1">
+
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
+        <button type="button" class="btn payment-btn-next" aria-label="Siguiente">Siguiente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade modalOverModal paymentModalStep" id="paymentModal3" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="paymentModal3Title" style="line-height: 1.1;">Pago</h3>
+      </div>
+      <div class="modal-body" id="paymentModal3Body">
+
+        <div class="payment-modals-bar">
+          <%= image_tag 'backgrounds/payment_header_background.png', :class => 'img-responsive' %>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-3">
+          </div>
+          <div class="col-xs-6">
+
+            <div class="payment-form-div">
+              <label for="payment_receipt_type" class="col-xs-5 control-label">Comprobante de pago</label>
+              <div class="col-xs-7">
+                <select class="form-control" id="payment_receipt_type" name="payment_receipt_type">
+                  <% ReceiptType.all.order(:name).each do |receipt_type| %>
+                    <option value="<%= receipt_type.id %>">
+                      <%= receipt_type.name %>
+                    </option>
+                  <% end %>
+                </select>
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+
+            <div class="payment-form-div">
+              <label for="payment_receipt_number" class="col-xs-5 control-label">Número de comprobante</label>
+              <div class="col-xs-7">
+                <input type="text" class="form-control" id="payment_receipt_number" name="payment_receipt_number" />
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+
+            <div class="payment-form-div">
+              <label for="payment_receipt_date" class="col-xs-5 control-label">Fecha de pago</label>
+              <div class="col-xs-7">
+                <input type="text" class="form-control" id="payment_receipt_date" name="payment_receipt_date" value="<%= DateTime.now.to_date %>" />
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+
+            <div class="payment-form-div">
+              <label for="payment_receipt_note" class="col-xs-5 control-label">Comentario</label>
+              <div class="col-xs-7">
+                <input type="text" class="form-control" id="payment_receipt_date" name="payment_receipt_date" />
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+
+          </div>
+          <div class="col-xs-3">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-default payment-btn-send" id="paymentBtnPrint" aria-label="Imprimir">Imprimir</button>
+        <button type="button" class="btn btn-default payment-btn-send" id="paymentBtnSendEmail" aria-label="Enviar por email">Enviar por email</button>
+        <button type="button" class="btn payment-btn-next" id="savePaymentBtn" aria-label="Guardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
