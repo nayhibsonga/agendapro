@@ -504,4 +504,20 @@ class Service < ActiveRecord::Base
 		end
 	end
 
+	#Check if all provider times in a day start at the same time
+	#True if they start at the same time
+	def check_providers_day_times(date)
+		day_open = ""
+		ProviderTime.where(:service_provider_id => self.service_providers.pluck(:id), :day_id => date.cwday).each do |pt|
+			if day_open == ""
+				day_open = pt.open
+			else
+				if day_open != pt.open
+					return false
+				end
+			end
+		end
+		return true
+	end
+
 end

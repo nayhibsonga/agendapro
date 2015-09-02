@@ -86,7 +86,7 @@ function saveProduct (typeURL, extraURL) {
 			var errors = $.parseJSON(xhr.responseText).errors;
 			var errorList = '';
 			for (i in errors) {
-				errorList += '<li>' + errores[i] + '</li>'
+				errorList += '<li>' + errors[i] + '</li>'
 			}
 			alertId.showAlert(
 				'<h3>Error</h3>' +

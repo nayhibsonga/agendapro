@@ -54,7 +54,7 @@ module Agendapro
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     config.i18n.fallbacks = true
     config.i18n.load_path += Dir[Rails.root.join('config','locales', '*.{rb,yml}').to_s]
-    config.i18n.fallbacks = {"es_CL" => "es"}
+    config.i18n.fallbacks = {"es_CL" => "es", "es_CO" => "es"}
     config.i18n.default_locale = :"es"
 
     config.middleware.insert_before 0, "Rack::Cors" do

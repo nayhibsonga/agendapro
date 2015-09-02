@@ -269,8 +269,10 @@ class BookingsController < ApplicationController
       if should_create_sessions
 
         session_booking.client_id = @booking.client_id
-        if User.find_by_email(buffer_params[:client_email])
-          session_booking.user_id = User.find_by_email(buffer_params[:client_email]).id
+        if buffer_params[:client_email] && buffer_params[:client_email] != ""
+          if User.find_by_email(buffer_params[:client_email])
+            session_booking.user_id = User.find_by_email(buffer_params[:client_email]).id
+          end
         end
 
         session_booking.save
@@ -290,16 +292,18 @@ class BookingsController < ApplicationController
         #Ele if it's an existing session, just save the SessionBooking
         if should_create_sessions
 
-          sessions_missing = session_booking.sessions_amount - 1
-          sessions_ratio = "Sesión 1 de " + @booking.service.sessions_amount.to_s
+          if !session_booking.nil?
+            sessions_missing = session_booking.sessions_amount - 1
+            sessions_ratio = "Sesión 1 de " + @booking.service.sessions_amount.to_s
 
-          for i in 0..sessions_missing-1
-            new_booking = @booking.dup
-            new_booking.is_session = true
-            new_booking.is_session_booked = false
-            new_booking.user_session_confirmed = false
-            new_booking.session_booking_id = session_booking.id
-            new_booking.save
+            for i in 0..sessions_missing-1
+              new_booking = @booking.dup
+              new_booking.is_session = true
+              new_booking.is_session_booked = false
+              new_booking.user_session_confirmed = false
+              new_booking.session_booking_id = session_booking.id
+              new_booking.save
+            end
           end
 
         elsif !session_booking.nil?
@@ -988,13 +992,14 @@ class BookingsController < ApplicationController
     #If updated by admin, mark for user validation
     #Also, check if client was changed and update SessionBooking and all sessions
     if @booking.is_session
+      new_booking_params[:session_booking_id] = @booking.session_booking_id
       if @booking.payed
         @booking.user_session_confirmed = false
       else
         @booking.user_session_confirmed = true
       end
-      session_booking_index = @booking.session_booking.sessions_taken + 1
-      sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
+      #session_booking_index = @booking.session_booking.sessions_taken
+      #sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
     end
     respond_to do |format|
       if @booking.update(new_booking_params)
@@ -1036,6 +1041,17 @@ class BookingsController < ApplicationController
               @booking.send_validate_mail
             end
           end
+
+          session_index = 1
+          Booking.where(:session_booking_id => @booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+            if b.id == @booking.id
+              break
+            else
+              session_index = session_index + 1
+            end
+          end
+
+          sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
 
         else
 
@@ -1382,9 +1398,11 @@ class BookingsController < ApplicationController
 
     events = Array.new
 
-    @bookings = Booking.where(:service_provider_id => @providers).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
+    @cancelled_id = Status.find_by_name('Cancelado').id
+
+    @bookings = Booking.where('bookings.service_provider_id IN (?)', @providers.pluck(:id)).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').includes(:client).includes(:service).includes(:session_booking)
     @bookings.each do |booking|
-      if booking.status_id != Status.find_by_name('Cancelado').id
+      if booking.status_id != @cancelled_id
         event = Hash.new
         booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
         booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
@@ -1434,7 +1452,7 @@ class BookingsController < ApplicationController
         if booking.is_session && booking.session_booking
           is_session = true
           session_index = 1
-          Booking.where(:session_booking_id => booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+          Booking.where(:session_booking_id => booking.session_booking_id, :is_session_booked => true).order('start asc').each do |b|
             if b.id == booking.id
               break
             else
@@ -2692,7 +2710,7 @@ class BookingsController < ApplicationController
                       provider_free = false
                       break
                     end
-                  elsif @service.group_service && @service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => @service.id, :start => start_time_block).where.not(status_id: Status.find_by_name('Cancelado')).count >= @service.capacity
+                  elsif @service.group_service && @service.id == provider_booking.service_id && provider.bookings.where(:service_id => @service.id, :start => start_time_block).where.not(status_id: Status.find_by_name('Cancelado')).count >= @service.capacity
                     if !provider_booking.is_session || (provider_booking.is_session and provider_booking.is_session_booked)
                       provider_free = false
                       break
@@ -2866,7 +2884,7 @@ class BookingsController < ApplicationController
             reason = "ya asististe a ella."
           elsif b.status_id == Status.find_by_name("Cancelado").id
             reason = "fue cancelada."
-          elsif b.status_id == Status.find_by_name("No asiste").id
+          elsif b.status_id == Status.find_by_name("No Asiste").id
             reason = "ya ocurrió y no asististe."
           else
             reason = "ya ocurrió."
@@ -3614,10 +3632,10 @@ class BookingsController < ApplicationController
           service = Service.find(serviceStaff[serviceStaffPos][:service])
 
           #Get providers min
-          min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(:location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
+          min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
 
-          #logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
-          #logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
+          logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
+          logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
 
           if !min_pt.nil? && min_pt.open.strftime("%H:%M") > dateTimePointer.strftime("%H:%M")
             #logger.debug "Changing dtp"
@@ -3667,7 +3685,15 @@ class BookingsController < ApplicationController
             if serviceStaff[serviceStaffPos][:provider] != "0"
               providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
             else
-              providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
+              #Check if providers have same day open
+              #If they do, choose the one with less ocupations to start with
+              #If they don't, choose the one that starts earlier.
+              if service.check_providers_day_times(dateTimePointer)
+                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+              else
+                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+              end
             end
 
             providers.each do |provider|
@@ -4303,7 +4329,7 @@ class BookingsController < ApplicationController
           if serviceStaff[serviceStaffPos][:provider] != "0"
             providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
           else
-            providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+            providers = ServiceProvider.where(id: service.service_providers.pluck(:id), online_booking: true, location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
           end
 
           providers.each do |provider|
