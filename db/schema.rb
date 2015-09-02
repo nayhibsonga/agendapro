@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150825201152) do
+ActiveRecord::Schema.define(version: 20150902192857) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -198,6 +198,17 @@ ActiveRecord::Schema.define(version: 20150825201152) do
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
   add_index "companies", ["payment_status_id"], name: "index_companies_on_payment_status_id", using: :btree
   add_index "companies", ["plan_id"], name: "index_companies_on_plan_id", using: :btree
+
+  create_table "company_countries", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "country_id"
+    t.string   "web_address", default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_countries", ["company_id"], name: "index_company_countries_on_company_id", using: :btree
+  add_index "company_countries", ["country_id"], name: "index_company_countries_on_country_id", using: :btree
 
   create_table "company_cron_logs", force: true do |t|
     t.integer  "company_id"
