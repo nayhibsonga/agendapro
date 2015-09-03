@@ -47,6 +47,23 @@ class Client < ActiveRecord::Base
 
         if bookings.count > 0
           if bookings.count > 1
+
+            #Set an id to identify bookings that were sent in this reminder
+
+            last_reminder_group = 0
+
+            last_reminder_booking = Booking.where(:location_id => location.id).where.not(reminder_group: nil).order('reminder_group asc').last
+
+            # If there is one that's not null, then get the last one
+            if !last_reminder_booking.nil?
+              last_reminder_group = last_reminder_booking.reminder_group + 1
+            end
+
+            bookings.each do |b|
+              b.reminder_group = last_reminder_group
+              b.save
+            end
+
             #Send multiple bookings reminder
             send_multiple_reminder(bookings)
           else
@@ -87,7 +104,7 @@ class Client < ActiveRecord::Base
       @user[:name] = bookings[0].client.first_name
       @user[:send_mail] = bookings[bookings.length - 1].send_mail
       @user[:email] = bookings[0].client.email
-      @user[:cancel_all] = helper.cancel_all_booking_url(:confirmation_code => bookings[0].confirmation_code)
+      @user[:cancel_all] = helper.cancel_all_reminded_booking_url(:confirmation_code => bookings[0].confirmation_code)
       @user[:confirm_all] = helper.confirm_all_bookings_url(:confirmation_code => bookings[0].confirmation_code)
 
       @user_table = ''

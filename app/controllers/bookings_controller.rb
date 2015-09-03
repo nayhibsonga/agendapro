@@ -2868,7 +2868,7 @@ class BookingsController < ApplicationController
     crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
     id = crypt.decrypt_and_verify(params[:confirmation_code])
     booking = Booking.find(id)
-    @bookings = Booking.where(location_id: booking.location_id).where(booking_group: booking.booking_group)
+    @bookings = Booking.where(location_id: booking.location_id).where(reminder_group: booking.reminder_group)
     @company = Location.find(booking.location_id).company
     @selectedLocation = Location.find(booking.location_id)
 
@@ -2916,7 +2916,7 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(@booking.location_id)
     @bookings = []
     if params[:group_confirm]
-      @bookings = Booking.where(:location_id => @booking.location_id, :booking_group => @booking.booking_group)
+      @bookings = Booking.where(location_id: @booking.location_id).where(reminder_group: @booking.reminder_group)
       @reason = params[:reason]
     end
     render layout: 'workflow'
@@ -2928,7 +2928,7 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(@booking.location_id)
     @bookings = []
     if params[:group_confirm]
-      @bookings = Booking.where(:location_id => @booking.location_id, :booking_group => @booking.booking_group)
+      @bookings = Booking.where(location_id: @booking.location_id).where(reminder_group: @booking.reminder_group)
     end
     render layout: 'workflow'
   end
@@ -3176,6 +3176,222 @@ class BookingsController < ApplicationController
     host = request.host_with_port
     @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
+    render layout: 'workflow'
+  end
+
+  def cancel_all_reminded_booking
+    require 'date'
+
+    unless params[:id]
+      crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+      id = crypt.decrypt_and_verify(params[:confirmation_code])
+      @booking = Booking.find(id)
+      @company = Location.find(@booking.location_id).company
+      @bookings = Booking.where(location_id: @booking.location_id).where(reminder_group: @booking.reminder_group)
+      @selectedLocation = Location.find(@booking.location_id)
+
+      now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+
+      #Pagadas
+
+      if @booking.check_for_promo_payment
+        redirect_to blocked_cancel_path(:id => @booking.id, :promo => true)
+        return
+      end
+
+      #Revisar si fue pagada en línea.
+      #Si lo fue, revisar política de modificación.
+      @bookings.each do |booking|
+        if booking.payed || !booking.payed_booking.nil?
+
+          if !booking.is_session
+            if !@company.company_setting.online_cancelation_policy.nil?
+              ocp = @company.company_setting.online_cancelation_policy
+              if !ocp.cancelable
+                redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                return
+              else
+                #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+                #Mínimo
+                book_start = DateTime.parse(booking.start.to_s)
+                min_hours = (book_start-now)/(60*60)
+                min_hours = min_hours.to_i.abs
+
+                if min_hours >= ocp.min_hours.to_i
+                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                end
+
+                #Máximo
+                booking_creation = DateTime.parse(booking.created_at.to_s)
+                minutes = (booking_creation.to_time - now.to_time)/(60)
+                hours = (booking_creation.to_time - now.to_time)/(60*60)
+                days = (booking_creation.to_time - now.to_time)/(60*60*24)
+                minutes = minutes.to_i.abs
+                hours = hours.to_i.abs
+                days = days.to_i.abs
+                weeks = days/7
+                months = days/30
+
+                #Obtener el máximo
+                num = ocp.cancel_max.to_i
+                if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+                  if minutes >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+                  if hours >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+                  if weeks >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+                  if months >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                end
+
+              end
+            end
+          end
+
+        end
+
+        booking_start = DateTime.parse(booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
+
+        if (booking_start <=> now) < 1
+          flash[:alert] = "No fue posible cancelar"
+          redirect_to root_path
+          return
+        end
+
+      end
+      #Fin pagadas
+
+      # else
+      #   status = Status.find_by(:name => 'Cancelado').id
+      #   @bookings.each do |book|
+      #     if book.update(status_id: status)
+      #       current_user ? user = current_user.id : user = 0
+      #       BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user)
+      #     end
+      #   end
+      # end
+
+    else
+      booking = Booking.find(params[:id])
+      @company = Location.find(booking.location_id).company
+      @bookings = Booking.where(location_id: booking.location_id).where(reminder_group: booking.reminder_group)
+      status = Status.find_by(:name => 'Cancelado').id
+      were_payed = true
+
+      @bookings.each do |booking|
+        if booking.payed || !booking.payed_booking.nil?
+
+          if !booking.is_session
+            if !@company.company_setting.online_cancelation_policy.nil?
+              ocp = @company.company_setting.online_cancelation_policy
+              if !ocp.cancelable
+                redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                return
+              else
+                #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+                now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+                #Mínimo
+                book_start = DateTime.parse(booking.start.to_s)
+                min_hours = (book_start-now)/(60*60)
+                min_hours = min_hours.to_i.abs
+
+                if min_hours >= ocp.min_hours.to_i
+                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                end
+
+                #Máximo
+                booking_creation = DateTime.parse(booking.created_at.to_s)
+                minutes = (booking_creation.to_time - now.to_time)/(60)
+                hours = (booking_creation.to_time - now.to_time)/(60*60)
+                days = (booking_creation.to_time - now.to_time)/(60*60*24)
+                minutes = minutes.to_i.abs
+                hours = hours.to_i.abs
+                days = days.to_i.abs
+                weeks = days/7
+                months = days/30
+
+                #Obtener el máximo
+                num = ocp.cancel_max.to_i
+                if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+                  if minutes >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+                  if hours >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+                  if weeks >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+                  if months >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                end
+
+              end
+            end
+          end
+
+        else
+          were_payed = false
+        end
+      end
+      #Fin pagadas
+
+      success = true
+      are_session_bookings = true
+      @bookings.each do |book|
+
+        is_booked = book.is_session_booked
+
+        if book.is_session
+          is_booked = false
+          status = book.status.id
+        else
+          are_session_bookings = false
+        end
+        if book.update(status_id: status, is_session_booked: is_booked)
+          current_user ? user = current_user.id : user = 0
+          BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user, notes: book.notes, company_comment: book.company_comment)
+        else
+          success = false
+        end
+
+      end
+
+      if success && were_payed && !are_session_bookings
+        payed_booking = @bookings.first.payed_booking
+        BookingMailer.cancel_payment_mail(payed_booking, 1)
+        BookingMailer.cancel_payment_mail(payed_booking, 2)
+        BookingMailer.cancel_payment_mail(payed_booking, 3)
+      end
+
+    end
+
+    # => Domain parser
+    host = request.host_with_port
+    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
     render layout: 'workflow'
   end
 
