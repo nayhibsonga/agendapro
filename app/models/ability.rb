@@ -135,6 +135,7 @@ class Ability
 
         can :get_booking, Booking, :service_provider => { :company_id => user.company_id }
         can :get_booking_info, Booking, :service_provider => { :company_id => user.company_id }
+        can :get_booking_for_payment, Booking, :service_provider => { :company_id => user.company_id }
         can :available_providers, ServiceProvider
         can :provider_breaks, ProviderBreak
         can :get_provider_break, ProviderBreak
@@ -148,6 +149,8 @@ class Ability
         can :destroy, Company, :id => user.company_id
         can :create, Company, :id => user.company_id
         can :update, Company, :id => user.company_id
+
+        can :location_products, Location
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -309,6 +312,8 @@ class Ability
         can :destroy, Product, :company_id => user.company_id
         can :create, Product, :company_id => user.company_id
         can :update, Product, :company_id => user.company_id
+
+        can :location_products, Location
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id

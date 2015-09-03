@@ -1378,6 +1378,12 @@ class BookingsController < ApplicationController
     render :json => booking
   end
 
+  def get_booking_for_payment
+    booking = Booking.find(params[:id])
+    discount = 100*((booking.service.price - booking.price)/booking.service.price).round(1)
+    render :json => {id: booking.id, service_name: booking.service.name, service_price: booking.service.price, discount: discount}
+  end
+
   def get_booking_info
     booking = Booking.find(params[:id])
     render :json => {service_provider_active: booking.service_provider.active, service_active: booking.service.active, service_provider_name: booking.service_provider.public_name, service_name: booking.service.name}

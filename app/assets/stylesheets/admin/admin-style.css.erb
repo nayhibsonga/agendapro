@@ -1238,10 +1238,13 @@ tr[class*="break"] {
 }
 
 #addNotBooked{
+  width: 120px;
+  margin-top: 7px;
   background-color: #22c488;
   color: #fff;
   border: 1px solid #22c488;
   border-radius: 3px;
+  float: right;
 }
 
 #addNotBooked:hover{
@@ -1251,6 +1254,9 @@ tr[class*="break"] {
 
 #paymentModalIntro .modal-dialog{
   width: 40% !important; 
+}
+.paymentModalStep{
+  overflow-y: auto;
 }
 
 .paymentModalStep .modal-dialog{
@@ -1282,6 +1288,12 @@ tr[class*="break"] {
 }
 
 .add-item-btn:hover{
+  background-color: #1ba970;
+  color: #fff;
+  border: none;
+}
+
+.add-item-btn:focus{
   background-color: #1ba970;
   color: #fff;
   border: none;
@@ -1421,4 +1433,139 @@ tr[class*="break"] {
   font-size: 17px;
   color: #22c488;
   text-align: center;
+}
+
+#paymentModalBookingForm{
+  border: 1px solid #949292;
+}
+
+.mbf-title{
+  border-bottom: 1px solid #949292;
+  margin-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  font-size: 16px;
+}
+
+#paymentClientPastBookings{
+  border: 1px solid #949292;
+}
+
+.cpb-title{
+  border-bottom: 1px solid #949292;
+  margin-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.cpb-headers{
+  border-bottom: 1px solid #949292;
+  margin-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#cpb-bookings{
+  max-height: 185px;
+  overflow-y: auto;
+}
+
+.addPastBooking{
+  background-color: #22c488;
+  color: #fff;
+  text-align: center;
+  border-radius: 3px;
+  border: none;
+}
+
+.addPastBooking:hover{
+  background-color: #1ba970;
+  color: #fff;
+  text-align: center;
+  border-radius: 3px;
+  border: none;
+}
+
+.addPastBooking:focus{
+  background-color: #1ba970;
+  color: #fff;
+  text-align: center;
+  border-radius: 3px;
+  border: none;
+}
+
+.pastBookingRow{
+  margin-bottom: 2px;
+  width: 98%;
+}
+
+.pastBookingCol{
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+#paymentItemsList{
+  margin-top: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#paymentItemsTable{
+  width: 100%;
+}
+
+#paymentItemsTable td{
+  border: 1px solid #949292;
+  padding: 3px;
+  text-align: left;
+}
+
+#paymentItemsTable th{
+  border: 1px solid #949292;
+  padding: 3px;
+  text-align: left;
+}
+
+#paymentSumDiv{
+  margin-top: 10px;
+}
+
+#paymentSumDiv table{
+  width: 100%;
+}
+
+#paymentSumDiv table td{
+  border: 1px solid #949292;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: bold;
+  color: #22c488;
+}
+
+#paymentSumDiv table th{
+  border: 1px solid #949292;
+  padding: 3px;
+  text-align: center;
+}
+
+
+#paymentModalProductForm{
+  border: 1px solid #949292;
+}
+
+.mpf-title{
+  border-bottom: 1px solid #949292;
+  margin-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  font-size: 16px;
 }

@@ -220,6 +220,7 @@
     get '/location_time', :to => 'locations#location_time'
     get '/get_booking', :to => 'bookings#get_booking'
     get '/get_booking_info', :to => 'bookings#get_booking_info'
+    get '/get_booking_for_payment', :to => 'bookings#get_booking_for_payment'
     get "/book", :to => 'bookings#book_service'
     post "/book", :to => 'bookings#book_service'
     get '/book_error', :to => 'bookings#book_error', :as => 'book_error'
@@ -360,6 +361,9 @@
     get "/transaccion/crear", :to => 'local_punto_pagos#create_transaction'
     get "/transaccion/procesar/:token", :to => 'local_punto_pagos#process_transaction'
     post "/transaccion/notificar", :to => 'local_punto_pagos#notify'
+
+    # Caja
+    get "/location_products", :to => 'locations#location_products'
 
   end
 

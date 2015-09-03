@@ -1,7 +1,7 @@
 class LocationsController < ApplicationController
   before_action :set_location, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
   before_action :authenticate_user!, except: [:location_data, :location_time, :get_available_time, :location_districts]
-  before_action :quick_add, except: [:location_data, :location_time, :get_available_time, :location_districts]
+  before_action :quick_add, except: [:location_data, :location_time, :get_available_time, :location_districts, :location_products]
   load_and_authorize_resource
   layout "admin", except: [:change_location_order]
 
@@ -546,6 +546,15 @@ class LocationsController < ApplicationController
       end
     end
     render :json => array_result
+  end
+
+  def location_products
+
+    @location = Location.find(params[:id])
+    @products = Product.where(id: LocationProduct.where(:location_id => @location.id).where('stock > 0').pluck(:product_id))
+
+    render :json => @products
+
   end
 
   private

@@ -20,7 +20,9 @@
             <div class="payment-form-div">
               <label for="payment_client" class="col-xs-3 control-label">Cliente</label>
               <div class="col-xs-9">
-                <input type="text" class="form-control" id="payment_client" name="payment_client" />
+                <input type="text" class="form-control" id="payment_client_name" name="payment_client_name" />
+                <span class="help-block"></span>
+                <ul id="payment_client_suggestions"></ul>
               </div>
               <div style="clear: both;"></div>
             </div>
@@ -53,42 +55,206 @@
           
           <div class="col-xs-2">
             <button type="button" class="btn btn-default add-item-btn" id="addServiceBtn">Servicio&nbsp;<i class="fa fa-plus"></i></button><br />
-            <button type="button" class="btn btn-default add-item-btn" id="addProductBtn">Producto&nbsp;<i class="fa fa-plus"></i></button>
+            <% if Product.where(:company_id => @company.id).count > 0 %>
+              <button type="button" class="btn btn-default add-item-btn" id="addProductBtn">Producto&nbsp;<i class="fa fa-plus"></i></button>
+            <% end %>
           </div>
           <div class="col-xs-10">
 
-            <div class="paymentClientPastBookings" hidden>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="fixed-table">
-                    <h4>Agregar al Pago:</h4>
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th></th>
-                          <th>Servicio</th>
-                          <th>Prestador</th>
-                          <th>Fecha</th>
-                          <th>Hora</th>
-                          <th>Precio Normal</th>
-                          <th>Descuento</th>
-                          <th>Precio</th>
-                        </tr>
-                      </thead>
-                      <tbody id="payment-past-bookings-table">
-                      </tbody>
-                    </table>
+            <div class="row">
+              
+              <div class="col-xs-6">
+
+                <div id="paymentModalBookingForm" hidden>
+                	
+                  <div class="mbf-title">
+                    Agregar servicio
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="service" class="col-xs-3 control-label">Servicio</label>
+                    <div class="col-xs-9">
+                      <select class="form-control" id="payment_not_booked_service" name="payment_not_booked_service">
+                        <option value=""></option>
+                      </select>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="provider" class="col-xs-3 control-label">Prestador</label>
+                    <div class="col-xs-9">
+                      <select class="form-control" id="payment_not_booked_provider" name="payment_not_booked_provider">
+                          <option value=""></option>
+                      </select>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="price" class="col-xs-3 control-label">Precio</label>
+                    <div class="col-xs-9">
+                      <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" />
+                      </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="discount" class="col-xs-3 control-label">Descuento</label>
+                    <div class="col-xs-9">
+                      <div class="input-group">
+                        <input class="form-control" type="number" id="payment_not_booked_discount" name="payment_not_booked_discount" value="0" />
+                        <span class="input-group-addon">%</span>
+                      </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <div class="col-xs-9 col-xs-offset-3">
+                      <button id="addNotBooked" class="btn">Agregar</button>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="col-xs-6">
+
+                <div id="paymentClientPastBookings" hidden>
+                  <div class="cpb-title">
+                    Agrega una reserva existente
+                  </div>
+                  <div class="cpb-headers">
+                    <div class="col-xs-4">
+                      Servicio
+                    </div>
+                    <div class="col-xs-4">
+                      Prestador
+                    </div>
+                    <div class="col-xs-4">
+                      Fecha
+                    </div>
+                    <div style="clear: both;">
+                    </div>
+                  </div>
+                  <div style="clear: both;">
+                  </div>
+                  <div id="cpb-bookings">
+                    
                   </div>
                 </div>
+
+              </div>
+
+            </div>
+
+            <div class="row">
+              <div class="col-xs-6">
+
+                <div id="paymentModalProductForm" hidden>
+
+                <div class="mpf-title">
+                    Agregar producto
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="service" class="col-xs-3 control-label">Producto</label>
+                    <div class="col-xs-9">
+                      <select class="form-control" id="payment_product" name="payment_product">
+                        <option value="">
+                          
+                        </option>
+                      </select>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="payment_product_quantity" class="col-xs-3 control-label">Cantidad</label>
+                    <div class="col-xs-9">
+                      <input class="form-control" type="number" id="payment_product_quantity" name="payment_product_quantity" value="1" />
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="payment_product_price" class="col-xs-3 control-label">Precio</label>
+                    <div class="col-xs-9">
+                      <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        <input class="form-control" type="number" id="payment_product_price" name="payment_product_price" value="0" />
+                      </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="payment_product_discount" class="col-xs-3 control-label">Descuento</label>
+                    <div class="col-xs-9">
+                      <div class="input-group">
+                        <input class="form-control" type="number" id="payment_product_discount" name="payment_product_discount" value="0" />
+                        <span class="input-group-addon">%</span>
+                      </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                </div>
+
+              </div>
+              <div class="col-xs-6">
+
               </div>
             </div>
 
-            <div class="paymentModalBookingForm" hidden>
+            <div class="row">
+              <div class="col-xs-9">
+                <div id="paymentItemsList" hidden>
+                  <table id="paymentItemsTable">
+                    <tr class="paymentItemsHeaders">
+                      <th>
 
-            </div>
+                      </th>
+                      <th>
+                        Tipo
+                      </th>
+                      <th>
+                        Nombre
+                      </th>
+                      <th>
+                        Cantidad
+                      </th>
+                      <th>
+                        Precio unitario
+                      </th>
+                      <th>
+                        Descuento
+                      </th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="col-xs-3">
+                <div id="paymentSumDiv">
+                  <table>
+                    <tr>
+                      <th>
+                        Total
+                      </th>
+                    </tr>
+                    <tr>
+                      <td id="paymentCalculatedTotal">
 
-            <div class="paymentModalProductForm" hidden>
-
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
             </div>
 
           </div>

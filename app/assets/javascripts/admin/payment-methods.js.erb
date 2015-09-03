@@ -1,4 +1,9 @@
 var paymentModalState = '';
+var paymentAmount = 0;
+var paymentItems = [];
+var paymentPastBookings = []
+var paymentNewBookings = []
+var paymentProducts = []
 
 function loadPaymentSettings() {
 	// cuotas
@@ -673,12 +678,36 @@ function get_product_index() {
 	//var location_id = parseInt($('#locals-selector').val())
 //}
 
+function loadLocationProducts()
+{
+	$("#payment_product").empty();
+	$("#payment_product").append('<option value="-1">Ninguno</option>');
+	$.getJSON('/location_products/', {id: parseInt($('#locals-selector').val()) }, function (products) {
+		$.each(products, function (key, product) {
+			$("#payment_product").append('<option value="' + product.id + '">' + product.name + '</option>');
+		});
+	});
+}
+
+function loadProductPrice()
+{
+	if($("#payment_product").val() == "")
+	{
+		return false;
+	}
+	$.getJSON('/products/' + $("#payment_product").val(), function (product) {
+		$("#payment_product_price").val(product.price);
+	});
+}
+
 function loadPaymentServices(){
-	$("#not_booked_service").empty();
-	$("#not_booked_service").append('<option value="">Ninguno</option>');
+	$("#payment_not_booked_service").empty();
+	$("#payment_not_booked_service").append('<option value="-1">Ninguno</option>');
+	$("#payment_not_booked_provider").empty();
+	$("#payment_not_booked_provider").append('<option value="-1">Ninguno</option>');
 	$.getJSON('/location_services/', {location: parseInt($('#locals-selector').val()) }, function (services) {
 		$.each(services, function (key, service) {
-			$("#not_booked_service").append('<option value="' + service.id + '">' + service.name + '</option>');
+			$("#payment_not_booked_service").append('<option value="' + service.id + '">' + service.name + '</option>');
 		});
 	});
 }
@@ -688,40 +717,213 @@ function loadServiceProviders(){
 	{
 		return false;
 	}
-	$("#not_booked_provider").empty();
-	$("#not_booked_provider").append('<option value="">Ninguno</option>');
-	$.getJSON('/providers_services/', {id: parseInt($("#not_booked_service").val()),local: parseInt($('#locals-selector').val()) }, function (providers) {
+	$("#payment_not_booked_provider").empty();
+	$("#payment_not_booked_provider").append('<option value="-1">Ninguno</option>');
+	$.getJSON('/providers_services/', {id: parseInt($("#payment_not_booked_service").val()),local: parseInt($('#locals-selector').val()) }, function (providers) {
 		$.each(providers, function (key, provider) {
-			$("#not_booked_provider").append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+			$("#payment_not_booked_provider").append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
 		});
 	});
 }
 
 function getServicePrice(){
-	if($("#not_booked_service").val() == "")
+	if($("#payment_not_booked_service").val() == "")
 	{
 		return false;
 	}
-	$.getJSON('/services/' + $("#not_booked_service").val(), function (service) {
-		$("#not_booked_price").val(service.price);
+	$.getJSON('/services/' + $("#payment_not_booked_service").val(), function (service) {
+		$("#payment_not_booked_price").val(service.price);
 	});
+}
+
+function loadClientPastBookings(){
+
+	$('#cpb-bookings').empty();
+	if (parseInt($('#payment_client_id').val()) > 0 && parseInt($('#locals-selector').val()) > 0) {
+	    $.getJSON('/payment_client_bookings/', { client_id: parseInt($('#payment_client_id').val()), location_id: parseInt($('#locals-selector').val()) }, function (past_bookings) {
+	      // window.console.log(past_bookings);
+	      	if (past_bookings.past_bookings.length > 0) {
+	        	$.each(past_bookings.past_bookings, function (key, past_booking) {
+
+	        		//Check if it's been added to the payment already.
+	        		var past_booking_exists = false;
+	        		for(pb_i = 0; pb_i < paymentPastBookings.length; pb_i++)
+	        		{
+	        			if(paymentPastBookings[pb_i] != null)
+	        			{
+	        				if(paymentPastBookings[pb_i].id == past_booking.booking.id)
+	        				{
+	        					past_booking_exists = true;
+	        					break;
+	        				}
+	        			}
+	        		}
+
+	        		if(!past_booking_exists)
+	        		{
+		        		$("#cpb-bookings").append('<div class="pastBookingRow" booking_id="' + past_booking.booking.id + '">' +
+		        			'<div class="col-xs-1 pastBookingCol"><button class="addPastBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
+		        			'<div class="col-xs-3 pastBookingCol">' + past_booking.booking_service + '</div>' +
+		        			'<div class="col-xs-4 pastBookingCol">' + past_booking.booking_provider + '</div>' +
+		        			'<div class="col-xs-4 pastBookingCol">' + past_booking.booking_datetime + '</div>' +
+		        			'<div style="clear-both">&nbsp;</div>' + 
+		        			'</div>'
+		        		);
+	        		}
+	        	});
+	        	$('#cpb-bookings').append('<div style="clear-both"></div>');
+	      	}
+	      	else {
+	        	$("#cpb-bookings").append("El cliente ingresado no tiene reservas hechas.");
+	      	}
+	    });
+	}
+	else {
+		$("#cpb-bookings").append("El cliente ingresado aún no existe.");
+	}
 }
 
 function addNotBooked(){
 
-	var final_price = $("#not_booked_price").val();
-	console.log(final_price);
-	if($("#not_booked_discount").val() != "")
+	var new_booking = new Object();
+	new_booking['service_id'] = $("#payment_not_booked_service").val();
+	new_booking['service_name'] = $('#payment_not_booked_service option:selected').text();
+	new_booking['provider_id'] = $("#payment_not_booked_provider").val();
+	new_booking['provider_name'] = $("#payment_not_booked_provider option:selected").text();
+	new_booking['price'] = $("#payment_not_booked_price").val();
+	new_booking['discount'] = $("#payment_not_booked_discount").val();
+
+	paymentItems.push(new_booking);
+	paymentNewBookings.push(new_booking);
+	var item_id = paymentItems.length-1;
+	var new_booking_index = paymentNewBookings.length-1;
+
+	$("#paymentItemsTable").append(
+		'<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '">' + 
+		'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" booking_index="-1" new_booking_index="' + new_booking_index + '"><i class="fa fa-times"></i></span></td>' +
+		'<td style="width: 28%;"><span>Servicio</span></td>' + 
+		'<td style="width: 21%;"><span>' + new_booking['service_name'] + '</span></td>' + 
+		'<td style="width: 7%;"><span class="itemQuantity">1</span></td>' + 
+		'<td style="width: 20%;"><span class="itemPrice">$' + new_booking['price'] + '</span></td>' +
+		'<td style="width: 19%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + new_booking['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
+		'</tr>'
+	);
+
+	calculatePaymentTotal();
+	$("#paymentItemsList").show();
+
+	loadPaymentServices();
+	$("#payment_not_booked_price").val("0");
+	$("#payment_not_booked_discount").val("0");
+
+}
+
+function addPastBooked(booking_id){
+
+	$.getJSON('/get_booking_for_payment', {id: booking_id}, function (booking) {
+
+		paymentItems.push(booking);
+		paymentPastBookings.push(booking);
+		var item_id = paymentItems.length-1;
+		var past_booking_index = paymentPastBookings.length-1;
+
+		$("#paymentItemsTable").append(
+			'<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1">' + 
+			'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" booking_index="' + past_booking_index + '" new_booking_index="-1"><i class="fa fa-times"></i></span></td>' +
+			'<td style="width: 28%;"><span>Reserva existente</span></td>' + 
+			'<td style="width: 21%;"><span>' + booking.service_name + '</span></td>' + 
+			'<td style="width: 7%;"><span class="itemQuantity">1</span></td>' + 
+			'<td style="width: 20%;"><span class="itemPrice">$' + booking.service_price + '</span></td>' +
+			'<td style="width: 19%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
+			'</tr>'
+		);
+
+		calculatePaymentTotal();
+
+	});
+
+	$("#paymentItemsList").show();
+	
+	loadClientPastBookings();
+
+	//$('.pastBookingRow[booking_id="' + booking_id + '"]').remove();
+}
+
+function addProduct()
+{
+	var product = new Object();
+	product['id'] = $("#payment_product").val();
+	product['name'] = $("#payment_product option:selected").text();
+	product['quantity'] = $("#payment_product_quantity");
+	product['price'] = $("#payment_product_price");
+	product['discount'] = $("#payment_product_discount");
+
+	paymentItems.push(product);
+	paymentProducts.push(product);
+	var item_id = paymentItems.length-1;
+	var product_index = paymentProducts.length-1;
+
+	$("#paymentItemsTable").append(
+		'<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '">' + 
+		'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><i class="fa fa-times"></i></span></td>' +
+		'<td style="width: 28%;"><span>Producto</span></td>' + 
+		'<td style="width: 21%;"><span>' + product['name'] + '</span></td>' + 
+		'<td style="width: 7%;"><span class="itemQuantity">' + product['quantity'] + '</span></td>' + 
+		'<td style="width: 20%;"><span class="itemPrice">$' + product['price'] + '</span></td>' +
+		'<td style="width: 19%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + product['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
+		'</tr>'
+	);
+
+	calculatePaymentTotal();
+	$("#paymentItemsList").show();
+
+	loadLocationProducts();
+	$("#payment_product_quantity").val("1");
+	$("#payment_product_price").val("0");
+	$("#payment_product_discount").val("0");
+
+}
+
+function calculatePaymentTotal(){
+
+	var total = 0;
+
+	$('.paymentItemsRow').each(function(e){
+
+		var quantity = parseInt($(this).find('.itemQuantity').text());
+		var price_str = $(this).find('.itemPrice').text();
+		var price = parseInt(price_str.substring(1, price_str.length));
+		var discount = parseInt($(this).find('.itemDiscount').val());
+
+		total = total + (price*(100-discount)/100);
+
+	});
+
+	$("#paymentCalculatedTotal").empty();
+	$("#paymentCalculatedTotal").append("$" + total);
+}
+
+function removePaymentItem(index)
+{
+
+	past_book_index = $('.paymentItemsRow[item_id="' + index + '"]').attr("past_booking_index");
+	new_book_index = $('.paymentItemsRow[item_id="' + index + '"]').attr("new_booking_index");
+
+	if(past_book_index != "-1")
 	{
-		final_price = parseInt(final_price)*(100 - parseInt($("#not_booked_discount").val()))/100; 
+		paymentPastBookings[past_book_index] = null;
 	}
+	if(new_book_index != "-1")
+	{	
+		paymentNewBookings[new_book_index] = null;
+	}
+	$('.paymentItemsRow[item_id="' + index + '"]').remove();
+	paymentItems[index] = null;
 
-	console.log(final_price);
+	loadClientPastBookings();
 
-	$('#payment-bookings-table').prepend('<tr class="payment-booking-tr"><td><input type="checkbox" class="payment-booking-checkbox" value="" /></td><td><div class="table-fixed">' + $("#not_booked_service option:selected").text() + '</div></td><td><div class="table-fixed">' + $("#not_booked_provider option:selected").text() + '</div></td><td><div class="table-fixed">Por agendar</div></td><td><div class="table-fixed">Por agendar</div></td><td><div class="table-fixed" data-price="' + $("#not_booked_price").val() + '">$ ' + $("#not_booked_price").val() + '</div></td><td><div class="input-group"><input type="number" class="form-control payment-booking-input" value="' + $("#not_booked_discount").val() + '" ><span class="input-group-addon">%</span></div></td><td><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control payment-booking-input" value="' + final_price + '"></div></td></tr>');
+	calculatePaymentTotal();
 
-	calculateTotals(false);
-	$('#paymentBookingModal').modal('hide');
 }
 
 
@@ -799,6 +1001,10 @@ $(function() {
 	});
 
 	$("#createPaymentBtn").click(function(){
+		paymentItems = [];
+		paymentNewBookings = [];
+		paymentPastBookings = [];
+		paymentProducts = [];
 		loadPaymentIntro(0);
 	});
 
@@ -815,13 +1021,23 @@ $(function() {
 
 	$("#addServiceBtn").click(function(){
 
+		$("#paymentModalProductForm").hide();
 
+		if($("#payment_client_id").val() != '')
+		{
+			loadClientPastBookings();
+			$("#paymentClientPastBookings").show();
+		}
+		loadPaymentServices();
+		$("#paymentModalBookingForm").show();
 
 	});
 
 	$("#addProductBtn").click(function(){
 
-		
+		$("#paymentModalBookingForm").hide();
+		loadLocationProducts();
+		$("#paymentModalProductForm").show();
 
 	});
 
@@ -829,9 +1045,26 @@ $(function() {
 		addNotBooked();
 	});
 
-	$("#not_booked_service").on('change', function(e){
+	$("body").on('click', '.addPastBooking', function(e){
+		addPastBooked($(this).attr("booking_id"));
+	});
+
+	$("body").on('change', '.itemDiscount', function(e){
+		console.log("Entra");
+		calculatePaymentTotal();
+	});
+
+	$("body").on('click', '.removePaymentItem', function(e){
+		removePaymentItem($(this).attr("item_id"));
+	});
+
+	$("#payment_not_booked_service").on('change', function(e){
 		loadServiceProviders();
 		getServicePrice();
+	});
+
+	$("#payment_product").on('change', function(e){
+		loadProductPrice();
 	});
 
 	$('#new_payment').submit(function(e) {
@@ -887,4 +1120,22 @@ $(function() {
 	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
 	};
+
+	$("#payment_client_name").autocomplete({
+		source: '/clients_name_suggestion',
+		appendTo: '#payment_client_suggestions',
+		autoFocus: true,
+		minLength: 3,
+		select: function( event, ui ) {
+			event.preventDefault();
+			var client = eval("(" + ui.item.value + ")");
+			$('#payment_client_id').val(client.id);
+			$("#payment_client_name").val(client.first_name+' '+client.last_name)
+			//$('#payment_xButton').prop('disabled', false);
+			//$("#payment_full_name").prop('disabled', true);
+		}
+	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+	};
+
 });
