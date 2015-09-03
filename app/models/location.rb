@@ -277,7 +277,7 @@ class Location < ActiveRecord::Base
 
 	end
 
-	def populated_categorized_services
+	def api_categorized_services
 
 	    location_resources = self.resource_locations.pluck(:resource_id)
 	    service_providers = self.service_providers.where(active: true, online_booking: true)
@@ -305,8 +305,16 @@ class Location < ActiveRecord::Base
 	      services_array = Array.new
 	      services.each do |service|
 	        if service.service_category_id == category.id
-	          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
-	          services_array.push(serviceJSON)
+	          service_info = {
+	          	id: service.id,
+	          	name: service.name,
+	          	price: service.show_price ? service.price : "",
+	          	duration: service.duration,
+	          	service_category_id: service.service_category_id,
+	          	order: service.order,
+	          	description: service.description
+	          }
+	          services_array.push(service_info)
 	        end
 	      end
 	      service_hash = {
