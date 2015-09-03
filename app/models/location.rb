@@ -308,7 +308,7 @@ class Location < ActiveRecord::Base
 	          service_info = {
 	          	id: service.id,
 	          	name: service.name,
-	          	price: service.show_price ? service.price : "",
+	          	price: service.show_price && service.price > 0 ? service.price : "",
 	          	duration: service.duration,
 	          	service_category_id: service.service_category_id,
 	          	order: service.order,
