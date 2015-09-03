@@ -13,7 +13,6 @@ class Client < ActiveRecord::Base
   def self.bookings_reminder
 
     canceled_status = Status.find_by_name("Cancelado")
-    bookings = Array.new
 
     #Send all services from same client (each company has diferent clients)
     Client.where(id: Booking.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).each do |client|
@@ -21,9 +20,14 @@ class Client < ActiveRecord::Base
       #Send a reminder for each location
       client.company.locations.each do |location|
 
+        bookings = Array.new
+        single_booking = Booking.new
+        
         potential_bookings = client.bookings.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
 
         potential_bookings.each do |booking|
+
+          single_booking = booking
 
           booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
 
@@ -43,11 +47,28 @@ class Client < ActiveRecord::Base
 
         if bookings.count > 0
           if bookings.count > 1
+
+            #Set an id to identify bookings that were sent in this reminder
+
+            last_reminder_group = 0
+
+            last_reminder_booking = Booking.where(:location_id => location.id).where.not(reminder_group: nil).order('reminder_group asc').last
+
+            # If there is one that's not null, then get the last one
+            if !last_reminder_booking.nil?
+              last_reminder_group = last_reminder_booking.reminder_group + 1
+            end
+
+            bookings.each do |b|
+              b.reminder_group = last_reminder_group
+              b.save
+            end
+
             #Send multiple bookings reminder
             send_multiple_reminder(bookings)
           else
             #Send regular reminder
-            BookingMailer.book_reminder_mail(booking)
+            BookingMailer.book_reminder_mail(single_booking)
           end
         end
 
@@ -83,7 +104,7 @@ class Client < ActiveRecord::Base
       @user[:name] = bookings[0].client.first_name
       @user[:send_mail] = bookings[bookings.length - 1].send_mail
       @user[:email] = bookings[0].client.email
-      @user[:cancel_all] = helper.cancel_all_booking_url(:confirmation_code => bookings[0].confirmation_code)
+      @user[:cancel_all] = helper.cancel_all_reminded_booking_url(:confirmation_code => bookings[0].confirmation_code)
       @user[:confirm_all] = helper.confirm_all_bookings_url(:confirmation_code => bookings[0].confirmation_code)
 
       @user_table = ''
