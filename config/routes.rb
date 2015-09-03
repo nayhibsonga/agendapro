@@ -263,6 +263,8 @@
     post '/cancel_booking', :to => 'bookings#cancel_booking'
     get '/cancel_all_booking', :to => 'bookings#cancel_all_booking', :as => 'cancel_all_booking'
     post '/cancel_all_booking', :to => 'bookings#cancel_all_booking'
+    get '/cancel_all_reminded_booking', :to => 'bookings#cancel_all_reminded_booking', :as => 'cancel_all_reminded_booking'
+    post '/cancel_all_reminded_booking', :to => 'bookings#cancel_all_reminded_booking'
     get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
     get '/confirm_all_bookings', :to => 'bookings#confirm_all_bookings', :as => 'confirm_all_bookings'
     get '/confirm_error', :to => 'bookings#confirm_error', :as => 'confirm_error'
