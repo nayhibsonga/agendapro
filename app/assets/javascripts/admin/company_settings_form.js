@@ -59,19 +59,17 @@ $(function () {
   });
 
   if ($('#company_setting_can_edit').prop('checked')) {
-    var thisGroup = $('#company_setting_can_edit').closest('.form-group');
-    thisGroup.next().removeClass('hidden');
+    $('#company_setting_max_changes').closest('.form-group').removeClass('hidden');
   } else{
-    var thisGroup = $('#company_setting_can_edit').closest('.form-group');
-    thisGroup.next().addClass('hidden');
+    $('#company_setting_max_changes').closest('.form-group').addClass('hidden');
   };
 
   $('#company_setting_can_edit').change(function () {
-    var thisGroup = $(this).closest('.form-group');
+    var maxChange = $('#company_setting_max_changes').closest('.form-group');
     if ($(this).prop('checked')) {
-      thisGroup.next().removeClass('hidden');
+      maxChange.removeClass('hidden');
     } else{
-      thisGroup.next().addClass('hidden');
+      maxChange.addClass('hidden');
     };
   });
 
