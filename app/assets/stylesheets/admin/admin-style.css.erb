@@ -1252,6 +1252,21 @@ tr[class*="break"] {
   border: 1px solid #1ba970;
 }
 
+#addProduct{
+  width: 120px;
+  margin-top: 7px;
+  background-color: #22c488;
+  color: #fff;
+  border: 1px solid #22c488;
+  border-radius: 3px;
+  float: right;
+}
+
+#addProduct:hover{
+  background-color: #1ba970;
+  border: 1px solid #1ba970;
+}
+
 #paymentModalIntro .modal-dialog{
   width: 40% !important; 
 }
@@ -1306,7 +1321,7 @@ tr[class*="break"] {
   text-align: center;
 }
 
-.payment-btn-next:hover{
+.payment-btn-next:hover, .payment-btn-next:focus{
   background-color: #1ba970;
   color: #fff;
 }
@@ -1319,7 +1334,7 @@ tr[class*="break"] {
   border: none;
 }
 
-.payment-btn-close:hover{
+.payment-btn-close:hover, .payment-btn-close:focus{
   width: 120px;
   background-color: #bebebe;
   color: #fff;
@@ -1336,7 +1351,7 @@ tr[class*="break"] {
   border: none;
 }
 
-.payment-btn-back:hover{
+.payment-btn-back:hover, .payment-btn-back:focus{
   float: left;
   width: 120px;
   background-color: #db7400;
@@ -1353,7 +1368,7 @@ tr[class*="break"] {
   border: none;
 }
 
-.payment-btn-send:hover{
+.payment-btn-send:hover, .payment-btn-send:focus{
   width: 120px;
   background-color: #0b587b;
   color: #fff;
@@ -1568,4 +1583,34 @@ tr[class*="break"] {
   padding-bottom: 5px;
   text-align: center;
   font-size: 16px;
+}
+
+.removePaymentItem button{
+  background-color: #fd633f;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+}
+
+.removePaymentItem button:hover, .removePaymentItem button:focus{
+  background-color: #e55938;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+}
+
+.editPaymentItem button{
+  background-color: #fd9610;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  text-align: center;
+}
+
+.editPaymentItem button:hover, .editPaymentItem button:focus{
+  background-color: #db7400;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  text-align: center;
 }

@@ -194,6 +194,15 @@ class PaymentsController < ApplicationController
     render :json => { past_sessions: @past_sessions }
   end
 
+  def create_new_payment
+
+    @json_response = []
+    @errors = []
+
+    
+
+  end
+
   private
     def set_payment
       @payment = Payment.find(params[:id])

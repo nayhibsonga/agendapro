@@ -1128,6 +1128,7 @@
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "bookings" %>
+  <%= javascript_include_tag "validations/admin/payment" %>
 
 	<script type="text/javascript">
     <% if @company_setting.deal_activate && @company_setting.deal_identification_number%>

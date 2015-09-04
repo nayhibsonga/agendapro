@@ -132,15 +132,44 @@ function calculateTotals(return_values) {
 $(".payment-btn-next").click(function(){
 	if(paymentModalState == 'Intro')
 	{
-		loadPaymentModal1();
+		if($("#fakePaymentIntroForm").valid())
+		{
+			loadPaymentModal1();
+		}
 	}
 	else if(paymentModalState == 'Step1')
 	{
+		if(paymentItems.length == 0)
+		{
+			alert("Agrega un servicio o poducto antes de continuar.");
+			return;
+		}
+		else
+		{
+			var all_null = true;
+			for(pi=0; pi < paymentItems.length; pi++)
+			{
+				if(paymentItems[pi] != null)
+				{
+					all_null = false;
+					break;
+				}
+			}
+
+			if(all_null)
+			{
+				alert("Agrega un servicio o poducto antes de continuar.");
+				return;
+			}
+		}
 		loadPaymentModal2();
 	}
 	else if(paymentModalState == 'Step2')
 	{
-		loadPaymentModal3();
+		if($("#fakePaymentStep2Form").valid() && $("#fakeMethodDetailsForm").valid())
+		{
+			loadPaymentModal3();
+		}
 	}
 });
 
@@ -159,6 +188,14 @@ $(".payment-btn-back").click(function(){
 	}
 });
 
+function calculateReturn()
+{
+	var paid_amount = parseInt($("#payment_paid_amount").val());
+	var price_amount = parseInt($("#payment_cost").val());
+	var return_amount = paid_amount - price_amount;
+	$("#payment_change_amount").val(return_amount);
+}
+
 function loadPaymentIntro(booking_id) {
 	$("#paymentModal1").modal('hide');
 	$("#paymentModalIntro").modal('show');
@@ -173,6 +210,8 @@ function loadPaymentModal1(booking_id) {
 }
 
 function loadPaymentModal2(booking_id) {
+	$("#payment-total-amount").text($("#paymentCalculatedTotal").text());
+	$("#payment_cost").val(parseInt($("#paymentCalculatedTotal").text().substring(1, $("#paymentCalculatedTotal").text().length)));
 	$("#paymentModal1").modal('hide');
 	$("#paymentModal2").modal('show');
 	$("#paymentModal3").modal('hide');
@@ -180,6 +219,7 @@ function loadPaymentModal2(booking_id) {
 }
 
 function loadPaymentModal3(booking_id) {
+	parsePaymentItems();
 	$("#paymentModal2").modal('hide');
 	$("#paymentModal3").modal('show');
 	paymentModalState = 'Step3';
@@ -799,18 +839,20 @@ function addNotBooked(){
 	var new_booking_index = paymentNewBookings.length-1;
 
 	$("#paymentItemsTable").append(
-		'<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '">' + 
-		'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" booking_index="-1" new_booking_index="' + new_booking_index + '"><i class="fa fa-times"></i></span></td>' +
-		'<td style="width: 28%;"><span>Servicio</span></td>' + 
-		'<td style="width: 21%;"><span>' + new_booking['service_name'] + '</span></td>' + 
-		'<td style="width: 7%;"><span class="itemQuantity">1</span></td>' + 
+		'<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1">' + 
+		'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+		/*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
+		'<td style="width: 25%;"><span>Servicio</span></td>' + 
+		'<td style="width: 25%;"><span>' + new_booking['service_name'] + '</span></td>' + 
+		'<td style="width: 7%;"><input type="number" class="form-control itemQuantity" value="1" disabled /></td>' + 
 		'<td style="width: 20%;"><span class="itemPrice">$' + new_booking['price'] + '</span></td>' +
-		'<td style="width: 19%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + new_booking['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
+		'<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + new_booking['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
 		'</tr>'
 	);
 
 	calculatePaymentTotal();
 	$("#paymentItemsList").show();
+	$("#paymentSumDiv").show();
 
 	loadPaymentServices();
 	$("#payment_not_booked_price").val("0");
@@ -828,13 +870,14 @@ function addPastBooked(booking_id){
 		var past_booking_index = paymentPastBookings.length-1;
 
 		$("#paymentItemsTable").append(
-			'<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1">' + 
-			'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" booking_index="' + past_booking_index + '" new_booking_index="-1"><i class="fa fa-times"></i></span></td>' +
-			'<td style="width: 28%;"><span>Reserva existente</span></td>' + 
-			'<td style="width: 21%;"><span>' + booking.service_name + '</span></td>' + 
-			'<td style="width: 7%;"><span class="itemQuantity">1</span></td>' + 
+			'<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' + 
+			'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+		/*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
+			'<td style="width: 25%;"><span>Reserva existente</span></td>' + 
+			'<td style="width: 25%;"><span>' + booking.service_name + '</span></td>' + 
+			'<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
 			'<td style="width: 20%;"><span class="itemPrice">$' + booking.service_price + '</span></td>' +
-			'<td style="width: 19%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
+			'<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
 			'</tr>'
 		);
 
@@ -843,6 +886,7 @@ function addPastBooked(booking_id){
 	});
 
 	$("#paymentItemsList").show();
+	$("#paymentSumDiv").show();
 	
 	loadClientPastBookings();
 
@@ -854,9 +898,11 @@ function addProduct()
 	var product = new Object();
 	product['id'] = $("#payment_product").val();
 	product['name'] = $("#payment_product option:selected").text();
-	product['quantity'] = $("#payment_product_quantity");
-	product['price'] = $("#payment_product_price");
-	product['discount'] = $("#payment_product_discount");
+	product['quantity'] = $("#payment_product_quantity").val();
+	product['price'] = $("#payment_product_price").val();
+	product['discount'] = $("#payment_product_discount").val();
+
+	console.log(product);
 
 	paymentItems.push(product);
 	paymentProducts.push(product);
@@ -865,17 +911,19 @@ function addProduct()
 
 	$("#paymentItemsTable").append(
 		'<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '">' + 
-		'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><i class="fa fa-times"></i></span></td>' +
-		'<td style="width: 28%;"><span>Producto</span></td>' + 
-		'<td style="width: 21%;"><span>' + product['name'] + '</span></td>' + 
-		'<td style="width: 7%;"><span class="itemQuantity">' + product['quantity'] + '</span></td>' + 
+		'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+		/*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
+		'<td style="width: 25%;"><span>Producto</span></td>' + 
+		'<td style="width: 25%;"><span>' + product['name'] + '</span></td>' + 
+		'<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="' + product['quantity'] + '" /></span></td>' + 
 		'<td style="width: 20%;"><span class="itemPrice">$' + product['price'] + '</span></td>' +
-		'<td style="width: 19%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + product['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
+		'<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + product['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
 		'</tr>'
 	);
 
 	calculatePaymentTotal();
 	$("#paymentItemsList").show();
+	$("#paymentSumDiv").show();
 
 	loadLocationProducts();
 	$("#payment_product_quantity").val("1");
@@ -890,17 +938,21 @@ function calculatePaymentTotal(){
 
 	$('.paymentItemsRow').each(function(e){
 
-		var quantity = parseInt($(this).find('.itemQuantity').text());
+		var quantity = parseInt($(this).find('.itemQuantity').val());
 		var price_str = $(this).find('.itemPrice').text();
 		var price = parseInt(price_str.substring(1, price_str.length));
 		var discount = parseInt($(this).find('.itemDiscount').val());
 
-		total = total + (price*(100-discount)/100);
+		total = total + (quantity*price*(100-discount)/100);
 
 	});
 
 	$("#paymentCalculatedTotal").empty();
 	$("#paymentCalculatedTotal").append("$" + total);
+
+	//Reset pay amounts if items list changed
+	$("#payment_paid_amount").val("");
+	$("#payment_change_amount").val("");
 }
 
 function removePaymentItem(index)
@@ -923,6 +975,85 @@ function removePaymentItem(index)
 	loadClientPastBookings();
 
 	calculatePaymentTotal();
+
+}
+
+function parsePaymentItems()
+{
+	var parsedPaymentPastBookings = []
+	var parsedPaymentNewBookings = []
+	var parsedPaymentProducts = []
+
+	for(x = 0; x < paymentPastBookings.length; x++)
+	{
+		if(paymentPastBookings[x] != null)
+		{
+			parsedPaymentPastBookings.push(paymentPastBookings[x]);
+		}
+	}
+
+	for(x = 0; x < paymentNewBookings.length; x++)
+	{
+		if(paymentNewBookings[x] != null)
+		{
+			parsedPaymentNewBookings.push(paymentNewBookings[x]);
+		}
+	}
+
+	for(x = 0; x < paymentProducts.length; x++)
+	{
+		if(paymentProducts[x] != null)
+		{
+			parsedPaymentProducts.push(paymentProducts[x]);
+		}
+	}
+
+	$('#paymentPastBookingsArray').val(JSON.stringify(parsedPaymentPastBookings));
+	$('#paymentNewBookingsArray').val(JSON.stringify(parsedPaymentNewBookings));
+	$('#paymentProductsArray').val(JSON.stringify(parsedPaymentProducts));
+
+}
+
+/*
+* Creates a payment and manages action depending on option selected:
+*	Send by email
+*	Print (create PDF)
+*	Nothing (show summary)
+*/
+
+function createAndServePayment(option)
+{
+	var cashier = $("#payment_cashier").val();
+	var client_name = $("#payment_client_name").val();
+	var client_id = $("#payment_client_id").val();
+	var client_email = $("#payment_client_email").val();
+	var payment_past_bookings = $("#paymentPastBookingsArray").val();
+	var payment_new_bookings = $("#paymentNewBookingsArray").val();
+	var payment_products = $("#paymentProductsArray").val();
+	var payment_paid_amount = $("#payment_paid_amount").val();
+	var payment_cost = $("#payment_cost").val();
+	var payment_change_amount = $("#payment_change_amount").val();
+	var pay_method = $("#selected_pay_method").val();
+	var method_number = $('#payment_' + pay_method + '_number').val();
+	var dues_number = $("#payment_credit_card_dues_number").val();
+	var payment_receipt_type_id = $("#payment_receipt_type").val();
+	var payment_receipt_number = $("#payment_receipt_number").val();
+	var payment_receipt_date = $("#payment_receipt_date").val();
+	var payment_receipt_notes = $("#payment_receipt_notes").val();
+	var callback_option = option;
+
+	$.ajax({
+		url: '/create_new_payment',
+		type: 'post',
+		dataType: 'json',
+		data: {cashier: cashier, client_name: client_name, client_id: client_id, past_bookings: payment_past_bookings, new_bookings: payment_new_bookings, products: payment_products, paid_amount: payment_paid_amount, cost: payment_cost, change_amount: payment_change_amount, pay_method: pay_method, method_number: method_number, dues_number: dues_number, receipt_type_id: payment_receipt_type_id, receipt_number: payment_receipt_number, receipt_date: payment_receipt_date, receipt_notes: payment_receipt_notes, callback: callback_option},
+		error: function(response){
+
+		},
+		success: function(response){
+
+		}
+	});
 
 }
 
@@ -1016,6 +1147,27 @@ $(function() {
 		var details_id = $(this).attr("href");
 		$(".payment_method_details").hide();
 		$(details_id).show();
+
+		if(details_id == "#cash_method_details")
+		{
+			$("#selected_pay_method").val("cash");
+		}
+		else if(details_id == "#check_method_details")
+		{
+			$("#selected_pay_method").val("check");
+		}
+		else if(details_id == "#credit_card_method_details")
+		{
+			$("#selected_pay_method").val("credit_card");
+		}
+		else if(details_id == "#debt_card_method_details")
+		{
+			$("#selected_pay_method").val("debt_card");
+		}
+		else
+		{
+			$("#selected_pay_method").val("other");
+		}
 		
 	});
 
@@ -1036,6 +1188,7 @@ $(function() {
 	$("#addProductBtn").click(function(){
 
 		$("#paymentModalBookingForm").hide();
+		$("#paymentClientPastBookings").hide();
 		loadLocationProducts();
 		$("#paymentModalProductForm").show();
 
@@ -1044,6 +1197,10 @@ $(function() {
 	$("#addNotBooked").click(function(e){
 		addNotBooked();
 	});
+
+	$("#addProduct").click(function(e){
+		addProduct();
+	})
 
 	$("body").on('click', '.addPastBooking', function(e){
 		addPastBooked($(this).attr("booking_id"));
@@ -1066,6 +1223,24 @@ $(function() {
 	$("#payment_product").on('change', function(e){
 		loadProductPrice();
 	});
+
+	$("#payment_paid_amount").on('change', function(e){
+		calculateReturn();
+	});
+
+
+	$("#paymentBtnSave").click(function(){
+		createAndServePayment("save");
+	});
+
+	$("#paymentBtnPrint").click(function(){
+		createAndServePayment("print");
+	});
+
+	$("#paymentBtnSendEmail").click(function(){
+		createAndServePayment("sendEmail")
+	});
+
 
 	$('#new_payment').submit(function(e) {
 	    e.preventDefault();
@@ -1130,7 +1305,8 @@ $(function() {
 			event.preventDefault();
 			var client = eval("(" + ui.item.value + ")");
 			$('#payment_client_id').val(client.id);
-			$("#payment_client_name").val(client.first_name+' '+client.last_name)
+			$("#payment_client_name").val(client.first_name+' '+client.last_name);
+			$("#payment_client_email").val(client.email);
 			//$('#payment_xButton').prop('disabled', false);
 			//$("#payment_full_name").prop('disabled', true);
 		}

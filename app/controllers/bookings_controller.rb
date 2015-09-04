@@ -1843,6 +1843,7 @@ class BookingsController < ApplicationController
 
 
       @booking.price = service.price
+      @booking.list_price = service.price
       @booking.max_changes = @company.company_setting.max_changes
       @booking.booking_group = booking_group
 
