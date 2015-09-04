@@ -29,6 +29,8 @@ $(function () {
 
   $("#company_logo").change(function (){
     if ($("#company_logo").valid()) {
+      var src = $('#company-form img').attr("src");
+      $('#company-form img').attr("src", "/assets/mobile/loading.gif");
       var formId = $('#company-form').prop('id');
       $.ajax({
         type: 'POST',
@@ -43,6 +45,7 @@ $(function () {
           $("#company_logo").val('');
         },
         error: function (xhr) {
+          $('#company-form img').attr("src", src);
           var errors = $.parseJSON(xhr.responseText).errors;
           var errorList = '';
           for (i in errors) {
