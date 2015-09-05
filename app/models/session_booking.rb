@@ -18,7 +18,7 @@ class SessionBooking < ActiveRecord::Base
 		# GENERAL
 			bookings = self.booked_bookings.order(:start)
 			@data[:company] = bookings[0].location.company.name
-			@data[:url] = bookings[0].location.company.web_address
+			@data[:url] = bookings[0].location.get_web_address
       @data[:domain] = bookings[0].location.company.country.domain
 			@data[:signature] = bookings[0].location.company.company_setting.signature
 			@data[:type] = 'image/png'

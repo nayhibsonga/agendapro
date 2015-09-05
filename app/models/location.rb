@@ -416,6 +416,14 @@ class Location < ActiveRecord::Base
 	    return categories
 	end
 
+	def get_web_address
+		return self.company.company_countries.find_by(country_id: self.district.city.region.country.id).web_address
+	end
+
+	def get_locale
+		return self.district.city.region.country.locale
+	end
+
 	def get_full_address
 		full_address = self.address
 		full_address += " " + self.second_address if !self.second_address.blank?

@@ -6,6 +6,19 @@ class Company < ActiveRecord::Base
 
 	has_many :company_economic_sectors
 	has_many :economic_sectors, :through => :company_economic_sectors
+
+	has_many :company_countries
+	has_many :countries, :through => :company_countries
+
+	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
+
+	def reject_company_country(attributes)
+	  exists = attributes['id'].present?
+	  empty = attributes.slice(:web_address).blank?
+	  attributes.merge!({:_destroy => 1}) if exists and empty # destroy empty tour
+	  return (!exists and empty) # reject empty attributes
+	end
+
 	has_many :users, dependent: :nullify
 	has_many :plan_logs, dependent: :destroy
 	has_many :billing_logs, dependent: :destroy
@@ -25,7 +38,7 @@ class Company < ActiveRecord::Base
 
 	has_many :payment_accounts, dependent: :destroy
 
-	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
+	validates :name, :web_address, :plan, :payment_status, :country, :company_countries, :presence => true
 
 	validates_uniqueness_of :web_address, scope: :country_id
 
@@ -40,6 +53,12 @@ class Company < ActiveRecord::Base
 	def plan_settings
 		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
 			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/proveedores activos que lo que permite el plan.")
+		end
+	end
+
+	def country_settings
+		if self.company_countries.count < 1
+			errors.add(:base, "La empresa debe tener por lo menos un país con dirección AgendaPro asociada.")
 		end
 	end
 

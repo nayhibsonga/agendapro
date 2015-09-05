@@ -1598,7 +1598,7 @@ class BookingsController < ApplicationController
 
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     booking_data = JSON.parse(params[:bookings], symbolize_names: true)
 
@@ -2482,20 +2482,22 @@ class BookingsController < ApplicationController
     # end
 
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "workflow"
   end
 
   def remove_bookings
     @bookings = Booking.find(params[:bookings].split())
+    @location = @bookings.first.location
+    @company = Company.find(params[:company])
     @bookings.each do |booking|
       booking.destroy
     end
 
     # => Domain parser
     host = request.host_with_port
-    @url = Company.find(params[:company]).web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     flash[:notice] = "Reserva cancelada"
     redirect_to @url
@@ -2511,7 +2513,7 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(@booking.location_id)
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
     booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
@@ -2794,7 +2796,7 @@ class BookingsController < ApplicationController
     end
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @booking.location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "workflow"
   end
@@ -2825,7 +2827,7 @@ class BookingsController < ApplicationController
 
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "workflow"
   end
@@ -2947,7 +2949,7 @@ class BookingsController < ApplicationController
     end
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @booking.location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "workflow"
   end
@@ -3174,7 +3176,7 @@ class BookingsController < ApplicationController
 
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: 'workflow'
   end
@@ -3289,6 +3291,7 @@ class BookingsController < ApplicationController
       booking = Booking.find(params[:id])
       @company = Location.find(booking.location_id).company
       @bookings = Booking.where(location_id: booking.location_id).where(reminder_group: booking.reminder_group)
+      @selectedLocation = Location.find(booking.location_id)
       status = Status.find_by(:name => 'Cancelado').id
       were_payed = true
 
@@ -3391,7 +3394,7 @@ class BookingsController < ApplicationController
 
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
     render layout: 'workflow'
   end
 
@@ -3505,6 +3508,7 @@ class BookingsController < ApplicationController
       booking = Booking.find(params[:id])
       @company = Location.find(booking.location_id).company
       @bookings = Booking.where(location: booking.location).where(booking_group: booking.booking_group)
+      @selectedLocation = Location.find(booking.location_id)
       status = Status.find_by(:name => 'Cancelado').id
       were_payed = true
 
@@ -3607,7 +3611,7 @@ class BookingsController < ApplicationController
 
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
     render layout: 'workflow'
   end
 
@@ -4679,7 +4683,7 @@ class BookingsController < ApplicationController
     @string_bookings = JSON.pretty_generate(@bookings)
 
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @local.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     # hash_array = Array.new
 

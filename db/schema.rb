@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150903000208) do
+ActiveRecord::Schema.define(version: 20150904141055) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -194,6 +194,7 @@ ActiveRecord::Schema.define(version: 20150903000208) do
     t.boolean  "owned",               default: true
     t.boolean  "show_in_home",        default: false
     t.integer  "country_id"
+    t.boolean  "activate_i18n",       default: false
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
