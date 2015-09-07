@@ -50,22 +50,9 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment
 
-	before_create :set_company_country
-
 	def plan_settings
 		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
 			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/proveedores activos que lo que permite el plan.")
-		end
-	end
-
-	def set_company_country
-		puts 'hola'
-		self.company_countries = [CompanyCountry.new(web_address: self.web_address, country_id: self.country_id, company_id: self)]
-	end
-
-	def country_settings
-		if self.company_countries.count < 1
-			errors.add(:base, "La empresa debe tener por lo menos un país con dirección AgendaPro asociada.")
 		end
 	end
 

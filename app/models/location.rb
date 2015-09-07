@@ -55,7 +55,7 @@ class Location < ActiveRecord::Base
 
   validates :name, :phone, :company, :district, :email, :presence => true
 
-  validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :plan_locations, :outcall_services
+  validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :plan_locations, :outcall_services, :active_countries
   validate :new_plan_locations, :on => :create
 
   after_commit :extended_schedule
@@ -211,6 +211,12 @@ class Location < ActiveRecord::Base
 					errors.add(:base, "El horario del staff "+service_provider.public_name+" no es factible para este local, debes cambiarlo antes de poder cambiar el horario del local.")
 				end
 			end
+		end
+	end
+
+	def active_countries
+		if self.active && CompanyCountry.where(country_id: self.district.city.region.country.id, company_id: self.company_id).count < 1
+			errors.add(:base, "No puedes guardar el local ya que no tienes ese país activo en tus configuraciones.")
 		end
 	end
 
