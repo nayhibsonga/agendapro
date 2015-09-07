@@ -103,7 +103,7 @@
 					<div class="form-group has-feedback">
 						<%= builder.label :country_id, 'País de la Compañía', :class => 'col-sm-4 control-label' %>
 						<div class="col-sm-8">
-							<%= builder.select :country_id, options_for_select(Country.all.map{ |c| [c.name, c.id, {'data-domain'=>c.domain}] }, selected_key = Country.find_by(locale: I18n.locale.to_s).id), { placeholder: 'Elige el país donde está tu empresa' }, { class: "form-control" } %>
+							<%= builder.select :country_id, options_for_select(Country.all.map{ |c| [c.name, c.id, {'data-domain'=>c.domain}] }, selected_key = Country.find_by(locale: I18n.locale.to_s) ? Country.find_by(locale: I18n.locale.to_s).id : ''), { placeholder: 'Elige el país donde está tu empresa' }, { class: "form-control" } %>
 						<span class="help-block"></span>
 						<span class="form-control-feedback"></span>
 						</div>
