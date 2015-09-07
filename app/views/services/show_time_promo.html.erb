@@ -14,9 +14,6 @@
         <div class="promo-title">
           <%= @service.name %> en <%= @location.name %> de <%= @location.company.name %>
         </div>
-        <div class="promo-description">
-          <%= @service.promo_description.html_safe %>
-        </div>
       </div>
     </div>
 
@@ -266,6 +263,9 @@
       <div class="col-xs-6 col-md-6">
         <div class="promo-image" style="margin-top: 15px;">
           <%= image_tag @service.time_promo_photo.url.to_s, :alt => "Loader", :size => "554x302", :class => "img-responsive", :id => "promo_photo" %>
+        </div>
+        <div class="promo-description">
+          <%= @service.promo_description.html_safe %>
         </div>
         <div class="google-maps-empresa">
           <h3><%= @service.company.name %></h3>

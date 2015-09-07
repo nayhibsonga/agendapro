@@ -2838,17 +2838,13 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(@booking.location_id)
 
     status_confirmed = Status.find_by(:name => 'Confirmado')
-    status_reservado = Status.find_by_name('Reservado')
-    status_pagado = Status.find_by_name('Pagado')
+    #status_reservado = Status.find_by_name('Reservado')
+    #status_pagado = Status.find_by_name('Pagado')
+    status_cancelado = Status.find_by_name('Cancelado')
 
-    if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > @booking.start || (@booking.status_id != status_reservado.id && @booking.status_id != status_pagado.id)
-      if @booking.status_id == status_confirmed.id
-        redirect_to confirm_success_path(:id => @booking.id)
-        return
-      else
+    if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > @booking.start || @booking.status_id == status_cancelado.id
         redirect_to confirm_error_path(:id => @booking.id)
         return
-      end
     end
 
 
@@ -2873,25 +2869,19 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(booking.location_id)
 
     status_confirmed = Status.find_by(:name => 'Confirmado')
-    status_reservado = Status.find_by_name('Reservado')
-    status_pagado = Status.find_by_name('Pagado')
+    status_cancelado = Status.find_by_name('Cancelado')
 
     @bookings.each do |b|
-      if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > b.start || (b.status_id != status_reservado.id && b.status_id != status_pagado.id)
-        if b.status_id != status_confirmed.id
-          reason = ""
-          if b.status_id == Status.find_by_name("Asiste").id
-            reason = "ya asististe a ella."
-          elsif b.status_id == Status.find_by_name("Cancelado").id
+      if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > b.start || b.status_id == status_cancelado.id
+          
+          if b.status_id == status_cancelado.id
             reason = "fue cancelada."
-          elsif b.status_id == Status.find_by_name("No Asiste").id
-            reason = "ya ocurrió y no asististe."
           else
             reason = "ya ocurrió."
           end
+          
           redirect_to confirm_error_path(:id => @bookings.first.id, :group_confirm => true, :reason => reason)
           return
-        end
       end
     end
 

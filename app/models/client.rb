@@ -60,6 +60,7 @@ class Client < ActiveRecord::Base
             end
 
             bookings.each do |b|
+              puts "Booking " + b.id.to_s + " will be sent with reminder_group: " + last_reminder_group.to_s
               b.reminder_group = last_reminder_group
               b.save
             end
@@ -68,6 +69,7 @@ class Client < ActiveRecord::Base
             send_multiple_reminder(bookings)
           else
             #Send regular reminder
+            puts "Booking " + b.id.to_s + " will be sent alone."
             BookingMailer.book_reminder_mail(single_booking)
           end
         end
