@@ -1,0 +1,31 @@
+<h1>Listing provider_groups</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Name</th>
+      <th>Order</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @provider_groups.each do |provider_group| %>
+      <tr>
+        <td><%= provider_group.company %></td>
+        <td><%= provider_group.name %></td>
+        <td><%= provider_group.order %></td>
+        <td><%= link_to 'Show', provider_group %></td>
+        <td><%= link_to 'Edit', edit_provider_group_path(provider_group) %></td>
+        <td><%= link_to 'Destroy', provider_group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Provider group', new_provider_group_path %>
