@@ -217,7 +217,7 @@
                             <div class="controls">
                               <%= layer_field.label :web_address, country.name, class: 'control-label' %>
                               <div class="input-group">
-                                <span class="input-group-addon"><%= layer_field.check_box :active, checked: ! @company.company_countries.find_by(country_id: country.id).nil?, class: 'company-country-checkbox' %></span>
+                                <span class="input-group-addon"><%= layer_field.check_box :active, checked: ! @company.company_countries.find_by(country_id: country.id).nil?, disabled: @company.country_id == country.id, class: 'company-country-checkbox' %></span>
                                 <%= layer_field.text_field :web_address, class: 'form-control company-web-address', disabled: @company.company_countries.find_by(country_id: country.id).nil?, required: true %>
                                 <span class="input-group-addon">.agendapro<%= country.domain %></span>
                               </div>

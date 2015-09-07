@@ -2410,8 +2410,8 @@ class CompaniesController < ApplicationController
 	end
 
 	def check_company_web_address
-		@company = CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)) ? CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)).company : nil
-		render :json => @company.nil?
+		@company_country = CompanyCountry.find_by(web_address: params[:web_address], country_id: params[:country_id])
+		render :json => @company_country.nil?
 	end
 
 	def get_link

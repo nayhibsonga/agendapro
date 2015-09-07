@@ -288,6 +288,10 @@
 	</div>
 <% end %>
 
+<% if resource.errors %>
+<%= resource.errors.full_messages.inspect %>
+<% end %>
+
 <% content_for :scripts do %>
 <%= javascript_include_tag 'validations/validate' %>
 <%= javascript_include_tag 'validations/home/new-user' %>
