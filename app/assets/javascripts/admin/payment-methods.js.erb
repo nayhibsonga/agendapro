@@ -1023,8 +1023,12 @@ function parsePaymentItems()
 
 function createAndServePayment(option)
 {
+	var location_id = parseInt($('#locals-selector').val());
 	var cashier = $("#payment_cashier").val();
 	var client_name = $("#payment_client_name").val();
+	split_name('#payment_client_name', '#payment_client_first_name', '#payment_client_last_name');
+	var client_first_name = $("#payment_client_first_name");
+	var client_last_name = $("#payment_client_last_name");
 	var client_id = $("#payment_client_id").val();
 	var client_email = $("#payment_client_email").val();
 	var payment_past_bookings = $("#paymentPastBookingsArray").val();
@@ -1046,7 +1050,7 @@ function createAndServePayment(option)
 		url: '/create_new_payment',
 		type: 'post',
 		dataType: 'json',
-		data: {cashier: cashier, client_name: client_name, client_id: client_id, past_bookings: payment_past_bookings, new_bookings: payment_new_bookings, products: payment_products, paid_amount: payment_paid_amount, cost: payment_cost, change_amount: payment_change_amount, pay_method: pay_method, method_number: method_number, dues_number: dues_number, receipt_type_id: payment_receipt_type_id, receipt_number: payment_receipt_number, receipt_date: payment_receipt_date, receipt_notes: payment_receipt_notes, callback: callback_option},
+		data: {location_id: location_id, cashier: cashier, client_name: client_name, client_first_name: client_first_name, client_last_name: client_last_name, client_id: client_id, past_bookings: payment_past_bookings, new_bookings: payment_new_bookings, products: payment_products, paid_amount: payment_paid_amount, cost: payment_cost, change_amount: payment_change_amount, pay_method: pay_method, method_number: method_number, dues_number: dues_number, receipt_type_id: payment_receipt_type_id, receipt_number: payment_receipt_number, receipt_date: payment_receipt_date, receipt_notes: payment_receipt_notes, callback: callback_option},
 		error: function(response){
 
 		},

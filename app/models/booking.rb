@@ -11,6 +11,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :payment
 	belongs_to :session_booking
 	belongs_to :service_promo
+  belongs_to :receipt
 
   has_many :booking_histories, dependent: :destroy
 
@@ -31,6 +32,17 @@ class Booking < ActiveRecord::Base
 
   after_create :send_booking_mail, :wait_for_payment, :check_session
   after_update :send_update_mail, :check_session
+
+  #Get booking price if it's a session
+  #to get it's provider commission
+  def get_session_price
+    if self.session_booking_id.nil?
+      return self.price
+    else
+      session_price = (self.price / self.session_booking.sessions_amount).round
+      return session_price
+    end
+  end
 
   #Check if booking hour is part of a promo
   def check_for_promo_payment

@@ -73,14 +73,31 @@ function saveProduct (typeURL, extraURL) {
 	    	location_products.push({ "location_id": $(this).val(), "stock": $('#location_product_ids_stock_'+$(this).val()).val() });
 		}
 	});
-	var productJSON = { "name": $('#product_name').val(), "sku": $('#product_sku').val(), "product_category_id": $('#product_product_category_id').val(), "price": $('#product_price').val(), "comission_value": $('#product_comission_value').val(), "comission_option": $('#product_comission_option').val(), "location_products_attributes": location_products };
+
+	var product_description = $("#product_description").val();
+
+	var productJSON = { "name": $('#product_name').val(), "sku": $('#product_sku').val(), "product_category_id": $('#product_product_category_id').val(), "price": $('#product_price').val(), "comission_value": $('#product_comission_value').val(), "comission_option": $('#product_comission_option').val(), "location_products_attributes": location_products, "description": product_description };
 	$.ajax({
 		type: typeURL,
 		url: '/products'+extraURL+'.json',
 		data: { "product": productJSON },
 		dataType: 'json',
 		success: function() {
-			document.location.href = '/products/';
+			alertId.showAlert(
+				'<h3>Producto guardado</h3>' +
+				'<p>El producto se ha editado de manera correcta.</p>'
+				,
+				function(){
+					document.location.href = '/products/';
+				}
+				,
+				"Aceptar"
+				,
+				function(){
+					document.location.href = '/products/';
+				}
+			);
+			
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;

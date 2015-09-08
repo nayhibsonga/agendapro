@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150904165900) do
+ActiveRecord::Schema.define(version: 20150908150508) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -125,6 +125,7 @@ ActiveRecord::Schema.define(version: 20150904165900) do
     t.boolean  "is_booked",              default: true
     t.integer  "reminder_group"
     t.float    "list_price",             default: 0.0
+    t.integer  "receipt_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -621,8 +622,6 @@ ActiveRecord::Schema.define(version: 20150904165900) do
   create_table "payments", force: true do |t|
     t.integer  "company_id"
     t.float    "amount",                    default: 0.0
-    t.integer  "receipt_type_id"
-    t.string   "receipt_number",            default: "",    null: false
     t.integer  "payment_method_id"
     t.string   "payment_method_number",     default: "",    null: false
     t.integer  "payment_method_type_id"
@@ -647,6 +646,8 @@ ActiveRecord::Schema.define(version: 20150904165900) do
     t.float    "sessions_amount",           default: 0.0
     t.float    "sessions_discount",         default: 0.0
     t.integer  "sessions_quantity",         default: 0
+    t.float    "paid_amount",               default: 0.0
+    t.float    "change_amount",             default: 0.0
   end
 
   add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
@@ -656,7 +657,6 @@ ActiveRecord::Schema.define(version: 20150904165900) do
   add_index "payments", ["location_id"], name: "index_payments_on_location_id", using: :btree
   add_index "payments", ["payment_method_id"], name: "index_payments_on_payment_method_id", using: :btree
   add_index "payments", ["payment_method_type_id"], name: "index_payments_on_payment_method_type_id", using: :btree
-  add_index "payments", ["receipt_type_id"], name: "index_payments_on_receipt_type_id", using: :btree
 
   create_table "plan_countries", force: true do |t|
     t.integer  "plan_id"
@@ -815,10 +815,29 @@ ActiveRecord::Schema.define(version: 20150904165900) do
     t.datetime "updated_at"
   end
 
+  create_table "receipt_products", force: true do |t|
+    t.integer  "receipt_id"
+    t.integer  "product_id"
+    t.float    "price"
+    t.float    "discount"
+    t.integer  "quantity"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "receipt_types", force: true do |t|
     t.string   "name",       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "receipts", force: true do |t|
+    t.integer  "receipt_type_id"
+    t.integer  "payment_id"
+    t.float    "amount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "number",          default: ""
   end
 
   create_table "regions", force: true do |t|

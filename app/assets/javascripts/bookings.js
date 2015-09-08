@@ -7,3 +7,4 @@
 //= require admin/admin-calendar
 //= require admin/hoursOptimizer
 //= require admin/payment-methods
+//= require split-name

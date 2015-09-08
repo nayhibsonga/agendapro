@@ -388,19 +388,21 @@ class PuntoPagosController < ApplicationController
         #Pending params:
         # => amount
 
+
         payment = Payment.new
         payment.company_id = first_booking.service.company.id
-        payment.receipt_type_id = ReceiptType.find_by_name("Boleta").id
-        payment.receipt_number = params[:numero_operacion]
+        payment.payed = true
         payment.amount = params[:monto]
+        payment.paid_amount = params[:monto]
+        payment.change_amount = 0.0
 
         if params[:medio_pago] == "3"
-          payment.payment_method_id = PaymentMethod.find_by_name("Tarjeta de Crédito").id
+          payment.payment_method_id = PaymentMethod.find_by_name("AgendaPro").id
           payment.payment_method_number = params[:codigo_autorizacion]
           payment.payment_method_type_id = PaymentMethodType.find_by_name("Sin información").id
           payment.installments = params[:num_cuotas]
         else
-          payment.payment_method_id = PaymentMethod.find_by_name("Tarjeta de Débito").id
+          payment.payment_method_id = PaymentMethod.find_by_name("AgendaPro").id
           payment.payment_method_number = params[:codigo_autorizacion]
         end
 
@@ -409,6 +411,12 @@ class PuntoPagosController < ApplicationController
         payment.client_id = first_booking.client_id
 
         sum_normal_price = 0
+
+        receipt = Receipt.new
+        receipt.amount = params[:monto]
+        receipt.receipt_type_id = ReceiptType.find_by_name("Boleta").id
+        receipt.number = params[:numero_operacion]
+        receipt.payment = payment
 
         Booking.where(:trx_id => params[:trx_id]).each do |booking|
 
@@ -463,15 +471,10 @@ class PuntoPagosController < ApplicationController
         # payment.discount = book_discount
 
         payment.bookings = bookings
-
-        #Now assign payment to all bookings (normal or session)
-        #If model is changed, then assign it to SessonBooking if they are sessions
-        #bookings.each do |booking|
-        #  booking.payment_id = payment.id
-        #  booking.save
-        #end
+        receipt.bookings = bookings
 
         payment.save
+        receipt.save
 
         if bookings.count > 0
 

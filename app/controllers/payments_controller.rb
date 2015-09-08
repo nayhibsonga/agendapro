@@ -199,6 +199,23 @@ class PaymentsController < ApplicationController
     @json_response = []
     @errors = []
 
+    #Find location
+    location = Location.find(params[:location_id])
+
+    #Find or create a client
+    client = Client.new
+    if params[:client_id] && !params[:client_id].blank?
+      client = Client.find(params[:client_id])
+    else
+      client.first_name = params[:client_first_name]
+      client.last_name = params[:client_last_name]
+      client.company_id = location.company_id
+      client.save
+    end
+
+    
+
+    payment = Payment.new
     
 
   end

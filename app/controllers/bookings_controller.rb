@@ -1992,6 +1992,11 @@ class BookingsController < ApplicationController
                 new_price = (service.price - current_service.discount*service.price/100).round
                 booking.price = new_price
                 final_price = new_price
+                if(booking.list_price > 0)
+                  booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+                else
+                  booking.discount = 0
+                end
               end
             elsif current_service.has_time_discount
 
@@ -2056,6 +2061,11 @@ class BookingsController < ApplicationController
                 new_price = (booking.service.price - sessions_max_discount*booking.service.price/100).round
                 booking.price = new_price
                 final_price = new_price
+                if(booking.list_price > 0)
+                  booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+                else
+                  booking.discount = 0
+                end
               end
 
             end
@@ -2075,6 +2085,14 @@ class BookingsController < ApplicationController
           if !booking.service.online_payable || !booking.service.company.company_setting.online_payment_capable || !booking.service.company.company_setting.allows_online_payment
 
             booking.price = booking.service.price
+            logger.debug "list_price: " + booking.list_price.to_s
+            logger.debug "price: " + booking.price.to_s
+
+            if(booking.list_price > 0)
+              booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+            else
+              booking.discount = 0
+            end
 
           else
 
@@ -2124,6 +2142,11 @@ class BookingsController < ApplicationController
               new_book_price = (booking.service.price - new_book_discount*booking.service.price/100).round
               booking.price = new_book_price
               final_price = final_price + new_book_price
+              if(booking.list_price > 0)
+                booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+              else
+                booking.discount = 0
+              end
 
             end
 
