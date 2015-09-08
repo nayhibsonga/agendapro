@@ -27,8 +27,6 @@ class Client < ActiveRecord::Base
 
         potential_bookings.each do |booking|
 
-          single_booking = booking
-
           booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
 
           if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start) && booking.send_mail
@@ -40,6 +38,8 @@ class Client < ActiveRecord::Base
             else
               bookings << booking
             end
+
+            single_booking = booking
 
           end
 
@@ -69,7 +69,7 @@ class Client < ActiveRecord::Base
             send_multiple_reminder(bookings)
           else
             #Send regular reminder
-            puts "Booking " + b.id.to_s + " will be sent alone."
+            puts "Booking " + single_booking.id.to_s + " will be sent alone."
             BookingMailer.book_reminder_mail(single_booking)
           end
         end
