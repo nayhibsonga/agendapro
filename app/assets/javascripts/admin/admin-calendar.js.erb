@@ -25,11 +25,15 @@ function loadProviders () {
 						$('#provider_break_service_provider_id').append('<option value="0" data-block="' + $('#calendar-data').data('calendar-duration') + '">Todos</option>');
 					}
 					var provider_groups = $('#groups_data').data('provider-groups');
+					if ($.grep(provider_groups, function(e) { return e.location_id == localId }).length > 1) {
+						$('#providers-selector').append('<option disabled role=separator>--------</option>');
+					}
 					$.each(provider_groups, function (key, group) {
 						if (group.location_id == localId) {
 							$('#providers-selector').append('<option value="0" data-resources=\'[' + JSON.stringify(group.resources) + ']\'>' + group.name + '</option>');
 						}
 					});
+					$('#providers-selector').append('<option disabled role=separator>--------</option>');
 					$.each(providersArray, function (key, provider) {
 						$('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'" data-block="' + provider.block_length + '">'+provider.public_name+'</option>');
 						resources.push({id: provider.id, name: provider.public_name});
