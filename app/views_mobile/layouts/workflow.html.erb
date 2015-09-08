@@ -48,7 +48,6 @@
               <li><%= link_to 'Buscador', root_url(subdomain: false) %></li>
               <li><%= link_to 'Clientes', root_url(subdomain: false, anchor: 'clients-target') %></li>
               <li><%= link_to 'Qué Hacemos', root_url(subdomain: false, anchor: 'what-we-do-target') %></li>
-              <li><%= link_to 'Contacto', root_url(subdomain: false, anchor: 'contact-target') %></li>
               <li class="divider"></li>
               <% if user_signed_in? %>
               <% if current_user.company_id %>

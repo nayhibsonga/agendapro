@@ -1,6 +1,5 @@
  Agendapro::Application.routes.draw do
 
-  resources :provider_groups
 
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
@@ -46,6 +45,7 @@
     resources :bookings
     resources :service_providers
     resources :service_categories
+    resources :provider_groups
     resources :resources
     resources :clients
     resources :resource_categories
@@ -117,6 +117,7 @@
     post '/change_services_order', :to => 'services#change_services_order'
     post '/change_location_order', :to => 'locations#change_location_order'
     post '/change_providers_order', :to => 'service_providers#change_providers_order'
+    post '/change_groups_order', :to => 'provider_groups#change_groups_order'
     get '/confirm_email', :to => 'company_from_emails#confirm_email', :as => 'confirm_email'
 
     # Autocompletar del Booking
