@@ -27,13 +27,21 @@ class ProviderGroupsController < ApplicationController
   def create
     @provider_group = ProviderGroup.new(provider_group_params)
     @provider_group.company_id = current_user.company_id
-    @provider_group.save
-    respond_with(@provider_group)
+    respond_with(@provider_group) do |format|
+      if @provider_group.save
+        flash[:notice] = "Grupo de Prestadores creado." 
+        format.html { redirect_to provider_groups_path }
+      end
+    end
   end
 
   def update
-    @provider_group.update(provider_group_params)
-    respond_with(@provider_group)
+    respond_with(@provider_group) do |format|
+      if @provider_group.update(provider_group_params)
+        flash[:notice] = "Grupo de Prestadores actualizado." 
+        format.html { redirect_to provider_groups_path }
+      end
+    end
   end
 
   def destroy

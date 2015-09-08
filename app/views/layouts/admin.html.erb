@@ -92,7 +92,6 @@
                   <li><%= link_to '<i class="fa fa-home fa-fw"></i> Locales'.html_safe, locations_path %></li>
                   <li><%= link_to '<i class="fa fa-user fa-fw"></i> Prestadores de Servicios'.html_safe, service_providers_path %></li>
                   <li><%= link_to '<i class="fa fa-book fa-fw"></i> Servicios'.html_safe, services_path %></li>
-                  <li><%= link_to '<i class="fa fa-list fa-fw"></i> Categorías de Servicios'.html_safe, service_categories_path %></li>
                   <li><%= link_to '<i class="fa fa-cubes fa-fw"></i> Recursos'.html_safe, resources_path %></li>
                   <li><%= link_to '<i class="fa fa-shopping-cart fa-fw"></i> Productos'.html_safe, products_path %></li>
                   <% if current_user.role == Role.find_by(name: "Administrador General") %>
