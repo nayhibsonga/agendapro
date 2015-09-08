@@ -1097,7 +1097,7 @@ function calculatePaymentTotal(){
 		var price_str = $(this).find('.itemPrice').text();
 		var price = parseInt(price_str.substring(1, price_str.length));
 		var discount = parseInt($(this).find('.itemDiscount').val());
-
+		
 		total = total + (quantity*price*(100-discount)/100);
 
 	});

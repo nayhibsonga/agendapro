@@ -1380,7 +1380,10 @@ class BookingsController < ApplicationController
 
   def get_booking_for_payment
     booking = Booking.find(params[:id])
-    discount = 100*((booking.service.price - booking.price)/booking.service.price).round(1)
+    discount = 0
+    if booking.service.price != 0
+      discount = 100*((booking.service.price - booking.price)/booking.service.price).round(1)
+    end
     render :json => {id: booking.id, service_name: booking.service.name, service_price: booking.service.price, discount: discount}
   end
 
