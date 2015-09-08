@@ -4,6 +4,7 @@ var paymentItems = [];
 var paymentPastBookings = []
 var paymentNewBookings = []
 var paymentProducts = []
+var paymentReceipts = []
 
 function loadPaymentSettings() {
 	// cuotas
@@ -833,6 +834,9 @@ function addNotBooked(){
 	new_booking['price'] = $("#payment_not_booked_price").val();
 	new_booking['discount'] = $("#payment_not_booked_discount").val();
 
+	new_booking['item_id'] = paymentItems.length;
+	new_booking['item_type'] = 'new_booking';
+
 	paymentItems.push(new_booking);
 	paymentNewBookings.push(new_booking);
 	var item_id = paymentItems.length-1;
@@ -841,12 +845,22 @@ function addNotBooked(){
 	$("#paymentItemsTable").append(
 		'<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1">' + 
 		'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+		'<td style="width: 5%;">' + item_id + '</td>' +
 		/*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
-		'<td style="width: 25%;"><span>Servicio</span></td>' + 
-		'<td style="width: 25%;"><span>' + new_booking['service_name'] + '</span></td>' + 
+		'<td style="width: 24%;"><span>Servicio</span></td>' + 
+		'<td style="width: 24%;"><span class="itemName">' + new_booking['service_name'] + '</span></td>' + 
 		'<td style="width: 7%;"><input type="number" class="form-control itemQuantity" value="1" disabled /></td>' + 
-		'<td style="width: 20%;"><span class="itemPrice">$' + new_booking['price'] + '</span></td>' +
+		'<td style="width: 18%;"><span class="itemPrice">$' + new_booking['price'] + '</span></td>' +
 		'<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + new_booking['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
+		'</tr>'
+	);
+
+	$("#receiptsItemsTable").append(
+		'<tr class="receiptsItemsRow" item_id="' + item_id + '">' + 
+		'<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + item_id + '" /></td>' +
+		'<td>' + item_id + '</td>' +
+		'<td>Servicio</td>' + 
+		'<td>' + new_booking['service_name'] + '</td>' + 
 		'</tr>'
 	);
 
@@ -864,6 +878,9 @@ function addPastBooked(booking_id){
 
 	$.getJSON('/get_booking_for_payment', {id: booking_id}, function (booking) {
 
+		booking['item_id'] = paymentItems.length;
+		booking['item_type'] = 'past_booking';
+
 		paymentItems.push(booking);
 		paymentPastBookings.push(booking);
 		var item_id = paymentItems.length-1;
@@ -872,12 +889,22 @@ function addPastBooked(booking_id){
 		$("#paymentItemsTable").append(
 			'<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' + 
 			'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+			'<td style="width: 5%;">' + item_id + '</td>' +
 		/*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
-			'<td style="width: 25%;"><span>Reserva existente</span></td>' + 
-			'<td style="width: 25%;"><span>' + booking.service_name + '</span></td>' + 
+			'<td style="width: 24%;"><span>Reserva existente</span></td>' + 
+			'<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
 			'<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
-			'<td style="width: 20%;"><span class="itemPrice">$' + booking.service_price + '</span></td>' +
+			'<td style="width: 18%;"><span class="itemPrice">$' + booking.service_price + '</span></td>' +
 			'<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
+			'</tr>'
+		);
+
+		$("#receiptsItemsTable").append(
+			'<tr class="receiptsItemsRow" item_id="' + item_id + '">' + 
+			'<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + item_id + '" /></td>' +
+			'<td>' + item_id + '</td>' +
+			'<td>Reserva existente</td>' + 
+			'<td>' + booking.service_name + '</td>' + 
 			'</tr>'
 		);
 
@@ -896,11 +923,14 @@ function addPastBooked(booking_id){
 function addProduct()
 {
 	var product = new Object();
+
+	product['item_id'] = paymentItems.length;
 	product['id'] = $("#payment_product").val();
 	product['name'] = $("#payment_product option:selected").text();
 	product['quantity'] = $("#payment_product_quantity").val();
 	product['price'] = $("#payment_product_price").val();
 	product['discount'] = $("#payment_product_discount").val();
+	product['item_type'] = 'product';
 
 	console.log(product);
 
@@ -912,12 +942,22 @@ function addProduct()
 	$("#paymentItemsTable").append(
 		'<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '">' + 
 		'<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+		'<td style="width: 5%;">' + item_id + '</td>' +
 		/*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
-		'<td style="width: 25%;"><span>Producto</span></td>' + 
-		'<td style="width: 25%;"><span>' + product['name'] + '</span></td>' + 
+		'<td style="width: 24%;"><span>Producto</span></td>' + 
+		'<td style="width: 24%;"><span class="itemName">' + product['name'] + '</span></td>' + 
 		'<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="' + product['quantity'] + '" /></span></td>' + 
-		'<td style="width: 20%;"><span class="itemPrice">$' + product['price'] + '</span></td>' +
+		'<td style="width: 18%;"><span class="itemPrice">$' + product['price'] + '</span></td>' +
 		'<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + product['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
+		'</tr>'
+	);
+
+	$("#receiptsItemsTable").append(
+		'<tr class="receiptsItemsRow" item_id="' + item_id + '">' + 
+		'<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + item_id + '" /></td>' +
+		'<td>' + item_id + '</td>' +
+		'<td>Producto</td>' + 
+		'<td>' + product['name'] + '</td>' + 
 		'</tr>'
 	);
 
@@ -930,6 +970,121 @@ function addProduct()
 	$("#payment_product_price").val("0");
 	$("#payment_product_discount").val("0");
 
+}
+
+function addReceipt()
+{
+	var receipt_id = paymentReceipts.length;
+	var receipt = new Object();
+	var receipt_amount = 0;
+
+	receipt['receipt_id'] = receipt_id;
+	receipt['receipt_type_id'] = $("#payment_receipt_type").val();
+	receipt['receipt_type_name'] = $("#payment_receipt_type :selected").text();
+	receipt['number'] = $("#payment_receipt_number").val();
+	receipt['date'] = $("#payment_receipt_date").val();
+	receipt['notes'] = $("#payment_receipt_notes").val();
+	receipt['items'] = []
+
+	$('.receipt_item_checkbox:checked').each(function(){
+
+		var current_item_id = parseInt($(this).attr("item_id"));
+
+		var current_item = $('.paymentItemsRow[item_id="'+current_item_id+'"]');
+		
+		for(x = 0; x < paymentItems.length; x++)
+		{
+			if(paymentItems[x] != null)
+			{
+				if(paymentItems[x]['item_id'] == current_item_id)
+				{
+					receipt['items'].push(paymentItems[x]);
+					$('.receiptsItemsRow[item_id="' + current_item_id + '"]').remove();
+
+					//Add to amount
+					var quantity = parseInt(current_item.find('.itemQuantity').val());
+					var price_str = current_item.find('.itemPrice').text();
+					var price = parseInt(price_str.substring(1, price_str.length));
+					var discount = parseInt(current_item.find('.itemDiscount').val());
+
+					receipt_amount = receipt_amount + (quantity*price*(100-discount)/100);
+					break;
+				}
+			}
+		}
+	});
+
+	receipt['amount'] = receipt_amount;
+
+	paymentReceipts.push(receipt);
+	addReceiptSummary(receipt);
+	checkReceiptsReady();
+}
+
+function addReceiptSummary(receipt)
+{
+	$("#payment_receipt_notes").val("");
+	$("#payment_receipt_number").val("");
+	$("#receiptsItemsDiv").hide();
+	$("#fakePaymentStep3Form").hide();
+	$("#paymentReceiptsForms").hide();
+
+	$("#addedReceipts").append(
+		'<div class="addedReceipt" receipt_id="' + receipt['receipt_id'] + '">' + 
+		receipt['receipt_type_name'] + '<span class="removeReceipt" receipt_id="' + receipt['receipt_id'] + '"><i class="fa fa-times"></i></span><br />' +
+		'N° ' + receipt['number'] + '<br />' +
+		'Monto: $' + receipt['amount'] +
+		'</div>'
+	);
+
+	var items_str = '';
+
+	var items_header = '<tr class="receiptHeader"><th>Nombre</th><th>Precio unitario</th><th>Cantidad</th><th>Descuento</th><th>Subtotal</th></tr>';
+
+	for(y = 0; y < receipt['items'].length; y++)
+	{
+		var current_item = $('.paymentItemsRow[item_id="'+ receipt['items'][y]['item_id'] +'"]');
+		
+		var item_quantity = parseInt(current_item.find('.itemQuantity').val());
+		var item_price_str = current_item.find('.itemPrice').text();
+		var item_price = parseInt(item_price_str.substring(1, item_price_str.length));
+		var item_discount = parseInt(current_item.find('.itemDiscount').val());
+		var current_name = current_item.find('.itemName').text();
+
+		var item_amount = (item_quantity*item_price*(100-item_discount)/100);
+
+
+		items_str = items_str + '<tr class="receiptItem"><td>' + current_name + '</td>';
+		items_str = items_str + '<td>' + item_price_str + '</td>';
+		items_str = items_str + '<td>' + item_quantity + '</td>';
+		items_str = items_str + '<td>' + item_discount + ' %</td>';
+		items_str = items_str + '<td> $' + item_amount + '</td><tr/>';
+	}
+
+	items_total = '<tr><td></td><td></td><td></td><td><b>Total:</b><td><b> $' + receipt['amount'] + '</b></td></tr>';
+
+	$("#paymentReceiptsFinal").append(
+		'<div class="receiptFinal" receipt_id="' + receipt['receipt_id'] + '"><div><span class="receiptTitle">' + receipt['receipt_type_name'] + '</span><span class="receiptNumber">N° ' + receipt['number'] +'</span></div><div><br /><table>' +
+			items_header + 
+			items_str +
+			items_total +
+		'</table></div></div>'
+	);
+
+	//Add to column for edit/remove.
+}
+
+function checkReceiptsReady()
+{
+	/*
+	* If there are no items left to add to receipts,
+	* show receipts summary.
+	*/
+	if($('.receiptsItemsRow').length == 0)
+	{
+		$("#paymentReceiptsForms").hide();
+		$("#paymentReceiptsFinal").show();
+	}
 }
 
 function calculatePaymentTotal(){
@@ -970,6 +1125,7 @@ function removePaymentItem(index)
 		paymentNewBookings[new_book_index] = null;
 	}
 	$('.paymentItemsRow[item_id="' + index + '"]').remove();
+	$('.receiptsItemsRow[item_id="' + index + '"]').remove();
 	paymentItems[index] = null;
 
 	loadClientPastBookings();
@@ -1034,23 +1190,30 @@ function createAndServePayment(option)
 	var payment_past_bookings = $("#paymentPastBookingsArray").val();
 	var payment_new_bookings = $("#paymentNewBookingsArray").val();
 	var payment_products = $("#paymentProductsArray").val();
+	var payment_receipts = $("#paymentReceiptsArray").val();
 	var payment_paid_amount = $("#payment_paid_amount").val();
 	var payment_cost = $("#payment_cost").val();
 	var payment_change_amount = $("#payment_change_amount").val();
 	var pay_method = $("#selected_pay_method").val();
 	var method_number = $('#payment_' + pay_method + '_number').val();
 	var dues_number = $("#payment_credit_card_dues_number").val();
-	var payment_receipt_type_id = $("#payment_receipt_type").val();
-	var payment_receipt_number = $("#payment_receipt_number").val();
-	var payment_receipt_date = $("#payment_receipt_date").val();
-	var payment_receipt_notes = $("#payment_receipt_notes").val();
+	var payment_date = $("#payment_date");
+
+
+	/*
+		var payment_receipt_type_id = $("#payment_receipt_type").val();
+		var payment_receipt_number = $("#payment_receipt_number").val();
+		var payment_receipt_date = $("#payment_receipt_date").val();
+		var payment_receipt_notes = $("#payment_receipt_notes").val();
+	*/
+
 	var callback_option = option;
 
 	$.ajax({
 		url: '/create_new_payment',
 		type: 'post',
 		dataType: 'json',
-		data: {location_id: location_id, cashier: cashier, client_name: client_name, client_first_name: client_first_name, client_last_name: client_last_name, client_id: client_id, past_bookings: payment_past_bookings, new_bookings: payment_new_bookings, products: payment_products, paid_amount: payment_paid_amount, cost: payment_cost, change_amount: payment_change_amount, pay_method: pay_method, method_number: method_number, dues_number: dues_number, receipt_type_id: payment_receipt_type_id, receipt_number: payment_receipt_number, receipt_date: payment_receipt_date, receipt_notes: payment_receipt_notes, callback: callback_option},
+		data: {location_id: location_id, cashier: cashier, client_name: client_name, client_first_name: client_first_name, client_last_name: client_last_name, client_id: client_id, past_bookings: payment_past_bookings, new_bookings: payment_new_bookings, products: payment_products, paid_amount: payment_paid_amount, cost: payment_cost, change_amount: payment_change_amount, pay_method: pay_method, method_number: method_number, dues_number: dues_number, payment_date: payment_date, receipts: payment_receipts, callback: callback_option},
 		error: function(response){
 
 		},
@@ -1081,6 +1244,23 @@ $(function() {
 	});
 
 	$("#payment_receipt_date").datepicker({
+		dateFormat: 'dd/mm/yy',
+		autoSize: true,
+		firstDay: 1,
+		changeMonth: true,
+		changeYear: true,
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+	});
+
+	$("#payment_date").datepicker({
 		dateFormat: 'dd/mm/yy',
 		autoSize: true,
 		firstDay: 1,
@@ -1232,6 +1412,30 @@ $(function() {
 		calculateReturn();
 	});
 
+	$("#checkAllItems").on('change', function(e){
+		if($(this).prop("checked"))
+		{
+			$(".receipt_item_checkbox").prop("checked", true);
+		}
+		else
+		{
+			$(".receipt_item_checkbox").prop("checked", false);
+		}
+	});
+
+	$("#addReceiptBtn").click(function(e){
+
+		addReceipt();
+
+	});
+
+	$("#openReceiptForm").click(function(e){
+		$("#payment_receipt_notes").val("");
+		$("#payment_receipt_number").val("");
+		$("#receiptsItemsDiv").show();
+		$("#fakePaymentStep3Form").show();
+		$("#paymentReceiptsForms").show();
+	});
 
 	$("#paymentBtnSave").click(function(){
 		createAndServePayment("save");

@@ -213,8 +213,6 @@ class PaymentsController < ApplicationController
       client.save
     end
 
-    
-
     payment = Payment.new
     
 

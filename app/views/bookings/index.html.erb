@@ -629,18 +629,6 @@
                       <%= f.hidden_field :id %>
                       <%= f.hidden_field :client_id %>
                       <div class="form-group">
-                        <%= f.label :receipt_type_id, "Comprobante de Pago", class: "col-sm-4 control-label" %>
-                        <div class="col-sm-8">
-                          <%= f.collection_select :receipt_type_id, ReceiptType.all.order(:name), :id, :name, {selected: ReceiptType.find_by_name("Boleta").id}, { class: "form-control" }%>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <%= f.label :receipt_number, "Número de Comprobante", class: "col-sm-4 control-label" %>
-                        <div class="col-sm-8">
-                          <%= f.text_field :receipt_number, class: "form-control" %>
-                        </div>
-                      </div>
-                      <div class="form-group">
                         <%= f.label :payment_date, "Fecha de Pago", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
                           <%= f.text_field :payment_date, class: "form-control" %>
