@@ -53,6 +53,8 @@ $(function() {
 	$("input:file").change(function (){
 		if ($('[id^="edit_company_"]').valid()) {
 	    var formId = $('[id^=edit_company_]').prop('id');
+      var src = $('#company_logo_img').attr("src");
+      $('#company_logo_img').attr("src", "/assets/mobile/loading.gif");
 			$.ajax({
 				type: 'POST',
 				url: '/quick_add/update_company',
@@ -66,8 +68,9 @@ $(function() {
 					$('#company_logo_img').attr("src", result+"?ts="+d.getTime());
 				},
 				error: function (xhr) {
+          $('#company_logo_img').attr("src", src);
 					var errors = $.parseJSON(xhr.responseText).errors;
-				    var errorList = '';
+				  var errorList = '';
 					for (i in errors) {
 						errorList += '<li>' + errors[i] + '</li>'
 					}
