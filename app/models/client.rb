@@ -234,58 +234,60 @@ class Client < ActiveRecord::Base
       all
     end
   end
-  def self.filter_location(location)
-    if location && (location != '')
-      where(id: Booking.where(location_id: location).pluck(:client_id))
+
+  def self.filter_location(locations)
+    if !locations.blank?
+      where(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
     else
       all
     end
   end
-  def self.filter_provider(provider)
-    if provider && (provider != '')
-      where(id: Booking.where(service_provider_id: provider).pluck(:client_id))
+
+  def self.filter_provider(providers)
+    if !providers.blank?
+      where(id: Booking.where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
     else
       all
     end
   end
-  def self.filter_service(service)
-    if service && (service != '')
-      where(id: Booking.where(service_id: service).pluck(:client_id))
+
+  def self.filter_service(services)
+    if !services.blank?
+      where(id: Booking.where(service_id: Service.find(services)).select(:client_id))
     else
       all
     end
   end
+
   def self.filter_gender(gender)
-    if gender && gender != ''
-      if gender != "0"
-        where(:gender => gender)
-      else
-        where('gender != ? and gender != ? or gender IS NULL', 1, 2)
-      end
+    if !gender.blank?
+      where(gender: gender)
     else
       all
     end
   end
-  def self.filter_birthdate(option)
-    if option && (["0","1","2"].include? option)
-      if option == "0"
-        where(birth_day: Time.now.day, birth_month: Time.now.month)
-      elsif option == "1"
-        weekStart = Time.now.beginning_of_week
-        weekEnd = Time.now.end_of_week
-        if weekStart.month == weekEnd.month
-          where(birth_day: weekStart.day..weekEnd.day, birth_month: weekStart.month)
-        else
-          monthEnd = weekEnd.end_of_month.day
-          where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?)', weekStart.month, weekStart.day, monthEnd, weekEnd.month, 1, weekEnd.day)
-        end
-      elsif option == "2"
-        where(birth_month: Time.now.month)
-      end
+
+  def self.filter_birthdate(from, to)
+    if from.present? and to.present?
+      # Transformar string a date
+      from = Date.parse(from)
+      to = Date.parse(to)
+
+      # posible falla al cambiar de año, fecha inicio 2015 - fecha termino 2016
+      where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month BETWEEN ? AND ?)', from.month, from.day, 31, to.month, 1, to.day, (from + 1.month).month, (to - 1.month).month)
     else
       all
     end
   end
+
+  def self.filter_status(statuses)
+    if !statuses.blank?
+      where(id: Booking.where(status_id: Status.find(statuses)).select(:client_id))
+    else
+      all
+    end
+  end
+
   def self.to_csv(options = {})
     CSV.generate(options) do |csv|
       csv << column_names
@@ -294,6 +296,7 @@ class Client < ActiveRecord::Base
       end
     end
   end
+
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
     spreadsheet = open_spreadsheet(file)
@@ -302,63 +305,65 @@ class Client < ActiveRecord::Base
       (2..spreadsheet.last_row).each do |i|
         row = Hash[[header, spreadsheet.row(i)].transpose]
 
-        if row["email"] && row["email"] != ""
+        if row["email"].present?
           row["email"] = row["email"].to_s
         end
 
-        if row["first_name"] && row["first_name"] != ""
+        if row["first_name"].present?
           row["first_name"] = row["first_name"].to_s
         end
 
-        if row["last_name"] && row["last_name"] != ""
+        if row["last_name"].present?
           row["last_name"] = row["last_name"].to_s
         end
 
-        if row["phone"] && row["phone"] != ""
+        if row["phone"].present?
           row["phone"] = row["phone"].to_s.chomp('.0')
         end
 
-        if row["address"] && row["address"] != ""
+        if row["address"].present?
           row["address"] = row["address"].to_s
         end
 
-        if row["district"] && row["district"] != ""
+        if row["district"].present?
           row["district"] = row["district"].to_s
         end
 
-        if row["city"] && row["city"] != ""
+        if row["city"].present?
           row["city"] = row["city"].to_s
         end
 
-        if row["age"] && row["age"] != ""
+        if row["age"].present?
           row["age"] = row["age"].to_i
         end
 
-        if row["gender"] && row["gender"] != ""
+        if row["gender"].present?
           row["gender"] = row["gender"].to_i
+        else
+          row["gender"] = 0
         end
 
-        if row["birth_day"] && row["birth_day"] != ""
+        if row["birth_day"].present?
           row["birth_day"] = row["birth_day"].to_i
         end
 
-        if row["birth_month"] && row["birth_month"] != ""
+        if row["birth_month"].present?
           row["birth_month"] = row["birth_month"].to_i
         end
 
-        if row["birth_year"] && row["birth_year"] != ""
+        if row["birth_year"].present?
           row["birth_year"] = row["birth_year"].to_i
         end
 
-        if row["record"] && row["record"] != ""
+        if row["record"].present?
           row["record"] = row["record"].to_s.chomp('.0')
         end
 
-        if row["second_phone"] && row["second_phone"] != ""
+        if row["second_phone"].present?
           row["second_phone"] = row["second_phone"].to_s.chomp('.0')
         end
 
-        if row["identification_number"] && row["identification_number"] != ""
+        if row["identification_number"].present?
 
           cRut = row["identification_number"].to_s.gsub(/[\.\-]/, "")
           if cRut.length == 0
@@ -381,7 +386,7 @@ class Client < ActiveRecord::Base
           end
         end
 
-        if row["identification_number"] && row["identification_number"] != ""
+        if row["identification_number"].present?
           rut = row["identification_number"].to_s
           if rut.length < 8
             row["identification_number"] = ''
@@ -414,11 +419,11 @@ class Client < ActiveRecord::Base
           end
         end
 
-        if row["identification_number"] && row["identification_number"] != "" && Client.where(identification_number: row["identification_number"], company_id: company_id).count > 0
+        if row["identification_number"].present? && Client.where(identification_number: row["identification_number"], company_id: company_id).count > 0
           client = Client.where(identification_number: row["identification_number"], company_id: company_id).first
-        elsif row["email"] && row["email"] != "" && Client.where(email: row["email"], company_id: company_id).count > 0
+        elsif row["email"].present? && Client.where(email: row["email"], company_id: company_id).count > 0
           client = Client.where(email: row["email"], company_id: company_id).first
-        elsif row["first_name"] && row["first_name"] != "" && row["last_name"] && row["last_name"] != "" && Client.where(first_name: row["first_name"], last_name: row["last_name"], company_id: company_id).count > 0
+        elsif row["first_name"].present? && row["last_name"].present? && Client.where(first_name: row["first_name"], last_name: row["last_name"], company_id: company_id).count > 0
           client = Client.where(first_name: row["first_name"], last_name: row["last_name"], company_id: company_id).first
         else
           client = Client.new
@@ -435,6 +440,7 @@ class Client < ActiveRecord::Base
       message = "Error en el archivo de importación, archivo inválido o lista vacía."
     end
   end
+
   def self.open_spreadsheet(file)
     case File.extname(file.original_filename)
     when ".csv" then Roo::Csv.new(file.path, file_warning: :ignore)

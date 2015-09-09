@@ -11,17 +11,18 @@ class ClientsController < ApplicationController
     if mobile_request?
       @company = current_user.company
     end
+    @monthly_mails = current_user.company.plan.monthly_mails
+    @monthly_mails_sent = current_user.company.company_setting.monthly_mails
+    @from_collection = current_user.company.company_from_email.where(confirmed: true)
+
     @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
     @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
-    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
 
-    @monthly_mails = current_user.company.plan.monthly_mails
-    @monthly_mails_sent = current_user.company.company_setting.monthly_mails
+    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
 
-    @from_collection = current_user.company.company_from_email.where(confirmed: true)
+    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(:last_name, :first_name)
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name)
     respond_to do |format|
       format.html
       format.csv
@@ -232,20 +233,13 @@ class ClientsController < ApplicationController
 
   def compose_mail
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
-    mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).pluck(:email).uniq
+    mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(:last_name, :first_name).pluck(:email).uniq
 
     @to = Array.new
 
     mail_list.each do |email|
       @to.push(email) if email=~ /([^\s]+)@([^\s]+)/
     end
-    # @to = '';
-    # if params[:to]
-    #   params[:to].each do |mail|
-    #     @to += mail + ', '
-    #   end
-    # end
-    # @to = @to.chomp(', ')
   end
 
   def send_mail
