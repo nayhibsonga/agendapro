@@ -194,7 +194,6 @@ ActiveRecord::Schema.define(version: 20150908141044) do
     t.boolean  "owned",               default: true
     t.boolean  "show_in_home",        default: false
     t.integer  "country_id"
-    t.boolean  "activate_i18n",       default: false
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
