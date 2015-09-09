@@ -12,12 +12,14 @@ class Payment < ActiveRecord::Base
   has_many :payment_products, dependent: :destroy
   has_many :products, through: :payment_products
 
+  has_many :mock_bookings
+
   accepts_nested_attributes_for :payment_products, :reject_if => :all_blank, :allow_destroy => true
   accepts_nested_attributes_for :bookings, :reject_if => :all_blank
 
   validate :payment_date_required, :client_required, :location_required
 
-  after_save :set_numbers
+  #after_save :set_numbers
 
   def payment_date_required
     if self.payment_date == nil
@@ -73,4 +75,9 @@ class Payment < ActiveRecord::Base
 
     self.update_columns(amount: amount, discount: discount, quantity: quantity, bookings_amount: bookings_amount, bookings_quantity: bookings_quantity, bookings_discount: bookings_discount, sessions_amount: sessions_amount, sessions_quantity: sessions_quantity, sessions_discount: sessions_discount, products_amount: products_amount, products_quantity: products_quantity, products_discount: products_discount)
   end
+
+  def send_mail
+    
+  end
+
 end

@@ -214,7 +214,115 @@ class PaymentsController < ApplicationController
     end
 
     payment = Payment.new
-    
+
+    payment.payment_method_id = params[:payment_method_id]
+
+    if params[:method_number].blank?
+      payment.payment_method_number = ""
+    else
+      payment.payment_method_number = params[:method_number]
+    end
+
+    if payment.payment_method_id = PaymentMethod.find_by_name("Tarjeta de Crédito").id
+      payment.payment_method_type_id = params[:pay_method_type]
+    end
+
+    if payment.payment_method_id == PaymentMethod.find_by_name("Cheque").id
+      payment.bank_id = params[:payment_bank]
+    end
+
+    if payment.payment_method_id == PaymentMethod.find_by_name("Otro").id
+      payment.company_payment_method_id = params[:payment_other_method_type]
+    end
+
+    payment.installments = params[:dues_number]
+    payment.payed = true
+    payment.payment_date = params[:payment_date].to_date
+
+    #payment.notes = params[:payment_notes]
+    payment.notes = ""
+    payment.location_id = params[:location_id]
+    payment.client_id = client.id
+
+    payment.paid_amount = params[:paid_amount]
+    payment.amount = params[:cost]
+    payment.change_amount = params[:change_amount]
+    #For real amount, discount and change, recalculate costs.
+
+    past_bookings = JSON.parse(params[:past_bookings], symbolize_names: true)
+    new_bookings = JSON.parse(params[:new_bookings], symbolize_names: true)
+    products = JSON.parse(params[:products], symbolize_names: true)
+    receipts = JSON.parse(params[:receipts], symbolize_names: true)
+
+    @mockBookings = []
+    @bookings = []
+    @paymentProducts = []
+
+
+    receipts.each do |receipt|
+      new_receipt = Receipt.new
+      new_receipt.receipt_type_id = receipt[:receipt_type_id]
+      new_receipt.amount = receipt[:amount]
+      new_receipt.date = receipt[:date]
+      new_receipt.notes = receipt[:notes]
+
+      receipt_items = receipt[:items]
+
+      #Check for it's items and add them to their corresponding array
+      receipt_items.each do |item|
+        if item[:item_type] == "new_booking"
+
+          new_booking = item
+          mock_booking = MockBooking.new
+          if new_booking[:service_id] != -1 && new_booking[:service_id] != "-1"
+            mock_booking.service_id = new_booking[:service_id]
+          end
+          if new_booking[:provider_id] != -1 && new_booking[:provider_id] != "-1"
+            mock_booking.service_id = new_booking[:provider_id]
+          end
+          mock_booking.price = new_booking[:price]
+          mock_booking.discount = new_booking[:discount]
+          @mockBookings << mock_booking
+
+          new_receipt.mock_bookings << mock_booking
+
+        elsif item[:item_type] == "past_booking"
+          past_booking = item
+          booking = Booking.find(past_booking[:id])
+          #booking.list_price = past_booking[:]
+          #booking.discount = past_booking[:discount]
+          @bookings << booking
+          new_receipt.bookings << booking
+        else
+          product = item
+          payment_product = PaymentProduct.new
+          payment_product.product_id = product[:id]
+          payment_product.price = product[:price]
+          payment_product.discount = product[:discount]
+          payment_product.quantity = product[:quantity]
+
+          receipt_product = ReceiptProduct.new
+          receipt_product.product_id = product[:id]
+          receipt_product.price = product[:price]
+          receipt_product.discount = product[:discount]
+          receipt_product.quantity = product[:quantity]
+
+          new_receipt.receipt_products << receipt_product
+
+          @paymentProducts << payment_product
+        end
+      end
+
+      new_receipt.payment = payment
+      new_receipt.save
+
+    end
+
+    payment.bookings = @bookings
+    payment.mock_bookings = @mockBookings
+    payment.payment_products = @paymentProducts
+
+    payment.save
 
   end
 

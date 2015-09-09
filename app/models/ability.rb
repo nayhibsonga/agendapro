@@ -151,6 +151,8 @@ class Ability
         can :update, Company, :id => user.company_id
 
         can :location_products, Location
+        can :get_staff_by_code, StaffCode
+        can :create_new_payment, Payment
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -314,6 +316,8 @@ class Ability
         can :update, Product, :company_id => user.company_id
 
         can :location_products, Location
+        can :get_staff_by_code, StaffCode
+        can :create_new_payment, Payment
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
@@ -448,6 +452,10 @@ class Ability
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
+
+        can :location_products, Location
+        can :get_staff_by_code, StaffCode
+        can :create_new_payment, Payment
 
     elsif user.role_id == Role.find_by_name("Staff").id
         

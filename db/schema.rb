@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150908150508) do
+ActiveRecord::Schema.define(version: 20150909174059) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -474,6 +474,18 @@ ActiveRecord::Schema.define(version: 20150908150508) do
     t.datetime "updated_at"
   end
 
+  create_table "mock_bookings", force: true do |t|
+    t.integer  "client_id"
+    t.integer  "service_id"
+    t.integer  "service_provider_id"
+    t.float    "price"
+    t.float    "discount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "payment_id"
+    t.integer  "receipt_id"
+  end
+
   create_table "notification_emails", force: true do |t|
     t.integer  "company_id"
     t.string   "email",                         null: false
@@ -838,6 +850,8 @@ ActiveRecord::Schema.define(version: 20150908150508) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "number",          default: ""
+    t.text     "notes",           default: ""
+    t.date     "date"
   end
 
   create_table "regions", force: true do |t|

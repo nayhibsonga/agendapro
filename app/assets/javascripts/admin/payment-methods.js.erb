@@ -135,7 +135,22 @@ $(".payment-btn-next").click(function(){
 	{
 		if($("#fakePaymentIntroForm").valid())
 		{
-			loadPaymentModal1();
+			var location_id = parseInt($('#locals-selector').val());
+			var cashier_code = $("#payment_cashier").val();
+
+			$.getJSON('/get_staff_by_code', { location_id: location_id, payment_staff_code: cashier_code }, function (response) {
+				if(response[0] != "error")
+				{
+					$("#payment_cashier_name").val(response[0]['staff']);
+					loadPaymentModal1();
+				}
+				else
+				{
+					alert("El código de staff ingresado es incorrecto.");
+					$("#payment_cashier_name").val("");
+				}
+			});
+			
 		}
 	}
 	else if(paymentModalState == 'Step1')
@@ -178,6 +193,13 @@ $(".payment-btn-back").click(function(){
 	if(paymentModalState == 'Step3')
 	{
 		loadPaymentModal2(0);
+		for(x = 0; x < paymentReceipts.length; x++)
+		{
+			if(paymentReceipts[x] != null)
+			{
+				removeReceipt(paymentReceipts[x]['receipt_id']);
+			}
+		}
 	}
 	else if(paymentModalState == 'Step2')
 	{
@@ -972,15 +994,110 @@ function addProduct()
 
 }
 
+function removeReceipt(receipt_id)
+{
+	//Get the receipt
+	receipt = null;
+	receipt_index = -1;
+	for(x = 0; x < paymentReceipts.length; x++)
+	{
+		if(paymentReceipts[x] != null)
+		{
+			if(paymentReceipts[x]['receipt_id'] == receipt_id)
+			{
+				receipt = paymentReceipts[x];
+				receipt_index = x;
+				break;
+			}
+		}
+	}
+
+	if(receipt == null)
+	{
+		alert("Error al eliminar el comprobante.");
+		return;
+	}
+
+	console.log("Receipt: " + receipt);
+
+	for(x = 0; x < receipt['items'].length; x++)
+	{
+		console.log(receipt['items']);
+		current_item = receipt['items'][x];
+		if(current_item['item_type'] == 'product')
+		{
+			$("#receiptsItemsTable").append(
+				'<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' + 
+				'<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" /></td>' +
+				'<td>' + current_item['item_id'] + '</td>' +
+				'<td>Producto</td>' + 
+				'<td>' + current_item['name'] + '</td>' + 
+				'</tr>'
+			);
+		}
+		else if(current_item['item_type'] == 'past_booking')
+		{
+			$("#receiptsItemsTable").append(
+				'<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' + 
+				'<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" /></td>' +
+				'<td>' + current_item['item_id'] + '</td>' +
+				'<td>Reserva existente</td>' + 
+				'<td>' + current_item.service_name + '</td>' + 
+				'</tr>'
+			);
+		}
+		else
+		{
+			$("#receiptsItemsTable").append(
+				'<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' + 
+				'<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" /></td>' +
+				'<td>' + current_item['item_id'] + '</td>' +
+				'<td>Servicio</td>' + 
+				'<td>' + current_item['service_name'] + '</td>' + 
+				'</tr>'
+			);
+		}
+	}
+
+	$('.addedReceipt[receipt_id="' + receipt['receipt_id'] + '"]').remove();
+	$("#paymentReceiptsFinal").hide();
+	$("#paymentReceiptsFinal").empty();
+	$('.payment-btn-end').hide();
+	paymentReceipts[receipt_index] = null;
+}
+
+function itemsCheckboxesSelected()
+{
+	var some_selected = false;
+	$('.receipt_item_checkbox').each(function(){
+		if($(this).prop("checked"))
+		{
+			some_selected = true;
+		}
+	});
+	return some_selected;
+}
+
 function addReceipt()
 {
+
+	if(!$("#fakePaymentStep3Form").valid())
+	{
+		return;
+	}
+	if(!itemsCheckboxesSelected())
+	{
+		alert("Elige los ítemes a incluir en el comprobante de pago.");
+		return;
+	}
+
 	var receipt_id = paymentReceipts.length;
 	var receipt = new Object();
 	var receipt_amount = 0;
 
 	receipt['receipt_id'] = receipt_id;
 	receipt['receipt_type_id'] = $("#payment_receipt_type").val();
-	receipt['receipt_type_name'] = $("#payment_receipt_type :selected").text();
+	receipt['receipt_type_name'] = $("#payment_receipt_type :selected").text().trim();
 	receipt['number'] = $("#payment_receipt_number").val();
 	receipt['date'] = $("#payment_receipt_date").val();
 	receipt['notes'] = $("#payment_receipt_notes").val();
@@ -1037,6 +1154,18 @@ function addReceiptSummary(receipt)
 		'</div>'
 	);
 
+	clearValidations("#payment_receipt_number");
+	clearValidations("#payment_receipt_date");
+
+	//Add to column for edit/remove.
+}
+
+function addReceiptFinal(receipt)
+{
+
+	console.log("ARF receipt: ");
+	console.log(receipt);
+
 	var items_str = '';
 
 	var items_header = '<tr class="receiptHeader"><th>Nombre</th><th>Precio unitario</th><th>Cantidad</th><th>Descuento</th><th>Subtotal</th></tr>';
@@ -1054,7 +1183,7 @@ function addReceiptSummary(receipt)
 		var item_amount = (item_quantity*item_price*(100-item_discount)/100);
 
 
-		items_str = items_str + '<tr class="receiptItem"><td>' + current_name + '</td>';
+		items_str = items_str + '<tr class="receiptItem" item_id="' + receipt['items'][y]['item_id'] + '"><td>' + current_name + '</td>';
 		items_str = items_str + '<td>' + item_price_str + '</td>';
 		items_str = items_str + '<td>' + item_quantity + '</td>';
 		items_str = items_str + '<td>' + item_discount + ' %</td>';
@@ -1070,18 +1199,31 @@ function addReceiptSummary(receipt)
 			items_total +
 		'</table></div></div>'
 	);
-
-	//Add to column for edit/remove.
 }
 
 function checkReceiptsReady()
 {
+
+	console.log("CheckReady");
+
 	/*
 	* If there are no items left to add to receipts,
 	* show receipts summary.
 	*/
 	if($('.receiptsItemsRow').length == 0)
 	{
+		console.log("Enters");
+
+		for(x = 0; x < paymentReceipts.length; x++)
+		{
+			if (paymentReceipts[x] != null)
+			{
+				console.log("Not null");
+				addReceiptFinal(paymentReceipts[x]);
+			}
+		}
+
+		$('.payment-btn-end').show();
 		$("#paymentReceiptsForms").hide();
 		$("#paymentReceiptsFinal").show();
 	}
@@ -1136,9 +1278,9 @@ function removePaymentItem(index)
 
 function parsePaymentItems()
 {
-	var parsedPaymentPastBookings = []
-	var parsedPaymentNewBookings = []
-	var parsedPaymentProducts = []
+	var parsedPaymentPastBookings = [];
+	var parsedPaymentNewBookings = [];
+	var parsedPaymentProducts = [];
 
 	for(x = 0; x < paymentPastBookings.length; x++)
 	{
@@ -1170,6 +1312,22 @@ function parsePaymentItems()
 
 }
 
+function parseReceipts()
+{
+
+	var parsedPaymentReceipts = [];
+
+	for(x = 0; x < paymentReceipts.length; x++)
+	{
+		if(paymentReceipts[x] != null)
+		{
+			parsedPaymentReceipts.push(paymentReceipts[x]);
+		}
+	}
+
+	$("#paymentReceiptsArray").val(JSON.stringify(parsedPaymentReceipts));
+}
+
 /*
 * Creates a payment and manages action depending on option selected:
 *	Send by email
@@ -1179,26 +1337,58 @@ function parsePaymentItems()
 
 function createAndServePayment(option)
 {
-	var location_id = parseInt($('#locals-selector').val());
-	var cashier = $("#payment_cashier").val();
-	var client_name = $("#payment_client_name").val();
-	split_name('#payment_client_name', '#payment_client_first_name', '#payment_client_last_name');
-	var client_first_name = $("#payment_client_first_name");
-	var client_last_name = $("#payment_client_last_name");
-	var client_id = $("#payment_client_id").val();
-	var client_email = $("#payment_client_email").val();
-	var payment_past_bookings = $("#paymentPastBookingsArray").val();
-	var payment_new_bookings = $("#paymentNewBookingsArray").val();
-	var payment_products = $("#paymentProductsArray").val();
-	var payment_receipts = $("#paymentReceiptsArray").val();
-	var payment_paid_amount = $("#payment_paid_amount").val();
-	var payment_cost = $("#payment_cost").val();
-	var payment_change_amount = $("#payment_change_amount").val();
-	var pay_method = $("#selected_pay_method").val();
-	var method_number = $('#payment_' + pay_method + '_number').val();
-	var dues_number = $("#payment_credit_card_dues_number").val();
-	var payment_date = $("#payment_date");
 
+	console.log("Hola 1");
+	var location_id = parseInt($('#locals-selector').val());
+	console.log("Hola 2");
+	var cashier_code = $("#payment_cashier").val();
+	console.log("Hola 3");
+	var cashier_name = $("#payment_cashier_name").val();
+	console.log("Hola 4");
+	var client_name = $("#payment_client_name").val();
+	console.log("Hola 5");
+	split_name('#payment_client_name', '#payment_client_first_name', '#payment_client_last_name');
+	console.log("Hola 6");
+	var client_first_name = $("#payment_client_first_name").val();
+	console.log("Hola 7");
+	var client_last_name = $("#payment_client_last_name").val();
+	console.log("Hola 8");
+	var client_id = $("#payment_client_id").val();
+	console.log("Hola 9");
+	var client_email = $("#payment_client_email").val();
+	console.log("Hola 10");
+	var payment_past_bookings = $("#paymentPastBookingsArray").val();
+	console.log("Hola 11");
+	var payment_new_bookings = $("#paymentNewBookingsArray").val();
+	console.log("Hola 12");
+	var payment_products = $("#paymentProductsArray").val();
+	console.log("Hola 13");
+	var payment_receipts = $("#paymentReceiptsArray").val();
+	console.log("Hola 14");
+	var payment_paid_amount = $("#payment_paid_amount").val();
+	console.log("Hola 15");
+	var payment_cost = $("#payment_cost").val();
+	console.log("Hola 16");
+	var payment_change_amount = $("#payment_change_amount").val();
+	console.log("Hola 17");
+	var pay_method = $("#selected_pay_method").val();
+	console.log("Hola 18");
+	var payment_method_id = $("#payment_method_id").val();
+	console.log("Hola 19");
+	var method_number = $('#payment_' + pay_method + '_number').val();
+	console.log("Hola 20");
+	var dues_number = $("#payment_credit_card_dues_number").val();
+	console.log("Hola 21");
+	var payment_date = $("#payment_date").val();
+	console.log("Hola 22");
+
+
+	var pay_method_type = $("#payment_method_type").val(); //Credit card type
+	console.log("Hola 23");
+	var payment_bank = $("#payment_check_bank").val(); //Check bank
+	console.log("Hola 24");
+	var payment_other_method_type = $("#payment_other_method_type").val(); //Company method (Otro)
+	console.log("Hola 25");
 
 	/*
 		var payment_receipt_type_id = $("#payment_receipt_type").val();
@@ -1207,13 +1397,46 @@ function createAndServePayment(option)
 		var payment_receipt_notes = $("#payment_receipt_notes").val();
 	*/
 
-	var callback_option = option;
+	var callback_option_str = option;
+	console.log("Hola 26");
+
+	var payment_data = {
+		location_id: location_id, 
+		cashier_code: cashier_code, 
+		client_name: client_name, 
+		client_first_name: client_first_name, 
+		client_last_name: client_last_name, 
+		client_id: client_id, 
+		client_name: client_name, 
+		past_bookings: payment_past_bookings, 
+		new_bookings: payment_new_bookings, 
+		products: payment_products, 
+		paid_amount: payment_paid_amount, 
+		cost: payment_cost, 
+		change_amount: payment_change_amount, 
+		payment_method_id: payment_method_id, 
+		pay_method: pay_method, 
+		method_number: method_number, 
+		dues_number: dues_number, 
+		pay_method_type: pay_method_type, 
+		payment_bank: payment_bank, 
+		payment_other_method_type: payment_other_method_type, 
+		payment_date: payment_date, 
+		receipts: payment_receipts,
+		callback_option: callback_option_str
+	};
+
+	console.log(payment_data);
+
+	//, callback_str: callback_option_str};
+
+	console.log("Hola 27");
 
 	$.ajax({
 		url: '/create_new_payment',
 		type: 'post',
 		dataType: 'json',
-		data: {location_id: location_id, cashier: cashier, client_name: client_name, client_first_name: client_first_name, client_last_name: client_last_name, client_id: client_id, past_bookings: payment_past_bookings, new_bookings: payment_new_bookings, products: payment_products, paid_amount: payment_paid_amount, cost: payment_cost, change_amount: payment_change_amount, pay_method: pay_method, method_number: method_number, dues_number: dues_number, payment_date: payment_date, receipts: payment_receipts, callback: callback_option},
+		data: payment_data,
 		error: function(response){
 
 		},
@@ -1222,6 +1445,19 @@ function createAndServePayment(option)
 		}
 	});
 
+}
+
+function clearValidations(element)
+{
+	$(element).closest(".payment-form-div").removeClass("has-success")
+	$(element).closest(".payment-form-div").removeClass("has-error")
+
+	$(element).closest(".payment-form-div").find(".form-control").removeClass("valid")
+
+	$(element).closest(".payment-form-div").find(".form-control-feedback").removeClass("fa")
+
+	$(element).closest(".payment-form-div").find(".form-control-feedback").removeClass("fa-check")
+	$(element).closest(".payment-form-div").find(".form-control-feedback").removeClass("fa-times")
 }
 
 
@@ -1329,6 +1565,8 @@ $(function() {
 		$(".method-btn.selected").removeClass("selected");
 		$(this).closest(".method-btn").addClass("selected");
 		var details_id = $(this).attr("href");
+		var payment_method_id = $(this).attr("method_id");
+		$("#payment_method_id").val(payment_method_id);
 		$(".payment_method_details").hide();
 		$(details_id).show();
 
@@ -1352,6 +1590,25 @@ $(function() {
 		{
 			$("#selected_pay_method").val("other");
 		}
+		
+	});
+
+	$("#payment_cashier").on('focusout', function(){
+
+		var location_id = parseInt($('#locals-selector').val());
+		var cashier_code = $(this).val();
+
+		$.getJSON('/get_staff_by_code', { location_id: location_id, payment_staff_code: cashier_code }, function (response) {
+			if(response[0] != "error")
+			{
+				$("#payment_cashier_name").val(response[0]['staff']);
+			}
+			else
+			{
+				alert("El código de staff ingresado es incorrecto.");
+				$("#payment_cashier_name").val("");
+			}
+		});
 		
 	});
 
@@ -1437,15 +1694,23 @@ $(function() {
 		$("#paymentReceiptsForms").show();
 	});
 
+	$('body').on('click', '.removeReceipt', function(){
+		var receipt_id = $(this).attr('receipt_id');
+		removeReceipt(receipt_id);
+	});
+
 	$("#paymentBtnSave").click(function(){
-		createAndServePayment("save");
+		parseReceipts();
+		createAndServePayment("save");		
 	});
 
 	$("#paymentBtnPrint").click(function(){
+		parseReceipts();
 		createAndServePayment("print");
 	});
 
 	$("#paymentBtnSendEmail").click(function(){
+		parseReceipts();
 		createAndServePayment("sendEmail")
 	});
 

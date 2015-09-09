@@ -5,9 +5,6 @@ $(function() {
 			error.appendTo(element.next());
 		},
 		rules: {
-			'payment_cashier': {
-				required: true
-			},
 			'payment_client_name': {
 				required: true
 			}

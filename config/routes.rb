@@ -125,6 +125,7 @@
     get '/client_loader', :to => 'clients#client_loader'
 
     get '/check_staff_code', :to => 'staff_codes#check_staff_code'
+    get '/get_staff_by_code', :to => 'staff_codes#get_staff_by_code'
 
     get '/provider_services', :to => 'service_providers#provider_service'
 
@@ -324,6 +325,7 @@
     get 'payment_client_bookings', :to => 'payments#client_bookings'
     get 'payment_client_sessions', :to => 'payments#client_sessions'
     get '/payments_index_content', :to=> 'payments#index_content'
+    post '/create_new_payment', :to => 'payments#create_new_payment'
 
     # Payed Bookings
     get "/company_bookings", :to => 'payed_bookings#show'
