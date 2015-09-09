@@ -344,6 +344,22 @@
                       <span class="help-block"></span>
                     </div>
                     <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :can_edit %> Reservas Editables
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tu cliente pueda modificar las reservas que realiza.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :can_cancel %> Reservas Cancelables
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tu cliente pueda cancelar las reservas que realiza.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
                       <%= f.label :before_edit_booking, 'Política de Edición de Reservas' %>
                       <span class="help-block">Horas mínimas requeridas para que un cliente edite o cancele su reserva. No se podrá editar o cancelar reservas con menos anticipación.</span>
                       <div class="input-group">
@@ -353,14 +369,6 @@
                       <span class="help-block"></span>
                     </div>
                     <div class="form-group">
-                      <div class="checkbox">
-                        <label>
-                          <%= f.check_box :can_edit %> Reservas Editables
-                        </label>
-                        <span class="help-block">Habilita esta opción para que el usuario pueda editar las reservas que reliza.</span>
-                      </div>
-                    </div>
-                    <div class="form-group">
                       <%= f.label :max_changes, 'Ediciones Maximas' %>
                       <span class="help-block">Cantidad de veces que un cliente puede editar su reserva.</span>
                       <div class="input-group">
@@ -368,14 +376,6 @@
                         <span class="input-group-addon">Veces</span>
                       </div>
                       <span class="help-block"></span>
-                    </div>
-                    <div class="form-group">
-                    <div class="checkbox">
-                      <label>
-                        <%= f.check_box :can_cancel %> Reservas Cancelables
-                      </label>
-                      <span class="help-block">Habilita esta opción para que el usuario pueda cancelar las reservas que reliza.</span>
-                    </div>
                     </div>
                   </div>
                 </div>

@@ -29,6 +29,8 @@ $(function () {
 
   $("#company_logo").change(function (){
     if ($("#company_logo").valid()) {
+      var src = $('#company-form img').attr("src");
+      $('#company-form img').attr("src", "/assets/mobile/loading.gif");
       var formId = $('#company-form').prop('id');
       $.ajax({
         type: 'POST',
@@ -43,6 +45,7 @@ $(function () {
           $("#company_logo").val('');
         },
         error: function (xhr) {
+          $('#company-form img').attr("src", src);
           var errors = $.parseJSON(xhr.responseText).errors;
           var errorList = '';
           for (i in errors) {
@@ -72,19 +75,17 @@ $(function () {
   });
 
   if ($('#company_setting_can_edit').prop('checked')) {
-    var thisGroup = $('#company_setting_can_edit').closest('.form-group');
-    thisGroup.next().removeClass('hidden');
+    $('#company_setting_max_changes').closest('.form-group').removeClass('hidden');
   } else{
-    var thisGroup = $('#company_setting_can_edit').closest('.form-group');
-    thisGroup.next().addClass('hidden');
+    $('#company_setting_max_changes').closest('.form-group').addClass('hidden');
   };
 
   $('#company_setting_can_edit').change(function () {
-    var thisGroup = $(this).closest('.form-group');
+    var maxChange = $('#company_setting_max_changes').closest('.form-group');
     if ($(this).prop('checked')) {
-      thisGroup.next().removeClass('hidden');
+      maxChange.removeClass('hidden');
     } else{
-      thisGroup.next().addClass('hidden');
+      maxChange.addClass('hidden');
     };
   });
 
