@@ -1,0 +1,125 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="well">
+        <%= form_for @provider_group, :html => {:class => 'form-horizontal'} do |f| %>
+          <% if @provider_group.errors.any? %>
+            <div id="error_explanation">
+              <h2><%= pluralize(@provider_group.errors.count, "error") %> no permitió que el grupo sea creado:</h2>
+              <ul>
+                <% @provider_group.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+          <div class="form-group has-feedback">
+            <%= f.label :name, 'Nombre del Grupo', :class => 'col-sm-3 control-label' %>
+            <div class="col-sm-5">
+              <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Nombre del grupo (requerido)' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <%= f.label :location_id, "Local", class: "col-sm-3 control-label" %>
+            <div class="col-sm-5">
+              <%= f.collection_select :location_id, Location.where(company_id: current_user.company_id, :active => true).order(:order, :name).accessible_by(current_ability), :id, :name, {:include_blank => true}, {class: "form-control"} %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :service_provider_ids, "Prestadores de Servicios", class: "col-sm-3 control-label" %>
+            <div class="col-sm-5">
+              <div class="panel-group" id="provider-group-panels">
+                <% Location.order(:order, :name).accessible_by(current_ability).each do |location| %>
+                  <% @service_providers = ServiceProvider.where(company_id: current_user.company_id, location_id: location.id, :active => true).order(:order, :public_name) %>
+                  <% if @service_providers.length > 0 %>
+                  <div class="panel panel-default" id="location_panel_<%= location.id %>" style="display: none;">
+                    <div class="panel-heading">
+                      <h4 class="panel-title">
+                        <input type="checkbox" class="select-location" name="selectLocation" id="selectLocation<%= location.id %>" value="0">
+                        <label for="selectLocation<%= location.id %>" class="control-label"><%= location.name %></label>
+                      </h4>
+                    </div>
+                    <div id="location<%= location.id %>">
+                      <div class="panel-body">
+                        <%= f.collection_check_boxes :service_provider_ids, @service_providers, :id, :public_name, {}, {class: "check_boxes"} do |b|%>
+                          <div class="checkbox">
+                            <label>
+                              <%= b.check_box %> <%= b.object.public_name %>
+                            </label>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-offset-3 col-md-5">
+              <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+              <%= link_to 'Cancelar', provider_groups_path, class: "btn btn-white" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/provider-group' %>
+  <script type="text/javascript">
+    $(function() {
+      $('.panel').each(function() {
+        $(this).hide();
+      });
+      if (parseInt($('#provider_group_location_id').val()) > 0) {
+        $('#location_panel_' + $('#provider_group_location_id').val()).show();
+      }
+
+      $('#provider_group_location_id').change(function() {
+        $('.panel').hide()
+        if (parseInt($('#provider_group_location_id').val()) > 0) {
+          $('#location_panel_' + $('#provider_group_location_id').val()).show();
+        }
+        $('.check_boxes, input.select-location').each(function() {
+          $(this).prop('checked', false);
+        });
+      });
+
+      $('input.check_boxes').each(function () {
+        var prop = true;
+        $(this).parents('.panel-body').find('input.check_boxes').each( function () {
+          prop = prop && $(this).prop('checked');
+        });
+        $(this).parents('.panel').find('input[name="selectLocation"]').prop('checked', prop);
+      });
+      $('input[name="selectLocation"]').change(function (event) {
+        var id = $(event.target).attr('id').replace('selectLocation', '');
+        $('#location' + id).find('input.check_boxes').each( function () {
+          if ($(event.target).prop('checked')) {
+            $(this).prop('checked', true);
+          }
+          else {
+            $(this).prop('checked', false);
+          }
+        });
+      });
+      $('input.check_boxes').change(function (event) {
+        var prop = true;
+        $(event.target).parents('.panel-body').find('input.check_boxes').each( function () {
+          prop = prop && $(this).prop('checked');
+        });
+        $(event.target).parents('.panel').find('input[name="selectLocation"]').prop('checked', prop);
+      });
+    });
+  </script>
+<% end %>

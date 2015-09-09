@@ -15,6 +15,16 @@ class BookingsController < ApplicationController
     end
     @company_setting = @company.company_setting
     @service_providers = ServiceProvider.where(location_id: @locations).order(:order)
+    @provider_groups = JbuilderTemplate.encode(view_context) do |json|
+      json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order) do |provider_group|
+        json.name  provider_group.name
+        json.location_id provider_group.location_id
+        json.resources provider_group.service_providers.where(active: true) do |service_provider|
+          json.id service_provider.id
+          json.name service_provider.public_name
+        end
+      end
+    end
     @bookings = Booking.where(service_provider_id: @service_providers)
     @booking = Booking.new
     @provider_break = ProviderBreak.new
