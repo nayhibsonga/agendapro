@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150909174059) do
+ActiveRecord::Schema.define(version: 20150910170938) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -703,6 +703,13 @@ ActiveRecord::Schema.define(version: 20150909174059) do
     t.integer  "monthly_mails",     default: 5000,  null: false
   end
 
+  create_table "product_brands", force: true do |t|
+    t.string   "name"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "product_categories", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -711,6 +718,13 @@ ActiveRecord::Schema.define(version: 20150909174059) do
   end
 
   add_index "product_categories", ["company_id"], name: "index_product_categories_on_company_id", using: :btree
+
+  create_table "product_displays", force: true do |t|
+    t.string   "name"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "products", force: true do |t|
     t.integer  "company_id"
@@ -723,6 +737,10 @@ ActiveRecord::Schema.define(version: 20150909174059) do
     t.string   "sku",                 default: ""
     t.decimal  "comission_value",     default: 0.0, null: false
     t.integer  "comission_option",    default: 0,   null: false
+    t.float    "cost"
+    t.float    "internal_price"
+    t.integer  "product_brand_id"
+    t.integer  "product_display_id"
   end
 
   add_index "products", ["company_id"], name: "index_products_on_company_id", using: :btree

@@ -1,5 +1,7 @@
  Agendapro::Application.routes.draw do
 
+  resources :product_displays
+
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO/ do
@@ -9,6 +11,10 @@
     devise_for :users, skip: [:omniauth_callbacks], controllers: {registrations: 'registrations'}
 
     resources :product_categories
+
+    resources :product_brands
+
+    resources :product_displays
 
     resources :products
 

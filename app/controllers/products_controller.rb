@@ -21,16 +21,24 @@ class ProductsController < ApplicationController
       ProductCategory.create(name: "Otros", company_id: current_user.company_id)
     end
     @product_category = ProductCategory.new
+    @product_brand = ProductBrand.new
+    @product_display = ProductDisplay.new
     @product = Product.new
     @product.location_products.build
     @product_categories = ProductCategory.where(company_id: current_user.company_id).order(:name)
+    @product_brands = ProductBrand.where(company_id: current_user.company_id).order(:name)
+    @product_displays = ProductDisplay.where(company_id: current_user.company_id).order(:name)
     @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
     respond_with(@product)
   end
 
   def edit
     @product_category = ProductCategory.new
+    @product_brand = ProductBrand.new
+    @product_display = ProductDisplay.new
     @product_categories = ProductCategory.where(company_id: current_user.company_id).order(:name)
+    @product_brands = ProductBrand.where(company_id: current_user.company_id).order(:name)
+    @product_displays = ProductDisplay.where(company_id: current_user.company_id).order(:name)
     @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
   end
 
@@ -75,6 +83,6 @@ class ProductsController < ApplicationController
     end
 
     def product_params
-      params.require(:product).permit(:name, :price, :sku, :product_category_id, :description, :comission_value, :comission_option, :location_products_attributes => [:id, :location_id, :stock])
+      params.require(:product).permit(:name, :price, :sku, :product_category_id, :product_brand_id, :product_display_id, :description, :comission_value, :comission_option, :cost, :internal_price, :location_products_attributes => [:id, :location_id, :stock])
     end
 end

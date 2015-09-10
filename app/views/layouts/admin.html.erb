@@ -75,6 +75,7 @@
               <!-- Caja -->
               <% if current_user.role == Role.find_by(name: "Administrador General") || current_user.role == Role.find_by(name: "Administrador Local") %>
               <li class="<%= 'active' if current_page?(payments_path) %>"><%= link_to 'Caja', payments_path %></li>
+              <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario', products_path %></li>
               <% end %>
               <!-- Clientes -->
               <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") and current_user.role != Role.find_by(name: "Super Admin") %>

@@ -218,6 +218,16 @@ class Ability
         can :create, ProductCategory, :company_id => user.company_id
         can :update, ProductCategory, :company_id => user.company_id
 
+        can :read, ProductBrand, :company_id => user.company_id
+        can :destroy, ProductBrand, :company_id => user.company_id
+        can :create, ProductBrand, :company_id => user.company_id
+        can :update, ProductBrand, :company_id => user.company_id
+
+        can :read, ProductDisplay, :company_id => user.company_id
+        can :destroy, ProductDisplay, :company_id => user.company_id
+        can :create, ProductDisplay, :company_id => user.company_id
+        can :update, ProductDisplay, :company_id => user.company_id
+
         can :provider_service, ServiceProvider
 
         can :get_link, Company
@@ -323,6 +333,16 @@ class Ability
         can :destroy, ProductCategory, :company_id => user.company_id
         can :create, ProductCategory, :company_id => user.company_id
         can :update, ProductCategory, :company_id => user.company_id
+
+        can :read, ProductBrand, :company_id => user.company_id
+        can :destroy, ProductBrand, :company_id => user.company_id
+        can :create, ProductBrand, :company_id => user.company_id
+        can :update, ProductBrand, :company_id => user.company_id
+
+        can :read, ProductDisplay, :company_id => user.company_id
+        can :destroy, ProductDisplay, :company_id => user.company_id
+        can :create, ProductDisplay, :company_id => user.company_id
+        can :update, ProductDisplay, :company_id => user.company_id
 
         @roles = Role.where(:name => ["Recepcionista","Staff"]).pluck(:id)
 

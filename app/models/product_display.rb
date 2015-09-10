@@ -1,4 +1,4 @@
-class ProductCategory < ActiveRecord::Base
+class ProductDisplay < ActiveRecord::Base
 	belongs_to :company
 	has_many :products
 end
