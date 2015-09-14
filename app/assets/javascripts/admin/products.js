@@ -268,6 +268,8 @@ function initialize() {
 	else {
 		form = '#new_product'
 	}
+
+	$("#locationsSelect").trigger('change');
 }
 
 var alertId;
@@ -317,6 +319,37 @@ $(function() {
 		var internal_price = cost*1.19;
 		$("#product_internal_price").val(internal_price);
 	})
+
+	$('#locationsSelect').on('change', function(){
+
+		var location_id = $(this).val();
+
+		$.ajax({
+			url: '/inventory?id=' + location_id,
+			type: 'get',
+			success: function(response)
+			{
+				$("#locationInventory").empty();
+				$("#locationInventory").append(response);
+			}
+		});
+	});
+
+	$("body").on('click', '.btn-alarm', function(e){
+
+		e.preventDefault();
+		var location_product_id = $(this).attr("location_product_id");
+		
+		$.ajax({
+			url: '/alarm_form?location_product_id=' + location_product_id,
+			type: 'get',
+			success: function(response){
+				$("#location_product_stock_limit").val(response[0]);
+				$("#location_product_alarm_email").val(response[1]);
+				$("#productAlarmModal").modal('show');
+			}
+		});
+	});
 
 	initialize();
 });

@@ -77,6 +77,42 @@ class ProductsController < ApplicationController
     respond_with(@product)
   end
 
+  def alarm_form
+    @location_product = LocationProduct.find(params[:location_product_id])
+    @location = @location_product.location
+
+    @response_array = []
+
+    if @location_product.stock_limit.nil?
+      @response_array << @location.default_stock_limit
+    else
+      @response_array << @location_product.stock_limit
+    end
+
+    if @location_product.alarm_email.nil?
+      @response_array << @location.email
+    else
+      @response_array << @location_product.alarm_email
+    end
+
+    render :json => @response_array
+
+  end
+
+  def set_alarm
+    @location_product = LocationProduct.find(params[:location_product_id])
+    @location_product.stock_limit = params[:stock_limit]
+    @location_product.alarm_email = params[:alarm_email]
+    @response_array = []
+    if @location_product.save
+      @response_array << "ok"
+      @response_array << @location_product
+    else
+      @response_array << "error"
+    end
+    render :json => @response_array
+  end
+
   private
     def set_product
       @product = Product.find(params[:id])

@@ -1,0 +1,60 @@
+<div class="modal fade" id="productAlarmModal" tabindex="-1" role="dialog" aria-labelledby="productAlarmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Alarma de stock</button>
+        <h4 class="modal-title productAlarm-modal-title" id="productAlarmModalLabel"></h4>
+      </div>
+      <div class="modal-body">
+
+
+        <% if !@location_product.stock_limit.nil? %>
+          <div class="form-group has-feedback">
+            <label for="location_product_stock_limit" class="col-md-5 control-label">Límite de stock</label>
+            <div class="col-md-7">
+              <input type="number" id="location_product_stock_limit" class="form-control" value="<%= @location_product.stock_limit %>" />
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+        <% else %>
+          <div class="form-group has-feedback">
+            <label for="location_product_stock_limit" class="col-md-5 control-label">Límite de stock</label>
+            <div class="col-md-7">
+              <input type="number" id="location_product_stock_limit" class="form-control" value="<%= @location.default_stock_limit %>" />
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @location_product.alarm_email.nil? %>
+          <div class="form-group has-feedback">
+            <label for="location_product_alarm_email" class="col-md-5 control-label">Email para avisos</label>
+            <div class="col-md-7">
+              <input type="text" id="location_product_alarm_email" class="form-control" value="@location_product.alarm_email" />
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+        
+          <% else %>
+
+          <div class="form-group has-feedback">
+            <label for="location_product_alarm_email" class="col-md-5 control-label">Email para avisos</label>
+            <div class="col-md-7">
+              <input type="text" id="location_product_alarm_email" class="form-control" value="<%= @location.email %>" />
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+        <% end %>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150910170938) do
+ActiveRecord::Schema.define(version: 20150914161008) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -423,6 +423,8 @@ ActiveRecord::Schema.define(version: 20150910170938) do
     t.integer  "stock",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "stock_limit"
+    t.string   "alarm_email"
   end
 
   add_index "location_products", ["location_id"], name: "index_location_products_on_location_id", using: :btree
@@ -441,24 +443,25 @@ ActiveRecord::Schema.define(version: 20150910170938) do
   add_index "location_times", ["location_id"], name: "index_location_times_on_location_id", using: :btree
 
   create_table "locations", force: true do |t|
-    t.string   "name",                           null: false
-    t.string   "address",                        null: false
-    t.string   "phone",                          null: false
+    t.string   "name",                                null: false
+    t.string   "address",                             null: false
+    t.string   "phone",                               null: false
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "district_id",                    null: false
-    t.integer  "company_id",                     null: false
+    t.integer  "district_id",                         null: false
+    t.integer  "company_id",                          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",         default: true
-    t.integer  "order",          default: 0
-    t.boolean  "outcall",        default: false
-    t.string   "email",          default: ""
-    t.string   "second_address", default: ""
-    t.boolean  "online_booking", default: true
+    t.boolean  "active",              default: true
+    t.integer  "order",               default: 0
+    t.boolean  "outcall",             default: false
+    t.string   "email",               default: ""
+    t.string   "second_address",      default: ""
+    t.boolean  "online_booking",      default: true
     t.string   "image1"
     t.string   "image2"
     t.string   "image3"
+    t.integer  "default_stock_limit", default: 0
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree

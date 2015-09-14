@@ -557,6 +557,17 @@ class LocationsController < ApplicationController
 
   end
 
+  def inventory
+    @location = Location.find(params[:id])
+    @location_products = @location.location_products
+
+    respond_to do |format|
+      format.html { render :partial => 'inventory' }
+      format.json { render :json => @location_products }
+    end
+
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_location
