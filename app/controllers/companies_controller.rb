@@ -1269,6 +1269,9 @@ class CompaniesController < ApplicationController
 
 	    @available_time
 			render layout: 'workflow'
+
+		rescue ActionView::MissingTemplate => e
+			redirect_to :action => "overview"
 	end
 
 

@@ -768,6 +768,18 @@ tr.tr-disabled td {
   color: #a5a5a5;
   background-color: transparent;
 }
+.email-dropdown {
+  text-overflow: clip;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 220px;
+  display: inline-block;
+}
+.email-dropdown + i {
+  position: relative;
+  top: -5px;
+}
 @media (min-width: 768px) {
   .navbar-admin .navbar-nav > li > a,
   .navbar-admin .navbar-nav > li > a:focus {
@@ -779,6 +791,9 @@ tr.tr-disabled td {
   .dropdown-menu > li > a {
     padding: 3px 10px;
     font-size: 12px;
+  }
+  .email-dropdown {
+    max-width: 140px;
   }
 }
 @media (min-width: 992px) {
@@ -793,6 +808,9 @@ tr.tr-disabled td {
     padding: 3px 15px;
     font-size: 13px;
   }
+  .email-dropdown {
+    max-width: 240px;
+  }
 }
 @media (min-width: 1200px) {
   .navbar-admin .navbar-nav > li > a,
@@ -805,6 +823,9 @@ tr.tr-disabled td {
   .dropdown-menu > li > a {
     padding: 3px 20px;
     font-size: inherit;
+  }
+  .email-dropdown {
+    max-width: 300px;
   }
 }
 
@@ -908,6 +929,83 @@ tr.tr-disabled td {
 
 tr[class*="break"] {
   background-color: #eeeeee;
+}
+
+.filter-header,
+.filter-body,
+.filter-footer {
+  padding: 10px 15px;
+  font-size: 15px;
+  border: 1px solid #e3e3e3;
+  background: #f5f5f5;
+}
+.filter-header {
+  padding-bottom: 5px;
+  border-bottom: 1px solid transparent;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  font-size: 18px;
+  margin-bottom: 0;
+  line-height: 2;
+}
+.filter-body {
+  padding-right: 0;
+  padding-left: 0;
+  background: transparent;
+  min-height: 71px;
+  max-height: 1221px;
+  overflow-y: auto;
+}
+.filter-footer {
+  padding-top: 5px;
+  border-top: 1px solid transparent;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.filter-body > .form-group > .panel {
+  margin-bottom: 0;
+}
+.filter-body a {
+  color: #ffffff;
+}
+/*.filter-body:before {
+  display: table;
+  content: " ";
+}
+.filter-body:after {
+  clear: both;
+}*/
+.filter-body > .form-group {
+  float: left;
+  position: relative;
+  padding-right: 15px;
+  padding-left: 15px;
+  width: 33.33333333%;
+  display: inline-block;
+  min-height: 1px;
+}
+.filter-body > .form-group ul {
+  max-height: 185px;
+  overflow-y: auto;
+}
+@media(min-width: 992px) {
+  .filter-body > .form-group:before {
+    display: table;
+    content: " ";
+  }
+  .filter-body > .form-group:after {
+    clear: both;
+  }
+  .filter-body > .form-group {
+    position: initial;
+    clear: both;
+    width: 100%;
+    display: block;
+  }
+  .filter-body > .form-group ul {
+    max-height: initial;
+    overflow-y: none;
+  }
 }
 
 /*
