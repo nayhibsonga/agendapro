@@ -393,6 +393,15 @@
     end
   end
 
+  namespace :api_views, defaults: {format: 'json'} do
+    namespace :marketplace do
+      namespace :v1 do
+        get 'promotions', to: 'promotions#index'
+        get 'promotions/index/preview', to: 'promotions#preview'
+      end
+    end
+  end
+
   root :to => 'searchs#index'
 
 
