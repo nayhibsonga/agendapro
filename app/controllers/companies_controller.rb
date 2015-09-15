@@ -26,6 +26,7 @@ class CompaniesController < ApplicationController
 		@blocked_companies = Company.where(:payment_status_id => PaymentStatus.find_by_name('Bloqueado').id).order(:name)
 		@inactive_companies = Company.where(:payment_status_id => PaymentStatus.find_by_name('Inactivo').id).order(:name)
 		@issued_companies = Company.where(:payment_status_id => PaymentStatus.find_by_name('Emitido').id).order(:name)
+		@pac_companies = Company.where(:payment_status_id => PaymentStatus.find_by_name('Convenio PAC').id).order(:name)
 	end
 
 	#SuperAdmin
