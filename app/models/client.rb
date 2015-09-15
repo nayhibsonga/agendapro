@@ -87,7 +87,7 @@ class Client < ActiveRecord::Base
     # GENERAL
       @data[:company_name] = bookings[0].location.company.name
       @data[:reply_to] = bookings[0].location.email
-      @data[:url] = bookings[0].location.company.web_address
+      @data[:url] = bookings[0].location.get_web_address
       @data[:signature] = bookings[0].location.company.company_setting.signature
       @data[:domain] = bookings[0].location.company.country.domain
       @data[:type] = 'image/png'

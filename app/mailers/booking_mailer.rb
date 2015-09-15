@@ -19,7 +19,7 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'URL',
-					:content => book_info.service_provider.company.web_address
+					:content => book_info.location.get_web_address
 				},
 				{
 					:name => 'COMPANYNAME',
@@ -230,7 +230,7 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'URL',
-					:content => book_info.service_provider.company.web_address
+					:content => book_info.location.get_web_address
 				},
 				{
 					:name => 'COMPANYNAME',
@@ -478,7 +478,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'URL',
-					:content => book_info.service_provider.company.web_address
+					:content => book_info.location.get_web_address
 				},
 				{
 					:name => 'DOMAIN',
@@ -611,7 +611,7 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'URL',
-					:content => book_info.service_provider.company.web_address
+					:content => book_info.location.get_web_address
 				},
 				{
 					:name => 'COMPANYNAME',
@@ -809,7 +809,7 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'URL',
-					:content => book_info.service_provider.company.web_address
+					:content => book_info.location.get_web_address
 				},
 				{
 					:name => 'COMPANYNAME',
@@ -1924,7 +1924,7 @@ class BookingMailer < ActionMailer::Base
 			:global_merge_vars => [
 				{
 					:name => 'URL',
-					:content => book_info.service_provider.company.web_address
+					:content => book_info.location.get_web_address
 				},
 				{
 					:name => 'COMPANYNAME',
