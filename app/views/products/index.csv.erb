@@ -1,0 +1,18 @@
+<% 
+  require 'csv'
+  header_arr = ["Sku", "Categoría", "Marca", "Nombre", "Cantidad/Unidad"]
+  locations_str = '' 
+%>
+<% @xls_locations.each do |location| %>
+  <% header_arr << 'Stock ' + location.name %>
+<% end %>
+<%= header_arr.to_csv( row_sep: nil ).html_safe %>
+<% @products.each do |product| %>
+  <% row_arr = [product.sku, product.product_category.name, product.product_brand.name, product.name, product.product_display.name] %>  
+  <% location_stocks = '' %>
+  <% @xls_locations.each do |location| %>
+    <% location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first %>
+    <% row_arr << location_product.stock %>
+  <% end %>
+  <%= row_arr.to_csv( row_sep: nil ).html_safe %>
+<% end %>

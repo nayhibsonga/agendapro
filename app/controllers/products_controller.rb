@@ -5,10 +5,23 @@ class ProductsController < ApplicationController
   layout "admin"
   load_and_authorize_resource
 
-  respond_to :html, :json
+  respond_to :html, :json, :xls, :csv
 
   def index
-    @products = Product.where(company_id: current_user.company_id).order(:product_category_id, :name)
+    @products = Product.where(company_id: current_user.company_id).order(:product_category_id, :product_brand_id, :name)
+    @pre_xls_locations = Location.where(company_id: current_user.company_id, active: true).order(:id)
+
+    if current_user.role_id != Role.find_by_name("Administrador General").id
+      @xls_locations = []
+      @pre_xls_locations.each do |location|
+        if current_user.locations.pluck(:id).include?(location.id)
+          @xls_locations << location
+        end
+      end
+    else
+       @xls_locations = @pre_xls_locations
+    end
+
     respond_with(@products)
   end
 
@@ -43,29 +56,37 @@ class ProductsController < ApplicationController
   end
 
   def create
+
     @product = Product.new(product_params)
     @product.company_id = current_user.company_id
     @product.save
+
+    loc_prods = JSON.parse(params[:location_products], symbolize_names: true)
+
+    loc_prods.each do |loc_prod|
+      location_product = LocationProduct.create(:location_id => loc_prod[:location_id], :product_id => @product.id, :stock => loc_prod[:stock])
+    end
+
     respond_with(@product)
   end
 
   def update
-    @location_products = Product.find(params[:id]).location_products
-    @location_products.each do |location_product|
-      location_product.product_id = nil
-      location_product.save
-    end
+    
     @product = Product.find(params[:id])
     respond_to do |format|
       if @product.update(product_params)
-        @location_products.destroy_all
+        
+        loc_prods = JSON.parse(params[:location_products], symbolize_names: true)
+
+        loc_prods.each do |loc_prod|
+          location_product = LocationProduct.where(:location_id => loc_prod[:location_id], :product_id => @product.id).first
+          location_product.stock = loc_prod[:stock]
+          location_product.save
+        end
+
         format.html { redirect_to products_path, notice: 'Producto actualizado exitosamente.' }
         format.json { render :json => @product }
       else
-        @location_products.each do |location_product|
-          location_product.product_id = @product.id
-          location_product.save
-        end
         format.html { redirect_to products_path, alert: 'No se pudo guardar el producto.' }
         format.json { render :json => { :errors => @product.errors.full_messages }, :status => 422 }
       end
@@ -109,8 +130,14 @@ class ProductsController < ApplicationController
       @response_array << @location_product
     else
       @response_array << "error"
+      @response_array << @location_product.errors.full_messages
     end
     render :json => @response_array
+  end
+
+  def import
+    message = Product.import(params[:file], current_user.company_id, current_user)
+    redirect_to products_path, notice: message
   end
 
   private

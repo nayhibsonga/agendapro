@@ -124,17 +124,42 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <% @locations.each do |location| %>
-                        <tr <%= if current_user.role_id != Role.find_by_name("Administrador General").id && !current_user.locations.pluck(:id).include?(location.id) then 'style=display:none;' end %>>
-                          <td>
-                            <input type="checkbox" class="check_boxes productLocationCheck" id="location_product_ids_<%= location.id %>" value="<%= location.id %>" name="product[location_ids][]" onchange="changeLocationStatus(<%= location.id %>)">
-                            <label class="checkbox-text" for="location_product_ids_<%= location.id %>">&nbsp; <%= location.name %></label>
-                          </td>
-                          <td>
-                            <input type="number" class="form-control" id="location_product_ids_stock_<%= location.id %>" name="product[location_ids_stock][]" disabled>
-                            <span class="help-block"></span>
-                          </td>
-                        </tr>
+
+                      <% if @product.id.nil? %>
+                        <% @locations.each do |location| %>
+                          <tr <%= if current_user.role_id != Role.find_by_name("Administrador General").id && !current_user.locations.pluck(:id).include?(location.id) then 'style=display:none;' end %>>
+                            <td>
+                              <%= location.name %>
+                            </td>
+                            <td>
+                              <input type="number" class="form-control location_product_stock" name="location_product_stock" location_id="<%= location.id %>" value="0" />
+                            </td>
+                          </tr>
+                        <% end %>
+                      <% else %>
+                        <% @locations.each do |location| %>
+
+                          <% if LocationProduct.where(:product_id => @product.id, :location_id => location.id).count > 0 %>
+                            <% location_product = LocationProduct.where(:product_id => @product.id, :location_id => location.id).first %>
+                            <tr <%= if current_user.role_id != Role.find_by_name("Administrador General").id && !current_user.locations.pluck(:id).include?(location.id) then 'style=display:none;' end %>>
+                              <td>
+                                <%= location.name %>
+                              </td>
+                              <td>
+                                <input type="number" class="form-control location_product_stock" name="location_product_stock" location_id="<%= location.id %>" value="<%= location_product.stock %>" />
+                              </td>
+                            </tr>
+                          <% else %>
+                            <tr <%= if current_user.role_id != Role.find_by_name("Administrador General").id && !current_user.locations.pluck(:id).include?(location.id) then 'style=display:none;' end %>>
+                              <td>
+                                <%= location.name %>
+                              </td>
+                              <td>
+                                <input type="number" class="form-control location_product_stock" name="location_product_stock" location_id="<%= location.id %>" value="0" />
+                              </td>
+                            </tr>
+                          <% end %>
+                        <% end %>
                       <% end %>
                     </tbody>
                   </table>

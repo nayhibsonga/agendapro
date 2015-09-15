@@ -558,8 +558,9 @@ class LocationsController < ApplicationController
   end
 
   def inventory
+
     @location = Location.find(params[:id])
-    @location_products = @location.location_products
+    @location_products = @location.location_products.order('stock asc')
 
     respond_to do |format|
       format.html { render :partial => 'inventory' }

@@ -262,6 +262,8 @@ class Ability
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 
+        can :import, Product
+
         can :change_categories_order, ServiceCategory
         can :change_services_order, Service
         can :change_location_order, Location
@@ -414,6 +416,8 @@ class Ability
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
+
+        can :import, Product
 
         can :change_categories_order, ServiceCategory
         can :change_services_order, Service

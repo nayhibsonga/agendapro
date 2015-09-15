@@ -62,6 +62,7 @@ class Location < ActiveRecord::Base
   validate :new_plan_locations, :on => :create
 
   after_commit :extended_schedule
+  after_create :add_products
 
   pg_search_scope :search_company_name, :associated_against => {
     :company => :name
@@ -119,6 +120,14 @@ class Location < ActiveRecord::Base
   },
   :ignoring => :accents
 
+
+  	def add_products
+  		Product.where(:company_id => self.company.id).each do |product|
+  			if LocationProduct.where(:product_id => product.id, :location_id => self.id).count == 0
+  				location_product = LocationProduct.create(:product_id => product.id, :location_id => self.id, :stock => 0)
+  			end
+  		end
+  	end
 
 	def extended_schedule
 		company_setting = self.company.company_setting

@@ -375,6 +375,7 @@
     get '/alarm_form', :to => 'products#alarm_form'
     get '/inventory', :to => 'locations#inventory'
     post '/set_alarm', :to => 'products#set_alarm'
+    post '/products/import', :to => 'products#import', :as => 'import_products'
 
   end
 

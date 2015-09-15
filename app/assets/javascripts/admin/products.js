@@ -162,19 +162,26 @@ function saveProduct (typeURL, extraURL) {
 		return false;
 	};
 	var location_products = []
-	$('input.productLocationCheck').each(function() {
+	
+	/*$('input.productLocationCheck').each(function() {
 		if ($('#location_product_ids_'+$(this).val()).prop('checked')) {
 	    	location_products.push({ "location_id": $(this).val(), "stock": $('#location_product_ids_stock_'+$(this).val()).val() });
 		}
+	});*/
+
+	$('.location_product_stock').each(function(){
+		location_products.push({ "location_id": $(this).attr("location_id"), "stock": $(this).val()});
 	});
+
+	console.log(location_products);
 
 	var product_description = $("#product_description").val();
 
-	var productJSON = { "name": $('#product_name').val(), "sku": $('#product_sku').val(), "product_category_id": $('#product_product_category_id').val(), "product_brand_id": $('#product_product_brand_id').val(), "product_display_id": $('#product_product_display_id').val(), "price": $('#product_price').val(), "comission_value": $('#product_comission_value').val(), "comission_option": $('#product_comission_option').val(), "location_products_attributes": location_products, "description": product_description, "cost": $("#product_cost").val(), "internal_price": $("#product_internal_price").val() };
+	var productJSON = { "name": $('#product_name').val(), "sku": $('#product_sku').val(), "product_category_id": $('#product_product_category_id').val(), "product_brand_id": $('#product_product_brand_id').val(), "product_display_id": $('#product_product_display_id').val(), "price": $('#product_price').val(), "comission_value": $('#product_comission_value').val(), "comission_option": $('#product_comission_option').val(), "description": product_description, "cost": $("#product_cost").val(), "internal_price": $("#product_internal_price").val() };
 	$.ajax({
 		type: typeURL,
 		url: '/products'+extraURL+'.json',
-		data: { "product": productJSON },
+		data: { "product": productJSON, "location_products": JSON.stringify(location_products)},
 		dataType: 'json',
 		success: function() {
 			alertId.showAlert(
@@ -344,12 +351,86 @@ $(function() {
 			url: '/alarm_form?location_product_id=' + location_product_id,
 			type: 'get',
 			success: function(response){
+				$("#location_product_id").val(location_product_id);
 				$("#location_product_stock_limit").val(response[0]);
 				$("#location_product_alarm_email").val(response[1]);
 				$("#productAlarmModal").modal('show');
 			}
 		});
 	});
+
+	$("body").on('click', '#saveAlarmBtn', function(e){
+		e.preventDefault();
+		var location_product_id = $("#location_product_id").val();
+		var stock_limit = $("#location_product_stock_limit").val();
+		var alarm_email = $("#location_product_alarm_email").val();
+
+		$.ajax({
+			url: '/set_alarm',
+			type: 'post',
+			dataType: 'json',
+			data: {location_product_id: location_product_id, stock_limit: stock_limit, alarm_email: alarm_email},
+			success: function(response){
+				if(response[0] == "ok")
+				{
+					alertId.showAlert(
+						'<h3>Alarma guardada</h3>' +
+						'<p>Se ha guardado la alarma correctamente.</p>'
+					);
+					console.log(response[1]['stock']);
+					console.log(response[1]['stock_limit']);
+					console.log(response[1]['stock'] < response[1]['stock_limit'])
+					if( response[1]['stock'] < response[1]['stock_limit'] )
+					{
+						$('.inventoryRow[product_id="' + response[1]['product_id'] + '"]').removeClass("mediumStock");
+						$('.inventoryRow[product_id="' + response[1]['product_id'] + '"]').addClass("lowStock");
+					}
+					else if( response[1]['stock'] < response[1]['stock_limit'] * 1.5 )
+					{
+						$('.inventoryRow[product_id="' + response[1]['product_id'] + '"]').addClass("mediumStock");
+						$('.inventoryRow[product_id="' + response[1]['product_id'] + '"]').removeClass("lowStock");
+					}
+					else
+					{
+						$('.inventoryRow[product_id="' + response[1]['product_id'] + '"]').removeClass("mediumStock");
+						$('.inventoryRow[product_id="' + response[1]['product_id'] + '"]').removeClass("lowStock");
+					}
+				}
+				else
+				{
+					errors = response[1];
+					errorList = '';
+					for (i in errors) {
+						errorList += '<li>' + errores[i] + '</li>'
+					}
+					alertId.showAlert(
+						'<h3>Error</h3>' +
+						'<p>Ocurrió un error al guardar la alarma:</p>' + 
+						'<p><ul>' + errorList + '</ul></p>'
+					);
+				}
+				$("#productAlarmModal").modal('hide');
+				$("#location_product_id").val('');
+				$("#location_product_alarm_email").val('');
+				$("#location_product_stock_limit").val('');
+			},
+			error: function(response)
+			{
+				alertId.showAlert(
+					'<h3>Error</h3>' +
+					'<p>Ocurrió un error inesperado al guardar la alarma.</p>'
+				);
+			}
+		});
+
+	});
+
+
+	$("body").on('click', '#openImportBtn', function(e){
+		$('#importModal').modal('show');
+	});
+
+
 
 	initialize();
 });

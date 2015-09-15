@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Productos">
+    <Table>
+      <ss:Column ss:Width="100"/>
+      <ss:Column ss:Width="100"/>
+      <ss:Column ss:Width="100"/>
+      <ss:Column ss:Width="100"/>
+      <ss:Column ss:Width="100"/>
+      <% @xls_locations.each do |location| %>
+        <ss:Column ss:Width="120"/>
+      <% end %>
+      <Row>
+        <Cell><Data ss:Type="String">Sku</Data></Cell>
+        <Cell><Data ss:Type="String">Categoría</Data></Cell>
+        <Cell><Data ss:Type="String">Marca</Data></Cell>
+        <Cell><Data ss:Type="String">Nombre</Data></Cell>
+        <Cell><Data ss:Type="String">Cantidad/Unidad</Data></Cell>
+        <% @xls_locations.each do |location| %>
+          <Cell><Data ss:Type="String">Stock <%= location.name %></Data></Cell>
+        <% end %>
+      </Row>
+    <% @products.each do |product| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= product.sku %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= product.product_category.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= product.product_brand.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= product.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= product.product_display.name %></Data></Cell>
+        <% @xls_locations.each do |location| %>
+          <% location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first %>
+          <Cell><Data ss:Type="Number"><%= location_product.stock %></Data></Cell>
+        <% end %>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

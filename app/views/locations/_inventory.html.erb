@@ -3,16 +3,36 @@
     <table class="table table-bordered table-green">
       <thead>
         <tr>
+          <th>SKU</th>
           <th>Nombre</th>
           <th>Categoría</th>
+          <th>Marca</th>
+          <th>Cantidad</th>
+          <th>Stock disponible</th>
           <th>Opciones</th>
         </tr>
       </thead>
       <tbody>
         <% @location_products.each do |location_product| %>
-          <tr>
+          <% if location_product.stock_limit != nil %>
+            <% if location_product.stock <= location_product.stock_limit %>
+              <tr class="lowStock inventoryRow" product_id="<%= location_product.product_id %>">
+            <% else %>
+              <% if location_product.stock <= location_product.stock_limit*1.5 %>
+                <tr class="mediumStock inventoryRow" product_id="<%= location_product.product_id %>">
+              <% else %>
+                <tr class="inventoryRow" product_id="<%= location_product.product_id %>">
+              <% end %>
+            <% end %>
+          <% else %> 
+            <tr>
+          <% end %>
+            <td><%= location_product.product.sku %></td>
             <td><%= location_product.product.name %></td>
             <td><%= location_product.product.product_category.name %></td>
+            <td><%= location_product.product.product_brand.name %></td>
+            <td><%= location_product.product.product_display.name %></td>
+            <td><%= location_product.stock %></td>
             <td>
               <a href="#" class="btn btn-sm btn-green btn-alarm" location_product_id="<%= location_product.id %>" product_id="<%= location_product.product.id %>"><i class="fa fa-exclamation-triangle"></i> Alarmas</a>
               <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_product_path(location_product.product), :class => "btn btn-sm btn-orange" %>
