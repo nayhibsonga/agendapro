@@ -1,4 +1,6 @@
-module Marketplace
-	class V1::V1Controller < MarketplaceController
+module ApiViews
+	module Marketplace
+		class V1::V1Controller < MarketplaceController
+		end
 	end
 end
