@@ -44,7 +44,9 @@ class Product < ActiveRecord::Base
 
       (2..spreadsheet.last_row).each do |i|
         
-        row = Hash[[header, spreadsheet.row(i)].transpose]
+        row = Hash[[header, spreadsheet.row(i)].transpose].values
+
+        logger.debug row.inspect
 
         sku = row[0].to_s
         category_str = row[1].to_s
@@ -57,57 +59,57 @@ class Product < ActiveRecord::Base
         logger.debug "Display: " + display_str
         logger.debug "Name: " + name_str
 
-        product = Product.new
-        category = ProductCategory.new
-        brand = ProductBrand.new
-        display = ProductDisplay.new
+        # product = Product.new
+        # category = ProductCategory.new
+        # brand = ProductBrand.new
+        # display = ProductDisplay.new
 
-        if !ProductCategory.where(:name => category_str, :company_id => company_id).first.nil?
-          category = ProductCategory.where(:name => category_str, :company_id => company_id).first
-        else
-          category.name = category_str
-          category.company_id = company_id
-          category.save
-        end
+        # if !ProductCategory.where(:name => category_str, :company_id => company_id).first.nil?
+        #   category = ProductCategory.where(:name => category_str, :company_id => company_id).first
+        # else
+        #   category.name = category_str
+        #   category.company_id = company_id
+        #   category.save
+        # end
 
-        if !ProductBrand.where(:name => category_str, :company_id => company_id).first.nil?
-          brand = ProductBrand.where(:name => category_str, :company_id => company_id).first
-        else
-          brand.name = brand_str
-          brand.company_id = company_id
-          brand.save
-        end
+        # if !ProductBrand.where(:name => category_str, :company_id => company_id).first.nil?
+        #   brand = ProductBrand.where(:name => category_str, :company_id => company_id).first
+        # else
+        #   brand.name = brand_str
+        #   brand.company_id = company_id
+        #   brand.save
+        # end
 
-        if !ProductDisplay.where(:name => category_str, :company_id => company_id).first.nil?
-          display = ProductDisplay.where(:name => category_str, :company_id => company_id).first
-        else
-          display.name = display_str
-          display.company_id = company_id
-          display.save
-        end
+        # if !ProductDisplay.where(:name => category_str, :company_id => company_id).first.nil?
+        #   display = ProductDisplay.where(:name => category_str, :company_id => company_id).first
+        # else
+        #   display.name = display_str
+        #   display.company_id = company_id
+        #   display.save
+        # end
 
-        if !Product.find_by_sku(sku).nil?
-          product = Product.find_by_sku(sku)
-        end
+        # if !Product.find_by_sku(sku).nil?
+        #   product = Product.find_by_sku(sku)
+        # end
 
-        product.name = name_str
-        product.product_category_id = category.id
-        product.product_brand_id = brand.id
-        product.product_display_id = display.id
-        product.save
+        # product.name = name_str
+        # product.product_category_id = category.id
+        # product.product_brand_id = brand.id
+        # product.product_display_id = display.id
+        # product.save
 
-        loc_index = 5
+        # loc_index = 5
 
-        xls_locations.each do |location|
-          if LocationProduct.where(:location_id => location.id, :product_id => product.id).count > 0
-            location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first
-            location_product.stock = row[loc_index].to_i
-            location_product.save
-          else
-            location_product = LocationProduct.create(:location_id => location.id, :product_id => product.id, :stock => row[loc_index].to_i)
-          end
-          loc_index = loc_index + 1
-        end
+        # xls_locations.each do |location|
+        #   if LocationProduct.where(:location_id => location.id, :product_id => product.id).count > 0
+        #     location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first
+        #     location_product.stock = row[loc_index].to_i
+        #     location_product.save
+        #   else
+        #     location_product = LocationProduct.create(:location_id => location.id, :product_id => product.id, :stock => row[loc_index].to_i)
+        #   end
+        #   loc_index = loc_index + 1
+        # end
 
       end
 

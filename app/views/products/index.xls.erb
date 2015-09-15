@@ -11,6 +11,12 @@
       <ss:Column ss:Width="100"/>
       <ss:Column ss:Width="100"/>
       <ss:Column ss:Width="100"/>
+      <ss:Column ss:Width="100"/>
+      <ss:Column ss:Width="100"/>
+      <ss:Column ss:Width="100"/>
+      <ss:Column ss:Width="100"/>
+      <ss:Column ss:Width="100"/>
+      <ss:Column ss:Width="100"/>
       <% @xls_locations.each do |location| %>
         <ss:Column ss:Width="120"/>
       <% end %>
@@ -20,6 +26,15 @@
         <Cell><Data ss:Type="String">Marca</Data></Cell>
         <Cell><Data ss:Type="String">Nombre</Data></Cell>
         <Cell><Data ss:Type="String">Cantidad/Unidad</Data></Cell>
+
+
+        <Cell><Data ss:Type="String">Costo</Data></Cell>
+        <Cell><Data ss:Type="String">Precio venta externa</Data></Cell>
+        <Cell><Data ss:Type="String">Precio venta interna</Data></Cell>
+        <Cell><Data ss:Type="String">Comisión</Data></Cell>
+        <Cell><Data ss:Type="String">Tipo de comisión (0: %, 1:$)</Data></Cell>
+        <Cell><Data ss:Type="String">Descripción</Data></Cell>
+
         <% @xls_locations.each do |location| %>
           <Cell><Data ss:Type="String">Stock <%= location.name %></Data></Cell>
         <% end %>
@@ -31,6 +46,12 @@
         <Cell><Data ss:Type="String"><%= product.product_brand.name %></Data></Cell>
         <Cell><Data ss:Type="String"><%= product.name %></Data></Cell>
         <Cell><Data ss:Type="String"><%= product.product_display.name %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= product.cost %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= product.price %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= product.internal_price %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= product.comission_value %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= product.comission_option %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= product.description %></Data></Cell>
         <% @xls_locations.each do |location| %>
           <% location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first %>
           <Cell><Data ss:Type="Number"><%= location_product.stock %></Data></Cell>

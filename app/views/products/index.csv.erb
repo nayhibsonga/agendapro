@@ -1,6 +1,6 @@
 <% 
   require 'csv'
-  header_arr = ["Sku", "Categoría", "Marca", "Nombre", "Cantidad/Unidad"]
+  header_arr = ["Sku", "Categoría", "Marca", "Nombre", "Cantidad/Unidad", "Costo", "Precio venta externa", "Precio venta interna", "Comisión", "Tipo de comisión", "Descripción"]
   locations_str = '' 
 %>
 <% @xls_locations.each do |location| %>
@@ -8,7 +8,7 @@
 <% end %>
 <%= header_arr.to_csv( row_sep: nil ).html_safe %>
 <% @products.each do |product| %>
-  <% row_arr = [product.sku, product.product_category.name, product.product_brand.name, product.name, product.product_display.name] %>  
+  <% row_arr = [product.sku, product.product_category.name, product.product_brand.name, product.name, product.product_display.name, product.cost, product.price, product.internal_price, product.comission_value, product.comission_option, product.description] %>  
   <% location_stocks = '' %>
   <% @xls_locations.each do |location| %>
     <% location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first %>
