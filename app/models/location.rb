@@ -49,6 +49,7 @@ class Location < ActiveRecord::Base
 
   has_many :location_products, dependent: :destroy
   has_many :products, through: :location_products
+  has_one :stock_alarm_setting, dependent: :destroy
 
   mount_uploader :image1, LocationImagesUploader
   mount_uploader :image2, LocationImagesUploader

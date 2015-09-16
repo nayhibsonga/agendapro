@@ -24,6 +24,9 @@ class Company < ActiveRecord::Base
 	has_many :company_payment_methods, dependent: :destroy
 	has_many :payment_accounts, dependent: :destroy
 	has_many :products, dependent: :destroy
+	has_many :product_brands, dependent: :destroy
+	has_many :product_displays, dependent: :destroy
+	has_many :product_categories, dependent: :destroy
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 

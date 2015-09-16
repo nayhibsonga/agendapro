@@ -2419,7 +2419,40 @@ class CompaniesController < ApplicationController
 	end
 
 	def inventory
-		
+
+		if current_user.role_id != Role.find_by_name("Administrador General").id
+			errors = ['No tienes suficientes privilegios para ver esta página.']
+			format.html { redirect_to products_path, alert: 'No tienes suficientes privilegios para ver esta página.' }
+        	format.json { render :json => { :errors => errors }, :status => 422 }
+        	return
+		end
+
+		@company = current_user.company
+		@products = []
+
+		if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
+			@products = @company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
+			@products = @company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
+			@products = @company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
+			@products = @company.products.where(:product_category_id => params[:category]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
+			@products = @company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
+			@products = @company.products.where(:product_brand_id => params[:brand]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
+			@products = @company.products.where(:product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+		else
+			@products = @company.products.order(:product_category_id, :product_brand_id)
+		end
+
+	    respond_to do |format|
+	      format.html { render :partial => 'inventory' }
+	      format.json { render :json => @products }
+	    end
+
 	end
 
 	private

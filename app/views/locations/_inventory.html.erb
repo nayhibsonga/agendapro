@@ -34,7 +34,7 @@
             <td><%= location_product.product.product_display.name %></td>
             <td><%= location_product.stock %></td>
             <td>
-              <a href="#" class="btn btn-sm btn-green btn-alarm" location_product_id="<%= location_product.id %>" product_id="<%= location_product.product.id %>"><i class="fa fa-exclamation-triangle"></i> Alarmas</a>
+              <a href="#" class="btn btn-sm btn-alarm" location_product_id="<%= location_product.id %>" product_id="<%= location_product.product.id %>"><i class="fa fa-exclamation-triangle"></i> Alarma</a>
               <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_product_path(location_product.product), :class => "btn btn-sm btn-orange" %>
               <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
               <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, location_product.product, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Producto seleccionado?' } %>

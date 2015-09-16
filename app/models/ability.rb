@@ -150,12 +150,13 @@ class Ability
         can :create, Company, :id => user.company_id
         can :update, Company, :id => user.company_id
 
-        can :location_products, Location
-        can :get_staff_by_code, StaffCode
-        can :create_new_payment, Payment
-        can :alarm_form, Product
-        can :inventory, Location
-        can :set_alarm, Product
+        can :location_products, Location, :company_id => user.company_id
+        can :get_staff_by_code, StaffCode, :company_id => user.company_id
+        can :create_new_payment, Payment, :company_id => user.company_id
+        can :alarm_form, Product, :company_id => user.company_id
+        can :inventory, Location, :company_id => user.company_id
+        can :set_alarm, Product, :company_id => user.company_id
+        can :inventory, Company, :company_id => user.company_id
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -331,12 +332,13 @@ class Ability
         can :create, Product, :company_id => user.company_id
         can :update, Product, :company_id => user.company_id
 
-        can :location_products, Location
-        can :get_staff_by_code, StaffCode
-        can :create_new_payment, Payment
-        can :alarm_form, Product
-        can :inventory, Location
-        can :set_alarm, Product
+        can :location_products, Location, :company_id => user.company_id
+        can :get_staff_by_code, StaffCode, :company_id => user.company_id
+        can :create_new_payment, Payment, :company_id => user.company_id
+        can :alarm_form, Product, :company_id => user.company_id
+        can :inventory, Location, :company_id => user.company_id
+        can :set_alarm, Product, :company_id => user.company_id
+        can :inventory, Company, :company_id => user.company_id
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
@@ -484,12 +486,9 @@ class Ability
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 
-        can :location_products, Location
-        can :get_staff_by_code, StaffCode
-        can :create_new_payment, Payment
-        can :alarm_form, Product
-        can :inventory, Location
-        can :set_alarm, Product
+        can :location_products, Location, :company_id => user.company_id
+        can :get_staff_by_code, StaffCode, :company_id => user.company_id
+        can :create_new_payment, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff").id
         

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150914161008) do
+ActiveRecord::Schema.define(version: 20150916172555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1067,6 +1067,18 @@ ActiveRecord::Schema.define(version: 20150914161008) do
   create_table "statuses", force: true do |t|
     t.string   "name",        null: false
     t.text     "description", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "stock_alarm_settings", force: true do |t|
+    t.integer  "location_id"
+    t.boolean  "quick_send",              default: false
+    t.boolean  "has_default_stock_limit", default: false
+    t.integer  "default_stock_limit",     default: 0
+    t.boolean  "monthly",                 default: true
+    t.integer  "month_day",               default: 1
+    t.integer  "week_day",                default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
   end

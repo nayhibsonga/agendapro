@@ -19,6 +19,7 @@
               <td>
                 <select id="locationsSelect" class="form-control">
                   <% if current_user.role_id == Role.find_by_name('Administrador General').id %>
+                    <option value="0">Todos</option>
                     <% current_user.company.locations.where(:active => true).order(name: :asc).each do |location| %>
                       <option value="<%= location.id %>"><%= location.name %></option>
                     <% end %>
@@ -36,6 +37,7 @@
     </div>
     <div class="col-md-8">
       <div class="pull-right" style="margin: 10px 0;">
+        <%= link_to '<i class="fa fa-exclamation-triangle"></i> Alarmas'.html_safe, "#", :class => "btn btn-alarm", :id => "openAlarmsBtn" %>
         <%= link_to '<i class="fa fa-plus"></i> Nueva Categoría'.html_safe, "#", :class => "btn btn-green", :id => "openCategoriesBtn" %>
         <%= link_to '<i class="fa fa-plus"></i> Nueva Marca'.html_safe, "#", :class => "btn btn-green", :id => "openBrandsBtn" %>
         <%= link_to '<i class="fa fa-plus"></i> Nueva Cantidad'.html_safe, "#", :class => "btn btn-green", :id => "openDisplaysBtn" %>
@@ -46,9 +48,67 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-12" style="margin: 5px 0;">
-      <p style="text-align: center; font-size: 20px; color: #22c488;">Inventario de <span id="selectedLocationInventory"></span></p>
-    </div> 
+    <div class="col-md-5" style="margin: 5px 0;">
+      <p style="text-align: left; font-size: 20px; color: #22c488;">Inventario de <span id="selectedLocationInventory"></span></p>
+    </div>
+    <div class="col-md-7" style="margin: 5px 0;">
+      <div class="pull-right">
+        <table id="inventoryFiltersTable">
+          <tr>
+            <td>
+            </td>
+            <td>
+              <div class="form-group">
+                <div class="col-md-5" style="text-align: right;">
+                Categoría:
+                </div>
+                <div class="col-md-7">
+                  <select id="categoryFilterSelect" class="form-control filterSelect">
+                    <option value="0">Todas</option>
+                    <% current_user.company.product_categories.order(:name).each do |category| %>
+                      <option value="<%= category.id %>"><%= category.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="form-group">
+                <div class="col-md-5" style="text-align: right;">
+                  Marca:
+                </div>
+                <div class="col-md-7">
+                  <select id="brandFilterSelect" class="form-control filterSelect">
+                    <option value="0">Todas</option>
+                    <% current_user.company.product_brands.order(:name).each do |brand| %>
+                      <option value="<%= brand.id %>"><%= brand.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="form-group">
+                <div class="col-md-5" style="text-align: right;">
+                  Cantidad:
+                </div>
+                <div class="col-md-7">
+                  <select id="displayFilterSelect" class="form-control filterSelect">
+                    <option value="0">Todas</option>
+                    <% current_user.company.product_displays.order(:name).each do |display| %>
+                      <option value="<%= display.id %>"><%= display.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </td>
+            <!--<td>
+              <button id="filterBtn" class="btn btn-default btn-dark-green">Filtrar</button>
+            </td>-->
+          </tr>
+        </table>
+      </div>
+    </div>
   </div>
   
   <div id="locationInventory">
@@ -269,6 +329,26 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="generalAlarmsModal" tabindex="-1" role="dialog" aria-labelledby="generalAlarmsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title generalAlarms-modal-title" id="generalAlarmsModalLabel">Configurar recordatorios de stock</h4>
+        </div>
+        <div class="modal-body">
+          <form id="generalAlarmsForm" action="">
+
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-green" id="savegeneralAlarmsBtn">Guardar</button>
         </div>
       </div>
     </div>
