@@ -33,7 +33,7 @@ class ClientsController < ApplicationController
   # GET /clients/1
   # GET /clients/1.json
   def show
-    @bookings = @client.bookings.where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc)
+    @bookings = @client.bookings.where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc).paginate(:page => params[:page], :per_page => 25)
     @booked = @bookings.where(status: Status.find_by(name: 'Reservado')).count
     @confirmed = @bookings.where(status: Status.find_by(name: 'Confirmado')).count
     @attended = @bookings.where(status: Status.find_by(name: 'Asiste')).count

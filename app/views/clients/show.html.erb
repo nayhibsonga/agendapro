@@ -119,4 +119,9 @@
       </div>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-8">
+      <%= will_paginate @bookings, renderer: BootstrapPagination::Rails %>
+    </div>
+  </div>
 </div>
