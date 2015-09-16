@@ -34,6 +34,12 @@ class ClientsController < ApplicationController
   # GET /clients/1.json
   def show
     @bookings = @client.bookings.where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc)
+    @booked = @bookings.where(status: Status.find_by(name: 'Reservado')).count
+    @confirmed = @bookings.where(status: Status.find_by(name: 'Confirmado')).count
+    @attended = @bookings.where(status: Status.find_by(name: 'Asiste')).count
+    @payed = @bookings.where(status: Status.find_by(name: 'Pagado')).count
+    @cancelled = @bookings.where(status: Status.find_by(name: 'Cancelado')).count
+    @notAttended = @bookings.where(status: Status.find_by(name: 'No Asiste')).count
   end
 
   # GET /clients/new
