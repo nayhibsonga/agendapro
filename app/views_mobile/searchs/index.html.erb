@@ -209,7 +209,7 @@
           <% @companies.each_with_index do |company, index| %>
             <div class="item <%= if index == 0 then 'active' end %>">
               <div>
-                <a href="http://<%= company.web_address %>.agendapro.cl/">
+                <a href="http://<%= company.web_address %>.agendapro<%= company.country.domain %>/">
                   <%= image_tag company.logo.page.url.to_s, alt: company.name, size: "170x170" %>
                 </a>
               </div>
