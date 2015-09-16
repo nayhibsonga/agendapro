@@ -1,54 +1,82 @@
-<p id="notice"><%= notice %></p>
-
-<p>
-  <strong>Company:</strong>
-  <%= @client.company %>
-</p>
-
-<p>
-  <strong>Email:</strong>
-  <%= @client.email %>
-</p>
-
-<p>
-  <strong>First name:</strong>
-  <%= @client.first_name %>
-</p>
-
-<p>
-  <strong>Last name:</strong>
-  <%= @client.last_name %>
-</p>
-
-<p>
-  <strong>Address:</strong>
-  <%= @client.address %>
-</p>
-
-<p>
-  <strong>District:</strong>
-  <%= @client.district %>
-</p>
-
-<p>
-  <strong>City:</strong>
-  <%= @client.city %>
-</p>
-
-<p>
-  <strong>Age:</strong>
-  <%= @client.age %>
-</p>
-
-<p>
-  <strong>Gender:</strong>
-  <%= @client.gender %>
-</p>
-
-<p>
-  <strong>Birth date:</strong>
-  <%= @client.birth_date %>
-</p>
-
-<%= link_to 'Edit', edit_client_path(@client) %> |
-<%= link_to 'Back', clients_path %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">
+        <%= @client.first_name %> <%= @client.last_name %>
+        <small><%= @client.email %></small>
+      </h2>
+    </div>
+    <div class="col-sm-4 col-md-4">
+      <strong>RUT:</strong> <%= @client.identification_number %>
+    </div>
+    <div class="col-sm-4 col-md-4">
+      <strong>Teléfono 1:</strong> <%= @client.phone %>
+    </div>
+    <div class="col-sm-4 col-md-4">
+      <strong>Teléfono 2:</strong> <%= @client.second_phone %>
+    </div>
+  </div>
+  <div class="row" style="margin-top: 15px;">
+    <div class="col-md-12">
+      <table class="table table-hover table-green">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Local</th>
+            <th>Servicio</th>
+            <th>Prestador</th>
+            <th>Estado</th>
+            <th>Nota Cliente</th>
+            <th>Nota Interna</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @bookings.each do |booking| %>
+          <%
+            tr_class = ""
+            if booking.start.utc > DateTime.now
+              tr_class = "success"
+              if booking.is_session
+                tr_class = "info"
+              end
+            end
+            if booking.status == Status.find_by(name: 'Cancelado')
+              tr_class = 'warning'
+            end
+            if booking.status == Status.find_by(name: 'No Asiste')
+              tr_class = 'warning'
+            end
+          %>
+          <tr class="<%= tr_class %>">
+            <td><%= l booking.start, format: :long %></td>
+            <td><%= booking.location.name %></td>
+            <td>
+              <%= booking.service.name %>
+              <% if booking.is_session %>
+                <%
+                  index = 1
+                  session_index = "Sesión "
+                  session_booking = booking.session_booking
+                  session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
+                    if b.id == booking.id
+                      session_index = session_index + index.to_s
+                      break
+                    end
+                    index = index + 1
+                  end
+                  session_index = session_index + " de " + session_booking.sessions_amount.to_s
+                %>
+                <br /><%= "(" + session_index + ")" %>
+              <% end %>
+            </td>
+            <td><%= booking.service_provider.public_name %></td>
+            <td><%= booking.status.name %></td>
+            <td><%= booking.notes %></td>
+            <td><%= booking.company_comment %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
