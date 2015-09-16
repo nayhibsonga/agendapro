@@ -47,7 +47,7 @@ class Location < ActiveRecord::Base
   has_many :favorites, dependent: :destroy
   has_many :favorite_users, through: :favorites, source: :user
 
-  has_many :location_products
+  has_many :location_products, dependent: :destroy
   has_many :products, through: :location_products
 
   mount_uploader :image1, LocationImagesUploader

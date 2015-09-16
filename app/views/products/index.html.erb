@@ -8,9 +8,9 @@
 </div>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
       <div class="form-group" style="margin-top: 10px;">
-        <div class="col-md-6">
+        <div class="col-md-10">
           <table>
             <tr>
               <td>
@@ -30,16 +30,25 @@
                 </select>
               </td>
             </tr>
-          </table>        
+          </table>     
         </div>
       </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-8">
       <div class="pull-right" style="margin: 10px 0;">
+        <%= link_to '<i class="fa fa-plus"></i> Nueva Categoría'.html_safe, "#", :class => "btn btn-green", :id => "openCategoriesBtn" %>
+        <%= link_to '<i class="fa fa-plus"></i> Nueva Marca'.html_safe, "#", :class => "btn btn-green", :id => "openBrandsBtn" %>
+        <%= link_to '<i class="fa fa-plus"></i> Nueva Cantidad'.html_safe, "#", :class => "btn btn-green", :id => "openDisplaysBtn" %>
+        &nbsp;&nbsp;
         <%= link_to '<i class="fa fa-upload"></i> Importar productos'.html_safe, "#", :class => "btn btn-green", :id => "openImportBtn" %>
         <%= link_to '<i class="fa fa-plus"></i> Nuevo Producto'.html_safe, new_product_path, :class => "btn btn-green" %>
       </div>
     </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12" style="margin: 5px 0;">
+      <p style="text-align: center; font-size: 20px; color: #22c488;">Inventario de <span id="selectedLocationInventory"></span></p>
+    </div> 
   </div>
   
   <div id="locationInventory">
@@ -137,6 +146,135 @@
     </div>
   </div>
 </div>
+
+<% content_for :modals do %>
+  <div class="modal fade" id="productCategoryModal" tabindex="-1" role="dialog" aria-labelledby="productCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title productCategory-modal-title" id="productCategoryModalLabel">Crear o Borrar Categorías de Producto</h4>
+        </div>
+        <div class="modal-body">
+          <%= form_for @product_category, html: {class: "form-horizontal"} do |f| %>
+            <div class="form-group has-feedback">
+              <%= f.label :name, "Nueva Categoría", class: "col-md-3 control-label" %>
+              <div class="col-md-6">
+                <%= f.text_field :name, :class => 'form-control', :placeholder => 'Categoría (requerido)' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+              <div class="col-md-3">
+                <input class="btn btn-green" id="saveProductCategoryButton" type="submit" value="Guardar">
+              </div>
+            </div>
+          <% end %>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <h4>Otras Categorías:</h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <table class="table">
+                <tbody id="productCategoriesTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="productBrandModal" tabindex="-1" role="dialog" aria-labelledby="productBrandModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title productBrand-modal-title" id="productBrandModalLabel">Crear o Borrar Marcas de Producto</h4>
+        </div>
+        <div class="modal-body">
+          <%= form_for @product_brand, html: {class: "form-horizontal"} do |f| %>
+            <div class="form-group has-feedback">
+              <%= f.label :name, "Nueva Marca", class: "col-md-3 control-label" %>
+              <div class="col-md-6">
+                <%= f.text_field :name, :class => 'form-control', :placeholder => 'Marca (requerido)' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+              <div class="col-md-3">
+                <input class="btn btn-green" id="saveProductBrandButton" type="submit" value="Guardar">
+              </div>
+            </div>
+          <% end %>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <h4>Otras Marcas:</h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <table class="table">
+                <tbody id="productBrandsTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="productDisplayModal" tabindex="-1" role="dialog" aria-labelledby="productDisplayModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title productDisplay-modal-title" id="productDisplayModalLabel">Crear o Borrar Cantidad de Producto</h4>
+        </div>
+        <div class="modal-body">
+          <%= form_for @product_display, html: {class: "form-horizontal"} do |f| %>
+            <div class="form-group has-feedback">
+              <%= f.label :name, "Nueva Marca", class: "col-md-3 control-label" %>
+              <div class="col-md-6">
+                <%= f.text_field :name, :class => 'form-control', :placeholder => '250 ml' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+              <div class="col-md-3">
+                <input class="btn btn-green" id="saveProductDisplayButton" type="submit" value="Guardar">
+              </div>
+            </div>
+          <% end %>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <h4>Otras Cantidades:</h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <table class="table">
+                <tbody id="productDisplaysTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "products" %>

@@ -22,6 +22,13 @@ class ProductsController < ApplicationController
        @xls_locations = @pre_xls_locations
     end
 
+    @product_category = ProductCategory.new
+    @product_brand = ProductBrand.new
+    @product_display = ProductDisplay.new
+    @product_categories = ProductCategory.where(company_id: current_user.company_id).order(:name)
+    @product_brands = ProductBrand.where(company_id: current_user.company_id).order(:name)
+    @product_displays = ProductDisplay.where(company_id: current_user.company_id).order(:name)
+
     respond_with(@products)
   end
 
@@ -138,6 +145,13 @@ class ProductsController < ApplicationController
   def import
     message = Product.import(params[:file], current_user.company_id, current_user)
     redirect_to products_path, notice: message
+  end
+
+  def product_features
+    
+    respond_to do |format|
+      format.html { render :partial => 'product_features' }
+    end
   end
 
   private

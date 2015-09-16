@@ -12,6 +12,12 @@ class Product < ActiveRecord::Base
 
   accepts_nested_attributes_for :location_products, :reject_if => :all_blank, :allow_destroy => true
 
+  def full_name
+
+    full_name = self.name + ", " + self.product_category.name + ", " + self.product_brand.name + ", " + self.product_display.name + " (SKU: " + self.sku + ")"
+    return full_name
+  end
+
   def self.open_spreadsheet(file)
     case File.extname(file.original_filename)
     when ".csv" then Roo::Csv.new(file.path, file_warning: :ignore)

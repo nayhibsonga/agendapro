@@ -298,6 +298,18 @@ $(function() {
 	$("#newProductDisplayButton").click(function(){
 		getProductDisplays();
 	});
+	$('#openCategoriesBtn').click(function(e) {
+		e.preventDefault();
+		getProductCategories();
+	});
+	$("#openBrandsBtn").click(function(e){
+		e.preventDefault();
+		getProductBrands();
+	});
+	$("#openDisplaysBtn").click(function(e){
+		e.preventDefault();
+		getProductDisplays();
+	});
 
 	$('#productCategoryModal').on('hidden.bs.modal', function (e) {
 		validator_product_category.resetForm();
@@ -330,6 +342,7 @@ $(function() {
 	$('#locationsSelect').on('change', function(){
 
 		var location_id = $(this).val();
+		var location_name = $("#locationsSelect option:selected").text();
 
 		$.ajax({
 			url: '/inventory?id=' + location_id,
@@ -338,6 +351,7 @@ $(function() {
 			{
 				$("#locationInventory").empty();
 				$("#locationInventory").append(response);
+				$("#selectedLocationInventory").html(location_name);
 			}
 		});
 	});
