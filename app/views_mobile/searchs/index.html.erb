@@ -25,6 +25,7 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 <!-- search -->
 <div class="background fill" style="height: 500px; background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>)" id="buscador">
   <div class="fill">
@@ -203,20 +204,13 @@
   <div class="row">
     <div class="col-xs-12 pull-center">
       <div id="carousel-clients" class="carousel slide" data-ride="carousel" data-interval="1846">
-        <!-- Indicators -->
-        <ol class="carousel-indicators">
-          <% @companies.each_index do |index| %>
-            <li data-target="#carousel-clients" data-slide-to="0" <%= if index == 0 then 'class=active' end %>></li>
-          <% end %>
-        </ol>
-
         <!-- Wrapper for slides -->
         <div class="carousel-inner" role="listbox">
           <% @companies.each_with_index do |company, index| %>
             <div class="item <%= if index == 0 then 'active' end %>">
               <div>
                 <a href="http://<%= company.web_address %>.agendapro.cl/">
-                  <%= image_tag company.logo.page.url.to_s, alt: company.name, size: "169x121" %>
+                  <%= image_tag company.logo.page.url.to_s, alt: company.name, size: "170x170" %>
                 </a>
               </div>
             </div>
