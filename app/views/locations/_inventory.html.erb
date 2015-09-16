@@ -25,7 +25,7 @@
               <% end %>
             <% end %>
           <% else %> 
-            <tr>
+            <tr class="inventoryRow" product_id="<%= location_product.product_id %>">
           <% end %>
             <td><%= location_product.product.sku %></td>
             <td><%= location_product.product.name %></td>

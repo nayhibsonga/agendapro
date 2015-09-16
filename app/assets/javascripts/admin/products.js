@@ -379,7 +379,8 @@ $(function() {
 					);
 					console.log(response[1]['stock']);
 					console.log(response[1]['stock_limit']);
-					console.log(response[1]['stock'] < response[1]['stock_limit'])
+					console.log(response[1]['stock'] < response[1]['stock_limit']);
+					console.log(response[1]['product_id']);
 					if( response[1]['stock'] < response[1]['stock_limit'] )
 					{
 						$('.inventoryRow[product_id="' + response[1]['product_id'] + '"]').removeClass("mediumStock");
@@ -430,7 +431,14 @@ $(function() {
 		$('#importModal').modal('show');
 	});
 
-
+	$('#file').change( function () {
+		if ($('#file').val()) {
+			$('#import_button').removeAttr("disabled");
+		}
+		else {
+			$('#import_button').attr("disabled", "disabled");
+		}
+	});
 
 	initialize();
 });

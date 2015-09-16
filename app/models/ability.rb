@@ -215,6 +215,7 @@ class Ability
         can :destroy, Product, :company_id => user.company_id
         can :create, Product, :company_id => user.company_id
         can :update, Product, :company_id => user.company_id
+        can :edit, Product, :company_id => user.company_id
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id

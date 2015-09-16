@@ -46,11 +46,11 @@
         <Cell><Data ss:Type="String"><%= product.product_brand.name %></Data></Cell>
         <Cell><Data ss:Type="String"><%= product.name %></Data></Cell>
         <Cell><Data ss:Type="String"><%= product.product_display.name %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= product.cost %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= product.price %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= product.internal_price %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= product.comission_value %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= product.comission_option %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= product.cost %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= product.price %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= product.internal_price %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= product.comission_value %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= product.comission_option %></Data></Cell>
         <Cell><Data ss:Type="String"><%= product.description %></Data></Cell>
         <% @xls_locations.each do |location| %>
           <% location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first %>

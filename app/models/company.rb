@@ -22,8 +22,8 @@ class Company < ActiveRecord::Base
 	has_many :staff_codes, dependent: :destroy
 	has_many :deals, dependent: :destroy
 	has_many :company_payment_methods, dependent: :destroy
-
 	has_many :payment_accounts, dependent: :destroy
+	has_many :products, dependent: :destroy
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
