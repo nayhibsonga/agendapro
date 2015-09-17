@@ -37,4 +37,26 @@ class LocationProduct < ActiveRecord::Base
 
   end
 
+  def check_stock_for_reminder
+    #Check that location has active quick sends.
+    if !self.location.stock_alarm_setting.nil? && self.location.stock_alarm_setting.periodic_send
+
+      #Check first for own settings
+      if !self.stock_limit.nil? && !self.alarm_email.nil?
+        if self.stock < self.stock_limit
+          #Send alert and mark flag
+          return true
+
+        end
+      else
+        #Check for location settings
+        if self.location.stock_alarm_setting.has_default_stock_limit && self.stock < self.location.stock_alarm_setting.default_stock_limit
+          #Send alert and mark flag
+          return true
+        end
+      end
+
+    end
+  end
+
 end

@@ -397,15 +397,11 @@ class Location < ActiveRecord::Base
 	def self.stock_reminders
 
 		now = DateTime.now
+		week_locations = []
+		month_locations = []
 
 		#Check for locations that should be reminded today by week
 		week_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => false, :week_day => now.cwday).pluck(:location_id))
-
-		week_locations.each do |location|
-
-		end
-
-		month_locations = []
 
 		if (now + 1.days).mday == 1
 			month_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => true).where('month_day >= ?', now.mday).pluck(:location_id))
@@ -413,7 +409,21 @@ class Location < ActiveRecord::Base
 			month_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => true, :month_day => now.mday).pluck(:location_id))
 		end
 
-		month_locations.each do |location|
+		locations = week_locations + month_locations
+
+		locations.each do |location|
+			
+			location_products = []
+			
+			location.location_products.each do |location_product|
+				if location_product.check_stock_for_reminder
+					location_products << location_product
+				end
+			end
+
+			if location_products.count > 0
+				#Send reminder
+			end
 
 		end
 
