@@ -377,6 +377,9 @@
     post '/set_alarm', :to => 'products#set_alarm'
     post '/products/import', :to => 'products#import', :as => 'import_products'
     get '/company_inventory', :to => 'companies#inventory'
+    get '/company_alarms', :to => 'companies#stock_alarm_form'
+    get '/location_alarms', :to => 'locations#stock_alarm_form'
+    post '/save_alarms', :to => 'locations#save_stock_alarm'
 
   end
 

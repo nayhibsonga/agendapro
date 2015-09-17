@@ -68,6 +68,21 @@ class UserMailer < ActionMailer::Base
     template_name = 'Stock Alarm'
     template_content = []
 
+    email = location_product.alarm_email
+    if email.nil? || email == ""
+      email = location_product.location.stock_alarm_setting.email
+      if email.nil? || email == ""
+        email = location_product.location.email
+      end
+    end
+
+    stock_limit = location_product.stock_limit
+    if stock_limit.nil?
+      stock_limit = location_product.location.stock_alarm_setting.default_stock_limit
+    end
+
+    puts email
+
     # => Message
     message = {
       :from_email => 'no-reply@agendapro.cl',
@@ -75,8 +90,8 @@ class UserMailer < ActionMailer::Base
       :subject => 'Alerta de stock en ' + location_product.location.name,
       :to => [
         {
-          :email => location_product.alarm_email,
-          :name => location_product.alarm_email,
+          :email => email,
+          :name => email,
           :type => 'to'
         }
       ],
@@ -96,7 +111,7 @@ class UserMailer < ActionMailer::Base
         },
         {
           :name => 'STOCKLIMIT',
-          :content => location_product.stock_limit.to_s
+          :content => stock_limit.to_s
         },
         {
           :name => 'STOCK',

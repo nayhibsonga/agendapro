@@ -379,6 +379,14 @@ $(function() {
 
 	$('#locationsSelect').on('change', function(){
 		getInventory();
+		if($("#locationsSelect").val() == "0")
+		{
+			$("#openAlarmsBtn").hide();
+		}
+		else
+		{
+			$("#openAlarmsBtn").show();
+		}
 	});
 
 	$(".filterSelect").on('change', function(){
@@ -481,6 +489,74 @@ $(function() {
 		else {
 			$('#import_button').attr("disabled", "disabled");
 		}
+	});
+
+	$("body").on('click', '#openAlarmsBtn', function(e){
+		e.preventDefault();
+		var location_id = $("#locationsSelect").val();
+		if(location_id != "0")
+		{
+			$.ajax({
+				url: '/location_alarms',
+				type: 'get',
+				data: {id: location_id},
+				success: function(response)
+				{
+					$("#AlarmsModalDiv").empty();
+					$("#AlarmsModalDiv").append(response);
+					$("#generalAlarmsModal").modal("show");
+				}
+			});
+		}
+		else
+		{
+			$("#AlarmsModalDiv").empty();
+			$("#generalAlarmsModal").modal("show");
+		}
+	});
+
+	$("#saveGeneralAlarmsBtn").click(function(e){
+
+		var stock_alarm_setting_id = $("#stockAlarmSettingId").val();
+		var quick_send = $("#location_quick_send").val();
+		var periodic_send = $("#location_periodic_send").val();
+		var has_default_stock_limit = $("#location_has_default_stock_limit").val();
+		var default_stock_limit = $("#location_default_stock_limit").val();
+		var monthly = $("#location_monthly").val();
+		var month_day = $("#location_month_day").val();
+		var week_day = $("#location_week_day").val();
+		var email = $("#location_email").val();
+
+		$.ajax({
+			url: '/save_alarms',
+			type: 'post',
+			dataType: 'json',
+			data: {stock_alarm_setting_id: stock_alarm_setting_id, quick_send: quick_send, periodic_send: periodic_send, has_default_stock_limit: has_default_stock_limit, default_stock_limit: default_stock_limit, monthly: monthly, month_day: month_day, week_day: week_day, email: email},
+			success: function(response){
+				$("#generalAlarmsModal").modal('hide');
+				if(response[0] == "ok")
+				{
+					alertId.showAlert(
+						'<h3>Alarmas guardadas</h3>' +
+						'<p>Se han guardado la alarmas correctamente.</p>'
+					);
+				}
+				else
+				{
+					errors = response[1];
+					errorList = '';
+					for (i in errors) {
+						errorList += '<li>' + errores[i] + '</li>'
+					}
+					alertId.showAlert(
+						'<h3>Error</h3>' +
+						'<p>Ocurrió un error al guardar las alarmas:</p>' + 
+						'<p><ul>' + errorList + '</ul></p>'
+					);
+				}	
+			}
+		});
+
 	});
 
 	initialize();

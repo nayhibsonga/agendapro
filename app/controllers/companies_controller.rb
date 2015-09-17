@@ -2455,6 +2455,22 @@ class CompaniesController < ApplicationController
 
 	end
 
+	def stock_alarm_form
+
+		if current_user.role_id != Role.find_by_name("Administrador General").id
+			errors = ['No tienes suficientes privilegios para ver esta página.']
+			format.html { redirect_to products_path, alert: 'No tienes suficientes privilegios para ver esta página.' }
+        	format.json { render :json => { :errors => errors }, :status => 422 }
+        	return
+		end
+		
+		@stock_alarm_settings = StockAlarmSetting.where(location_id: current_user.company.locations.where(:active => true).pluck(:id))
+		respond_to do |format|
+	      format.html { render :partial => 'stock_alarm_form' }
+	      format.json { render :json => @locations }
+	    end
+	end
+
 	private
 		# Use callbacks to share common setup or constraints between actions.
 		def set_company

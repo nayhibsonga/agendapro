@@ -587,6 +587,60 @@ class LocationsController < ApplicationController
 
   end
 
+  def stock_alarm_form
+    @location = Location.find(params[:id])
+
+    if @location.stock_alarm_setting.nil?
+      stock_alarm_setting = StockAlarmSetting.create
+      stock_alarm_setting.location_id = @location.id
+      stock_alarm_setting.email = @location.email
+      stock_alarm_setting.save
+    end
+    @stock_alarm_setting = @location.stock_alarm_setting
+
+    respond_to do |format|
+        format.html { render :partial => 'stock_alarm_form' }
+        format.json { render :json => @locations }
+    end
+  end
+
+  def save_stock_alarm
+
+    @response_array = []
+
+    if params[:stock_alarm_setting_id].blank? || params[:stock_alarm_setting_id] == "0"
+      @response_array << "error"
+      @response_array << "El local que tratas de editar no existe o no tienes los permisos suficientes para hacerlo."
+    else
+      @stock_alarm_setting = StockAlarmSetting.find(params[:stock_alarm_setting_id])
+      if @stock_alarm_setting.nil?
+        @response_array << "error"
+        @response_array << "El local que tratas de editar no existe o no tienes los permisos suficientes para hacerlo."
+      else
+        @stock_alarm_setting.quick_send = params[:quick_send]
+        @stock_alarm_setting.periodic_send = params[:periodic_send]
+        @stock_alarm_setting.has_default_stock_limit = params[:has_default_stock_limit]
+        @stock_alarm_setting.default_stock_limit = params[:default_stock_limit]
+        @stock_alarm_setting.monthly = params[:monthly]
+        @stock_alarm_setting.month_day = params[:month_day]
+        @stock_alarm_setting.week_day = params[:week_day]
+        @stock_alarm_setting.email = params[:email]
+
+        if @stock_alarm_setting.save
+          @response_array << "ok"
+          @response_array << @stock_alarm_setting
+        else
+          @response_array << "error"
+          @response_array << "Ocurrió un error inesperado al guardar la configuración."
+        end
+
+      end
+    end
+
+    render :json => @response_array
+
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_location

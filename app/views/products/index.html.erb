@@ -8,9 +8,9 @@
 </div>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-5">
       <div class="form-group" style="margin-top: 10px;">
-        <div class="col-md-10">
+        <div class="col-md-12">
           <table>
             <tr>
               <td>
@@ -30,14 +30,18 @@
                   <% end %>
                 </select>
               </td>
+              <td style="padding-left: 5px; ">
+                <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, '/products.xls', :target => :blank, class: "btn btn-white" %>
+                <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, '/products.csv', :target => :blank, class: "btn btn-white" %>
+                <a href="#" class="btn btn-red" id="openAlarmsBtn" style="display: none;"><i class="fa fa-exclamation-triangle"></i> Alarmas</a>
+              </td>
             </tr>
           </table>     
         </div>
       </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-7">
       <div class="pull-right" style="margin: 10px 0;">
-        <%= link_to '<i class="fa fa-exclamation-triangle"></i> Alarmas'.html_safe, "#", :class => "btn btn-alarm", :id => "openAlarmsBtn" %>
         <%= link_to '<i class="fa fa-plus"></i> Nueva Categoría'.html_safe, "#", :class => "btn btn-green", :id => "openCategoriesBtn" %>
         <%= link_to '<i class="fa fa-plus"></i> Nueva Marca'.html_safe, "#", :class => "btn btn-green", :id => "openBrandsBtn" %>
         <%= link_to '<i class="fa fa-plus"></i> Nueva Cantidad'.html_safe, "#", :class => "btn btn-green", :id => "openDisplaysBtn" %>
@@ -342,13 +346,16 @@
           <h4 class="modal-title generalAlarms-modal-title" id="generalAlarmsModalLabel">Configurar recordatorios de stock</h4>
         </div>
         <div class="modal-body">
-          <form id="generalAlarmsForm" action="">
+          <div id="AlarmsModalDiv">
 
-          </form>
+          </div>
+          <!--<form class="generalAlarmsForm" action="">
+
+          </form>-->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-green" id="savegeneralAlarmsBtn">Guardar</button>
+          <button type="button" class="btn btn-green" id="saveGeneralAlarmsBtn">Guardar</button>
         </div>
       </div>
     </div>

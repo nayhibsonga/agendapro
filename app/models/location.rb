@@ -394,5 +394,30 @@ class Location < ActiveRecord::Base
 		return closed_days
 	end
 
+	def self.stock_reminders
+
+		now = DateTime.now
+
+		#Check for locations that should be reminded today by week
+		week_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => false, :week_day => now.cwday).pluck(:location_id))
+
+		week_locations.each do |location|
+
+		end
+
+		month_locations = []
+
+		if (now + 1.days).mday == 1
+			month_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => true).where('month_day >= ?', now.mday).pluck(:location_id))
+		else
+			month_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => true, :month_day => now.mday).pluck(:location_id))
+		end
+
+		month_locations.each do |location|
+
+		end
+
+	end
+
 end
 
