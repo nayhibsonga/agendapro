@@ -618,7 +618,9 @@ class CompaniesController < ApplicationController
 			end
 		end
 
-		unless @company.company_setting.activate_workflow && @company.active
+		@locations = Location.where(:active => true, online_booking: true, district_id: District.where(city_id: City.where(region_id: Region.where(country_id: Country.find_by(locale: I18n.locale.to_s))))).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+
+		unless @company.company_setting.activate_workflow && @company.active && @locations.count > 0
 			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
 
 			host = request.host_with_port
@@ -627,7 +629,6 @@ class CompaniesController < ApplicationController
 			redirect_to root_url(:host => domain)
 			return
 		end
-		@locations = Location.where(:active => true, online_booking: true, district_id: District.where(city_id: City.where(region_id: Region.where(country_id: Country.find_by(locale: I18n.locale.to_s))))).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
 
 		@has_images = false
 		@locations.each do |location|
