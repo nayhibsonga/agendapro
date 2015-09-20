@@ -4,11 +4,13 @@
       <p class="text-right">
       <% if @from_collection.first %>
         <% if @monthly_mails_sent < @monthly_mails %>
+          Enviar e-mail a este listado de clientes:
           <%= link_to '<i class="fa fa-envelope"></i> Enviar E-mail'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white", id: 'sendMail' %>
         <% else %>
           Has alcanzado el limite de e-mails
         <% end %>
       <% else %>
+        Enviar e-mail a este listado de clientes:
         <button id="sendMail" type="button" class="btn btn-white" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar E-mail</button>
       <% end %>
       </p>
@@ -214,6 +216,7 @@
               <td><%= client.email %></td>
               <td><%= client.identification_number %></td>
               <td>
+                <%= link_to '<i class="fa fa-eye"></i> Ver'.html_safe, client_path(client), class: 'btn btn-sm btn-margin-bottom btn-green' %>
                 <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_client_path(client), :class => "btn btn-sm btn-margin-bottom btn-orange" %>
                 <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-sm btn-margin-bottom btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %>
               </td>
