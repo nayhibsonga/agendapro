@@ -16,7 +16,7 @@
 			<li class="center-li"><a class="center-link dark-gray" tab_id="<%=i%>" href="#services<%=i%>" data-toggle="tab">Servicios</a></li>
 			<li class="center-li"><a class="center-link dark-gray" tab_id="<%=i%>" href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
 			<% if location.company.owned %>
-			<li class="right-li"><%= link_to '<i class="fa fa-calendar-o"></i>&nbsp;&nbsp;Reservar'.html_safe, url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "reservar-link", :role => "button" %></li>
+			<li class="right-li"><%= link_to '<i class="fa fa-calendar-o"></i>&nbsp;&nbsp;Reservar'.html_safe, url_for(:subdomain => location.get_web_address, locale: location.get_locale, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "reservar-link", :role => "button" %></li>
 			<% end %>
 		</ul>
 
@@ -100,7 +100,7 @@
 																<% end %>
 															</div>
 															<div class="col-xs-3">
-																<%= link_to 'Reservar'.html_safe, url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, service_id: service["id"], :controller => 'companies', :action => 'workflow'), :class => "btn btn-sm btn-default btn-green pull-right", :role => "button" %>
+																<%= link_to 'Reservar'.html_safe, url_for(:subdomain => location.get_web_address, locale: location.get_locale, :local => location.id, service_id: service["id"], :controller => 'companies', :action => 'workflow'), :class => "btn btn-sm btn-default btn-green pull-right", :role => "button" %>
 															</div>
 														</div>
 													</div>

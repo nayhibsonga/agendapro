@@ -10,12 +10,8 @@ class SearchsController < ApplicationController
   	before_action :constraint_locale, only: [:promotions]
 
 	def landing
-		@url_cl = localized_root_path(:locale => 'es_CL')
-		@url_co = localized_root_path(:locale => 'es_CO')
 		if params[:redirect_params].present?
 			redirect = eval(params[:redirect_params])
-			@url_cl = url_for(redirect.merge({:locale => 'es_CL'}))
-			@url_co = url_for(redirect.merge({:locale => 'es_CO'}))
 		end
 
 		render layout: "empty"

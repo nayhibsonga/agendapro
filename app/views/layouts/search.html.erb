@@ -25,46 +25,34 @@
 		<%= yield :stylesheets %>
     <!-- end: CSS -->
 
+    <!-- start: JavaScript-->
     <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
     <!-- Begin Inspectlet Embed Code -->
     <script type="text/javascript" id="inspectletjs">
-    window.__insp = window.__insp || [];
-    __insp.push(['wid', 1883420541]);
-    (function() {
-    function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
-    if (window.attachEvent) window.attachEvent('onload', __ldinsp);
-    else window.addEventListener('load', __ldinsp, false);
-    })();
+      window.__insp = window.__insp || [];
+      __insp.push(['wid', 1883420541]);
+      (function() {
+      function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+      if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+      else window.addEventListener('load', __ldinsp, false);
+      })();
     </script>
     <!-- End Inspectlet Embed Code -->
 		<!-- start: Facebook Tracker-->
 		<%= render 'layouts/facebook_tracker' %>
 		<!-- end: Facebook Tracker-->
-        <% end %>
+    <% end %>
 
-		<!-- start: JavaScript-->
 		<%= javascript_include_tag "home-head" %>
-		<!-- end: JavaScript-->
-
-
 		<%= yield :head_scripts %>
+    <!-- end: JavaScript-->
 
 		<%= render 'layouts/icons' %>
-
 	</head>
 
 	<body>
-        <%= render 'layouts/modals' %>
+    <%= render 'layouts/modals' %>
 
-		<!-- start: Header -->
-        <!-- <% if user_signed_in? %>
-        	<%= render 'layouts/home_dropdown' %>
-        	<li><%= link_to '<i class="fa fa-plus"></i> Info'.html_safe, home_path %></li>
-        <% else %>
-            <li><a href="#" data-toggle="modal" data-target="#signin-modal"><i class="fa fa-user"></i> Inicia Sesión</a></li>
-            <li><a href="#" data-toggle="modal" data-target="#signup-modal"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
-            <li><%= link_to '<i class="fa fa-home"></i> Agrega tu empresa'.html_safe, home_path %></li>
-        <% end %> -->
 		<header>
 			<nav class="navbar navbar-default navbar-agendapro navbar-fixed-top" role="navigation" id="main-navbar">
 				<div class="container">
@@ -86,14 +74,13 @@
 							<li><%= link_to "Contacto", "/#contacto" %></li>
 							<li><%= link_to "Promociones", get_promotions_path, :class => "nav-bar-orange" %></li>
 							<% if user_signed_in? %>
-                                <%= render 'layouts/home_dropdown' %>
-                            <% else %>
-                                <li><a href="#" data-toggle="modal" data-target="#signin-modal" class="menu-green"><i class="fa fa-user"></i> Inicia Sesión</a></li>
-                                <li><a href="#" data-toggle="modal" data-target="#signup-modal" class="menu-green"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
-                            <% end %>
+							<%= render 'layouts/home_dropdown' %>
+							<% else %>
+							<li><a href="#" data-toggle="modal" data-target="#signin-modal" class="menu-green"><i class="fa fa-user"></i> Inicia Sesión</a></li>
+							<li><a href="#" data-toggle="modal" data-target="#signup-modal" class="menu-green"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
+							<% end %>
 							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
-							<li><%= link_to image_tag("search/landing/chile.png", alt: "Chile", size: "24x16", :class => I18n.locale == 'es_CL'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CL'})), class: "i18n-flag" %></li>
-            				<li><%= link_to image_tag("search/landing/colombia.png", alt: "Colombia", size: "24x16", :class => I18n.locale == 'es_CO'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CO'})), class: "i18n-flag" %></li>
+							<%= render 'layouts/flag_dropdown' %>
 						</ul>
 					</div>
 				</div>
@@ -119,42 +106,7 @@
 		<%= yield %>
 		<!-- end: content -->
 
-		<!-- <footer>
-			<section id="footer_teasers_wrapper">
-				<div class="container">
-					<div class="row">
-						<div class="footer_teaser col-sm-12 col-md-12">
-							<%= render 'layouts/facebook' %>
-							<h3>AgendaPro - Sistema de Reservas Online</h3>
-							<p>
-								<span class="txt-footer"><i class="fa fa-map-marker"></i> Ana María Carrera 5210, Las Condes, Santiago </span>
-								<span class="txt-footer"><i class="fa fa-phone"></i> (+56 9) 5178 5898 </span>
-								<span><i class="fa fa-envelope"></i> contacto@agendapro.cl </span>
-							</p>
-						</div>
-					</div>
-				</div>
-			</section>
-			<section class="copyright">
-				<div class="container">
-					<div class="row">
-						<div class="col-sm-6 col-md-6"> &copy; Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados</div>
-						<div class="text-right col-sm-6 col-md-6">
-							<%= link_to 'Sobre Nosotros', '/about_us', :target => :blank %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
-						</div>
-                        <% if mobile_browser? %>
-                        <div class="col-xs-12">
-                        	<%= link_to 'Sitio Movil', prefer_mobile_site_url %>
-                        </div>
-                        <% end %>
-					</div>
-				</div>
-			</section>
-		</footer> -->
-
 		<!-- start: JavaScript-->
-		<% javascript_include_tag "jquery.browser.min" %><!-- Removido -->
-		<% javascript_include_tag "browser-detect" %><!-- Removido -->
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 		<%= javascript_include_tag "search" %>
 		<%= yield :scripts %>
@@ -170,12 +122,6 @@
 		<!--Start of Crazy Egg Script-->
 		<%= javascript_include_tag 'crazy_egg' %>
 		<!--End of Crazy Egg Script-->
-
-		<!--<script>
-          // $( "#menu-display" ).click(function() {
-          //   $( ".nav-pills" ).toggle( "slow" );
-          // });
-        </script>-->
 		<!-- end: JavaScript-->
 	</body>
 </html>

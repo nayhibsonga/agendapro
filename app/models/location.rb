@@ -55,7 +55,7 @@ class Location < ActiveRecord::Base
 
   validates :name, :phone, :company, :district, :email, :presence => true
 
-  validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :plan_locations, :outcall_services
+  validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :plan_locations, :outcall_services, :active_countries
   validate :new_plan_locations, :on => :create
 
   after_commit :extended_schedule
@@ -214,6 +214,12 @@ class Location < ActiveRecord::Base
 		end
 	end
 
+	def active_countries
+		if self.active && CompanyCountry.where(country_id: self.district.city.region.country.id, company_id: self.company_id).count < 1
+			errors.add(:base, "No puedes guardar el local ya que no tienes ese país activo en tus configuraciones.")
+		end
+	end
+
 	def categorized_services
 
 	    location_resources = self.resource_locations.pluck(:resource_id)
@@ -277,7 +283,7 @@ class Location < ActiveRecord::Base
 
 	end
 
-	def populated_categorized_services
+	def api_categorized_services
 
 	    location_resources = self.resource_locations.pluck(:resource_id)
 	    service_providers = self.service_providers.where(active: true, online_booking: true)
@@ -305,8 +311,16 @@ class Location < ActiveRecord::Base
 	      services_array = Array.new
 	      services.each do |service|
 	        if service.service_category_id == category.id
-	          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
-	          services_array.push(serviceJSON)
+	          service_info = {
+	          	id: service.id,
+	          	name: service.name,
+	          	price: service.show_price ? service.price : "",
+	          	duration: service.duration,
+	          	service_category_id: service.service_category_id,
+	          	order: service.order,
+	          	description: service.description
+	          }
+	          services_array.push(service_info)
 	        end
 	      end
 	      service_hash = {
@@ -406,6 +420,14 @@ class Location < ActiveRecord::Base
 	    end
 
 	    return categories
+	end
+
+	def get_web_address
+		return self.company.company_countries.find_by(country_id: self.district.city.region.country.id).web_address
+	end
+
+	def get_locale
+		return self.district.city.region.country.locale
 	end
 
 	def get_full_address
