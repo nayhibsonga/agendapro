@@ -31,6 +31,12 @@ class ApplicationController < ActionController::Base
           I18n.locale = :es_CL
         elsif requested_location == 'CO'
           I18n.locale = :es_CO
+        elsif requested_location == 'PA'
+          I18n.locale = :es_PA
+        elsif requested_location == 'VE'
+          I18n.locale = :es_VE
+        elsif requested_location == 'GT'
+          I18n.locale = :es_GT
         else
           I18n.locale = :es
         end
