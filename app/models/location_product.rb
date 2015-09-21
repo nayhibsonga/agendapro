@@ -21,7 +21,7 @@ class LocationProduct < ActiveRecord::Base
     		if self.stock < self.stock_limit && self.alert_flag
           #Send alert and mark flag
           self.update_column(:alert_flag, false)
-    			UserMailer.stock_alarm_email(self)
+    			PaymentsSystemMailer.stock_alarm_email(self)
 
     		end
       else
@@ -29,7 +29,7 @@ class LocationProduct < ActiveRecord::Base
         if self.location.stock_alarm_setting.has_default_stock_limit && self.stock < self.location.stock_alarm_setting.default_stock_limit
           #Send alert and mark flag
           self.update_column(:alert_flag, false)
-          UserMailer.stock_alarm_email(self)
+          PaymentsSystemMailer.stock_alarm_email(self)
         end
     	end
 

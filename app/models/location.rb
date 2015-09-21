@@ -423,9 +423,43 @@ class Location < ActiveRecord::Base
 
 			if location_products.count > 0
 				#Send reminder
+				location.send_stock_reminders(location_products)
 			end
 
 		end
+
+	end
+
+	def send_stock_reminders(location_products)
+
+		stocks = ''
+
+		email = self.stock_alarm_setting.email
+		if email.nil? || email == ""
+			email = self.email
+		end
+
+		location_products.each do |location_product|
+
+			stock_limit = location_product.stock_limit
+			puts "LocationProduct: "
+			puts location_product.inspect
+		    if stock_limit.nil?
+		      stock_limit = location_product.location.stock_alarm_setting.default_stock_limit
+		  	else
+		  		puts "No era nulo. Stock limit: " + stock_limit.to_s
+		    end
+		    puts "Stock limit: " + stock_limit.to_s
+
+		    stocks = stocks + '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.product.full_name + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.stock.to_s + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + stock_limit.to_s + '</td>' +
+            '</tr>'
+
+		end
+
+		PaymentsSystemMailer.stock_reminder_email(self, stocks, email)
 
 	end
 

@@ -118,7 +118,7 @@ class ProductsController < ApplicationController
     end
 
     if @location_product.alarm_email.nil?
-      @response_array << @location..stock_alarm_setting.email
+      @response_array << @location.stock_alarm_setting.email
     else
       @response_array << @location_product.alarm_email
     end
