@@ -273,8 +273,17 @@ class Client < ActiveRecord::Base
       from = Date.parse(from)
       to = Date.parse(to)
 
-      # posible falla al cambiar de año, fecha inicio 2015 - fecha termino 2016
-      where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month BETWEEN ? AND ?)', from.month, from.day, 31, to.month, 1, to.day, (from + 1.month).month, (to - 1.month).month)
+      # # posible falla al cambiar de año, fecha inicio 2015 - fecha termino 2016
+      # where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month BETWEEN ? AND ?)', from.month, from.day, 31, to.month, 1, to.day, (from + 1.month).month, (to - 1.month).month)
+      if from.month == to.month
+        where('birth_month = ? AND birth_day BETWEEN ? AND ?', from.month, from.day, to.day)
+      elsif from.month < to.month
+        where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month > ? AND birth_month < ?)', from.month, from.day, 31, to.month, 1, to.day, from.month, to.month)
+      elsif from.month > to.month
+        where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month > ? AND birth_month < ?) OR (birth_month > ? AND birth_month < ?)', from.month, from.day, 31, to.month, 1, to.day, from.month, 12, 1, to.month)
+      else
+        all
+      end
     else
       all
     end
