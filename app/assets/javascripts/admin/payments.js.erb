@@ -1121,7 +1121,16 @@ function createAndServePayment(option)
 
     },
     success: function(response){
-
+      if(response[0] == "ok")
+      {
+        alert("Pago guardado con éxito.");
+        $(".payment-btn-close").trigger("click");
+      }
+      else
+      {
+        alert("Ocurrió un error al guardar el pago.");
+        $(".payment-btn-close").trigger("click");
+      }
     }
   });
 

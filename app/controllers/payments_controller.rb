@@ -318,7 +318,13 @@ class PaymentsController < ApplicationController
       end
 
       new_receipt.payment = payment
-      new_receipt.save
+      
+      if new_receipt.save
+        @json_response[0] = "ok"
+      else
+        @json_response[0] = "error"
+        @errors << new_receipt.errors
+      end
 
     end
 
@@ -326,7 +332,20 @@ class PaymentsController < ApplicationController
     payment.mock_bookings = @mockBookings
     payment.payment_products = @paymentProducts
 
-    payment.save
+    if payment.save
+      @json_response[0] = "ok"
+      @errors << payment.errors
+    else
+      @json_response[0] = "error"
+    end
+
+    if @json_response[0] == "ok"
+      @json_response << payment
+    else
+      @json_response << @errors
+    end
+
+    render :json => @json_response
 
   end
 
