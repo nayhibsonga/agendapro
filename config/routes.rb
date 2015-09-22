@@ -1,22 +1,14 @@
  Agendapro::Application.routes.draw do
 
-  resources :product_displays
+  
 
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
-  scope "(:locale)", locale: /es|es_CL|es_CO/ do
+  scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
 
     # devise_for :users, controllers: {registrations: 'registrations', omniauth_callbacks: "omniauth_callbacks"}
 
     devise_for :users, skip: [:omniauth_callbacks], controllers: {registrations: 'registrations'}
-
-    resources :product_categories
-
-    resources :product_brands
-
-    resources :product_displays
-
-    resources :products
 
     get "users/index"
     require 'subdomain'
@@ -50,6 +42,7 @@
     resources :bookings
     resources :service_providers
     resources :service_categories
+    resources :provider_groups
     resources :resources
     resources :clients
     resources :resource_categories
@@ -70,6 +63,14 @@
     resources :receipt_types
     resources :company_payment_methods
     resources :payment_methods
+
+    resources :product_categories
+
+    resources :product_brands
+
+    resources :product_displays
+
+    resources :products
 
     resources :favorite_locations, only: [:index, :create, :destroy]
 
@@ -121,6 +122,7 @@
     post '/change_services_order', :to => 'services#change_services_order'
     post '/change_location_order', :to => 'locations#change_location_order'
     post '/change_providers_order', :to => 'service_providers#change_providers_order'
+    post '/change_groups_order', :to => 'provider_groups#change_groups_order'
     get '/confirm_email', :to => 'company_from_emails#confirm_email', :as => 'confirm_email'
 
     # Autocompletar del Booking
@@ -271,6 +273,8 @@
     post '/cancel_booking', :to => 'bookings#cancel_booking'
     get '/cancel_all_booking', :to => 'bookings#cancel_all_booking', :as => 'cancel_all_booking'
     post '/cancel_all_booking', :to => 'bookings#cancel_all_booking'
+    get '/cancel_all_reminded_booking', :to => 'bookings#cancel_all_reminded_booking', :as => 'cancel_all_reminded_booking'
+    post '/cancel_all_reminded_booking', :to => 'bookings#cancel_all_reminded_booking'
     get '/confirm_booking', :to => 'bookings#confirm_booking', :as => 'confirm_booking'
     get '/confirm_all_bookings', :to => 'bookings#confirm_all_bookings', :as => 'confirm_all_bookings'
     get '/confirm_error', :to => 'bookings#confirm_error', :as => 'confirm_error'
@@ -394,6 +398,7 @@
       get 'services/:id/service_providers', to: 'services#service_providers'
 
       get 'service_providers/:id/available_hours', to: 'service_providers#available_hours'
+      get 'service_providers/:id/available_days', to: 'service_providers#available_days'
 
       post 'users/session', to: 'users#login'
       post 'users/registration', to: 'users#create'

@@ -72,18 +72,15 @@
 	</div>
 	<div class="countries">
 		<ul>
+		<% Country.all.order(:name).each do |country| %>
+		<% @url = params[:redirect_params].present? ? url_for(eval(params[:redirect_params]).merge({:locale => country.locale })) : localized_root_path(:locale => country.locale ) %>
 			<li>
-				<a href="<%= @url_cl %>" class="imageLink">
-					<%= image_tag "search/landing/chile.png", alt: "Chile", size: "47x32" %>
-		            Chile
+				<a href="<%= @url %>" class="imageLink">
+					<%= image_tag country.flag_photo.url, alt: country.name, size: "47x32" %>
+		            <%= country.name %>
 		        </a>
 		    </li>
-		    <li>
-		        <a href="<%= @url_co %>" class="imageLink">
-					<%= image_tag "search/landing/colombia.png", alt: "Colombia", size: "47x32" %>
-		            Colombia
-		        </a>
-		    </li>
+		<% end %>
 		</ul>
 	</div>
 </div>

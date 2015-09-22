@@ -34,6 +34,9 @@
 <%= content_tag "div", id: "products_data", data: { products: Product.where(company_id: current_user.company_id).to_json } do %>
 <% end %>
 
+<%= content_tag "div", id: "groups_data", data: { provider_groups: @provider_groups } do %>
+<% end %>
+
 <% content_for :calendar do %>
   <div class="container-fluid">
     <div class="row">
@@ -344,7 +347,7 @@
                       <div class="form-group has-feedback">
                         <%= label_tag :booking_staff_code, "Código de Empleado", class: "col-sm-2 control-label" %>
                         <div class="col-sm-10">
-                          <%= text_field_tag :booking_staff_code, '',{class: "form-control", required: true} %>
+                          <%= password_field_tag :booking_staff_code, '',{class: "form-control", required: true} %>
                           <span class="help-block"></span>
                           <span class="form-control-feedback"></span>
                         </div>

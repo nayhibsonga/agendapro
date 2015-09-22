@@ -40,6 +40,7 @@
 										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
 									</dl>
 									<% end %>
+									<% if current_user && @company %>
 									<hr>
 									<h4>Información de la Cuenta</h4>
 									<dl class="dl-horizontal">
@@ -60,6 +61,7 @@
 								        <dt>Saldo a Favor</dt>
 								        <dd><%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%></dd>
 								        <% end %>
+								       <% end %>
 									</dl>
 								<% else %>
 

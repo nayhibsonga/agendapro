@@ -363,9 +363,11 @@
         <div class="campo">
           <%= booking.service_provider.public_name %>
         </div>
+        <% if booking.service.show_price && booking.service.price > 0 %>
         <div class="campo">
           $<%= number_with_precision(booking.service.price, precision: 0, separator: '', delimiter: '.') %>
         </div>
+        <% end %>
         <div class="campo">
           <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-warning btn-xs' %>
           <%= link_to '<i class="fa fa-trash-o"></i> Cancelar'.html_safe, booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger btn-xs' %>

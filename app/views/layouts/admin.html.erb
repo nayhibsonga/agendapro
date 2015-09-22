@@ -7,7 +7,7 @@
     <!-- start: Meta -->
     <meta charset="utf-8" />
     <% if !current_user.company.nil? %>
-    <title>Administrador <%= current_user.company.name %> AgendaPro</title>
+    <title>Administrador <%= current_user.company.name %> - AgendaPro</title>
     <% else %>
     <title>Administrador - AgendaPro</title>
     <% end %>
@@ -28,6 +28,7 @@
     <%= yield :stylesheets %>
     <!-- end: CSS -->
 
+    <!-- start: JavaScript-->
     <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
     <!-- Begin Inspectlet Embed Code -->
     <script type="text/javascript" id="inspectletjs">
@@ -41,8 +42,8 @@
     </script>
     <!-- End Inspectlet Embed Code -->
     <% end %>
-
     <%= yield :head_scripts %>
+    <!-- end: JavaScript-->
 
     <%= render 'layouts/icons' %>
   </head>
@@ -93,7 +94,6 @@
                   <li><%= link_to '<i class="fa fa-home fa-fw"></i> Locales'.html_safe, locations_path %></li>
                   <li><%= link_to '<i class="fa fa-user fa-fw"></i> Prestadores de Servicios'.html_safe, service_providers_path %></li>
                   <li><%= link_to '<i class="fa fa-book fa-fw"></i> Servicios'.html_safe, services_path %></li>
-                  <li><%= link_to '<i class="fa fa-list fa-fw"></i> Categorías de Servicios'.html_safe, service_categories_path %></li>
                   <li><%= link_to '<i class="fa fa-cubes fa-fw"></i> Recursos'.html_safe, resources_path %></li>
                   <li><%= link_to '<i class="fa fa-shopping-cart fa-fw"></i> Productos'.html_safe, products_path %></li>
                   <% if current_user.role == Role.find_by(name: "Administrador General") %>
@@ -117,7 +117,7 @@
                   <li><%= link_to '<i class="fa fa-list-ol fa-fw"></i> Parámetros Numéricos'.html_safe, numeric_parameters_path %></li>
                   <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Transferencias'.html_safe, payed_bookings_path %></li>
                   <li><%= link_to '<i class="fa fa-university fa-fw"></i> Bancos'.html_safe, banks_path %></li>
-                  <li><%= link_to '<i class="fa fa-star fa-fw"></i> Promociones'.html_safe, manage_promotions_path %></li> 
+                  <li><%= link_to '<i class="fa fa-star fa-fw"></i> Promociones'.html_safe, manage_promotions_path %></li>
                   <li><%= link_to '<i class="fa fa-list-alt fa-fw"></i> Comprobantes de Pago'.html_safe, receipt_types_path %></li>
                   <li><%= link_to '<i class="fa fa-money fa-fw"></i> Medio de Pago'.html_safe, payment_methods_path %></li>
                   <li><%= link_to '<i class="fa fa-credit-card fa-fw"></i> Tipo de Medio de Pago'.html_safe, payment_method_types_path %></li>
@@ -258,8 +258,6 @@
       </script>
     <!--<![endif]-->
     <%= yield :scripts %>
-    <!-- end: JavaScript-->
-
     <script type="text/javascript">
       $(document).ready(function(){
         if ($('#payment_data').data('due-payment') == true) {
@@ -345,9 +343,9 @@
         });
       });
     </script>
-
 		<!--Start of Crazy Egg Script-->
 		<%= javascript_include_tag 'crazy_egg' %>
 		<!--End of Crazy Egg Script-->
+    <!-- end: JavaScript-->
 	</body>
 </html>

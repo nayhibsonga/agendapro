@@ -2,6 +2,8 @@ class LocationProduct < ActiveRecord::Base
   belongs_to :product
   belongs_to :location
 
+  validates :stock, presence: true
+
   after_save :check_stock
 
   #Send notice to indicate stock is low

@@ -214,7 +214,7 @@ class PuntoPagosController < ApplicationController
           @token = params[:token]
           @success_page = "booking"
           host = request.host_with_port
-          @url = @bookings.first.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
+          @url = @bookings.first.location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
           if !@bookings.first.booking_group.nil?
             not_payed_bookings = Booking.where(:booking_group => @bookings.first.booking_group, :payed => false)

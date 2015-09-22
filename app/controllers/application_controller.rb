@@ -31,6 +31,12 @@ class ApplicationController < ActionController::Base
           I18n.locale = :es_CL
         elsif requested_location == 'CO'
           I18n.locale = :es_CO
+        elsif requested_location == 'PA'
+          I18n.locale = :es_PA
+        elsif requested_location == 'VE'
+          I18n.locale = :es_VE
+        elsif requested_location == 'GT'
+          I18n.locale = :es_GT
         else
           I18n.locale = :es
         end
@@ -93,7 +99,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_is_active
-    @company = Company.find_by(web_address: request.subdomain)
+    @company = CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)) ? CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)).company : nil
     if @company && ( !@company.active || !@company.owned)
       redirect_to "/307" unless current_user && (current_user.role_id == Role.find_by_name("Super Admin").id)
     end

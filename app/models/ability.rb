@@ -35,7 +35,7 @@ class Ability
     #alias_action :workflow, :to => :update
     #alias_action :workflow, :to => :create
 
-    company_abilities = [User, Location, ServiceProvider, Service, CompanySetting, ServiceCategory, Client, BillingInfo]
+    company_abilities = [User, Location, ServiceProvider, Service, CompanySetting, ServiceCategory, Client, BillingInfo, ProviderGroup]
 
 
     user ||= User.new # guest user (not logged in)
@@ -273,6 +273,7 @@ class Ability
         can :change_services_order, Service
         can :change_location_order, Location
         can :change_providers_order, ServiceProvider
+        can :change_groups_order, ProviderGroup
 
         can :country_regions, Region
         can :region_cities, City
@@ -314,6 +315,10 @@ class Ability
         can :read, ServiceCategory, :company_id => user.company_id
         can :create, ServiceCategory, :company_id => user.company_id
         can :update, ServiceCategory, :company_id => user.company_id
+
+        can :read, ProviderGroup, :company_id => user.company_id
+        can :create, ProviderGroup, :company_id => user.company_id
+        can :update, ProviderGroup, :company_id => user.company_id
 
         can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
@@ -431,6 +436,7 @@ class Ability
         can :change_services_order, Service
         can :change_location_order, Location
         can :change_providers_order, ServiceProvider
+        can :change_groups_order, ProviderGroup
 
         can :country_regions, Region
         can :region_cities, City

@@ -107,7 +107,7 @@ class LocationsController < ApplicationController
     if @location.save
       redirect_to inactive_locations_path, notice: "Local activado exitosamente."
     else
-      redirect_to inactive_locations_path, notice: "No se pudo activar el local ya que el plan actual no lo permite, ¡mejóralo!"
+      redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
     end
   end
 
@@ -116,7 +116,7 @@ class LocationsController < ApplicationController
     if @location.save
       redirect_to locations_path, notice: "Local desactivado exitosamente."
     else
-      redirect_to locations_path, notice: "No se pudo desactivar el local."
+      redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
     end
   end
 
