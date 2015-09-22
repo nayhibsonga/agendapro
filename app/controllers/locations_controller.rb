@@ -1,5 +1,5 @@
 class LocationsController < ApplicationController
-  before_action :set_location, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
+  before_action :set_location, only: [:show, :edit, :update, :destroy, :activate, :deactivate, :sellers]
   before_action :authenticate_user!, except: [:location_data, :location_time, :get_available_time, :location_districts]
   before_action :quick_add, except: [:location_data, :location_time, :get_available_time, :location_districts, :location_products]
   load_and_authorize_resource
@@ -635,6 +635,40 @@ class LocationsController < ApplicationController
         end
 
       end
+    end
+
+    render :json => @response_array
+
+  end
+
+  def sellers
+
+    @response_array = []
+
+    @location.service_providers.each do |service_provider|
+
+      new_seller ={
+        :id => service_provider.id,
+        :seller_type => 0,
+        :full_name => service_provider.public_name,
+        :role_name => "Proveedor"
+      }
+
+      @response_array << new_seller
+
+    end
+
+    @location.users.each do |user|
+
+      new_seller ={
+        :id => user.id,
+        :seller_type => 1,
+        :full_name => user.first_name + " " + user.last_name,
+        :role_name => user.role.name
+      }
+
+      @response_array << new_seller
+
     end
 
     render :json => @response_array

@@ -47,6 +47,8 @@ group :development do
   gem 'binding_of_caller'
   #impresion amigable en consola
   gem 'awesome_print'
+  #generador de modelo relación-entidad
+  gem "rails-erd"
 end
 
 group :development, :test do

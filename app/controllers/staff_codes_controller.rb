@@ -70,8 +70,8 @@ class StaffCodesController < ApplicationController
   end
 
   def get_staff_by_code
-    location = Location.find(params[:location_id])
-    staff_code = StaffCode.where(code: params[:payment_staff_code], company_id: location.company.id).first
+
+    staff_code = StaffCode.where(code: params[:payment_staff_code], company_id: current_user.company_id).first
 
     return_array = []
     if staff_code.nil?

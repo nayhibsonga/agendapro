@@ -301,6 +301,10 @@ class PaymentsController < ApplicationController
           payment_product.discount = product[:discount]
           payment_product.quantity = product[:quantity]
 
+          seller = product[:seller].split("_")
+          payment_product.seller_id = seller[0]
+          payment_product.seller_type = seller[1]
+
           receipt_product = ReceiptProduct.new
           receipt_product.product_id = product[:id]
           receipt_product.price = product[:price]

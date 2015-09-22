@@ -160,6 +160,7 @@ class Ability
         can :stock_alarm_form, Company, :company_id => user.company_id
         can :stock_alarm_form, Location, :company_id => user.company_id
         can :save_stock_alarm, Location, :company_id => user.company_id
+        can :sellers, Location, :company_id => user.company_id
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -346,9 +347,9 @@ class Ability
         can :alarm_form, Product, :company_id => user.company_id
         can :inventory, Location, :company_id => user.company_id
         can :set_alarm, Product, :company_id => user.company_id
-        #can :inventory, Company, :company_id => user.company_id
         can :stock_alarm_form, Location, :company_id => user.company_id
         can :save_stock_alarm, Location, :company_id => user.company_id
+        can :sellers, Location, :company_id => user.company_id
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
@@ -425,6 +426,7 @@ class Ability
         can :destroy, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
         can :update, Payment, :company_id => user.company_id
+        can :sellers, Location, :company_id => user.company_id
         
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
@@ -488,6 +490,7 @@ class Ability
         can :destroy, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
         can :update, Payment, :company_id => user.company_id
+        can :sellers, Location, :company_id => user.company_id
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
@@ -543,6 +546,7 @@ class Ability
         can :destroy, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
         can :update, Payment, :company_id => user.company_id
+        can :sellers, Location, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 

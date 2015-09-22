@@ -12,6 +12,21 @@
             <form id="fakePaymentIntroForm" action="">
 
               <div class="payment-form-div form-group has-feedback">
+                <label for="payment_location" class="col-xs-3 control-label">Local</label>
+                <div class="col-xs-9">
+                  <select id="payment_location" name="payment_location" class="form-control">
+                    <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) %>
+                      <option value="<%= location.id %>">
+                        <%= location.name.humanize %>
+                      </option>
+                    <% end %>
+                  </select>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
                 <label for="payment_cashier" class="col-xs-3 control-label">Cajero</label>
                 <div class="col-xs-9">
                   <input type="text" class="form-control" id="payment_cashier" name="payment_cashier" value="" />
@@ -95,7 +110,7 @@
           
           <div class="col-xs-2">
             <button type="button" class="btn btn-default add-item-btn" id="addServiceBtn">Servicio&nbsp;<i class="fa fa-plus"></i></button><br />
-            <% if Product.where(:company_id => @company.id).count > 0 %>
+            <% if Product.where(:company_id => company.id).count > 0 %>
               <button type="button" class="btn btn-default add-item-btn" id="addProductBtn">Producto&nbsp;<i class="fa fa-plus"></i></button>
             <% end %>
           </div>

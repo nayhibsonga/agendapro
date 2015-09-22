@@ -1112,10 +1112,10 @@
     </div>
   </div>
   -->
-  
-  <%= render :partial => 'payment_modals', :locals => {:company => @company} %>
 
 <% end %>
+
+<%= render :partial => '/payments/payment_modals', :locals => {:company => @company} %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "bookings" %>

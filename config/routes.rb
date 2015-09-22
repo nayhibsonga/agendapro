@@ -384,6 +384,7 @@
     get '/company_alarms', :to => 'companies#stock_alarm_form'
     get '/location_alarms', :to => 'locations#stock_alarm_form'
     post '/save_alarms', :to => 'locations#save_stock_alarm'
+    get '/location_sellers', :to => 'locations#sellers'
 
   end
 

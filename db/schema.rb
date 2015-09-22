@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150921190816) do
+ActiveRecord::Schema.define(version: 20150922132045) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -629,12 +629,14 @@ ActiveRecord::Schema.define(version: 20150921190816) do
 
   create_table "payment_products", force: true do |t|
     t.integer  "payment_id"
-    t.integer  "product_id",               null: false
-    t.float    "price",      default: 0.0
-    t.float    "discount",   default: 0.0
+    t.integer  "product_id",                null: false
+    t.float    "price",       default: 0.0
+    t.float    "discount",    default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "quantity",   default: 1,   null: false
+    t.integer  "quantity",    default: 1,   null: false
+    t.integer  "seller_id"
+    t.integer  "seller_type"
   end
 
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
