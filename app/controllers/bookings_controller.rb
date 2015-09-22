@@ -3981,8 +3981,9 @@ class BookingsController < ApplicationController
                   end
                   used_resource = 0
                   group_services = []
+                  pointerEnd = dateTimePointer+service.duration.minutes
                   local.bookings.where(:start => dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |location_booking|
-                    if location_booking.status_id != cancelled_id && (location_booking.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= location_booking.start.to_datetime)
+                    if location_booking.status_id != cancelled_id && !(pointerEnd <= location_booking.start.to_datetime || location_booking.end.to_datetime <= dateTimePointer)
                       if location_booking.service.resources.include?(resource)
                         if !location_booking.service.group_service
                           used_resource += 1
