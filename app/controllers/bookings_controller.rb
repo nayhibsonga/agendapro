@@ -1631,8 +1631,12 @@ class BookingsController < ApplicationController
         client.email = params[:email]
         client.phone = params[:phone]
         client.save
-        if client.errors
-          puts client.errors.full_messages.inspect
+        if client.save
+
+        else
+          @errors << client.errors.full_messages
+          render layout: "workflow"
+          return
         end
       else
         @errors << "No estás ingresado como cliente"
@@ -1649,8 +1653,8 @@ class BookingsController < ApplicationController
 
         else
           @errors << client.errors.full_messages
-          logger.debug "Client errors 1"
-          logger.debug @errors.inspect
+          render layout: "workflow"
+          return
         end
       else
         client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
@@ -1658,8 +1662,8 @@ class BookingsController < ApplicationController
 
         else
           @errors << client.errors.full_messages
-          logger.debug "Client errors 2"
-          logger.debug @errors.inspect
+          render layout: "workflow"
+          return
         end
       end
     end
