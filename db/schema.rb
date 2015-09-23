@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150922132045) do
+ActiveRecord::Schema.define(version: 20150923171855) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,6 +138,14 @@ ActiveRecord::Schema.define(version: 20150922132045) do
   add_index "bookings", ["start"], name: "index_bookings_on_start", using: :btree
   add_index "bookings", ["status_id"], name: "index_bookings_on_status_id", using: :btree
   add_index "bookings", ["user_id"], name: "index_bookings_on_user_id", using: :btree
+
+  create_table "cashiers", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.string   "code"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "cities", force: true do |t|
     t.string   "name",       null: false
@@ -678,6 +686,7 @@ ActiveRecord::Schema.define(version: 20150922132045) do
     t.integer  "sessions_quantity",         default: 0
     t.float    "paid_amount",               default: 0.0
     t.float    "change_amount",             default: 0.0
+    t.integer  "cashier_id"
   end
 
   add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree

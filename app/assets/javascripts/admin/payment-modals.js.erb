@@ -10,6 +10,8 @@ var paymentNewBookings = [];
 var paymentProducts = [];
 var paymentReceipts = [];
 
+var existing_payment_changed = false;
+
 
 /*
 * Initializations and event triggers.
@@ -401,7 +403,7 @@ function calculatePaymentTotal(){
 * Switch between modals.
 */
 
-function loadPaymentIntro(booking_id) {
+function loadPaymentIntro(payment_id) {
   $("#paymentModal1").modal('hide');
   $("#paymentModalIntro").modal('show');
   paymentModalState = 'Intro';
@@ -1194,6 +1196,12 @@ function clearValidations(element)
 }
 
 /*
+* Reset functions
+* Separated by steps
+*/
+
+
+/*
 * Clear items lists and reset form values.
 */
 
@@ -1220,7 +1228,15 @@ function resetPayment()
 
   resetPaymentStep1();
 
-  
+  resetPaymentStep2();
+
+  resetPaymentStep3();
+
+  /*
+  * Additionally, clean receiptsItemsTable (it should not be cleaned on resets that come from back/forth navigation) between Step 2 and 3.
+  */
+
+  $(".receiptsItemsRow").remove();
 
 }
 
@@ -1279,7 +1295,12 @@ function resetPaymentStep1()
   $("#payment_product_quantity").val("0");
   $("#payment_product_seller").empty();
 
+  /*
+  * Remove items from itemsTable and from receiptsItemsTable.
+  */
   $(".paymentItemsRow").remove();
+  $(".receiptsItemsRow").remove();
+
   calculatePaymentTotal();
   $("#paymentItemsTable").hide();
   $("#paymentSumDiv").hide();
@@ -1339,7 +1360,10 @@ function resetPaymentStep3()
   $("#paymentReceiptsArray").val("");
 
   $("#addedReceipts").empty();
-  //$(".receiptsItemsRow").remove();
+  
+  /*
+  * ¡DO NOT clean receiptsItemsTable by default! It should be cleaned only when itemsTable is cleaned.
+  */
 
   $("#receiptsItemsDiv").hide();
   $("#fakePaymentStep3Form").hide();
@@ -1357,8 +1381,21 @@ function resetReceipt()
 }
 
 /*
+* Edit payment methods
+*/
+
+function editPayment(payment_id)
+{
+  $.getJSON('/load_payment/', { payment_id: payment_id }, function (full_payment) {
+    console.log(full_payment);
+  });
+}
+
+
+/*
 * New payment methods end
 */
+
 
 
 /*

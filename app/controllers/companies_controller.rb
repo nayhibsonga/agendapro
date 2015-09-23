@@ -2477,6 +2477,11 @@ class CompaniesController < ApplicationController
 	    end
 	end
 
+	def get_cashiers_by_code
+		@cashier = Cashier.find_by_code(params[:cashier_code])
+		render :json => @cashier
+	end
+
 	private
 		# Use callbacks to share common setup or constraints between actions.
 		def set_company

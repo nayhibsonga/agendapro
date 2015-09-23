@@ -14,6 +14,8 @@ class Payment < ActiveRecord::Base
 
   has_many :mock_bookings
 
+  has_one :cashier
+
   accepts_nested_attributes_for :payment_products, :reject_if => :all_blank, :allow_destroy => true
   accepts_nested_attributes_for :bookings, :reject_if => :all_blank
 
