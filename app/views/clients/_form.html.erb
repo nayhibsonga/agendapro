@@ -332,5 +332,6 @@
 </div>
 
 <% content_for :scripts do %>
+  <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag "clients" %>
 <% end %>
