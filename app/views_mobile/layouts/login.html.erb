@@ -38,7 +38,7 @@
               <button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
                   <i class="fa fa-bars"></i>
               </button>
-              <% link_to root_url(subdomain: false), class: 'navbar-brand' do %>
+              <%= link_to root_url(subdomain: false), class: 'navbar-brand' do %>
                 <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>
               <% end %>
           </div>
@@ -60,9 +60,7 @@
               <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path, class: "menu-green" %></li>
               <li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
               <% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
-    
-              <li><%= link_to '<i class="fa fa-desktop fa-fw"></i> Ver Sitio'.html_safe, root_url(:subdomain => current_user.company.web_address) %></li>
-              
+              <li><%= link_to '<i class="fa fa-desktop fa-fw"></i> Ver Sitio'.html_safe, url_for(:subdomain => current_user.company.web_address, controller: 'companies', action: 'overview', locale: current_user.company.country.locale) %></li>
               <% end %>
               <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete, class: "menu-orange" %></li>
               <% else %>

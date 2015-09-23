@@ -586,7 +586,7 @@ class CompaniesController < ApplicationController
 				format.html { redirect_to edit_company_setting_path(@company.company_setting, anchor: 'company'), notice: 'Empresa actualizada exitosamente.' }
 				format.json { head :no_content }
 			else
-				format.html { render action: 'edit' }
+				format.html { render 'company_settings/edit' }
 				format.json { render json: @company.errors, status: :unprocessable_entity }
 			end
 		end
@@ -604,9 +604,10 @@ class CompaniesController < ApplicationController
 
 	##### Workflow #####
 	def overview
-		@company = Company.find_by(web_address: request.subdomain, country_id: Country.find_by_locale(I18n.locale.to_s))
+		
+		@company = CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)) ? CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)).company : nil
 		if @company.nil?
-			@company = Company.find_by(web_address: request.subdomain.gsub(/www\./i, ''), country_id: Country.find_by_locale(I18n.locale.to_s))
+			@company = CompanyCountry.find_by(web_address: request.subdomain.gsub(/www\./i, ''), country_id: Country.find_by(locale: I18n.locale.to_s)) ? CompanyCountry.find_by(web_address: request.subdomain.gsub(/www\./i, ''), country_id: Country.find_by(locale: I18n.locale.to_s)).company : nil
 			if @company.nil?
 				flash[:alert] = "No existe la compañia buscada."
 
@@ -618,7 +619,9 @@ class CompaniesController < ApplicationController
 			end
 		end
 
-		unless @company.company_setting.activate_workflow && @company.active
+		@locations = Location.where(:active => true, online_booking: true, district_id: District.where(city_id: City.where(region_id: Region.where(country_id: Country.find_by(locale: I18n.locale.to_s))))).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+
+		unless @company.company_setting.activate_workflow && @company.active && @locations.count > 0
 			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
 
 			host = request.host_with_port
@@ -627,7 +630,6 @@ class CompaniesController < ApplicationController
 			redirect_to root_url(:host => domain)
 			return
 		end
-		@locations = Location.where(:active => true, online_booking: true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
 
 		@has_images = false
 		@locations.each do |location|
@@ -637,7 +639,7 @@ class CompaniesController < ApplicationController
 
 		# => Domain parser
 		host = request.host_with_port
-		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length] + '/' + I18n.locale.to_s
+		@url = @company.company_countries.find_by(country_id: Country.find_by(locale: I18n.locale.to_s)).web_address + '.' + host[host.index(request.domain)..host.length] + '/' + I18n.locale.to_s
 
 		#Selected local from fase II
 		if(params[:local])
@@ -653,7 +655,7 @@ class CompaniesController < ApplicationController
 		end
 
 		if mobile_request?
-			@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+			@url = @company.company_countries.find_by(country_id: Country.find_by(locale: I18n.locale.to_s)).web_address + '.' + host[host.index(request.domain)..host.length]
 			if params[:local]
 				redirect_to workflow_path(:local => params[:local])
 				return
@@ -668,9 +670,9 @@ class CompaniesController < ApplicationController
 	end
 
 	def workflow
-		@company = Company.find_by(web_address: request.subdomain, country_id: Country.find_by_locale(I18n.locale.to_s))
+		@company = CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)) ? CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)).company : nil
 		if @company.nil?
-			@company = Company.find_by(web_address: request.subdomain.gsub(/www\./i, ''), country_id: Country.find_by_locale(I18n.locale.to_s))
+			@company = CompanyCountry.find_by(web_address: request.subdomain.gsub(/www\./i, ''), country_id: Country.find_by(locale: I18n.locale.to_s)) ? CompanyCountry.find_by(web_address: request.subdomain.gsub(/www\./i, ''), country_id: Country.find_by(locale: I18n.locale.to_s)).company : nil
 			if @company.nil?
 				flash[:alert] = "No existe la compañia buscada."
 
@@ -695,7 +697,7 @@ class CompaniesController < ApplicationController
 
 		# => Domain parser
 		host = request.host_with_port
-		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+		@url = @company.company_countries.find_by(country_id: Country.find_by(locale: I18n.locale.to_s)).web_address + '.' + host[host.index(request.domain)..host.length]
 
 		if Location.where(:id => params[:local]).count > 0
 			@location = Location.find(params[:local])
@@ -2414,12 +2416,12 @@ class CompaniesController < ApplicationController
 	end
 
 	def check_company_web_address
-		@company = Company.find_by(:web_address => params[:web_address], country_id: params[:country_id])
-		render :json => @company.nil?
+		@company_country = CompanyCountry.find_by(web_address: params[:web_address], country_id: params[:country_id])
+		render :json => @company_country.nil?
 	end
 
 	def get_link
-		@web_address = Company.find(current_user.company_id).web_address
+		@web_address = current_user.company.company_countries.find_by(country_id: Country.find_by(locale: I18n.locale.to_s)).web_address
 	end
 
 	private
@@ -2430,6 +2432,6 @@ class CompaniesController < ApplicationController
 
 		# Never trust parameters from the scary internet, only allow the white list through.
 		def company_params
-			params.require(:company).permit(:name, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, :show_in_home, :country_id, company_setting_attributes: [:before_booking, :after_booking, :allows_online_payment, :account_number, :company_rut, :account_name, :account_type, :bank_id], economic_sector_ids: [])
+			params.require(:company).permit(:name, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, :show_in_home, :country_id, company_setting_attributes: [:before_booking, :after_booking, :allows_online_payment, :account_number, :company_rut, :account_name, :account_type, :bank_id], economic_sector_ids: [], company_countries_attributes: [:id, :country_id, :web_address, :active])
 		end
 end

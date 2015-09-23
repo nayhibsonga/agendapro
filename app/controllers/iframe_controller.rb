@@ -83,7 +83,7 @@ class IframeController < ApplicationController
 
 		# => Domain parser
 		host = request.host_with_port
-		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+		@url = @company.company_countries.find_by(country_id: Country.find_by(locale: I18n.locale.to_s)).web_address + '.' + host[host.index(request.domain)..host.length]
 
 		render layout: "iframe"
 	end
@@ -103,7 +103,7 @@ class IframeController < ApplicationController
 
 		# => Domain parser
 		host = request.host_with_port
-		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+		@url = @company.company_countries.find_by(country_id: Country.find_by(locale: I18n.locale.to_s)).web_address + '.' + host[host.index(request.domain)..host.length]
 
 		if mobile_request?
 			company_setting = @company.company_setting
@@ -129,7 +129,7 @@ class IframeController < ApplicationController
 
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @company.company_countries.find_by(country_id: Country.find_by(locale: I18n.locale.to_s)).web_address + '.' + host[host.index(request.domain)..host.length]
 
     booking_data = JSON.parse(params[:bookings], symbolize_names: true)
 
@@ -928,7 +928,7 @@ class IframeController < ApplicationController
     end
 
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @company.company_countries.find_by(country_id: Country.find_by(locale: I18n.locale.to_s)).web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "iframe"
   end

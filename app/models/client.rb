@@ -27,8 +27,6 @@ class Client < ActiveRecord::Base
 
         potential_bookings.each do |booking|
 
-          single_booking = booking
-
           booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
 
           if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start) && booking.send_mail
@@ -40,6 +38,8 @@ class Client < ActiveRecord::Base
             else
               bookings << booking
             end
+
+            single_booking = booking
 
           end
 
@@ -60,6 +60,7 @@ class Client < ActiveRecord::Base
             end
 
             bookings.each do |b|
+              puts "Booking " + b.id.to_s + " will be sent with reminder_group: " + last_reminder_group.to_s
               b.reminder_group = last_reminder_group
               b.save
             end
@@ -68,6 +69,7 @@ class Client < ActiveRecord::Base
             send_multiple_reminder(bookings)
           else
             #Send regular reminder
+            puts "Booking " + single_booking.id.to_s + " will be sent alone."
             BookingMailer.book_reminder_mail(single_booking)
           end
         end
@@ -87,7 +89,7 @@ class Client < ActiveRecord::Base
     # GENERAL
       @data[:company_name] = bookings[0].location.company.name
       @data[:reply_to] = bookings[0].location.email
-      @data[:url] = bookings[0].location.company.web_address
+      @data[:url] = bookings[0].location.get_web_address
       @data[:signature] = bookings[0].location.company.company_setting.signature
       @data[:domain] = bookings[0].location.company.country.domain
       @data[:type] = 'image/png'
@@ -273,8 +275,17 @@ class Client < ActiveRecord::Base
       from = Date.parse(from)
       to = Date.parse(to)
 
-      # posible falla al cambiar de año, fecha inicio 2015 - fecha termino 2016
-      where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month BETWEEN ? AND ?)', from.month, from.day, 31, to.month, 1, to.day, (from + 1.month).month, (to - 1.month).month)
+      # # posible falla al cambiar de año, fecha inicio 2015 - fecha termino 2016
+      # where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month BETWEEN ? AND ?)', from.month, from.day, 31, to.month, 1, to.day, (from + 1.month).month, (to - 1.month).month)
+      if from.month == to.month
+        where('birth_month = ? AND birth_day BETWEEN ? AND ?', from.month, from.day, to.day)
+      elsif from.month < to.month
+        where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month > ? AND birth_month < ?)', from.month, from.day, 31, to.month, 1, to.day, from.month, to.month)
+      elsif from.month > to.month
+        where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month > ? AND birth_month < ?) OR (birth_month > ? AND birth_month < ?)', from.month, from.day, 31, to.month, 1, to.day, from.month, 12, 1, to.month)
+      else
+        all
+      end
     else
       all
     end

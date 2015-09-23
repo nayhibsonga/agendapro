@@ -28,6 +28,10 @@ class QuickAddController < ApplicationController
 	        @resource_category = ResourceCategory.new(name: "Otros", company_id: current_user.company_id)
 	        @resource_category.save
     	end
+    	if CompanyCountry.where(company_id: current_user.company_id).count < 1
+    		@company_country = CompanyCountry.new(company_id: current_user.company_id, country_id: current_user.company.country_id, web_address: current_user.company.web_address)
+    		@company_country.save
+    	end
 		@location = Location.new
 		@service_category = ServiceCategory.new
 		@service = Service.new
