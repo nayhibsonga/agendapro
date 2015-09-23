@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from ActionController::InvalidAuthenticityToken do
-    redirect_to localized_root_path, alert: "Su sesión ha expirado. Vuelva a iniciar para poder continuar."
+    redirect_to localized_root_path, alert: "Su sesión ha expirado."
   end
 
   protected
