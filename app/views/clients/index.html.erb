@@ -16,7 +16,7 @@
       </p>
     </div>
   </div>
-  <div class="row" style="margin-bottom: 15px;">
+  <div class="row">
     <div class="col-xs-5 col-sm-5">
       <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-white" %>
       <button id="import_clients" type="button" class="btn btn-white" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
@@ -29,9 +29,21 @@
       </p>
     </div>
   </div>
+  <div class="row" style="margin-bottom: 15px;">
+    <div class="col-xs-3 col-md-2 col-md-push-3">
+      <p><strong>Buscar por Palabras</strong></p>
+    </div>
+    <div class="col-xs-7 col-md-5 col-md-push-3">
+      <%= text_field_tag :search_bar, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o RUT..." %>
+    </div>
+    <div class="col-xs-2 col-md-2 col-md-push-3">
+      <button class="btn btn-green" id="search_btn"><i class="fa fa-search"></i> Buscar</button>
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-3">
       <%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get" do %>
+        <%= hidden_field_tag :search, params[:search] %>
         <div class="form-group filter-header">
           <strong>Filtrar</strong>
           <div class="dropdwn pull-right">
@@ -43,7 +55,6 @@
               <li class="<%= 'hidden' if params[:statuses] %>"><a href="#" id="addFilterStatuses" data-target="#filterStatuses">Por Estado</a></li>
               <li class="<%= 'hidden' if params[:gender] %>"><a href="#" id="addFilterGender" data-target="#filterGender">Por Género</a></li>
               <li class="<%= 'hidden' if !params[:from].blank? and !params[:to].blank? %>"><a href="#" id="addFilterBirthday" data-target="#filterBirthday">Por Cumpleaños</a></li>
-              <li class="<%= 'hidden' if !params[:search].blank? %>"><a href="#" id="addFilterSearch" data-target="#filterSearch">Por Texto</a></li>
             </ul>
           </div>
         </div>
@@ -169,19 +180,6 @@
                 <li class="list-group-item">
                   <%= text_field_tag :to_display, params[:to_display], class: "form-control", placeholder: "Hasta" %>
                   <%= hidden_field_tag :to, params[:to], class: "form-control" %>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="form-group <%= 'hidden' if params[:search].blank? %>" id="filterSearch">
-            <div class="panel panel-green">
-              <div class="panel-heading">
-                Texto
-                <a class="pull-right" href="#" data-target="#addFilterSearch"><i class="fa fa-times"></i></a>
-              </div>
-              <ul class="list-group">
-                <li class="list-group-item">
-                  <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o RUT..." %>
                 </li>
               </ul>
             </div>
