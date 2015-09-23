@@ -1,4 +1,4 @@
-<div class="modal fade modalOverModal" id="paymentModalIntro" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+<div class="modal fade modalOverModal paymentModal" id="paymentModalIntro" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
       <div class="modal-header">
@@ -93,7 +93,7 @@
   </div>
 </div>
 
-<div class="modal fade modalOverModal paymentModalStep" id="paymentModal1" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+<div class="modal fade modalOverModal paymentModalStep paymentModal" id="paymentModal1" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
       <div class="modal-header">
@@ -349,7 +349,7 @@
 </div>
 
 
-<div class="modal fade modalOverModal paymentModalStep" id="paymentModal2" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+<div class="modal fade modalOverModal paymentModalStep paymentModal" id="paymentModal2" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
       <div class="modal-header">
@@ -511,7 +511,7 @@
                 <div class="payment-form-div">
                   <label for="payment_credit_card_dues_number" class="col-xs-3 control-label">Cuotas</label>
                   <div class="col-xs-9">
-                    <input type="text" class="form-control" id="payment_credit_card_dues_number" name="payment_credit_card_dues_number" />
+                    <input type="number" class="form-control" id="payment_credit_card_dues_number" name="payment_credit_card_dues_number" />
                     <span class="help-block"></span>
                     <span class="form-control-feedback"></span>
                   </div>
@@ -576,7 +576,7 @@
   </div>
 </div>
 
-<div class="modal fade modalOverModal paymentModalStep" id="paymentModal3" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+<div class="modal fade modalOverModal paymentModalStep paymentModal" id="paymentModal3" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
       <div class="modal-header">
@@ -707,3 +707,5 @@
 <input type="hidden" id="paymentNewBookingsArray" value="" />
 <input type="hidden" id="paymentProductsArray" value="" />
 <input type="hidden" id="paymentReceiptsArray" value="" />
+
+<input type="hidden" id="today_date" value="<%= I18n.l(DateTime.now.to_date) %>" />

@@ -48,7 +48,8 @@ group :development do
   #impresion amigable en consola
   gem 'awesome_print'
   #generador de modelo relación-entidad
-  gem "rails-erd"
+  #Descomentar sólo para casos puntuales
+  #gem "rails-erd"
 end
 
 group :development, :test do
