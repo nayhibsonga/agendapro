@@ -1,41 +1,24 @@
-
-function drop (e) {
-  if (e.stopPropagation) {
-    e.stopPropagation();
-  };
-  if (e.preventDefault) {
-    e.preventDefault();
-  };
-
-  var tbody = $(e.target).closest('tbody');
-  if (dragElemente != this) {
-    // Objects
-    var origin = dragElemente;
-    var destiny = this;
-    var tmp = new Array();
-
-    // Ordenando las filas
-    $.each($(tbody).children(), function (pos, tr) {
-      if (!Object.is(origin, tr)) {
-        if (Object.is(destiny, tr)) {
-          tmp.push(destiny);
-          tmp.push(origin);
-        } else{
-          tmp.push(tr);
-        };
-      };
-    });
-
-    // Colocando las filas por orden
-    $(tbody).empty();
-    $.each(tmp, function (key, element) {
-      $(tbody).append(element);
-    });
-  };
-
-  serviceNewOrder(tbody);
-  return false;
-}
+$(function () {
+  $('tbody').sortable({
+    axis: 'y',
+    handle: '.fa-bars',
+    helper: function(e, tr) {
+      var $originals = tr.children();
+      var $helper = tr.clone();
+      $helper.children().each(function(index)
+      {
+        // Set helper cell sizes to match the original sizes
+        $(this).width($originals.eq(index).width());
+      });
+      return $helper;
+    },
+    revert: 300,
+    update: function (event, ui) {
+      var tbody = $(event.target);
+      serviceNewOrder(tbody);
+    }
+  });
+});
 
 // Service Drag & Drop
 function serviceNewOrder (tbody) {
