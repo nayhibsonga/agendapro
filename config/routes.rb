@@ -396,6 +396,14 @@
     end
   end
 
+  # Angular Root
+  namespace 'hora_chic', controller: 'angular' do
+    get '/', action: 'index'
+    get '/landing', action: 'landing'
+    get '/header', action: 'header'
+    get '/footer', action: 'footer'
+  end
+
   root :to => 'searchs#index'
 
 
