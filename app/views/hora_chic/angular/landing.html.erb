@@ -1,0 +1,42 @@
+<div class="container-fluid landing" ng-controller="SearchController">
+  <div class="container">
+    <div class="title">
+        <h1>
+          BUSCA, ENCUENTRA Y <br>RESERVA <span class="typed">SPA_</span>
+        </h1>
+    </div>
+
+    <div id="search" class="row">
+      <div class="col-md-2">
+        <div class="geo-icon"></div>
+      </div>
+      <div class="col-md-6 col-xs-12 form-container">
+        <form class="form-horizontal">
+          <div class="form-group">
+            <div class="input-group input-group-lg">
+              <input class="form-control" id="localization" name="localization" placeholder="{{ lang.search.placeholder.address }}" required="required" type="text" autocomplete="off">
+              <span class="input-group-btn">
+                <button id="geo-locate" class="btn btn-down" type="button">
+                  <span class="xs-size"><i class="ion-ios-location-outline"></i></span>
+                  <span class="md-size"><i class="fa fa-crosshairs"></i> {{ lang.search.find_me }}</span>
+                </button>
+              </span>
+            </div>
+
+            <div class="input-group input-group-lg">
+              <input type="text" class="form-control" id="service" name="service" placeholder="{{ lang.search.placeholder.service }}">
+              <span class="input-group-btn">
+                <button id="find-service" class="btn btn-down" type="button">
+
+                  <span class="xs-size"><i class="ion-ios-search"></i></span>
+                  <span class="md-size"> {{ lang.search.find_service }} </span>
+                </button>
+              </span>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

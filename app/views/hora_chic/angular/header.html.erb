@@ -1,0 +1,71 @@
+<header>
+  <div class="container">
+    <div class="row">
+
+      <div class="contact col-lg-4 col-md-4">
+        <div class="pull-left content">
+          <p>
+            {{ lang.write_us }} <strong>{{ lang.contact }}</strong>
+          </p>
+        </div>
+      </div>
+
+      <div class="logo-container col-xs-12 col-md-4 col-lg-4">
+        <div>
+          <div class="logo">&nbsp;</div>
+        </div>
+      </div>
+
+      <div class="options col-lg-4 col-md-4">
+        <div class="pull-right content">
+          <div class="login">
+            <a href="#">{{ lang.login }}</a>
+            <span class="separator">|</span>
+            <a href="#"> {{ lang.register }}</a>
+          </div>
+          <div class="add-company">
+            <a href="#"> {{ lang.add_company }} </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<div class="container menu">
+
+  <div class="row wrapper">
+
+    <button type="button" class="toggle-menu menu-left push-body">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <nav id="services-list" class="content nav-links col-md-12 cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" ng-controller="LinksController">
+      <h3><div class="logo"></div></h3>
+
+      <span class="service-link" ng-repeat="service in services">
+        <a ng-href="{{ service.url }}" ng-class="{ deals: service.name === 'deals' }" title="{{ lang.services[service.name] }}">
+          {{ lang.services[service.name] }}
+        </a>
+        <span class="separator" ng-if="!$last">|</span>
+      </span>
+
+      <div class="nav-account">
+        <a href="#">{{ lang.login }}</a>
+        <a href="#"> {{ lang.register }}</a>
+        <a href="#" class="add-company"> {{ lang.add_company }} </a>
+      </div>
+
+    </nav>
+
+  </div>
+
+
+</div>
+
+<script>
+  $(function (){
+    HoraChic.init();
+  });
+</script>

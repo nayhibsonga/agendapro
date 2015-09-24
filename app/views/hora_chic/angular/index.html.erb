@@ -1,0 +1,24 @@
+<!doctype html>
+<html ng-app="HoraChic">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <%= stylesheet_link_tag 'bootstrap.min' %>
+    <%= stylesheet_link_tag 'font-awesome.min' %>
+    <%= stylesheet_link_tag 'ionicons.min' %>
+    <%= javascript_include_tag 'angular' %>
+    <%= stylesheet_link_tag 'hora_chic_base' %>
+    <%= stylesheet_link_tag 'frontend/jPushMenu.css' %>
+
+    <title>HoraChic - By AgendaPro</title>
+  </head>
+
+  <body ng-controller="TemplateController">
+    <div ng-include="'/hora_chic/header'"></div>
+    <div id="mainContent" ng-include="template"></div>
+    <footer ng-include="'/hora_chic/footer'"></footer>
+
+  </body>
+
+</html>
+
