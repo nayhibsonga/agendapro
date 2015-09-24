@@ -310,7 +310,7 @@
                         <label>
                           <%= f.check_box :client_exclusive %> Exclusivo para Clientes
                         </label>
-                        <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el RUT.</span>
+                        <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el <%= (I18n.t('ci')).capitalize %>.</span>
                       </div>
                     </div>
                     <div class="form-group">
@@ -920,9 +920,9 @@
                     <div class="form-group">
                       <div class="checkbox">
                         <label>
-                          <%= f.check_box :deal_identification_number %> Etiqueta es RUT
+                          <%= f.check_box :deal_identification_number %> Etiqueta es <%= (I18n.t('ci')).capitalize %>
                         </label>
-                        <span class="help-block">Si habilitas esta opción, se validará y dará formato al campo ingresado como si fuera RUT (persona o empresa).</span>
+                        <span class="help-block">Si habilitas esta opción, se validará y dará formato al campo ingresado como si fuera <%= (I18n.t('ci')).capitalize %> (persona o empresa).</span>
                       </div>
                     </div>
                     <div class="form-group">
@@ -1453,5 +1453,6 @@
 <% end %>
 
 <% content_for :scripts do %>
+  <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag "admin/company_settings" %>
 <% end %>

@@ -629,13 +629,13 @@
                       <% if @location.company.company_setting.client_exclusive %>
                         <div class="row">
                           <div class="col-md-12 dark-gray">
-                            RUT
+                            <%= (I18n.t('ci')).capitalize %>
                           </div>
                         </div>
                         <div class="row">
                           <div class="col-md-12">
                             <div class="form-group has-feedback">
-                              <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
+                              <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
                               <span class="help-block"></span>
                               <span class="form-control-feedback"></span>
                             </div>
@@ -813,6 +813,7 @@
   
   <%= javascript_include_tag 'workflow/promotions-calendar' %>
   <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag 'validations/home/promo' %>
   <%= javascript_include_tag 'promo/promo' %>
   <%= javascript_include_tag 'split-name' %>

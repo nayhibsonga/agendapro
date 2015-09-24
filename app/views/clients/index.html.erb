@@ -181,7 +181,7 @@
               </div>
               <ul class="list-group">
                 <li class="list-group-item">
-                  <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o RUT..." %>
+                  <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o " + (I18n.t('ci')).capitalize + "..." %>
                 </li>
               </ul>
             </div>
@@ -201,7 +201,7 @@
             <th>Nombre</th>
             <th>Apellido</th>
             <th>E-mail</th>
-            <th>RUT</th>
+            <th><%= (I18n.t('ci')).capitalize %></th>
             <th>Opciones</th>
             <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
             <th>¿Puede Reservar?</th>
@@ -281,7 +281,7 @@
                 <li>Para editar el e-mail de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li>
               </ul>
             </li>
-            <li>El email, RUT y número de ficha de cada cliente debe ser <mark>único</mark>.</li>
+            <li>El email, <%= (I18n.t('ci')).capitalize %> y número de ficha de cada cliente debe ser <mark>único</mark>.</li>
             <li>
               Para ingresar el género de los clientes se debe utilizar:
               <ul>

@@ -336,5 +336,6 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag "admin/select_plan" %>
   <%= javascript_include_tag "validations/validate" %>
+  <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag "validations/admin/billing" %>
 <% end %>

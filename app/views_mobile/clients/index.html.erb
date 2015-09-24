@@ -26,7 +26,7 @@
     <div class="col-xs-12">
       <%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get" do %>
         <div class="input-group input-group-lg">
-          <%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido, e-mail o RUT...", :value => params[:search] %>
+          <%= text_field_tag :search, nil, :class => "form-control", :placeholder => "Buscar por nombre, apellido, e-mail o " +  (I18n.t('ci')).capitalize + "...", :value => params[:search] %>
           <span class="input-group-btn">
             <button class="btn btn-default" type="submit" action="/clients" value="client_filter"><i class="fa fa-search"></i></button>
           </span>
