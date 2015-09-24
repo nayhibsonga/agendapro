@@ -1,0 +1,205 @@
+@include breakpoint(md) {
+  // TABLET STYLES
+  header {
+    display: block;
+    $header-height: 75px;
+    border-bottom: 1px solid $light-gray;
+    font-size: 11px; // IE Fallback
+    font-size: 1vw;
+    %links-tablet {
+      line-height: $header-height;
+      color: $light-gray;
+      margin: 0;
+    }
+    .container > .row {
+      height: $header-height;
+      padding-left: 15px;
+      padding-right: 15px;
+      div { height: 100%; }
+      .contact {
+        display: inline;
+        p { @extend %links-tablet; }
+      }
+      .options {
+        display: inline;
+        a {
+          @extend %links-tablet;
+          text-decoration: none;
+        }
+        .login {
+          display: inline;
+          a { color: $black; }
+        }
+        .add-company {
+          display: inline;
+          a {
+            border: 1px solid $light-pink;
+            border-radius: 7px;
+            color: $light-pink;
+            margin-left: 25px;
+            padding: 8px 20px;
+            &:hover {
+              border: 1px solid $dark-pink;
+              color: $dark-pink;
+            }
+          }
+        }
+      }
+    }
+
+    .logo-container {
+      height: 100%;
+      div {
+        height: inherit;
+        @include logo {
+          height: inherit;
+          width: auto;
+        }
+      }
+    }
+  }
+
+  .menu {
+    $menu-height: 50px;
+    $content-padding: 8px;
+    position: relative;
+    left: initial;
+    top: initial;
+    .wrapper {
+      height: $menu-height;
+      .content {
+        height: 100%;
+        padding: $content-padding 15px;
+        z-index: initial;
+      }
+      button { display: none; }
+    }
+
+    nav#services-list {
+      display: inline;
+      line-height: calc(#{$menu-height} - (#{$content-padding} * 2));
+      position: relative;
+      right: 0;
+      text-align: center;
+      top: 0;
+      border: none;
+      width: 100%;
+      h3 { display: none; }
+      .service-link { display: inline; }
+      span { display: inline-block; }
+      a {
+        color: $dark-gray;
+        text-decoration: none;
+        display: initial;
+        padding: 0;
+        &:hover {
+          background-color: inherit;
+        }
+      }
+      .nav-account {
+        display: none;
+      }
+    }
+  }
+
+  .landing {
+    background: url($landing-image) no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 475px;
+    .container {
+      height: 100%;
+      padding: 80px 0;
+      .title {
+        padding: 0 70px;
+        h1 {
+          font-size: 50px;
+          width: 70%;
+          color: $white;
+          text-transform: uppercase;
+          @include font-smoothing(antialiased);
+          .typed {
+            color: $light-pink;
+            font-weight: 600;
+          }
+        }
+      }
+      #search {
+        @include font-smoothing(antialiased);
+        padding: 0 70px;
+        margin-top: 20px;
+        .geo-icon {
+          display: inline-block;
+          background: url($geo-icon);
+          height: 135px;
+          width: 100px;
+        }
+        .form-container {
+          padding: 30px 0;
+        }
+        form {
+          $button-width: 158px;
+          %md-input-defaults {
+            height: 45px;
+            font-size: 16px;
+          }
+          .form-group { margin: 0 -15px 15px -15px; }
+          .input-group {
+            margin-bottom: 20px;
+            &:first-child::before {
+              content: '1';
+              @extend %step;
+            }
+            &:last-child::before {
+              content: '2';
+              @extend %step;
+            }
+          }
+          @include placeholder {
+            color: $lighter-gray;
+            font-weight: 300;
+          }
+          input {
+            @extend %md-input-defaults;
+            &[type='text'] {
+              width: 90%;
+            }
+          }
+          button {
+            @extend %md-input-defaults;
+            .xs-size { display: none; }
+            .md-size { display: inline; }
+          }
+          #localization {
+            background: transparent;
+            color: $white;
+          }
+          span.input-group-btn {
+            vertical-align: top;
+            #geo-locate.btn {
+              background: transparent;
+              border: 1px solid $white;
+              color: $white;
+              font-weight: 300;
+              width: $button-width;
+            }
+          }
+          #find-service.btn {
+            background-color: $light-pink;
+            color: $white;
+            width: $button-width;
+          }
+          %step {
+            color: $white;
+            display: inline-block;
+            float:left;
+            @include roboto-font(3em);
+            line-height: 46px; //Default Bootstrap Input Height
+            width: 10%;
+          }
+        }
+      }
+    }
+  }
+
+}
