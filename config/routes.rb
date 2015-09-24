@@ -396,6 +396,15 @@
     end
   end
 
+  namespace :api_views, defaults: {format: 'json'} do
+    namespace :marketplace do
+      namespace :v1 do
+        get 'promotions', to: 'promotions#index'
+        get 'promotions/index/preview', to: 'promotions#preview'
+      end
+    end
+  end
+
   # Angular Root
   namespace 'hora_chic', controller: 'angular' do
     get '/', action: 'index'

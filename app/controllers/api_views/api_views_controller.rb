@@ -1,0 +1,3 @@
+class ApiViews::ApiViewsController < ApplicationController
+	skip_before_action :verify_authenticity_token
+end
