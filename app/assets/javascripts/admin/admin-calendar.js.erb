@@ -293,6 +293,12 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		eventDrop: function (event) {
 			editDrag(event);
 		},
+		eventDragStart: function (event) {
+			window.console.log(event.start)
+		},
+		eventDragStop: function (event) {
+			window.console.log(event.start)
+		},
 		slotMinutes: duration,
 		aspectRatio: setAspectRatio(),
 		windowResize: function(view) {
@@ -502,7 +508,7 @@ function loadProviderEvents(providerId) {
 	if (ajaxRequest != null) {
 		ajaxRequest.abort();
 	}
-	
+
 	ajaxRequest = $.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (events_list) {
 		$('#calendar').fullCalendar('addEventSource', events_list);
 		$('#small_loader_header').remove();

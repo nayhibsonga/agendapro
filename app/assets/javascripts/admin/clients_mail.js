@@ -57,6 +57,12 @@ $(function () {
     removeData(cross.parents('.form-group'));
   });
 
+  $('#search_btn').click(function (e) {
+    var data = $('#search_bar').val();
+    $('#search').val(data);
+    $('#client_filter').submit();
+  });
+
   $('#file').change( function () {
     if ($('#file').val()) {
       $('#import_button').removeAttr("disabled");
