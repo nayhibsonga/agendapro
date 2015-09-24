@@ -175,3 +175,7 @@ gem 'rack-cors'
 
 #Oink para revisión de memoria
 gem "oink"
+
+# CSS Preprocessor
+gem 'sass-rails'
+#gem 'compass-rails'
