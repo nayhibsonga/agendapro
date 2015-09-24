@@ -553,13 +553,13 @@
                     <% if @location.company.company_setting.client_exclusive %>
                       <div class="row">
                         <div class="col-sm-12 dark-gray">
-                          RUT
+                          <%= (I18n.t('ci')).capitalize %>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-sm-12">
                           <div class="form-group has-feedback">
-                            <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
+                            <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                           </div>
@@ -883,6 +883,7 @@
 <% end %>
 
 <% content_for :scripts do %>
+  <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag 'workflow/index' %>
   <script type="text/javascript">
 
@@ -913,9 +914,9 @@
     $(function() {
       <% if @location.company.company_setting.deal_identification_number %>
         $('#deal_code').change(function() {
-          var rut_string = $('#deal_code').val()
-          if (rut_string != '') {
-            $('#deal_code').val(rut_format(rut_string));
+          var id_string = $('#deal_code').val()
+          if (id_string != '') {
+            $('#deal_code').val(identification_number_format(id_string));
           }
         });
       <% end %>
