@@ -246,7 +246,7 @@
                         <% end %>
                         <% if @company_setting.client_exclusive || @company_setting.use_identification_number %>
                         <div class="form-group has-feedback has-feedback">
-                          <%= builder.label :identification_number, "RUT", class: "col-sm-4 control-label" %>
+                          <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-sm-4 control-label" %>
                           <div class="col-sm-8">
                             <%= builder.text_field :identification_number, class: "form-control", disabled: @company_setting.client_exclusive %>
                             <span class="help-block"></span>
@@ -389,7 +389,7 @@
                         </div>
                         <% unless @company_setting.client_exclusive || @company_setting.use_identification_number %>
                         <div class="form-group has-feedback">
-                          <%= builder.label :identification_number, "RUT", class: "col-sm-4 control-label" %>
+                          <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-sm-4 control-label" %>
                           <div class="col-sm-8">
                             <%= builder.text_field :identification_number, class: "form-control" %>
                             <span class="help-block"></span>
@@ -883,7 +883,7 @@
               <%= builder.hidden_field :city %>
               <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
                 <div class="form-group">
-                  <%= builder.label :identification_number, "RUT", class: "col-md-4 control-label" %>
+                  <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-md-4 control-label" %>
                   <div class="col-md-8">
                     <%= builder.text_field :identification_number, class: "form-control", disabled: true %>
                   </div>
@@ -1056,9 +1056,9 @@
 	<script type="text/javascript">
     <% if @company_setting.deal_activate && @company_setting.deal_identification_number%>
 		$('#booking_deal_code').change(function() {
-			var rut_string = $('#booking_deal_code').val()
-			if (rut_string != '') {
-				$('#booking_deal_code').val(rut_format(rut_string));
+			var id_string = $('#booking_deal_code').val()
+			if (id_string != '') {
+				$('#booking_deal_code').val(identification_number_format(id_string));
 			}
 		});
     <% end %>

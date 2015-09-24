@@ -69,7 +69,7 @@
           </div>
           <% if @location.company.company_setting.client_exclusive %>
           <div class="form-group">
-            <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "RUT" ) %>
+            <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => (I18n.t('ci')).capitalize ) %>
             <span class="help-block"></span>
           </div>
           <% end %>

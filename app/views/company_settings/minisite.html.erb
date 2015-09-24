@@ -46,7 +46,7 @@
 				<%= f.label :client_exclusive, 'Exclusivo para Clientes', :class => 'col-sm-3 control-label' %>
 				<div class="col-sm-5">
 					<%= f.check_box :client_exclusive %>
-					<span class="help-block">Esta opcion limita que sólo puedan reservar clientes ingresados en la sección <%= link_to "Clientes", clients_path %>, usando el RUT.</span>
+					<span class="help-block">Esta opcion limita que sólo puedan reservar clientes ingresados en la sección <%= link_to "Clientes", clients_path %>, usando el <%= (I18n.t('ci')).capitalize %>.</span>
 				</div>
 			</div>
 			<!-- <div class="form-group">
