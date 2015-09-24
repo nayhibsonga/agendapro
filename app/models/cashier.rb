@@ -1,8 +1,8 @@
 class Cashier < ActiveRecord::Base
 	belongs_to :company
-	belongs_to :payment
+	has_many :payments
 
-	validates :code_uniqueness
+	validate :code_uniqueness
 
 	def code_uniqueness
 		if self.code.nil? || self.code == ""

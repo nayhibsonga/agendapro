@@ -3,6 +3,7 @@ FactoryGirl.define do
     company_id 1
 name "MyString"
 code "MyString"
+active false
   end
 
 end

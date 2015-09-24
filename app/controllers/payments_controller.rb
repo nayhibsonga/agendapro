@@ -233,13 +233,15 @@ class PaymentsController < ApplicationController
 
     payment.payment_method_id = params[:payment_method_id]
 
+    payment.cashier_id = params[:cashier_id]
+
     if params[:method_number].blank?
       payment.payment_method_number = ""
     else
       payment.payment_method_number = params[:method_number]
     end
 
-    if payment.payment_method_id = PaymentMethod.find_by_name("Tarjeta de Crédito").id
+    if payment.payment_method_id == PaymentMethod.find_by_name("Tarjeta de Crédito").id
       payment.payment_method_type_id = params[:pay_method_type]
     end
 
@@ -281,6 +283,7 @@ class PaymentsController < ApplicationController
       new_receipt.amount = receipt[:amount]
       new_receipt.date = receipt[:date]
       new_receipt.notes = receipt[:notes]
+      new_receipt.number = receipt[:number]
 
       receipt_items = receipt[:items]
 
@@ -364,6 +367,38 @@ class PaymentsController < ApplicationController
     render :json => @json_response
 
   end
+
+  def receipt_pdf
+    
+    @receipt = Receipt.find(params[:receipt_id])
+    @filename = @receipt.receipt_type.name + "_" + @receipt.number.to_s
+
+    date = DateTime.now
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = ReceiptsPdf.new(@receipt.id)
+        send_data pdf.render, filename: @filename + "_" + date.to_s[0,10] + '.pdf', type: 'application/pdf'
+      end
+    end
+  end
+
+  def payment_pdf
+    @payment = Payment.find(params[:payment_id])
+    @filename = "Resumen de pago "
+    date = DateTime.now
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = PaymentsPdf.new(@payment.id)
+        send_data pdf.render, filename: @filename + "_" + date.to_s[0,10] + '.pdf', type: 'application/pdf'
+      end
+    end
+
+  end
+
 
   private
     def set_payment

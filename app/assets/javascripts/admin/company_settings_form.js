@@ -280,6 +280,7 @@ $(function () {
       };
     };
   });
+
   $('#new_payment_method_button').click(function() {
     $('form.company_payment_method_form').attr('action', '/company_payment_methods');
     $('form.company_payment_method_form').attr('id', 'new_company_payment_method');
@@ -302,6 +303,30 @@ $(function () {
     $('#company_payment_method_active').attr('checked', $(e.currentTarget).data('active'));
     $('#company_payment_method_number_required').attr('checked', $(e.currentTarget).data('number-required'));
     $('#payment_method').modal('show');
+  });
+
+  $('#new_cashier_button').click(function() {
+    $('form.cashier_form').attr('action', '/cashiers');
+    $('form.cashier_form').attr('id', 'new_cashier');
+    $('form.cashier_form').removeClass('edit_cashier');
+    $('form.cashier_form input[name="_method"]').remove();
+    $('#cashier_name').val('');
+    $('#cashier_active').attr('checked', true);
+    $('#cashier_code').attr('checked', true);
+    $('#cashierModal').modal('show');
+  });
+
+  $('.edit_cashier_button').click(function(e) {
+    $('form.cashier_form').attr('action', '/cashiers/' + $(e.currentTarget).data('id'));
+    $('form.cashier_form').attr('id', 'edit_cashier_' + $(e.currentTarget).data('id'));
+    $('form.cashier_form').addClass('edit_cashier');
+    if ($('form.cashier_form input[name="_method"]').length < 1) {
+      $('form.cashier_form').append('<input name="_method" type="hidden" value="patch">');
+    }
+    $('#cashier_name').val($(e.currentTarget).data('name'));
+    $('#cashier_active').attr('checked', $(e.currentTarget).data('active'));
+    $('#cashier_code').val($(e.currentTarget).data('code'));
+    $('#cashierModal').modal('show');
   });
 
 });

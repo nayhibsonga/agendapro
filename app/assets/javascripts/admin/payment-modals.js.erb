@@ -95,19 +95,21 @@ $(function() {
     
   });
 
-  $("#payment_cashier").on('focusout', function(){
+  $("#payment_cashier_code").on('focusout', function(){
 
     var cashier_code = $(this).val();
 
-    $.getJSON('/get_staff_by_code', {payment_staff_code: cashier_code }, function (response) {
+    $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
       if(response[0] != "error")
       {
-        $("#payment_cashier_name").val(response[0]['staff']);
+        $("#payment_cashier_name").val(response[0]['name']);
+        $("#payment_cashier_id").val(response[0]['id']);
       }
       else
       {
-        alert("El código de staff ingresado es incorrecto.");
+        alert("El código de cajero ingresado es incorrecto.");
         $("#payment_cashier_name").val("");
+        $("#payment_cashier_id").val("");
       }
     });
     
@@ -241,6 +243,8 @@ $(function() {
       $('#payment_client_id').val(client.id);
       $("#payment_client_name").val(client.first_name+' '+client.last_name);
       $("#payment_client_email").val(client.email);
+      $("#payment_client_first_name").val(client.first_name);
+      $("#payment_client_last_name").val(client.last_name);
 
       //$('#payment_xButton').prop('disabled', false);
       //$("#payment_full_name").prop('disabled', true);
@@ -268,18 +272,19 @@ $(function() {
       if($("#fakePaymentIntroForm").valid())
       {
         var location_id = parseInt($('#payment_location').val());
-        var cashier_code = $("#payment_cashier").val();
+        var cashier_code = $("#payment_cashier_code").val();
 
-        $.getJSON('/get_staff_by_code', { location_id: location_id, payment_staff_code: cashier_code }, function (response) {
+        $.getJSON('/get_cashier_by_code', { location_id: location_id, payment_cashier_code: cashier_code }, function (response) {
           if(response[0] != "error")
           {
-            $("#payment_cashier_name").val(response[0]['staff']);
+            $("#payment_cashier_name").val(response[0]['name']);
+            $("#payment_cashier_id").val(response[0]['id']);
             resetPaymentStep1();
             loadPaymentModal1();
           }
           else
           {
-            alert("El código de staff ingresado es incorrecto.");
+            alert("El código de cajero ingresado es incorrecto.");
             $("#payment_cashier_name").val("");
           }
         });
@@ -410,6 +415,10 @@ function loadPaymentIntro(payment_id) {
 }
 
 function loadPaymentModal1(booking_id) {
+  /*
+  * Split client name
+  */
+  split_name('#payment_client_name', '#payment_client_first_name', '#payment_client_last_name');
   $("#paymentModalIntro").modal('hide');
   $("#paymentModal1").modal('show');
   $("#paymentModal2").modal('hide');
@@ -430,6 +439,7 @@ function loadPaymentModal2(booking_id) {
 */
 function loadPaymentModal3(booking_id) {
   parsePaymentItems();
+  fillReceiptsItemsTable();
   $("#paymentModal2").modal('hide');
   $("#paymentModal3").modal('show');
   paymentModalState = 'Step3';
@@ -605,15 +615,6 @@ function addNotBooked(){
 
   $("#paymentItemsTable").show();
 
-  $("#receiptsItemsTable").append(
-    '<tr class="receiptsItemsRow" item_id="' + item_id + '">' + 
-    '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + item_id + '" /></td>' +
-    '<td>' + item_id + '</td>' +
-    '<td>Servicio</td>' + 
-    '<td>' + new_booking['service_name'] + '</td>' + 
-    '</tr>'
-  );
-
   calculatePaymentTotal();
   $("#paymentItemsList").show();
   $("#paymentSumDiv").show();
@@ -650,15 +651,6 @@ function addPastBooked(booking_id){
     );
 
     $("#paymentItemsTable").show();
-
-    $("#receiptsItemsTable").append(
-      '<tr class="receiptsItemsRow" item_id="' + item_id + '">' + 
-      '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + item_id + '" /></td>' +
-      '<td>' + item_id + '</td>' +
-      '<td>Reserva existente</td>' + 
-      '<td>' + booking.service_name + '</td>' + 
-      '</tr>'
-    );
 
     calculatePaymentTotal();
 
@@ -707,15 +699,6 @@ function addProduct()
 
   $("#paymentItemsTable").show();
 
-  $("#receiptsItemsTable").append(
-    '<tr class="receiptsItemsRow" item_id="' + item_id + '">' + 
-    '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + item_id + '" /></td>' +
-    '<td>' + item_id + '</td>' +
-    '<td>Producto</td>' + 
-    '<td>' + product['name'] + '</td>' + 
-    '</tr>'
-  );
-
   calculatePaymentTotal();
   $("#paymentItemsList").show();
   $("#paymentSumDiv").show();
@@ -724,6 +707,50 @@ function addProduct()
   $("#payment_product_quantity").val("1");
   $("#payment_product_price").val("0");
   $("#payment_product_discount").val("0");
+
+}
+
+function fillReceiptsItemsTable(){
+
+  for(x = 0; x < paymentItems.length; x++)
+  {
+    if(paymentItems[x] != null)
+    {
+      if(paymentItems[x]['item_type'] == "product")
+      {
+        $("#receiptsItemsTable").append(
+          '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' + 
+          '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" /></td>' +
+          '<td>' + paymentItems[x]['item_id'] + '</td>' +
+          '<td>Producto</td>' + 
+          '<td>' + paymentItems[x]['name'] + '</td>' + 
+          '</tr>'
+        );
+      }
+      else if(paymentItems[x]['item_type'] == "past_booking")
+      {
+        $("#receiptsItemsTable").append(
+          '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' + 
+          '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" /></td>' +
+          '<td>' + paymentItems[x]['item_id'] + '</td>' +
+          '<td>Reserva existente</td>' + 
+          '<td>' + paymentItems[x]['service_name'] + '</td>' + 
+          '</tr>'
+        );
+      }
+      else
+      {
+        $("#receiptsItemsTable").append(
+          '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' + 
+          '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" /></td>' +
+          '<td>' + paymentItems[x]['item_id'] + '</td>' +
+          '<td>Servicio</td>' + 
+          '<td>' + paymentItems[x]['service_name'] + '</td>' + 
+          '</tr>'
+        );
+      }
+    }
+  }
 
 }
 
@@ -851,6 +878,8 @@ function removeReceipt(receipt_id)
   $('.addedReceipt[receipt_id="' + receipt['receipt_id'] + '"]').remove();
   $("#paymentReceiptsFinal").hide();
   $("#paymentReceiptsFinal").empty();
+  $("#openReceiptForm").show();
+  $("#checkAllItems").prop('checked', false);
   $('.payment-btn-end').hide();
   paymentReceipts[receipt_index] = null;
 }
@@ -1004,13 +1033,11 @@ function checkReceiptsReady()
   */
   if($('.receiptsItemsRow').length == 0)
   {
-    console.log("Enters");
 
     for(x = 0; x < paymentReceipts.length; x++)
     {
       if (paymentReceipts[x] != null)
       {
-        console.log("Not null");
         addReceiptFinal(paymentReceipts[x]);
       }
     }
@@ -1018,6 +1045,7 @@ function checkReceiptsReady()
     $('.payment-btn-end').show();
     $("#paymentReceiptsForms").hide();
     $("#paymentReceiptsFinal").show();
+    $("#openReceiptForm").hide();
   }
 }
 
@@ -1092,8 +1120,9 @@ function parseReceipts()
 function createAndServePayment(option)
 {
   var location_id = parseInt($('#payment_location').val());
-  var cashier_code = $("#payment_cashier").val();
+  var cashier_code = $("#payment_cashier_code").val();
   var cashier_name = $("#payment_cashier_name").val();
+  var cashier_id = $("#payment_cashier_id").val();
   var client_name = $("#payment_client_name").val();
   split_name('#payment_client_name', '#payment_client_first_name', '#payment_client_last_name');
   var client_first_name = $("#payment_client_first_name").val();
@@ -1109,7 +1138,7 @@ function createAndServePayment(option)
   var payment_change_amount = $("#payment_change_amount").val();
   var pay_method = $("#selected_pay_method").val();
   var payment_method_id = $("#payment_method_id").val();
-  var method_number = $('#payment_' + pay_method + '_number').val();
+  var method_number = $('#payment_' + pay_method + '_method_number').val();
   var dues_number = $("#payment_credit_card_dues_number").val();
   var payment_date = $("#payment_date").val();
 
@@ -1129,7 +1158,7 @@ function createAndServePayment(option)
 
   var payment_data = {
     location_id: location_id, 
-    cashier_code: cashier_code, 
+    cashier_id: cashier_id, 
     client_name: client_name, 
     client_first_name: client_first_name, 
     client_last_name: client_last_name, 
@@ -1166,6 +1195,14 @@ function createAndServePayment(option)
       {
         alert("Pago guardado con éxito.");
         $(".payment-btn-close").trigger("click");
+        if (callback_option_str == "print")
+        {
+          $("#printReceipt").attr("href", "/receipt_pdf.pdf?receipt_id" + response[1]['id'])
+        }
+        else if(callback_option_str == "sendEmail")
+        {
+
+        }
       }
       else
       {
@@ -1254,8 +1291,9 @@ function resetPaymentIntro()
   /*
   * Clear Intro (cashier and client) fields.
   */
-  $("#payment_cashier").val("");
+  $("#payment_cashier_code").val("");
   $("#payment_cashier_name").val("");
+  $("#payment_cashier_id").val("");
 
   $("#payment_client_id").val("");
   $("#payment_client_first_name").val("");
@@ -1292,7 +1330,6 @@ function resetPaymentStep1()
   $("#payment_product").empty();
   $("#payment_product_quantity").val("1");
   $("#payment_product_price").val("0");
-  $("#payment_product_quantity").val("0");
   $("#payment_product_seller").empty();
 
   /*
@@ -1315,7 +1352,7 @@ function resetPaymentStep2()
   $("#payment-total-amount").text("");
 
   $('.method-btn.selected').removeClass('selected');
-  $("#cash_method_details").closest(".method-btn").addClass('selected');
+  $('.method-btn-name[method_id="1"]').closest(".method-btn").addClass('selected');
 
   $("#payment_paid_amount").val("");
   $("#payment_cost").val("");
@@ -1361,11 +1398,14 @@ function resetPaymentStep3()
 
   $("#addedReceipts").empty();
   
-  /*
-  * ¡DO NOT clean receiptsItemsTable by default! It should be cleaned only when itemsTable is cleaned.
-  */
+  $("#checkAllItems").prop('checked', false);
+
+  $(".receiptsItemsRow").remove();
+  $("#openReceiptForm").show();
 
   $("#receiptsItemsDiv").hide();
+  $("#paymentReceiptsFinal").empty();
+  $("#paymentReceiptsFinal").hide();
   $("#fakePaymentStep3Form").hide();
 
   resetReceipt();
@@ -1388,6 +1428,8 @@ function editPayment(payment_id)
 {
   $.getJSON('/load_payment/', { payment_id: payment_id }, function (full_payment) {
     console.log(full_payment);
+    
+    
   });
 }
 

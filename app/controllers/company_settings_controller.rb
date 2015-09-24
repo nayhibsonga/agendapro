@@ -34,6 +34,8 @@ class CompanySettingsController < ApplicationController
     @staff_code = StaffCode.new
     @deals = current_user.company.deals
     @deal = Deal.new
+    @cashiers = current_user.company.cashiers
+    @cashier = Cashier.new
     @company_setting = @company.company_setting
     @online_cancelation_policy = OnlineCancelationPolicy.new
     if(!@company_setting.online_cancelation_policy.nil?)

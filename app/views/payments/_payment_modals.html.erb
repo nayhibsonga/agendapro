@@ -27,9 +27,9 @@
               </div>
 
               <div class="payment-form-div form-group has-feedback">
-                <label for="payment_cashier" class="col-xs-3 control-label">Cajero</label>
+                <label for="payment_cashier_code" class="col-xs-3 control-label">Cajero</label>
                 <div class="col-xs-9">
-                  <input type="text" class="form-control" id="payment_cashier" name="payment_cashier" value="" />
+                  <input type="text" class="form-control" id="payment_cashier_code" name="payment_cashier_code" value="" />
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
@@ -37,6 +37,7 @@
               </div>
 
               <div class="payment-form-div form-group has-feedback">
+                <input type="hidden" id="payment_cashier_id" value="" />
                 <label for="payment_cashier_name" class="col-xs-3 control-label"></label>
                 <div class="col-xs-9">
                   <input type="text" class="form-control" id="payment_cashier_name" name="payment_cashier_name" value="" disabled />
@@ -537,12 +538,12 @@
                   <label for="payment_other_method_type" class="col-xs-3 control-label">Otro medio de pago</label>
                   <div class="col-xs-9">
                     <select class="form-control" id="payment_other_method_type" name="payment_other_method_type">
-                      <% company.company_payment_methods.order(:name).each do |cpm| %>
+                      <% company.company_payment_methods.where(:active => true).order(:name).each do |cpm| %>
                         <option value="<%= cpm.id %>"><%= cpm.name %></option>
                       <% end %>
                     </select>
                   </div>
-                  <% company.company_payment_methods.order(:name).each do |cpm| %>
+                  <% company.company_payment_methods.where(:active => true).order(:name).each do |cpm| %>
                     <input type="hidden" class="payment_other_method_type_number_required" method_id="<%= cpm.id %>" value="<%= cpm.number_required %>" />
                   <% end %>
                   <div style="clear: both;"></div>
@@ -709,3 +710,5 @@
 <input type="hidden" id="paymentReceiptsArray" value="" />
 
 <input type="hidden" id="today_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+
+<a href="#" id="printReceipt" hidden></a>

@@ -1,6 +1,5 @@
  Agendapro::Application.routes.draw do
 
-  
 
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
@@ -73,6 +72,8 @@
     resources :products
 
     resources :favorite_locations, only: [:index, :create, :destroy]
+
+    resources :cashiers
 
     namespace :admin do
       get '', :to => 'dashboard#index', :as => '/'
@@ -385,6 +386,13 @@
     get '/location_alarms', :to => 'locations#stock_alarm_form'
     post '/save_alarms', :to => 'locations#save_stock_alarm'
     get '/location_sellers', :to => 'locations#sellers'
+
+    get '/cashiers/:id/activate', :to => 'cashiers#activate', :as => 'activate_cashier'
+    get '/cashiers/:id/deactivate', :to => 'cashiers#deactivate', :as => 'deactivate_cashier'
+    get '/get_cashier_by_code', :to => 'cashiers#get_by_code'
+
+    get '/receipt_pdf', :to => 'payments#receipt_pdf'
+    get '/payment_pdf', :to => 'payments#payment_pdf'
 
   end
 

@@ -2,6 +2,7 @@
 //= require jquery.qtip
 //= require validations/validate
 //= require validations/admin/booking
+//= require validations/admin/payment
 //**** require bootstrap-modal
 //**** require bootstrap-modalmanager
 //= require admin/admin-calendar
