@@ -86,6 +86,10 @@ class Booking < ActiveRecord::Base
       return
     end
 
+    if self.status_id_changed? && self.changed.count == 1
+      return
+    end
+
     bstart = self.start.clone()
     bend = self.end.clone()
     bstart_wday = bstart.wday
@@ -114,6 +118,10 @@ class Booking < ActiveRecord::Base
       return
     end
 
+    if self.status_id_changed? && self.changed.count == 1
+      return
+    end
+
     self.service_provider.provider_breaks.where("provider_breaks.start < ?", self.end.to_datetime).where("provider_breaks.end > ?", self.start.to_datetime).each do |provider_break|
       if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
         warnings.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido")
@@ -125,6 +133,10 @@ class Booking < ActiveRecord::Base
   def bookings_overlap_warning
 
     if self.is_session && !self.is_session_booked
+      return
+    end
+
+    if self.status_id_changed? && self.changed.count == 1
       return
     end
 
@@ -155,6 +167,10 @@ class Booking < ActiveRecord::Base
   def bookings_resources_warning
 
     if self.is_session && !self.is_session_booked
+      return
+    end
+
+    if self.status_id_changed? && self.changed.count == 1
       return
     end
 
@@ -206,6 +222,10 @@ class Booking < ActiveRecord::Base
       return
     end
 
+    if self.status_id_changed? && self.changed.count == 1
+      return
+    end
+
     cancelled_id = Status.find_by(name: 'Cancelado').id
     unless self.status_id == cancelled_id
       if !self.deal.nil?
@@ -242,6 +262,12 @@ class Booking < ActiveRecord::Base
   end
 
   def time_in_provider_time
+    puts self.changed.inspect
+
+    if self.status_id_changed? && self.changed.count == 1
+      return
+    end
+
     bstart = self.start.clone()
     bend = self.end.clone()
     bstart_wday = bstart.wday
@@ -291,6 +317,10 @@ class Booking < ActiveRecord::Base
       return
     end
 
+    if self.status_id_changed? && self.changed.count == 1
+      return
+    end
+
     unless self.location.company.company_setting.provider_overcapacity
       cancelled_id = Status.find_by(name: 'Cancelado').id
       unless self.status_id == cancelled_id
@@ -320,6 +350,10 @@ class Booking < ActiveRecord::Base
   def bookings_resources
 
     if self.is_session && !self.is_session_booked
+      return
+    end
+
+    if self.status_id_changed? && self.changed.count == 1
       return
     end
 
@@ -366,6 +400,10 @@ class Booking < ActiveRecord::Base
   def bookings_deal
 
     if self.is_session && !self.is_session_booked
+      return
+    end
+
+    if self.status_id_changed? && self.changed.count == 1
       return
     end
 
