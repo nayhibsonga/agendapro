@@ -923,8 +923,21 @@ tr.tr-disabled td {
   border-right: transparent;
   border-left: transparent;
 }
+.table-green > thead > tr > th > a,
+.table-green > thead > tr > td > a {
+  color: #ffffff;
+}
 .list-separate > li:not(:last-child) {
   margin-bottom: inherit;
+}
+.indicator:before {
+  content: "\f0dc";
+}
+.asc > .indicator:before {
+  content: "\f0de";
+}
+.desc > .indicator:before {
+  content: "\f0dd";
 }
 
 tr[class*="break"] {
