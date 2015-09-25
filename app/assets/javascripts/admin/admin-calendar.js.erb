@@ -290,6 +290,9 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
+		eventDragStart: function(event, jsEvent, ui, view){
+			ui.helper.qtip('hide');
+		},
 		eventDrop: function (event) {
 			editDrag(event);
 		},
@@ -471,6 +474,9 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		defaultEventMinutes: $('#providers-selector option:selected').data("block"),
 		editable: true,
 		disableResizing: true,
+		eventDragStart: function(event, jsEvent, ui, view){
+			ui.helper.qtip('hide');
+		},
 		eventDrop: function (event) {
 			editDrag(event);
 		},
