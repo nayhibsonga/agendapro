@@ -223,6 +223,31 @@ $(function() {
     //$('#payment_xButton').prop('disabled', true);
   });
 
+  $("#openClient").click(function(e){
+    $(".client-option").toggle();
+
+    if($("#set_client").val() == "0")
+    {
+      $("#set_client").val("1");
+    }
+    else
+    {
+      $("#set_client").val("0");
+    }
+
+    if($("#openClientIcon").prop("hidden"))
+    {
+      $("#closeClientIcon").hide();
+      $("#openClientIcon").show();
+    }
+    else
+    {
+      $("#openClientIcon").hide();
+      $("#closeClientIcon").show();
+    }
+
+  });
+
   $("#payment_client_name").autocomplete({
     source: '/clients_name_suggestion',
     appendTo: '#payment_client_suggestions',
@@ -245,6 +270,9 @@ $(function() {
       $("#payment_client_email").val(client.email);
       $("#payment_client_first_name").val(client.first_name);
       $("#payment_client_last_name").val(client.last_name);
+      $("#payment_client_phone").val(client.phone);
+
+      $("#payment_client_gender").val(client.gender);
 
       //$('#payment_xButton').prop('disabled', false);
       //$("#payment_full_name").prop('disabled', true);
@@ -1125,10 +1153,13 @@ function createAndServePayment(option)
   var cashier_id = $("#payment_cashier_id").val();
   var client_name = $("#payment_client_name").val();
   split_name('#payment_client_name', '#payment_client_first_name', '#payment_client_last_name');
+  var set_client = $("#set_client").val();
   var client_first_name = $("#payment_client_first_name").val();
   var client_last_name = $("#payment_client_last_name").val();
   var client_id = $("#payment_client_id").val();
   var client_email = $("#payment_client_email").val();
+  var client_phone = $("#payment_client_phone").val();
+  var client_gender = $("#payment_client_gender").val();
   var payment_past_bookings = $("#paymentPastBookingsArray").val();
   var payment_new_bookings = $("#paymentNewBookingsArray").val();
   var payment_products = $("#paymentProductsArray").val();
@@ -1159,11 +1190,15 @@ function createAndServePayment(option)
   var payment_data = {
     location_id: location_id, 
     cashier_id: cashier_id, 
+    set_client: set_client,
     client_name: client_name, 
     client_first_name: client_first_name, 
     client_last_name: client_last_name, 
     client_id: client_id, 
     client_name: client_name, 
+    client_phone: client_phone,
+    client_gender: client_gender,
+    client_email: client_email,
     past_bookings: payment_past_bookings, 
     new_bookings: payment_new_bookings, 
     products: payment_products, 
@@ -1191,17 +1226,26 @@ function createAndServePayment(option)
 
     },
     success: function(response){
+      $("#paymentPrintLink").empty();
+      $("#receiptsPrintLinks").empty();
       if(response[0] == "ok")
       {
         alert("Pago guardado con éxito.");
         $(".payment-btn-close").trigger("click");
         if (callback_option_str == "print")
         {
-          $("#printReceipt").attr("href", "/receipt_pdf.pdf?receipt_id" + response[1]['id'])
+          
+          $("#paymentPrintLink").append('<a target="_blank" href="/payment_pdf.pdf?payment_id=' + response[1]['id'] + '" class="print-link">Imprimir resumen de pago</a><br />');
+
+          for(x = 0; x < response[2].length; x++)
+          {
+            $("#receiptsPrintLinks").append('<a target="_blank" href="/receipt_pdf.pdf?receipt_id=' + response[2][x][0] + '" class="print-link">Imprimir ' + response[2][x][1] + ' N° ' + response[2][x][2] + '</a><br />');
+          }
+          $("#pdfModal").modal('show');
         }
         else if(callback_option_str == "sendEmail")
         {
-
+          
         }
       }
       else
@@ -1295,13 +1339,21 @@ function resetPaymentIntro()
   $("#payment_cashier_name").val("");
   $("#payment_cashier_id").val("");
 
+  $(".client-option").hide();
+  $("#payment_client_gender").val("0");
+  $("#payment_client_phone").val("");
   $("#payment_client_id").val("");
   $("#payment_client_first_name").val("");
   $("#payment_client_last_name").val("");
   $("#payment_client_name").val("");
+  $("#set_client").val("0");
 
   $("#payment_client_email").val("");
   $("#payment_date").val($("#today_date").val());
+
+  $("#closeClientIcon").hide();
+  $("#openClientIcon").show();
+
 }
 
 function resetPaymentStep1()

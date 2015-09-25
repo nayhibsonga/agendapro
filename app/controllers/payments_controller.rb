@@ -218,18 +218,39 @@ class PaymentsController < ApplicationController
     #Find location
     location = Location.find(params[:location_id])
 
-    #Find or create a client
-    client = Client.new
-    if params[:client_id] && !params[:client_id].blank?
-      client = Client.find(params[:client_id])
-    else
+    payment = Payment.new
+
+    #Find or create a client (update if necessary)
+    
+
+    if params[:set_client] == "1"
+      
+      client = Client.new
+      
+      if params[:client_id] && !params[:client_id].blank?
+        client = Client.find(params[:client_id])
+      end
+        
       client.first_name = params[:client_first_name]
       client.last_name = params[:client_last_name]
+      client.email = params[:email]
+      client.phone = params[:client_phone]
+      client.gender = params[:client_gender]
       client.company_id = location.company_id
-      client.save
+      
+      if client.save
+        payment.client_id = client.id
+      else
+        @errors << "No se pudo guardar al cliente"
+      end
+
+      
+
+    else
+      payment.client_id = nil
     end
 
-    payment = Payment.new
+    
 
     payment.payment_method_id = params[:payment_method_id]
 
@@ -260,7 +281,6 @@ class PaymentsController < ApplicationController
     #payment.notes = params[:payment_notes]
     payment.notes = ""
     payment.location_id = params[:location_id]
-    payment.client_id = client.id
 
     payment.paid_amount = params[:paid_amount]
     payment.amount = params[:cost]
@@ -324,13 +344,7 @@ class PaymentsController < ApplicationController
           payment_product.seller_id = seller[0]
           payment_product.seller_type = seller[1]
 
-          receipt_product = ReceiptProduct.new
-          receipt_product.product_id = product[:id]
-          receipt_product.price = product[:price]
-          receipt_product.discount = product[:discount]
-          receipt_product.quantity = product[:quantity]
-
-          new_receipt.receipt_products << receipt_product
+          new_receipt.payment_products << payment_product
 
           @paymentProducts << payment_product
         end
@@ -353,13 +367,21 @@ class PaymentsController < ApplicationController
 
     if payment.save
       @json_response[0] = "ok"
-      @errors << payment.errors
     else
       @json_response[0] = "error"
+      @errors << payment.errors
     end
 
     if @json_response[0] == "ok"
       @json_response << payment
+      @json_response[2] = []
+      payment.receipts.each do |receipt|
+        receipt_detail = []
+        receipt_detail << receipt.id
+        receipt_detail << receipt.receipt_type.name
+        receipt_detail << receipt.number
+        @json_response[2] << receipt_detail
+      end
     else
       @json_response << @errors
     end

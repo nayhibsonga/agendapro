@@ -6,7 +6,24 @@ $(function() {
 		},
 		rules: {
 			'payment_client_name': {
-				required: true
+				required: {
+					depends: function () { return ($("#set_client").val() == "1"); }
+				}
+			},
+			'payment_client_email': {
+				required: {
+					depends: function () { return ($("#set_client").val() == "1"); }
+				}
+			},
+			'payment_client_phone': {
+				required: {
+					depends: function () { return ($("#set_client").val() == "1"); }
+				}
+			},
+			'payment_client_gender': {
+				required: {
+					depends: function () { return ($("#set_client").val() == "1"); }
+				}
 			}
 		},
 		highlight: function(element) {

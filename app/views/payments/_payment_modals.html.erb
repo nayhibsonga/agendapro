@@ -47,7 +47,31 @@
 
               </div>
 
-              <div class="payment-form-div form-group has-feedback">
+              <div class="payment-form-div form-group">
+                <label for="payment_date" class="col-xs-3 control-label">Fecha</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <div class="payment-form-div form-group">
+
+                <div class="col-xs-3">
+                </div>
+                <div class="col-xs-9" id="openClient">
+                  <span>Asociar o agregar cliente </span><span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
+                </div>
+                <div style="clear: both;">
+                </div>
+
+              </div>
+
+              <input type="hidden" id="set_client" value="0" />
+
+              <div class="payment-form-div form-group has-feedback client-option" hidden>
                 <label for="payment_client" class="col-xs-3 control-label">Cliente</label>
                 <div class="col-xs-9">
                   <input type="hidden" id="payment_client_id" name="payment_client_id" value="" />
@@ -61,7 +85,7 @@
 
               </div>
 
-              <div class="payment-form-div form-group">
+              <div class="payment-form-div form-group client-option" hidden>
                 <label for="payment_client_email" class="col-xs-3 control-label">Email</label>
                 <div class="col-xs-9">
                   <input type="text" class="form-control" id="payment_client_email" name="payment_client_email" value="" />
@@ -71,14 +95,33 @@
 
               </div>
 
-              <div class="payment-form-div form-group">
-                <label for="payment_date" class="col-xs-3 control-label">Fecha</label>
+              <div class="payment-form-div form-group client-option" hidden>
+                <label for="payment_client_phone" class="col-xs-3 control-label">Teléfono</label>
                 <div class="col-xs-9">
-                  <input type="text" class="form-control" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                  <input type="text" class="form-control" id="payment_client_phone" name="payment_client_phone" value="" />
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
 
+              </div>
+
+              <div class="payment-form-div form-group has-feedback client-option" hidden>
+                <label for="payment_client_gender" class="col-xs-3 control-label">Género</label>
+                <div class="col-xs-9">
+                  <select id="payment_client_gender" name="payment_client_gender" class="form-control">
+                    <option value="0">
+                      Indefinido
+                    </option>
+                    <option value="1">
+                      Femenino
+                    </option>
+                    <option value="2">
+                      Masculino
+                    </option>
+                  </select>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
               </div>
 
             </form>
@@ -699,6 +742,68 @@
         <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnPrint" aria-label="Imprimir" hidden>Imprimir</button>
         <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnSendEmail" aria-label="Enviar por email" hidden>Enviar por email</button>
         <button type="button" class="btn payment-btn-next payment-btn-end" id="paymentBtnSave" aria-label="Guardar" hidden>Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade modalOverModal" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="Imprimir" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="pdfModalIntroTitle" style="line-height: 1.1;">Imprimir</h3>
+      </div>
+      <div class="modal-body" id="pdfModalIntroBody">
+        <div class="row">
+          <div class="col-xs-10">
+
+
+              <div id="paymentPrintLink">
+
+              </div>
+
+              <div id="receiptsPrintLinks">
+
+              </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade modalOverModal" id="sendEmailModal" tabindex="-1" role="dialog" aria-labelledby="Enviar por email" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="sendEmailModalIntroTitle" style="line-height: 1.1;">Enviar por email</h3>
+      </div>
+      <div class="modal-body" id="sendEmailModalIntroBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+
+              <div class="payment-form-div form-group client-option" hidden>
+                <label for="payment_emails" class="col-xs-3 control-label">Email</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_emails" name="payment_emails" value="" />
+                  <span class="help-block">Ingresa los emails a los que quieras enviar el resumen separados por coma: ejemplo1@agendapro.cl, ejemplo2@agendapro.cl, ejemplo3@agendapro.cl</span>
+                </div>
+
+              </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        <button type="button" class="btn btn-default" id="sendEmails" aria-label="Enviar por email" hidden>Enviar</button>
       </div>
     </div>
   </div>

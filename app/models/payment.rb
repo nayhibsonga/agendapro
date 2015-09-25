@@ -18,8 +18,9 @@ class Payment < ActiveRecord::Base
 
   accepts_nested_attributes_for :payment_products, :reject_if => :all_blank, :allow_destroy => true
   accepts_nested_attributes_for :bookings, :reject_if => :all_blank
+  accepts_nested_attributes_for :mock_bookings, :reject_if => :all_blank
 
-  validate :payment_date_required, :client_required, :location_required
+  validate :payment_date_required, :location_required
 
   #after_save :set_numbers
 

@@ -12,9 +12,15 @@ class PaymentsPdf < Prawn::Document
 
 		@payment = Payment.find(payment_id)
 
+		i = 0
+		count = @payment.receipts.count
 		@payment.receipts.each do |receipt|
 			header(receipt)
 			text_content(receipt)
+			i = i+1
+			if i < count
+				start_new_page
+			end
 		end
 
 	end
@@ -22,17 +28,43 @@ class PaymentsPdf < Prawn::Document
 	def header(receipt)
 
 		y_position = cursor
-		bounding_box([220, y_position], width: 260, height: 50) do
-			text receipt.receipt_type.name
+		bounding_box([220, y_position], width: 260, height: 30) do
+			text "<b>" + receipt.receipt_type.name + "</b>",
+				:inline_format => true
 		end
-		bounding_box([440, y_position], width: 260, height: 50) do
-			text receipt.number.to_s
+		bounding_box([440, y_position], width: 260, height: 30) do
+			text "N° " + receipt.number.to_s
 		end
+
+		move_down 10
+
+		info_rows = []
+
+		info_rows << ["Fecha: ", I18n.l(receipt.date)]
+		info_rows << ["Local: ", receipt.payment.location.name]
+		if !receipt.payment.client_id.nil?
+			info_rows << ["Cliente: " , receipt.payment.client.first_name + " " + receipt.payment.client.last_name]
+			if !receipt.payment.client.email.blank?
+				info_rows << ["Email: ", receipt.payment.client.email]
+				move_down 5
+			end
+			if !receipt.payment.client.phone
+				info_rows << ["Teléfono: " + receipt.payment.client.phone]
+				move_down 5
+			end
+		end
+		info_rows << ["Atendido por: ", receipt.payment.cashier.name]
+
+		table(info_rows) do
+			cells.borders = []
+		end
+
+		move_down 10
 
 	end
 
 	def text_content(receipt)
-		table(receipt_table(receipt), header: true, position: :center, width: 450, :column_widths => [90,90,90,90,90]) do
+		table(receipt_table(receipt), header: true, position: :center, width: 540, :column_widths => [90,90,90,90,90,90]) do
 			
 			#cells.borders = []
 
@@ -54,23 +86,24 @@ class PaymentsPdf < Prawn::Document
 
 	def receipt_table(receipt)
 
-		table_header = [['Nombre', 'Precio unitario', 'Cantidad', 'Descuento', 'Subtotal']]
+		table_header = [['Nombre', 'Vendedor / Prestador', 'Precio unitario', 'Cantidad', 'Descuento', 'Subtotal']]
 		table_rows = []
 
 		items_total = 0
 
-		receipt.receipt_products.each do |receipt_product|
+		receipt.payment_products.each do |payment_product|
 
 			product_arr = []
 
-			item_amount = (receipt_product.quantity*receipt_product.price*(100-receipt_product.discount)/100).round
+			item_amount = (payment_product.quantity*payment_product.price*(100-payment_product.discount)/100).round
 
 			items_total = items_total + item_amount
 
-			product_arr << receipt_product.product.name
-			product_arr << '$ ' + receipt_product.price.to_s
-			product_arr << receipt_product.quantity.to_s
-			product_arr << receipt_product.discount.to_s + '%'
+			product_arr << payment_product.product.name
+			product_arr << payment_product.get_seller_details
+			product_arr << '$ ' + payment_product.price.to_s
+			product_arr << payment_product.quantity.to_s
+			product_arr << payment_product.discount.to_s + '%'
 			product_arr << '$ ' + item_amount.to_s
 
 			table_rows.append(product_arr)
@@ -91,6 +124,12 @@ class PaymentsPdf < Prawn::Document
 				mock_booking_arr << mock_booking.service.name
 			end
 
+			if mock_booking.service_provider_id.nil?
+				mock_booking_arr << "Sin prestador"
+			else
+				mock_booking_arr << mock_booking.service_provider.public_name
+			end
+
 			mock_booking_arr << '$' + mock_booking.price.to_s
 			mock_booking_arr << '1'
 			mock_booking_arr << mock_booking.discount.to_s + '%'
@@ -109,6 +148,7 @@ class PaymentsPdf < Prawn::Document
 			items_total = items_total + item_amount
 
 			booking_arr << booking.service.name
+			booking_arr << booking.service_provider.public_name
 			booking_arr << '$' + booking.price.to_s
 			booking_arr << '1'
 			booking_arr << booking.discount.to_s + '%'
@@ -118,7 +158,7 @@ class PaymentsPdf < Prawn::Document
 
 		end
 
-		total_row = ["", "", "", "Total", "$ " + receipt.amount.to_s]
+		total_row = ["", "", "", "", "Total", "$ " + receipt.amount.to_s]
 		table_rows.append(total_row)
 
 		return table_header + table_rows
