@@ -5,6 +5,8 @@ class ClientsController < ApplicationController
   load_and_authorize_resource
   layout "admin"
 
+  helper_method :sort_column, :sort_direction
+
   # GET /clients
   # GET /clients.json
   def index
@@ -19,9 +21,9 @@ class ClientsController < ApplicationController
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
     @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
 
-    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
+    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(:last_name, :first_name)
+    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction)
 
     respond_to do |format|
       format.html
@@ -405,5 +407,13 @@ class ClientsController < ApplicationController
 
     def client_comment_params
       params.require(:client_comment).permit(:id, :client_id, :comment)
+    end
+
+    def sort_column
+      Client.column_names.include?(params[:sort]) ? params[:sort] : "last_name"
+    end
+
+    def sort_direction
+      %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
     end
 end

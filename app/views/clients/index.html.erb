@@ -196,10 +196,10 @@
         <caption id="mails" data-monthly-mails="<%= @monthly_mails %>" data-monthly-mails-sent="<%= @monthly_mails_sent %>">E-mails enviados <%= number_with_delimiter(@monthly_mails_sent) %> de <%= number_with_delimiter(@monthly_mails) %></caption>
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>E-mail</th>
-            <th><%= (I18n.t('ci')).capitalize %></th>
+            <th><%= sortable "first_name", 'Nombre <i class="fa indicator"></i>'.html_safe %></th>
+            <th><%= sortable "last_name", 'Apellido <i class="fa indicator"></i>'.html_safe %></th>
+            <th><%= sortable "email", 'E-mail <i class="fa indicator"></i>'.html_safe %></th>
+            <th><%= sortable "identification_number", ((I18n.t('ci')).capitalize + ' <i class="fa indicator"></i>').html_safe %></th>
             <th>Opciones</th>
             <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
             <th>¿Puede Reservar?</th>
