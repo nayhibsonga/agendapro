@@ -106,10 +106,11 @@ header {
         @include breakpoint(615px) { font-size: 45px; }
         @include breakpoint(690px) { font-size: 49px; }
         @include font-smoothing(antialiased);
-        .typed {
+        #typed {
           color: $light-pink;
           font-weight: 600;
         }
+        .typed-cursor{ @extend #typed; }
       }
     }
     #search {
