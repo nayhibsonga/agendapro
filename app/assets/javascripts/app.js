@@ -1,7 +1,19 @@
-'use strict'
+(function() {
+  'use strict'
 
-angular.module('HoraChic', ['ngResource', 'ngRoute'])
-  .config(['$routeProvider', function ($routeProvider) {
+  angular
+    .module('HoraChic', [
+        'ngResource',
+        'ngRoute',
+        'uiGmapgoogle-maps',
+        'ngCookies'
+      ])
+    .config(config)
+    .run(globalVariables);
+
+  config.$inject = ['$routeProvider', 'uiGmapGoogleMapApiProvider'];
+
+  function config($routeProvider, GoogleMapApiProvider) {
     var $namespace = '/hora_chic';
     $routeProvider
       .when('/', {
@@ -23,56 +35,15 @@ angular.module('HoraChic', ['ngResource', 'ngRoute'])
       .otherwise({
           redirectTo: '/'
       });
-  }]);
 
-var Translations = (function() {
-  function Translations(locale) {
-    var lang = Language(locale);
-    return {
-      'es-CL': {
-        contact: 'contacto@agendapro.cl',
-        address: 'Ana María Carrera 5210, Las Condes, Santiago',
-        write_us: '¿Dudas? escríbenos a',
-        login: 'Inicia Sesión',
-        register: 'Regístrate',
-        add_company: 'Agrega tu Empresa',
-        services: {
-          peluquerias: "Peluquerías",
-          maquillaje: "Maquillaje",
-          estetica: "Centros de Estética",
-          spa: "Spa",
-          tratamientos: "Tratamientos",
-          manos_y_pies: "Manos y Pies",
-          deals: "Promociones",
-          blog: "Blog"
-        },
-        search: {
-          find_me: 'Encuéntrame',
-          find_service: 'Buscar',
-          placeholder: {
-            address: 'Escribe tu dirección, sector o ciudad...',
-            service: 'Ejemplo: Corte de Pelo, Masajes'
-          }
-        }
-
-      }
-    }[lang];
+    GoogleMapApiProvider.configure({
+      key: 'AIzaSyDeFsCNzRfUK7Yretd1EBgGL73O1PJOEZM',
+      v: '3.20', //defaults to latest 3.X anyhow
+      libraries: 'weather,geometry,visualization'
+    });
   }
 
-  return Translations;
-
-})();
-
-var Language = (function() {
-  function Language(locale) {
-    switch (locale) {
-      case 'co':
-        return 'es-CO';
-      default:
-        return 'es-CL';
-    }
+  function globalVariables($rootScope) {
+    $rootScope.country = 'cl';
   }
-
-  return Language;
-
 })();
