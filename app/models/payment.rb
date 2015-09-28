@@ -79,7 +79,58 @@ class Payment < ActiveRecord::Base
     self.update_columns(amount: amount, discount: discount, quantity: quantity, bookings_amount: bookings_amount, bookings_quantity: bookings_quantity, bookings_discount: bookings_discount, sessions_amount: sessions_amount, sessions_quantity: sessions_quantity, sessions_discount: sessions_discount, products_amount: products_amount, products_quantity: products_quantity, products_discount: products_discount)
   end
 
-  def send_mail
+  def send_receipts_email(given_emails)
+
+
+    #Check emails correctness. If any doesn't match, return false
+
+    emails = []
+    emails_arr = given_emails.split(',')
+
+    emails_arr.each do |email|
+      email_str = email.strip
+      if email_str != ""
+        emails << email_str
+      end
+    end
+
+    summary = '';
+
+    self.receipts.each do |receipt|
+
+      summary << '<div class="receiptFinal" style="margin-bottom: 15px; border: 1px solid #fff; padding: 20px; text-align: center;"><div><span class="receiptTitle" style="text-align: center; font-weight: bold; font-size: 18px;">' + receipt.receipt_type.name + '</span><span class="receiptNumber" style="font-size: 18px; float: right;">N° ' + receipt.number + '</span></div><div><br /><div class="responsive-table" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;min-height:.01%;overflow-x:auto;width:100%;overflow-y:hidden;-ms-overflow-style:-ms-autohiding-scrollbar;min-width:440px;"><table class="table summary" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-spacing:0;border-collapse:collapse;font-family:"Roboto Condensed", sans-serif;font-size:12px;font-weight:300;width:100%;max-width:100%;color:#626262;background-color:transparent !important;background-image:none !important;background-repeat:repeat !important;background-position:top left !important;background-attachment:scroll !important;margin-bottom:0;">'
+      summary << '<thead style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><tr  style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><th>Nombre</th><th>Precio unitario</th><th>Cantidad</th><th>Descuento</th><th>Subtotal</th></tr></thead>'
+
+      receipt.payment_products.each do |payment_product|
+        summary << '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + payment_product.product.name + '</td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$ ' + payment_product.product.price.to_s + '</td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + payment_product.quantity.to_s + '</td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + payment_product.discount.to_s + ' %<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$ ' + payment_product.price.to_s + '</td></tr>'
+      end
+
+      receipt.bookings.each do |booking|
+        summary << '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + booking.name + '</td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$ ' + booking.list_price.to_s + '</td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">1</td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + booking.discount.to_s + ' %</td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$ ' + booking.price.to_s + '</td></tr>'
+      end
+
+      receipt.mock_bookings.each do |mock_booking|
+
+        service_name = "Sin servicio"
+        provider_name = "Sin proveedor"
+
+        if !mock_booking.service_id.nil?
+          service_name = mock_booking.service.name
+        end
+        if ! mock_booking.service_provider_id.nil?
+          provider_name = mock_booking.service_provider.name
+        end
+
+        summary << '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + service_name + '</td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$' + mock_booking.price.to_s + '</td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">1</td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + mock_booking.discount.to_s + ' %</td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$' + (mock_booking.price*(100-mock_booking.discount)/100).round(1).to_s + '</td></tr>'
+      end
+
+      summary << '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"></td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"></td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"></td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><b>Total</b></td><td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><b>$' + receipt.amount.to_s + '</b></td></tr>'
+
+      summary << '</table></div></div></div>'
+
+    end
+
+    PaymentsSystemMailer.receipts_email(self, emails, summary)
     
   end
 

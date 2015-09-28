@@ -144,4 +144,76 @@ class PaymentsSystemMailer < ActionMailer::Base
       raise
   end
 
+  def receipts_email(payment, emails, data)
+
+    mandrill = Mandrill::API.new Agendapro::Application.config.api_key
+
+    # => Template
+    template_name = 'Payment Receipts'
+    template_content = []
+
+    company = payment.location.company
+
+    recipients = []
+
+    emails.each do |email|
+      recipients << {
+        :email => email,
+        :name => email,
+        :type => 'to'
+      }
+    end
+
+    # => Message
+    message = {
+      :from_email => 'no-reply@agendapro.cl',
+      :from_name => company.name,
+      :subject => 'Comprobantes de pago',
+      :to => recipients,
+      :headers => { 'Reply-To' => payment.location.email },
+      :global_merge_vars => [
+        {
+          :name => 'URL',
+          :content => 'www'
+        },
+        {
+          :name => 'RECEIPTS',
+          :content => data
+        },
+        {
+          :name => 'COMPANY',
+          :content => company.name
+        },
+        {
+          :name => 'LOCATION',
+          :content => payment.location.name
+        },
+        {
+          :name => 'DOMAIN',
+          :content => company.country.domain
+        }
+      ],
+      :tags => [],
+      :images => [
+        {
+          :type => 'image/png',
+          :name => 'LOGO',
+          :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
+        }
+      ]
+    }
+
+    # => Metadata
+    async = false
+    send_at = DateTime.now
+
+    # => Send mail
+    result = mandrill.messages.send_template template_name, template_content, message, async, send_at
+
+    rescue Mandrill::Error => e
+      puts "A mandrill error occurred: #{e.class} - #{e.message}"
+      raise
+
+  end
+
 end

@@ -248,6 +248,29 @@ $(function() {
 
   });
 
+  $("#sendEmailsBtn").click(function(e){
+
+    $.ajax({
+      url: '/receipts_email',
+      data: {payment_id: $("#sendEmailsPaymentId").val(), emails: $("#payment_emails").val()},
+      dataType: 'json',
+      method: 'post',
+      error: function(response){
+        alert("Ocurrió un error inesperado.");
+      },
+      success: function(response){
+        if (response[0] == "ok")
+        {
+          alert("Se enviaron mails de resumen a las direcciones ingresadas.");
+        }
+        else
+        {
+          alert("Ocurrió un error inesperado al enviar los correos. Ponte en contacto con nosotros en contacto@agendapro.cl para darte una solución.");
+        }
+      }
+    });
+  });
+
   $("#payment_client_name").autocomplete({
     source: '/clients_name_suggestion',
     appendTo: '#payment_client_suggestions',
@@ -1245,7 +1268,9 @@ function createAndServePayment(option)
         }
         else if(callback_option_str == "sendEmail")
         {
-          
+          $("#paymentEmails").val("");
+          $("#sendEmailsPaymentId").val(response[1]['id']);
+          $("#sendEmailsModal").modal('show');
         }
       }
       else

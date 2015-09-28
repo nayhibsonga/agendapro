@@ -164,6 +164,7 @@ class Ability
         can :get_by_code, Cashier, :company_id => user.company_id
         can :receipt_pdf, Payment, :company_id => user.company_id
         can :payment_pdf, Payment, :company_id => user.company_id
+        can :send_receipts_email, Payment, :company_id => user.company_id
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -363,6 +364,7 @@ class Ability
         can :get_by_code, Cashier, :company_id => user.company_id
         can :receipt_pdf, Payment, :company_id => user.company_id
         can :payment_pdf, Payment, :company_id => user.company_id
+        can :send_receipts_email, Payment, :company_id => user.company_id
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
@@ -519,6 +521,7 @@ class Ability
         can :get_by_code, Cashier, :company_id => user.company_id
         can :receipt_pdf, Payment, :company_id => user.company_id
         can :payment_pdf, Payment, :company_id => user.company_id
+        can :send_receipts_email, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff").id
         

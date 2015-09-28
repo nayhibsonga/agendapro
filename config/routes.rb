@@ -394,6 +394,8 @@
     get '/receipt_pdf', :to => 'payments#receipt_pdf'
     get '/payment_pdf', :to => 'payments#payment_pdf'
 
+    post '/receipts_email', :to => 'payments#send_receipts_email'
+
   end
 
   namespace :api, defaults: {format: 'json'} do

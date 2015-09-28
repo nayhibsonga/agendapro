@@ -777,7 +777,7 @@
   </div>
 </div>
 
-<div class="modal fade modalOverModal" id="sendEmailModal" tabindex="-1" role="dialog" aria-labelledby="Enviar por email" aria-hidden="true">
+<div class="modal fade modalOverModal" id="sendEmailsModal" tabindex="-1" role="dialog" aria-labelledby="Enviar por email" aria-hidden="true">
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
       <div class="modal-header">
@@ -788,8 +788,8 @@
         <div class="row">
           <div class="col-xs-12">
 
-
-              <div class="payment-form-div form-group client-option" hidden>
+              <input type="hidden" id="sendEmailsPaymentId" value="" />
+              <div class="payment-form-div form-group">
                 <label for="payment_emails" class="col-xs-3 control-label">Email</label>
                 <div class="col-xs-9">
                   <input type="text" class="form-control" id="payment_emails" name="payment_emails" value="" />
@@ -803,7 +803,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
-        <button type="button" class="btn btn-default" id="sendEmails" aria-label="Enviar por email" hidden>Enviar</button>
+        <button type="button" class="btn btn-default" id="sendEmailsBtn" aria-label="Enviar por email" hidden>Enviar</button>
       </div>
     </div>
   </div>

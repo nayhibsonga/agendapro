@@ -329,7 +329,9 @@ class PaymentsController < ApplicationController
           past_booking = item
           booking = Booking.find(past_booking[:id])
           #booking.list_price = past_booking[:]
-          #booking.discount = past_booking[:discount]
+          booking.discount = past_booking[:discount]
+          booking.price = (past_booking[:list_price].to_f*(100-booking.discount)/100).round(1)
+
           @bookings << booking
           new_receipt.bookings << booking
         else
@@ -421,6 +423,22 @@ class PaymentsController < ApplicationController
 
   end
 
+  def send_receipts_email
+
+    @payment = Payment.find(params[:payment_id])
+    @json_response = []
+    
+    if @payment.send_receipts_email(params[:emails])
+      @json_response << "ok"
+      @json_response << @payment
+    else
+      @json_response << "error"
+      @json_response << ""
+    end
+
+    render :json => @json_response
+
+  end
 
   private
     def set_payment

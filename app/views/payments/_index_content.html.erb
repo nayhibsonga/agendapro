@@ -48,7 +48,13 @@
         <tr>
           <td><%= payment.payment_date.strftime('%d-%m-%Y') %></td>
           <td><%= payment.location ? payment.location.name : '' %></td>
-          <td><%= payment.client.first_name %> <%= payment.client.last_name %></td>
+          <td>
+            <% if !payment.client.nil? %>
+              <%= payment.client.first_name %> <%= payment.client.last_name %>
+            <% else %>
+              Sin información
+            <% end %>
+          </td>
           <td><button class="btn btn-green btn-xs" id="payment_details_button_<%= payment.id %>">Vista Rápida</button></td>
           <td><%= payment.payment_method ? payment.payment_method.name : '' %></td>
           <td><%= number_to_currency(payment.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
