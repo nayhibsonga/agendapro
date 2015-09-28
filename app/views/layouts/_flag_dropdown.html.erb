@@ -1,0 +1,13 @@
+<li class="dropdown">
+	<% if Country.find_by(locale: I18n.locale.to_s) %>
+	<% country = Country.find_by(locale: I18n.locale.to_s) %>
+	<%= link_to ('<span class="email-dropdown">' + image_tag(country.flag_photo.url, alt: country.name, size: "24x16", :class => I18n.locale == country.locale.to_sym ? 'selected' : nil) + '</span> <i class="fa fa-chevron-down"></i>').html_safe, '', class: "dropdown-toggle menu-green i18n-flag", data: { toggle:"dropdown" } %>
+	<% else %>
+	<a href="" class="dropdown-toggle menu-green" data-toggle="dropdown"><span class="email-dropdown"><i class="fa fa-globe"></i></span> <i class="fa fa-chevron-down"></i></a>
+	<% end %>
+	<ul class="dropdown-menu">
+		<% Country.all.order(:name).each do |country| %>
+		<li><%= link_to (image_tag(country.flag_photo.url, alt: country.name, size: "24x16", :class => I18n.locale == country.locale.to_sym ? 'selected' : nil) + ' ' + country.name).html_safe, url_for(params.merge({:locale => country.locale})), class: "i18n-flag" %></li>
+		<% end %>
+	</ul>
+</li>

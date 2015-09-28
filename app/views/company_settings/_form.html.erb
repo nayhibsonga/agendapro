@@ -161,7 +161,7 @@
         <!-- Company -->
         <div class="tab-pane" id="company">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-sm-12">
               <%= form_for @company, :html => {:class => 'company-form', :id => 'company-form', :multipart => true} do |f| %>
                 <div class="row">
                   <div class="col-md-6">
@@ -171,10 +171,10 @@
                       <span class="help-block"></span>
                       <span class="form-control-feedback"></span>
                     </div>
-                    <div class="form-group has-feedback">
+                    <div class="form-group has-feedback <%= 'hidden' if @company.activate_i18n %>">
                       <%= f.label :web_address, 'Dirección Sitio AgendaPro' %>
                       <div class="input-group">
-                        <%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
+                        <%= f.text_field :web_address, :required => true, :class => 'form-control company-web-address', :placeholder => 'Empresa (requerido)' %>
                         <span class="input-group-addon">.agendapro<%= @company.country.domain %></span>
                       </div>
                       <span class="help-block"></span>
@@ -187,8 +187,6 @@
                       <%= f.text_area :description, :class => 'form-control', :rows => "7" %>
                     </div>
                   </div>
-                </div>
-                <div class="row">
                   <div class="col-md-3">
                     <div class="form-group has-feedback">
                       <%= f.label :logo, 'Logo Compañía' %>
@@ -208,6 +206,31 @@
                     </div>
                   </div>
                 </div>
+                <% if @company.activate_i18n %>
+                <div class="row ">
+                  <div class="form-group has-feedback">
+                    <div class="control-group">
+                      <% Country.all.each do |country| %>
+                        <div class="col-sm-6">
+                          <%= f.fields_for :company_countries, @company.company_countries.find_or_initialize_by(country_id: country.id) do |layer_field| %>
+                            <%= layer_field.hidden_field :country_id, value: country.id.to_s %>
+                            <div class="controls">
+                              <%= layer_field.label :web_address, country.name, class: 'control-label' %>
+                              <div class="input-group">
+                                <span class="input-group-addon"><%= layer_field.check_box :active, checked: ! @company.company_countries.find_by(country_id: country.id).nil?, disabled: @company.country_id == country.id, class: 'company-country-checkbox' %></span>
+                                <%= layer_field.text_field :web_address, class: 'form-control company-web-address', disabled: @company.company_countries.find_by(country_id: country.id).nil?, required: true %>
+                                <span class="input-group-addon">.agendapro<%= country.domain %></span>
+                              </div>
+                              <span class="help-block"></span>
+                            </div>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+                <% end %>
+                <br />
                 <div class="row">
                   <div class="col-md-12">
                     <div class="form-group has-feedback">
@@ -287,7 +310,7 @@
                         <label>
                           <%= f.check_box :client_exclusive %> Exclusivo para Clientes
                         </label>
-                        <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el RUT.</span>
+                        <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el <%= (I18n.t('ci')).capitalize %>.</span>
                       </div>
                     </div>
                     <div class="form-group">
@@ -415,13 +438,13 @@
                         <label>
                           <%= f.check_box :extended_schedule_bool %> Extender Calendario
                         </label>
-                        <span class="help-block">Habilita esta opción para extender el horario en la sección <strong>"Calendario"</strong>, y así poder tomar reservas antes y/o después de tu horario normal, si la opción anterior así lo permite.</span>
+                        <span class="help-block">Habilita esta opción para extender el horario en la sección <strong>"Calendario"</strong>, y así poder generar reservas internas fuera del horario de apertura de tus locales.</span>
                       </div>
                     </div>
                     <div class="form-group ">
                       <%= f.label :extended_min_hour, 'Horario Calendario Extendido' %>
                       <div>
-                        <%= f.time_select :extended_min_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= f.time_select :extended_max_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+                        <%= f.time_select :extended_min_hour, {minute_step: 15, end_hour: @open_end}, {:class => 'form-control date-select', required: true} %> - <%= f.time_select :extended_max_hour, {minute_step: 15, start_hour: @close_start}, {:class => 'form-control date-select', required: true} %>
                       </div>
                     </div>
                     <div class="form-group">
@@ -733,11 +756,8 @@
           </div>
         </div>
         <% end %>
-
         <!-- Promociones -->
-
         <% if current_user.company.company_setting.online_payment_capable && current_user.company.company_setting.promo_offerer_capable %>
-
         <div class="tab-pane" id="promotions">
           <% if !current_user.company.company_setting.allows_online_payment %>
             <div class="row">
@@ -750,11 +770,8 @@
           <% end %>
           <div class="row">
             <div class="col-md-12">
-
               <%= form_for @company_setting, :html => {:class => 'company-form', :id => 'promo-times-form'} do |f| %>
-
                 <%= f.hidden_field :company_id, :value => current_user.company.id %>
-
                 <%= f.fields_for :promo_time do |p| %>
                 <div class="row">
                   <div class="col-md-12">
@@ -768,7 +785,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="row">
                   <div class="col-md-2">
                     <div class="hour-title">
@@ -795,7 +811,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="row">
                   <div class="col-md-2">
                     <div class="hour-title">
@@ -822,7 +837,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="row">
                   <div class="col-md-2">
                     <div class="hour-title">
@@ -849,7 +863,6 @@
                     </div>
                   </div>
                 </div>
-
                   <div class="row">
                     <div class="col-md-12">
                       <div class="form-group">
@@ -858,20 +871,13 @@
                       </div>
                     </div>
                   </div>
-
                 <% end %>
-
               <% end %>
-
             </div>
           </div>
-
         </div>
-
         <% end %>
-
         <!-- Fin Promociones -->
-
         <!-- Deals -->
         <% if current_user.company.company_setting.deal_activate %>
         <div class="tab-pane" id="deals">
@@ -897,9 +903,9 @@
                     <div class="form-group">
                       <div class="checkbox">
                         <label>
-                          <%= f.check_box :deal_identification_number %> Etiqueta es RUT
+                          <%= f.check_box :deal_identification_number %> Etiqueta es <%= (I18n.t('ci')).capitalize %>
                         </label>
-                        <span class="help-block">Si habilitas esta opción, se validará y dará formato al campo ingresado como si fuera RUT (persona o empresa).</span>
+                        <span class="help-block">Si habilitas esta opción, se validará y dará formato al campo ingresado como si fuera <%= (I18n.t('ci')).capitalize %> (persona o empresa).</span>
                       </div>
                     </div>
                     <div class="form-group">
@@ -1430,5 +1436,6 @@
 <% end %>
 
 <% content_for :scripts do %>
+  <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag "admin/company_settings" %>
 <% end %>

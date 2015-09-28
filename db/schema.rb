@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150908141044) do
+ActiveRecord::Schema.define(version: 20150921190816) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -132,6 +132,7 @@ ActiveRecord::Schema.define(version: 20150908141044) do
   add_index "bookings", ["promotion_id"], name: "index_bookings_on_promotion_id", using: :btree
   add_index "bookings", ["service_id"], name: "index_bookings_on_service_id", using: :btree
   add_index "bookings", ["service_provider_id"], name: "index_bookings_on_service_provider_id", using: :btree
+  add_index "bookings", ["start"], name: "index_bookings_on_start", using: :btree
   add_index "bookings", ["status_id"], name: "index_bookings_on_status_id", using: :btree
   add_index "bookings", ["user_id"], name: "index_bookings_on_user_id", using: :btree
 
@@ -163,7 +164,7 @@ ActiveRecord::Schema.define(version: 20150908141044) do
     t.string   "district",              default: ""
     t.string   "city",                  default: ""
     t.integer  "age"
-    t.integer  "gender",                default: 0,    null: false
+    t.integer  "gender",                default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "identification_number", default: ""
@@ -194,11 +195,23 @@ ActiveRecord::Schema.define(version: 20150908141044) do
     t.boolean  "owned",               default: true
     t.boolean  "show_in_home",        default: false
     t.integer  "country_id"
+    t.boolean  "activate_i18n",       default: false
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
   add_index "companies", ["payment_status_id"], name: "index_companies_on_payment_status_id", using: :btree
   add_index "companies", ["plan_id"], name: "index_companies_on_plan_id", using: :btree
+
+  create_table "company_countries", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "country_id"
+    t.string   "web_address", default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_countries", ["company_id"], name: "index_company_countries_on_company_id", using: :btree
+  add_index "company_countries", ["country_id"], name: "index_company_countries_on_country_id", using: :btree
 
   create_table "company_cron_logs", force: true do |t|
     t.integer  "company_id"

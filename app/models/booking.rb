@@ -86,6 +86,10 @@ class Booking < ActiveRecord::Base
       return
     end
 
+    if self.status_id_changed? && self.changed.count == 1
+      return
+    end
+
     bstart = self.start.clone()
     bend = self.end.clone()
     bstart_wday = bstart.wday
@@ -114,6 +118,10 @@ class Booking < ActiveRecord::Base
       return
     end
 
+    if self.status_id_changed? && self.changed.count == 1
+      return
+    end
+
     self.service_provider.provider_breaks.where("provider_breaks.start < ?", self.end.to_datetime).where("provider_breaks.end > ?", self.start.to_datetime).each do |provider_break|
       if (provider_break.start - self.end) * (self.start - provider_break.end) > 0
         warnings.add(:base, "El prestador seleccionado tiene bloqueado el horario elegido")
@@ -125,6 +133,10 @@ class Booking < ActiveRecord::Base
   def bookings_overlap_warning
 
     if self.is_session && !self.is_session_booked
+      return
+    end
+
+    if self.status_id_changed? && self.changed.count == 1
       return
     end
 
@@ -158,45 +170,59 @@ class Booking < ActiveRecord::Base
       return
     end
 
-    cancelled_id = Status.find_by(name: 'Cancelado').id
-    unless self.status_id == cancelled_id
-      if self.service.resources.count > 0
-        self.service.resources.each do |resource|
-          if !self.location.resource_locations.pluck(:resource_id).include?(resource.id)
-            if !self.is_session || (self.is_session && self.is_session_booked)
-              warnings.add(:base, "Este local no tiene el(los) recurso(s) necesario(s) para realizar este servicio")
-              return
+    if self.status_id_changed? && self.changed.count == 1
+      return
+    end
+
+    if self.location.company.company_setting.resource_overcapacity
+
+      cancelled_id = Status.find_by(name: 'Cancelado').id
+      unless self.status_id == cancelled_id
+        if self.service.resources.count > 0
+          self.service.resources.each do |resource|
+            if !self.location.resource_locations.pluck(:resource_id).include?(resource.id)
+              if !self.is_session || (self.is_session && self.is_session_booked)
+                warnings.add(:base, "Este local no tiene el(los) recurso(s) necesario(s) para realizar este servicio")
+                return
+              end
             end
-          end
-          used_resource = 0
-          group_services = []
-          self.location.bookings.where("bookings.start < ?", self.end.to_datetime).where("bookings.end > ?", self.start.to_datetime).each do |location_booking|
-            if location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start - self.end) * (self.start - location_booking.end) > 0
-              if location_booking.service.resources.include?(resource)
-                if !location_booking.service.group_service
-                  used_resource += 1
-                else
-                  if location_booking.service != self.service || location_booking.service_provider != self.service_provider
-                    group_services.push(location_booking.service_provider.id)
+            used_resource = 0
+            group_services = []
+            self.location.bookings.where("bookings.start < ?", self.end.to_datetime).where("bookings.end > ?", self.start.to_datetime).where('is_session = false or (is_session = true and is_session_booked = true)').each do |location_booking|
+              if location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start - self.end) * (self.start - location_booking.end) > 0
+                if location_booking.service.resources.include?(resource)
+                  if !location_booking.service.group_service
+                    used_resource += 1
+                  else
+                    if location_booking.service != self.service || location_booking.service_provider != self.service_provider
+                      group_services.push(location_booking.service_provider.id)
+                    end
                   end
                 end
               end
             end
-          end
-          if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
-            if !self.is_session || (self.is_session && self.is_session_booked)
-              warnings.add(:base, "Este local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio")
-              return
+            if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
+              if !self.is_session || (self.is_session && self.is_session_booked)
+                warnings.add(:base, "Este local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio")
+                return
+              end
             end
           end
         end
       end
+
     end
+
+
   end
 
   def bookings_deal_warning
 
     if self.is_session && !self.is_session_booked
+      return
+    end
+
+    if self.status_id_changed? && self.changed.count == 1
       return
     end
 
@@ -236,6 +262,12 @@ class Booking < ActiveRecord::Base
   end
 
   def time_in_provider_time
+    puts self.changed.inspect
+
+    if self.status_id_changed? && self.changed.count == 1
+      return
+    end
+
     bstart = self.start.clone()
     bend = self.end.clone()
     bstart_wday = bstart.wday
@@ -285,6 +317,10 @@ class Booking < ActiveRecord::Base
       return
     end
 
+    if self.status_id_changed? && self.changed.count == 1
+      return
+    end
+
     unless self.location.company.company_setting.provider_overcapacity
       cancelled_id = Status.find_by(name: 'Cancelado').id
       unless self.status_id == cancelled_id
@@ -317,7 +353,12 @@ class Booking < ActiveRecord::Base
       return
     end
 
+    if self.status_id_changed? && self.changed.count == 1
+      return
+    end
+
     unless self.location.company.company_setting.resource_overcapacity
+      
       cancelled_id = Status.find_by(name: 'Cancelado').id
       unless self.status_id == cancelled_id
         if self.service.resources.count > 0
@@ -330,7 +371,7 @@ class Booking < ActiveRecord::Base
             end
             used_resource = 0
             group_services = []
-            self.location.bookings.each do |location_booking|
+            self.location.bookings.where("bookings.start < ?", self.end.to_datetime).where("bookings.end > ?", self.start.to_datetime).where('is_session = false or (is_session = true and is_session_booked = true)').each do |location_booking|
               if location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start - self.end) * (self.start - location_booking.end) > 0
                 if location_booking.service.resources.include?(resource)
                   if !location_booking.service.group_service
@@ -352,12 +393,17 @@ class Booking < ActiveRecord::Base
           end
         end
       end
+
     end
   end
 
   def bookings_deal
 
     if self.is_session && !self.is_session_booked
+      return
+    end
+
+    if self.status_id_changed? && self.changed.count == 1
       return
     end
 
@@ -1289,7 +1335,7 @@ class Booking < ActiveRecord::Base
       bookings = Booking.where(location_id: location).where(booking_group: group).order(:start)
       @data[:company_name] = bookings[0].location.company.name
       @data[:reply_to] = bookings[0].location.email
-      @data[:url] = bookings[0].location.company.web_address
+      @data[:url] = bookings[0].location.get_web_address
       @data[:signature] = bookings[0].location.company.company_setting.signature
       @data[:domain] = bookings[0].location.company.country.domain
       @data[:type] = 'image/png'

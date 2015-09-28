@@ -30,7 +30,6 @@ $(function() {
 				require_from_group: [4, '.date-select']
 			},
 			'booking[client][identification_number]': {
-				rut: true,
 				minlength: 2
 			},
 			'booking[service_provider_id]': {
@@ -41,8 +40,7 @@ $(function() {
 				remote: '/check_staff_code'
 			},
 			'booking_deal_code': {
-				required: $('#calendar-data').data('deal-required'),
-				rut: $('#calendar-data').data('deal-identification-number')
+				required: $('#calendar-data').data('deal-required')
 			},
 			'booking[service_id]': {
 				required: true
@@ -126,7 +124,7 @@ $(function() {
 		}
 	});
 	$('#booking_client_identification_number').change(function() {
-		var rut_string = $('#booking_client_identification_number').val()
-		$('#booking_client_identification_number').val(rut_format(rut_string));
+		var id_string = $('#booking_client_identification_number').val()
+		$('#booking_client_identification_number').val(identification_number_format(id_string));
 	});
 });

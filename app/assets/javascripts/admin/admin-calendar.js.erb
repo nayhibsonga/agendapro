@@ -290,8 +290,17 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
+		eventDragStart: function(event, jsEvent, ui, view){
+			ui.helper.qtip('hide');
+		},
 		eventDrop: function (event) {
 			editDrag(event);
+		},
+		eventDragStart: function (event) {
+			window.console.log(event.start)
+		},
+		eventDragStop: function (event) {
+			window.console.log(event.start)
 		},
 		slotMinutes: duration,
 		aspectRatio: setAspectRatio(),
@@ -471,6 +480,9 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		defaultEventMinutes: $('#providers-selector option:selected').data("block"),
 		editable: true,
 		disableResizing: true,
+		eventDragStart: function(event, jsEvent, ui, view){
+			ui.helper.qtip('hide');
+		},
 		eventDrop: function (event) {
 			editDrag(event);
 		},
@@ -502,7 +514,7 @@ function loadProviderEvents(providerId) {
 	if (ajaxRequest != null) {
 		ajaxRequest.abort();
 	}
-	
+
 	ajaxRequest = $.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (events_list) {
 		$('#calendar').fullCalendar('addEventSource', events_list);
 		$('#small_loader_header').remove();
@@ -565,7 +577,7 @@ function editBookingModal(eventId) {
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#booking_client_identification_number').val(booking.identification_number);
 			$('#full_name').val(booking.first_name+' '+booking.last_name);
-			//$("#full_name").prop('disabled', true);
+			$("#full_name").prop('disabled', true);
 			$('#xButton').prop('disabled', false);
 			$('#booking_client_email').val(booking.email);
 			$('#booking_client_phone').val(booking.phone);

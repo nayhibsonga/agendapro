@@ -1,25 +1,27 @@
 <div class="container-fluid">
   <div class="row" style="margin-top: 15px;">
-    <div class="col-xs-8 col-sm-5">
-      <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-white" %>
-      <button id="import_clients" type="button" class="btn btn-white" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
-    </div>
-    <div class="col-xs-4 col-sm-push-4 col-sm-3">
+    <div class="col-xs-push-8 col-xs-4 col-sm-push-9 col-sm-3">
       <p class="text-right">
       <% if @from_collection.first %>
         <% if @monthly_mails_sent < @monthly_mails %>
+          Enviar e-mail a este listado de clientes:
           <%= link_to '<i class="fa fa-envelope"></i> Enviar E-mail'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white", id: 'sendMail' %>
         <% else %>
           Has alcanzado el limite de e-mails
         <% end %>
       <% else %>
+        Enviar e-mail a este listado de clientes:
         <button id="sendMail" type="button" class="btn btn-white" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar E-mail</button>
       <% end %>
       </p>
     </div>
   </div>
-  <div class="row" style="margin-bottom: 15px;">
-    <div class="col-xs-12 col-sm-push-5 col-sm-7">
+  <div class="row">
+    <div class="col-xs-5 col-sm-5">
+      <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-white" %>
+      <button id="import_clients" type="button" class="btn btn-white" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
+    </div>
+    <div class="col-xs-7 col-sm-7">
       <p class="text-right">
         Descargar este listado de clientes:
         <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white" %>
@@ -27,9 +29,21 @@
       </p>
     </div>
   </div>
+  <div class="row" style="margin-bottom: 15px;">
+    <div class="col-xs-3 col-md-2 col-md-push-3">
+      <p><strong>Buscar por Palabras</strong></p>
+    </div>
+    <div class="col-xs-7 col-md-5 col-md-push-3">
+      <%= text_field_tag :search_bar, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o " + (I18n.t('ci')).capitalize + "..." %>
+    </div>
+    <div class="col-xs-2 col-md-2 col-md-push-3">
+      <button class="btn btn-green" id="search_btn"><i class="fa fa-search"></i> Buscar</button>
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-3">
       <%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get" do %>
+        <%= hidden_field_tag :search, params[:search] %>
         <div class="form-group filter-header">
           <strong>Filtrar</strong>
           <div class="dropdwn pull-right">
@@ -41,7 +55,6 @@
               <li class="<%= 'hidden' if params[:statuses] %>"><a href="#" id="addFilterStatuses" data-target="#filterStatuses">Por Estado</a></li>
               <li class="<%= 'hidden' if params[:gender] %>"><a href="#" id="addFilterGender" data-target="#filterGender">Por Género</a></li>
               <li class="<%= 'hidden' if !params[:from].blank? and !params[:to].blank? %>"><a href="#" id="addFilterBirthday" data-target="#filterBirthday">Por Cumpleaños</a></li>
-              <li class="<%= 'hidden' if !params[:search].blank? %>"><a href="#" id="addFilterSearch" data-target="#filterSearch">Por Palabras</a></li>
             </ul>
           </div>
         </div>
@@ -126,7 +139,7 @@
             <div class="panel panel-green">
               <div class="panel-heading">
                 Genero
-                <a class="pull-right" href="#addFilterGender" data-target="#"><i class="fa fa-times"></i></a>
+                <a class="pull-right" href="#" data-target="#addFilterGender"><i class="fa fa-times"></i></a>
               </div>
               <ul class="list-group">
                 <li class="list-group-item">
@@ -171,22 +184,10 @@
               </ul>
             </div>
           </div>
-          <div class="form-group <%= 'hidden' if params[:search].blank? %>" id="filterSearch">
-            <div class="panel panel-green">
-              <div class="panel-heading">
-                Palabra
-                <a class="pull-right" href="#addFilterSearch" data-target="#"><i class="fa fa-times"></i></a>
-              </div>
-              <ul class="list-group">
-                <li class="list-group-item">
-                  <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o RUT..." %>
-                </li>
-              </ul>
-            </div>
-          </div>
         </div>
         <div class="form-group filter-footer">
-          <button class="btn btn-green btn-bloc" type="submit" action="/clients" value="client_filter"><i class="fa fa-filter"></i><span> Filtrar</span></button>
+          <%= link_to '<i class="fa fa-times"></i><span> Restablecer</span>'.html_safe, clients_path, class: 'btn btn-white btn-bloc' %>
+          <button class="btn btn-green btn-bloc pull-right" type="submit" action="/clients" value="client_filter"><i class="fa fa-filter"></i><span> Filtrar</span></button>
         </div>
       <% end %>
     </div>
@@ -195,10 +196,10 @@
         <caption id="mails" data-monthly-mails="<%= @monthly_mails %>" data-monthly-mails-sent="<%= @monthly_mails_sent %>">E-mails enviados <%= number_with_delimiter(@monthly_mails_sent) %> de <%= number_with_delimiter(@monthly_mails) %></caption>
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>E-mail</th>
-            <th>RUT</th>
+            <th><%= sortable "first_name", 'Nombre <i class="fa indicator"></i>'.html_safe %></th>
+            <th><%= sortable "last_name", 'Apellido <i class="fa indicator"></i>'.html_safe %></th>
+            <th><%= sortable "email", 'E-mail <i class="fa indicator"></i>'.html_safe %></th>
+            <th><%= sortable "identification_number", ((I18n.t('ci')).capitalize + ' <i class="fa indicator"></i>').html_safe %></th>
             <th>Opciones</th>
             <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
             <th>¿Puede Reservar?</th>
@@ -213,6 +214,7 @@
               <td><%= client.email %></td>
               <td><%= client.identification_number %></td>
               <td>
+                <%= link_to '<i class="fa fa-eye"></i> Ver'.html_safe, client_path(client), class: 'btn btn-sm btn-margin-bottom btn-green' %>
                 <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_client_path(client), :class => "btn btn-sm btn-margin-bottom btn-orange" %>
                 <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-sm btn-margin-bottom btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %>
               </td>
@@ -277,7 +279,7 @@
                 <li>Para editar el e-mail de un cliente o eliminar un cliente de la base de datos, se debe realizar a través de la página.</li>
               </ul>
             </li>
-            <li>El email, RUT y número de ficha de cada cliente debe ser <mark>único</mark>.</li>
+            <li>El email, <%= (I18n.t('ci')).capitalize %> y número de ficha de cada cliente debe ser <mark>único</mark>.</li>
             <li>
               Para ingresar el género de los clientes se debe utilizar:
               <ul>

@@ -24,7 +24,7 @@
           <div class="form-group has-feedback">
             <%= label_tag :country, "País", class: "col-md-3 control-label" %>
             <div class="col-md-9">
-              <%= select_tag :country, options_from_collection_for_select(Country.where(id: Company.find(current_user.company_id).country_id).order(:name), :id, :name), class: "form-control", include_blank: true %>
+              <%= select_tag :country, options_from_collection_for_select(Country.where(id: CompanyCountry.where(company_id: current_user.company_id).pluck(:country_id)).order(:name), :id, :name), class: "form-control", include_blank: true %>
               <span class="help-block"></span>
               <span class="form-control-feedback"></span>
             </div>

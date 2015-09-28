@@ -15,7 +15,6 @@ $(function() {
 				minlength: 2
 			},
 			'client[identification_number]': {
-				rut: true,
 				minlength: 2
 			},
 			'client[phone]': {
@@ -48,7 +47,7 @@ $(function() {
 		}
 	});
 	$('#client_identification_number').change(function() {
-		var rut_string = $('#client_identification_number').val()
-		$('#client_identification_number').val(rut_format(rut_string));
+		var id_string = $('#client_identification_number').val()
+		$('#client_identification_number').val(identification_number_format(id_string));
 	});
 });

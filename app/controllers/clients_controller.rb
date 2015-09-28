@@ -5,6 +5,8 @@ class ClientsController < ApplicationController
   load_and_authorize_resource
   layout "admin"
 
+  helper_method :sort_column, :sort_direction
+
   # GET /clients
   # GET /clients.json
   def index
@@ -19,9 +21,9 @@ class ClientsController < ApplicationController
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
     @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
 
-    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
+    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(:last_name, :first_name)
+    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction)
 
     respond_to do |format|
       format.html
@@ -33,6 +35,13 @@ class ClientsController < ApplicationController
   # GET /clients/1
   # GET /clients/1.json
   def show
+    @bookings = @client.bookings.where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc).paginate(:page => params[:page], :per_page => 25)
+    @booked = @bookings.where(status: Status.find_by(name: 'Reservado')).count
+    @confirmed = @bookings.where(status: Status.find_by(name: 'Confirmado')).count
+    @attended = @bookings.where(status: Status.find_by(name: 'Asiste')).count
+    @payed = @bookings.where(status: Status.find_by(name: 'Pagado')).count
+    @cancelled = @bookings.where(status: Status.find_by(name: 'Cancelado')).count
+    @notAttended = @bookings.where(status: Status.find_by(name: 'No Asiste')).count
   end
 
   # GET /clients/new
@@ -60,7 +69,7 @@ class ClientsController < ApplicationController
 
       include_sb = false
 
-      if session_booking.sessions_taken < session_booking.sessions_amount
+      if session_booking.sessions_taken && session_booking.sessions_amount && session_booking.sessions_taken < session_booking.sessions_amount
         include_sb = true
       else
         session_booking.bookings.each do |booking|
@@ -398,5 +407,13 @@ class ClientsController < ApplicationController
 
     def client_comment_params
       params.require(:client_comment).permit(:id, :client_id, :comment)
+    end
+
+    def sort_column
+      Client.column_names.include?(params[:sort]) ? params[:sort] : "last_name"
+    end
+
+    def sort_direction
+      %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
     end
 end
