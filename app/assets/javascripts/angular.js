@@ -2,6 +2,10 @@
 //= require ./angular/libs/javascripts/angular.min
 //= require ./angular/libs/javascripts/angular-resource.min
 //= require ./angular/libs/javascripts/angular-route.min
+//= require ./angular/libs/javascripts/angular-cookies.min
+//= require ./angular/libs/javascripts/google-maps/lodash.min
+//= require ./angular/libs/javascripts/google-maps/index
+//= require ./angular/libs/javascripts/google-maps/angular-google-maps.min
 //= require app
 //= require_tree ./angular
 
