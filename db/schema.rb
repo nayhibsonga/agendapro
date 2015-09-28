@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20150921190816) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20150921190816) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes"
-    t.text     "company_comment"
+    t.text     "notes",               default: ""
+    t.text     "company_comment",     default: ""
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -108,18 +108,18 @@ ActiveRecord::Schema.define(version: 20150921190816) do
     t.integer  "client_id"
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
-    t.integer  "max_changes",            default: 2
     t.boolean  "payed",                  default: false
     t.string   "trx_id",                 default: ""
+    t.integer  "max_changes",            default: 2
     t.string   "token",                  default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
-    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
+    t.integer  "payment_id"
     t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
     t.integer  "reminder_group"
@@ -281,17 +281,17 @@ ActiveRecord::Schema.define(version: 20150921190816) do
     t.boolean  "deal_activate",              default: false
     t.string   "deal_name",                  default: ""
     t.boolean  "deal_overcharge",            default: true
+    t.boolean  "deal_exclusive",             default: false
+    t.integer  "deal_quantity",              default: 0
+    t.integer  "deal_constraint_option",     default: 0
+    t.integer  "deal_constraint_quantity",   default: 0
+    t.boolean  "deal_identification_number", default: false
     t.boolean  "allows_online_payment",      default: false
     t.string   "account_number",             default: ""
     t.string   "company_rut",                default: ""
     t.string   "account_name",               default: ""
     t.integer  "account_type",               default: 3
     t.integer  "bank_id"
-    t.boolean  "deal_exclusive",             default: true
-    t.integer  "deal_quantity",              default: 0
-    t.integer  "deal_constraint_option",     default: 0
-    t.integer  "deal_constraint_quantity",   default: 0
-    t.boolean  "deal_identification_number", default: false
     t.boolean  "deal_required",              default: false,                 null: false
     t.boolean  "online_payment_capable",     default: false
     t.boolean  "allows_optimization",        default: true
@@ -429,8 +429,8 @@ ActiveRecord::Schema.define(version: 20150921190816) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-    t.integer  "location_id"
-    t.integer  "stock"
+    t.integer  "location_id",             null: false
+    t.integer  "stock",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
