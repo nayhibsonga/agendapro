@@ -150,6 +150,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 				bookingModalOpen = true;
 				editBookingModal(event.id);
 			};
+			ui.helper.qtip('hide');
 		},
 		dayClick: function(date, allDay, jsEvent, view) {
 			var p = $('#popover').parent();
@@ -333,6 +334,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 				bookingModalOpen = true;
 				editBookingModal(event.id);
 			};
+			ui.helper.qtip('hide');
 		},
 		dayClick: function(date, allDay, jsEvent, view) {
 			var p = $('.popover').parent();

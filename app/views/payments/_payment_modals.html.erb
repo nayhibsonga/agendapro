@@ -809,6 +809,47 @@
   </div>
 </div>
 
+<div class="modal fade modalOverModal" id="editPaymentModal" tabindex="-1" role="dialog" aria-labelledby="Editar pago" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="editPaymentModalIntroTitle" style="line-height: 1.1;">Editar pago</h3>
+      </div>
+      <div class="modal-body" id="editPaymentModalIntroBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <input type="hidden" id="editPaymentId" value="" />
+
+            <div>  
+              <p>
+                Edita los distintos detalles del pago. Puedes editar sólo los datos de cajero y cliente, el conjunto de ítemes, forma de pago y comprobantes, o editar toda la información.
+              </p>
+            </div>
+
+            <div style="clear:both;">
+
+            </div>
+
+            <div class="payment-form-div form-group">
+              <div class="col-xs-4">
+                <button class="edit-option-btn">Editar cajero/cliente</button>
+                <button class="edit-option-btn">Editar ítemes</button>
+                <button class="edit-option-btn">Editar todo</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <input type="hidden" id="paymentPastBookingsArray" value="" />
 <input type="hidden" id="paymentNewBookingsArray" value="" />
 <input type="hidden" id="paymentProductsArray" value="" />

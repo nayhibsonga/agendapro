@@ -233,7 +233,7 @@ class PaymentsController < ApplicationController
         
       client.first_name = params[:client_first_name]
       client.last_name = params[:client_last_name]
-      client.email = params[:email]
+      client.email = params[:client_email]
       client.phone = params[:client_phone]
       client.gender = params[:client_gender]
       client.company_id = location.company_id
@@ -242,9 +242,7 @@ class PaymentsController < ApplicationController
         payment.client_id = client.id
       else
         @errors << "No se pudo guardar al cliente"
-      end
-
-      
+      end   
 
     else
       payment.client_id = nil
@@ -317,10 +315,11 @@ class PaymentsController < ApplicationController
             mock_booking.service_id = new_booking[:service_id]
           end
           if new_booking[:provider_id] != -1 && new_booking[:provider_id] != "-1"
-            mock_booking.service_id = new_booking[:provider_id]
+            mock_booking.provider_id = new_booking[:provider_id]
           end
           mock_booking.price = new_booking[:price]
           mock_booking.discount = new_booking[:discount]
+          mock_booking.client_id = payment.client_id
           @mockBookings << mock_booking
 
           new_receipt.mock_bookings << mock_booking
@@ -438,6 +437,19 @@ class PaymentsController < ApplicationController
 
     render :json => @json_response
 
+  end
+
+  def get_receipts
+    @payment = Payment.find(params[:payment_id])
+    @receipts = []
+    @payment.receipts.each do |receipt|
+        receipt_detail = []
+        receipt_detail << receipt.id
+        receipt_detail << receipt.receipt_type.name
+        receipt_detail << receipt.number
+        @receipts << receipt_detail
+    end
+    render :json => @receipts
   end
 
   private

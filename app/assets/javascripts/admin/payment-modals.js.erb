@@ -262,11 +262,17 @@ $(function() {
         if (response[0] == "ok")
         {
           alert("Se enviaron mails de resumen a las direcciones ingresadas.");
+          $("#sendEmailsModal").modal('hide');
+          $("#payment_emails").val("");
+          $("#sendEmailsPaymentId").val("");
         }
         else
         {
           alert("Ocurrió un error inesperado al enviar los correos. Ponte en contacto con nosotros en contacto@agendapro.cl para darte una solución.");
         }
+        $("#sendEmailsModal").modal('hide');
+        $("#payment_emails").val("");
+        $("#sendEmailsPaymentId").val("");
       }
     });
   });
@@ -1251,6 +1257,7 @@ function createAndServePayment(option)
     success: function(response){
       $("#paymentPrintLink").empty();
       $("#receiptsPrintLinks").empty();
+      $("#paymentEmails").val("");
       if(response[0] == "ok")
       {
         alert("Pago guardado con éxito.");
@@ -1281,6 +1288,38 @@ function createAndServePayment(option)
     }
   });
 
+}
+
+/*
+* Functions to open pdfs or email sender.
+*/
+
+function openPaymentPdfs(payment_id)
+{
+  $("#paymentPrintLink").empty();
+  $("#receiptsPrintLinks").empty();
+  $.ajax({
+    url: '/payment_receipts',
+    data: {payment_id: payment_id},
+    method: 'get',
+    dataType: 'json',
+    success: function(response){
+      $("#paymentPrintLink").append('<a target="_blank" href="/payment_pdf.pdf?payment_id=' + payment_id + '" class="print-link">Imprimir resumen de pago</a><br />');
+
+          for(x = 0; x < response.length; x++)
+          {
+            $("#receiptsPrintLinks").append('<a target="_blank" href="/receipt_pdf.pdf?receipt_id=' + response[x][0] + '" class="print-link">Imprimir ' + response[x][1] + ' N° ' + response[x][2] + '</a><br />');
+          }
+          $("#pdfModal").modal('show');
+    }
+  });
+}
+
+function openPaymentMailer(payment_id)
+{
+  $("#paymentEmails").val("");
+  $("#sendEmailsPaymentId").val(payment_id);
+  $("#sendEmailsModal").modal('show');
 }
 
 
@@ -1503,11 +1542,16 @@ function resetReceipt()
 
 function editPayment(payment_id)
 {
-  $.getJSON('/load_payment/', { payment_id: payment_id }, function (full_payment) {
+  /*$.getJSON('/load_payment/', { payment_id: payment_id }, function (full_payment) {
     console.log(full_payment);
     
     
-  });
+  });*/
+
+  $("#editPaymentId").val(payment_id);
+
+  $("#editPaymentModal").modal('show');
+
 }
 
 
