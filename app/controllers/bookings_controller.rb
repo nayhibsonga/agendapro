@@ -830,9 +830,6 @@ class BookingsController < ApplicationController
               end
             end
           end
-          if User.find_by_email(booking_params[:client_email])
-            new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
-          end
         end
       end
     end
@@ -985,9 +982,6 @@ class BookingsController < ApplicationController
                 return
               end
             end
-          end
-          if User.find_by_email(booking_params[:client_email])
-            new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
           end
         end
       end
