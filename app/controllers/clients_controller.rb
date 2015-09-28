@@ -67,7 +67,7 @@ class ClientsController < ApplicationController
 
       include_sb = false
 
-      if session_booking.sessions_taken < session_booking.sessions_amount
+      if session_booking.sessions_taken && session_booking.sessions_amount && session_booking.sessions_taken < session_booking.sessions_amount
         include_sb = true
       else
         session_booking.bookings.each do |booking|
