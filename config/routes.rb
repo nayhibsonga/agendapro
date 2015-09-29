@@ -397,6 +397,11 @@
     post '/receipts_email', :to => 'payments#send_receipts_email'
     get '/payment_receipts', :to => 'payments#get_receipts'
 
+    get '/payment_intro', :to => 'payments#get_intro_info'
+    post '/save_payment_intro', :to => 'payments#save_intro_info'
+
+    post '/update_payment', :to => 'payments#update_payment'
+
   end
 
   namespace :api, defaults: {format: 'json'} do

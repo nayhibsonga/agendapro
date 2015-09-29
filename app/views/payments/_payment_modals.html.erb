@@ -131,7 +131,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
-        <button type="button" class="btn payment-btn-next" aria-label="Siguiente">Siguiente</button>
+        <button type="button" class="btn payment-btn-next" id="paymentIntroNextBtn" aria-label="Siguiente">Siguiente</button>
+        <button type="button" class="btn" id="paymentIntroSaveBtn" aria-label="Guardar">Guardar</button>
       </div>
     </div>
   </div>
@@ -387,7 +388,7 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
+        <button type="button" class="btn btn-default payment-btn-back" id="paymentStep1BackBtn" aria-label="Atrás">Atrás</button>
         <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
         <button type="button" class="btn payment-btn-next" aria-label="Siguiente">Siguiente</button>
       </div>
@@ -837,9 +838,13 @@
 
             <div class="payment-form-div form-group">
               <div class="col-xs-4">
-                <button class="edit-option-btn">Editar cajero/cliente</button>
-                <button class="edit-option-btn">Editar ítemes</button>
-                <button class="edit-option-btn">Editar todo</button>
+                <button id="editPaymentIntroBtn" class="edit-option-btn btn btn-default"><i class="fa fa-users"></i>&nbsp;Editar cajero/cliente</button>
+              </div>
+              <div class="col-xs-4">
+                <button id="editPaymentItemsBtn" class="edit-option-btn btn btn-default"><i class="fa fa-list"></i>&nbsp;Editar ítemes</button>
+              </div>
+              <div class="col-xs-4">
+                <button id="editPaymentAllBtn" class="edit-option-btn btn btn-green"><i class="fa fa-pencil-square-o">&nbsp;</i>Editar todo</button>
               </div>
             </div>
 

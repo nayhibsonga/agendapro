@@ -126,14 +126,42 @@ class PaymentsController < ApplicationController
   def load_payment
 
     @payment = Payment.find(params[:payment_id])
-    @client = @payment.client
 
-    @bookings = @payment.bookings
-    @mock_bookings = @payment.mock_bookings
-    @products = @payment.products
+    @bookings = []
+    @payment.bookings.each do |booking|
+      @bookings << {id: booking.id, service_name: booking.service.name, service_price: booking.service.price, discount: booking.discount, price: booking.price, list_price: booking.list_price}
+    end
+
+    @mock_bookings = []
+    @payment.mock_bookings.each do |mock_booking|
+      service_id = -1
+      service_name = "Ninguno"
+      provider_id = -1
+      provider_name = "Ninguno"
+
+      if !mock_booking.service_id.nil?
+        service_id = mock_booking.service_id
+        service_name = mock_booking.service.name
+      end
+
+      if !mock_booking.service_provider_id.nil?
+        provider_id = mock_booking.service_provider_id
+        provider_name = mock_booking.service_provider.public_name
+      end
+
+      @mock_bookings << {id: mock_booking.id, service_id: service_id, service_name: service_name, provider_id: provider_id, provider_name: provider_name, price: mock_booking.price, discount: mock_booking.discount}
+
+    end
+
+    @payment_products = []
+    @payment.payment_products.each do |payment_product|
+      @payment_products << {id: payment_product.product.id, name: payment_product.product.name, quantity: payment_product.quantity, price: payment_product.price, discount: payment_product.discount, seller: payment_product.seller_id.to_s + '_' + payment_product.seller_type.to_s}
+    end
+
     @receipts = @payment.receipts
 
-    render :json => {payment: @payment, client: @client, bookings: @bookings, products: @products, bookings: @bookings, mock_bookings: @mock_bookings, receipts: @receipts}
+    render :json => {payment: @payment, payment_products: @payment_products, bookings: @bookings, mock_bookings: @mock_bookings, receipts: @receipts}
+
 
     # weekdays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
     # @payment = Payment.find(params[:payment_id])
@@ -190,8 +218,9 @@ class PaymentsController < ApplicationController
 
     #Treat session bookings as a normal booking. Worry about the price afterwards.
     #Only leave out those that haven't been booked yet.
+    #IMPORTANT: Leave out bookings that are already associated to a payment.
 
-    @full_past_bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado")).where.not('is_session = true and is_session_booked = false').where(client_id: params[:client_id], location_id: params[:location_id], payment_id: nil).order(start: :desc).limit(100)
+    @full_past_bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado")).where.not('is_session = true and is_session_booked = false').where('payment_id is null').where(client_id: params[:client_id], location_id: params[:location_id], payment_id: nil).order(start: :desc).limit(100)
     @past_bookings = []
     @full_past_bookings.each do |b|
 
@@ -227,11 +256,9 @@ class PaymentsController < ApplicationController
     render :json => { past_sessions: @past_sessions }
   end
 
-  def create_new_payment
 
-    #
-    # Evaluar agregar un cajero, y hacer un modelo de cajeros.
-    #
+
+  def create_new_payment
 
     @json_response = []
     @errors = []
@@ -336,7 +363,229 @@ class PaymentsController < ApplicationController
             mock_booking.service_id = new_booking[:service_id]
           end
           if new_booking[:provider_id] != -1 && new_booking[:provider_id] != "-1"
-            mock_booking.provider_id = new_booking[:provider_id]
+            mock_booking.service_provider_id = new_booking[:provider_id]
+          end
+          mock_booking.price = new_booking[:price]
+          mock_booking.discount = new_booking[:discount]
+          mock_booking.client_id = payment.client_id
+          @mockBookings << mock_booking
+
+          new_receipt.mock_bookings << mock_booking
+
+        elsif item[:item_type] == "past_booking"
+          past_booking = item
+          booking = Booking.find(past_booking[:id])
+          #booking.list_price = past_booking[:]
+          booking.discount = past_booking[:discount]
+          booking.price = (past_booking[:list_price].to_f*(100-booking.discount)/100).round(1)
+
+          @bookings << booking
+          new_receipt.bookings << booking
+        else
+          product = item
+          payment_product = PaymentProduct.new
+          payment_product.product_id = product[:id]
+          payment_product.price = product[:price]
+          payment_product.discount = product[:discount]
+          payment_product.quantity = product[:quantity]
+
+          seller = product[:seller].split("_")
+          payment_product.seller_id = seller[0]
+          payment_product.seller_type = seller[1]
+
+          new_receipt.payment_products << payment_product
+
+          @paymentProducts << payment_product
+        end
+      end
+
+      new_receipt.payment = payment
+      
+      if new_receipt.save
+        @json_response[0] = "ok"
+      else
+        @json_response[0] = "error"
+        @errors << new_receipt.errors
+      end
+
+    end
+
+    payment.bookings = @bookings
+    payment.mock_bookings = @mockBookings
+    payment.payment_products = @paymentProducts
+
+    if payment.save
+      @json_response[0] = "ok"
+    else
+      @json_response[0] = "error"
+      @errors << payment.errors
+    end
+
+    if @json_response[0] == "ok"
+      @json_response << payment
+      @json_response[2] = []
+      payment.receipts.each do |receipt|
+        receipt_detail = []
+        receipt_detail << receipt.id
+        receipt_detail << receipt.receipt_type.name
+        receipt_detail << receipt.number
+        @json_response[2] << receipt_detail
+      end
+    else
+      @json_response << @errors
+    end
+
+    render :json => @json_response
+
+  end
+
+
+  #
+  # Almost equal to create_new_payment.
+  # Just deletes/disassociates items and reconstructs them.
+  # Obviously, updates all params concerning the payment (client, cashier, date, payment_method, amount, etc.)
+  #
+
+  def update_payment
+
+    @json_response = []
+    @errors = []
+
+    #Find location
+    location = Location.find(params[:location_id])
+
+    payment = Payment.find(params[:payment_id])
+
+    #Find or create a client (update if necessary)
+    
+
+    if params[:set_client] == "1"
+      
+      client = Client.new
+      
+      if params[:client_id] && !params[:client_id].blank?
+        client = Client.find(params[:client_id])
+      end
+        
+      client.first_name = params[:client_first_name]
+      client.last_name = params[:client_last_name]
+      client.email = params[:client_email]
+      client.phone = params[:client_phone]
+      client.gender = params[:client_gender]
+      client.company_id = location.company_id
+      
+      if client.save
+        payment.client_id = client.id
+      else
+        @errors << "No se pudo guardar al cliente"
+      end   
+
+    else
+      payment.client_id = nil
+    end
+
+    
+
+    payment.payment_method_id = params[:payment_method_id]
+
+    payment.cashier_id = params[:cashier_id]
+
+    if params[:method_number].blank?
+      payment.payment_method_number = ""
+    else
+      payment.payment_method_number = params[:method_number]
+    end
+
+    if payment.payment_method_id == PaymentMethod.find_by_name("Tarjeta de Crédito").id
+      payment.payment_method_type_id = params[:pay_method_type]
+    end
+
+    if payment.payment_method_id == PaymentMethod.find_by_name("Cheque").id
+      payment.bank_id = params[:payment_bank]
+    end
+
+    if payment.payment_method_id == PaymentMethod.find_by_name("Otro").id
+      payment.company_payment_method_id = params[:payment_other_method_type]
+    end
+
+    payment.installments = params[:dues_number]
+    payment.payed = true
+    payment.payment_date = params[:payment_date].to_date
+
+    #payment.notes = params[:payment_notes]
+    payment.notes = ""
+    payment.location_id = params[:location_id]
+
+    payment.paid_amount = params[:paid_amount]
+    payment.amount = params[:cost]
+    payment.change_amount = params[:change_amount]
+    #For real amount, discount and change, recalculate costs.
+
+    past_bookings = JSON.parse(params[:past_bookings], symbolize_names: true)
+    new_bookings = JSON.parse(params[:new_bookings], symbolize_names: true)
+    products = JSON.parse(params[:products], symbolize_names: true)
+    receipts = JSON.parse(params[:receipts], symbolize_names: true)
+
+    @mockBookings = []
+    @bookings = []
+    @paymentProducts = []
+
+    #
+    # UPDATE
+    #
+    # Receipts should be deleted and reconstructed.
+    # PaymentProducts should be deleted and reconstructed.
+    # MockBookings should be deleted and reconstructed.
+    # Booking should be disasociated from payment and then reassociated with new params.
+    #
+
+    payment.mock_bookings.each do |mock_booking|
+      mock_booking.delete
+    end
+
+    payment.payment_products.each do |payment_product|
+      payment_product.delete
+    end
+
+    old_bookings = payment.bookings
+
+    old_bookings.each do |booking|
+      booking.receipt_id = nil
+      booking.payment_id = nil
+      booking.save
+    end
+
+    payment.receipts.each do |receipt|
+      receipt.delete
+    end
+
+
+    #
+    # Deletes and disassociations done.
+    # Now reconstruct
+    #
+
+    receipts.each do |receipt|
+      new_receipt = Receipt.new
+      new_receipt.receipt_type_id = receipt[:receipt_type_id]
+      new_receipt.amount = receipt[:amount]
+      new_receipt.date = receipt[:date]
+      new_receipt.notes = receipt[:notes]
+      new_receipt.number = receipt[:number]
+
+      receipt_items = receipt[:items]
+
+      #Check for it's items and add them to their corresponding array
+      receipt_items.each do |item|
+        if item[:item_type] == "new_booking"
+
+          new_booking = item
+          mock_booking = MockBooking.new
+          if new_booking[:service_id] != -1 && new_booking[:service_id] != "-1"
+            mock_booking.service_id = new_booking[:service_id]
+          end
+          if new_booking[:provider_id] != -1 && new_booking[:provider_id] != "-1"
+            mock_booking.service_provider_id = new_booking[:provider_id]
           end
           mock_booking.price = new_booking[:price]
           mock_booking.discount = new_booking[:discount]
@@ -471,6 +720,83 @@ class PaymentsController < ApplicationController
         @receipts << receipt_detail
     end
     render :json => @receipts
+  end
+
+  #
+  # Returns payment's cashier, client and date
+  #
+  def get_intro_info
+
+    @payment = Payment.find(params[:payment_id])
+    @client = @payment.client
+    @cashier = @payment.cashier
+
+    render :json => {payment: @payment, client: @client, cashier: @cashier}
+
+  end
+
+  #
+  # Updates payment's cashier and client info.
+  # Updates client_id for each mock_booking.
+  #
+  def save_intro_info
+
+    json_response = []
+    errors = []
+
+    payment = Payment.find(params[:payment_id])
+
+    if params[:set_client] == "1"
+      
+      client = Client.new
+      
+      if params[:client_id] && !params[:client_id].blank?
+        client = Client.find(params[:client_id])
+      end
+        
+      client.first_name = params[:client_first_name]
+      client.last_name = params[:client_last_name]
+      client.email = params[:client_email]
+      client.phone = params[:client_phone]
+      client.gender = params[:client_gender]
+      client.company_id = payment.location.company_id
+      
+      if client.save
+        payment.client_id = client.id
+      else
+        errors << "No se pudo guardar al cliente"
+      end   
+
+    else
+      payment.client_id = nil
+    end
+
+    payment.cashier_id = params[:cashier_id]
+    payment.payment_date = params[:payment_date].to_date
+
+    payment.mock_bookings.each do |mock_booking|
+      mock_booking.client_id = payment.client_id
+      if !mock_booking.save
+        errors << "No se pudo guardar un servicio"
+      end
+    end
+
+    if errors.length == 0
+      if payment.save
+        json_response << "ok"
+        json_response << payment
+      else
+        json_response << "error"
+        errors << payment.errors
+        json_response << errors
+      end
+    else
+      json_response << "error"
+      json_response << errors
+    end
+
+    render :json => json_response
+
   end
 
   private

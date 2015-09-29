@@ -420,8 +420,281 @@ $(function() {
     resetPayment();
   });
 
+  $("#editPaymentIntroBtn").on('click', function(e){
+    editPaymentIntro($("#editPaymentId").val());
+    $("#editPaymentModal").modal('hide');
+    //$("#editPaymentId").val("");
+  });
+
+  $("#editPaymentItemsBtn").on('click', function(e){
+    editPaymentItems($("#editPaymentId").val());
+    $("#editPaymentModal").modal('hide');
+    //$("#editPaymentId").val("");
+  });
+
+  $("#editPaymentAllBtn").on('click', function(e){
+    editPaymentAll($("#editPaymentId").val());
+    $("#editPaymentModal").modal('hide');
+    //$("#editPaymentId").val("");
+  });
+
+  $("#paymentIntroSaveBtn").on('click', function(e){
+    savePaymentIntro();
+  });
+
 
 });
+
+
+/*
+* Edition functions
+* For each of them, get relevant Payment info for modals fields.
+* Manage hiding/showing of relevant buttons (such as hiding "Siguiente" on Intro if you
+* are just editing Client/Cashier)
+*/
+
+function getPaymentIntro(payment_id)
+{
+  $.ajax({
+    url: '/payment_intro',
+    data: {payment_id: payment_id},
+    method: 'get',
+    dataType: 'json',
+    success: function(response){
+
+      $("#payment_location").val(response.payment.location_id);
+      $("#payment_location").prop("disabled", true);
+      $("#payment_cashier_code").val(response.cashier.code);
+      $("#payment_cashier_name").val(response.cashier.name);
+      $("#payment_cashier_id").val(response.cashier.id);
+      var given_date_arr = response.payment.payment_date.split("-");
+      var given_date = given_date_arr[2] + "/" + given_date_arr[1] + "/" + given_date_arr[0];
+      $("#payment_date").val(given_date);
+
+      if(response.payment.client_id != null)
+      {
+        $("#set_client").val("1");
+        $("#payment_client_id").val(response.client.id);
+        $("#payment_client_first_name").val(response.client.first_name);
+        $("#payment_client_last_name").val(response.client.last_name);
+        $("#payment_client_name").val(response.client.first_name + " " + response.client.last_name);
+        $("#payment_client_email").val(response.client.email);
+        $("#payment_client_phone").val(response.client.phone);
+        $("#payment_client_gender").val(response.client.gender);
+        $(".client-option").show();
+      }
+      else
+      {
+        $("#set_client").val("0");
+      }
+
+    },
+    error: function(response){
+      alert("Ocurrió un error inesperado al tratar de editar el pago.");
+    }
+  });
+}
+
+function editPaymentIntro(payment_id)
+{
+
+  getPaymentIntro(payment_id);
+
+  $("#paymentIntroNextBtn").hide();
+  $("#paymentIntroSaveBtn").show();
+
+  $("#paymentModalIntro").modal('show');
+}
+
+function savePaymentIntro()
+{
+
+  var payment_id = $("#editPaymentId").val();
+  var cashier_code = $("#payment_cashier_code").val();
+  var cashier_name = $("#payment_cashier_name").val();
+  var cashier_id = $("#payment_cashier_id").val();
+  var client_name = $("#payment_client_name").val();
+  split_name('#payment_client_name', '#payment_client_first_name', '#payment_client_last_name');
+  var set_client = $("#set_client").val();
+  var client_first_name = $("#payment_client_first_name").val();
+  var client_last_name = $("#payment_client_last_name").val();
+  var client_id = $("#payment_client_id").val();
+  var client_email = $("#payment_client_email").val();
+  var client_phone = $("#payment_client_phone").val();
+  var client_gender = $("#payment_client_gender").val();
+  var payment_date = $("#payment_date").val();
+
+  var payment_data = {
+    payment_id: payment_id,
+    cashier_id: cashier_id, 
+    set_client: set_client,
+    client_name: client_name, 
+    client_first_name: client_first_name, 
+    client_last_name: client_last_name, 
+    client_id: client_id, 
+    client_name: client_name, 
+    client_phone: client_phone,
+    client_gender: client_gender,
+    client_email: client_email,
+    payment_date: payment_date, 
+  };
+
+  $.ajax({
+    url: '/save_payment_intro',
+    method: 'post',
+    dataType: 'json',
+    data: payment_data,
+    error: function(response)
+    {
+      alert("Ocurrió un error inesperado al tratar de editar el pago.");
+      $(".payment-btn-close").trigger("click");
+    },
+    success: function(response)
+    {
+      if(response[0] == "ok")
+      {
+        alert("Los datos se han guardado correctamente.");
+      }
+      else
+      {
+        var errors_str = "";
+        for(x = 0; x < response[1].length; x++)
+        {
+          errors_str = errors_str + response[1][x] + " - ";
+        }
+        alert("Ocurrieron errores al tratar de guardar los datos: " + errors_str);
+      }
+      
+      $(".payment-btn-close").trigger("click");
+
+    }
+  });
+}
+
+function editPaymentItems(payment_id)
+{
+  //Load Intro, but don't show it.
+  getPaymentIntro(payment_id);
+  $("#paymentStep1BackBtn").hide();
+  getPayment(payment_id);
+  //$("#paymentModal1").modal('show');
+  loadPaymentModal1(0);
+}
+
+function editPaymentAll(payment_id)
+{
+  getPaymentIntro(payment_id);
+  getPayment(payment_id);
+
+  $("#paymentIntroNextBtn").show();
+  $("#paymentIntroSaveBtn").hide();
+  $("#paymentModalIntro").modal('show');
+}
+
+function getPayment(payment_id)
+{
+  $.ajax({
+    url: '/load_payment',
+    method: 'get',
+    dataType: 'json',
+    data: {payment_id: payment_id},
+    error: function(response){
+      alert("Ocurrió un error inesperado al tratar de editar el pago.");
+    },
+    success: function(response){
+      //Loop through bookings, mock_bookings and products.
+      for(x = 0; x < response.bookings.length; x++)
+      {
+        booking = response.bookings[x];
+        booking['item_id'] = paymentItems.length;
+        booking['item_type'] = 'past_booking';
+
+        paymentItems.push(booking);
+        paymentPastBookings.push(booking);
+        var item_id = paymentItems.length-1;
+        var past_booking_index = paymentPastBookings.length-1;
+
+        $("#paymentItemsTable").append(
+          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' + 
+          '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+          '<td style="width: 5%;">' + item_id + '</td>' +
+          '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
+          '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
+          '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
+          '<td style="width: 18%;"><span class="itemPrice">$' + Math.round(booking.list_price * 100)/100 + '</span></td>' +
+          '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
+          '</tr>'
+        );
+      }
+
+
+      for(x = 0; x < response.mock_bookings.length; x++)
+      {
+
+        new_booking = response.mock_bookings[x];
+
+        new_booking['item_id'] = paymentItems.length;
+        new_booking['item_type'] = 'new_booking';
+
+        paymentItems.push(new_booking);
+        paymentNewBookings.push(new_booking);
+        var item_id = paymentItems.length-1;
+        var new_booking_index = paymentNewBookings.length-1;
+
+        $("#paymentItemsTable").append(
+          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1">' + 
+          '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+          '<td style="width: 5%;">' + item_id + '</td>' +
+          /*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
+          '<td style="width: 24%;"><span>Servicio</span></td>' + 
+          '<td style="width: 24%;"><span class="itemName">' + new_booking['service_name'] + '</span></td>' + 
+          '<td style="width: 7%;"><input type="number" class="form-control itemQuantity" value="1" disabled /></td>' + 
+          '<td style="width: 18%;"><span class="itemPrice">$' + new_booking['price'] + '</span></td>' +
+          '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + new_booking['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
+          '</tr>'
+        );
+      }
+
+
+      for(x = 0; x < response.payment_products.length; x++)
+      {
+
+        product = response.payment_products[x];
+        product['item_id'] = paymentItems.length;
+        product['item_type'] = 'product';
+
+        paymentItems.push(product);
+        paymentProducts.push(product);
+        var item_id = paymentItems.length-1;
+        var product_index = paymentProducts.length-1;
+
+        $("#paymentItemsTable").append(
+          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '">' + 
+          '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+          '<td style="width: 5%;">' + item_id + '</td>' +
+          /*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
+          '<td style="width: 24%;"><span>Producto</span></td>' + 
+          '<td style="width: 24%;"><span class="itemName">' + product['name'] + '</span></td>' + 
+          '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="' + product['quantity'] + '" /></span></td>' + 
+          '<td style="width: 18%;"><span class="itemPrice">$' + product['price'] + '</span></td>' +
+          '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + product['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
+          '</tr>'
+        );
+
+      }
+
+
+      $("#paymentItemsTable").show();
+
+      calculatePaymentTotal();
+
+      $("#paymentItemsList").show();
+      $("#paymentSumDiv").show();
+
+    }
+  })
+}
+
 
 /*
 * Calculations functions.
@@ -468,6 +741,9 @@ function calculatePaymentTotal(){
 function loadPaymentIntro(payment_id) {
   $("#paymentModal1").modal('hide');
   $("#paymentModalIntro").modal('show');
+  $("#paymentIntroSaveBtn").hide();
+  $("#paymentIntroNextBtn").show();
+  $("#payment_location").prop("disabled", false);
   paymentModalState = 'Intro';
 }
 
@@ -745,8 +1021,6 @@ function addProduct()
   product['discount'] = $("#payment_product_discount").val();
   product['seller'] = $("#payment_product_seller").val();
   product['item_type'] = 'product';
-
-  console.log(product);
 
   paymentItems.push(product);
   paymentProducts.push(product);
@@ -1258,47 +1532,97 @@ function createAndServePayment(option)
     callback_option: callback_option_str
   };
 
-  $.ajax({
-    url: '/create_new_payment',
-    type: 'post',
-    dataType: 'json',
-    data: payment_data,
-    error: function(response){
+  if ($("#editPaymentId").val() == "")
+  {
+    $.ajax({
+      url: '/create_new_payment',
+      type: 'post',
+      dataType: 'json',
+      data: payment_data,
+      error: function(response){
 
-    },
-    success: function(response){
-      $("#paymentPrintLink").empty();
-      $("#receiptsPrintLinks").empty();
-      $("#paymentEmails").val("");
-      if(response[0] == "ok")
-      {
-        alert("Pago guardado con éxito.");
-        $(".payment-btn-close").trigger("click");
-        if (callback_option_str == "print")
+      },
+      success: function(response){
+        $("#paymentPrintLink").empty();
+        $("#receiptsPrintLinks").empty();
+        $("#paymentEmails").val("");
+        if(response[0] == "ok")
         {
-          
-          $("#paymentPrintLink").append('<a target="_blank" href="/payment_pdf.pdf?payment_id=' + response[1]['id'] + '" class="print-link">Imprimir resumen de pago</a><br />');
-
-          for(x = 0; x < response[2].length; x++)
+          alert("Pago guardado con éxito.");
+          $(".payment-btn-close").trigger("click");
+          if (callback_option_str == "print")
           {
-            $("#receiptsPrintLinks").append('<a target="_blank" href="/receipt_pdf.pdf?receipt_id=' + response[2][x][0] + '" class="print-link">Imprimir ' + response[2][x][1] + ' N° ' + response[2][x][2] + '</a><br />');
+            
+            $("#paymentPrintLink").append('<a target="_blank" href="/payment_pdf.pdf?payment_id=' + response[1]['id'] + '" class="print-link">Imprimir resumen de pago</a><br />');
+
+            for(x = 0; x < response[2].length; x++)
+            {
+              $("#receiptsPrintLinks").append('<a target="_blank" href="/receipt_pdf.pdf?receipt_id=' + response[2][x][0] + '" class="print-link">Imprimir ' + response[2][x][1] + ' N° ' + response[2][x][2] + '</a><br />');
+            }
+            $("#pdfModal").modal('show');
           }
-          $("#pdfModal").modal('show');
+          else if(callback_option_str == "sendEmail")
+          {
+            $("#paymentEmails").val("");
+            $("#sendEmailsPaymentId").val(response[1]['id']);
+            $("#sendEmailsModal").modal('show');
+          }
         }
-        else if(callback_option_str == "sendEmail")
+        else
         {
-          $("#paymentEmails").val("");
-          $("#sendEmailsPaymentId").val(response[1]['id']);
-          $("#sendEmailsModal").modal('show');
+          alert("Ocurrió un error al guardar el pago.");
+          $(".payment-btn-close").trigger("click");
         }
       }
-      else
-      {
-        alert("Ocurrió un error al guardar el pago.");
-        $(".payment-btn-close").trigger("click");
+    });
+  }
+  else
+  {
+    payment_data['payment_id'] = $("#editPaymentId").val();
+    console.log("Updates a payment");
+    $.ajax({
+      url: '/update_payment',
+      type: 'post',
+      dataType: 'json',
+      data: payment_data,
+      error: function(response){
+
+      },
+      success: function(response){
+        $("#paymentPrintLink").empty();
+        $("#receiptsPrintLinks").empty();
+        $("#paymentEmails").val("");
+        if(response[0] == "ok")
+        {
+          alert("Pago guardado con éxito.");
+          $(".payment-btn-close").trigger("click");
+          if (callback_option_str == "print")
+          {
+            
+            $("#paymentPrintLink").append('<a target="_blank" href="/payment_pdf.pdf?payment_id=' + response[1]['id'] + '" class="print-link">Imprimir resumen de pago</a><br />');
+
+            for(x = 0; x < response[2].length; x++)
+            {
+              $("#receiptsPrintLinks").append('<a target="_blank" href="/receipt_pdf.pdf?receipt_id=' + response[2][x][0] + '" class="print-link">Imprimir ' + response[2][x][1] + ' N° ' + response[2][x][2] + '</a><br />');
+            }
+            $("#pdfModal").modal('show');
+          }
+          else if(callback_option_str == "sendEmail")
+          {
+            $("#paymentEmails").val("");
+            $("#sendEmailsPaymentId").val(response[1]['id']);
+            $("#sendEmailsModal").modal('show');
+          }
+        }
+        else
+        {
+          alert("Ocurrió un error al guardar el pago.");
+          $(".payment-btn-close").trigger("click");
+        }
       }
-    }
-  });
+    });
+
+  }
 
 }
 
@@ -1429,6 +1753,8 @@ function resetPaymentIntro()
 
   $("#closeClientIcon").hide();
   $("#openClientIcon").show();
+
+  $("#editPaymentId").val("");
 
 }
 
