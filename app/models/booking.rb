@@ -66,6 +66,21 @@ class Booking < ActiveRecord::Base
 			end
 			self.session_booking.sessions_taken = sessions_count
 			self.session_booking.save
+
+      #On creation, mark list_price as a proportion of the treatment's list_price.
+      if self.list_price == self.service.price
+        self.update_column(:list_price, self.list_price / self.session_booking.sessions_amount)
+      end
+
+      #Check for price and divide it by number of sessions if it's the original price or there is a discount.
+      if self.price == self.service.price
+        self.update_column(:price, self.price / self.session_booking.sessions_amount)
+      elsif self.discount > 0
+        if self.price.round = (self.service.price*(100-self.discount)/100).round
+          self.update_column(:price, self.price / self.session_booking.sessions_amount)
+        end
+      end
+
 		end
 	end
 

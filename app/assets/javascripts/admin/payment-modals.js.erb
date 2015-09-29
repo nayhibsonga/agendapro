@@ -576,7 +576,12 @@ function getServicePrice(){
     return false;
   }
   $.getJSON('/services/' + $("#payment_not_booked_service").val(), function (service) {
-    $("#payment_not_booked_price").val(service.price);
+    var service_price = service.price;
+    if(service.has_sessions)
+    {
+      service_price = Math.round( (service.price / service.sessions_amount) * 100 )/100;
+    }
+    $("#payment_not_booked_price").val(service_price);
   });
 }
 
@@ -609,13 +614,20 @@ function loadClientPastBookings(){
 
               if(!past_booking_exists)
               {
+
+                var service_name = past_booking.booking_service;
+
+                if(past_booking.booking.is_session && past_booking.sessions_amount > 1)
+                {
+                  service_name = service_name + " (" + past_booking.session_number + "/" + past_booking.sessions_amount + ")";
+                }
+
                 $("#cpb-bookings").append('<div class="pastBookingRow" booking_id="' + past_booking.booking.id + '">' +
-                  '<div class="col-xs-1 pastBookingCol"><button class="addPastBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
-                  '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_service + '</div>' +
-                  '<div class="col-xs-4 pastBookingCol">' + past_booking.booking_provider + '</div>' +
+                  '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-1 pastBookingCol"><button class="addPastBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
+                  '<div class="col-xs-4 pastBookingCol">' + service_name + '</div>' +
+                  '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_provider + '</div>' +
                   '<div class="col-xs-4 pastBookingCol">' + past_booking.booking_datetime + '</div>' +
-                  '<div style="clear-both">&nbsp;</div>' + 
-                  '</div>'
+                  '</div></div>'
                 );
               }
             });
@@ -702,7 +714,7 @@ function addPastBooked(booking_id){
       '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
       '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
       '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
-      '<td style="width: 18%;"><span class="itemPrice">$' + booking.service_price + '</span></td>' +
+      '<td style="width: 18%;"><span class="itemPrice">$' + Math.round(booking.list_price * 100)/100 + '</span></td>' +
       '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
       '</tr>'
     );

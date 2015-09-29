@@ -1391,10 +1391,13 @@ class BookingsController < ApplicationController
   def get_booking_for_payment
     booking = Booking.find(params[:id])
     discount = 0
-    if booking.service.price != 0
-      discount = 100*((booking.service.price - booking.price)/booking.service.price).round(1)
-    end
-    render :json => {id: booking.id, service_name: booking.service.name, service_price: booking.service.price, discount: discount}
+    #if booking.service.price != 0
+    #  discount = 100*((booking.service.price - booking.price)/booking.service.price).round(1)
+    #end
+
+    #Return list_price and discount. Their combination should equal price. Return service_price also, just for reference.
+
+    render :json => {id: booking.id, service_name: booking.service.name, service_price: booking.service.price, discount: booking.discount, price: booking.price, list_price: booking.list_price}
   end
 
   def get_booking_info

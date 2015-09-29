@@ -187,10 +187,31 @@ class PaymentsController < ApplicationController
 
   def client_bookings
     weekdays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
-    @full_past_bookings = Booking.where.not(is_session: true, status_id: Status.find_by_name("Cancelado")).where(client_id: params[:client_id], location_id: params[:location_id], payment_id: nil).order(start: :desc).limit(100)
+
+    #Treat session bookings as a normal booking. Worry about the price afterwards.
+    #Only leave out those that haven't been booked yet.
+
+    @full_past_bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado")).where.not('is_session = true and is_session_booked = false').where(client_id: params[:client_id], location_id: params[:location_id], payment_id: nil).order(start: :desc).limit(100)
     @past_bookings = []
     @full_past_bookings.each do |b|
-      @past_bookings.push({ booking: b, booking_checked: true, booking_service: b.service.name, booking_provider: b.service_provider.public_name, booking_date: weekdays[b.start.wday] + ' ' + b.start.strftime('%d-%m-%Y'), booking_time: b.start.strftime('%R'), booking_datetime: b.start.strftime('%d/%m/%Y') + ' - ' + b.start.strftime('%R'), booking_price: b.service.price.round(0) })
+
+      #Dummy amount for services whitout sessions
+      sessions_amount = 1
+      session_number = 1
+      if !b.session_booking_id.nil?
+
+        sessions_amount = b.session_booking.sessions_amount
+        Booking.where(:session_booking_id => b.session_booking.id, :is_session_booked => true).order('start asc').each do |u|
+          if u.id == b.id
+            break
+          else
+            session_number = session_number + 1
+          end
+        end
+
+      end
+
+      @past_bookings.push({ booking: b, booking_checked: true, booking_service: b.service.name, booking_provider: b.service_provider.public_name, booking_date: weekdays[b.start.wday] + ' ' + b.start.strftime('%d-%m-%Y'), booking_time: b.start.strftime('%R'), booking_datetime: b.start.strftime('%d/%m/%Y') + ' - ' + b.start.strftime('%R'), booking_price: b.price, sessions_amount: sessions_amount, session_number: session_number })
     end
     render :json => { past_bookings: @past_bookings }
   end
