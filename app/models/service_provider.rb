@@ -315,7 +315,7 @@ class ServiceProvider < ActiveRecord::Base
 			                    	promo = Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).first
 
 		                    		if !(service_promo.morning_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= service_promo.morning_start.strftime("%H:%M"))
-				                    		
+
 				                    	status = 'hora-promocion'
 				                    	promo_discount = promo.morning_discount
 
@@ -544,7 +544,7 @@ class ServiceProvider < ActiveRecord::Base
 			                    	promo = Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).first
 
 		                    		if !(promo_time.morning_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.morning_start.strftime("%H:%M"))
-					                    		
+
 				                    	status = 'hora-promocion'
 				                    	promo_discount = promo.morning_discount
 
@@ -621,4 +621,20 @@ class ServiceProvider < ActiveRecord::Base
 
 	    return { panel_body: week_blocks, days_row: days_row, days_count: days_count }
 	end
+
+	def self.filter_location(location)
+    if !location.blank? && location != '0'
+      where(location_id: location).order(:order)
+    else
+      all.order(:order)
+    end
+  end
+
+  def self.filter_provider(provider)
+    if !provider.blank? && provider != '0'
+      find(provider)
+    else
+      all.order(:order)
+    end
+  end
 end
