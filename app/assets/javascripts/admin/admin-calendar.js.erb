@@ -4,6 +4,9 @@ var textColors = ["#707070", "#0b587d", "#a78a47", "#8e508f", "#4c8b6e", "#50520
 var resourcesColors = [];
 var servicesJSON;
 
+var dragInProgress = false;
+var dragUi = null;
+
 var bookingBuffer = []
 
 function loadProviders () {
@@ -227,7 +230,15 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 							event: 'click mouseleave unfocus',
 							leave: true,
 							fixed: true
-						}
+						},
+						events: {
+					        show: function(event, api) {
+					        	if(dragInProgress)
+					        	{
+					            	event.preventDefault();
+					            }
+					        }
+					    }
 				   	});
 		   		}
 		   		else
@@ -254,7 +265,15 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 							event: 'click mouseleave unfocus',
 							leave: true,
 							fixed: true
-						}
+						},
+						events: {
+					        show: function(event, api) {
+					        	if(dragInProgress)
+					        	{
+					            	event.preventDefault();
+					            }
+					        }
+					    }
 				   	});
 			   	}
 			}
@@ -292,9 +311,13 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		disableResizing: true,
 		eventDragStart: function(event, jsEvent, ui, view){
 			ui.helper.qtip('hide');
+			dragInProgress = true;
+			dragUi = ui;
 		},
 		eventDrop: function (event) {
 			editDrag(event);
+			dragInProgress = false;
+			dragUi = null;
 		},
 		slotMinutes: duration,
 		aspectRatio: setAspectRatio(),
@@ -411,7 +434,15 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 							   event: 'click mouseleave unfocus',
 							   leave: true,
 							   fixed: true
-						   }
+						   },
+						   events: {
+						        show: function(event, api) {
+						        	if(dragInProgress)
+						        	{
+						            	event.preventDefault();
+						            }
+						        }
+						    }
 					   	});
 			   		}
 			   		else
@@ -438,7 +469,15 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 							   event: 'click mouseleave unfocus',
 							   leave: true,
 							   fixed: true
-						   }
+						   },
+						   events: {
+						        show: function(event, api) {
+						        	if(dragInProgress)
+						        	{
+						            	event.preventDefault();
+						            }
+						        }
+						    }
 					   	});
 					}
 			   }
@@ -476,9 +515,13 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		disableResizing: true,
 		eventDragStart: function(event, jsEvent, ui, view){
 			ui.helper.qtip('hide');
+			dragInProgress = true;
+			dragUi = ui;
 		},
 		eventDrop: function (event) {
 			editDrag(event);
+			dragInProgress = false;
+			dragUi = null;
 		},
 		slotMinutes: $('#providers-selector option:selected').data("block"),
 		aspectRatio: setAspectRatio(),
