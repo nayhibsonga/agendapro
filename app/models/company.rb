@@ -74,6 +74,9 @@ class Company < ActiveRecord::Base
 			end
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
+				if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id
+					CompanyMailer.invoice_email(company.id)
+				end
 			else
 				errors = ""
 				company.errors.full_messages.each do |error|
@@ -140,6 +143,7 @@ class Company < ActiveRecord::Base
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "OK end_trial")
+				CompanyMailer.invoice_email(company.id)
 			else
 				errors = ""
 				company.errors.full_messages.each do |error|

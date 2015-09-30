@@ -2,7 +2,7 @@ class CompanyFromEmailMailer < ActionMailer::Base
 	require 'mandrill'
 	require 'base64'
 
-	def invoice_email (company_id)
+	def invoice_email(company_id)
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		current_date = DateTime.now
@@ -10,6 +10,9 @@ class CompanyFromEmailMailer < ActionMailer::Base
 	    month_days = Time.now.days_in_month
 	    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 		company = Company.find(company_id)
+		unless company.users.where(role_id: Role.find_by_name('Administrador General')).count > 0
+			return
+		end
 		admin = company.users.where(role_id: Role.find_by_name('Administrador General')).first
 
 		sales_tax = NumericParameter.find_by_name("sales_tax").value
