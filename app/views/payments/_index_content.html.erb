@@ -63,41 +63,33 @@
             <button class="btn btn-dark-green btn-xs" onclick="openPaymentPdfs(<%= payment.id %>);"><i class="fa fa-file-pdf-o"></i></button>
             <button class="btn btn-orange btn-xs" onclick="openPaymentMailer(<%= payment.id %>);"><i class="fa fa-envelope"></i></button>
             <button class="btn btn-warning btn-xs" onclick="editPayment(<%= payment.id %>);"><i class="fa fa-pencil"></i></button> 
-            <button class="btn btn-red btn-xs" onclick="destroyPayment(<%= payment.id %>);"><i class="fa fa-trash-o"></i></button>
+            <button class="btn btn-red btn-xs" onclick="deletePayment(<%= payment.id %>);"><i class="fa fa-trash-o"></i></button>
           </td>
         </tr>
         <% bookings_text = ''
-        sessions_text = ''
-        products_text = ''
-        mock_bookings_text = ''
+          products_text = ''
+          mock_bookings_text = ''
          %>
-        <% payment.bookings.where(is_session: false, session_booking_id: nil).each do |booking|
+        <% payment.bookings.each do |booking|
           bookings_text += '* ' + booking.service.name + ' con ' + booking.service_provider.public_name + ' (' + booking.start.strftime('%R %d-%m-%Y') + ') ' + number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
-        end %>
-        <% payment.bookings.where.not(is_session: false, session_booking_id: nil).pluck(:session_booking_id).uniq.each do |session_booking_id|
-          booking = SessionBooking.find(session_booking_id).bookings.first
-          if booking
-            sessions_text += '* ' + booking.service.name + ' con ' + booking.service_provider.public_name + ' (' + SessionBooking.find(session_booking_id).bookings.count.to_s + ' reservas) ' + number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
-          end
         end %>
         <% payment.payment_products.each do |payment_product|
           products_text += '* ' + payment_product.product.name + ' ' + number_to_currency(payment_product.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
         end %>
         <% payment.mock_bookings.each do |mock_booking|
           if mock_booking.service_id.nil? && mock_booking.service_provider_id.nil?
-            products_text += '* ' + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
+            mock_bookings_text += '* ' + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
           elsif !mock_booking.service_id.nil? && mock_booking.service_provider_id.nil?
-            products_text += '* ' + mock_booking.service.name + " sin prestador " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
+            mock_bookings_text += '* ' + mock_booking.service.name + " sin prestador " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
           elsif mock_booking.service_id.nil? && !mock_booking.service_provider_id.nil?
-            products_text += '* ' + " servicio por definir con " + mock_booking.service_provider.public_name + " " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
+            mock_bookings_text += '* ' + " servicio por definir con " + mock_booking.service_provider.public_name + " " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
           else
-            products_text += '* ' + mock_booking.service.name + " con " + mock_booking.service_provider.public_name + " " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
+            mock_bookings_text += '* ' + mock_booking.service.name + " con " + mock_booking.service_provider.public_name + " " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
           end
             
         end %>
         <% qtip_text = ''
         if bookings_text != '' then qtip_text += '<strong>Reservas:</strong><br/>' + bookings_text + '<br/>' end
-        if sessions_text != '' then qtip_text += '<strong>Tratamientos:</strong><br/>' + sessions_text + '<br/>' end
         if mock_bookings_text != '' then qtip_text += '<strong>Servicios:</strong><br/>' + mock_bookings_text + '<br/>' end
         if products_text != '' then qtip_text += '<strong>Productos:</strong><br/>' + products_text + '<br/>' end %>
         <script type="text/javascript">

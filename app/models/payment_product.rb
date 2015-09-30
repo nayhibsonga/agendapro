@@ -11,8 +11,10 @@ class PaymentProduct < ActiveRecord::Base
     if !self.seller_id.nil?
       if self.seller_type == 0
         return self.seller.public_name + " (proveedor)"
-      else
+      elsif self.seller_type == 1
         return self.seller.first_name + " " + self.seller.last_name + " (" + self.seller.role.name + ")"
+      else
+        return self.seller.name + " (cajero)"
       end
     else
       return "Sin información"
@@ -20,14 +22,17 @@ class PaymentProduct < ActiveRecord::Base
   end
 
   def seller
+    
     if self.seller_id.nil?
       return nil
     end
 
     if self.seller_type == 0
       return ServiceProvider.find(self.seller_id)
-    else
+    elsif self.seller_type == 1
       return User.find(self.seller_id)
+    else
+      return Cashier.find(self.seller_id)
     end
 
   end

@@ -218,32 +218,32 @@ $(function() {
     createAndServePayment("sendEmail")
   });
 
-  $('#payment_xButton').click(function() {
+  $('#payment_client_xButton').click(function() {
     $('#payment_client_id').val('');
-    //$('#payment_xButton').prop('disabled', true);
+    $("#payment_client_name").val('');
+    $("#payment_client_first_name").val('');
+    $("#payment_client_last_name").val('');
+    $("#payment_client_email").val('');
+    $("#payment_client_phone").val('');
+    $("#payment_client_gender").val("0");
+    $("#openClient").trigger("click");
   });
 
   $("#openClient").click(function(e){
+
     $(".client-option").toggle();
 
     if($("#set_client").val() == "0")
     {
       $("#set_client").val("1");
+      $("#openClientIcon").hide();
+      $("#closeClientIcon").show();
     }
     else
     {
       $("#set_client").val("0");
-    }
-
-    if($("#openClientIcon").prop("hidden"))
-    {
       $("#closeClientIcon").hide();
       $("#openClientIcon").show();
-    }
-    else
-    {
-      $("#openClientIcon").hide();
-      $("#closeClientIcon").show();
     }
 
   });
@@ -254,7 +254,7 @@ $(function() {
       url: '/receipts_email',
       data: {payment_id: $("#sendEmailsPaymentId").val(), emails: $("#payment_emails").val()},
       dataType: 'json',
-      method: 'post',
+      type: 'post',
       error: function(response){
         alert("Ocurrió un error inesperado.");
       },
@@ -326,6 +326,11 @@ $(function() {
   $(".payment-btn-next").click(function(){
     if(paymentModalState == 'Intro')
     {
+      if($("#set_client").val() == "1" && $("#payment_client_name").val() == "")
+      {
+        alert("Debes ingresar un nombre de cliente.");
+        return;
+      }
       if($("#fakePaymentIntroForm").valid())
       {
         var location_id = parseInt($('#payment_location').val());
@@ -336,7 +341,6 @@ $(function() {
           {
             $("#payment_cashier_name").val(response[0]['name']);
             $("#payment_cashier_id").val(response[0]['id']);
-            resetPaymentStep1();
             loadPaymentModal1();
           }
           else
@@ -405,6 +409,10 @@ $(function() {
     }
     else if(paymentModalState == 'Step1')
     {
+      if($("#paymentBookingId").val() == "" && $("#editPaymentId").val() == "")
+      {
+        resetPaymentStep1();
+      }
       loadPaymentIntro(0);
     }
   });
@@ -414,10 +422,12 @@ $(function() {
   */
   $('.payment-btn-close').on('click', function(e){
     resetPayment();
+    loadPayments();
   });
 
   $('.paymentModal .close').on('click', function(e){
     resetPayment();
+    loadPayments();
   });
 
   $("#editPaymentIntroBtn").on('click', function(e){
@@ -458,7 +468,7 @@ function getPaymentIntro(payment_id)
   $.ajax({
     url: '/payment_intro',
     data: {payment_id: payment_id},
-    method: 'get',
+    type: 'get',
     dataType: 'json',
     success: function(response){
 
@@ -541,7 +551,7 @@ function savePaymentIntro()
 
   $.ajax({
     url: '/save_payment_intro',
-    method: 'post',
+    type: 'post',
     dataType: 'json',
     data: payment_data,
     error: function(response)
@@ -566,7 +576,7 @@ function savePaymentIntro()
       }
       
       $(".payment-btn-close").trigger("click");
-
+      //loadPayments();
     }
   });
 }
@@ -586,6 +596,8 @@ function editPaymentAll(payment_id)
   getPaymentIntro(payment_id);
   getPayment(payment_id);
 
+  paymentModalState = 'Intro';
+
   $("#paymentIntroNextBtn").show();
   $("#paymentIntroSaveBtn").hide();
   $("#paymentModalIntro").modal('show');
@@ -595,7 +607,7 @@ function getPayment(payment_id)
 {
   $.ajax({
     url: '/load_payment',
-    method: 'get',
+    type: 'get',
     dataType: 'json',
     data: {payment_id: payment_id},
     error: function(response){
@@ -1567,6 +1579,10 @@ function createAndServePayment(option)
             $("#sendEmailsPaymentId").val(response[1]['id']);
             $("#sendEmailsModal").modal('show');
           }
+          else
+          {
+            $(".payment-btn-close").trigger("click");
+          }
         }
         else
         {
@@ -1637,7 +1653,7 @@ function openPaymentPdfs(payment_id)
   $.ajax({
     url: '/payment_receipts',
     data: {payment_id: payment_id},
-    method: 'get',
+    type: 'get',
     dataType: 'json',
     success: function(response){
       $("#paymentPrintLink").append('<a target="_blank" href="/payment_pdf.pdf?payment_id=' + payment_id + '" class="print-link">Imprimir resumen de pago</a><br />');
@@ -1695,6 +1711,9 @@ function resetPayment()
   var paymentNewBookings = []
   var paymentProducts = []
   var paymentReceipts = []
+
+  $("#paymentBookingId").val("");
+  $("#editPaymentId").val("");
 
   /*
   * Clear stringified lists.
@@ -1890,6 +1909,39 @@ function editPayment(payment_id)
 
   $("#editPaymentModal").modal('show');
 
+}
+
+
+/*
+* Custom Payment Delete
+*/
+
+function deletePayment(payment_id)
+{
+  var r = confirm("¿Estás seguro que deseas eliminar el pago?");
+  if (r == true)
+  {
+    $.ajax({
+      url: '/delete_payment',
+      type: 'post',
+      data: {payment_id, payment_id},
+      dataType: 'json',
+      error: function(resonse){
+        alert("Ocurrió un error al eliminar el pago.");
+      },
+      success: function(response){
+        if(response[0] == "ok")
+        {
+          alert("Pago eliminado correctamente.");
+        }
+        else
+        {
+          alert("Ocurrió un error al eliminar el pago.");
+        }
+        loadPayments();
+      }
+    });
+  }
 }
 
 

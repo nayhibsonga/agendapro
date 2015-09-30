@@ -402,6 +402,11 @@
 
     post '/update_payment', :to => 'payments#update_payment'
 
+    get '/check_booking_payment', :to => 'payments#check_booking_payment'
+    get '/get_formatted_booking', :to => 'payments#get_formatted_booking'
+
+    post '/delete_payment', :to => 'payments#delete_payment'
+
   end
 
   namespace :api, defaults: {format: 'json'} do

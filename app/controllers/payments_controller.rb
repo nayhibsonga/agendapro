@@ -125,7 +125,42 @@ class PaymentsController < ApplicationController
 
   def load_payment
 
-    @payment = Payment.find(params[:payment_id])
+    @payment = nil
+
+    errors = []
+
+    #Check if there's a payment_id and find the payment
+    if !params[:payment_id].blank?
+      @payment = Payment.find(params[:payment_id])
+      if @payment.nil?
+        errors << "No existe un pago con id " + params[:payment_id].to_s
+        render :json => {errors: errors}
+        return
+      end
+    end
+
+    #Check if there's a booking_id and get it's payment
+    if !params[:booking_id].blank?
+
+      @booking = Booking.find(params[:booking_id])
+
+      if @booking.nil?
+        errors << "No existe una reserva con id " + params[:booking_id].to_s
+        render :json => {errors: errors}
+        return
+      end
+
+      @payment = @booking.payment
+
+      if @payment.nil?
+        errors << "No existe un pago asociado a la reserva con id " + params[:booking_id].to_s
+        render :json => {errors: errors}
+        return
+      end
+
+    end
+
+
 
     @bookings = []
     @payment.bookings.each do |booking|
@@ -160,34 +195,7 @@ class PaymentsController < ApplicationController
 
     @receipts = @payment.receipts
 
-    render :json => {payment: @payment, payment_products: @payment_products, bookings: @bookings, mock_bookings: @mock_bookings, receipts: @receipts}
-
-
-    # weekdays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
-    # @payment = Payment.find(params[:payment_id])
-    # @client = @payment.client
-    # @elegible_bookings = @payment.bookings.where(is_session: false, session_booking_id: nil)
-    # @past_bookings = Booking.where.not(is_session: true, status_id: Status.find_by_name("Cancelado")).where(location_id: @payment.location_id, client_id: @client.id, payment_id: nil).where.not(id: @elegible_bookings.pluck(:id)).limit(100).pluck(:id)
-    # @elegible_sessions = @payment.bookings.where.not(is_session: false, session_booking_id: nil)
-    # @past_sessions = Booking.where.not(is_session: false, session_booking_id: nil, status_id: Status.find_by_name("Cancelado")).where(location_id: @payment.location_id, client_id: @client.id, payment_id: nil).where.not(id: @elegible_bookings.pluck(:id)).limit(100).pluck(:id)
-
-    # @payment_bookings = @payment.id ? @payment.bookings.pluck(:id) : (@elegible_bookings.where(payment_id: nil).pluck(:id) + @elegible_sessions.where(payment_id: nil).pluck(:id)).uniq
-    # @bookings = []
-    # @elegible_bookings.each do |b|
-    #   @bookings.push( { booking: b, booking_checked: @payment_bookings.include?(b.id), booking_service: b.service.name, booking_provider: b.service_provider.public_name, booking_date: weekdays[b.start.wday] + ' ' + b.start.strftime('%d-%m-%Y'), booking_time: b.start.strftime('%R'), booking_price: b.service.price.round(0) } )
-    # end
-
-    # @sessions = []
-    #  @elegible_sessions.pluck(:session_booking_id).uniq.each do |sb|
-    #   session_booking = SessionBooking.find(sb)
-    #   @past_sessions = @past_sessions - session_booking.bookings.pluck(:id)
-    #   @elegible_bookings = (@elegible_bookings + session_booking.bookings.pluck(:id)).uniq
-    #   @sessions.push( { session_booking: session_booking, session_booking_ids: session_booking.bookings.pluck(:id), session_checked: (@payment_bookings & session_booking.bookings.pluck(:id)).present?, session_service: session_booking.bookings.first.service.name, session_normal: session_booking.bookings.first.service.price.round(0), session_price: session_booking.bookings.first.price, session_discount: session_booking.bookings.first.discount, session_count: session_booking.bookings.count } )
-    # end
-
-    # @products = @payment.payment_products
-
-    # render :json => {payment: @payment, client: @client, bookings: @bookings, sessions: @sessions, products: @products, past_bookings: @past_bookings, past_sessions: @past_sessions }
+    render :json => {payment: @payment, payment_products: @payment_products, bookings: @bookings, mock_bookings: @mock_bookings, receipts: @receipts, errors: errors}
 
   end
 
@@ -457,8 +465,6 @@ class PaymentsController < ApplicationController
     payment = Payment.find(params[:payment_id])
 
     #Find or create a client (update if necessary)
-    
-
     if params[:set_client] == "1"
       
       client = Client.new
@@ -599,9 +605,11 @@ class PaymentsController < ApplicationController
           booking = Booking.find(past_booking[:id])
           #booking.list_price = past_booking[:]
           booking.discount = past_booking[:discount]
-          booking.price = (past_booking[:list_price].to_f*(100-booking.discount)/100).round(1)
+          booking.price = (past_booking[:list_price].to_f*(100-booking.discount)/100).round(2)
+          booking.client_id = client.id
 
           @bookings << booking
+          booking.payment = payment
           new_receipt.bookings << booking
         else
           product = item
@@ -636,11 +644,15 @@ class PaymentsController < ApplicationController
     payment.mock_bookings = @mockBookings
     payment.payment_products = @paymentProducts
 
-    if payment.save
-      @json_response[0] = "ok"
+    if @errors.length == 0
+      if payment.save
+        @json_response[0] = "ok"
+      else
+        @json_response[0] = "error"
+        @errors << payment.errors
+      end
     else
       @json_response[0] = "error"
-      @errors << payment.errors
     end
 
     if @json_response[0] == "ok"
@@ -781,6 +793,13 @@ class PaymentsController < ApplicationController
       end
     end
 
+    payment.bookings.each do |booking|
+      booking.client_id = payment.client_id
+      if !booking.save
+        errors << "No se pudo guardar un servicio"
+      end
+    end
+
     if errors.length == 0
       if payment.save
         json_response << "ok"
@@ -788,6 +807,85 @@ class PaymentsController < ApplicationController
       else
         json_response << "error"
         errors << payment.errors
+        json_response << errors
+      end
+    else
+      json_response << "error"
+      json_response << errors
+    end
+
+    render :json => json_response
+
+  end
+
+  #Responds if a booking has a payment or not
+  def check_booking_payment
+    
+    booking = Booking.find(params[:booking_id])
+    json_response = []
+
+    if booking.payment_id.nil?
+      json_response << "no"
+    else
+      json_response << "yes"
+      json_response << booking.payment
+    end
+
+    render :json => json_response
+
+  end
+
+  #Returns a formatted booking to prefill a new payment
+  def get_formatted_booking
+    booking = Booking.find(params[:booking_id])
+    book = {id: booking.id, service_name: booking.service.name, service_price: booking.service.price, discount: booking.discount, price: booking.price, list_price: booking.list_price, location_id: booking.location_id}
+    client = booking.client
+    json_response = {booking: book, client: client}
+    render :json => json_response
+  end
+
+  def delete_payment
+
+    @payment = Payment.find(params[:payment_id])
+    errors = []
+    json_response = []
+
+    @payment.payment_products.each do |payment_product|
+      if payment_product.delete
+      else
+        errors << payment_product.errors
+      end
+    end
+
+    @payment.mock_bookings.each do |mock_booking|
+      if mock_booking.delete
+      else
+        errors << mock_booking.errors
+      end
+    end
+
+    @payment.bookings.each do |booking|
+      booking.payment_id = nil
+      booking.receipt_id = nil
+      if booking.save
+      else
+        errors << booking.errors
+      end
+    end
+
+    @payment.receipts.each do |receipt|
+      if receipt.delete
+      else
+        errors << receipt.errors
+      end
+    end
+
+    if errors.length == 0
+      if @payment.delete
+        json_response << "ok"
+      else
+        json_response << "error"
+        errors << @payment.errors
         json_response << errors
       end
     else

@@ -169,6 +169,9 @@ class Ability
         can :get_intro_info, Payment, :company_id => user.company_id
         can :save_intro_info, Payment, :company_id => user.company_id
         can :update_payment, Payment, :company_id => user.company_id
+        can :check_booking_payment, Payment, :company_id => user.company_id
+        can :get_formatted_booking, Payment, :company_id => user.company_id
+        can :delete_payment, Payment, :company_id => user.company_id
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -373,6 +376,9 @@ class Ability
         can :get_intro_info, Payment, :company_id => user.company_id
         can :save_intro_info, Payment, :company_id => user.company_id
         can :update_payment, Payment, :company_id => user.company_id
+        can :check_booking_payment, Payment, :company_id => user.company_id
+        can :get_formatted_booking, Payment, :company_id => user.company_id
+        can :delete_payment, Payment, :company_id => user.company_id
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
@@ -534,6 +540,9 @@ class Ability
         can :get_intro_info, Payment, :company_id => user.company_id
         can :save_intro_info, Payment, :company_id => user.company_id
         can :update_payment, Payment, :company_id => user.company_id
+        can :check_booking_payment, Payment, :company_id => user.company_id
+        can :get_formatted_booking, Payment, :company_id => user.company_id
+        can :delete_payment, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff").id
         
@@ -578,6 +587,21 @@ class Ability
         can :create, Payment, :company_id => user.company_id
         can :update, Payment, :company_id => user.company_id
         can :sellers, Location, :company_id => user.company_id
+
+        can :location_products, Location, :company_id => user.company_id
+        can :get_staff_by_code, StaffCode, :company_id => user.company_id
+        can :create_new_payment, Payment, :company_id => user.company_id
+        can :get_by_code, Cashier, :company_id => user.company_id
+        can :receipt_pdf, Payment, :company_id => user.company_id
+        can :payment_pdf, Payment, :company_id => user.company_id
+        can :send_receipts_email, Payment, :company_id => user.company_id
+        can :get_receipts, Payment, :company_id => user.company_id
+        can :get_intro_info, Payment, :company_id => user.company_id
+        can :save_intro_info, Payment, :company_id => user.company_id
+        can :update_payment, Payment, :company_id => user.company_id
+        can :check_booking_payment, Payment, :company_id => user.company_id
+        can :get_formatted_booking, Payment, :company_id => user.company_id
+        can :delete_payment, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 

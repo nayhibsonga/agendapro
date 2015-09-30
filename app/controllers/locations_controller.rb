@@ -671,6 +671,17 @@ class LocationsController < ApplicationController
 
     end
 
+    @location.company.cashiers.each do |cashier|
+      new_seller ={
+        :id => cashier.id,
+        :seller_type => 2,
+        :full_name => cashier.name,
+        :role_name => "Cajero"
+      }
+
+      @response_array << new_seller
+    end
+
     render :json => @response_array
 
   end
