@@ -19,14 +19,18 @@ class CompaniesController < ApplicationController
 	#SuperAdmin
 	#Manage companies payments.
 	def manage
-		@companies = Company.all.order(:name)
-		@active_companies = Company.where(:payment_status_id => PaymentStatus.find_by_name('Activo').id).order(:name)
-		@trial_companies = Company.where(:payment_status_id => PaymentStatus.find_by_name('Trial').id).order(:name)
-		@late_companies = Company.where(:payment_status_id => PaymentStatus.find_by_name('Vencido').id).order(:name)
-		@blocked_companies = Company.where(:payment_status_id => PaymentStatus.find_by_name('Bloqueado').id).order(:name)
-		@inactive_companies = Company.where(:payment_status_id => PaymentStatus.find_by_name('Inactivo').id).order(:name)
-		@issued_companies = Company.where(:payment_status_id => PaymentStatus.find_by_name('Emitido').id).order(:name)
-		@pac_companies = Company.where(:payment_status_id => PaymentStatus.find_by_name('Convenio PAC').id).order(:name)
+		if I18n.locale == :es
+			@companies = Company.all.order(:name)
+		else
+			@companies = Company.where(country_id: Country.find_by(locale: I18n.locale.to_s)).order(:name)
+		end
+		@active_companies = @companies.where(:payment_status_id => PaymentStatus.find_by_name('Activo').id).order(:name)
+		@trial_companies = @companies.where(:payment_status_id => PaymentStatus.find_by_name('Trial').id).order(:name)
+		@late_companies = @companies.where(:payment_status_id => PaymentStatus.find_by_name('Vencido').id).order(:name)
+		@blocked_companies = @companies.where(:payment_status_id => PaymentStatus.find_by_name('Bloqueado').id).order(:name)
+		@inactive_companies = @companies.where(:payment_status_id => PaymentStatus.find_by_name('Inactivo').id).order(:name)
+		@issued_companies = @companies.where(:payment_status_id => PaymentStatus.find_by_name('Emitido').id).order(:name)
+		@pac_companies = @companies.where(:payment_status_id => PaymentStatus.find_by_name('Convenio PAC').id).order(:name)
 	end
 
 	#SuperAdmin
