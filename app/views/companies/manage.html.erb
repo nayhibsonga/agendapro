@@ -20,6 +20,14 @@
     </div>
     <!-- Panels -->
     <div class="col-md-10 left-panel">
+      <div>
+        <select id="country_changer">
+          <option value="<%= url_for(params.merge({locale: 'es'})) %>" <%= 'selected' if :es == I18n.locale %>>Todos</option>
+          <% Country.all.order(:name).each do |country| %>
+            <option value="<%= url_for(params.merge({locale: country.locale})) %>" <%= 'selected' if country.locale == I18n.locale.to_s %>><%= country.name %></option>
+          <% end %>
+        </select>
+      </div>
       <div class="tab-margin">
         <ul id="myTab" class="nav nav-tabs" role="tablist">
           <li class="active"><a href="#summary" role="tab" data-toggle="tab" class="tab_index">Resumen</a></li>
@@ -406,3 +414,19 @@
     </div>
   </div>
 </div>
+
+<% content_for :scripts do %>
+  <script type="text/javascript">
+
+    $(function () {
+      $('#country_changer').on('change', function() {
+        var url = $(this).val(); // get selected value
+        if (url) { // require a URL
+            window.location = url; // redirect
+        }
+        return false;
+      });
+    });
+
+  </script>
+<% end %>
