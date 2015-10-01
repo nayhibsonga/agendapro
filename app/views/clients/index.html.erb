@@ -1,43 +1,31 @@
 <div class="container-fluid">
   <div class="row" style="margin-top: 15px;">
-    <div class="col-xs-push-8 col-xs-4 col-sm-push-9 col-sm-3">
-      <p class="text-right">
-      <% if @from_collection.first %>
-        <% if @monthly_mails_sent < @monthly_mails %>
-          Enviar e-mail a este listado de clientes:
-          <%= link_to '<i class="fa fa-envelope"></i> Enviar E-mail'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white", id: 'sendMail' %>
-        <% else %>
-          Has alcanzado el limite de e-mails
-        <% end %>
-      <% else %>
-        Enviar e-mail a este listado de clientes:
-        <button id="sendMail" type="button" class="btn btn-white" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar E-mail</button>
-      <% end %>
-      </p>
-    </div>
+    <small class="pull-right">* Enviar e-mail o Descargar este listado de clientes:</small>
   </div>
   <div class="row">
-    <div class="col-xs-5 col-sm-5">
+    <div class="col-sm-3">
       <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-white" %>
       <button id="import_clients" type="button" class="btn btn-white" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
     </div>
-    <div class="col-xs-7 col-sm-7">
+    <div class="col-sm-6">
+      <div class="row" style="margin-bottom: 15px;">
+        <div class="col-sm-1">
+          <p><strong>Buscar:</strong></p>
+        </div>
+        <div class="col-sm-9">
+          <%= text_field_tag :search_bar, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o " + (I18n.t('ci')).capitalize + "..." %>
+        </div>
+        <div class="col-sm-2">
+          <button class="btn btn-green" id="search_btn"><i class="fa fa-search"></i> Buscar</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3">
       <p class="text-right">
-        Descargar este listado de clientes:
+        <%= link_to '<i class="fa fa-envelope"></i> Enviar E-mail'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white", id: 'sendMail' %>
         <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white" %>
         <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_path(format: "xls", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white" %>
       </p>
-    </div>
-  </div>
-  <div class="row" style="margin-bottom: 15px;">
-    <div class="col-xs-3 col-md-2 col-md-push-3">
-      <p><strong>Buscar por Palabras</strong></p>
-    </div>
-    <div class="col-xs-7 col-md-5 col-md-push-3">
-      <%= text_field_tag :search_bar, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o " + (I18n.t('ci')).capitalize + "..." %>
-    </div>
-    <div class="col-xs-2 col-md-2 col-md-push-3">
-      <button class="btn btn-green" id="search_btn"><i class="fa fa-search"></i> Buscar</button>
     </div>
   </div>
   <div class="row">

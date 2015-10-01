@@ -15,7 +15,7 @@ class Client < ActiveRecord::Base
     canceled_status = Status.find_by_name("Cancelado")
 
     #Send all services from same client (each company has diferent clients)
-    Client.where(id: Booking.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).each do |client|
+    Client.where(id: Booking.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
 
       #Send a reminder for each location
       client.company.locations.each do |location|
