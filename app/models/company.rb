@@ -92,6 +92,7 @@ class Company < ActiveRecord::Base
 			company.payment_status_id = PaymentStatus.find_by_name("Vencido").id
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 2, details: "OK payment_expiry")
+				CompanyMailer.invoice_email(company.id)
 			else
 				errors = ""
 				company.errors.full_messages.each do |error|
@@ -167,6 +168,12 @@ class Company < ActiveRecord::Base
 				end
 				CompanyCronLog.create(company_id: company.id, action_ref: 6, details: "ERROR add_due_amount "+errors)
 			end
+		end
+	end
+
+	def self.invoice_email
+		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id), due_date: [10.days.ago, 15.days.ago, 20.days.ago]).each do |company|
+			CompanyMailer.invoice_email(company.id)
 		end
 	end
 

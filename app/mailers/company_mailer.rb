@@ -1,4 +1,4 @@
-class CompanyFromEmailMailer < ActionMailer::Base
+class CompanyMailer < ActionMailer::Base
 	require 'mandrill'
 	require 'base64'
 
@@ -8,8 +8,8 @@ class CompanyFromEmailMailer < ActionMailer::Base
 		current_date = DateTime.now
 		day_number = Time.now.day
 	    month_days = Time.now.days_in_month
-	    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 		company = Company.find(company_id)
+	    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 		unless company.users.where(role_id: Role.find_by_name('Administrador General')).count > 0
 			return
 		end
@@ -44,7 +44,7 @@ class CompanyFromEmailMailer < ActionMailer::Base
 				},
 				{
 					:name => 'CURRENT_MONTH',
-					:content => (controller.l current_date, :format => '%B').capitalize
+					:content => (l current_date, :format => '%B').capitalize
 				},
 				{
 					:name => 'COMPANY_NAME',
@@ -56,15 +56,15 @@ class CompanyFromEmailMailer < ActionMailer::Base
 				},
 				{
 					:name => 'CURRENT_AMOUNT',
-					:content => number_to_currency(current_amount * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})
+					:content => ActionController::Base.helpers.number_to_currency(current_amount * (1 + sales_tax), locale: company.country.locale.to_sym)
 				},
 				{
 					:name => 'PLAN_AMOUNT',
-					:content => number_to_currency(plan_amount * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})
+					:content => ActionController::Base.helpers.number_to_currency(plan_amount * (1 + sales_tax), locale: company.country.locale.to_sym)
 				},
 				{
 					:name => 'DEBT_AMOUNT',
-					:content => number_to_currency(debt_amount * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})
+					:content => ActionController::Base.helpers.number_to_currency(debt_amount * (1 + sales_tax), locale: company.country.locale.to_sym)
 				}
 			],
 			:tags => ['invoice']
