@@ -3745,6 +3745,10 @@ class BookingsController < ApplicationController
     end
   end
 
+  def block_promotion_hours
+
+  end
+
   def promotion_hours
 
     week_days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
@@ -3769,8 +3773,8 @@ class BookingsController < ApplicationController
 
     weekDate = Date.strptime(current_date, '%Y-%m-%d')
 
-    logger.debug "current_date: " + current_date.to_s
-    logger.debug "weekDate: " + weekDate.to_s
+    #logger.debug "current_date: " + current_date.to_s
+    #logger.debug "weekDate: " + weekDate.to_s
 
     if params[:date] and params[:date] != ""
       if params[:date].to_datetime > now
@@ -3778,7 +3782,7 @@ class BookingsController < ApplicationController
       end
     end
 
-    logger.debug "now: " + now.to_s
+    #logger.debug "now: " + now.to_s
 
     days_ids = [1,2,3,4,5,6,7]
     index = days_ids.find_index(now.cwday)
@@ -3798,18 +3802,31 @@ class BookingsController < ApplicationController
 
     max_time_diff = 0
 
-    #while total_hours_array.size == 0
+    #Save first service and it's providers for later use
 
-      #current_date = current_date.to_datetime + 7.days
-      #current_date = current_date.to_s
-      #weekDate = Date.strptime(current_date, '%Y-%m-%d')
+    first_service = Service.find(serviceStaff[0][:service])
+    first_providers = []
+    if serviceStaff[0][:provider] != "0"
+      first_providers << ServiceProvider.find(serviceStaff[0][:provider])
+    else
+      first_providers = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc)
+    end
 
-      #@days_count = 0
-      #@week_blocks = []
-      #@days_row = []
+    #Look for services and providers and save them for later use.
 
-      #book_index = 0
-      #book_summaries = []
+    services_arr = []
+    providers_arr = []
+    for i in 0..serviceStaff.length-1
+      services_arr[i] = Service.find(serviceStaff[i][:service])
+      if serviceStaff[i][:provider] != "0"
+        providers_arr[i] << ServiceProvider.find(serviceStaff[0][:provider])
+      else
+        providers_arr[i] = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true)
+      end
+    end
+
+    #providers_arr = []
+    #for i
 
     after_date = DateTime.now + company_setting.after_booking.months
 
@@ -3818,7 +3835,7 @@ class BookingsController < ApplicationController
       day = date.cwday
       dtp = local.location_times.where(day_id: day).order(:open).first
       if dtp.nil?
-        logger.debug "Nil day " + day.to_s
+        #logger.debug "Nil day " + day.to_s
         next
       end
 
@@ -3847,7 +3864,8 @@ class BookingsController < ApplicationController
         while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date)
 
           service_valid = false
-          service = Service.find(serviceStaff[serviceStaffPos][:service])
+          #service = Service.find(serviceStaff[serviceStaffPos][:service])
+          service = services_arr[serviceStaffPos]
 
           #Get providers min
           min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
@@ -3901,17 +3919,26 @@ class BookingsController < ApplicationController
           if service_valid
             providers = []
             if serviceStaff[serviceStaffPos][:provider] != "0"
-              providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
+              #providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
+              providers = providers_arr[serviceStaffPos]
             else
 
               #Check if providers have same day open
               #If they do, choose the one with less ocupations to start with
               #If they don't, choose the one that starts earlier.
               if service.check_providers_day_times(dateTimePointer)
-                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+                #providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
+                providers = providers_arr[serviceStaffPos].order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
               else
-                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                #providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+
+                providers = providers_arr[serviceStaffPos].order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
               end
+
+
+
             end
 
             providers.each do |provider|
@@ -3924,6 +3951,9 @@ class BookingsController < ApplicationController
               end
 
               service_valid = false
+
+              #Check directly on query instead of looping through
+
               provider.provider_times.where(day_id: dateTimePointer.cwday).each do |provider_time|
                 provider_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.open.hour, provider_time.open.min)
                 provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.close.hour, provider_time.close.min)
@@ -3936,38 +3966,58 @@ class BookingsController < ApplicationController
 
               # Provider breaks
               if service_valid
-                provider.provider_breaks.each do |provider_break|
-                  if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= provider_break.start.to_datetime)
-                    service_valid = false
-                    break
-                  end
+
+                if provider.provider_breaks.where.not('(provider_breaks.end <= ? or ? <= provider_breaks.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count > 0
+                  service_valid = false
                 end
+
+                #provider.provider_breaks.each do |provider_break|
+                #  if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= provider_break.start.to_datetime)
+                #    service_valid = false
+                #    break
+                #  end
+                #end
+
               end
 
               # Cross Booking
               if service_valid
-                Booking.where(service_provider_id: provider.id, start: dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |provider_booking|
-                  unless provider_booking.status_id == cancelled_id
-                    pointerEnd = dateTimePointer+service.duration.minutes
-                    if !(pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
-                      if !service.group_service || service.id != provider_booking.service_id
-                        if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                          service_valid = false
-                          break
-                        end
-                      elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(service_id: service.id, start: dateTimePointer).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
-                        if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                          service_valid = false
-                          break
-                        end
-                      end
-                    else
-                      #if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                      #  service_valid = false
-                      #end
-                    end
+
+                if !service.group_service
+                  if Booking.where(service_provider_id: provider.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count > 0
+                    service_valid = false
+                  end
+                else
+                  if Booking.where(service_provider_id: provider.id, service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count >= service.capacity
+                    service_valid = false
                   end
                 end
+
+
+                # Booking.where(service_provider_id: provider.id, start: dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |provider_booking|
+                #   unless provider_booking.status_id == cancelled_id
+                #     pointerEnd = dateTimePointer+service.duration.minutes
+                #     if !(pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
+                #       if !service.group_service || service.id != provider_booking.service_id
+                #         if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+                #           service_valid = false
+                #           break
+                #         end
+                #       elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(service_id: service.id, start: dateTimePointer).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
+                #         if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+                #           service_valid = false
+                #           break
+                #         end
+                #       end
+                #     else
+                #       #if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
+                #       #  service_valid = false
+                #       #end
+                #     end
+                #   end
+                # end
+
+
               end
 
               # Recursos
@@ -4113,9 +4163,123 @@ class BookingsController < ApplicationController
           end
 
           if !service_valid
-            dateTimePointer += service.duration.minutes
+
+            #Check for providers' bookings and breaks that include current dateTimePointer
+            #If any, jump to the nearest end
+            #Else, it's gotta be a resource issue or dtp is outside providers' time, so just add service duration as always
+            #Last part could be optimized to jump to the nearest open provider's time
+
+            #Time check must be an overlap of (dtp - dtp+service_duration) with booking/break (start - end)
+
+            smallest_diff = first_service.duration
+            #logger.debug "Defined smallest_diff: " + smallest_diff.to_s
+
+            if first_providers.count > 1
+
+              first_providers.each do |first_provider|
+
+                #book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes)
+
+                book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
+                # logger.debug "***"
+                # logger.debug "***"
+                # logger.debug "***"
+                # logger.debug "DTP: " + dateTimePointer.to_s
+                # logger.debug "Multi book_blockings: " + book_blockings.count.to_s
+                # logger.debug "***"
+                # logger.debug "***"
+                # logger.debug "***"
+                if book_blockings.count > 0
+
+                  book_diff = (book_blockings.first.end - dateTimePointer)/60
+                  if book_diff < smallest_diff
+                    smallest_diff = book_diff
+                    #logger.debug "smallest_diff1: " + smallest_diff.to_s
+                  end
+                else
+                  break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
+                  # logger.debug "***"
+                  # logger.debug "***"
+                  # logger.debug "***"
+                  # logger.debug "DTP: " + dateTimePointer.to_s
+                  # logger.debug "Multi break_blockings: " + book_blockings.count.to_s
+                  # logger.debug "***"
+                  # logger.debug "***"
+                  # logger.debug "***"
+                  if break_blockings.count > 0
+                    break_diff = (break_blockings.first.end - dateTimePointer)/60
+                    if break_diff < smallest_diff
+                      smallest_diff = break_diff
+                      #logger.debug "smallest_diff2: " + smallest_diff.to_s
+                    end
+                  end
+                end
+
+              end
+
+            else
+
+              first_provider = first_providers.first
+
+              book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start => ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
+              # logger.debug "***"
+              # logger.debug "***"
+              # logger.debug "***"
+              # logger.debug "DTP: " + dateTimePointer.to_s
+              # logger.debug "Single book_blockings: " + book_blockings.count.to_s
+              # logger.debug "***"
+              # logger.debug "***"
+              # logger.debug "***"
+              if book_blockings.count > 0
+                book_diff = (book_blockings.first.end - dateTimePointer)/60
+                if book_diff < smallest_diff
+                  smallest_diff = book_diff
+                  #logger.debug "smallest_diff3: " + smallest_diff.to_s
+                end
+              else
+                break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start => ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
+                  # logger.debug "***"
+                  # logger.debug "***"
+                  # logger.debug "***"
+                  # logger.debug "DTP: " + dateTimePointer.to_s
+                  # logger.debug "Single break_blockings: " + book_blockings.count.to_s
+                  # logger.debug "***"
+                  # logger.debug "***"
+                  # logger.debug "***"
+                if break_blockings.count > 0
+                  break_diff = (break_blockings.first.end - dateTimePointer)/60
+                  if break_diff < smallest_diff
+                    smallest_diff = break_diff
+                    #logger.debug "smallest_diff4: " + smallest_diff.to_s
+                  end
+                end
+              end
+
+            end
+
+            if smallest_diff == 0
+              smallest_diff = first_service.duration
+            end
+
+            # logger.debug "####"
+            # logger.debug "####"
+            # logger.debug "####"
+            # logger.debug "####"
+            # logger.debug "OLD DTP: " + dateTimePointer.to_s
+            # logger.debug "Current smallest_diff: " + smallest_diff.to_s
+
+            dateTimePointer += smallest_diff.minutes
+
+            # logger.debug "NEW DTP: " + dateTimePointer.to_s
+            # logger.debug "####"
+            # logger.debug "####"
+            # logger.debug "####"
+            # logger.debug "####"
+
+            #dateTimePointer += service.duration.minutes
             serviceStaffPos = 0
             bookings = []
+
           end
         end
 
@@ -4158,10 +4322,10 @@ class BookingsController < ApplicationController
             end
           end
 
-          logger.debug "Time diff: "
-          logger.debug bookings[bookings.length-1][:end].to_s
-          logger.debug bookings[0][:start].to_s
-          logger.debug ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f.to_s
+          #logger.debug "Time diff: "
+          #logger.debug bookings[bookings.length-1][:end].to_s
+          #logger.debug bookings[0][:start].to_s
+          #logger.debug ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f.to_s
           hour_time_diff = ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f
 
           if hour_time_diff > max_time_diff
@@ -4313,7 +4477,7 @@ class BookingsController < ApplicationController
     min_block = 0
     min_block_str = ""
 
-    logger.debug "THA: " + total_hours_array.count.to_s
+    #logger.debug "THA: " + total_hours_array.count.to_s
 
     total_hours_array.each do |hour|
       if min_block == 0
@@ -4325,8 +4489,8 @@ class BookingsController < ApplicationController
       end
     end
 
-    logger.debug "Min block: " + min_block.to_s
-    logger.debug "Max close: " + max_close.to_s
+    #logger.debug "Min block: " + min_block.to_s
+    #logger.debug "Max close: " + max_close.to_s
 
     if min_block != 0
 
@@ -4344,11 +4508,11 @@ class BookingsController < ApplicationController
 
     end
 
-    logger.debug "Hours diff: "
-    logger.debug "Max close: " + max_close.to_s
-    logger.debug "Min open:" + min_open.to_s
-    logger.debug "Min block: " + min_block.to_s
-    logger.debug "Hours diff:" + hours_diff.to_s
+    #logger.debug "Hours diff: "
+    #logger.debug "Max close: " + max_close.to_s
+    #logger.debug "Min open:" + min_open.to_s
+    #logger.debug "Min block: " + min_block.to_s
+    #logger.debug "Hours diff:" + hours_diff.to_s
 
     time_prop = 0
 
