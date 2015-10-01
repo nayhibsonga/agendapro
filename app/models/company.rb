@@ -74,7 +74,7 @@ class Company < ActiveRecord::Base
 			end
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
-				if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id
+				if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id && company.country_id == 1
 					CompanyMailer.invoice_email(company.id)
 				end
 			else
@@ -92,7 +92,9 @@ class Company < ActiveRecord::Base
 			company.payment_status_id = PaymentStatus.find_by_name("Vencido").id
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 2, details: "OK payment_expiry")
-				CompanyMailer.invoice_email(company.id)
+				if company.country_id == 1
+					CompanyMailer.invoice_email(company.id)
+				end
 			else
 				errors = ""
 				company.errors.full_messages.each do |error|
@@ -144,7 +146,9 @@ class Company < ActiveRecord::Base
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "OK end_trial")
-				CompanyMailer.invoice_email(company.id)
+				if company.country_id == 1
+					CompanyMailer.invoice_email(company.id)
+				end
 			else
 				errors = ""
 				company.errors.full_messages.each do |error|
@@ -172,7 +176,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def self.invoice_email
-		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id), due_date: [10.days.ago, 15.days.ago, 20.days.ago]).each do |company|
+		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id), due_date: [10.days.ago, 15.days.ago, 20.days.ago], country_id: 1).each do |company|
 			CompanyMailer.invoice_email(company.id)
 		end
 	end
