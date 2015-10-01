@@ -55,6 +55,10 @@ class CompanyMailer < ActionMailer::Base
 					:content => admin.full_name
 				},
 				{
+					:name => 'ADMIN_EMAIL',
+					:content => admin.email
+				},
+				{
 					:name => 'CURRENT_AMOUNT',
 					:content => ActionController::Base.helpers.number_to_currency(current_amount * (1 + sales_tax), locale: company.country.locale.to_sym)
 				},
