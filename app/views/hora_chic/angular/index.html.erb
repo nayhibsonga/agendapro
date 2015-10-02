@@ -2,6 +2,7 @@
 <html ng-app="HoraChic">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <base href="/">
 
     <%= javascript_include_tag 'angular' %>
 
@@ -16,9 +17,8 @@
 
   <body ng-controller="TemplateController as tc">
     <div ng-include="'/hora_chic/header'"></div>
-    <div id="mainContent" ng-include="tc.template"></div>
+    <div id="mainContent" ng-view class="view-animate"></div>
     <footer ng-include="'/hora_chic/footer'"></footer>
-
   </body>
 
 </html>

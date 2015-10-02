@@ -7,10 +7,5 @@ class HoraChic::AngularController < ApplicationController
 
   # Cross App Views
   def index; end
-  def header; end
-  def footer; end
-
-  # Specific views
-  def landing; end
 
 end

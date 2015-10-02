@@ -11,29 +11,33 @@
     .config(config)
     .run(globalVariables);
 
-  config.$inject = ['$routeProvider', 'uiGmapGoogleMapApiProvider'];
+  config.$inject = ['$routeProvider', 'uiGmapGoogleMapApiProvider','$locationProvider'];
 
-  function config($routeProvider, GoogleMapApiProvider) {
+  function config($routeProvider, GoogleMapApiProvider, $locationProvider) {
     var $namespace = '/hora_chic';
+
+    $locationProvider.html5Mode(true);
+
     $routeProvider
-      .when('/', {
-          templateUrl: $namespace,
-          controller: 'TemplateController'
-      })
-      .when($namespace + '/landing', {
+      .when($namespace + '/', {
           templateUrl: $namespace + '/landing',
-          controller: 'TemplateController'
+          controller: 'LandingController',
+          controllerAs: 'lc'
       })
       .when($namespace + '/header', {
-          templateUrl: $namespace + '/header',
-          controller: 'TemplateController'
+          templateUrl: $namespace + '/header'
       })
       .when($namespace + '/footer', {
-          templateUrl: $namespace + '/footer',
-          controller: 'TemplateController'
+          templateUrl: $namespace + '/footer'
+      })
+      .when($namespace + '/buscar', {
+          templateUrl: $namespace + '/results',
+          controller: 'ResultsController',
+          controllerAs: 'rc',
+          cache: false
       })
       .otherwise({
-          redirectTo: '/'
+          redirectTo: $namespace + '/'
       });
 
     GoogleMapApiProvider.configure({
@@ -43,7 +47,8 @@
     });
   }
 
-  function globalVariables($rootScope) {
+  function globalVariables($rootScope, Translator) {
     $rootScope.country = 'cl';
+    $rootScope.lang = Translator.init($rootScope.country);
   }
 })();

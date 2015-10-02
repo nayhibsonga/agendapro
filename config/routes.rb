@@ -405,15 +405,15 @@
     end
   end
 
+  root :to => 'searchs#index'
+
   # Angular Root
+
   namespace 'hora_chic', controller: 'angular' do
-    get '/', action: 'index'
-    get '/landing', action: 'landing'
-    get '/header', action: 'header'
-    get '/footer', action: 'footer'
+    get '/(*path)', action: 'index'
   end
 
-  root :to => 'searchs#index'
+
 
 
   # The priority is based upon order of creation: first created -> highest priority.
