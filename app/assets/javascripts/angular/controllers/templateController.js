@@ -1,21 +1,24 @@
 (function (){
-  'use strict'
+    'use strict'
 
-  angular
-    .module('HoraChic')
-    .controller('TemplateController', TemplateController);
+    angular
+        .module('HoraChic')
+        .controller('TemplateController', TemplateController);
 
-  TemplateController.$inject = ['Translator'];
+    TemplateController.$inject = ['$rootScope'];
 
-  function TemplateController(Translator) {
-    var vm = this;
-    vm.lang = Translator.init();
-    vm.templates = {
-      landing: '/hora_chic/landing'
-      };
-    // To render a new element in the main content
-    // section, just change the route to the template
-    // In shits scope.
-    vm.template = vm.templates.landing;
-  }
+    function TemplateController($rootScope) {
+        var vm = this;
+        vm.lang = $rootScope.lang;
+        vm.templates = {
+            landing: '/hora_chic/landing',
+            deals: '/hora_chic/deals',
+            search: '/hora_chic/search',
+            map: '/hora_chic/map'
+        };
+        // To render a new element in the main content
+        // section, just change the route to the template
+        // In its scope.
+        vm.template = vm.templates.landing;
+    }
 })();
