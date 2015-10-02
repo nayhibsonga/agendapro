@@ -1,0 +1,27 @@
+<div class="container-fluid deals-container" ng-controller="DealsController as dc">
+  <div class="row title">
+    <div class="col-xs-12 text-center">
+      <h1>{{ tc.lang.landing.deals.title }}</h1>
+      <p>{{ tc.lang.landing.deals.sub_title }}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="wrapper col-xs-12">
+      <div class="deal pull-left" ng-repeat="deal in dc.deals">
+        <figure>
+          <img ng-src="{{deal.promo_photo}}" alt="{{deal.company_name + deal.service_name}}" title="{{deal.company_name + deal.service_name}}">
+        </figure>
+        <figcaption>{{ deal.company_name }}</figcaption>
+        <div class="service-info">
+          <div class="service-detail">
+            {{deal.service_name}}
+          </div>
+          <div class="service-price">
+            <p class="normal-price">{{ deal.normal_price | dealsCurrency }}</p>
+            <p class="min-price">{{ deal.min_price | dealsCurrency }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
