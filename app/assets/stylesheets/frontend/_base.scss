@@ -1,0 +1,356 @@
+html, body, header, footer {
+  @include roboto-font(14px, normal);
+  @include font-smoothing;
+}
+
+*:focus{ outline: none; } // Removes Bootstrap default focus styles
+
+header {
+  $header-height: 75px;
+  height: $header-height;
+  div { height: 100%; }
+  .contact, .options { display: none; }
+  .logo-container {
+    height: 100%;
+    div {
+      height: inherit;
+      @include logo {
+        height: inherit;
+        width: auto;
+      }
+    }
+  }
+}
+
+.menu {
+  $menu-height: 75px;
+  position: absolute;
+  left: 10px;
+  top: 15px;
+  .wrapper {
+    height: $menu-height;
+    .content {
+      height: auto;
+      padding: 0;
+      z-index: 999;
+    }
+    button {
+      border: none;
+      background-color: transparent;
+      color: $light-pink;
+      font-size: 2em;
+    }
+  }
+
+  span.separator { margin: 0 10px; }
+
+  nav#services-list {
+    background-color: $white;
+    line-height: 30px;
+    border-right: 1px solid $black;
+    height: 100%;
+    span { display: none; }
+    h3 {
+      height: $menu-height;
+      background-color: $white;
+      padding: 11px;
+      @include logo {
+        width: auto;
+      }
+    }
+    a {
+      color: $dark-gray;
+      text-decoration: none;
+      display: inline-block;
+      height: 100%;
+      width: 100%;
+      padding: 8px 25px;
+      border-bottom: none;
+      &:hover {
+        background-color: $lighter-gray;
+      }
+    }
+    .deals {
+      color: $light-pink;
+      font-style: bold;
+    }
+    .service-link {
+      color: $black;
+      display: block;
+    }
+    .nav-account {
+      margin-top: 15%;
+      border-top: 1px solid black;
+      padding-top: 35px;
+      .add-company { color: $light-pink; }
+    }
+  }
+}
+
+.landing {
+  background: url($landing-image-xs) no-repeat;
+  background-size: cover;
+  background-position: 60%;
+  height: 525px;
+  .container {
+    height: 100%;
+    padding: 80px 0;
+    .title {
+      padding: 0;
+      h1 {
+        color: $white;
+        text-transform: uppercase;
+        font-size: 33px;
+        width: 100%;
+        @include breakpoint(460px) { font-size: 37px; }
+        @include breakpoint(555px) { font-size: 41px; }
+        @include breakpoint(615px) { font-size: 45px; }
+        @include breakpoint(690px) { font-size: 49px; }
+        @include font-smoothing(antialiased);
+        #typed {
+          color: $light-pink;
+          font-weight: 600;
+        }
+        .typed-cursor{ @extend #typed; }
+      }
+    }
+
+  }
+}
+
+#search {
+  @extend .title;
+  @include font-smoothing(antialiased);
+  margin-top: 20px;
+  .geo-icon { display: none; }
+  .form-container {
+    padding: 30px 10px;
+  }
+  form {
+    $button-width: 70px;
+    $input-height: 55px;
+    .form-group { margin: 0 0 15px 0; }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    @include placeholder {
+      color: $lighter-gray;
+      font-weight: 300;
+    }
+    input {
+      @include border-radius(0px);
+      height: $input-height;
+      &[type='text']{
+        width: 100%;
+      }
+    }
+    button {
+      @include border-radius(0px);
+      height: $input-height;
+      border: 1px solid $light-pink;
+      background-color: $light-pink;
+      font-weight: 300;
+      width: $button-width;
+      color: $white;
+      vertical-align: top;
+      font-size: 35px;
+      .xs-size { display: inline; }
+      .md-size { display: none; }
+    }
+    #localization {
+      background: transparent;
+      color: $white;
+    }
+  }
+}
+
+footer {
+  background-color: $lighterx-gray;
+  left: 0;
+  height: 125px;
+  width: 100%;
+  margin-top: 30px;
+  .container {
+    @include logo;
+    height: 100%;
+    .logo {
+      height: 100%;
+    }
+  }
+}
+
+.deals-container {
+  %deal-padding {
+    padding: 0 10px;
+  }
+  .title {
+    h1::after{
+      content: ' ';
+      border-top: 6px solid $light-pink;
+      display: block;
+      width: 55px;
+      margin: 0 auto;
+      margin-top: 10px;
+    }
+  }
+  .deal {
+    margin-top: 20px;
+    height: 350px;
+    width: 100%;
+    max-width: 370px;
+    border: 1px solid black;
+    font-weight: bold;
+    margin-right: 20px;
+    &:first-child {
+      margin-left: 0;
+    }
+    figure { height: 55%; }
+    figcaption {
+      height: 15%;
+      background-color: $darkest-gray;
+      color: $white;
+      line-height: 52px;
+      @extend %deal-padding;
+    }
+    .service-info {
+      height: 30%;
+      background-color: $lighterx-gray;
+      line-height: 104px;
+      .service-detail {
+        width: 70%;
+        float: left;
+        @extend %deal-padding;
+        &:after {
+          content: ' ';
+          border-right: 1px solid $dark-gray;
+          height: 80px;
+          float: right;
+          margin-top: 10px;
+        }
+      }
+      .service-price {
+        width: 30%;
+        float: right;
+        line-height: 30px;
+        text-align: center;
+        padding: 22px 12px 22px 0;
+        .normal-price {
+          text-decoration: line-through;
+          color: $light-gray;
+          font-size: 18px;
+          margin-bottom: 0;
+        }
+        .min-price {
+          color: $light-pink;
+          font-size: 24px;
+        }
+      }
+    }
+  }
+  figure {
+    img{
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+#newsletter {
+  background-color: $light-pink;
+  height: 200px;
+  margin-top: 30px;
+  form {
+    height: 100%;
+    line-height: 50px;
+    @include font-smoothing;
+    p {
+      color: $white;
+      font-size: 18px;
+    }
+    input {
+      background-color: transparent;
+      color: $white;
+    }
+    @include placeholder {
+      color: $white;
+      text-align: center;
+    }
+    button{
+      color: $light-pink;
+      width: 100%;
+    }
+  }
+}
+
+#results {
+  #search {
+    margin-top: 0;
+    .form-container { padding: 10px; }
+    .form-group { margin: 0; }
+    input {
+      height: 45px;
+      color: $black;
+    }
+    button {
+      height: 45px;
+      padding: 3px 16px;
+      width: 55px;
+    }
+  }
+
+  .change-location{
+    margin: 25px 0;
+    span { color: $light-pink; }
+  }
+
+  #places {
+    .img-container {
+      margin-bottom: 20px;
+      img { width: 100%; }
+    }
+
+    .description-container {
+      margin-bottom: 20px;
+      h3 { margin-top: 0; }
+      p.address{
+        margin-bottom: 0;
+        span {
+          // Could be deleted upon
+          // geo icon set
+          color: #F26062;
+          font-size: 20px;
+          vertical-align: middle;
+        }
+      }
+      p.detail{
+        border-top: 1px solid;
+        padding-top: 10px;
+      }
+    }
+
+    .services-container {
+      margin-bottom: 20px;
+      .service {
+        padding: 10px;
+        border: 1px $light-gray solid;
+        margin-bottom: 5px;
+        overflow: hidden;
+        .time {
+          margin-left: 10px;
+          color: $lighter-gray;
+        }
+        .price { color: $light-pink; }
+      }
+      .view-more{
+        button {
+          @include border-radius(0);
+          background-color: $light-pink;
+          padding: 10px 20px;
+          color: $white;
+        }
+      }
+    }
+  }
+
+}
+
