@@ -4717,7 +4717,10 @@ class BookingsController < ApplicationController
 
     logger.debug "Max gaps: " + day_positive_gaps.max.to_s
     calendar_height = time_prop*67
-    adjusted_calendar_height = calendar_height + (day_positive_gaps.max * 100 / (60 * 100))*67
+    adjusted_calendar_height = calendar_height + calendar_height*day_positive_gaps.max.to_f/hours_diff 
+    #(day_positive_gaps.max.to_f * 100 / (60 * 100))*67
+
+    logger.debug calendar_height.to_s + " *** " + adjusted_calendar_height.to_s
     #adjusted_calendar_height = adjusted_calendar_height * 1.0207
 
 
