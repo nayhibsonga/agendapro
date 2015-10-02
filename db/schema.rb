@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150921190816) do
+ActiveRecord::Schema.define(version: 20151002142900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20150921190816) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes",               default: ""
-    t.text     "company_comment",     default: ""
+    t.text     "notes"
+    t.text     "company_comment"
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -115,11 +115,11 @@ ActiveRecord::Schema.define(version: 20150921190816) do
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
+    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.integer  "payment_id"
     t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
     t.integer  "reminder_group"
@@ -196,6 +196,7 @@ ActiveRecord::Schema.define(version: 20150921190816) do
     t.boolean  "show_in_home",        default: false
     t.integer  "country_id"
     t.boolean  "activate_i18n",       default: false
+    t.integer  "sales_user_id"
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
@@ -429,8 +430,8 @@ ActiveRecord::Schema.define(version: 20150921190816) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-    t.integer  "location_id",             null: false
-    t.integer  "stock",       default: 0
+    t.integer  "location_id"
+    t.integer  "stock"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1042,6 +1043,20 @@ ActiveRecord::Schema.define(version: 20150921190816) do
   end
 
   add_index "staff_codes", ["company_id"], name: "index_staff_codes_on_company_id", using: :btree
+
+  create_table "stats_companies", force: true do |t|
+    t.integer  "company_id",                      null: false
+    t.string   "company_name",       default: "", null: false
+    t.datetime "company_start",                   null: false
+    t.datetime "last_booking",                    null: false
+    t.integer  "week_bookings",                   null: false
+    t.integer  "past_week_bookings",              null: false
+    t.float    "web_bookings",                    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "stats_companies", ["company_id"], name: "index_stats_companies_on_company_id", using: :btree
 
   create_table "statuses", force: true do |t|
     t.string   "name",        null: false
