@@ -3819,7 +3819,8 @@ class BookingsController < ApplicationController
     for i in 0..serviceStaff.length-1
       services_arr[i] = Service.find(serviceStaff[i][:service])
       if serviceStaff[i][:provider] != "0"
-        providers_arr[i] << ServiceProvider.find(serviceStaff[0][:provider])
+        providers_arr[i] = []
+        providers_arr[i] << ServiceProvider.find(serviceStaff[i][:provider])
       else
         providers_arr[i] = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true)
       end
@@ -3839,10 +3840,15 @@ class BookingsController < ApplicationController
         next
       end
 
+      
 
 
       dateTimePointer = dtp.open
+
       dateTimePointer = DateTime.new(date.year, date.mon, date.mday, dateTimePointer.hour, dateTimePointer.min)
+      day_open_time = dateTimePointer
+
+      dateTimePointerEnd = dateTimePointer
 
 
       if date > after_date
@@ -3863,6 +3869,14 @@ class BookingsController < ApplicationController
 
         while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date)
 
+          #if !first_service.company.company_setting.allows_optimization
+          #  if dateTimePointerEnd > dateTimePointer
+          #    logger.debug "Entra acá"
+          #    dateTimePointer += first_service.company.company_setting.calendar_duration.minutes
+          #    next
+          #  end
+          #end
+
           service_valid = false
           #service = Service.find(serviceStaff[serviceStaffPos][:service])
           service = services_arr[serviceStaffPos]
@@ -3877,9 +3891,19 @@ class BookingsController < ApplicationController
             #logger.debug "Changing dtp"
             dateTimePointer = min_pt.open
             dateTimePointer = DateTime.new(date.year, date.mon, date.mday, dateTimePointer.hour, dateTimePointer.min)
+            day_open_time = dateTimePointer
           end
 
-          logger.debug dateTimePointer.to_s
+          #To deattach continous services, just delete the serviceStaffPos condition
+
+          if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization
+            #Calculate offset
+            offset_diff = (dateTimePointer-day_open_time)*24*60
+            offset_rem = offset_diff % first_service.company.company_setting.calendar_duration
+            if offset_rem != 0
+              dateTimePointer = dateTimePointer + (first_service.company.company_setting.calendar_duration - offset_rem).minutes
+            end
+          end
 
           #Find next service block starting from dateTimePointer
           service_sum = service.duration.minutes
@@ -4150,10 +4174,14 @@ class BookingsController < ApplicationController
 
                 serviceStaffPos += 1
 
-                if dateTimePointer < provider.provider_times.where(day_id: dateTimePointer.cwday).order('open asc').first.open
-                  dateTimePointer = provider.provider_times.where(day_id: dateTimePointer.cwday).order('open asc').first.open
+                if first_service.company.company_setting.allows_optimization
+                  if dateTimePointer < provider.provider_times.where(day_id: dateTimePointer.cwday).order('open asc').first.open
+                    dateTimePointer = provider.provider_times.where(day_id: dateTimePointer.cwday).order('open asc').first.open
+                  else
+                    dateTimePointer += service.duration.minutes
+                  end
                 else
-                  dateTimePointer += service.duration.minutes
+                  dateTimePointer = dateTimePointer + service.duration.minutes
                 end
 
                 break
@@ -4171,94 +4199,105 @@ class BookingsController < ApplicationController
 
             #Time check must be an overlap of (dtp - dtp+service_duration) with booking/break (start - end)
 
+
+
+
             smallest_diff = first_service.duration
             #logger.debug "Defined smallest_diff: " + smallest_diff.to_s
 
-            if first_providers.count > 1
+            if first_service.company.company_setting.allows_optimization
 
-              first_providers.each do |first_provider|
+              if first_providers.count > 1
 
-                #book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes)
+                first_providers.each do |first_provider|
+
+                  #book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes)
+
+                  book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
+                  # logger.debug "***"
+                  # logger.debug "***"
+                  # logger.debug "***"
+                  # logger.debug "DTP: " + dateTimePointer.to_s
+                  # logger.debug "Multi book_blockings: " + book_blockings.count.to_s
+                  # logger.debug "***"
+                  # logger.debug "***"
+                  # logger.debug "***"
+                  if book_blockings.count > 0
+
+                    book_diff = (book_blockings.first.end - dateTimePointer)/60
+                    if book_diff < smallest_diff
+                      smallest_diff = book_diff
+                      #logger.debug "smallest_diff1: " + smallest_diff.to_s
+                    end
+                  else
+                    break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
+                    # logger.debug "***"
+                    # logger.debug "***"
+                    # logger.debug "***"
+                    # logger.debug "DTP: " + dateTimePointer.to_s
+                    # logger.debug "Multi break_blockings: " + book_blockings.count.to_s
+                    # logger.debug "***"
+                    # logger.debug "***"
+                    # logger.debug "***"
+                    if break_blockings.count > 0
+                      break_diff = (break_blockings.first.end - dateTimePointer)/60
+                      if break_diff < smallest_diff
+                        smallest_diff = break_diff
+                        #logger.debug "smallest_diff2: " + smallest_diff.to_s
+                      end
+                    end
+                  end
+
+                end
+
+              else
+
+                first_provider = first_providers.first
 
                 book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
                 # logger.debug "***"
                 # logger.debug "***"
                 # logger.debug "***"
                 # logger.debug "DTP: " + dateTimePointer.to_s
-                # logger.debug "Multi book_blockings: " + book_blockings.count.to_s
+                # logger.debug "Single book_blockings: " + book_blockings.count.to_s
                 # logger.debug "***"
                 # logger.debug "***"
                 # logger.debug "***"
                 if book_blockings.count > 0
-
                   book_diff = (book_blockings.first.end - dateTimePointer)/60
                   if book_diff < smallest_diff
                     smallest_diff = book_diff
-                    #logger.debug "smallest_diff1: " + smallest_diff.to_s
+                    #logger.debug "smallest_diff3: " + smallest_diff.to_s
                   end
                 else
                   break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "DTP: " + dateTimePointer.to_s
-                  # logger.debug "Multi break_blockings: " + book_blockings.count.to_s
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "***"
+                    # logger.debug "***"
+                    # logger.debug "***"
+                    # logger.debug "***"
+                    # logger.debug "DTP: " + dateTimePointer.to_s
+                    # logger.debug "Single break_blockings: " + book_blockings.count.to_s
+                    # logger.debug "***"
+                    # logger.debug "***"
+                    # logger.debug "***"
                   if break_blockings.count > 0
                     break_diff = (break_blockings.first.end - dateTimePointer)/60
                     if break_diff < smallest_diff
                       smallest_diff = break_diff
-                      #logger.debug "smallest_diff2: " + smallest_diff.to_s
+                      #logger.debug "smallest_diff4: " + smallest_diff.to_s
                     end
                   end
                 end
 
               end
 
-            else
-
-              first_provider = first_providers.first
-
-              book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start => ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
-              # logger.debug "***"
-              # logger.debug "***"
-              # logger.debug "***"
-              # logger.debug "DTP: " + dateTimePointer.to_s
-              # logger.debug "Single book_blockings: " + book_blockings.count.to_s
-              # logger.debug "***"
-              # logger.debug "***"
-              # logger.debug "***"
-              if book_blockings.count > 0
-                book_diff = (book_blockings.first.end - dateTimePointer)/60
-                if book_diff < smallest_diff
-                  smallest_diff = book_diff
-                  #logger.debug "smallest_diff3: " + smallest_diff.to_s
-                end
-              else
-                break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start => ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "DTP: " + dateTimePointer.to_s
-                  # logger.debug "Single break_blockings: " + book_blockings.count.to_s
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "***"
-                if break_blockings.count > 0
-                  break_diff = (break_blockings.first.end - dateTimePointer)/60
-                  if break_diff < smallest_diff
-                    smallest_diff = break_diff
-                    #logger.debug "smallest_diff4: " + smallest_diff.to_s
-                  end
-                end
+              if smallest_diff == 0
+                smallest_diff = first_service.duration
               end
 
-            end
+            else
 
-            if smallest_diff == 0
-              smallest_diff = first_service.duration
+              smallest_diff = first_service.company.company_setting.calendar_duration
+
             end
 
             # logger.debug "####"
