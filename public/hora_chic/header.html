@@ -41,10 +41,10 @@
       <i class="fa fa-bars"></i>
     </button>
 
-    <nav id="services-list" class="content nav-links col-md-12 cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" ng-controller="LinksController">
+    <nav id="services-list" class="content nav-links col-md-12 cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" ng-controller="LinksController as links">
       <h3><div class="logo"></div></h3>
 
-      <span class="service-link" ng-repeat="service in services">
+      <span class="service-link" ng-repeat="service in links.services">
         <a ng-href="{{ service.url }}" ng-class="{ deals: service.name === 'deals' }" title="{{ tc.lang.services[service.name] }}">
           {{ tc.lang.services[service.name] }}
         </a>
