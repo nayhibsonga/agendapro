@@ -41,7 +41,7 @@
 		<div class="col-xs-12">
 			<div class="box-search">
 				<% if location.company.owned %>
-				<a href="<%= url_for(:subdomain => location.get_web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview', locale: location.get_locale) %>">
+				<a href="<%= url_for(:subdomain => location.get_web_address, :local => location.id, :controller => 'companies', :action => 'overview', locale: location.get_locale) %>">
 					<%= image_tag location.company.logo.page.url.to_s, :alt => location.company.name %>
 					<div class="description">
 						<h3><%= location.company.name %></h3>

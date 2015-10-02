@@ -4,6 +4,9 @@ var textColors = ["#707070", "#0b587d", "#a78a47", "#8e508f", "#4c8b6e", "#50520
 var resourcesColors = [];
 var servicesJSON;
 
+var dragInProgress = false;
+var dragUi = null;
+
 var bookingBuffer = []
 
 function loadProviders () {
@@ -227,7 +230,15 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 							event: 'click mouseleave unfocus',
 							leave: true,
 							fixed: true
-						}
+						},
+						events: {
+					        show: function(event, api) {
+					        	if(dragInProgress)
+					        	{
+					            	event.preventDefault();
+					            }
+					        }
+					    }
 				   	});
 		   		}
 		   		else
@@ -254,7 +265,15 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 							event: 'click mouseleave unfocus',
 							leave: true,
 							fixed: true
-						}
+						},
+						events: {
+					        show: function(event, api) {
+					        	if(dragInProgress)
+					        	{
+					            	event.preventDefault();
+					            }
+					        }
+					    }
 				   	});
 			   	}
 			}
@@ -290,8 +309,21 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
+		eventDragStart: function(event, jsEvent, ui, view){
+			ui.helper.qtip('hide');
+			dragInProgress = true;
+			dragUi = ui;
+		},
 		eventDrop: function (event) {
 			editDrag(event);
+			dragInProgress = false;
+			dragUi = null;
+		},
+		eventDragStart: function (event) {
+			window.console.log(event.start)
+		},
+		eventDragStop: function (event) {
+			window.console.log(event.start)
 		},
 		slotMinutes: duration,
 		aspectRatio: setAspectRatio(),
@@ -408,7 +440,15 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 							   event: 'click mouseleave unfocus',
 							   leave: true,
 							   fixed: true
-						   }
+						   },
+						   events: {
+						        show: function(event, api) {
+						        	if(dragInProgress)
+						        	{
+						            	event.preventDefault();
+						            }
+						        }
+						    }
 					   	});
 			   		}
 			   		else
@@ -435,7 +475,15 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 							   event: 'click mouseleave unfocus',
 							   leave: true,
 							   fixed: true
-						   }
+						   },
+						   events: {
+						        show: function(event, api) {
+						        	if(dragInProgress)
+						        	{
+						            	event.preventDefault();
+						            }
+						        }
+						    }
 					   	});
 					}
 			   }
@@ -471,8 +519,15 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		defaultEventMinutes: $('#providers-selector option:selected').data("block"),
 		editable: true,
 		disableResizing: true,
+		eventDragStart: function(event, jsEvent, ui, view){
+			ui.helper.qtip('hide');
+			dragInProgress = true;
+			dragUi = ui;
+		},
 		eventDrop: function (event) {
 			editDrag(event);
+			dragInProgress = false;
+			dragUi = null;
 		},
 		slotMinutes: $('#providers-selector option:selected').data("block"),
 		aspectRatio: setAspectRatio(),
@@ -502,7 +557,7 @@ function loadProviderEvents(providerId) {
 	if (ajaxRequest != null) {
 		ajaxRequest.abort();
 	}
-	
+
 	ajaxRequest = $.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (events_list) {
 		$('#calendar').fullCalendar('addEventSource', events_list);
 		$('#small_loader_header').remove();
@@ -565,7 +620,7 @@ function editBookingModal(eventId) {
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#booking_client_identification_number').val(booking.identification_number);
 			$('#full_name').val(booking.first_name+' '+booking.last_name);
-			//$("#full_name").prop('disabled', true);
+			$("#full_name").prop('disabled', true);
 			$('#xButton').prop('disabled', false);
 			$('#booking_client_email').val(booking.email);
 			$('#booking_client_phone').val(booking.phone);

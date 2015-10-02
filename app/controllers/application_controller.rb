@@ -17,14 +17,18 @@ class ApplicationController < ActionController::Base
     redirect_to "/403"
   end
 
+  rescue_from ActionController::InvalidAuthenticityToken do
+    redirect_to localized_root_path, alert: "Su sesión ha expirado."
+  end
+
   protected
 
   def set_locale
-    if params[:locale].blank?
+    if current_user && current_user.company_id && current_user.company_id > 0
+      I18n.locale = Company.find(current_user.company_id).country.locale
+    elsif params[:locale].blank?
       if Country.find_by(locale: I18n.locale.to_s)
         I18n.locale = I18n.locale
-      elsif current_user && current_user.company_id && current_user.company_id > 0
-        I18n.locale = Company.find(current_user.company_id).country.locale
       else
         requested_location = request_location
         if requested_location == 'CL'
@@ -73,7 +77,7 @@ class ApplicationController < ActionController::Base
     method = "#{resource}_params"
     params[resource] &&= send(method) if respond_to?(method, true)
   end
-  
+
   def quick_add
     @due_payment = false
     if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
@@ -156,7 +160,7 @@ class ApplicationController < ActionController::Base
           localized_root_path
         end
       elsif stored_location_for(resource)
-        begin 
+        begin
           url = stored_location_for(resource).gsub(localized_root_path)
           Rails.application.routes.recognize_path(url)
           stored_location_for(resource)
