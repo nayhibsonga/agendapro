@@ -5,13 +5,13 @@
     .module('HoraChic')
     .service('Translator', Translator);
 
-  Translator.$inject = ['$rootScope', 'Language'];
+  Translator.$inject = ['Language'];
 
-  function Translator($rootScope, Language) {
+  function Translator(Language) {
     this.init = init;
 
-    function init() {
-      var locale = Language.locale($rootScope.country);
+    function init(country) {
+      var locale = Language.locale(country);
       // Move this to a separated .json file and
       // use factory to call it
       var translations = {
@@ -41,7 +41,11 @@
             }
           },
           landing: {
-            typed: ["Corte de Pelo", "Tratamientos Faciales", "SPA", "Maquillaje", "Centros de Estética", "Peluquerías", "Masajes", "Manicure", "Pedicure", "Tratamientos Corporales", "Bronceados", "Medicina Alternativa"]
+            typed: ["Corte de Pelo", "Tratamientos Faciales", "SPA", "Maquillaje", "Centros de Estética", "Peluquerías", "Masajes", "Manicure", "Pedicure", "Tratamientos Corporales", "Bronceados", "Medicina Alternativa"],
+            deals: {
+              title: "Promociones Destacadas",
+              sub_title: "¡Promociones destacadas de este mes!"
+            }
           },
           error: {
             geolocation: {
