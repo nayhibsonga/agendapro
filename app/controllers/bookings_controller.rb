@@ -3788,6 +3788,7 @@ class BookingsController < ApplicationController
     index = days_ids.find_index(now.cwday)
     ordered_days = days_ids[index, days_ids.length] + days_ids[0, index]
 
+    day_positive_gaps = [0,0,0,0,0,0,0]
 
     @days_count = 0
     @week_blocks = []
@@ -3813,11 +3814,26 @@ class BookingsController < ApplicationController
     end
 
     #Look for services and providers and save them for later use.
+    #Also, save total services duration
+
+    total_services_duration = 0
+
+    #False if last tried block allocation failed.
+    #Used for searching gaps. They should be looked for only if last block culd be allocated, 
+    #because if not, then there isn't anyway that coming back in time cause correct allocation.
+    last_check = false
+
+    #Checks if the block being allocated is from a gap
+    is_gap_hour = false
+
+    #Holds current_gap to sum a day's total gap and adjust calendar's height
+    current_gap = 0
 
     services_arr = []
     providers_arr = []
     for i in 0..serviceStaff.length-1
       services_arr[i] = Service.find(serviceStaff[i][:service])
+      total_services_duration += services_arr[i].duration
       if serviceStaff[i][:provider] != "0"
         providers_arr[i] = []
         providers_arr[i] << ServiceProvider.find(serviceStaff[i][:provider])
@@ -4184,6 +4200,17 @@ class BookingsController < ApplicationController
                   dateTimePointer = dateTimePointer + service.duration.minutes
                 end
 
+                if serviceStaffPos == serviceStaff.count
+                  last_check = true
+
+                  #Sum to gap_hours the gap_amount and reset gap flag.
+                  if is_gap_hour
+                    day_positive_gaps[day-1] += (total_services_duration - current_gap)
+                    is_gap_hour = false
+                    current_gap = 0
+                  end
+                end
+
                 break
 
               end
@@ -4192,6 +4219,127 @@ class BookingsController < ApplicationController
 
           if !service_valid
 
+
+            #Reset gap_hour
+            is_gap_hour = false
+
+            #First, check if there's a gap. If so, back dateTimePointer to (blocking_start - total_duration)
+            #This way, you can give two options when there are gaps.
+
+            logger.debug "DTP starting not valid: " + dateTimePointer.to_s
+            logger.debug "Last Check: " + last_check.to_s
+
+            #Assume there is no gap
+            time_gap = 0
+
+            if first_service.company.company_setting.allows_optimization && last_check
+
+              if first_providers.count > 1
+
+                first_providers.each do |first_provider|
+
+                  book_gaps = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.start asc')
+
+                  break_gaps = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.start asc')
+
+                  provider_time_gap = first_provider.provider_times.where(day_id: dateTimePointer.cwday).order('close asc').first
+
+                  if !provider_time_gap.nil?
+
+                    provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time_gap.close.hour, provider_time_gap.close.min)
+
+                    if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
+                      gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
+                      logger.debug "Enters provider_close and gap is " + gap_diff.to_s
+                      logger.debug "Provider close: " + provider_close.to_s
+                      if gap_diff > time_gap
+                        time_gap = gap_diff
+                      end
+                    end
+
+                  end
+
+                  if book_gaps.count > 0
+                    gap_diff = (book_gaps.first.start - dateTimePointer)/60
+                    logger.debug "Enters bookings and gap is " + gap_diff.to_s
+                    logger.debug "Book start: " + book_gaps.first.start.to_s
+                    if gap_diff != 0
+                      if gap_diff > time_gap
+                        time_gap = gap_diff
+                      end
+                    end
+                  end
+
+                  if break_gaps.count > 0
+                    gap_diff = (break_gaps.first.start - dateTimePointer)/60
+                    logger.debug "Enters breaks and gap is " + gap_diff.to_s
+                    logger.debug "Break start: " + break_gaps.first.start.to_s
+                    if gap_diff != 0
+                      if gap_diff > time_gap
+                        time_gap = gap_diff
+                      end
+                    end
+                  end
+
+                end
+
+              else
+
+                #Get nearest blocking start and check the gap.
+                #Blocking can come from provider time day end.
+
+                first_provider = first_providers.first
+
+                book_gaps = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.start asc')
+
+                break_gaps = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.start asc')
+
+                provider_time_gap = first_provider.provider_times.where(day_id: dateTimePointer.cwday).order('close asc').first
+
+                if !provider_time_gap.nil?
+
+                  provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time_gap.close.hour, provider_time_gap.close.min)
+
+                  if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
+                    gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
+                    logger.debug "Enters provider_close and gap is " + gap_diff.to_s
+                    logger.debug "Provider close: " + provider_close.to_s
+                    if gap_diff > time_gap
+                      time_gap = gap_diff
+                    end
+                  end
+
+                end
+
+                if book_gaps.count > 0
+                  gap_diff = (book_gaps.first.start - dateTimePointer)/60
+                  logger.debug "Enters bookings and gap is " + gap_diff.to_s
+                  logger.debug "Book start: " + book_gaps.first.start.to_s
+                  if gap_diff != 0
+                    if gap_diff > time_gap
+                      time_gap = gap_diff
+                    end
+                  end
+                end
+
+                if break_gaps.count > 0
+                  gap_diff = (break_gaps.first.start - dateTimePointer)/60
+                  logger.debug "Enters breaks and gap is " + gap_diff.to_s
+                  logger.debug "Break start: " + break_gaps.first.start.to_s
+                  if gap_diff != 0
+                    if gap_diff > time_gap
+                      time_gap = gap_diff
+                    end
+                  end
+                end
+
+              end
+
+            end
+
+            logger.debug "DTP for gap: " + dateTimePointer.to_s
+            logger.debug "GAP: " + time_gap.to_s
+
             #Check for providers' bookings and breaks that include current dateTimePointer
             #If any, jump to the nearest end
             #Else, it's gotta be a resource issue or dtp is outside providers' time, so just add service duration as always
@@ -4199,13 +4347,12 @@ class BookingsController < ApplicationController
 
             #Time check must be an overlap of (dtp - dtp+service_duration) with booking/break (start - end)
 
-
-
-
             smallest_diff = first_service.duration
             #logger.debug "Defined smallest_diff: " + smallest_diff.to_s
 
-            if first_service.company.company_setting.allows_optimization
+
+            #Only do this when there is no gap
+            if first_service.company.company_setting.allows_optimization && time_gap == 0
 
               if first_providers.count > 1
 
@@ -4307,7 +4454,14 @@ class BookingsController < ApplicationController
             # logger.debug "OLD DTP: " + dateTimePointer.to_s
             # logger.debug "Current smallest_diff: " + smallest_diff.to_s
 
-            dateTimePointer += smallest_diff.minutes
+            if first_service.company.company_setting.allows_optimization && time_gap > 0
+              dateTimePointer = (dateTimePointer + time_gap.minutes) - total_services_duration.minutes
+              is_gap_hour = true
+              current_gap = time_gap
+            else
+              current_gap = 0
+              dateTimePointer += smallest_diff.minutes
+            end
 
             # logger.debug "NEW DTP: " + dateTimePointer.to_s
             # logger.debug "####"
@@ -4318,6 +4472,8 @@ class BookingsController < ApplicationController
             #dateTimePointer += service.duration.minutes
             serviceStaffPos = 0
             bookings = []
+
+            last_check = false
 
           end
         end
@@ -4559,7 +4715,12 @@ class BookingsController < ApplicationController
       time_prop = hours_diff/max_time_diff
     end
 
+    logger.debug "Max gaps: " + day_positive_gaps.max.to_s
     calendar_height = time_prop*67
+    adjusted_calendar_height = calendar_height + (day_positive_gaps.max * 100 / (60 * 100))*67
+    #adjusted_calendar_height = adjusted_calendar_height * 1.0207
+
+
 
     logger.debug "Time prop: " + time_prop.to_s
 
@@ -4567,7 +4728,7 @@ class BookingsController < ApplicationController
     if time_prop != 0
 
       @week_blocks.each do |week_block|
-        week_blocks += '<div class="columna-dia" data-date="' + week_block[:formatted_date] + '" style="width: ' + width + '%; height: ' + calendar_height.round(2).to_s + 'px !important;">'
+        week_blocks += '<div class="columna-dia" data-date="' + week_block[:formatted_date] + '" style="width: ' + width + '%; height: ' + adjusted_calendar_height.round(2).to_s + 'px !important;">'
 
         previous_hour = min_open.strftime("%H:%M")
         if min_block != 0
