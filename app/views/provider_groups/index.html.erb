@@ -1,0 +1,49 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Grupos de Prestadores</h2>
+      <p>Estas son los Grupos de Prestadores de Servicios, para ordenarlos y ordenarlos cómodamente en la vista "Calendario". Acá puedes editarlos y crear nuevos.</p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="pull-right" style="margin: 10px 0;">
+        <%= link_to '<i class="fa fa-plus"></i> Nuevo Grupo de Prestadores'.html_safe, new_provider_group_path, :class => "btn btn-green" %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-bordered table-green">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Local</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @provider_groups.each do |provider_group| %>
+            <tr data-resource="categories">
+              <td data-group="<%= provider_group.id %>"><%= provider_group.name %></td>
+              <td><%= provider_group.location.name %></td>
+              <td>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_provider_group_path(provider_group), :class => "btn btn-sm btn-orange" %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, provider_group, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el grupo seleccionado?' } unless cannot? :destroy, provider_group %>
+                <span class="pull-right">
+                  <i class="fa fa-bars"></i>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'admin/group_draggable' %>
+<% end %>

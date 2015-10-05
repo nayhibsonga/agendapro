@@ -17,7 +17,7 @@
 					</a></li>
 					<li class="center-li"><a class="center-link" tab_id="<%=i%>" href="#profile<%=i%>" data-toggle="tab">Descripción</a></li>
 					<li class="center-li"><a class="center-link" tab_id="<%=i%>" href="#messages<%=i%>" data-toggle="tab">Horario</a></li>
-					<li class="right-li"><%= link_to '<i class="fa fa-calendar-o"></i><br />Reservar'.html_safe, url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "reservar-link", :role => "button" %></li>
+					<li class="right-li"><%= link_to '<i class="fa fa-calendar-o"></i><br />Reservar'.html_safe, url_for(:subdomain => location.get_web_address, locale: location.get_locale, :local => location.id, :controller => 'companies', :action => 'overview'), :class => "reservar-link", :role => "button" %></li>
 				</ul>
 
 				<!-- Tab panes -->

@@ -12,3 +12,6 @@ es_CO:
   country:
     name: 'Colombia'
     domain: '.com.co'
+  district: 'localidad'
+  ditricts: 'localidades'
+  ci: 'cédula'

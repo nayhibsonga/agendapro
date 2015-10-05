@@ -67,7 +67,7 @@
 		                    <div class="form-group">
 		                        <div class="col-sm-12">
 		                            <div class="input-group input-group-lg">
-		                                <%= text_field_tag :inputLocalization2, params[:inputLocalization], class: "form-control ", placeholder: "Escribe tu dirección, sector o comuna...", required: true %>
+		                                <%= text_field_tag :inputLocalization2, params[:inputLocalization], class: "form-control ", placeholder: "Escribe tu dirección, sector o ciudad...", required: true %>
 		                                <span class="input-group-btn">
 		                                    <button id="geolocate_btn2" class="btn btn-default geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
 		                                </span>
@@ -155,8 +155,7 @@
                                 <li><a href="#" data-toggle="modal" data-target="#signup-modal" class="menu-green"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
                             <% end %>
 							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
-							<li><%= link_to image_tag("search/landing/chile.png", alt: "Chile", size: "24x16", :class => I18n.locale == 'es_CL'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CL'})), class: "i18n-flag" %></li>
-            				<li><%= link_to image_tag("search/landing/colombia.png", alt: "Colombia", size: "24x16", :class => I18n.locale == 'es_CO'.to_sym ? 'selected' : nil), url_for(params.merge({:locale => 'es_CO'})), class: "i18n-flag" %></li>
+							<%= render 'layouts/flag_dropdown' %>
 						</ul>
 					</div>
 				</div>

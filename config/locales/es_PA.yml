@@ -1,4 +1,4 @@
-es_CL:
+es_PA:
   number:
     currency:
       format:
@@ -12,3 +12,6 @@ es_CL:
   country:
     name: 'Panamá'
     domain: '.co/es_PA'
+  district: 'localidad'
+  ditricts: 'localidades'
+  ci: 'cédula'

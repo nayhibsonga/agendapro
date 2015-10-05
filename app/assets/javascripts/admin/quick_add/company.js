@@ -46,35 +46,42 @@ function updateCompany () {
 
 $(function() {
 	$('#update_company_button').click(function() {
-		updateCompany();
+		if ($('[id^="edit_company_"]').valid()) {
+			updateCompany();
+		};
 	});
 	$("input:file").change(function (){
-       var formId = $('[id^=edit_company_]').prop('id');
-		$.ajax({
-			type: 'POST',
-			url: '/quick_add/update_company',
-			data: new FormData(document.getElementById(formId)),
-			mimeType: 'multipart/form-data',
-			contentType: false,
-			processData: false,
-			success: function (result) {
-				window.console.log(result);
-				d = new Date();
-				$('#company_logo_img').attr("src", result+"?ts="+d.getTime());
-			},
-			error: function (xhr) {
-				var errors = $.parseJSON(xhr.responseText).errors;
-			    var errorList = '';
-				for (i in errors) {
-					errorList += '<li>' + errors[i] + '</li>'
-				}
-				my_alert.showAlert(
-					'<h3>Error</h3>' +
-					'<ul>' +
-						errorList +
-					'</ul>'
-				);
-			},
-		});
-     });
+		if ($('[id^="edit_company_"]').valid()) {
+	    var formId = $('[id^=edit_company_]').prop('id');
+      var src = $('#company_logo_img').attr("src");
+      $('#company_logo_img').attr("src", "/assets/mobile/loading.gif");
+			$.ajax({
+				type: 'POST',
+				url: '/quick_add/update_company',
+				data: new FormData(document.getElementById(formId)),
+				mimeType: 'multipart/form-data',
+				contentType: false,
+				processData: false,
+				success: function (result) {
+					window.console.log(result);
+					d = new Date();
+					$('#company_logo_img').attr("src", result+"?ts="+d.getTime());
+				},
+				error: function (xhr) {
+          $('#company_logo_img').attr("src", src);
+					var errors = $.parseJSON(xhr.responseText).errors;
+				  var errorList = '';
+					for (i in errors) {
+						errorList += '<li>' + errors[i] + '</li>'
+					}
+					my_alert.showAlert(
+						'<h3>Error</h3>' +
+						'<ul>' +
+							errorList +
+						'</ul>'
+					);
+				},
+			});
+		};
+  });
 });

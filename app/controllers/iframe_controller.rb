@@ -81,10 +81,6 @@ class IframeController < ApplicationController
 		end
 		@locations = Location.where(:active => true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
 
-		# => Domain parser
-		host = request.host_with_port
-		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
-
 		render layout: "iframe"
 	end
 
@@ -100,10 +96,6 @@ class IframeController < ApplicationController
 			redirect_to root_url(:host => domain)
 			return
 		end
-
-		# => Domain parser
-		host = request.host_with_port
-		@url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
 		if mobile_request?
 			company_setting = @company.company_setting
@@ -126,10 +118,6 @@ class IframeController < ApplicationController
     @selectedLocation = Location.find(@location_id)
     @company = Location.find(params[:location]).company
     cancelled_id = Status.find_by(name: 'Cancelado').id
-
-    # => Domain parser
-    host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
     booking_data = JSON.parse(params[:bookings], symbolize_names: true)
 
@@ -926,9 +914,6 @@ class IframeController < ApplicationController
         booking.delete
       end
     end
-
-    host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "iframe"
   end

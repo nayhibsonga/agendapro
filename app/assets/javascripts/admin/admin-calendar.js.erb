@@ -4,6 +4,9 @@ var textColors = ["#707070", "#0b587d", "#a78a47", "#8e508f", "#4c8b6e", "#50520
 var resourcesColors = [];
 var servicesJSON;
 
+var dragInProgress = false;
+var dragUi = null;
+
 var bookingBuffer = []
 
 function loadProviders () {
@@ -21,9 +24,19 @@ function loadProviders () {
 					$('#booking_service_provider_id').find('option').remove().end();
 					$('#providers-div').append('<select class="form-control" id="providers-selector"></select>');
 					if (providersArray.length > 1) {
-						$('#providers-selector').append('<option value="0">Todos</option>');
+						$('#providers-selector').append('<option value="0" data-resources="' + '' + '">Todos</option>');
 						$('#provider_break_service_provider_id').append('<option value="0" data-block="' + $('#calendar-data').data('calendar-duration') + '">Todos</option>');
 					}
+					var provider_groups = $('#groups_data').data('provider-groups');
+					if ($.grep(provider_groups, function(e) { return e.location_id == localId }).length > 1) {
+						$('#providers-selector').append('<option disabled role=separator>--------</option>');
+					}
+					$.each(provider_groups, function (key, group) {
+						if (group.location_id == localId) {
+							$('#providers-selector').append('<option value="0" data-resources=\'[' + JSON.stringify(group.resources) + ']\'>' + group.name + '</option>');
+						}
+					});
+					$('#providers-selector').append('<option disabled role=separator>--------</option>');
 					$.each(providersArray, function (key, provider) {
 						$('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'" data-block="' + provider.block_length + '">'+provider.public_name+'</option>');
 						resources.push({id: provider.id, name: provider.public_name});
@@ -36,9 +49,15 @@ function loadProviders () {
 						;
 					});
 					$('#providers-selector').change(function() {
+						window.console.log($('#providers-selector option:selected').data('resources'));
 						providerId = parseInt($('#providers-selector').val());
 						if (providerId == 0) {
-							loadLocationTime (localId, resources);
+							if ( $('#providers-selector option:selected').data('resources').length > 0 ) {
+								loadLocationTime (localId, $('#providers-selector option:selected').data('resources'));
+							}
+							else {
+								loadLocationTime (localId, resources);
+							}
 						}
 						else {
 							loadProviderTime(providerId);
@@ -211,7 +230,15 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 							event: 'click mouseleave unfocus',
 							leave: true,
 							fixed: true
-						}
+						},
+						events: {
+					        show: function(event, api) {
+					        	if(dragInProgress)
+					        	{
+					            	event.preventDefault();
+					            }
+					        }
+					    }
 				   	});
 		   		}
 		   		else
@@ -238,7 +265,15 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 							event: 'click mouseleave unfocus',
 							leave: true,
 							fixed: true
-						}
+						},
+						events: {
+					        show: function(event, api) {
+					        	if(dragInProgress)
+					        	{
+					            	event.preventDefault();
+					            }
+					        }
+					    }
 				   	});
 			   	}
 			}
@@ -274,8 +309,21 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		defaultEventMinutes: duration,
 		editable: true,
 		disableResizing: true,
+		eventDragStart: function(event, jsEvent, ui, view){
+			ui.helper.qtip('hide');
+			dragInProgress = true;
+			dragUi = ui;
+		},
 		eventDrop: function (event) {
 			editDrag(event);
+			dragInProgress = false;
+			dragUi = null;
+		},
+		eventDragStart: function (event) {
+			window.console.log(event.start)
+		},
+		eventDragStop: function (event) {
+			window.console.log(event.start)
 		},
 		slotMinutes: duration,
 		aspectRatio: setAspectRatio(),
@@ -392,7 +440,15 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 							   event: 'click mouseleave unfocus',
 							   leave: true,
 							   fixed: true
-						   }
+						   },
+						   events: {
+						        show: function(event, api) {
+						        	if(dragInProgress)
+						        	{
+						            	event.preventDefault();
+						            }
+						        }
+						    }
 					   	});
 			   		}
 			   		else
@@ -419,7 +475,15 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 							   event: 'click mouseleave unfocus',
 							   leave: true,
 							   fixed: true
-						   }
+						   },
+						   events: {
+						        show: function(event, api) {
+						        	if(dragInProgress)
+						        	{
+						            	event.preventDefault();
+						            }
+						        }
+						    }
 					   	});
 					}
 			   }
@@ -455,8 +519,15 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		defaultEventMinutes: $('#providers-selector option:selected').data("block"),
 		editable: true,
 		disableResizing: true,
+		eventDragStart: function(event, jsEvent, ui, view){
+			ui.helper.qtip('hide');
+			dragInProgress = true;
+			dragUi = ui;
+		},
 		eventDrop: function (event) {
 			editDrag(event);
+			dragInProgress = false;
+			dragUi = null;
 		},
 		slotMinutes: $('#providers-selector option:selected').data("block"),
 		aspectRatio: setAspectRatio(),
@@ -471,7 +542,9 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 	loadProviderEvents(providerId);
 }
 
+var ajaxRequest;
 function loadProviderEvents(providerId) {
+	$('#small_loader_header').remove();
 	$(".fc-button").css("display", "none");
 	$(".fc-header-center").append('<span id="small_loader_header"><i class="fa fa-spinner fa-spin"></i> </span>');
 	var localId = parseInt($('#locals-selector').val());
@@ -480,7 +553,12 @@ function loadProviderEvents(providerId) {
 	var startParam = start.getFullYear()+'-'+(start.getMonth()+1)+'-'+start.getDate();
 	var endParam = end.getFullYear()+'-'+(end.getMonth()+1)+'-'+end.getDate();
 	$('#calendar').fullCalendar('removeEvents');
-	$.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (events_list) {
+
+	if (ajaxRequest != null) {
+		ajaxRequest.abort();
+	}
+
+	ajaxRequest = $.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (events_list) {
 		$('#calendar').fullCalendar('addEventSource', events_list);
 		$('#small_loader_header').remove();
 		$(".fc-button").css("display", "inline-block");
@@ -492,7 +570,8 @@ function loadProviderEvents(providerId) {
 function editBookingModal(eventId) {
 
 	$("#is_edit_modal").val("1");
-
+	$("#full_name").attr("disabled", false);
+	$("#xButton").attr("disabled", false);
 	if (eventId.toString().indexOf('b') >= 0) {
 		editBreakModal(eventId.split('b')[1]);
 	}
@@ -660,7 +739,7 @@ function editBookingModal(eventId) {
 				$("#sessions-info").empty();
 				$("#sessions-info").append("Esta reserva corresponde a la " + booking.sessions_ratio + " del servicio.");
 				$("#sessions-row").show();
-				$("#xButton").attr("disabled", true);
+				//$("#xButton").attr("disabled", true);
 			}
 
 			$('#bookingModal #myTab').show();
@@ -770,7 +849,7 @@ function createBookingModal(date, provider_id) {
 					$('#booking_service_id').removeAttr('disabled');
 					$('#booking_service_id option').first().attr("selected", true);
 					modalChange();
-					checkClientSessions();
+					checkClientSessions(true);
 				});
 			};
 			$('#client-history-tbody').html('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
@@ -828,7 +907,6 @@ function booking_valid (booking) {
 			$('#bookingStartMinute').val($('#bookingEndMinute').val());
 			$('#bookingEndHour').val('');
 			$('#bookingEndMinute').val('');
-			$('#booking_service_provider_id').val('');
 			$('#booking_provider_lock').prop('checked', false);
 			$('#booking_service_id').val('');
 			$('#booking_price').val(0);
@@ -897,6 +975,10 @@ function jsonBooking() {
 	if($("#has_sessions").val() == "1")
 	{
 		jsBooking["session_booking_id"] = $('[name="sessions-choice"]:checked').val();
+	}
+	else
+	{
+		delete jsBooking["session_booking_id"];
 	}
 	return jsBooking;
 }
@@ -2057,7 +2139,7 @@ function setAge() {
 	return false;
 }
 
-function checkClientSessions()
+function checkClientSessions(service_change)
 {
 
 	modalChange();
@@ -2111,6 +2193,10 @@ function checkClientSessions()
 								});
 							}
 						}
+						else
+						{
+							$("#has_sessions").val("0");
+						}
 					}
 				});
 			}
@@ -2133,6 +2219,10 @@ function checkClientSessions()
 							$("#sessions-row").show();
 							$("#add-service-btn").hide();
 							$("#has_sessions").val("1");
+						}
+						else
+						{
+							$("#has_sessions").val("0");
 						}
 					}
 				});
@@ -2162,75 +2252,86 @@ function checkClientSessions()
 				}
 			});
 		}*/
-		$("#sessions-info").empty();
-		$("#sessions-row").hide();
-		$("#add-service-btn").show();
-		$("#has_sessions").val("0");
-
-		if (parseInt($('#booking_client_id').val()) > 0)
+		if(service_change)
 		{
-			if(parseInt($("#booking_service_id").val()) > 0)
-			{
-				$.ajax({
-					type: "get",
-					url: "/clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
-					success: function(response)
-					{
-						var service = response[0]
-						var sessions_bookings = response[1]
+			$("#sessions-info").empty();
+			$("#sessions-row").hide();
+			$("#add-service-btn").show();
+			$("#has_sessions").val("0");
 
-						if (service.has_sessions)
+			if (parseInt($('#booking_client_id').val()) > 0)
+			{
+				if(parseInt($("#booking_service_id").val()) > 0)
+				{
+					$.ajax({
+						type: "get",
+						url: "/clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
+						success: function(response)
 						{
-							if (sessions_bookings.length > 0)
+							var service = response[0]
+							var sessions_bookings = response[1]
+
+							if (service.has_sessions)
 							{
-								$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+								if (sessions_bookings.length > 0)
+								{
+									$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+								}
+								else
+								{
+									$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+								}
+								$("#sessions-row").show();
+								$("#add-service-btn").hide();
+								$("#has_sessions").val("1");
+								if(sessions_bookings.length > 0)
+								{
+									var index = 0;
+									$.each(sessions_bookings, function (key, session_booking) {
+										var nextSession = session_booking.sessions_taken + 1;
+										if(index == 0)
+										{
+											$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '" checked />&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+										}
+										else
+										{
+											$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '">&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+										}
+										index = index + 1;
+									});
+								}
 							}
 							else
 							{
-								$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
-							}
-							$("#sessions-row").show();
-							$("#add-service-btn").hide();
-							$("#has_sessions").val("1");
-							if(sessions_bookings.length > 0)
-							{
-								var index = 0;
-								$.each(sessions_bookings, function (key, session_booking) {
-									var nextSession = session_booking.sessions_taken + 1;
-									if(index == 0)
-									{
-										$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '" checked />&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
-									}
-									else
-									{
-										$("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '">&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
-									}
-									index = index + 1;
-								});
+								$("#has_sessions").val("0");
 							}
 						}
-					}
-				});
+					});
+				}
 			}
-		}
-		else
-		{
-			if(parseInt($("#booking_service_id").val()) > 0)
+			else
 			{
-				$.ajax({
-					type: "get",
-					url: "services/" + $("#booking_service_id").val() + ".json",
-					success: function(service)
-					{
-						if(service.has_sessions)
+				if(parseInt($("#booking_service_id").val()) > 0)
+				{
+					$.ajax({
+						type: "get",
+						url: "services/" + $("#booking_service_id").val() + ".json",
+						success: function(service)
 						{
-							$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar una nueva reserva y agendar la primera sesión.');
-							$("#sessions-row").show();
-							$("#add-service-btn").hide();
-							$("#has_sessions").val("1");
+							if(service.has_sessions)
+							{
+								$("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar una nueva reserva y agendar la primera sesión.');
+								$("#sessions-row").show();
+								$("#add-service-btn").hide();
+								$("#has_sessions").val("1");
+							}
+							else
+							{
+								$("#has_sessions").val("0");
+							}
 						}
-					}
-				});
+					});
+				}
 			}
 		}
 	}
@@ -2336,7 +2437,7 @@ $(function() {
 	});
 	$("#booking_service_id").on("change", function() {
 		modalChange();
-		checkClientSessions();
+		checkClientSessions(true);
 	});
 
 	$("#dp").datepicker({
@@ -2442,7 +2543,8 @@ $(function() {
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
-			checkClientSessions();
+			checkClientSessions(false);
+			loadBookingPayment(0);
 		},
 		focus: function (event, ui) {
 			event.preventDefault();
@@ -2494,6 +2596,61 @@ $(function() {
 			$('#xButton').prop('disabled', false);
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
+			checkClientSessions(false);
+			loadBookingPayment(0);
+		},
+		focus: function (event, ui) {
+			event.preventDefault();
+			var client = eval("(" + ui.item.value + ")");
+			$("#booking_client_email").val(client.email);
+		}
+	}).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+		return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+	};
+
+	$("#booking_client_identification_number").autocomplete({
+		source: '/clients_rut_suggestion',
+		appendTo: '#rut_suggestions',
+		autoFocus: false,
+		minLength: 3,
+		select: function( event, ui ) {
+			event.preventDefault();
+			var client = eval("(" + ui.item.value + ")");
+			$('#booking_client_first_name').val(client.first_name);
+			$('#booking_client_last_name').val(client.last_name);
+			$('#booking_client_phone').val(client.phone);
+			$('#booking_client_email').val(client.email);
+			$('#booking_client_id').val(client.id);
+			$('#booking_client_identification_number').val(client.identification_number);
+			$('#booking_client_address').val(client.address);
+			$('#booking_client_district').val(client.district);
+			$('#booking_client_city').val(client.city);
+			$('#booking_client_birth_day option[value="'+client.birth_day+'"]').prop('selected', true);
+			$('#booking_client_birth_month option[value="'+client.birth_month+'"]').prop('selected', true);
+			$('#booking_client_birth_year option[value="'+client.birth_year+'"]').prop('selected', true);
+			$('#booking_client_age').val(client.age);
+			$('#booking_client_second_phone').val(client.second_phone);
+			$('#booking_client_record').val(client.record);
+			$('.client_link').attr('href','/clients/' + client.id + '/edit');
+			$('.client_link').html('Ir a la ficha del cliente...');
+			$('#booking_client_gender option[value="'+client.gender+'"]').attr("selected",true);
+			if (validEmail($("#booking_client_email").val())) {
+				$('#booking_send_mail').prop('disabled', false);
+				$('#booking_send_mail').val(1);
+				$('#booking_send_mail').prop('checked', true);
+				$('label[for=booking_send_mail]').removeClass('disabled');
+			}
+			else {
+				$('#booking_send_mail').val(0);
+				$('#booking_send_mail').prop('checked', false);
+				$('#booking_send_mail').prop('disabled', true);
+				$('label[for=booking_send_mail]').addClass('disabled');
+			}
+			$('#xButton').prop('disabled', false);
+			$('#full_name').prop('disabled', true);
+			$('#full_name').val(client.first_name+' '+client.last_name);
+			loadClientHistory(0);
+			checkClientSessions(false);
 			loadBookingPayment(0);
 		},
 		focus: function (event, ui) {
@@ -2584,7 +2741,7 @@ $(function() {
 		$('label[for=booking_send_mail]').addClass('disabled');
 		$('#client-history-tbody').empty();
 		$('#client-history-tbody').append('<tr><td colspan="6">No hay un cliente seleccionado...</td></tr>');
-		checkClientSessions();
+		checkClientSessions(false);
 		$('#xButton').prop('disabled', true);
 	});
 

@@ -14,7 +14,7 @@ $(function () {
     };
   });
 
-  $('#company_web_address').on('change', function() {
+  $('.company-web-address').on('change', function() {
     var tmp = $('#company_web_address').val();
     tmp = tmp.toLowerCase();
     tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
@@ -24,52 +24,68 @@ $(function () {
     tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
     tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
     tmp = tmp.replace(/[^a-z0-9]/gi,'');
-    $('#company_web_address').val(tmp);
+    $(this).val(tmp);
   });
 
   $("#company_logo").change(function (){
-    var formId = $('#company-form').prop('id');
-    $.ajax({
-      type: 'POST',
-      url: '/quick_add/update_company',
-      data: new FormData(document.getElementById(formId)),
-      mimeType: 'multipart/form-data',
-      contentType: false,
-      processData: false,
-      success: function (result) {
-        window.console.log(result);
-        d = new Date();
-        $('#company-form img').attr("src", result+"?ts="+d.getTime());
-      },
-      error: function (xhr) {
-        var errors = $.parseJSON(xhr.responseText).errors;
-        var errorList = '';
-        for (i in errors) {
-          errorList += '* ' + errors[i] + '\n'
-        }
-        alert(
-          'Error\n' +
-          '--------' +
-          errorList
-        );
-      },
-    });
+    if ($("#company_logo").valid()) {
+      var src = $('#company-form img').attr("src");
+      $('#company-form img').attr("src", "/assets/mobile/loading.gif");
+      var formId = $('#company-form').prop('id');
+      $.ajax({
+        type: 'POST',
+        url: '/quick_add/update_company',
+        data: new FormData(document.getElementById(formId)),
+        mimeType: 'multipart/form-data',
+        contentType: false,
+        processData: false,
+        success: function (result) {
+          d = new Date();
+          $('#company-form img').attr("src", result+"?ts="+d.getTime());
+          $("#company_logo").val('');
+        },
+        error: function (xhr) {
+          $('#company-form img').attr("src", src);
+          var errors = $.parseJSON(xhr.responseText).errors;
+          var errorList = '';
+          for (i in errors) {
+            errorList += '* ' + errors[i] + '\n'
+          }
+          alert(
+            'Error\n' +
+            '--------' +
+            errorList
+          );
+        },
+      });
+    };
+  });
+
+  $('.company-country-checkbox').change(function() {
+    var t = $(this).attr('id');
+    t = t.substr(0, t.lastIndexOf("_"));
+    if ( $('#' + t + '_active').prop('checked') ) {
+      $('#' + t + '_web_address').prop('disabled', false);
+      $('#' + t + '_web_address').val($('#company_web_address').val());
+    }
+    else {
+      $('#' + t + '_web_address').prop('disabled', true);
+      $('#' + t + '_web_address').val('');
+    }
   });
 
   if ($('#company_setting_can_edit').prop('checked')) {
-    var thisGroup = $('#company_setting_can_edit').closest('.form-group');
-    thisGroup.next().removeClass('hidden');
+    $('#company_setting_max_changes').closest('.form-group').removeClass('hidden');
   } else{
-    var thisGroup = $('#company_setting_can_edit').closest('.form-group');
-    thisGroup.next().addClass('hidden');
+    $('#company_setting_max_changes').closest('.form-group').addClass('hidden');
   };
 
   $('#company_setting_can_edit').change(function () {
-    var thisGroup = $(this).closest('.form-group');
+    var maxChange = $('#company_setting_max_changes').closest('.form-group');
     if ($(this).prop('checked')) {
-      thisGroup.next().removeClass('hidden');
+      maxChange.removeClass('hidden');
     } else{
-      thisGroup.next().addClass('hidden');
+      maxChange.addClass('hidden');
     };
   });
 

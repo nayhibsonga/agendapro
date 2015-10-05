@@ -105,7 +105,7 @@ class PuntoPagosController < ApplicationController
         months_active_left = company.months_active_left
         plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
         due_amount = company.due_amount
-        plan_price = Plan.find(plan_id).price
+        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
         plan_month_value = (month_days - day_number + 1)*plan_price/month_days
 
         trx_comp = company.id.to_s + "0" + plan_id.to_s + "0"
@@ -214,7 +214,7 @@ class PuntoPagosController < ApplicationController
           @token = params[:token]
           @success_page = "booking"
           host = request.host_with_port
-          @url = @bookings.first.location.company.web_address + '.' + host[host.index(request.domain)..host.length]
+          @url = @bookings.first.location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
           if !@bookings.first.booking_group.nil?
             not_payed_bookings = Booking.where(:booking_group => @bookings.first.booking_group, :payed => false)

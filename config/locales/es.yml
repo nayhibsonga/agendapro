@@ -208,3 +208,6 @@ es:
   country:
     name: 'Latinoamérica'
     domain: '.co'
+  district: 'comuna'
+  ditricts: 'comunas'
+  ci: 'cédula'

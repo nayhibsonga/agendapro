@@ -12,3 +12,6 @@ es_CL:
   country:
     name: 'Chile'
     domain: '.cl'
+  district: 'comuna'
+  ditricts: 'comunas'
+  ci: 'RUT'

@@ -1,5 +1,5 @@
 <li class="dropdown">
-	<a href="" class="dropdown-toggle menu-green" data-toggle="dropdown"><%= current_user.email %> <i class="fa fa-chevron-down"></i></a>
+	<a href="" class="dropdown-toggle menu-green" data-toggle="dropdown"><span class="email-dropdown"><%= current_user.email %></span> <i class="fa fa-chevron-down"></i></a>
 	<ul class="dropdown-menu">
 		<li>
 		<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
@@ -12,9 +12,7 @@
 		<li><%= link_to '<i class="fa fa-user fa-fw"></i> Editar Perfil'.html_safe, edit_user_registration_url(subdomain: false) %></li>
 		<li><%= link_to '<i class="fa fa-question fa-fw"></i> Tutoriales'.html_safe, tutorials_url(subdomain: false) %></li>
 		<% if current_user.company_id && current_user.company_id > 0 %>
-		
-		<li><%= link_to '<i class="fa fa-desktop fa-fw"></i> Ver Sitio'.html_safe, root_url(:subdomain => current_user.company.web_address) %></li>
-		
+			<li><%= link_to '<i class="fa fa-desktop fa-fw"></i> Ver Sitio'.html_safe, root_url(:subdomain => current_user.company.web_address) %></li>
 		<% end %>
 		<li><%= link_to '<i class="fa fa-power-off fa-fw"></i> Salir'.html_safe, destroy_user_session_url(subdomain: false), method: :delete %></li>
 	</ul>

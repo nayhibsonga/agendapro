@@ -9,9 +9,12 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
-      <div class="pull-right" style="margin: 10px 0;">
-        <%= link_to '<i class="fa fa-plus"></i> Nuevo Prestador de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-green" %>
-          <%= link_to '<i class="fa fa-minus"></i> Prestadores de Servicios Inactivos'.html_safe, inactive_service_providers_path, :class => "btn btn-white" %>
+      <div>
+      </div>
+      <div style="margin: 10px 0;">
+        <%= link_to '<i class="fa fa-list"></i> Grupos de Prestadores'.html_safe, provider_groups_path, :class => "btn btn-green" %>
+        <%= link_to '<i class="fa fa-minus"></i> Prestadores de Servicios Inactivos'.html_safe, inactive_service_providers_path, :class => "btn btn-white pull-right", style: "margin: 0 10px;" %>
+        <%= link_to '<i class="fa fa-plus"></i> Nuevo Prestador de Servicios'.html_safe, new_service_provider_path, :class => "btn btn-green pull-right" %>
       </div>
     </div>
   </div>
@@ -37,7 +40,7 @@
                 <tbody>
                   <% @service_providers.each do |service_provider| %>
                     <% if service_provider.location_id == location.id %>
-                    <tr draggable="true">
+                    <tr>
                       <td data-provider="<%= service_provider.id %>"><%= service_provider.public_name %></td>
                       <td>
                         <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-sm btn-orange" %>
@@ -60,11 +63,6 @@
   </div>
 </div>
 
-<% content_for :stylesheets do %>
-  <%= stylesheet_link_tag "admin/draggable" %>
-<% end %>
-
 <% content_for :scripts do %>
-  <%= javascript_include_tag 'admin/draggable' %>
   <%= javascript_include_tag 'admin/provider_draggable' %>
 <% end %>

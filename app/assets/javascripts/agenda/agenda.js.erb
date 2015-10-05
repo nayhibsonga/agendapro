@@ -703,8 +703,7 @@ $(document).on('calendarBuilded', function (e) {
 
 var input2 = document.getElementById('inputLocalization2');
 var options = {
-  types: ['geocode'],
-  componentRestrictions: {country: 'cl'}
+  types: ['geocode']
 };
 var geocoder = new google.maps.Geocoder();
 var autocomplete2 = new google.maps.places.Autocomplete(input2, options);
@@ -712,10 +711,10 @@ var infowindow = new google.maps.InfoWindow();
 google.maps.event.addListener(autocomplete2, 'place_changed', function() {
   if (autocomplete2.getPlace().geometry) {
     $('#inputLocalization').val(autocomplete2.getPlace().formatted_address);
-    $('#latitude').val(autocomplete2.getPlace().geometry.location.G);
-    $('#longitude').val(autocomplete2.getPlace().geometry.location.K);
-    document.cookie = "lat=" + escape(autocomplete2.getPlace().geometry.location.G);
-    document.cookie = "lng=" + escape(autocomplete2.getPlace().geometry.location.K);
+    $('#latitude').val(autocomplete2.getPlace().geometry.location.lat());
+    $('#longitude').val(autocomplete2.getPlace().geometry.location.lng());
+    document.cookie = "lat=" + escape(autocomplete2.getPlace().geometry.location.lat());
+    document.cookie = "lng=" + escape(autocomplete2.getPlace().geometry.location.lng());
     document.cookie = "formatted_address=" + escape(autocomplete2.getPlace().formatted_address);
   }
 });
@@ -861,6 +860,14 @@ $('.sector_search_agenda').click(function() {
 $('#modal_search').click(function() {
   $('#search-form').submit();
 });
+
+/*$("#btn-delete-session-booking").click(function(){
+  var sb_id = $("#session-booking-select").val();
+  if(confirm("¿Estás seguro que deseas eliminar el tratamiento?"))
+  {
+    
+  }
+});*/
 
 <% if @lat && @lng && @formatted_address %>
 

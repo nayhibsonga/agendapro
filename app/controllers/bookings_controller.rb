@@ -15,6 +15,16 @@ class BookingsController < ApplicationController
     end
     @company_setting = @company.company_setting
     @service_providers = ServiceProvider.where(location_id: @locations).order(:order)
+    @provider_groups = JbuilderTemplate.encode(view_context) do |json|
+      json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order) do |provider_group|
+        json.name  provider_group.name
+        json.location_id provider_group.location_id
+        json.resources provider_group.service_providers.where(active: true) do |service_provider|
+          json.id service_provider.id
+          json.name service_provider.public_name
+        end
+      end
+    end
     @bookings = Booking.where(service_provider_id: @service_providers)
     @booking = Booking.new
     @provider_break = ProviderBreak.new
@@ -269,8 +279,10 @@ class BookingsController < ApplicationController
       if should_create_sessions
 
         session_booking.client_id = @booking.client_id
-        if User.find_by_email(buffer_params[:client_email])
-          session_booking.user_id = User.find_by_email(buffer_params[:client_email]).id
+        if buffer_params[:client_email] && buffer_params[:client_email] != ""
+          if User.find_by_email(buffer_params[:client_email])
+            session_booking.user_id = User.find_by_email(buffer_params[:client_email]).id
+          end
         end
 
         session_booking.save
@@ -290,16 +302,18 @@ class BookingsController < ApplicationController
         #Ele if it's an existing session, just save the SessionBooking
         if should_create_sessions
 
-          sessions_missing = session_booking.sessions_amount - 1
-          sessions_ratio = "Sesión 1 de " + @booking.service.sessions_amount.to_s
+          if !session_booking.nil?
+            sessions_missing = session_booking.sessions_amount - 1
+            sessions_ratio = "Sesión 1 de " + @booking.service.sessions_amount.to_s
 
-          for i in 0..sessions_missing-1
-            new_booking = @booking.dup
-            new_booking.is_session = true
-            new_booking.is_session_booked = false
-            new_booking.user_session_confirmed = false
-            new_booking.session_booking_id = session_booking.id
-            new_booking.save
+            for i in 0..sessions_missing-1
+              new_booking = @booking.dup
+              new_booking.is_session = true
+              new_booking.is_session_booked = false
+              new_booking.user_session_confirmed = false
+              new_booking.session_booking_id = session_booking.id
+              new_booking.save
+            end
           end
 
         elsif !session_booking.nil?
@@ -816,9 +830,6 @@ class BookingsController < ApplicationController
               end
             end
           end
-          if User.find_by_email(booking_params[:client_email])
-            new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
-          end
         end
       end
     end
@@ -972,9 +983,6 @@ class BookingsController < ApplicationController
               end
             end
           end
-          if User.find_by_email(booking_params[:client_email])
-            new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
-          end
         end
       end
     end
@@ -988,13 +996,14 @@ class BookingsController < ApplicationController
     #If updated by admin, mark for user validation
     #Also, check if client was changed and update SessionBooking and all sessions
     if @booking.is_session
+      new_booking_params[:session_booking_id] = @booking.session_booking_id
       if @booking.payed
         @booking.user_session_confirmed = false
       else
         @booking.user_session_confirmed = true
       end
-      session_booking_index = @booking.session_booking.sessions_taken + 1
-      sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
+      #session_booking_index = @booking.session_booking.sessions_taken
+      #sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
     end
     respond_to do |format|
       if @booking.update(new_booking_params)
@@ -1036,6 +1045,17 @@ class BookingsController < ApplicationController
               @booking.send_validate_mail
             end
           end
+
+          session_index = 1
+          Booking.where(:session_booking_id => @booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+            if b.id == @booking.id
+              break
+            else
+              session_index = session_index + 1
+            end
+          end
+
+          sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
 
         else
 
@@ -1382,9 +1402,11 @@ class BookingsController < ApplicationController
 
     events = Array.new
 
-    @bookings = Booking.where(:service_provider_id => @providers).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
+    @cancelled_id = Status.find_by_name('Cancelado').id
+
+    @bookings = Booking.where('bookings.service_provider_id IN (?)', @providers.pluck(:id)).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').includes(:client).includes(:service).includes(:session_booking)
     @bookings.each do |booking|
-      if booking.status_id != Status.find_by_name('Cancelado').id
+      if booking.status_id != @cancelled_id
         event = Hash.new
         booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
         booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
@@ -1434,7 +1456,7 @@ class BookingsController < ApplicationController
         if booking.is_session && booking.session_booking
           is_session = true
           session_index = 1
-          Booking.where(:session_booking_id => booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+          Booking.where(:session_booking_id => booking.session_booking_id, :is_session_booked => true).order('start asc').each do |b|
             if b.id == booking.id
               break
             else
@@ -1580,7 +1602,7 @@ class BookingsController < ApplicationController
 
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     booking_data = JSON.parse(params[:bookings], symbolize_names: true)
 
@@ -1603,8 +1625,12 @@ class BookingsController < ApplicationController
         client.email = params[:email]
         client.phone = params[:phone]
         client.save
-        if client.errors
-          puts client.errors.full_messages.inspect
+        if client.save
+
+        else
+          @errors << client.errors.full_messages
+          render layout: "workflow"
+          return
         end
       else
         @errors << "No estás ingresado como cliente"
@@ -1621,8 +1647,8 @@ class BookingsController < ApplicationController
 
         else
           @errors << client.errors.full_messages
-          logger.debug "Client errors 1"
-          logger.debug @errors.inspect
+          render layout: "workflow"
+          return
         end
       else
         client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
@@ -1630,8 +1656,8 @@ class BookingsController < ApplicationController
 
         else
           @errors << client.errors.full_messages
-          logger.debug "Client errors 2"
-          logger.debug @errors.inspect
+          render layout: "workflow"
+          return
         end
       end
     end
@@ -2464,20 +2490,22 @@ class BookingsController < ApplicationController
     # end
 
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "workflow"
   end
 
   def remove_bookings
     @bookings = Booking.find(params[:bookings].split())
+    @location = @bookings.first.location
+    @company = Company.find(params[:company])
     @bookings.each do |booking|
       booking.destroy
     end
 
     # => Domain parser
     host = request.host_with_port
-    @url = Company.find(params[:company]).web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     flash[:notice] = "Reserva cancelada"
     redirect_to @url
@@ -2493,7 +2521,7 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(@booking.location_id)
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
     booking_start = DateTime.parse(@booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
@@ -2692,7 +2720,7 @@ class BookingsController < ApplicationController
                       provider_free = false
                       break
                     end
-                  elsif @service.group_service && @service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => @service.id, :start => start_time_block).where.not(status_id: Status.find_by_name('Cancelado')).count >= @service.capacity
+                  elsif @service.group_service && @service.id == provider_booking.service_id && provider.bookings.where(:service_id => @service.id, :start => start_time_block).where.not(status_id: Status.find_by_name('Cancelado')).count >= @service.capacity
                     if !provider_booking.is_session || (provider_booking.is_session and provider_booking.is_session_booked)
                       provider_free = false
                       break
@@ -2776,7 +2804,7 @@ class BookingsController < ApplicationController
     end
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @booking.location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "workflow"
   end
@@ -2807,7 +2835,7 @@ class BookingsController < ApplicationController
 
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "workflow"
   end
@@ -2820,17 +2848,13 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(@booking.location_id)
 
     status_confirmed = Status.find_by(:name => 'Confirmado')
-    status_reservado = Status.find_by_name('Reservado')
-    status_pagado = Status.find_by_name('Pagado')
+    #status_reservado = Status.find_by_name('Reservado')
+    #status_pagado = Status.find_by_name('Pagado')
+    status_cancelado = Status.find_by_name('Cancelado')
 
-    if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > @booking.start || (@booking.status_id != status_reservado.id && @booking.status_id != status_pagado.id)
-      if @booking.status_id == status_confirmed.id
-        redirect_to confirm_success_path(:id => @booking.id)
-        return
-      else
+    if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > @booking.start || @booking.status_id == status_cancelado.id
         redirect_to confirm_error_path(:id => @booking.id)
         return
-      end
     end
 
 
@@ -2850,30 +2874,24 @@ class BookingsController < ApplicationController
     crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
     id = crypt.decrypt_and_verify(params[:confirmation_code])
     booking = Booking.find(id)
-    @bookings = Booking.where(location_id: booking.location_id).where(booking_group: booking.booking_group)
+    @bookings = Booking.where(location_id: booking.location_id).where(reminder_group: booking.reminder_group)
     @company = Location.find(booking.location_id).company
     @selectedLocation = Location.find(booking.location_id)
 
     status_confirmed = Status.find_by(:name => 'Confirmado')
-    status_reservado = Status.find_by_name('Reservado')
-    status_pagado = Status.find_by_name('Pagado')
+    status_cancelado = Status.find_by_name('Cancelado')
 
     @bookings.each do |b|
-      if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > b.start || (b.status_id != status_reservado.id && b.status_id != status_pagado.id)
-        if b.status_id != status_confirmed.id
-          reason = ""
-          if b.status_id == Status.find_by_name("Asiste").id
-            reason = "ya asististe a ella."
-          elsif b.status_id == Status.find_by_name("Cancelado").id
+      if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > b.start || b.status_id == status_cancelado.id
+          
+          if b.status_id == status_cancelado.id
             reason = "fue cancelada."
-          elsif b.status_id == Status.find_by_name("No asiste").id
-            reason = "ya ocurrió y no asististe."
           else
             reason = "ya ocurrió."
           end
+          
           redirect_to confirm_error_path(:id => @bookings.first.id, :group_confirm => true, :reason => reason)
           return
-        end
       end
     end
 
@@ -2898,7 +2916,7 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(@booking.location_id)
     @bookings = []
     if params[:group_confirm]
-      @bookings = Booking.where(:location_id => @booking.location_id, :booking_group => @booking.booking_group)
+      @bookings = Booking.where(location_id: @booking.location_id).where(reminder_group: @booking.reminder_group)
       @reason = params[:reason]
     end
     render layout: 'workflow'
@@ -2910,7 +2928,7 @@ class BookingsController < ApplicationController
     @selectedLocation = Location.find(@booking.location_id)
     @bookings = []
     if params[:group_confirm]
-      @bookings = Booking.where(:location_id => @booking.location_id, :booking_group => @booking.booking_group)
+      @bookings = Booking.where(location_id: @booking.location_id).where(reminder_group: @booking.reminder_group)
     end
     render layout: 'workflow'
   end
@@ -2929,7 +2947,7 @@ class BookingsController < ApplicationController
     end
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @booking.location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     render layout: "workflow"
   end
@@ -3156,8 +3174,225 @@ class BookingsController < ApplicationController
 
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
+    render layout: 'workflow'
+  end
+
+  def cancel_all_reminded_booking
+    require 'date'
+
+    unless params[:id]
+      crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+      id = crypt.decrypt_and_verify(params[:confirmation_code])
+      @booking = Booking.find(id)
+      @company = Location.find(@booking.location_id).company
+      @bookings = Booking.where(location_id: @booking.location_id).where(reminder_group: @booking.reminder_group)
+      @selectedLocation = Location.find(@booking.location_id)
+
+      now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+
+      #Pagadas
+
+      if @booking.check_for_promo_payment
+        redirect_to blocked_cancel_path(:id => @booking.id, :promo => true)
+        return
+      end
+
+      #Revisar si fue pagada en línea.
+      #Si lo fue, revisar política de modificación.
+      @bookings.each do |booking|
+        if booking.payed || !booking.payed_booking.nil?
+
+          if !booking.is_session
+            if !@company.company_setting.online_cancelation_policy.nil?
+              ocp = @company.company_setting.online_cancelation_policy
+              if !ocp.cancelable
+                redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                return
+              else
+                #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+                #Mínimo
+                book_start = DateTime.parse(booking.start.to_s)
+                min_hours = (book_start-now)/(60*60)
+                min_hours = min_hours.to_i.abs
+
+                if min_hours >= ocp.min_hours.to_i
+                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                end
+
+                #Máximo
+                booking_creation = DateTime.parse(booking.created_at.to_s)
+                minutes = (booking_creation.to_time - now.to_time)/(60)
+                hours = (booking_creation.to_time - now.to_time)/(60*60)
+                days = (booking_creation.to_time - now.to_time)/(60*60*24)
+                minutes = minutes.to_i.abs
+                hours = hours.to_i.abs
+                days = days.to_i.abs
+                weeks = days/7
+                months = days/30
+
+                #Obtener el máximo
+                num = ocp.cancel_max.to_i
+                if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+                  if minutes >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+                  if hours >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+                  if weeks >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+                  if months >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                end
+
+              end
+            end
+          end
+
+        end
+
+        booking_start = DateTime.parse(booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
+
+        if (booking_start <=> now) < 1
+          flash[:alert] = "No fue posible cancelar"
+          redirect_to root_path
+          return
+        end
+
+      end
+      #Fin pagadas
+
+      # else
+      #   status = Status.find_by(:name => 'Cancelado').id
+      #   @bookings.each do |book|
+      #     if book.update(status_id: status)
+      #       current_user ? user = current_user.id : user = 0
+      #       BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user)
+      #     end
+      #   end
+      # end
+
+    else
+      booking = Booking.find(params[:id])
+      @company = Location.find(booking.location_id).company
+      @bookings = Booking.where(location_id: booking.location_id).where(reminder_group: booking.reminder_group)
+      @selectedLocation = Location.find(booking.location_id)
+      status = Status.find_by(:name => 'Cancelado').id
+      were_payed = true
+
+      @bookings.each do |booking|
+        if booking.payed || !booking.payed_booking.nil?
+
+          if !booking.is_session
+            if !@company.company_setting.online_cancelation_policy.nil?
+              ocp = @company.company_setting.online_cancelation_policy
+              if !ocp.cancelable
+                redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                return
+              else
+                #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+                now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+                #Mínimo
+                book_start = DateTime.parse(booking.start.to_s)
+                min_hours = (book_start-now)/(60*60)
+                min_hours = min_hours.to_i.abs
+
+                if min_hours >= ocp.min_hours.to_i
+                  redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                end
+
+                #Máximo
+                booking_creation = DateTime.parse(booking.created_at.to_s)
+                minutes = (booking_creation.to_time - now.to_time)/(60)
+                hours = (booking_creation.to_time - now.to_time)/(60*60)
+                days = (booking_creation.to_time - now.to_time)/(60*60*24)
+                minutes = minutes.to_i.abs
+                hours = hours.to_i.abs
+                days = days.to_i.abs
+                weeks = days/7
+                months = days/30
+
+                #Obtener el máximo
+                num = ocp.cancel_max.to_i
+                if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+                  if minutes >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+                  if hours >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+                  if weeks >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+                  if months >= num
+                    redirect_to blocked_cancel_path(:id => booking.id, :online => true)
+                    return
+                  end
+                end
+
+              end
+            end
+          end
+
+        else
+          were_payed = false
+        end
+      end
+      #Fin pagadas
+
+      success = true
+      are_session_bookings = true
+      @bookings.each do |book|
+
+        is_booked = book.is_session_booked
+
+        if book.is_session
+          is_booked = false
+          status = book.status.id
+        else
+          are_session_bookings = false
+        end
+        if book.update(status_id: status, is_session_booked: is_booked)
+          current_user ? user = current_user.id : user = 0
+          BookingHistory.create(booking_id: book.id, action: "Cancelada por Cliente", start: book.start, status_id: book.status_id, service_id: book.service_id, service_provider_id: book.service_provider_id, user_id: user, notes: book.notes, company_comment: book.company_comment)
+        else
+          success = false
+        end
+
+      end
+
+      if success && were_payed && !are_session_bookings
+        payed_booking = @bookings.first.payed_booking
+        BookingMailer.cancel_payment_mail(payed_booking, 1)
+        BookingMailer.cancel_payment_mail(payed_booking, 2)
+        BookingMailer.cancel_payment_mail(payed_booking, 3)
+      end
+
+    end
+
+    # => Domain parser
+    host = request.host_with_port
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
     render layout: 'workflow'
   end
 
@@ -3271,6 +3506,7 @@ class BookingsController < ApplicationController
       booking = Booking.find(params[:id])
       @company = Location.find(booking.location_id).company
       @bookings = Booking.where(location: booking.location).where(booking_group: booking.booking_group)
+      @selectedLocation = Location.find(booking.location_id)
       status = Status.find_by(:name => 'Cancelado').id
       were_payed = true
 
@@ -3373,7 +3609,7 @@ class BookingsController < ApplicationController
 
     # => Domain parser
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @selectedLocation.get_web_address + '.' + host[host.index(request.domain)..host.length]
     render layout: 'workflow'
   end
 
@@ -3614,10 +3850,10 @@ class BookingsController < ApplicationController
           service = Service.find(serviceStaff[serviceStaffPos][:service])
 
           #Get providers min
-          min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(:location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
+          min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
 
-          #logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
-          #logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
+          # logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
+          # logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
 
           if !min_pt.nil? && min_pt.open.strftime("%H:%M") > dateTimePointer.strftime("%H:%M")
             #logger.debug "Changing dtp"
@@ -3667,7 +3903,15 @@ class BookingsController < ApplicationController
             if serviceStaff[serviceStaffPos][:provider] != "0"
               providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
             else
-              providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
+              #Check if providers have same day open
+              #If they do, choose the one with less ocupations to start with
+              #If they don't, choose the one that starts earlier.
+              if service.check_providers_day_times(dateTimePointer)
+                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+              else
+                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+              end
             end
 
             providers.each do |provider|
@@ -3735,8 +3979,9 @@ class BookingsController < ApplicationController
                   end
                   used_resource = 0
                   group_services = []
+                  pointerEnd = dateTimePointer+service.duration.minutes
                   local.bookings.where(:start => dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |location_booking|
-                    if location_booking.status_id != cancelled_id && (location_booking.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= location_booking.start.to_datetime)
+                    if location_booking.status_id != cancelled_id && !(pointerEnd <= location_booking.start.to_datetime || location_booking.end.to_datetime <= dateTimePointer)
                       if location_booking.service.resources.include?(resource)
                         if !location_booking.service.group_service
                           used_resource += 1
@@ -3792,7 +4037,7 @@ class BookingsController < ApplicationController
                   bookings.last[:time_discount] = 0
                 end
 
-                if service.has_time_discount && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable
+                if service.has_time_discount && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable && service.time_promo_active
 
                   promo = Promo.where(:day_id => date.cwday, :service_promo_id => service.active_service_promo_id, :location_id => local.id).first
 
@@ -4189,9 +4434,9 @@ class BookingsController < ApplicationController
               end
             else
               if top_margin > 0
-                week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></div>'
+                week_blocks += '<div style="border-top: 1px solid #d2d2d2 !important; margin-top: ' + top_margin.to_s + 'px !important; height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px; font-size: 14px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></div>'
               else
-                week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></span></div>'
+                week_blocks += '<div style="height: ' + hour_diff.to_s + 'px;" class="bloque-hora ' + hour[:status] + '" data-start="' + hour[:start_block] + '" data-end="' + hour[:end_block] + '" data-providerid="' + hour[:provider_id].to_s + '" data-provider="' + hour[:available_provider] + '" data-discount="' + hour[:promo_discount] + '" data-index="' +  hour[:index].to_s + '" data-timediscount="' + hour[:has_time_discount].to_s + '" data-groupdiscount="' + hour[:group_discount] + '"><span style="line-height: ' + hour_diff.to_s + 'px; height: ' + span_diff.to_s + 'px; font-size: 14px;">' + '<div class="in-block-discount">' + ActionController::Base.helpers.image_tag('promociones/icono_promociones.png', class: 'promotion-hour-icon-green', size: "18x18") + ActionController::Base.helpers.image_tag('promociones/icono_promociones_blanco.png', class: 'promotion-hour-icon-white', size: "18x18") + '&nbsp;-' + hour[:group_discount] + '%</div> &nbsp;' + hour[:start_block] + ' - ' + hour[:end_block]  + '</span></span></div>'
               end
             end
           end
@@ -4303,7 +4548,7 @@ class BookingsController < ApplicationController
           if serviceStaff[serviceStaffPos][:provider] != "0"
             providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
           else
-            providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+            providers = ServiceProvider.where(id: service.service_providers.pluck(:id), online_booking: true, location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
           end
 
           providers.each do |provider|
@@ -4437,7 +4682,7 @@ class BookingsController < ApplicationController
     @string_bookings = JSON.pretty_generate(@bookings)
 
     host = request.host_with_port
-    @url = @company.web_address + '.' + host[host.index(request.domain)..host.length]
+    @url = @local.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
     # hash_array = Array.new
 

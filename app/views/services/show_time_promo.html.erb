@@ -14,9 +14,6 @@
         <div class="promo-title">
           <%= @service.name %> en <%= @location.name %> de <%= @location.company.name %>
         </div>
-        <div class="promo-description">
-          <%= @service.promo_description.html_safe %>
-        </div>
       </div>
     </div>
 
@@ -267,6 +264,9 @@
         <div class="promo-image" style="margin-top: 15px;">
           <%= image_tag @service.time_promo_photo.url.to_s, :alt => "Loader", :size => "554x302", :class => "img-responsive", :id => "promo_photo" %>
         </div>
+        <div class="promo-description">
+          <%= @service.promo_description.html_safe %>
+        </div>
         <div class="google-maps-empresa">
           <h3><%= @service.company.name %></h3>
           <div id="time-promo-map"></div>
@@ -432,33 +432,34 @@
             <div class="col-md-3">
 
               <div class="changeStaffPanel" style="margin-bottom: 10px;">
-                <div id="changeStaffTitle" style="display: inline;">
-                  <a data-toggle="collapse" href="#staffCollapse" aria-expanded="false" aria-controls="staffCollapse">
+                <div id="changeStaffTitle" style="display: inline; color: #22c488;">
                     Cambiar prestador
-                    <span style="float: right; color: #22c488;"><i class="fa fa-plus-circle" id="openStaffCollapseIcon"></i><i class="fa fa-minus-circle" id="closeStaffCollapseIcon" style="display: none;"></i></span>
-                  </a>
                 </div>
-                <div class="collapse" id="staffCollapse">
+                <div>
                   <div class="changeStaff" style="margin-top: 5px;">
-
+                    <select name="changeProvider" class="form-control">
                     <% if @location.company.company_setting.provider_preference != 0 %>
-                      <div class="radio">
+                      <!--<div class="radio">
                         <label>
                           <p><input type="radio" name="changeProvider" value="0" style="cursor: pointer;" />Sin preferencia</p>
                         </label>
-                      </div>
+                      </div>-->
+                      <option value="0">Sin preferencia</option>
                     <% end %>
                     <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(order: :asc).each do |provider| %>
-                        <div class="radio">
+                        <!--<div class="radio">
                           <label>
                             <p>
                               <input type="radio" name="changeProvider" value="<%= provider.id %>" style="cursor: pointer;" />
                             <%= provider.public_name %>
                             </p>
                           </label>
-                        </div>
-
+                        </div>-->
+                        <option value="<%= provider.id %>">
+                          <%= provider.public_name %>
+                        </option>
                     <% end %>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -497,7 +498,12 @@
                 </div>
               </div>
               <div class="col-md-3 col-xs-12" id="current-discount-div" style="bottom: 0px !important; color: #949292;" hidden>
-                  Descuento a aplicar: <span id="current-discount" style="color: #22c488;">0%</span>
+                  <div style="margin-top: 31px; padding-top: 25px; height: 87px; background-color: #FEEAD1; font-weight: bold;">
+                    <div style="text-align: center;">
+                      Descuento a aplicar: <span id="current-discount" style="color: #22c488;">0%</span>
+                    </div>
+                    
+                  </div>
                   <div><label id="booking-error" style="color: #fd633f;"></label></div>
               </div>
             </div>
@@ -623,13 +629,13 @@
                       <% if @location.company.company_setting.client_exclusive %>
                         <div class="row">
                           <div class="col-md-12 dark-gray">
-                            RUT
+                            <%= (I18n.t('ci')).capitalize %>
                           </div>
                         </div>
                         <div class="row">
                           <div class="col-md-12">
                             <div class="form-group has-feedback">
-                              <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
+                              <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
                               <span class="help-block"></span>
                               <span class="form-control-feedback"></span>
                             </div>
@@ -807,6 +813,7 @@
   
   <%= javascript_include_tag 'workflow/promotions-calendar' %>
   <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag 'validations/home/promo' %>
   <%= javascript_include_tag 'promo/promo' %>
   <%= javascript_include_tag 'split-name' %>

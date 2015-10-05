@@ -119,7 +119,7 @@ module ApplicationHelper
 			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).count
 		else
 			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).count
-		end		
+		end
 	end
 
 	def provider_service_booking_count(from, to, status, option, service_id, provider_id)
@@ -137,7 +137,7 @@ module ApplicationHelper
 			return Booking.where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).count
 		else
 			return Booking.where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).count
-		end		
+		end
 	end
 
 	def location_service_booking_count(from, to, status, option, service_id, location_id)
@@ -155,7 +155,7 @@ module ApplicationHelper
 			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, start: from.beginning_of_day..to.end_of_day).count
 		else
 			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, created_at: from.beginning_of_day..to.end_of_day).count
-		end			
+		end
 	end
 
 	def location_booking_count(from, to, status, option, location_id)
@@ -170,7 +170,7 @@ module ApplicationHelper
 			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).count
 		else
 			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).count
-		end		
+		end
 	end
 
 	def provider_booking_count(from, to, status, option, provider_id)
@@ -185,7 +185,7 @@ module ApplicationHelper
 			return Booking.where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).count
 		else
 			return Booking.where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).count
-		end		
+		end
 	end
 
 	def status_booking_count(from, to, status, option, company_id)
@@ -193,7 +193,7 @@ module ApplicationHelper
 			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).count
 		else
 			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).count
-		end	
+		end
 	end
 
 	# Occupation
@@ -374,7 +374,7 @@ module ApplicationHelper
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end		
+		end
 	end
 
 	def provider_service_booking_revenue(from, to, status, option, service_id, provider_id)
@@ -392,7 +392,7 @@ module ApplicationHelper
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end		
+		end
 	end
 
 	def location_service_booking_revenue(from, to, status, option, service_id, location_id)
@@ -410,7 +410,7 @@ module ApplicationHelper
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end			
+		end
 	end
 
 	def location_booking_revenue(from, to, status, option, location_id)
@@ -425,7 +425,7 @@ module ApplicationHelper
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end		
+		end
 	end
 
 	def provider_booking_revenue(from, to, status, option, provider_id)
@@ -440,7 +440,7 @@ module ApplicationHelper
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end		
+		end
 	end
 
 	def status_booking_revenue(from, to, status, option, company_id)
@@ -448,6 +448,6 @@ module ApplicationHelper
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end	
+		end
 	end
 end
