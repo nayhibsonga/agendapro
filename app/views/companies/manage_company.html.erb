@@ -383,6 +383,22 @@
                     </div>
                   </div>
                   <div class="form-group">
+                    <label class="col-md-2 control-label">Ejecutivo Comercial</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static">
+                        <%= @company.sales_user_id && User.find(@company.sales_user_id) ? User.find(@company.sales_user_id).email : "" %>
+                      </p>
+                    </div>
+                    <div class="col-md-4">
+                      <select name="sales_user_id" class="form-control">
+                        <option value="">Sin Asignar</option>
+                        <% User.where(role_id: Role.find_by_name("Ventas").id).each do |user| %>
+                        <option value="<%= user.id %>" <%= 'selected' if @company.sales_user_id == user.id %>><%= user.email %></option>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
                     <div class="col-md-4 col-md-offset-6">
                       <button class="btn btn-green btn-block">Editar</button>
                     </div>
