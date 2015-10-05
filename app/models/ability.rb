@@ -524,6 +524,8 @@ class Ability
     elsif user.role_id == Role.find_by_name("Ventas").id
 
         can :manage, Company
+        can :manage_company, Company
+        can :index, Dashboard
     end
 
   end

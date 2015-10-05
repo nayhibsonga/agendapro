@@ -20,7 +20,7 @@ class CompaniesController < ApplicationController
 	#Manage companies payments.
 	def manage
 		if current_user.role_id == Role.find_by_name("Ventas").id
-			@companies = StatsCompany.where(sales_user_id: current_user.id)
+			@companies = StatsCompany.where(company_sales_user_id: current_user.id)
 			@active_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Activo').id).order(:company_name)
 			@trial_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Trial').id).order(:company_name)
 			@late_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Vencido').id).order(:company_name)
@@ -54,6 +54,27 @@ class CompaniesController < ApplicationController
 				@bookings << booking
 			end
 		end
+		@company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
+		@sales_tax = NumericParameter.find_by_name("sales_tax").value
+	    @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
+	    @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
+	    @month_discount_9 = NumericParameter.find_by_name("9_month_discount").value
+	    @month_discount_12 = NumericParameter.find_by_name("12_month_discount").value
+
+
+
+	    @day_number = Time.now.day
+	    @month_number = Time.now.month
+	    @month_days = Time.now.days_in_month
+		@company.months_active_left > 0 ? @plan_1 = (@company.due_amount + @price).round(0) : @plan_1 = ((@company.due_amount + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
+
+
+	    @plan_2 = (@plan_1 + @price*1).round(0)
+	    @plan_3 = (@plan_1 + @price*2).round(0)
+	    @plan_4 = ((@plan_1 + @price*3)*(1-@month_discount_4)).round(0)
+	    @plan_6 = ((@plan_1 + @price*5)*(1-@month_discount_6)).round(0)
+	    @plan_9 = ((@plan_1 + @price*8)*(1-@month_discount_9)).round(0)
+	    @plan_12 = ((@plan_1 + @price*11)*(1-@month_discount_12)).round(0)
 	end
 
 	#SuperAdmin

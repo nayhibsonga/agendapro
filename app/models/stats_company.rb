@@ -21,14 +21,14 @@ class StatsCompany < ActiveRecord::Base
 		if !bl.nil? && !rec.nil?
 			if bl.created_at <= rec.date
 				stats.last_payment = rec.date
-				stats.last_payment_method = "Manual"
+				stats.last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
 			else
 				stats.last_payment = bl.created_at
 				stats.last_payment_method = "Automático"
 			end
 		elsif bl.nil? && !rec.nil?
 			stats.last_payment = rec.date
-			stats.last_payment_method = "Manual"
+			stats.last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
 		elsif !bl.nil? && rec.nil?
 			stats.last_payment = bl.created_at
 			stats.last_payment_method = "Automático"
