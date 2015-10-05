@@ -4226,8 +4226,8 @@ class BookingsController < ApplicationController
             #First, check if there's a gap. If so, back dateTimePointer to (blocking_start - total_duration)
             #This way, you can give two options when there are gaps.
 
-            logger.debug "DTP starting not valid: " + dateTimePointer.to_s
-            logger.debug "Last Check: " + last_check.to_s
+            #logger.debug "DTP starting not valid: " + dateTimePointer.to_s
+            #logger.debug "Last Check: " + last_check.to_s
 
             #Assume there is no gap
             time_gap = 0
@@ -4250,8 +4250,8 @@ class BookingsController < ApplicationController
 
                     if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
                       gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
-                      logger.debug "Enters provider_close and gap is " + gap_diff.to_s
-                      logger.debug "Provider close: " + provider_close.to_s
+                      #logger.debug "Enters provider_close and gap is " + gap_diff.to_s
+                      #logger.debug "Provider close: " + provider_close.to_s
                       if gap_diff > time_gap
                         time_gap = gap_diff
                       end
@@ -4261,8 +4261,8 @@ class BookingsController < ApplicationController
 
                   if book_gaps.count > 0
                     gap_diff = (book_gaps.first.start - dateTimePointer)/60
-                    logger.debug "Enters bookings and gap is " + gap_diff.to_s
-                    logger.debug "Book start: " + book_gaps.first.start.to_s
+                    #logger.debug "Enters bookings and gap is " + gap_diff.to_s
+                    #logger.debug "Book start: " + book_gaps.first.start.to_s
                     if gap_diff != 0
                       if gap_diff > time_gap
                         time_gap = gap_diff
@@ -4272,8 +4272,8 @@ class BookingsController < ApplicationController
 
                   if break_gaps.count > 0
                     gap_diff = (break_gaps.first.start - dateTimePointer)/60
-                    logger.debug "Enters breaks and gap is " + gap_diff.to_s
-                    logger.debug "Break start: " + break_gaps.first.start.to_s
+                    #logger.debug "Enters breaks and gap is " + gap_diff.to_s
+                    #logger.debug "Break start: " + break_gaps.first.start.to_s
                     if gap_diff != 0
                       if gap_diff > time_gap
                         time_gap = gap_diff
@@ -4302,8 +4302,8 @@ class BookingsController < ApplicationController
 
                   if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
                     gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
-                    logger.debug "Enters provider_close and gap is " + gap_diff.to_s
-                    logger.debug "Provider close: " + provider_close.to_s
+                    #logger.debug "Enters provider_close and gap is " + gap_diff.to_s
+                    #logger.debug "Provider close: " + provider_close.to_s
                     if gap_diff > time_gap
                       time_gap = gap_diff
                     end
@@ -4313,8 +4313,8 @@ class BookingsController < ApplicationController
 
                 if book_gaps.count > 0
                   gap_diff = (book_gaps.first.start - dateTimePointer)/60
-                  logger.debug "Enters bookings and gap is " + gap_diff.to_s
-                  logger.debug "Book start: " + book_gaps.first.start.to_s
+                  #logger.debug "Enters bookings and gap is " + gap_diff.to_s
+                  #logger.debug "Book start: " + book_gaps.first.start.to_s
                   if gap_diff != 0
                     if gap_diff > time_gap
                       time_gap = gap_diff
@@ -4324,8 +4324,8 @@ class BookingsController < ApplicationController
 
                 if break_gaps.count > 0
                   gap_diff = (break_gaps.first.start - dateTimePointer)/60
-                  logger.debug "Enters breaks and gap is " + gap_diff.to_s
-                  logger.debug "Break start: " + break_gaps.first.start.to_s
+                  #logger.debug "Enters breaks and gap is " + gap_diff.to_s
+                  #logger.debug "Break start: " + break_gaps.first.start.to_s
                   if gap_diff != 0
                     if gap_diff > time_gap
                       time_gap = gap_diff
@@ -4337,8 +4337,8 @@ class BookingsController < ApplicationController
 
             end
 
-            logger.debug "DTP for gap: " + dateTimePointer.to_s
-            logger.debug "GAP: " + time_gap.to_s
+            #logger.debug "DTP for gap: " + dateTimePointer.to_s
+            #logger.debug "GAP: " + time_gap.to_s
 
             #Check for providers' bookings and breaks that include current dateTimePointer
             #If any, jump to the nearest end
@@ -4715,17 +4715,17 @@ class BookingsController < ApplicationController
       time_prop = hours_diff/max_time_diff
     end
 
-    logger.debug "Max gaps: " + day_positive_gaps.max.to_s
+    #logger.debug "Max gaps: " + day_positive_gaps.max.to_s
     calendar_height = time_prop*67
     adjusted_calendar_height = calendar_height + calendar_height*day_positive_gaps.max.to_f/hours_diff 
     #(day_positive_gaps.max.to_f * 100 / (60 * 100))*67
 
-    logger.debug calendar_height.to_s + " *** " + adjusted_calendar_height.to_s
+    #logger.debug calendar_height.to_s + " *** " + adjusted_calendar_height.to_s
     #adjusted_calendar_height = adjusted_calendar_height * 1.0207
 
 
 
-    logger.debug "Time prop: " + time_prop.to_s
+    #logger.debug "Time prop: " + time_prop.to_s
 
 
     if time_prop != 0
