@@ -172,6 +172,8 @@ class Ability
         can :check_booking_payment, Payment, :company_id => user.company_id
         can :get_formatted_booking, Payment, :company_id => user.company_id
         can :delete_payment, Payment, :company_id => user.company_id
+        can :commissions, Payment, :company_id => user.company_id
+        can :day_payments, Payment, :company_id => user.company_id
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -379,6 +381,8 @@ class Ability
         can :check_booking_payment, Payment, :company_id => user.company_id
         can :get_formatted_booking, Payment, :company_id => user.company_id
         can :delete_payment, Payment, :company_id => user.company_id
+        can :commissions, Payment, :company_id => user.company_id
+        can :day_payments, Payment, :company_id => user.company_id
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
@@ -543,6 +547,7 @@ class Ability
         can :check_booking_payment, Payment, :company_id => user.company_id
         can :get_formatted_booking, Payment, :company_id => user.company_id
         can :delete_payment, Payment, :company_id => user.company_id
+        can :day_payments, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff").id
         
@@ -602,6 +607,7 @@ class Ability
         can :check_booking_payment, Payment, :company_id => user.company_id
         can :get_formatted_booking, Payment, :company_id => user.company_id
         can :delete_payment, Payment, :company_id => user.company_id
+        can :day_payments, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 

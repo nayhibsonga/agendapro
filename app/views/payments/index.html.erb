@@ -39,6 +39,15 @@
             </label>
           <% end %>
         </div>
+        <label for="payment_method_ids[]" class="col-sm-1 control-label" style="margin-top: 20px;">Cajero:</label>
+        <div class="col-sm-3">
+          <% for cashier in current_user.company.cashiers do %>
+            <label class="checkbox-inline" style="margin-top: 20px;">
+              <%= check_box_tag 'cashier_ids[]', cashier.id, params[:cashier_ids].blank? ? true : params[:cashier_ids] && params[:cashier_ids].includes(cashier.id), {class: "payments_select payment_cashier"} %>
+              <%= payment_method.name.humanize %>
+            </label>
+          <% end %>
+        </div>
       </div>
     </div>
     <div class="col-sm-2">

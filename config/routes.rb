@@ -407,6 +407,9 @@
 
     post '/delete_payment', :to => 'payments#delete_payment'
 
+    get '/day_payments', :to => 'payments#day_payments'
+    get '/commissions', :to => 'payments#commissions'
+
   end
 
   namespace :api, defaults: {format: 'json'} do

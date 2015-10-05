@@ -1,0 +1,77 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Comisiones de servicios</h2>
+      <p>Configura las comisiones por los servicios prestados.</p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-5">
+      <div class="form-group" style="margin-top: 10px;">
+        <div class="col-md-12">
+          <table>
+            <tr>
+              <td>
+                Ver por:&nbsp;&nbsp;
+              </td>
+              <td>
+                <select id="viewOptionsSelect" class="form-control">
+                    <option value="services">Servicios</option>
+                    <option value="service_providers">Proveedores</option>
+                </select>
+              </td>
+            </tr>
+          </table>     
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div id="servicesCommissionsDiv">
+      <% @service_categories.each do |service_category| %>
+        <table class="servicesTable">
+          <tr>
+            <th>
+              Servicio
+            </th>
+            <th>
+              Comisión por defecto
+            </th>
+            <th>
+              Opciones
+            </th>
+          </tr>
+          <% service_category.services.each do |service| %>
+            <tr>
+              <td>
+                <%= service.name %>
+              </td>
+              <td>
+                <% if service.comission_option == 0 %>
+                  <%= service.comission_value %> %
+                <% else %>
+                  $ <%= service.comission_value %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+      <% end %>
+    </div>
+    <div id="serviceProvidersCommissionsDiv">
+
+    </div>
+  </div>
+</div>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "payments" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/payment-commissions" %>
+  <script type="text/javascript">
+  </script>
+<% end %>

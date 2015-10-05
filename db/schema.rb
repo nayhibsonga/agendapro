@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150925125107) do
+ActiveRecord::Schema.define(version: 20151005122935) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -979,6 +979,15 @@ ActiveRecord::Schema.define(version: 20150925125107) do
   end
 
   add_index "service_categories", ["company_id"], name: "index_service_categories_on_company_id", using: :btree
+
+  create_table "service_commissions", force: true do |t|
+    t.integer  "service_provider_id"
+    t.integer  "service_id"
+    t.float    "amount",              default: 0.0
+    t.boolean  "is_percent",          default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "service_payment_logs", force: true do |t|
     t.string   "token"
