@@ -4833,8 +4833,6 @@ class BookingsController < ApplicationController
   end
 
 
-
-
   def optimizer_hours
 
     week_days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
