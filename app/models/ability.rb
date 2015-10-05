@@ -74,6 +74,7 @@ class Ability
     can :select_promo_hour, Company
     can :select_session_hour, Company
     can :user_data, Company
+    can :mobile_hours, Company
     can :client_loader, Client
     can :available_hours_week_html, ServiceProvider
 
