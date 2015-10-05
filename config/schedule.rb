@@ -33,3 +33,7 @@ end
 every 1.days, :at => '3:00 am' do
 	runner "StatsCompany.update_stats"
 end
+
+every 1.days, :at => '3 am' do
+  runner "Company.invoice_email"
+end
