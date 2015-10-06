@@ -361,6 +361,12 @@
     get '', :to => 'searchs#index', :as => 'localized_root'
     get 'landing', :to => 'searchs#landing', :as => 'landing'
 
+    # PuntoPagos Local
+    post "/transaccion/crear", :to => 'local_punto_pagos#create_transaction'
+    get "/transaccion/crear", :to => 'local_punto_pagos#create_transaction'
+    get "/transaccion/procesar/:token", :to => 'local_punto_pagos#process_transaction'
+    post "/transaccion/notificar", :to => 'local_punto_pagos#notify'
+
   end
 
   namespace :api, defaults: {format: 'json'} do
