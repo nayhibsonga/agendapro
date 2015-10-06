@@ -1173,6 +1173,15 @@ class BookingsController < ApplicationController
   # DELETE /bookings/1
   # DELETE /bookings/1.json
   def destroy
+    @company_setting = current_user.company.company_setting
+    if @company_setting.staff_code
+      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
+        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first.id
+      else
+        render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
+        return
+      end
+    end
     status = @booking.status.id
     is_booked = @booking.is_session_booked
     if !@booking.is_session

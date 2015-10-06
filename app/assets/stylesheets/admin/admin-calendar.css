@@ -595,4 +595,7 @@ select[name="serviceOptimizerSelector"] {
 .calendar-alert > .alert {
   position: initial;
   width: initial;
+  color: #ffffff;
+  background-color: #f96d6d;
+  border-color: #e24949;
 }

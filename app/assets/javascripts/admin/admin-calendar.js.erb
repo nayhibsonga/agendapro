@@ -934,7 +934,18 @@ function booking_valid (booking) {
 }
 
 function deleteBooking(eventId) {
-	if (confirm('¿Estás seguro que quieres cancelar esta reserva?\nEsta acción no se puede revertir.')) {
+	var warning = '¿Estás seguro que quieres cancelar esta reserva?\nEsta acción no se puede revertir.';
+    // Staff code
+    var confirmation = false;
+    if ($('#calendar-data').data('staff-code')) {
+      warning += "\n\nIngrese el código de Empleado";
+      var staffCode = prompt(warning, "");
+      confirmation = (staffCode != null) && (staffCode != "");
+      $('#booking_staff_code').val(staffCode);
+    } else{
+      confirmation = confirm(warning);
+    };
+	if (confirmation) {
 		$('.booking-button').attr("disabled", "disabled");
 		$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 		saveBooking('DELETE','/'+eventId);
@@ -1032,20 +1043,20 @@ function editDrag(event) {
 		};
 	}
 	else {
-    var warning = '¿Estás seguro que deseas modificar la reserva?';
+	    var warning = '¿Estás seguro que deseas modificar la reserva?';
 		if (event.resourceId) {
 			var warning = '¿Estás seguro que deseas modificar la reserva? Si la reserva tenía una preferencia de prestador, esta se perderá.';
 		};
-    // Staff code
-    var confirmation = false;
-    if ($('#calendar-data').data('staff-code')) {
-      warning += "\n\nIngrese el código de Empleado";
-      var staffCode = prompt(warning, "");
-      $.extend(eventJSON, {staff_code: staffCode});
-      confirmation = (staffCode != null) && (staffCode != "");
-    } else{
-      confirmation = confirm(warning);
-    };
+	    // Staff code
+	    var confirmation = false;
+	    if ($('#calendar-data').data('staff-code')) {
+	      warning += "\n\nIngrese el código de Empleado";
+	      var staffCode = prompt(warning, "");
+	      $.extend(eventJSON, {staff_code: staffCode});
+	      confirmation = (staffCode != null) && (staffCode != "");
+	    } else{
+	      confirmation = confirm(warning);
+	    };
 
 		if (confirmation) {
 			$.ajax({
