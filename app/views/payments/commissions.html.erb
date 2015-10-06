@@ -28,40 +28,90 @@
       </div>
     </div>
   </div>
+  <br />
   <div class="row">
     <div id="servicesCommissionsDiv">
-      <% @service_categories.each do |service_category| %>
-        <table class="servicesTable">
-          <tr>
-            <th>
-              Servicio
-            </th>
-            <th>
-              Comisión por defecto
-            </th>
-            <th>
-              Opciones
-            </th>
-          </tr>
-          <% service_category.services.each do |service| %>
-            <tr>
-              <td>
-                <%= service.name %>
-              </td>
-              <td>
-                <% if service.comission_option == 0 %>
-                  <%= service.comission_value %> %
-                <% else %>
-                  $ <%= service.comission_value %>
-                <% end %>
-              </td>
-            </tr>
-          <% end %>
-        </table>
-      <% end %>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="panel-group" id="accordion">
+            <% @service_categories.each do |service_category| %>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= service_category.id %>">
+                  <a><%= service_category.name %></a>
+                </h4>
+              </div>
+              <div id="collapse<%= service_category.id %>" class="panel-collapse collapse<% if @service_categories.count == 1%> in<% end %>">
+                <div class="panel-body">
+                  <table class="servicesTable">
+                    <tr class="tableHeading">
+                      <th>
+                        Servicio
+                      </th>
+                      <th>
+                        Comisión por defecto
+                      </th>
+                      <th>
+                        Opciones
+                      </th>
+                    </tr>
+                    <% service_category.services.each do |service| %>
+                      <tr>
+                        <td>
+                          <%= service.name %>
+                        </td>
+                        <td>
+                          <% if service.comission_option == 0 %>
+                            <%= service.comission_value %> %
+                          <% else %>
+                            $ <%= service.comission_value %>
+                          <% end %>
+                        </td>
+                        <td>
+                          <button class="editServiceCommissionBtn commissions-options-btn btn btn-orange" onclick="loadServiceCommissions(<%= service.id %>);" service_id="<%= service.id %>">Editar</button>
+                          <button class="setServiceCommissionDefaultBtn commissions-options-btn btn btn-green" service_id="<%= service.id %>">Restaurar</button>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
     </div>
     <div id="serviceProvidersCommissionsDiv">
 
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="serviceCommissionsModal" tabindex="-1" role="dialog" aria-labelledby="Comisiones del servicio" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="serviceCommissionsModalTitle" style="line-height: 1.1;">Comisiones de</h3>
+      </div>
+      <div class="modal-body" id="serviceCommissionsModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+              <input type="hidden" id="serviceId" value="" />
+
+              <div id="serviceCommissionsModalDiv">
+
+              </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        <button type="button" class="btn btn-default" id="saveServiceCommissions" aria-label="Guardar" hidden>Guardar</button>
+      </div>
     </div>
   </div>
 </div>

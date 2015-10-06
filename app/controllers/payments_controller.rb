@@ -920,7 +920,75 @@ class PaymentsController < ApplicationController
       @service_commissions = ServiceCommission.where(service_provider_id: @service_providers.pluck(:id))
     end
 
+  end
 
+  #Returns a list of providers and service_commissions for given service
+  def service_commissions
+
+    service = Service.find(params[:service_id])
+
+    providers = []
+
+    if !params[:location_id].blank?
+      providers = service.service_providers.where(location_id: params[:location_id])
+    else
+      providers = service.service_providers
+    end
+
+    service_commissions = []
+
+    providers.each do |provider|
+      service_commission = ServiceCommission.new
+      if ServiceCommission.where(:service_id => service.id, :service_provider_id => provider.id).count > 0
+        service_commission = ServiceCommission.where(:service_id => service.id, :service_provider_id => provider.id).first
+      else
+        service_commission.service_id = service.id
+        service_commission.service_provider_id = provider.id
+        service_commission.amount = service.comission_value
+        if service.comission_option == 0
+          service_commission.is_percent = true
+        else
+          service_commission.is_percent = false
+        end
+        service_commission.save
+      end
+      service_commissions << {service_id: service.id, service_name: service.name, provider_id: provider.id, provider_name: provider.public_name, amount: service_commission.amount, is_percent: service_commission.is_percent}
+    end
+
+    render :json => service_commissions
+
+  end
+
+  #Returns a list of services and service_commissions for given provider
+  def provider_commissions
+
+    provider = ServiceProvider.find(params[:provider_id])
+
+    services = []
+
+    services = provider.services
+
+    service_commissions = []
+
+    services.each do |service|
+      service_commission = ServiceCommission.new
+      if ServiceCommission.where(:service_id => service.id, :service_provider_id => provider.id).count > 0
+        service_commission = ServiceCommission.where(:service_id => service.id, :service_provider_id => provider.id).first
+      else
+        service_commission.service_id = service.id
+        service_commission.service_provider_id = provider.id
+        service_commission.amount = service.comission_value
+        if service.comission_option == 0
+          service_commission.is_percent = true
+        else
+          service_commission.is_percent = false
+        end
+        service_commission.save
+      end
+      service_commissions << {service_id: service.id, service_name: service.name, provider_id: provider.id, provider_name: provider.public_name, amount: service_commission.amount, is_percent: service_commission.is_percent}
+    end
+
+    render :json => service_commissions
 
   end
 

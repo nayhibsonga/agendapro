@@ -384,8 +384,17 @@ $(function() {
     {
       if($("#fakePaymentStep2Form").valid() && $("#fakeMethodDetailsForm").valid())
       {
-        resetPaymentStep3();
-        loadPaymentModal3();
+        //Check that paid_amount >= cost
+        //if (parseFloat($("#payment_paid_amount").val()) >= parseFloat($("#payment_cost").val()))
+        //{
+          resetPaymentStep3();
+          loadPaymentModal3();
+        /*}
+        else
+        {
+          alert("El valor pagado no puede ser menor que el costo total.");
+          return;
+        }*/
       }
     }
   });
@@ -783,6 +792,7 @@ function loadPaymentModal2(booking_id) {
 * Important: Reparses products, new services and bookings when reaching final step.
 */
 function loadPaymentModal3(booking_id) {
+  $('.payment-btn-end').hide();
   parsePaymentItems();
   fillReceiptsItemsTable();
   $("#paymentModal2").modal('hide');
@@ -1401,6 +1411,10 @@ function checkReceiptsReady()
     $("#paymentReceiptsForms").hide();
     $("#paymentReceiptsFinal").show();
     $("#openReceiptForm").hide();
+  }
+  else
+  {
+    $('.payment-btn-end').hide();
   }
 }
 

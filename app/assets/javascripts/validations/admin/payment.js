@@ -48,7 +48,8 @@ $(function() {
 			},
 			'payment_paid_amount': {
 				required: true,
-				number: true
+				number: true,
+				min: function() { return parseFloat($("#payment_cost").val()); }
 			},
 			'payment_change_amount': {
 				required: true,

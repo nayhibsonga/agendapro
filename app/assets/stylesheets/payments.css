@@ -1,8 +1,38 @@
- /*
- *= require jquery.qtip
- */
+/*
+*= require jquery.qtip
+*/
 
- .qtip {
- 	min-width: 150px;
- 	max-width: 500px;
- }
+.qtip {
+	min-width: 150px;
+	max-width: 500px;
+}
+
+table.servicesTable{
+	border: 1px solid #949292;
+}
+
+table.servicesTable tr.tableHeading{
+ 	background-color: #22c498;
+ 	border: none;
+}
+
+table.servicesTable th{
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 7px;
+	padding-right: 7px;
+	color: #fff;
+}
+
+table.servicesTable td{
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 7px;
+	padding-right: 7px;
+	color: #949292;
+}
+
+.commissions-option-btn{
+	width: 120px;
+	border-radius: 3px;
+}
