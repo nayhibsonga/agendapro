@@ -1414,6 +1414,8 @@ class BookingsController < ApplicationController
     @cancelled_id = Status.find_by_name('Cancelado').id
 
     @bookings = Booking.where('bookings.service_provider_id IN (?)', @providers.pluck(:id)).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').includes(:client).includes(:service).includes(:session_booking)
+    
+
     @bookings.each do |booking|
       if booking.status_id != @cancelled_id
         event = Hash.new
