@@ -11,7 +11,7 @@ class StatsCompany < ActiveRecord::Base
   		stats.web_bookings = 0.0
   		if Booking.where(location_id: Location.where(company_id: company.id)).count > 0
   			stats.last_booking = Booking.where(location_id: Location.where(company_id: company.id)).last.created_at
-  			stats.web_bookings = Booking.where(location_id: Location.where(company_id: company.id), web_origin: true).count / Booking.where(location_id: Location.where(company_id: company.id)).count
+  			stats.web_bookings = Booking.where(location_id: Location.where(company_id: company.id), web_origin: true).count.to_f / Booking.where(location_id: Location.where(company_id: company.id)).count.to_f
   		end
   		stats.week_bookings = Booking.where(location_id: Location.where(company_id: company.id), created_at: 7.days.ago..Time.now).count
   		stats.past_week_bookings = Booking.where(location_id: Location.where(company_id: company.id), created_at: 14.days.ago..7.days.ago).count
