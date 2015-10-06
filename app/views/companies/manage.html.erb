@@ -109,8 +109,8 @@
                 <tr>
                   <th>Empresa</th>
                   <th>Última Reserva</th>
-                  <th>Reservas 7</th>
-                  <th>Reservas 7 Ant.</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
                   <th>% Reservas Web</th>
                   <th>Último Pago</th>
                   <th>Fecha Inicio</th>
@@ -142,8 +142,8 @@
                 <tr>
                   <th>Empresa</th>
                   <th>Última Reserva</th>
-                  <th>Reservas 7</th>
-                  <th>Reservas 7 Ant.</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
                   <th>% Reservas Web</th>
                   <th>Último Pago</th>
                   <th>Fecha Inicio</th>
@@ -152,15 +152,15 @@
                 </tr>
               </thead>
               <tbody>
-                <% @active_companies.each do |company| %>
+                <% @trial_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
-                    <td><%= company.last_booking %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
                     <td><%= company.week_bookings %></td>
                     <td><%= company.past_week_bookings %></td>
                     <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
-                    <td><%= company.last_payment %></td>
-                    <td><%= company.company_start %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
                     <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
                     <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
@@ -175,8 +175,8 @@
                 <tr>
                   <th>Empresa</th>
                   <th>Última Reserva</th>
-                  <th>Reservas 7</th>
-                  <th>Reservas 7 Ant.</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
                   <th>% Reservas Web</th>
                   <th>Último Pago</th>
                   <th>Fecha Inicio</th>
@@ -185,15 +185,15 @@
                 </tr>
               </thead>
               <tbody>
-                <% @issued_companies.each do |company| %>
+                <% @trial_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
-                    <td><%= company.last_booking %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
                     <td><%= company.week_bookings %></td>
                     <td><%= company.past_week_bookings %></td>
                     <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
-                    <td><%= company.last_payment %></td>
-                    <td><%= company.company_start %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
                     <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
                     <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
@@ -208,8 +208,8 @@
                 <tr>
                   <th>Empresa</th>
                   <th>Última Reserva</th>
-                  <th>Reservas 7</th>
-                  <th>Reservas 7 Ant.</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
                   <th>% Reservas Web</th>
                   <th>Último Pago</th>
                   <th>Fecha Inicio</th>
@@ -218,15 +218,15 @@
                 </tr>
               </thead>
               <tbody>
-                <% @late_companies.each do |company| %>
+                <% @trial_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
-                    <td><%= company.last_booking %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
                     <td><%= company.week_bookings %></td>
                     <td><%= company.past_week_bookings %></td>
                     <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
-                    <td><%= company.last_payment %></td>
-                    <td><%= company.company_start %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
                     <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
                     <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
@@ -236,13 +236,13 @@
           </div>
           <div class="tab-pane fade" id="blocked">
             <p>Número de empresas: <%= @blocked_companies.count %></p>
-            <table class="table table-hoover table-green">
+            <table class="table table-hover table-green">
               <thead>
                 <tr>
                   <th>Empresa</th>
                   <th>Última Reserva</th>
-                  <th>Reservas 7</th>
-                  <th>Reservas 7 Ant.</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
                   <th>% Reservas Web</th>
                   <th>Último Pago</th>
                   <th>Fecha Inicio</th>
@@ -251,15 +251,15 @@
                 </tr>
               </thead>
               <tbody>
-                <% @blocked_companies.each do |company| %>
+                <% @trial_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
-                    <td><%= company.last_booking %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
                     <td><%= company.week_bookings %></td>
                     <td><%= company.past_week_bookings %></td>
                     <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
-                    <td><%= company.last_payment %></td>
-                    <td><%= company.company_start %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
                     <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
                     <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
@@ -274,8 +274,8 @@
                 <tr>
                   <th>Empresa</th>
                   <th>Última Reserva</th>
-                  <th>Reservas 7</th>
-                  <th>Reservas 7 Ant.</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
                   <th>% Reservas Web</th>
                   <th>Último Pago</th>
                   <th>Fecha Inicio</th>
@@ -284,15 +284,15 @@
                 </tr>
               </thead>
               <tbody>
-                <% @pac_companies.each do |company| %>
+                <% @trial_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
-                    <td><%= company.last_booking %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
                     <td><%= company.week_bookings %></td>
                     <td><%= company.past_week_bookings %></td>
                     <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
-                    <td><%= company.last_payment %></td>
-                    <td><%= company.company_start %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
                     <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
                     <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
@@ -307,8 +307,8 @@
                 <tr>
                   <th>Empresa</th>
                   <th>Última Reserva</th>
-                  <th>Reservas 7</th>
-                  <th>Reservas 7 Ant.</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
                   <th>% Reservas Web</th>
                   <th>Último Pago</th>
                   <th>Fecha Inicio</th>
@@ -317,15 +317,15 @@
                 </tr>
               </thead>
               <tbody>
-                <% @inactive_companies.each do |company| %>
+                <% @trial_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
-                    <td><%= company.last_booking %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
                     <td><%= company.week_bookings %></td>
                     <td><%= company.past_week_bookings %></td>
                     <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
-                    <td><%= company.last_payment %></td>
-                    <td><%= company.company_start %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
                     <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
                     <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
