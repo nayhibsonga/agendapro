@@ -12,6 +12,7 @@
 	        		<%= hidden_field_tag :location, @booking.location.id %>
 	        		<%= hidden_field_tag :service, @booking.service.id %>
 	        		<%= hidden_field_tag :booking_id, @booking.id %>
+	        		<%= hidden_field_tag :serviceStaff %>
 	        		<!--<%= hidden_field_tag :provider, @booking.service_provider.id %>-->
 	        			
 	        			<div class="form-group" <%= 'style="display:none;"'.html_safe if @booking.location.company.company_setting.provider_preference == 2 %>>
@@ -79,9 +80,24 @@
 			var location = $("#location").val();
 			var datepicker = $("#datepicker").val();
 			var booking_id = $("#booking_id").val();
+			var selects = []
+			selects.push({
+				service: service,
+				provider: provider
+			})
+			selects = [];
+		    selects.push({
+		      service: $("#service").val(),
+		      provider: $("#provider").val()
+		    });
+
+		    $("#serviceStaff").val(JSON.stringify(selects));
+
+		    var serviceStaff = $("#serviceStaff").val();
+
 			$.ajax({
 				type: "post",
-				data: {service: service, provider: provider, location: location, datepicker: datepicker, booking_id: booking_id},
+				data: {service: service, provider: provider, location: location, datepicker: datepicker, booking_id: booking_id, serviceStaff: serviceStaff},
 				url: "select_session_hour",
 				success: function(response){
 					$("#obtained_hours").empty();
