@@ -163,8 +163,10 @@
 
     # Punto Pagos
     get "/punto_pagos/generate_transaction/:mp/:amount", :to => 'punto_pagos#generate_transaction', :as => 'punto_pagos_generate'
-    get "/punto_pagos/generate_company_transaction/:mp/:amount", :to => 'punto_pagos#generate_company_transaction', :as => 'generate_company_transaction'
-    get "/punto_pagos/generate_plan_transaction/:mp/:plan_id", :to => 'punto_pagos#generate_plan_transaction', :as => 'generate_plan_transaction'
+    get "/punto_pagos/generate_company_transaction/:mp/:amount", :to => 'punto_pagos#generate_company_transaction', :as => 'pp_generate_company_transaction'
+    get "/punto_pagos/generate_plan_transaction/:mp/:plan_id", :to => 'punto_pagos#generate_plan_transaction', :as => 'pp_generate_plan_transaction'
+    get "/pay_u/generate_company_transaction/:mp/:amount", :to => 'pay_u#generate_company_transaction', :as => 'pu_generate_company_transaction'
+    get "/pay_u/generate_plan_transaction/:mp/:plan_id", :to => 'pay_u#generate_plan_transaction', :as => 'pu_generate_plan_transaction'
     post "/punto_pagos/notification", :to => 'punto_pagos#notification', :as => 'punto_pagos_notification'
     get "/punto_pagos/success", :to => 'punto_pagos#success', :as => 'punto_pagos_success'
     get "/punto_pagos/failure", :to => 'punto_pagos#failure', :as => 'punto_pagos_failure'
