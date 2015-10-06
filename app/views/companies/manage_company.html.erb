@@ -6,7 +6,10 @@
         <% if @company.payment_status_id != PaymentStatus.find_by_name('Inactivo').id %>
           <%= form_tag({ :controller => 'companies', :action => 'deactivate_company'}, method: "post", class: "pull-right") do %>
             <input type="hidden" name="id" value="<%= @company.id %>" />
+
+          <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
             <button type="submit" class="btn btn-red" id="deactivateBtn">Desactivar</button>
+            <% end %>
           <% end %>
         <% end %>
       </h2>
@@ -17,6 +20,7 @@
   <div class="row">
     <!-- Navegation Tabs -->
     <div class="col-md-2">
+    <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
       <ul class="nav nav-pills nav-stacked tab-margin">
         <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
         <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
@@ -25,13 +29,16 @@
         <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
         <li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
       </ul>
+      <% end %>
     </div>
     <!-- Panels -->
     <div class="col-md-10 left-panel">
       <div class="tab-margin">
         <ul class="nav nav-tabs">
           <li class="active"><a href="/manage_company/<%= @company.id %>">Ver/Manejar</a></li>
+          <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
           <li><a href="/companies/new_payment/<%= @company.id %>">Agregar pago</a></li>
+          <% end %>
         </ul>
         <div class="row">
           <div class="col-md-2">
@@ -40,7 +47,9 @@
               <li><a href="#incomes" role="tab" data-toggle="tab" class="tab_index">Ingresos</a></li>
               <li><a href="#bookings" role="tab" data-toggle="tab" class="tab_index">Reservas</a></li>
               <li><a href="#payments" role="tab" data-toggle= "tab" class="tab_index">Pagos</a></li>
+              <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
               <li><a href="#edit" role="tab" data-toggle="tab" class="tab_index">Edición</a></li>
+              <% end %>
             </ul>
           </div>
           <div class="col-md-10 left-panel">
@@ -115,6 +124,25 @@
                   <dt>Meses activos restantes</dt>
                   <dd><%= @company.months_active_left %></dd>
                 </dl>
+                <div class="row">
+                  <h3>Simulador de Pago (IVA incluído), deuda mes anterior: <%= number_to_currency(@plan_1 - @price > 0 ? (@plan_1 - @price) * (1 + @sales_tax) : 0, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></h3>
+                  <dl class="dl-horizontal">
+                    <dt><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %></dt>
+                    <dd value="1"><%= number_to_currency(@plan_1 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></dd>
+                    <dt>2 Meses</dt>
+                    <dd value="2"><%= number_to_currency(@plan_2 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></dd>
+                    <dt>3 Meses</dt>
+                    <dd value="3"><%= number_to_currency(@plan_3 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></dd>
+                    <dt>4 Meses</dt>
+                    <dd value="4"><%= number_to_currency(@plan_4 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_4 * 100, precision: 0) %>% dcto.)</dd>
+                    <dt>6 Meses</dt>
+                    <dd value="6"><%= number_to_currency(@plan_6 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_6 * 100, precision: 0) %>% dcto.)</dd>
+                    <dt>9 Meses</dt>
+                    <dd value="9"><%= number_to_currency(@plan_9 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_9 * 100, precision: 0) %>% dcto.)</dd>
+                    <dt>12 Meses</dt>
+                    <dd value="12"><%= number_to_currency(@plan_12 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_12 * 100, precision: 0) %>% dcto.)</dd>
+                  </dl>
+                </div>
               </div>
               <div class="tab-pane fade" id="incomes">
                 <div class="form-group">
@@ -263,6 +291,7 @@
                   </div>
                 </div>
               </div>
+              <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
               <div class="tab-pane fade" id="edit">
                 <%= form_tag({ :controller => 'companies', :action => 'update_company'}, method: "post", class: 'form-horizontal') do %>
                   <input type="hidden" name="id" value="<%= @company.id %>" />
@@ -383,6 +412,22 @@
                     </div>
                   </div>
                   <div class="form-group">
+                    <label class="col-md-2 control-label">Ejecutivo Comercial</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static">
+                        <%= @company.sales_user_id && User.find(@company.sales_user_id) ? User.find(@company.sales_user_id).email : "" %>
+                      </p>
+                    </div>
+                    <div class="col-md-4">
+                      <select name="sales_user_id" class="form-control">
+                        <option value="">Sin Asignar</option>
+                        <% User.where(role_id: Role.find_by_name("Ventas").id).each do |user| %>
+                        <option value="<%= user.id %>" <%= 'selected' if @company.sales_user_id == user.id %>><%= user.email %></option>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
                     <div class="col-md-4 col-md-offset-6">
                       <button class="btn btn-green btn-block">Editar</button>
                     </div>
@@ -413,6 +458,7 @@
                   </div>
                 <% end %>
               </div>
+              <% end %>
             </div>
           </div>
         </div>

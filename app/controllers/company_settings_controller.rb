@@ -54,6 +54,10 @@ class CompanySettingsController < ApplicationController
 
     @notification_email = NotificationEmail.new
     @notifications = NotificationEmail.where(company: @company).order(:receptor_type)
+
+    # Extended Schedule
+    @open_end = LocationTime.where(location_id: @company.locations).order(open: :asc).first.open.hour
+    @close_start = LocationTime.where(location_id: @company.locations).order(close: :desc).first.close.hour
   end
 
   # POST /company_settings

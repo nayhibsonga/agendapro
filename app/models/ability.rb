@@ -520,6 +520,12 @@ class Ability
         # can :suggestion, Client
         # can :rut_suggestion, Client
         # can :provider_service, ServiceProvider
+
+    elsif user.role_id == Role.find_by_name("Ventas").id
+
+        can :manage, Company
+        can :manage_company, Company
+        can :index, Dashboard
     end
 
   end
