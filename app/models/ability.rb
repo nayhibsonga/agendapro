@@ -178,6 +178,9 @@ class Ability
 
         can :provider_commissions, Payment, :company_id => user.company_id
         can :service_commissions, Payment, :company_id => user.company_id
+        can :set_commissions, Payment, :company_id => user.company_id
+        can :set_default_commission, Payment, :company_id => user.company_id
+        can :set_provider_default_commissions, Payment, :company_id => user.company_id
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -390,6 +393,9 @@ class Ability
 
         can :provider_commissions, Payment, :company_id => user.company_id
         can :service_commissions, Payment, :company_id => user.company_id
+        can :set_commissions, Payment, :company_id => user.company_id
+        can :set_default_commission, Payment, :company_id => user.company_id
+        can :set_provider_default_commissions, Payment, :company_id => user.company_id
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id

@@ -9,6 +9,7 @@
 
 table.servicesTable{
 	border: 1px solid #949292;
+	width: 80%;
 }
 
 table.servicesTable tr.tableHeading{
@@ -22,6 +23,7 @@ table.servicesTable th{
 	padding-left: 7px;
 	padding-right: 7px;
 	color: #fff;
+	width: 33%;
 }
 
 table.servicesTable td{
@@ -35,4 +37,8 @@ table.servicesTable td{
 .commissions-option-btn{
 	width: 120px;
 	border-radius: 3px;
+}
+
+.modal-dialog{
+	width: 40% !important;
 }

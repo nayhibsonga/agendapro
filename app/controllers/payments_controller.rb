@@ -916,7 +916,7 @@ class PaymentsController < ApplicationController
     elsif current_user.role_id == Role.find_by_name("Administrador Local").id
       @locations = current_user.locations.where(:active => true).order(name: :asc)
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
-      @service_categories = ServiceCategory.where(service_id: Service.where(service_provider_id: @service_providers.pluck(:id)))
+      @service_categories = ServiceCategory.where(id: Service.where(id: ServiceStaff.where( service_provider_id: @service_providers.pluck(:id)).pluck(:service_id)).pluck(:service_category_id))
       @service_commissions = ServiceCommission.where(service_provider_id: @service_providers.pluck(:id))
     end
 
@@ -929,8 +929,8 @@ class PaymentsController < ApplicationController
 
     providers = []
 
-    if !params[:location_id].blank?
-      providers = service.service_providers.where(location_id: params[:location_id])
+    if current_user.role_id == Role.find_by_name("Administrador Local").id
+      providers = service.service_providers.where(location_id: current_user.locations.pluck(:id))
     else
       providers = service.service_providers
     end
@@ -952,7 +952,7 @@ class PaymentsController < ApplicationController
         end
         service_commission.save
       end
-      service_commissions << {service_id: service.id, service_name: service.name, provider_id: provider.id, provider_name: provider.public_name, amount: service_commission.amount, is_percent: service_commission.is_percent}
+      service_commissions << {id: service_commission.id, service_id: service.id, service_name: service.name, provider_id: provider.id, provider_name: provider.public_name, amount: service_commission.amount, is_percent: service_commission.is_percent}
     end
 
     render :json => service_commissions
@@ -985,10 +985,135 @@ class PaymentsController < ApplicationController
         end
         service_commission.save
       end
-      service_commissions << {service_id: service.id, service_name: service.name, provider_id: provider.id, provider_name: provider.public_name, amount: service_commission.amount, is_percent: service_commission.is_percent}
+      service_commissions << {id: service_commission.id, service_id: service.id, service_name: service.name, provider_id: provider.id, provider_name: provider.public_name, amount: service_commission.amount, is_percent: service_commission.is_percent}
     end
 
     render :json => service_commissions
+
+  end
+
+  def set_default_commission
+
+    @errors = []
+    @json_response = [] 
+    service = Service.find(params[:service_id])
+
+    service.comission_value = params[:comission_value]
+
+    if !params[:comission_option].blank?
+      service.comission_option = params[:comission_option]
+    else
+      #Someone messed with the js/html
+      @errors << "El tipo de comisión es incorrecto."
+      @json_response << "error"
+      @json_response << @errors
+      render :json => @json_response
+      return
+    end
+
+    if service.save
+      #Change commission for all providers
+      providers = []
+
+      if current_user.role_id == Role.find_by_name("Administrador Local").id
+        providers = service.service_providers.where(location_id: current_user.locations.pluck(:id))
+      else
+        providers = service.service_providers
+      end
+
+      providers.each do |provider|
+        service_commission = ServiceCommission.new
+        if ServiceCommission.where(:service_id => service.id, :service_provider_id => provider.id).count > 0
+          service_commission = ServiceCommission.where(:service_id => service.id, :service_provider_id => provider.id).first
+        end
+        service_commission.service_id = service.id
+        service_commission.service_provider_id = provider.id
+        service_commission.amount = service.comission_value
+        if service.comission_option == 0
+          service_commission.is_percent = true
+        else
+          service_commission.is_percent = false
+        end
+        unless service_commission.save
+          @errors << service_commission.errors
+        end
+      end
+
+    else
+      @errors << service.errors
+    end
+
+    if @errors.length == 0
+      @json_response << "ok"
+      @json_response << service
+    else
+      @json_response << "error"
+      @json_response << @errors
+    end
+
+    render :json => @json_response
+
+  end
+
+  def set_provider_default_commissions
+
+    @errors = []
+    @json_response = [] 
+
+    provider = ServiceProvider.find(params[:provider_id])
+
+    provider.services.each do |service|
+      service_commission = ServiceCommission.new
+      if ServiceCommission.where(:service_id => service.id, :service_provider_id => provider.id).count > 0
+        service_commission = ServiceCommission.where(:service_id => service.id, :service_provider_id => provider.id).first
+      end
+
+      service_commission.service_id = service.id
+      service_commission.service_provider_id = provider.id
+      service_commission.amount = params[:amount]
+      service_commission.is_percent = params[:is_percent]
+
+      unless service_commission.save
+        @errors << service_commission.errors
+      end
+    end
+
+    if @errors.length == 0
+      @json_response << "ok"
+      @json_response << provider
+    else
+      @json_response << "error"
+      @json_response << @errors
+    end
+
+    render :json => @json_response
+
+  end
+
+  def set_commissions
+
+    service_commissions = JSON.parse(params[:service_commissions], symbolize_names: true)
+
+    @errors = []
+    @json_response = []
+
+    service_commissions.each do |servCom|
+      service_commission = ServiceCommission.find(servCom[:id])
+      service_commission.amount = servCom[:amount]
+      service_commission.is_percent = servCom[:is_percent]
+      unless service_commission.save
+        @errors << service_commission.errors
+      end
+    end
+
+    if @errors.length == 0
+      @json_response << "ok"
+    else
+      @json_response << "error"
+      @json_response << @errors
+    end
+
+    render :json => @json_response
 
   end
 

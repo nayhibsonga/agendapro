@@ -413,6 +413,9 @@
     get '/commissions', :to => 'payments#commissions'
     get '/service_commissions', :to => 'payments#service_commissions'
     get '/provider_commissions', :to => 'payments#provider_commissions'
+    post '/set_commissions', :to => 'payments#set_commissions'
+    post '/set_default_commission', :to => 'payments#set_default_commission'
+    post '/set_provider_default_commissions', :to => 'payments#set_provider_default_commissions'
 
   end
 
