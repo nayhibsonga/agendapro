@@ -4985,14 +4985,14 @@ class BookingsController < ApplicationController
               end
             end
 
-            day_close = local.location_times.where(day_id: day).order(:close).first.close
-            new_limit = limit_date + 1.days
-            limit_date = DateTime.new(new_limit.year, new_limit.mon, new_limit.mday, day_close.hour, day_close.min)
-
             day = day-1
             if day < 1
               day = 7
             end
+
+            day_close = local.location_times.where(day_id: day).order(:close).first.close
+            new_limit = limit_date + 1.days
+            limit_date = DateTime.new(new_limit.year, new_limit.mon, new_limit.mday, day_close.hour, day_close.min)
 
             dateTimePointer = dtp.open
 
