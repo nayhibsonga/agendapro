@@ -29,6 +29,15 @@
               <%= location.name.humanize %>
             </label><br />
           <% end %>
+
+          <select id="locationMultiSelect" multiple="multiple">
+            <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) do %>
+              <option value="<%= location.id %>">
+                <%= location.name %>
+              </option>
+            <% end %>
+          </select>
+
         </div>
         <label for="payment_method_ids[]" class="col-sm-1 control-label" style="margin-top: 20px;">Tipo:</label>
         <div class="col-sm-3">
@@ -69,12 +78,19 @@
 
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "payments" %>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
 <% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "payment_index" %>
   <script type="text/javascript">
   $(function() {
+
+    $('#locationMultiSelect').multiselect({
+      includeSelectAllOption: true,
+      selectAllText: "Todos"
+    });
+
     $('#new_payment').validate({
       errorPlacement: function(error, element) {
         error.appendTo(element.next());

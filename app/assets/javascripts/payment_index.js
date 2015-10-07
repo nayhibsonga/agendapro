@@ -4,3 +4,4 @@
 //= require admin/payment-modals
 //= require jquery.qtip
 //= require split-name
+//= require admin/bootstrap-multiselect
