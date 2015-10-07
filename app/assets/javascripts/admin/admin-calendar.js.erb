@@ -49,7 +49,6 @@ function loadProviders () {
 						;
 					});
 					$('#providers-selector').change(function() {
-						window.console.log($('#providers-selector option:selected').data('resources'));
 						providerId = parseInt($('#providers-selector').val());
 						if (providerId == 0) {
 							if ( $('#providers-selector option:selected').data('resources').length > 0 ) {
@@ -318,12 +317,6 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			editDrag(event);
 			dragInProgress = false;
 			dragUi = null;
-		},
-		eventDragStart: function (event) {
-			window.console.log(event.start)
-		},
-		eventDragStop: function (event) {
-			window.console.log(event.start)
 		},
 		slotMinutes: duration,
 		aspectRatio: setAspectRatio(),
