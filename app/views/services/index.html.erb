@@ -40,7 +40,7 @@
                 <tbody>
                   <% @services.each do |service| %>
                     <% if service.service_category_id == service_category.id %>
-                    <tr draggable="true" data-resource="services">
+                    <tr data-resource="services">
                       <td data-service="<%= service.id %>"><%= service.name %></td>
                       <td>$<%= service.price.to_i %></td>
                       <td><%= service.duration %> min</td>
@@ -65,11 +65,6 @@
   </div>
 </div>
 
-<% content_for :stylesheets do %>
-  <%= stylesheet_link_tag "admin/draggable" %>
-<% end %>
-
 <% content_for :scripts do %>
-  <%= javascript_include_tag 'admin/draggable' %>
   <%= javascript_include_tag 'admin/service_draggable' %>
 <% end %>
