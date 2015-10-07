@@ -49,7 +49,6 @@ function loadProviders () {
 						;
 					});
 					$('#providers-selector').change(function() {
-						window.console.log($('#providers-selector option:selected').data('resources'));
 						providerId = parseInt($('#providers-selector').val());
 						if (providerId == 0) {
 							if ( $('#providers-selector option:selected').data('resources').length > 0 ) {
@@ -314,16 +313,12 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			dragInProgress = true;
 			dragUi = ui;
 		},
-		eventDrop: function (event) {
-			editDrag(event);
+		eventDragStop: function(event, jsEvent, ui, view){
 			dragInProgress = false;
 			dragUi = null;
 		},
-		eventDragStart: function (event) {
-			window.console.log(event.start)
-		},
-		eventDragStop: function (event) {
-			window.console.log(event.start)
+		eventDrop: function (event) {
+			editDrag(event);
 		},
 		slotMinutes: duration,
 		aspectRatio: setAspectRatio(),
@@ -524,10 +519,12 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			dragInProgress = true;
 			dragUi = ui;
 		},
-		eventDrop: function (event) {
-			editDrag(event);
+		eventDragStop: function(event, jsEvent, ui, view){
 			dragInProgress = false;
 			dragUi = null;
+		},
+		eventDrop: function (event) {
+			editDrag(event);
 		},
 		slotMinutes: $('#providers-selector option:selected').data("block"),
 		aspectRatio: setAspectRatio(),

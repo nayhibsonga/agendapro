@@ -10,7 +10,7 @@
 					</div>
 					<div class="col-xs-6 session-row-date">
 						<i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :default) %>&nbsp;&nbsp;
-						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
+						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + eval(ENV["TIME_ZONE_OFFSET"]), format: :hour) %>
 					</div>
 					<div class="col-xs-4 session-row-btns">
 						<span><button class="btn session-btn session-btn-edit" data-toggle="bookModal" href="book_session_form?id=<%= booking.id %>"disabled>Editar</button><button class="btn session-btn session-btn-delete"disabled>Cancelar</button></span>
@@ -23,7 +23,7 @@
 					</div>
 					<div class="col-xs-6 session-row-date">
 						<i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :default) %>&nbsp;&nbsp;
-						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
+						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + eval(ENV["TIME_ZONE_OFFSET"]), format: :hour) %>
 					</div>
 					<div class="col-xs-4 session-row-btns">
 						<button class="btn session-btn session-btn-detail" data-toggle="detailModal" href="session_booking_detail?id=<%= booking.id %>" disabled>Ver</button>
@@ -38,7 +38,7 @@
 				</div>
 				<div class="col-xs-6 session-row-date">
 					<i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :default) %>&nbsp;&nbsp;
-						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
+						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + eval(ENV["TIME_ZONE_OFFSET"]), format: :hour) %>
 				</div>
 				<div class="col-xs-4 session-row-btns">
 					<button class="btn session-btn session-btn-detail" data-toggle="detailModal" href="session_booking_detail?id=<%= booking.id %>" disabled>Ver</button>
