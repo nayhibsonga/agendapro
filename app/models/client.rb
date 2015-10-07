@@ -22,7 +22,7 @@ class Client < ActiveRecord::Base
 
         bookings = Array.new
         single_booking = Booking.new
-        
+
         potential_bookings = client.bookings.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
 
         potential_bookings.each do |booking|
@@ -294,6 +294,18 @@ class Client < ActiveRecord::Base
   def self.filter_status(statuses)
     if !statuses.blank?
       where(id: Booking.where(status_id: Status.find(statuses)).select(:client_id))
+    else
+      all
+    end
+  end
+
+  def self.filter_range(from, to)
+    if from.present? and to.present?
+      # Transformar string a datetime
+      from = Date.parse(from).to_datetime
+      to = Date.parse(to).to_datetime
+
+      where(id: Booking.where('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
     else
       all
     end

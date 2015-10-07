@@ -40,9 +40,10 @@
               <li class="<%= 'hidden' if params[:locations] %>"><a href="#" id="addFilterLocations" data-target="#filterLocations">Por Local</a></li>
               <li class="<%= 'hidden' if params[:providers] %>"><a href="#" id="addFilterProviders" data-target="#filterProviders">Por Prestador</a></li>
               <li class="<%= 'hidden' if params[:services] %>"><a href="#" id="addFilterServices" data-target="#filterServices">Por Servicio</a></li>
-              <li class="<%= 'hidden' if params[:statuses] %>"><a href="#" id="addFilterStatuses" data-target="#filterStatuses">Por Estado</a></li>
+              <li class="<%= 'hidden' if params[:statuses] %>"><a href="#" id="addFilterStatuses" data-target="#filterStatuses">Por Estado de Reserva</a></li>
               <li class="<%= 'hidden' if params[:gender] %>"><a href="#" id="addFilterGender" data-target="#filterGender">Por Género</a></li>
-              <li class="<%= 'hidden' if !params[:from].blank? and !params[:to].blank? %>"><a href="#" id="addFilterBirthday" data-target="#filterBirthday">Por Cumpleaños</a></li>
+              <li class="<%= 'hidden' if !params[:birth_from].blank? and !params[:birth_to].blank? %>"><a href="#" id="addFilterBirthday" data-target="#filterBirthday">Por Cumpleaños</a></li>
+              <li class="<%= 'hidden' if !params[:range_from].blank? and !params[:range_to].blank? %>"><a href="#" id="addFilterRange" data-target="#filterRange">Por Rango de Fecha</a></li>
             </ul>
           </div>
         </div>
@@ -107,7 +108,7 @@
           <div class="form-group <%= 'hidden' if not params[:statuses] %>" id="filterStatuses">
             <div class="panel panel-green">
               <div class="panel-heading">
-                Estado
+                Estado de Reserva
                 <a class="pull-right" href="#" data-target="#addFilterStatuses"><i class="fa fa-times"></i></a>
               </div>
               <ul class="list-group">
@@ -154,7 +155,7 @@
               </ul>
             </div>
           </div>
-          <div class="form-group <%= 'hidden' if params[:from].blank? and params[:to].blank? %>" id="filterBirthday">
+          <div class="form-group <%= 'hidden' if params[:birth_from].blank? and params[:birth_to].blank? %>" id="filterBirthday">
             <div class="panel panel-green">
               <div class="panel-heading">
                 Cumpleaños
@@ -162,12 +163,30 @@
               </div>
               <ul class="list-group">
                 <li class="list-group-item">
-                  <%= text_field_tag :from_display, params[:from_display], class: "form-control", placeholder: "Desde" %>
-                  <%= hidden_field_tag :from, params[:from], class: "form-control" %>
+                  <%= text_field_tag :birth_from_display, params[:birth_from_display], class: "form-control", placeholder: "Desde" %>
+                  <%= hidden_field_tag :birth_from, params[:birth_from], class: "form-control" %>
                 </li>
                 <li class="list-group-item">
-                  <%= text_field_tag :to_display, params[:to_display], class: "form-control", placeholder: "Hasta" %>
-                  <%= hidden_field_tag :to, params[:to], class: "form-control" %>
+                  <%= text_field_tag :birth_to_display, params[:birth_to_display], class: "form-control", placeholder: "Hasta" %>
+                  <%= hidden_field_tag :birth_to, params[:birth_to], class: "form-control" %>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group <%= 'hidden' if params[:range_from].blank? and params[:range_to].blank? %>" id="filterRange">
+            <div class="panel panel-green">
+              <div class="panel-heading">
+                Rango de Fecha
+                <a class="pull-right" href="#" data-target="#addFilterRange"><i class="fa fa-times"></i></a>
+              </div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <%= text_field_tag :range_from_display, params[:range_from_display], class: "form-control", placeholder: "Desde" %>
+                  <%= hidden_field_tag :range_from, params[:range_from], class: "form-control" %>
+                </li>
+                <li class="list-group-item">
+                  <%= text_field_tag :range_to_display, params[:range_to_display], class: "form-control", placeholder: "Hasta" %>
+                  <%= hidden_field_tag :range_to, params[:range_to], class: "form-control" %>
                 </li>
               </ul>
             </div>
