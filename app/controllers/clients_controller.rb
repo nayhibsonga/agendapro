@@ -242,8 +242,9 @@ class ClientsController < ApplicationController
   end
 
   def compose_mail
+    attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
-    mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(:last_name, :first_name).pluck(:email).uniq
+    mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(:last_name, :first_name).pluck(:email).uniq
 
     @to = Array.new
 
