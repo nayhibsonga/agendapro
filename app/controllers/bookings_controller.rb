@@ -4973,9 +4973,6 @@ class BookingsController < ApplicationController
             if day > 7
               day = 1
             end
-            day_close = local.location_times.where(day_id: day).order(:close).first.close
-            new_limit = limit_date + 1.days
-            limit_date = DateTime.new(new_limit.year, new_limit.mon, new_limit.mday, day_close.hour, day_close.min)
 
             dtp = nil
 
@@ -4987,6 +4984,10 @@ class BookingsController < ApplicationController
                 day = 1
               end
             end
+
+            day_close = local.location_times.where(day_id: day).order(:close).first.close
+            new_limit = limit_date + 1.days
+            limit_date = DateTime.new(new_limit.year, new_limit.mon, new_limit.mday, day_close.hour, day_close.min)
 
             day = day-1
             if day < 1
@@ -5001,6 +5002,8 @@ class BookingsController < ApplicationController
             dateTimePointerEnd = dateTimePointer
 
             now = dateTimePointer
+
+            date = now
 
           end
 
