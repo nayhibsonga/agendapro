@@ -21,9 +21,10 @@ class ClientsController < ApplicationController
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
     @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
 
-    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to]).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
+    attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
+    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to]).order(sort_column + " " + sort_direction)
+    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction)
 
     respond_to do |format|
       format.html

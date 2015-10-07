@@ -44,6 +44,7 @@
               <li class="<%= 'hidden' if params[:gender] %>"><a href="#" id="addFilterGender" data-target="#filterGender">Por Género</a></li>
               <li class="<%= 'hidden' if !params[:birth_from].blank? and !params[:birth_to].blank? %>"><a href="#" id="addFilterBirthday" data-target="#filterBirthday">Por Cumpleaños</a></li>
               <li class="<%= 'hidden' if !params[:range_from].blank? and !params[:range_to].blank? %>"><a href="#" id="addFilterRange" data-target="#filterRange">Por Rango de Fecha</a></li>
+              <li class="<%= 'hidden' if !params[:attendance].blank? %>"><a href="#" id="addFilterAttendance" data-target="#filterAttendance">Por Asistencia</a></li>
             </ul>
           </div>
         </div>
@@ -187,6 +188,30 @@
                 <li class="list-group-item">
                   <%= text_field_tag :range_to_display, params[:range_to_display], class: "form-control", placeholder: "Hasta" %>
                   <%= hidden_field_tag :range_to, params[:range_to], class: "form-control" %>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group <%= 'hidden' if params[:attendance].blank? %>" id="filterAttendance">
+            <div class="panel panel-green">
+              <div class="panel-heading">
+                Asistencia
+                <a class="pull-right" href="#" data-target="#addFilterAttendance"><i class="fa fa-times"></i></a>
+              </div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <div class="checkbox">
+                    <label>
+                      <%= radio_button_tag "attendance", true, params[:attendance] && params[:attendance].include?("true") %> Asiste
+                    </label>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="checkbox">
+                    <label>
+                      <%= radio_button_tag "attendance", false, params[:attendance] && params[:attendance].include?("false") %> No Asiste
+                    </label>
+                  </div>
                 </li>
               </ul>
             </div>
