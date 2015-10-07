@@ -4973,6 +4973,7 @@ class BookingsController < ApplicationController
             if day > 7
               day = 1
             end
+            next unless local.location_times.where(day_id: day).count > 0
             day_close = local.location_times.where(day_id: day).order(:close).first.close
             new_limit = limit_date + 1.days
             limit_date = DateTime.new(new_limit.year, new_limit.mon, new_limit.mday, day_close.hour, day_close.min)
