@@ -313,10 +313,12 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			dragInProgress = true;
 			dragUi = ui;
 		},
-		eventDrop: function (event) {
-			editDrag(event);
+		eventDragStop: function(event, jsEvent, ui, view){
 			dragInProgress = false;
 			dragUi = null;
+		},
+		eventDrop: function (event) {
+			editDrag(event);
 		},
 		slotMinutes: duration,
 		aspectRatio: setAspectRatio(),
@@ -517,10 +519,12 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			dragInProgress = true;
 			dragUi = ui;
 		},
-		eventDrop: function (event) {
-			editDrag(event);
+		eventDragStop: function(event, jsEvent, ui, view){
 			dragInProgress = false;
 			dragUi = null;
+		},
+		eventDrop: function (event) {
+			editDrag(event);
 		},
 		slotMinutes: $('#providers-selector option:selected').data("block"),
 		aspectRatio: setAspectRatio(),
