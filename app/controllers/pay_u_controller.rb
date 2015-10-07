@@ -18,13 +18,6 @@ class PayUController < ApplicationController
 
   #Métodos de pagos de compañía/plan
   def generate_transaction
-
-  	uri = URI.parse("https://gateway.payulatam.com/ppp-web-gateway/pb.zul")
-  	http = Net::HTTP.new(uri.host, uri.port)
-  	http.use_ssl = uri.port == 443
-
-	req = Net::HTTP::Post.new(uri.request_uri)
-
 	form_data = { "merchantId" => "540049",
 		"accountId" => "547737",
 		"description" => "Boton de Prueba Colombia",
@@ -41,18 +34,7 @@ class PayUController < ApplicationController
 		"signature" => "3fe657d15f7db3a5693443556ff0bd0f52ea57db9b8533631f972441ff97ff7b"
 	}
 
-	headers = {
-        'Accept-Charset' => 'utf-8'
-	}
-
-	req.set_form_data(form_data)
-
-	response = http.request(req)
-
-	puts response
-
-	# resp = RestClient.method(:post).call("https://stg.payulatam.com/ppp-web-gateway", form_data, headers)
-	# JSON.parse(resp, :quirks_mode => true)
+	render layout: "search"
   end
 
   def generate_company_transaction

@@ -1,0 +1,23 @@
+<form id="" method="post" action="https://gateway.payulatam.com/ppp-web-gateway/pb.zul" accept-charset="UTF-8" name="pay_u_submit">
+  <input name="merchantId" type="hidden" value="540049"/>
+  <input name="accountId" type="hidden" value="547737"/>
+  <input name="description" type="hidden" value="Boton de Prueba Colombia"/>
+  <input name="referenceCode" type="hidden" value="200"/>
+  <input name="amount" type="hidden" value="10000.00"/>
+  <input name="tax" type="hidden" value="0.00"/>
+  <input name="taxReturnBase" type="hidden" value="0.00"/>
+<input name="shipmentValue" value="0.00" type="hidden"/>
+  <input name="currency" type="hidden" value="COP"/>
+  <input name="lng" type="hidden" value="es"/>
+  <input name="sourceUrl" id="urlOrigen" value="" type="hidden"/>
+  <input name="buttonType" value="SIMPLE" type="hidden"/>
+  <input name="signature" value="3fe657d15f7db3a5693443556ff0bd0f52ea57db9b8533631f972441ff97ff7b" type="hidden"/>
+</form>
+
+<% content_for :scripts do %>
+	<script type="text/javascript">
+		window.onload = function(){
+			document.forms['pay_u_submit'].submit()
+		}
+	</script>
+<% end %>
