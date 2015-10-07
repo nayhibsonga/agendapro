@@ -44,8 +44,14 @@ class DashboardController < ApplicationController
       end
     end
 
-    #@todayBookings = Booking.where(service_provider_id: ServiceProvider.filter_location(params[:location]).filter_provider(params[:provider])).where.not(status_id: Status.find_by_name("Cancelado")).where("DATE(start) = DATE(?)", Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
-    @todayBookings = Booking.where(service_provider_id: ServiceProvider.filter_location(params[:location]).filter_provider(params[:provider])).where.not(status_id: Status.find_by_name("Cancelado")).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
+    # Datos variables
+    @payedBookings = @monthBookings.where(payed: true)
+    @payedAmount = 0
+    @payedBookings.each do |booking|
+      @payedAmount += booking.price
+    end
+    @onlineBookings = @monthBookings.where(web_origin: true)
+    @todayBookings = Booking.where(service_provider_id: ServiceProvider.filter_location(params[:location]).filter_provider(params[:provider])).where.not(status_id: Status.find_by_name("Cancelado")).where("DATE(start) = DATE(?)", Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
 
     if mobile_request?
       @company = current_user.company

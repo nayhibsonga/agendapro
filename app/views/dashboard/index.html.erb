@@ -10,43 +10,49 @@
 <div class="container-fluid" style="padding-top: 10px;">
   <% unless current_user.role == Role.find_by(name: "Super Admin") %>
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-sm-4">
         <div class="row">
           <div class="col-md-6">
-            <div class="square-highlight square-green">
+            <div class="square-green">
               <h2><%= @monthBookings.count %></h2>
               <p>Reservas este mes</p>
             </div>
           </div>
           <div class="col-md-6">
             <% @statusArray.each do |status| %>
-            <div class="square-highlight">
+            <div class="rec-highlight">
               <span><span class="text-green"><%= status[1] %></span> <%= status[0] %></span>
             </div>
             <% end %>
           </div>
         </div>
       </div>
-      <div class="col-md-8">
+      <div class="col-sm-8">
         <div class="row">
           <div class="col-md-3">
-            <div class="square-highlight square">
-              <h2><span class="text-green">10</span>/<%= @monthBookings.count %></h2>
-              <p class="text-green">$150.000</p>
+            <div class="square-highlight">
+              <h2><span class="text-green"><%= @payedBookings.count %></span>/<%= @monthBookings.count %></h2>
+              <p class="text-green"><%= number_to_currency @payedAmount %></p>
               <p>Pago Online</p>
             </div>
           </div>
           <div class="col-md-3">
-            <div class="square-highlight square">
-              <h2><span class="text-green">15</span>/<%= @monthBookings.count %></h2>
-              <p class="text-green">80%</p>
+            <div class="square-highlight">
+              <h2><span class="text-green"><%= @onlineBookings.count %></span>/<%= @monthBookings.count %></h2>
+              <p class="text-green">
+                <% online = if @monthBookings.count > 0 then @onlineBookings.count.to_f/@monthBookings.count.to_f else 0 end %>
+                <%= number_to_percentage online * 100, precision: 1, strip_insignificant_zeros: true %>
+              </p>
               <p>Reservas Online</p>
             </div>
           </div>
           <div class="col-md-3">
-            <div class="square-highlight square">
-              <h2 class="text-green">28%</h2>
-              <p>
+            <div class="square-highlight">
+              <h2 class="text-green">
+                <% occupation = booking_occupation(Time.now.beginning_of_month - eval(ENV["TIME_ZONE_OFFSET"]), Time.now.end_of_month - eval(ENV["TIME_ZONE_OFFSET"]), [1, 2, 3, 4], 1, current_user.company_id) %>
+                <%= number_to_percentage occupation * 100, precision: 1, strip_insignificant_zeros: true %>
+              </h2>
+              <p data-toggle="toltip" title="Que tan ocupada tienen la agenda los prestadores" data-placement="top" role="button">
                 <span class="fa-stack text-green">
                   <i class="fa fa-square fa-stack-2x"></i>
                   <i class="fa fa-question fa-stack-1x fa-inverse"></i>
@@ -56,9 +62,12 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="square-highlight square">
-              <h3 class="text-green">$10.000.000</h3>
-              <p>
+            <div class="square-highlight">
+              <h2 class="text-green">
+                <% incomes = booking_revenue(Time.now.beginning_of_month - eval(ENV["TIME_ZONE_OFFSET"]), Time.now.end_of_month - eval(ENV["TIME_ZONE_OFFSET"]), [1, 2, 3, 4], 1, current_user.company_id) %>
+                <%= number_to_currency incomes %>
+              </h2>
+              <p data-toggle="toltip" title="La suma de los precios de todas las reservas del mes" data-placement="top" role="button">
                 <span class="fa-stack text-green">
                   <i class="fa fa-square fa-stack-2x"></i>
                   <i class="fa fa-question fa-stack-1x fa-inverse"></i>
@@ -229,6 +238,7 @@
     $('#provider').change(function() {
       $(this).closest('form').submit();
     });
+    $('[data-toggle="toltip"]').toltip();
   });
 </script>
 <% end %>
