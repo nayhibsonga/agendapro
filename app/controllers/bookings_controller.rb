@@ -1194,6 +1194,9 @@ class BookingsController < ApplicationController
     respond_to do |format|
       if @booking.update(status_id: status)
         BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, notes: @booking.notes, company_comment: @booking.company_comment)
+        if @booking.is_session
+          @booking.send_session_cancel_mail
+        end
         format.html { redirect_to bookings_url }
         format.json { render :json => @booking }
       else

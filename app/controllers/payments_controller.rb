@@ -350,6 +350,14 @@ class PaymentsController < ApplicationController
     @bookings = []
     @paymentProducts = []
 
+    #Save payment before
+    unless payment.save
+      @json_response[0] = "error"
+      @errors << payment.errors
+      render :json => @json_response
+      return
+    end
+
 
     receipts.each do |receipt|
       new_receipt = Receipt.new
@@ -402,6 +410,16 @@ class PaymentsController < ApplicationController
           payment_product.seller_type = seller[1]
 
           new_receipt.payment_products << payment_product
+
+          #Update location_product stock
+
+          location_product = LocationProduct.where(:location_id => payment.location_id, :product_id => payment_product.product_id).first
+          if location_product.nil?
+            @errors << "No existe el producto para el local."
+          else
+            location_product.stock = location_product.stock - payment_product.quantity
+            location_product.save
+          end
 
           @paymentProducts << payment_product
         end
@@ -550,6 +568,15 @@ class PaymentsController < ApplicationController
     end
 
     payment.payment_products.each do |payment_product|
+
+      location_product = LocationProduct.where(:location_id => payment.location_id, :product_id => payment_product.product_id).first
+      if location_product.nil?
+        @errors << "No existe el producto para el local."
+      else
+        location_product.stock = location_product.stock + payment_product.quantity
+        location_product.save
+      end
+
       payment_product.delete
     end
 
@@ -622,6 +649,14 @@ class PaymentsController < ApplicationController
           seller = product[:seller].split("_")
           payment_product.seller_id = seller[0]
           payment_product.seller_type = seller[1]
+
+          location_product = LocationProduct.where(:location_id => payment.location_id, :product_id => payment_product.product_id).first
+          if location_product.nil?
+            @errors << "No existe el producto para el local."
+          else
+            location_product.stock = location_product.stock - payment_product.quantity
+            location_product.save
+          end
 
           new_receipt.payment_products << payment_product
 
@@ -852,6 +887,13 @@ class PaymentsController < ApplicationController
 
     @payment.payment_products.each do |payment_product|
       if payment_product.delete
+        location_product = LocationProduct.where(:location_id => @payment.location_id, :product_id => payment_product.product_id).first
+        if location_product.nil?
+          errors << "No existe el producto para el local."
+        else
+          location_product.stock = location_product.stock + payment_product.quantity
+          location_product.save
+        end
       else
         errors << payment_product.errors
       end

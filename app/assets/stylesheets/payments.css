@@ -42,3 +42,11 @@ table.servicesTable td{
 .modal-dialog{
 	width: 40% !important;
 }
+
+.multiselect{
+	width: 100% !important;
+}
+
+.btn-caja{
+	width: 120px;
+}

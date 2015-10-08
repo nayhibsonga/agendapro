@@ -427,6 +427,7 @@ class PuntoPagosController < ApplicationController
             sum_normal_price = sum_normal_price + booking.service.price
             #book_discount = ((booking.service.price - booking.price)/booking.service.price).round(0)
           else
+
             if first_session
               #If it's the first sessions, generate the payment for it's SessionBooking
               #If not, it's already been assigned

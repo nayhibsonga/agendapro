@@ -4,8 +4,8 @@ class PaymentProduct < ActiveRecord::Base
   belongs_to :receipt
 
   # after_create :set_stock_create
-  after_save :set_stock_update
-  before_destroy :set_stock_destroy
+  #after_save :set_stock_update
+  #before_destroy :set_stock_destroy
 
   def get_seller_details
     if !self.seller_id.nil?

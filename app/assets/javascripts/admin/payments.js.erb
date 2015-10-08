@@ -614,7 +614,7 @@ function get_product_index() {
   return product_index;
 }
 
-function loadPayments() {
+/*function loadPayments() {
     $('#render_content').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
     $.ajax({
         url: '/payments_index_content?from=' + $('#from').val() + '&to=' + $('#to').val() + '&location_ids=' + $('input:checkbox:checked.payment_location').map(function () {return parseInt(this.value);}).get() + '&payment_method_ids=' + $('input:checkbox:checked.payment_method').map(function () {return parseInt(this.value);}).get(),
@@ -625,12 +625,116 @@ function loadPayments() {
     });
 
     return false;
+}*/
+
+function loadPayments(locations, payment_methods) {
+
+    var location_ids = [];
+    var payment_method_ids = [];
+    $("#locationMultiSelect option").each(function(){
+      if ($(this).is(':selected'))
+      {
+        location_ids.push($(this).val());
+      }
+    });
+    $("#paymentMethodMultiSelect option").each(function(){
+      if ($(this).is(':selected'))
+      {
+        payment_method_ids.push($(this).val());
+      }
+    });
+
+    var locations = location_ids.join();
+    var payment_methods = payment_method_ids.join();
+
+    $('#render_content').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+    $.ajax({
+        url: '/payments_index_content?from=' + $('#from').val() + '&to=' + $('#to').val() + '&location_ids=' + locations + '&payment_method_ids=' + payment_methods,
+        cache: false,
+        success: function(html){
+          $('#render_content').html(html);
+        }
+    });
+
+    return false;
 }
 
 $(function() {
+
+
+  $('#locationMultiSelect').multiselect({
+    includeSelectAllOption: true,
+    selectAllText: 'Todos',
+    buttonContainer: '<div style="margin-top: 5px;"></div>',
+    buttonText: function(options, select) {
+      console.log(select);
+      if (options.length === 0) {
+          return 'Ninguno';
+      }
+      else if(options.length == select[0].length)
+      {
+        return "Todos";
+      }
+      else if(options.length > 3)
+      {
+        return options.length + " seleccionados";
+      }
+      else {
+        var labels = [];
+        options.each(function() {
+           if ($(this).attr('label') !== undefined) {
+               labels.push($(this).attr('label'));
+           }
+           else {
+               labels.push($(this).html());
+           }
+        });
+        return labels.join(', ') + '';
+      }
+    },
+    onChange: function(option, checked, select){
+      loadPayments();
+    }
+  });
+
+  $('#paymentMethodMultiSelect').multiselect({
+    includeSelectAllOption: true,
+    selectAllText: 'Todos',
+    buttonContainer: '<div style="margin-top: 8px;"></div>',
+    buttonText: function(options, select) {
+      console.log(select);
+      if (options.length === 0) {
+          return 'Ninguno';
+      }
+      else if(options.length == select[0].length)
+      {
+        return "Todos";
+      }
+      else if(options.length > 3)
+      {
+        return options.length + " seleccionados";
+      }
+      else {
+        var labels = [];
+        options.each(function() {
+           if ($(this).attr('label') !== undefined) {
+               labels.push($(this).attr('label'));
+           }
+           else {
+               labels.push($(this).html());
+           }
+        });
+        return labels.join(', ') + '';
+      }
+    },
+    onChange: function(option, checked, select){
+      loadPayments();
+    }
+  });
+
+
   $('.payments_select').change(function() {
     loadPayments();
-
     return false;
   });
   $("#from").datepicker({
@@ -744,29 +848,21 @@ $(function() {
   $("#to").datepicker('setDate', new Date());
   $("#from").datepicker('setDate', new Date());
 
-  /*$("#full_name").autocomplete({
-    source: '/clients_name_suggestion',
-    appendTo: '#full_name_suggestions',
-    autoFocus: true,
-    minLength: 3,
-    select: function( event, ui ) {
-      event.preventDefault();
-      var client = eval("(" + ui.item.value + ")");
-      $('#payment_client_id').val(client.id);
-      $("#full_name").val(client.first_name+' '+client.last_name)
-      $('#xButton').prop('disabled', false);
-      $("#full_name").prop('disabled', true);
-    }
-  }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-    return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
-  };
+  $("#locationMultiSelect").multiselect('selectAll', false);
+  $("#paymentMethodMultiSelect").multiselect('selectAll', false);
 
-  $('#xButton').click(function() {
-    $('#payment_client_id').val('');
-    $("#full_name").val('');
-    $("#full_name").prop('disabled', false);
-    $('#xButton').prop('disabled', true);
-  });*/
+  $('#locationMultiSelect').multiselect('updateButtonText');
+  $('#paymentMethodMultiSelect').multiselect('updateButtonText');
 
   loadPayments();
+
+
+  /*
+  * Petty Cash
+  */
+
+  $("#openPettyCashBtn").on('click', function(){
+    $("#pettyCashModalIntro").modal('show');
+  });
+
 });

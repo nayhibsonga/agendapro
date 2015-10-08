@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151005122935) do
+ActiveRecord::Schema.define(version: 20151008164631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -699,6 +699,26 @@ ActiveRecord::Schema.define(version: 20151005122935) do
   add_index "payments", ["location_id"], name: "index_payments_on_location_id", using: :btree
   add_index "payments", ["payment_method_id"], name: "index_payments_on_payment_method_id", using: :btree
   add_index "payments", ["payment_method_type_id"], name: "index_payments_on_payment_method_type_id", using: :btree
+
+  create_table "petty_cashes", force: true do |t|
+    t.integer  "location_id"
+    t.float    "cash",        default: 0.0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "open",        default: false
+  end
+
+  create_table "petty_transactions", force: true do |t|
+    t.integer  "petty_cash_id"
+    t.integer  "transactioner_id"
+    t.integer  "transactioner_type"
+    t.datetime "date"
+    t.float    "amount",             default: 0.0
+    t.boolean  "is_income",          default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "notes"
+  end
 
   create_table "plan_countries", force: true do |t|
     t.integer  "plan_id"
