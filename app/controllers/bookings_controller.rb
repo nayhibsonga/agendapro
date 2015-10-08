@@ -5448,6 +5448,9 @@ class BookingsController < ApplicationController
               dateTimePointer += smallest_diff.minutes
             end
 
+            logger.info "Smalled diff: " + smallest_diff.to_s
+            logger.info "Gap DTP: " + dateTimePointer.to_s
+
             serviceStaffPos = 0
             bookings = []
 
