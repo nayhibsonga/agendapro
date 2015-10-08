@@ -4968,6 +4968,8 @@ class BookingsController < ApplicationController
 
         while serviceStaffPos < serviceStaff.length
 
+
+
           if dateTimePointer >= limit_date
             day = day + 1
             if day > 7
@@ -5009,6 +5011,10 @@ class BookingsController < ApplicationController
 
           service_valid = false
           service = services_arr[serviceStaffPos]
+
+          logger.info "Service: " + service.name
+          logger.info "DTP: " + dateTimePointer.to_s
+
 
           #Get providers min
           min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
