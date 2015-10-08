@@ -49,7 +49,6 @@ function loadProviders () {
 						;
 					});
 					$('#providers-selector').change(function() {
-						window.console.log($('#providers-selector option:selected').data('resources'));
 						providerId = parseInt($('#providers-selector').val());
 						if (providerId == 0) {
 							if ( $('#providers-selector option:selected').data('resources').length > 0 ) {
@@ -314,10 +313,12 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			dragInProgress = true;
 			dragUi = ui;
 		},
-		eventDrop: function (event) {
-			editDrag(event);
+		eventDragStop: function(event, jsEvent, ui, view){
 			dragInProgress = false;
 			dragUi = null;
+		},
+		eventDrop: function (event) {
+			editDrag(event);
 		},
 		slotMinutes: duration,
 		aspectRatio: setAspectRatio(),
@@ -518,10 +519,12 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			dragInProgress = true;
 			dragUi = ui;
 		},
-		eventDrop: function (event) {
-			editDrag(event);
+		eventDragStop: function(event, jsEvent, ui, view){
 			dragInProgress = false;
 			dragUi = null;
+		},
+		eventDrop: function (event) {
+			editDrag(event);
 		},
 		slotMinutes: $('#providers-selector option:selected').data("block"),
 		aspectRatio: setAspectRatio(),
@@ -551,7 +554,7 @@ function loadProviderEvents(providerId) {
 	if (ajaxRequest != null) {
 		ajaxRequest.abort();
 	}
-	
+
 	ajaxRequest = $.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (events_list) {
 		$('#calendar').fullCalendar('addEventSource', events_list);
 		$('#small_loader_header').remove();

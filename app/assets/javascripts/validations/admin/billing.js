@@ -12,8 +12,7 @@ $(function() {
 		},
 		rules: {
 			'billing_info[rut]': {
-				required: true,
-				rut: true
+				required: true
 			},
 			'billing_info[name]': {
 				required: true
@@ -53,7 +52,7 @@ $(function() {
 		}
 	});
 	$('#billing_info_rut').change(function() {
-		var rut_string = $('#billing_info_rut').val()
-		$('#billing_info_rut').val(rut_format(rut_string));
+		var id_string = $('#billing_info_rut').val()
+		$('#billing_info_rut').val(identification_number_format(id_string));
 	});
 });

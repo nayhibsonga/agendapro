@@ -202,9 +202,9 @@
 
                 <% if @local.company.company_setting.client_exclusive %>
                   <div id="identificationNumber" class="form-group has-feedback">
-                    <%= label_tag(:identification_number, "RUT", class: "col-sm-3 control-label") %>
+                    <%= label_tag(:identification_number, (I18n.t('ci')).capitalize, class: "col-sm-3 control-label") %>
                     <div class="col-sm-9">
-                      <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
+                      <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
                       <span class="help-block"></span>
                       <span class="form-control-feedback"></span>
                     </div>

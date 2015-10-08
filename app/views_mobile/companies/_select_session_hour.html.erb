@@ -64,10 +64,14 @@
 
 	$("#nextButton").click(function(e){
 
+		$("#nextButton").prop('disabled', true);
+
 		if(!selected)
 		{
 			return false;
 		}
+
+		selected = false;
 
 		var booking_id = $("#newSessionId").val();
 		var start = $("#newSessionStart").val();

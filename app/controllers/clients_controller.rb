@@ -5,6 +5,8 @@ class ClientsController < ApplicationController
   load_and_authorize_resource
   layout "admin"
 
+  helper_method :sort_column, :sort_direction
+
   # GET /clients
   # GET /clients.json
   def index
@@ -19,9 +21,10 @@ class ClientsController < ApplicationController
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
     @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
 
-    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
+    attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
+    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(:last_name, :first_name)
+    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction)
 
     respond_to do |format|
       format.html
@@ -239,8 +242,9 @@ class ClientsController < ApplicationController
   end
 
   def compose_mail
+    attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
-    mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations]).filter_provider(params[:providers]).filter_service(params[:services]).filter_gender(params[:gender]).filter_birthdate(params[:from], params[:to]).filter_status(params[:statuses]).order(:last_name, :first_name).pluck(:email).uniq
+    mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(:last_name, :first_name).pluck(:email).uniq
 
     @to = Array.new
 
@@ -405,5 +409,13 @@ class ClientsController < ApplicationController
 
     def client_comment_params
       params.require(:client_comment).permit(:id, :client_id, :comment)
+    end
+
+    def sort_column
+      Client.column_names.include?(params[:sort]) ? params[:sort] : "last_name"
+    end
+
+    def sort_direction
+      %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
     end
 end

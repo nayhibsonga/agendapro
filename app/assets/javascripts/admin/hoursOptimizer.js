@@ -153,6 +153,8 @@ function loadHours () {
 
   var start_date = $("#optimizerDateSelector").val();
 
+  bookings = []
+
   $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, start_date: start_date, admin: true }, function (hours_array) {
     $('#selectHour > p').remove();
     var services_str = "";
