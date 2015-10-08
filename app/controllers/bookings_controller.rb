@@ -4979,12 +4979,18 @@ class BookingsController < ApplicationController
             dtp = nil
 
             while dtp.nil?
-              day = now.cwday
+              logger.debug "Day: " + day.to_s
               dtp = local.location_times.where(day_id: day).order(:open).first
+              if dtp.nil?
+                logger.debug "NIL"
+              else
+                logger.debug "GOOD"
+              end
               day = day+1
               if day > 7
                 day = 1
               end
+
             end
 
             day = day-1
