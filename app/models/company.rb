@@ -208,7 +208,8 @@ class Company < ActiveRecord::Base
 	end
 
 	def update_stats
-		stats = StatsCompany.find_or_initialize_by(company_id: self.id)
+		company = self
+		stats = StatsCompany.find_or_initialize_by(company_id: company.id)
   		stats.company_name = company.name
   		stats.company_start = company.created_at
   		stats.company_payment_status_id = company.payment_status_id
