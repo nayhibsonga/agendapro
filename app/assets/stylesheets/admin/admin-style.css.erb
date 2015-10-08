@@ -953,12 +953,51 @@ tr.tr-disabled td {
   border-right: transparent;
   border-left: transparent;
 }
+.table-green > thead > tr > th > a,
+.table-green > thead > tr > td > a {
+  color: #ffffff;
+}
 .list-separate > li:not(:last-child) {
   margin-bottom: inherit;
+}
+.indicator:before {
+  content: "\f0dc";
+}
+.asc > .indicator:before {
+  content: "\f0de";
+}
+.desc > .indicator:before {
+  content: "\f0dd";
 }
 
 tr[class*="break"] {
   background-color: #eeeeee;
+}
+.pull-right + .pull-right {
+  margin-right: 5px;
+}
+.btn-pseudo-block {
+  width: 49.5%;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+.btn-pseudo-block > button,
+.btn-pseudo-block > a {
+  width: 90%;
+}
+@media (min-width: 992px) {
+  .btn-pseudo-block {
+    display: block;
+    width: 100%;
+    margin-bottom: 0;
+  }
+  .btn-pseudo-block > button,
+  .btn-pseudo-block > a {
+    width: 87%;
+  }
+  .btn-pseudo-block + .btn-pseudo-block {
+    margin-top: 5px;
+  }
 }
 
 .filter-header,
@@ -998,13 +1037,6 @@ tr[class*="break"] {
 .filter-body a {
   color: #ffffff;
 }
-/*.filter-body:before {
-  display: table;
-  content: " ";
-}
-.filter-body:after {
-  clear: both;
-}*/
 .filter-body > .form-group {
   float: left;
   position: relative;

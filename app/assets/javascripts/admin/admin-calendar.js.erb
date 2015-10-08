@@ -49,7 +49,6 @@ function loadProviders () {
 						;
 					});
 					$('#providers-selector').change(function() {
-						//window.console.log($('#providers-selector option:selected').data('resources'));
 						providerId = parseInt($('#providers-selector').val());
 						if (providerId == 0) {
 							if ( $('#providers-selector option:selected').data('resources').length > 0 ) {
@@ -314,6 +313,10 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 			dragInProgress = true;
 			dragUi = ui;
 		},
+		eventDragStop: function(event, jsEvent, ui, view){
+			dragInProgress = false;
+			dragUi = null;
+		},
 		eventDrop: function (event) {
 			editDrag(event);
 			dragInProgress = false;
@@ -435,7 +438,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 							   leave: true,
 							   fixed: true
 						   },
-							events: {
+						   events: {
 						        show: function(event, api) {
 						        	if(dragInProgress)
 						        	{
@@ -518,6 +521,10 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 			dragInProgress = true;
 			dragUi = ui;
 		},
+		eventDragStop: function(event, jsEvent, ui, view){
+			dragInProgress = false;
+			dragUi = null;
+		},
 		eventDrop: function (event) {
 			editDrag(event);
 			dragInProgress = false;
@@ -551,7 +558,7 @@ function loadProviderEvents(providerId) {
 	if (ajaxRequest != null) {
 		ajaxRequest.abort();
 	}
-	
+
 	ajaxRequest = $.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (events_list) {
 		$('#calendar').fullCalendar('addEventSource', events_list);
 		$('#small_loader_header').remove();
@@ -613,7 +620,7 @@ function editBookingModal(eventId) {
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#booking_client_identification_number').val(booking.identification_number);
 			$('#full_name').val(booking.first_name+' '+booking.last_name);
-			//$("#full_name").prop('disabled', true);
+			$("#full_name").prop('disabled', true);
 			$('#xButton').prop('disabled', false);
 			$('#booking_client_email').val(booking.email);
 			$('#booking_client_phone').val(booking.phone);
@@ -933,7 +940,18 @@ function booking_valid (booking) {
 }
 
 function deleteBooking(eventId) {
-	if (confirm('¿Estás seguro que quieres cancelar esta reserva?\nEsta acción no se puede revertir.')) {
+	var warning = '¿Estás seguro que quieres cancelar esta reserva?\nEsta acción no se puede revertir.';
+    // Staff code
+    var confirmation = false;
+    if ($('#calendar-data').data('staff-code')) {
+      warning += "\n\nIngrese el código de Empleado";
+      var staffCode = prompt(warning, "");
+      confirmation = (staffCode != null) && (staffCode != "");
+      $('#booking_staff_code').val(staffCode);
+    } else{
+      confirmation = confirm(warning);
+    };
+	if (confirmation) {
 		$('.booking-button').attr("disabled", "disabled");
 		$( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
 		saveBooking('DELETE','/'+eventId);
@@ -1031,20 +1049,20 @@ function editDrag(event) {
 		};
 	}
 	else {
-    var warning = '¿Estás seguro que deseas modificar la reserva?';
+	    var warning = '¿Estás seguro que deseas modificar la reserva?';
 		if (event.resourceId) {
 			var warning = '¿Estás seguro que deseas modificar la reserva? Si la reserva tenía una preferencia de prestador, esta se perderá.';
 		};
-    // Staff code
-    var confirmation = false;
-    if ($('#calendar-data').data('staff-code')) {
-      warning += "\n\nIngrese el código de Empleado";
-      var staffCode = prompt(warning, "");
-      $.extend(eventJSON, {staff_code: staffCode});
-      confirmation = (staffCode != null) && (staffCode != "");
-    } else{
-      confirmation = confirm(warning);
-    };
+	    // Staff code
+	    var confirmation = false;
+	    if ($('#calendar-data').data('staff-code')) {
+	      warning += "\n\nIngrese el código de Empleado";
+	      var staffCode = prompt(warning, "");
+	      $.extend(eventJSON, {staff_code: staffCode});
+	      confirmation = (staffCode != null) && (staffCode != "");
+	    } else{
+	      confirmation = confirm(warning);
+	    };
 
 		if (confirmation) {
 			$.ajax({

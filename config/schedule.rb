@@ -29,3 +29,11 @@ end
 every 1.days, :at => '5:30 am' do
 	runner "NotificationEmail.booking_summary"
 end
+
+every 1.days, :at => '3:00 am' do
+	runner "StatsCompany.update_stats"
+end
+
+every 1.days, :at => '3 am' do
+  runner "Company.invoice_email"
+end

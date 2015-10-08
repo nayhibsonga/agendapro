@@ -112,7 +112,7 @@
               </li>
               <% end %>
               <!-- Super Admin -->
-              <% if current_user.role == Role.find_by_name("Super Admin") %>
+              <% if current_user.role_id == Role.find_by_name("Super Admin").id || current_user.role_id == Role.find_by_name("Ventas").id %>
               <li class="<%= 'active' if current_page?("/companies_payments") %>"><%= link_to 'Control de gestión', '/companies_payments' %></li>
               <!-- General -->
               <li class="dropdown <%= 'active' if current_page?(admin_users_path) or current_page?(roles_path) or current_page?(payment_statuses_path) or current_page?(statuses_path) or current_page?(plans_path) or current_page?(numeric_parameters_path) or current_page?(payed_bookings_path) or current_page?(banks_path) %>">

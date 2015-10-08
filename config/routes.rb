@@ -245,6 +245,7 @@
     get '/select_promo_hour', :to => 'companies#select_promo_hour'
     post '/select_session_hour', :to => 'companies#select_session_hour'
     get '/user_data', :to => 'companies#user_data'
+    get '/mobile_hours', :to => 'companies#mobile_hours'
 
     # Fullcalendar
     get '/provider_breaks/new', :to => 'provider_breaks#new', :as => 'new_provider_break'

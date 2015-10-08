@@ -63,8 +63,7 @@ $(function() {
 				required: true
 			},
 			'company_setting[company_rut]': {
-				required: true,
-				rut: true
+				required: true
 			},
 			'company_setting[account_number]': {
 				required: true
@@ -95,8 +94,8 @@ $(function() {
 	});
 
 	$('#company_setting_company_rut').change(function() {
-		var rut_string = $('#company_setting_company_rut').val()
-		$('#company_setting_company_rut').val(rut_format(rut_string));
+		var id_string = $('#company_setting_company_rut').val()
+		$('#company_setting_company_rut').val(identification_number_format(id_string));
 	});
 
 });

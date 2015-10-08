@@ -15,14 +15,14 @@ class Client < ActiveRecord::Base
     canceled_status = Status.find_by_name("Cancelado")
     bookings = Array.new
     #Send all services from same client (each company has diferent clients)
-    Client.where(id: Booking.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).each do |client|
+    Client.where(id: Booking.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
 
       #Send a reminder for each location
       client.company.locations.each do |location|
 
         bookings = Array.new
         single_booking = Booking.new
-        
+
         potential_bookings = client.bookings.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
 
         potential_bookings.each do |booking|
@@ -204,7 +204,7 @@ class Client < ActiveRecord::Base
     end
     Client.where(company_id: self.company_id, identification_number: self.identification_number).each do |client|
       if self.identification_number && self.identification_number != "" && client != self && client.identification_number != "" && self.identification_number == client.identification_number
-        errors.add(:base, "No se pueden crear dos clientes con el mismo RUT.")
+        errors.add(:base, "No se pueden crear dos clientes con el mismo Número de Identificación.")
       end
     end
   end
@@ -237,25 +237,37 @@ class Client < ActiveRecord::Base
     end
   end
 
-  def self.filter_location(locations)
+  def self.filter_location(locations, attendace)
     if !locations.blank?
-      where(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
+      if attendace
+        where(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
+      else
+        where(id: Booking.where.not(location_id: Location.find(locations)).select(:client_id))
+      end
     else
       all
     end
   end
 
-  def self.filter_provider(providers)
+  def self.filter_provider(providers, attendace)
     if !providers.blank?
-      where(id: Booking.where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
+      if attendace
+        where(id: Booking.where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
+      else
+        where(id: Booking.where.not(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
+      end
     else
       all
     end
   end
 
-  def self.filter_service(services)
+  def self.filter_service(services, attendace)
     if !services.blank?
-      where(id: Booking.where(service_id: Service.find(services)).select(:client_id))
+      if attendace
+        where(id: Booking.where(service_id: Service.find(services)).select(:client_id))
+      else
+        where(id: Booking.where.not(service_id: Service.find(services)).select(:client_id))
+      end
     else
       all
     end
@@ -294,6 +306,22 @@ class Client < ActiveRecord::Base
   def self.filter_status(statuses)
     if !statuses.blank?
       where(id: Booking.where(status_id: Status.find(statuses)).select(:client_id))
+    else
+      all
+    end
+  end
+
+  def self.filter_range(from, to, attendace)
+    if from.present? and to.present?
+      # Transformar string a datetime
+      from = Date.parse(from).to_datetime
+      to = Date.parse(to).to_datetime
+
+      if attendace
+        where(id: Booking.where('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
+      else
+        where(id: Booking.where.not('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
+      end
     else
       all
     end
@@ -375,59 +403,7 @@ class Client < ActiveRecord::Base
         end
 
         if row["identification_number"].present?
-
-          cRut = row["identification_number"].to_s.gsub(/[\.\-]/, "")
-          if cRut.length == 0
-            row["identification_number"] = ''
-          elsif cRut.length == 1
-            row["identification_number"] = ''
-          else
-            cDv = cRut.split('')[cRut.length - 1]
-            cRut = cRut[0..cRut.length - 2]
-            if cDv && cRut
-              rutF = ''
-              while cRut.length > 3 do
-                rutF = "." + cRut[(cRut.length - 3)..cRut.length] + rutF
-                cRut = cRut[0..cRut.length - 4]
-              end
-              row["identification_number"] = cRut + rutF + "-" + cDv
-            else
-              row["identification_number"] = ''
-            end
-          end
-        end
-
-        if row["identification_number"].present?
-          rut = row["identification_number"].to_s
-          if rut.length < 8
-            row["identification_number"] = ''
-          else
-            cRut = rut.gsub(/[\.\-]/, "")
-            suma = 0
-            cDv = cRut.split('')[cRut.length - 1]
-            cRut = cRut[0..cRut.length - 2]
-            mul = 2
-            for i  in (cRut.length - 1).downto(0) do
-              suma = suma + cRut.split('')[i].to_i * mul
-              if mul == 7
-                mul = 2
-              else
-                mul += 1
-              end
-            end
-            res = suma % 11
-            if res==1
-              dvr = 'k'
-            elsif res==0
-              dvr = '0'
-            else
-              dvi = 11-res
-              dvr = dvi.to_s
-            end
-            if dvr != cDv.downcase
-              row["identification_number"] = ''
-            end
-          end
+          row["identification_number"] = row["identification_number"].to_s.chomp('.0')
         end
 
         if row["identification_number"].present? && Client.where(identification_number: row["identification_number"], company_id: company_id).count > 0
