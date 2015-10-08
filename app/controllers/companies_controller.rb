@@ -946,12 +946,6 @@ class CompaniesController < ApplicationController
 		    	session_booking = @booking.session_booking
 		    end
 
-		    if params[:datepicker] && params[:datepicker] != ""
-		      current_date = params[:date]
-		    else
-		      current_date = DateTime.now.to_date.to_s
-		    end
-
 
 		    if params[:datepicker] and params[:datepicker] != ""
 		      if params[:datepicker].to_datetime > now
@@ -1018,6 +1012,7 @@ class CompaniesController < ApplicationController
 
 		    #providers_arr = []
 		    #for i
+		    hours_array = []
 
 		    after_date = DateTime.now + company_setting.after_booking.months
 
@@ -1025,6 +1020,21 @@ class CompaniesController < ApplicationController
 			dtp = local.location_times.where(day_id: day).order(:open).first
 
 			if dtp.nil?
+				if serviceStaff[0][:provider] == "0"
+			    	@lock = false
+			    else
+			    	@lock = true
+			    end
+
+			    @lock
+			    @company = local.company
+			    @location = local
+			    @serviceStaff = serviceStaff
+			    @date = Date.parse(params[:datepicker])
+			    @service = Service.find(serviceStaff[0][:service])
+
+			    @available_time = hours_array
+			    @bookSummaries = book_summaries
 				return
 			end
 
@@ -1037,11 +1047,24 @@ class CompaniesController < ApplicationController
 
 
 			if now > after_date
+				if serviceStaff[0][:provider] == "0"
+			    	@lock = false
+			    else
+			    	@lock = true
+			    end
+
+			    @lock
+			    @company = local.company
+			    @location = local
+			    @serviceStaff = serviceStaff
+			    @date = Date.parse(params[:datepicker])
+			    @service = Service.find(serviceStaff[0][:service])
+
+			    @available_time = hours_array
+			    @bookSummaries = book_summaries
 				return
 			end
-
-
-			hours_array = []
+			
 
 			day_close = local.location_times.where(day_id: day).order(:close).first.close
 			limit_date = DateTime.new(now.year, now.mon, now.mday, day_close.hour, day_close.min)
