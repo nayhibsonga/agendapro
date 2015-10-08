@@ -152,7 +152,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% @trial_companies.each do |company| %>
+                <% @active_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
                     <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
@@ -185,7 +185,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% @trial_companies.each do |company| %>
+                <% @issued_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
                     <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
@@ -218,7 +218,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% @trial_companies.each do |company| %>
+                <% @late_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
                     <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
@@ -251,7 +251,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% @trial_companies.each do |company| %>
+                <% @blocked_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
                     <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
@@ -284,7 +284,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% @trial_companies.each do |company| %>
+                <% @pac_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
                     <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
@@ -317,7 +317,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% @trial_companies.each do |company| %>
+                <% @inactive_companies.each do |company| %>
                   <tr>
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
                     <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
