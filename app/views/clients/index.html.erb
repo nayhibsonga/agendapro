@@ -9,7 +9,15 @@
         </ul>
       </div>
       <div class="btn-pseudo-block">
-        <%= link_to '<i class="fa fa-envelope"></i> Enviar e-mail a este listado'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], attendance: params[:attendance], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-green", id: 'sendMail' %>
+        <% if @from_collection.first %>
+          <% if @monthly_mails_sent < @monthly_mails %>
+            <%= link_to '<i class="fa fa-envelope"></i> Enviar e-mail a este listado'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], attendance: params[:attendance], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-green", id: 'sendMail' %>
+          <% else %>
+            <button class="btn btn-green">Has alcanzado el limite de e-mails.</button>
+          <% end %>
+        <% else %>
+          <a id="sendMail" type="button" class="btn btn-green" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar e-mail a este listado</a>
+        <% end %>
         <span class="text-green" data-toggle="tooltip" data-placement="bottom" title="Al hacer click en este botón podrás enviar un correo a todos los clientes previamente filtrados por el buscador y los filtros avanzados. En caso de que no selecciones ningún filtro, se le enviará a la lista completa de clientes.">&nbsp;<i class="fa fa-question-circle fa-lg"></i></span>
       </div>
     </div>
