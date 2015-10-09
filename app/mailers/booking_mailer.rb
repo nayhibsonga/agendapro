@@ -923,6 +923,9 @@ class BookingMailer < ActionMailer::Base
 		# New subject
 		message[:subject] = 'Recuerda tu reserva en ' + book_info.service_provider.company.name
 
+		# Remove arrow
+		message[:images].pop
+
 		# Notificacion service provider
 		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), company_id: Company.where(active: true), receptor_type: 2, summary: false).select(:email).distinct
 		providers_emails.each do |provider|
