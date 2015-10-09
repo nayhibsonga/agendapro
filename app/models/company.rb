@@ -204,10 +204,15 @@ class Company < ActiveRecord::Base
 				pa.save
 			end
 		end
-
 	end
 
 	def update_stats
+		if changed_attributes['web_address'] || changed_attributes['country_id']
+			cc = CompanyCountry.find_by(company_id: self.id, country_id: self.country_id)
+			cc.web_address = self.web_address
+			cc.save
+		end
+
 		company = self
 		stats = StatsCompany.find_or_initialize_by(company_id: company.id)
   		stats.company_name = company.name
