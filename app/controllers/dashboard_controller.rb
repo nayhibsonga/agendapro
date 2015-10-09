@@ -21,7 +21,7 @@ class DashboardController < ApplicationController
       @due_payment = true if Company.find(current_user.company_id).payment_status == PaymentStatus.find_by_name("Emitido") unless current_user.role_id == Role.find_by_name("Super Admin").id
 
       @locations = Location.where(company_id: current_user.company_id).accessible_by(current_ability).order(:order)
-      @service_providers = ServiceProvider.where(location_id: @locations)
+      @service_providers = ServiceProvider.where(location_id: @locations).order(:order)
 
       @monthBookings = Booking.where(service_provider_id: @service_providers).where("created_at BETWEEN ? AND ?", Time.now.beginning_of_month - eval(ENV["TIME_ZONE_OFFSET"]), Time.now.end_of_month - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)')
       @statusArray = []
@@ -31,7 +31,7 @@ class DashboardController < ApplicationController
 
       @lastBookings = Booking.where(service_provider_id: @service_providers).where('start >= ?', Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)').order(updated_at: :desc).limit(50)
 
-      @services = Service.where(:company_id => current_user.company_id)
+      @services = Service.where(:company_id => current_user.company_id).order(:order)
       @potential_session_bookings = SessionBooking.where('client_id is not null').where(service_id: @services).order('updated_at desc').limit(20)
       @session_bookings = []
       @potential_session_bookings.each do |session_booking|
@@ -52,7 +52,7 @@ class DashboardController < ApplicationController
         @payedAmount += booking.price
       end
       @onlineBookings = @monthBookings.where(web_origin: true)
-      @todayBookings = Booking.where(service_provider_id: ServiceProvider.filter_location(params[:location]).filter_provider(params[:provider])).where.not(status_id: Status.find_by_name("Cancelado")).where("DATE(start) = DATE(?)", Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
+      @todayBookings = Booking.where(service_provider_id: ServiceProvider.filter_location(params[:location]).filter_provider(params[:provider]).accessible_by(current_ability)).where.not(status_id: Status.find_by_name("Cancelado")).where("DATE(start) = DATE(?)", Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
 
       if mobile_request?
         @company = current_user.company
