@@ -8,7 +8,7 @@
 </div>
 
 <div class="container-fluid" style="padding-top: 10px;">
-  <% unless current_user.role == Role.find_by(name: "Super Admin") %>
+  <% unless current_user.role == Role.find_by(name: "Super Admin") || current_user.role == Role.find_by_name("Ventas") %>
     <div class="row">
       <div class="col-sm-4">
         <div class="row">

@@ -24,11 +24,11 @@ class ApplicationController < ActionController::Base
   protected
 
   def set_locale
-    if params[:locale].blank?
+    if current_user && current_user.company_id && current_user.company_id > 0
+      I18n.locale = Company.find(current_user.company_id).country.locale
+    elsif params[:locale].blank?
       if Country.find_by(locale: I18n.locale.to_s)
         I18n.locale = I18n.locale
-      elsif current_user && current_user.company_id && current_user.company_id > 0
-        I18n.locale = Company.find(current_user.company_id).country.locale
       else
         requested_location = request_location
         if requested_location == 'CL'
@@ -112,7 +112,7 @@ class ApplicationController < ActionController::Base
   def verify_is_super_admin
     host = request.host_with_port
     @url = host[host.index(request.domain)..host.length]
-    redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Super Admin").id)
+    redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Super Admin").id || current_user.role_id == Role.find_by_name("Ventas").id)
   end
 
   def verify_is_admin

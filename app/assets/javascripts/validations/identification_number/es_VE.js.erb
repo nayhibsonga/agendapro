@@ -1,5 +1,9 @@
+function rut_clear(value) {
+	return value.replace(/[\.\-]/g, "");
+}
+
 function identification_number_format(value) {
-	var cRut = value;
+	var cRut = rut_clear(value);
 	var rutF = "";
 	while(cRut.length > 3) {
 		rutF = "." + cRut.substr(cRut.length - 3) + rutF;
