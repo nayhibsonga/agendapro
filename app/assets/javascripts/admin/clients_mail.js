@@ -1,43 +1,37 @@
 $(function () {
-  $("#from_display").datepicker({
+  $('[data-toggle="tooltip"]').tooltip();
+
+  createDatepicker("#birth_from_display", {
     dateFormat: 'dd M',
-    altField: '#from',
-    altFormat: 'dd-mm-yy',
-    autoSize: false,
-    firstDay: 1,
-    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-    prevText: 'Atrás',
-    nextText: 'Adelante',
-    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-    today: 'Hoy',
-    clear: '',
+    altField: '#birth_from',
     onSelect: function(newDate){
-      nextDate = $("#from_display").datepicker("getDate");
+      nextDate = $("#birth_from_display").datepicker("getDate");
       nextDate.setFullYear(nextDate.getFullYear() + 1);
-      $('#to_display').datepicker("option", {
+      $('#birth_to_display').datepicker("option", {
         minDate: newDate,
         maxDate: nextDate
       });
     }
   });
-  $("#to_display").datepicker({
+  createDatepicker("#birth_to_display", {
     dateFormat: 'dd M',
-    altField: '#to',
-    altFormat: 'dd-mm-yy',
-    autoSize: false,
-    firstDay: 1,
-    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-    prevText: 'Atrás',
-    nextText: 'Adelante',
-    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-    today: 'Hoy',
-    clear: ''
+    altField: '#birth_to'
+  });
+  createDatepicker("#range_from_display", {
+    dateFormat: 'dd M yy',
+    altField: '#range_from',
+    onSelect: function(newDate){
+      nextDate = $("#range_from_display").datepicker("getDate");
+      nextDate.setFullYear(nextDate.getFullYear() + 1);
+      $('#range_to_display').datepicker("option", {
+        minDate: newDate,
+        maxDate: nextDate
+      });
+    }
+  });
+  createDatepicker("#range_to_display", {
+    dateFormat: 'dd M yy',
+    altField: '#range_to'
   });
 
   $('#addFilter + .dropdown-menu > li > a').click(function (event) {
@@ -55,6 +49,12 @@ $(function () {
     menu = $(cross.data('target'));
     menu.parent().removeClass('hidden');
     removeData(cross.parents('.form-group'));
+  });
+
+  $('#search_btn').click(function (e) {
+    var data = $('#search_bar').val();
+    $('#search').val(data);
+    $('#client_filter').submit();
   });
 
   $('#file').change( function () {
@@ -93,6 +93,25 @@ $(function () {
   });
 });
 
+function createDatepicker (element, options) {
+  var defaults = {
+    altFormat: 'dd-mm-yy',
+    autoSize: false,
+    firstDay: 1,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    prevText: 'Atrás',
+    nextText: 'Adelante',
+    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    today: 'Hoy',
+    clear: ''
+  }
+  var settings = $.extend({}, defaults, options);
+  $(element).datepicker(settings);
+}
+
 function animateIn (element) {
   element.removeClass('hidden');
   height = element.outerHeight();
@@ -118,6 +137,10 @@ function removeData(element) {
     $(child).prop('checked', false);
   });
   children = element.find('input[type="text"]');
+  $.each(children, function (i, child) {
+    $(child).val('');
+  });
+  children = element.find('input[type="hidden"]');
   $.each(children, function (i, child) {
     $(child).val('');
   });

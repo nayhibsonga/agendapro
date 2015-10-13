@@ -7,7 +7,7 @@
     </div>
     <div class="col-xs-12 col-sm-10">
       <div id="reservar">
-        <%= form_tag("select_hour", method: "get", role: "form") do %>
+        <%= form_tag("select_hour", method: "get", role: "form", id: "selectHourForm") do %>
           <%= hidden_field_tag :location, @location.id %>
           <div class="form-group">
             <%= label_tag :service, 'Selecciona el servicio que quieres' %>
@@ -21,7 +21,9 @@
             <%= label_tag :datepicker, 'Selecciona una fecha' %>
             <%= text_field_tag :datepicker, nil, :disabled => true, :placeholder => 'Selecciona fecha...', :class => 'form-control' %>
           </div>
-          <button type="submit" class="btn btn-green btn-block btn-lg" disabled>Siguiente</button>
+          <input type="hidden" id="serviceStaff" name="serviceStaff" value="" />
+          <input type="hidden" id="hours_type" name="hours_type" value="workflow" />
+          <button type="submit" id="selectHourNextBtn" class="btn btn-green btn-block btn-lg" disabled>Siguiente</button>
         <% end %>
       </div>
       <div id="informacion" class="hidden">

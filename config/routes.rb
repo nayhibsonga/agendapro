@@ -236,6 +236,7 @@
     get '/select_promo_hour', :to => 'companies#select_promo_hour'
     post '/select_session_hour', :to => 'companies#select_session_hour'
     get '/user_data', :to => 'companies#user_data'
+    get '/mobile_hours', :to => 'companies#mobile_hours'
 
     # Fullcalendar
     get '/provider_breaks/new', :to => 'provider_breaks#new', :as => 'new_provider_break'
@@ -358,6 +359,12 @@
     get '', :to => 'companies#overview', :constraints => { :subdomain => /.+/ }
     get '', :to => 'searchs#index', :as => 'localized_root'
     get 'landing', :to => 'searchs#landing', :as => 'landing'
+
+    # PuntoPagos Local
+    post "/transaccion/crear", :to => 'local_punto_pagos#create_transaction'
+    get "/transaccion/crear", :to => 'local_punto_pagos#create_transaction'
+    get "/transaccion/procesar/:token", :to => 'local_punto_pagos#process_transaction'
+    post "/transaccion/notificar", :to => 'local_punto_pagos#notify'
 
   end
 
