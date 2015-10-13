@@ -836,7 +836,6 @@ ActiveRecord::Schema.define(version: 20151005122935) do
 
   add_index "provider_breaks", ["service_provider_id"], name: "index_provider_breaks_on_service_provider_id", using: :btree
 
-<<<<<<< Updated upstream
   create_table "provider_group_auxes", force: true do |t|
     t.integer  "provider_group_id"
     t.integer  "service_provider_id"
@@ -858,17 +857,6 @@ ActiveRecord::Schema.define(version: 20151005122935) do
 
   add_index "provider_groups", ["company_id"], name: "index_provider_groups_on_company_id", using: :btree
   add_index "provider_groups", ["location_id"], name: "index_provider_groups_on_location_id", using: :btree
-=======
-  create_table "provider_groups", force: true do |t|
-    t.integer  "company_id"
-    t.string   "name",       default: "", null: false
-    t.integer  "order",      default: 0,  null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "provider_groups", ["company_id"], name: "index_provider_groups_on_company_id", using: :btree
->>>>>>> Stashed changes
 
   create_table "provider_times", force: true do |t|
     t.time     "open",                null: false

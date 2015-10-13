@@ -127,30 +127,30 @@
                         <div class="col-sm-8">
                           <div class="input datetime required booking_start_end ">
                             <select class="form-control date-select datetime required" id="bookingStartHour" name="booking[start_hours]">
-                              <option value="0 am">00</option>
-                              <option value="1 am">01</option>
-                              <option value="2 am">02</option>
-                              <option value="3 am">03</option>
-                              <option value="4 am">04</option>
-                              <option value="5 am">05</option>
-                              <option value="6 am">06</option>
-                              <option value="7 am">07</option>
-                              <option value="8 am">08</option>
-                              <option value="9 am">09</option>
-                              <option value="10 am">10</option>
-                              <option value="11 am">11</option>
-                              <option value="12 am">12</option>
-                              <option value="1 pm">13</option>
-                              <option value="2 pm">14</option>
-                              <option value="3 pm">15</option>
-                              <option value="4 pm">16</option>
-                              <option value="5 pm">17</option>
-                              <option value="6 pm">18</option>
-                              <option value="7 pm">19</option>
-                              <option value="8 pm">20</option>
-                              <option value="9 pm">21</option>
-                              <option value="10 pm">22</option>
-                              <option value="11 pm">23</option>
+                              <option value="00">00</option>
+                              <option value="01">01</option>
+                              <option value="02">02</option>
+                              <option value="03">03</option>
+                              <option value="04">04</option>
+                              <option value="05">05</option>
+                              <option value="06">06</option>
+                              <option value="07">07</option>
+                              <option value="08">08</option>
+                              <option value="09">09</option>
+                              <option value="10">10</option>
+                              <option value="11">11</option>
+                              <option value="12">12</option>
+                              <option value="13">13</option>
+                              <option value="14">14</option>
+                              <option value="15">15</option>
+                              <option value="16">16</option>
+                              <option value="17">17</option>
+                              <option value="18">18</option>
+                              <option value="19">19</option>
+                              <option value="20">20</option>
+                              <option value="21">21</option>
+                              <option value="22">22</option>
+                              <option value="23">23</option>
                             </select>
                             :<select class="form-control date-select datetime required" id="bookingStartMinute" name="booking[start_minutes]">
                               <option value="00">00</option>
@@ -167,30 +167,30 @@
                               <option value="55">55</option>
                             </select> -
                             <select class="form-control date-select datetime required" id="bookingEndHour" name="booking[end_hours]">
-                              <option value="0 am">00</option>
-                              <option value="1 am">01</option>
-                              <option value="2 am">02</option>
-                              <option value="3 am">03</option>
-                              <option value="4 am">04</option>
-                              <option value="5 am">05</option>
-                              <option value="6 am">06</option>
-                              <option value="7 am">07</option>
-                              <option value="8 am">08</option>
-                              <option value="9 am">09</option>
-                              <option value="10 am">10</option>
-                              <option value="11 am">11</option>
-                              <option value="12 am">12</option>
-                              <option value="1 pm">13</option>
-                              <option value="2 pm">14</option>
-                              <option value="3 pm">15</option>
-                              <option value="4 pm">16</option>
-                              <option value="5 pm">17</option>
-                              <option value="6 pm">18</option>
-                              <option value="7 pm">19</option>
-                              <option value="8 pm">20</option>
-                              <option value="9 pm">21</option>
-                              <option value="10 pm">22</option>
-                              <option value="11 pm">23</option>
+                              <option value="00">00</option>
+                              <option value="01">01</option>
+                              <option value="02">02</option>
+                              <option value="03">03</option>
+                              <option value="04">04</option>
+                              <option value="05">05</option>
+                              <option value="06">06</option>
+                              <option value="07">07</option>
+                              <option value="08">08</option>
+                              <option value="09">09</option>
+                              <option value="10">10</option>
+                              <option value="11">11</option>
+                              <option value="12">12</option>
+                              <option value="13">13</option>
+                              <option value="14">14</option>
+                              <option value="15">15</option>
+                              <option value="16">16</option>
+                              <option value="17">17</option>
+                              <option value="18">18</option>
+                              <option value="19">19</option>
+                              <option value="20">20</option>
+                              <option value="21">21</option>
+                              <option value="22">22</option>
+                              <option value="23">23</option>
                             </select>
                             :<select class="form-control date-select datetime required" id="bookingEndMinute" name="booking[end_minutes]">
                               <option value="00">00</option>
@@ -766,13 +766,13 @@
             <div class="form-group">
               <%= f.label :start, "Inicio", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
-                <%= f.datetime_select :start, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5, ampm: true}, {class: "form-control date-select"} %>
+                <%= f.datetime_select :start, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
             <div class="form-group">
               <%= f.label :end, "Fin", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
-                <%= f.datetime_select :end, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5, ampm: true}, {class: "form-control date-select"} %>
+                <%= f.datetime_select :end, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
             <div class="form-group form-repeat-div">
@@ -829,7 +829,7 @@
                 </div>
                 <div>
                   <%= radio_button_tag :repeat_option, 'date_end', false %>&nbsp;El&nbsp;
-                  <%= datetime_select "provider_break_repeat", "repeat_end", {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5, ampm: true}, {class: "form-control date-select"} %>
+                  <%= datetime_select "provider_break_repeat", "repeat_end", {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
                 </div>
               </div>
             </div>

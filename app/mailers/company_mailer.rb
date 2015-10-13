@@ -3,7 +3,6 @@ class CompanyMailer < ActionMailer::Base
 	require 'base64'
 
 	def invoice_email(company_id)
-		return
 		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		current_date = DateTime.now
