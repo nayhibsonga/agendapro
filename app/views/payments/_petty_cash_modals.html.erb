@@ -12,7 +12,7 @@
             <div class="payment-form-div form-group">
               <label for="petty_cash_location" class="col-xs-3 control-label">Local</label>
               <div class="col-xs-9">
-                <select id="petty_cash_location" name="petty_cash_location" class="form-control">
+                <select id="petty_cash_location_id" name="petty_cash_location_id" class="form-control">
                   <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) %>
                     <option value="<%= location.id %>">
                       <%= location.name.humanize %>
@@ -67,20 +67,57 @@
         <div class="row">
           <div class="col-xs-12">
 
+            <input type="hidden" id="petty_cash_id" name="petty_cash_id" val="" />
+
             <div class="payment-form-div form-group" id="pettyCashStatusDiv">
-              
+              <label class="col-xs-3 control-label">Estado</label>
+              <div class="col-xs-5">
+                <input type="hidden" class="form-control" id="petty_cash_open" name="petty_cash_open" value="" />
+                <span id="petty_cash_state"></span>
+              </div>
+              <div class="col-xs-4">
+                <button id="openPettyCashBtn" class="btn btn-green" hidden>Abrir</button>
+                <button id="closePettyCashBtn" class="btn btn-red" hidden>Cerrar</button>
+              </div>
             </div>
 
-            <div class="payment-form-div form-group">
-              <button type="button" class="btn btn-default" id="addPettyIncomeBtn" aria-label="Agregar Ingreso">Agregar Ingreso</button>
+            <div style="clear: both;">
             </div>
 
-            <div class="payment-form-div form-group">
-              <button type="button" class="btn btn-default" id="addPettyOutcomeBtn" aria-label="Agregar Ingreso">Agregar Egreso</button>
+            <div class="payment-form-div form-group" id="pettyCashActions">
+              <label class="col-xs-3 control-label">Monto en caja</label>
+              <div class="col-xs-9">
+                <span id="petty_cash_cash"></span>
+              </div>
             </div>
 
-            <p>Revisar movimientos</p>
-            <div class="payment-form-div form-group has-feedback">
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group pettyCashActions" hidden>
+              <label class="col-xs-3 control-label">Opciones</label>
+              <div class="col-xs-9">
+                <div class="input-group">
+                  <button type="button" class="btn btn-default" id="addPettyTransactionBtn" aria-label="Agregar Ingreso">Agregar Ingreso</button>&nbsp;
+                  <button type="button" class="btn btn-default" id="configureCloseBtn" arua-label="Configurar cierre">Configurar cierre</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+
+            <div class="payment-form-div form-group has-feedback pettyCashActions">
+              <label class="col-xs-5 control-label">Revisar movimientos</label>
+              <div class="col-xs-7">
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group has-feedback pettyCashActions">
               
               <label for="petty_cash_start_date" class="col-xs-3 control-label">Desde</label>
               <div class="col-xs-9">
@@ -90,7 +127,10 @@
               </div>
             </div>
 
-            <div class="payment-form-div form-group has-feedback">
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group has-feedback pettyCashActions">
               
               <label for="petty_cash_start_date" class="col-xs-3 control-label">Hasta</label>
               <div class="col-xs-9">
@@ -100,11 +140,88 @@
               </div>
             </div>
 
+
           </div>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addPettyTransactionModal" tabindex="-1" role="dialog" aria-labelledby="Caja Chica" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="addPettyTransactionModalTitle" style="line-height: 1.1;">Agregar ingreso/retiro</h3>
+      </div>
+      <div class="modal-body" id="addPettyTransactionModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <div class="payment-form-div form-group">
+              <label for="petty_transaction_is_income" class="col-xs-3 control-label">Tipo</label>
+              <div class="col-xs-9">
+                <select id="petty_transaction_is_income" name="petty_transaction_is_income" class="form-control">
+                  <option value="1">Ingreso</option>
+                  <option value="0">Retiro</option>
+                </select>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group has-feedback">
+              <label for="petty_cash_transactioner" class="col-xs-3 control-label">Autor</label>
+              <div class="col-xs-9">
+                <select class="form-control" id="petty_cash_transactioner" name="petty_cash_transactioner">    
+                  <option value="">
+                    
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group has-feedback">
+              <label for="petty_transaction_amount" class="col-xs-3 control-label">Monto</label>
+              <div class="col-xs-9">
+                <input type="number" class="form-control" id="petty_transaction_amount" name="petty_transaction_amount" value="0.0" />
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group has-feedback">
+              <label for="petty_transaction_notes" class="col-xs-3 control-label">Comentario</label>
+              <div class="col-xs-9">
+                <textarea class="form-control" id="petty_transaction_notes" name="petty_transaction_notes" value=""></textarea>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        <button type="button" class="btn payment-btn-next" id="pettyTransactionSaveBtn" aria-label="Siguiente">Guardar</button>
       </div>
     </div>
   </div>

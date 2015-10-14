@@ -418,6 +418,11 @@
     post '/set_default_commission', :to => 'payments#set_default_commission'
     post '/set_provider_default_commissions', :to => 'payments#set_provider_default_commissions'
 
+    #PettyCash
+    get '/petty_cash', :to => 'payments#petty_cash'
+    get '/petty_transactions', :to => 'payments#petty_transactions'
+    post '/add_petty_transaction', :to => 'payments#add_petty_transaction'
+
   end
 
   namespace :api, defaults: {format: 'json'} do

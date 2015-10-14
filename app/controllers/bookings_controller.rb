@@ -3960,6 +3960,10 @@ class BookingsController < ApplicationController
 
           #To deattach continous services, just delete the serviceStaffPos condition
 
+          if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization && last_check
+            dateTimePointer = dateTimePointer - total_services_duration.minutes + first_service.company.company_setting.calendar_duration.minutes
+          end
+
           if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization
             #Calculate offset
             offset_diff = (dateTimePointer-day_open_time)*24*60
@@ -4052,19 +4056,24 @@ class BookingsController < ApplicationController
                 end
               end
 
+              # #Stored procedure for time check
+
+              # proc_start_date = dateTimePointer.to_s.gsub('T', ' ')
+              # proc_end_date = dateTimePointer + service.duration.minutes
+              # proc_end_date = proc_end_date.to_s.gsub('T', ' ')
+
+              # if ActiveRecord::Base.connection.execute("select check_hour(#{local.id}, #{provider.id}, #{service.id}, '#{proc_start_date}', '#{proc_end_date}')")[0]['check_hour'] == 't'
+              #   service_valid = true
+              # else
+              #   service_valid = false
+              # end
+
               # Provider breaks
               if service_valid
 
                 if provider.provider_breaks.where.not('(provider_breaks.end <= ? or ? <= provider_breaks.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count > 0
                   service_valid = false
                 end
-
-                #provider.provider_breaks.each do |provider_break|
-                #  if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= provider_break.start.to_datetime)
-                #    service_valid = false
-                #    break
-                #  end
-                #end
 
               end
 
@@ -4080,30 +4089,6 @@ class BookingsController < ApplicationController
                     service_valid = false
                   end
                 end
-
-
-                # Booking.where(service_provider_id: provider.id, start: dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |provider_booking|
-                #   unless provider_booking.status_id == cancelled_id
-                #     pointerEnd = dateTimePointer+service.duration.minutes
-                #     if !(pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
-                #       if !service.group_service || service.id != provider_booking.service_id
-                #         if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                #           service_valid = false
-                #           break
-                #         end
-                #       elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(service_id: service.id, start: dateTimePointer).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
-                #         if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                #           service_valid = false
-                #           break
-                #         end
-                #       end
-                #     else
-                #       #if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                #       #  service_valid = false
-                #       #end
-                #     end
-                #   end
-                # end
 
 
               end
@@ -5072,6 +5057,10 @@ class BookingsController < ApplicationController
 
           #To deattach continous services, just delete the serviceStaffPos condition
 
+          if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization && last_check
+            dateTimePointer = dateTimePointer - total_services_duration.minutes + first_service.company.company_setting.calendar_duration.minutes
+          end
+
           if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization
             #Calculate offset
             offset_diff = (dateTimePointer-day_open_time)*24*60
@@ -5171,6 +5160,18 @@ class BookingsController < ApplicationController
               end
 
               logger.info "Debug 10"
+
+              # #Stored procedure for time check
+
+              # proc_start_date = dateTimePointer.to_s.gsub('T', ' ')
+              # proc_end_date = dateTimePointer + service.duration.minutes
+              # proc_end_date = proc_end_date.to_s.gsub('T', ' ')
+
+              # if ActiveRecord::Base.connection.execute("select check_hour(#{local.id}, #{provider.id}, #{service.id}, '#{proc_start_date}', '#{proc_end_date}')")[0]['check_hour'] == 't'
+              #   service_valid = true
+              # else
+              #   service_valid = false
+              # end
 
               # Provider breaks
               if service_valid

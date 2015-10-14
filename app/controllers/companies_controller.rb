@@ -1148,6 +1148,10 @@ class CompaniesController < ApplicationController
 
 				  #To deattach continous services, just delete the serviceStaffPos condition
 
+				  if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization && last_check
+		            dateTimePointer = dateTimePointer - total_services_duration.minutes + first_service.company.company_setting.calendar_duration.minutes
+		          end
+
 				  if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization
 				    #Calculate offset
 				    offset_diff = (dateTimePointer-day_open_time)*24*60

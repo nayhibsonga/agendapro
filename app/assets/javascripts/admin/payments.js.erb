@@ -659,6 +659,132 @@ function loadPayments(locations, payment_methods) {
     return false;
 }
 
+/*
+* Petty Cash functions
+*
+*/
+
+function loadPettyCash()
+{
+
+  var cashier_code = $("#petty_cash_cashier_code").val();
+
+  $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
+    if(response[0] != "error")
+    {
+      $("#petty_cash_cashier_name").val(response[0]['name']);
+      $("#petty_cash_cashier_id").val(response[0]['id']);
+      $("#pettyCashModalIntro").modal('hide');
+      getPettyCash();
+    }
+    else
+    {
+      alert("El código de cajero ingresado es incorrecto.");
+      $("#petty_cash_cashier_name").val("");
+      $("#petty_cash_cashier_id").val("");
+    }
+  });
+
+}
+
+function getPettyCash()
+{
+  var location_id = $("#petty_cash_location_id").val();
+
+  $.getJSON('/petty_cash', {location_id: location_id}, function (response) {
+    if(response[0] != "error")
+    {
+      var petty_cash = response[1];
+      if(petty_cash.open)
+      {
+        $("#petty_cash_state").text("Abierta");
+        $("#petty_cash_open").val("1");
+        $("#petty_cash_cash").text(petty_cash.cash);
+        $("#openPettyCashBtn").hide();
+        $("#closePettyCashBtn").show();
+        $(".pettyCashActions").show();
+      }
+      else
+      {
+        $("#petty_cash_state").text("Cerrada");
+        $("#petty_cash_open").val("0");
+        $("#petty_cash_cash").text("");
+        $("#openPettyCashBtn").show();
+        $("#closePettyCashBtn").hide();
+        $(".pettyCashActions").hide();
+      }
+      $("#petty_cash_id").val(petty_cash.id);
+    }
+    else
+    {
+      alert("Ocurrió un error al cargar la caja chica.");
+      $("#pettyCashModal").modal('hide');
+    }
+  });
+
+  $("#pettyCashModal").modal('show');
+}
+
+/*
+* Transactioners for a location are the same as sellers, so just get those.
+*/
+function loadTransactioners()
+{
+  $("#petty_cash_transactioner").empty();
+  $.getJSON('/location_sellers', {id: parseInt($('#petty_cash_location_id').val()) }, function (sellers) {
+    
+    $.each(sellers, function (key, seller) {
+      $("#petty_cash_transactioner").append('<option value="' + seller.id + '_' + seller.seller_type + '">' + seller.full_name + ' (' + seller.role_name + ')</option>');
+    });
+
+  });
+}
+
+function newTransaction()
+{
+  loadTransactioners();
+  $("#petty_transaction_is_income").val("1");
+  $("#petty_transaction_amount").val("0.0");
+  $("#petty_transaction_notes").val("");
+  $("#pettyCashModal").modal('hide');
+  $("#addPettyTransactionModal").modal('show');
+}
+
+function saveTransaction()
+{
+  var petty_cash_id = $("#petty_cash_id").val();
+  var amount = $("#petty_transaction_amount").val();
+  var notes = $("#petty_transaction_notes").val();
+  var transactioner = $("#petty_cash_transactioner").val();
+  var is_income = $("#petty_transaction_is_income").val();
+  $.ajax({
+    url: '/add_petty_transaction',
+    type: 'post',
+    data: {petty_cash_id: petty_cash_id, amount: amount, transactioner: transactioner, notes: notes, is_income: is_income},
+    dataType: 'json',
+    error: function(){
+      alert("Ocurrió un error inesperado");
+      $("#pettyTransactionModal").modal('hide');
+      $("#pettyCashModal").modal('show');
+    },
+    success: function(response){
+
+      if(response[0] == "error")
+      {
+        alert("Error: " + response[1]);
+      }
+      else
+      {
+        alert("Transacción guardada.");
+      }
+
+      $("#addPettyTransactionModal").modal('hide');
+      getPettyCash();
+
+    }
+  });
+}
+
 $(function() {
 
 
@@ -861,8 +987,40 @@ $(function() {
   * Petty Cash
   */
 
-  $("#openPettyCashBtn").on('click', function(){
+  $("#pettyCashBtn").on('click', function(){
     $("#pettyCashModalIntro").modal('show');
+  });
+
+  $("#petty_cash_cashier_code").on('focusout', function(){
+
+    var cashier_code = $(this).val();
+
+    $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
+      if(response[0] != "error")
+      {
+        $("#petty_cash_cashier_name").val(response[0]['name']);
+        $("#petty_cash_cashier_id").val(response[0]['id']);
+      }
+      else
+      {
+        alert("El código de cajero ingresado es incorrecto.");
+        $("#petty_cash_cashier_name").val("");
+        $("#petty_cash_cashier_id").val("");
+      }
+    });
+    
+  });
+
+  $("#pettyCashIntroBtn").on('click', function(){
+    loadPettyCash();
+  });
+
+  $("#addPettyTransactionBtn").on('click', function(){
+    newTransaction();
+  });
+
+  $("#pettyTransactionSaveBtn").on('click', function(){
+    saveTransaction();
   });
 
 });

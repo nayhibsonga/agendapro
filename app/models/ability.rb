@@ -183,6 +183,10 @@ class Ability
         can :set_default_commission, Payment, :company_id => user.company_id
         can :set_provider_default_commissions, Payment, :company_id => user.company_id
 
+        can :petty_cash, Payment, :company_id => user.company_id
+        can :petty_transactions, Payment, :company_id => user.company_id
+        can :add_petty_transaction, Payment, :company_id => user.company_id
+
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
         # can :create, CompanyFromEmail
@@ -398,6 +402,10 @@ class Ability
         can :set_default_commission, Payment, :company_id => user.company_id
         can :set_provider_default_commissions, Payment, :company_id => user.company_id
 
+        can :petty_cash, Payment, :company_id => user.company_id
+        can :petty_transactions, Payment, :company_id => user.company_id
+        can :add_petty_transaction, Payment, :company_id => user.company_id
+
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
         can :create, ProductCategory, :company_id => user.company_id
@@ -563,6 +571,10 @@ class Ability
         can :delete_payment, Payment, :company_id => user.company_id
         can :day_payments, Payment, :company_id => user.company_id
 
+        can :petty_cash, Payment, :company_id => user.company_id
+        can :petty_transactions, Payment, :company_id => user.company_id
+        can :add_petty_transaction, Payment, :company_id => user.company_id
+
     elsif user.role_id == Role.find_by_name("Staff").id
         
         can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
@@ -622,6 +634,10 @@ class Ability
         can :get_formatted_booking, Payment, :company_id => user.company_id
         can :delete_payment, Payment, :company_id => user.company_id
         can :day_payments, Payment, :company_id => user.company_id
+
+        can :petty_cash, Payment, :company_id => user.company_id
+        can :petty_transactions, Payment, :company_id => user.company_id
+        can :add_petty_transaction, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 

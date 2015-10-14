@@ -1159,6 +1159,117 @@ class PaymentsController < ApplicationController
 
   end
 
+  def petty_cash
+    petty_cash = nil
+    @json_response = []
+    if PettyCash.where(location_id: params[:location_id]).count > 0
+      petty_cash = PettyCash.find_by_location_id(params[:location_id])
+    else
+      petty_cash = PettyCash.create(:location_id => params[:location_id], :cash => 0, :open => true)
+    end
+    if !petty_cash.nil?
+      @json_response << "ok"
+      @json_response << petty_cash
+    else
+      @json_response << "error"
+      @json_response << "Ocurrió un error al cargar la caja."
+    end
+    render :json => @json_response
+  end
+
+  def petty_transactions
+
+  end
+
+  def add_petty_transaction
+    @json_response = []
+
+    if params[:transactioner].blank?
+      @json_response << "error"
+      @json_response << "El autor de la transacción es inválido."
+      render :json => @json_response
+      return
+    end
+
+    transactioner = params[:transactioner].split("_")
+    transactioner_id = transactioner[0].to_i
+    transactioner_type = transactioner[1].to_i
+
+    if transactioner_type == 0
+      if ServiceProvider.where(:id => transactioner_id).count == 0
+        @json_response << "error"
+        @json_response << "El autor de la transacción es inválido."
+        render :json => @json_response
+        return
+      end
+    elsif transactioner_type == 1
+      if User.where(:id => transactioner_id).count == 0
+        @json_response << "error"
+        @json_response << "El autor de la transacción es inválido."
+        render :json => @json_response
+        return
+      end
+    elsif transactioner_type == 2
+      if Cashier.where(:id => transactioner_id).count == 0
+        @json_response << "error"
+        @json_response << "El autor de la transacción es inválido."
+        render :json => @json_response
+        return
+      end
+    else
+        @json_response << "error"
+        @json_response << "El autor de la transacción es inválido."
+        render :json => @json_response
+        return
+    end
+
+    if PettyCash.where(:id => params[:petty_cash_id]).count == 0
+      @json_response << "error"
+      @json_response << "El código de caja es incorrecto."
+      render :json => @json_response
+      return
+    end
+
+    if params[:notes].blank?
+      @json_response << "error"
+      @json_response << "No se puede guardar una transacción sin comentarios."
+      render :json => @json_response
+      return
+    end
+
+    petty_cash = PettyCash.find(params[:petty_cash_id])
+
+    petty_transaction = PettyTransaction.new
+    petty_transaction.transactioner_id = transactioner[0]
+    petty_transaction.transactioner_type = transactioner[1]
+    petty_transaction.amount = params[:amount].to_f
+    petty_transaction.date = DateTime.now
+    petty_transaction.petty_cash_id = petty_cash.id
+    petty_transaction.is_income = params[:is_income]
+    petty_transaction.notes = params[:notes]
+
+    if petty_transaction.save
+      if petty_transaction.is_income
+        petty_cash.cash = petty_cash.cash + petty_transaction.amount
+      else
+        petty_cash.cash = petty_cash.cash - petty_transaction.amount
+      end
+      if petty_cash.save
+        @json_response << "ok"
+        @json_response << petty_transaction
+      else
+        @json_response << "error"
+        @json_response << petty_cash.errors
+      end
+    else
+      @json_response << "error"
+      @json_response << petty_transaction.errors
+    end
+
+    render :json => @json_response
+
+  end
+
   private
     def set_payment
       @payment = Payment.find(params[:id])

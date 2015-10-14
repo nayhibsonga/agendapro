@@ -33,6 +33,8 @@ class Booking < ActiveRecord::Base
   after_create :send_booking_mail, :wait_for_payment, :check_session
   after_update :send_update_mail, :check_session
 
+  procedure :check_hour
+
   #Get booking price if it's a session
   #to get it's provider commission
   def get_session_price

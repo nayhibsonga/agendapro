@@ -178,3 +178,6 @@ gem 'rack-cors'
 
 #Oink para revisión de memoria
 gem "oink"
+
+#Squirm-rails for stored procedures
+gem "squirm_rails", require: "squirm/rails"
