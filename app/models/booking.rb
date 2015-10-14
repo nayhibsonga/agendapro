@@ -538,6 +538,10 @@ class Booking < ActiveRecord::Base
     end
   end
 
+  def send_session_cancel_mail
+    BookingMailer.cancel_booking(self)
+  end
+
   def send_update_mail
     if self.is_session
       return
