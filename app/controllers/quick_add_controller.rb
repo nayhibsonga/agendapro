@@ -281,7 +281,7 @@ class QuickAddController < ApplicationController
     end
 
     def service_params
-      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, :outcall, :online_payable, :has_discount, :discount, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
+      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, :outcall, :online_payable, :has_discount, :discount, :has_sessions, :sessions_amount, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
     end
 
     def company_params

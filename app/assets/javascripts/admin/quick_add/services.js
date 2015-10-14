@@ -1,11 +1,3 @@
-// $('input').on('itemAdded', function(event) {
-//   // event.item: contains the item
-// });
-// $('input').on('beforeItemRemove', function(event) {
-//   // event.item: contains the item
-//   // event.cancel: set to true to prevent the item getting removed
-// });
-
 function saveServiceCategory () {
 	$.ajax({
 	    type: 'POST',
@@ -77,7 +69,16 @@ function saveService () {
 	$.ajax({
 	    type: 'POST',
 	    url: '/quick_add/service.json',
-	    data: { "service": { "name": $('#service_name').val(), "price": $('#service_price').val(), "duration": $('#service_duration').val(), "service_category_id": $('#service_service_category_id').val() } },
+	    data: {
+	    	"service": {
+	    		"name": $('#service_name').val(),
+	    		"price": $('#service_price').val(),
+	    		"duration": $('#service_duration').val(),
+	    		"service_category_id": $('#service_service_category_id').val(),
+	    		"has_sessions": $('#service_has_sessions').is(':checked'),
+	    		"sessions_amount": $('#service_sessions_amount').val()
+	    	}
+	    },
 	    dataType: 'json',
 	    success: function (result){
 	    	$('#services').append('<tr id="service_'+ result.service.id +'"><td>'+ result.service.name +'</td><td>$ '+ result.service.price.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +'</td><td>'+ result.service.duration +' min.</td><td>'+ result.service_category +'</td><td><button id="service_delete_'+ result.service.id +'" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td></tr>');
@@ -85,9 +86,13 @@ function saveService () {
 	    	$('#service_name').val('');
 	    	$('#service_price').val('');
 	    	$('#service_duration').val('');
+	    	$('#service_sessions_amount').val('');
+	    	if ($('#service_has_sessions').is(':checked')) {
+	    		$('#service_has_sessions').click();
+	    	};
 	    	$('#service_delete_'+ result.service.id).click(function() {
 	    		$('#update_service_spinner').show();
-				$('#update_service_button').attr('disabled', true);
+					$('#update_service_button').attr('disabled', true);
 	    		deleteService(result.service.id);
 	    	});
 			service_validation.resetForm();
@@ -98,8 +103,8 @@ function saveService () {
 			$('#update_service_spinner').hide();
 		},
 		error: function (xhr){
-		    var errors = $.parseJSON(xhr.responseText).errors;
-		    var errorList = '';
+		  var errors = $.parseJSON(xhr.responseText).errors;
+		  var errorList = '';
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
@@ -175,6 +180,17 @@ $(function() {
 		else {
 			window.console.log("Bad service delete");
 		}
+	});
+
+	$('#service_has_sessions').click(function (e) {
+			if($("#service_has_sessions").is(':checked')){
+				$('#service_sessions_amount').closest('.form-group').removeClass('hidden');
+				$('#service_sessions_amount').attr('disabled', false);
+			}
+			else{
+				$('#service_sessions_amount').closest('.form-group').addClass('hidden');
+				$('#service_sessions_amount').attr('disabled', true);
+			}
 	});
 
 });
