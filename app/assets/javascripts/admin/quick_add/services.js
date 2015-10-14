@@ -96,7 +96,7 @@ function saveService () {
 	    		deleteService(result.service.id);
 	    	});
 			service_validation.resetForm();
-		    $('#new_service .form-group').removeClass('has-error has-success');
+		    $('#new_service .form-group').removeClass('has-error has-success has-feedback');
 		    $('#new_service .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
 	    	$('#next_service_button').attr('disabled', false);
 			$('#update_service_button').attr('disabled', false);
