@@ -1,8 +1,7 @@
 // Post
 function updateCompany () {
 	$('#fieldset_step1').attr('disabled');
-	$('#update_company_button').addClass('disabled');
-	$('#update_company_spinner').show();
+	$('#update_company_button').button('reset');
 	var formId = $('[id^=edit_company_]').prop('id');
 	$.ajax({
 		type: 'POST',
@@ -22,8 +21,7 @@ function updateCompany () {
 			scrollToAnchor("fieldset_step2");
 			$('#fieldset_step1').show();
 			$('#fieldset_step1').removeAttr('disabled');
-			$('#update_company_button').removeClass('disabled');
-			$('#update_company_spinner').hide();
+			$('#update_company_button').button('reset');
 		},
 		error: function (xhr) {
 			var errors = $.parseJSON(xhr.responseText).errors;
@@ -38,8 +36,7 @@ function updateCompany () {
 				'</ul>'
 			);
 			$('#fieldset_step1').removeAttr('disabled');
-			$('#update_company_button').removeClass('disabled');
-			$('#update_company_spinner').hide();
+			$('#update_company_button').button('reset');
 		},
 	});
 }
@@ -47,6 +44,7 @@ function updateCompany () {
 $(function() {
 	$('#update_company_button').click(function() {
 		if ($('[id^="edit_company_"]').valid()) {
+			$('#update_company_button').button('loading');
 			updateCompany();
 		};
 	});

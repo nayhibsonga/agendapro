@@ -12,7 +12,7 @@
         <div class="col-md-12">
           <ul id="location_pills" class="nav nav-pills nav-justified quickadd-pills">
             <% @company.locations.where(active:true).each do |location| %>
-            <li><a href="#" id="location_pill_<%= location.id %>"><%= location.name %><!--  <button id="location_delete_<%= location.id %>" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button> --></a></li>
+            <li><a href="#" id="location_pill_<%= location.id %>"><%= location.name %></a></li>
             <% end %>
             <li class="active"><a href="#" id="new_location_pill">Nuevo Local</a></li>
           </ul>
@@ -109,7 +109,6 @@
             <div class="form-group">
               <div class="col-sm-9 col-sm-offset-3">
                 <button id="update_location_button" name="new_location_btn" class="btn btn-green btn-lg">Guardar Local</button>
-                <!-- <a id="update_location_button" name="new_location_btn" class="btn btn-green btn-lg">Guardar Local</a> -->
                 <a id="next_location_button" class="btn btn-orange btn-lg" <%= 'disabled' if @company.locations.where(active: true).count < 1 %>>Siguiente Paso</a>
                 <i id="update_location_spinner" class="fa fa-spinner fa-spin" style="display:none;"></i>
               </div>
