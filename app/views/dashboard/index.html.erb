@@ -15,7 +15,7 @@
           <div class="col-md-6">
             <div class="square-green">
               <h2><%= @monthBookings.count %></h2>
-              <p>Reservas este mes</p>
+              <p>Reservas últimos 7 días</p>
             </div>
           </div>
           <div class="col-md-6">
@@ -29,6 +29,7 @@
       </div>
       <div class="col-sm-8">
         <div class="row">
+          <% if current_user.role == Role.find_by(name: 'Administrador Local') or current_user.role == Role.find_by(name: 'Administrador General') %>
           <div class="col-md-3">
             <div class="square-highlight">
               <h2><span class="text-green"><%= @payedBookings.count %></span>/<%= @monthBookings.count %></h2>
@@ -36,6 +37,7 @@
               <p>Pago Online</p>
             </div>
           </div>
+          <% end %>
           <div class="col-md-3">
             <div class="square-highlight">
               <h2><span class="text-green"><%= @onlineBookings.count %></span>/<%= @monthBookings.count %></h2>
@@ -49,7 +51,7 @@
           <div class="col-md-3">
             <div class="square-highlight">
               <h2 class="text-green">
-                <% occupation = booking_occupation(Time.now.beginning_of_month - eval(ENV["TIME_ZONE_OFFSET"]), Time.now.end_of_month - eval(ENV["TIME_ZONE_OFFSET"]), [1, 2, 3, 4], 1, current_user.company_id) %>
+                <% occupation = booking_occupation(Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
                 <%= number_to_percentage occupation * 100, precision: 1, strip_insignificant_zeros: true %>
               </h2>
               <p data-toggle="toltip" title="Que tan ocupada tienen la agenda los prestadores" data-placement="top" role="button">
@@ -61,10 +63,11 @@
               <p>Factor de Ocupación</p>
             </div>
           </div>
+          <% if current_user.role == Role.find_by(name: 'Administrador General') %>
           <div class="col-md-3">
             <div class="square-highlight">
               <h2 class="text-green">
-                <% incomes = booking_revenue(Time.now.beginning_of_month - eval(ENV["TIME_ZONE_OFFSET"]), Time.now.end_of_month - eval(ENV["TIME_ZONE_OFFSET"]), [1, 2, 3, 4], 1, current_user.company_id) %>
+                <% incomes = booking_revenue(Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
                 <%= number_to_currency incomes %>
               </h2>
               <p data-toggle="toltip" title="La suma de los precios de todas las reservas del mes" data-placement="top" role="button">
@@ -76,6 +79,7 @@
               <p>Ingresos Estimados</p>
             </div>
           </div>
+          <% end %>
         </div>
       </div>
     </div>

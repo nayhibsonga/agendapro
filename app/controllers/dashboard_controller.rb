@@ -23,7 +23,7 @@ class DashboardController < ApplicationController
       @locations = Location.where(company_id: current_user.company_id).accessible_by(current_ability).order(:order)
       @service_providers = ServiceProvider.where(location_id: @locations).order(:order)
 
-      @monthBookings = Booking.where(service_provider_id: @service_providers).where("created_at BETWEEN ? AND ?", Time.now.beginning_of_month - eval(ENV["TIME_ZONE_OFFSET"]), Time.now.end_of_month - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)')
+      @monthBookings = Booking.where(service_provider_id: @service_providers).where("created_at BETWEEN ? AND ?", Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now).where('is_session = false or (is_session = true and is_session_booked = true)')
       @statusArray = []
       Status.all.each do |status|
         @statusArray.push([status.name,@monthBookings.where(:status_id => status.id).count])
