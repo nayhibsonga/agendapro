@@ -316,6 +316,47 @@ class PaymentsController < ApplicationController
       payment.payment_method_number = params[:method_number]
     end
 
+    if payment.payment_method_id == PaymentMethod.find_by_name("Efectivo").id
+
+      petty_cash = nil
+      if PettyCash.where(location_id: params[:location_id]).count > 0
+        petty_cash = PettyCash.find_by_location_id(params[:location_id])
+      else
+        petty_cash = PettyCash.create(:location_id => params[:location_id], :cash => 0, :open => true)
+      end
+
+      petty_transaction = PettyTransaction.new
+
+      petty_transaction.transactioner_id = params[:cashier_id]
+      petty_transaction.transactioner_type = 2
+      petty_transaction.amount = params[:cost].to_f
+      petty_transaction.date = DateTime.now
+      petty_transaction.petty_cash_id = petty_cash.id
+      petty_transaction.is_income = true
+      petty_transaction.notes = "Transacción generada por pago en efectivo."
+
+      petty_transaction.save
+
+      if petty_transaction.save
+        if petty_transaction.is_income
+          petty_cash.cash = petty_cash.cash + petty_transaction.amount
+        else
+          petty_cash.cash = petty_cash.cash - petty_transaction.amount
+        end
+        if petty_cash.save
+          @json_response << "ok"
+          @json_response << petty_transaction
+        else
+          @json_response << "error"
+          @json_response << petty_cash.errors
+        end
+      else
+        @json_response << "error"
+        @json_response << petty_transaction.errors
+      end
+
+    end
+
     if payment.payment_method_id == PaymentMethod.find_by_name("Tarjeta de Crédito").id
       payment.payment_method_type_id = params[:pay_method_type]
     end
