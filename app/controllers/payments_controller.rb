@@ -1219,7 +1219,22 @@ class PaymentsController < ApplicationController
   end
 
   def petty_transactions
-
+    petty_cash = PettyCash.find(params[:petty_cash_id])
+    start_date = params[:start_date].to_datetime
+    end_date = params[:end_date].to_datetime + 1.days
+    petty_transactions = PettyTransaction.where(:petty_cash_id => petty_cash.id).where('? <= date and date <= ?', start_date, end_date)
+    @petty_transactions = []
+    petty_transactions.each do |petty_transaction|
+      @petty_transactions << {
+        id: petty_transaction.id,
+        date: petty_transaction.date,
+        amount: petty_transaction.amount,
+        is_income: petty_transaction.is_income,
+        transactioner: petty_transaction.get_transactioner_details,
+        notes: petty_transaction.notes
+      }
+    end
+    render :json => @petty_transactions
   end
 
   def add_petty_transaction

@@ -132,11 +132,19 @@
 
             <div class="payment-form-div form-group has-feedback pettyCashActions">
               
-              <label for="petty_cash_start_date" class="col-xs-3 control-label">Hasta</label>
+              <label for="petty_cash_end_date" class="col-xs-3 control-label">Hasta</label>
               <div class="col-xs-9">
-                <input type="text" class="form-control" id="petty_cash_start_date" name="petty_cash_start_date" value="" />
+                <input type="text" class="form-control" id="petty_cash_end_date" name="petty_cash_end_date" value="" />
                 <span class="help-block"></span>
                 <span class="form-control-feedback"></span>
+              </div>
+            </div>
+
+            <div class="payment-form-div form-group has-feedback pettyCashActions">
+              
+              <label class="col-xs-3 control-label"></label>
+              <div class="col-xs-9">
+                <button type="button" id="pettyTransactionSummaryBtn" class="btn btn-green">Ver</button>
               </div>
             </div>
 
@@ -215,6 +223,48 @@
 
             <div style="clear: both;">
             </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        <button type="button" class="btn payment-btn-next" id="pettyTransactionSaveBtn" aria-label="Siguiente">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pettyTransactionsSummaryModal" tabindex="-1" role="dialog" aria-labelledby="Caja Chica" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="pettyTransactionsSummaryModalTitle" style="line-height: 1.1;">Transacciones</h3>
+      </div>
+      <div class="modal-body" id="pettyTransactionsSummaryModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <table id="pettyTransactionsTable">
+              <tr>
+                <th>
+                  Tipo
+                </th>
+                <th>
+                  Monto
+                </th>
+                <th>
+                  Fecha
+                </th>
+                <th>
+                  Autor
+                </th>
+                <th>
+                  Comentario
+                </th>
+              </tr>
+            </table>
 
           </div>
         </div>

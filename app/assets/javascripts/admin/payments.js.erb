@@ -785,6 +785,36 @@ function saveTransaction()
   });
 }
 
+function loadTransactions()
+{
+  var petty_cash_id = $("#petty_cash_id").val();
+  var start_date = $("#petty_cash_start_date").val();
+  var end_date = $("#petty_cash_end_date").val();
+  $(".pettyTransactionsRow").remove();
+  $.getJSON('/petty_transactions', {petty_cash_id: petty_cash_id, start_date: start_date, end_date: end_date}, function (petty_transactions) {
+    $.each(petty_transactions, function (key, petty_transaction) {
+      var trans_type = "Ingreso";
+      if(!petty_transaction.is_income)
+      {
+        trans_type = "Retiro";
+      }
+      $("#pettyTransactionsTable").append(
+        '<tr class="pettyTransactionsRow">' +
+        '<td>' + trans_type + '</td>' +
+        '<td>' + petty_transaction.amount + '</td>' +
+        '<td>' + petty_transaction.date + '</td>' +
+        '<td>' + petty_transaction.transactioner + '</td>' +
+        '<td>' + petty_transaction.notes + '</td>' +
+        '</tr>'
+      );
+    });
+
+    $("#pettyCashModal").modal('hide');
+    $("#pettyTransactionsSummaryModal").modal('show');
+
+  });
+}
+
 $(function() {
 
 
@@ -923,6 +953,40 @@ $(function() {
         clear: ''
   });
 
+  $("#petty_cash_start_date").datepicker({
+    dateFormat: 'dd-mm-yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
+  $("#petty_cash_end_date").datepicker({
+    dateFormat: 'dd-mm-yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
   $('#payment_payment_method_id').change(function() {
     loadPaymentSettings();
   });
@@ -1021,6 +1085,14 @@ $(function() {
 
   $("#pettyTransactionSaveBtn").on('click', function(){
     saveTransaction();
+  });
+
+  $("#pettyTransactionSummaryBtn").on('click', function(){
+    loadTransactions();
+  });
+
+  $("#pettyTransactionsSummaryModal").on('hidden.bs.modal', function(){
+    $("#pettyCashModal").modal('show');
   });
 
 });
