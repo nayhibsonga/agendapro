@@ -30,6 +30,7 @@ function loadServiceModal () {
     loadService();
   }); // Bind click event
 
+  $('#nextButton').text('Siguiente');
   $('#nextButton').off('click'); // Unbind click event
   $('#nextButton').click(function (e) {
     loadHourModal();
@@ -215,6 +216,7 @@ function loadUserModal () {
   $('#hoursOptimizer #new_booking').show();
   $('#optimizerTitle').html(userTitle);
 
+  $('#nextButton').text('Reservar');
   $('#nextButton').off('click'); // Unbind click event
   $('#nextButton').click(function (e) {
     if ($('#hoursOptimizer #new_booking').valid()) {
