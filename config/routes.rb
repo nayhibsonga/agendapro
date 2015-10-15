@@ -421,7 +421,11 @@
     #PettyCash
     get '/petty_cash', :to => 'payments#petty_cash'
     get '/petty_transactions', :to => 'payments#petty_transactions'
+    get '/petty_transaction', :to => 'payments#petty_transaction'
     post '/add_petty_transaction', :to => 'payments#add_petty_transaction'
+    post '/open_close_petty_cash', :to => 'payments#open_close_petty_cash'
+    post '/delete_petty_transaction', :to => 'payments#delete_petty_transaction'
+    post '/set_petty_cash_close_schedule', :to => 'payments#set_petty_cash_close_schedule'
 
   end
 

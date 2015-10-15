@@ -185,7 +185,11 @@ class Ability
 
         can :petty_cash, Payment, :company_id => user.company_id
         can :petty_transactions, Payment, :company_id => user.company_id
+        can :petty_transaction, Payment, :company_id => user.company_id
         can :add_petty_transaction, Payment, :company_id => user.company_id
+        can :open_close_petty_cash, Payment, :company_id => user.company_id
+        can :delete_petty_transaction, Payment, :company_id => user.company_id
+        can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -404,7 +408,11 @@ class Ability
 
         can :petty_cash, Payment, :company_id => user.company_id
         can :petty_transactions, Payment, :company_id => user.company_id
+        can :petty_transaction, Payment, :company_id => user.company_id
         can :add_petty_transaction, Payment, :company_id => user.company_id
+        can :open_close_petty_cash, Payment, :company_id => user.company_id
+        can :delete_petty_transaction, Payment, :company_id => user.company_id
+        can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
@@ -573,7 +581,11 @@ class Ability
 
         can :petty_cash, Payment, :company_id => user.company_id
         can :petty_transactions, Payment, :company_id => user.company_id
+        can :petty_transaction, Payment, :company_id => user.company_id
         can :add_petty_transaction, Payment, :company_id => user.company_id
+        can :open_close_petty_cash, Payment, :company_id => user.company_id
+        can :delete_petty_transaction, Payment, :company_id => user.company_id
+        can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff").id
         
@@ -637,7 +649,11 @@ class Ability
 
         can :petty_cash, Payment, :company_id => user.company_id
         can :petty_transactions, Payment, :company_id => user.company_id
+        can :petty_transaction, Payment, :company_id => user.company_id
         can :add_petty_transaction, Payment, :company_id => user.company_id
+        can :open_close_petty_cash, Payment, :company_id => user.company_id
+        can :delete_petty_transaction, Payment, :company_id => user.company_id
+        can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 

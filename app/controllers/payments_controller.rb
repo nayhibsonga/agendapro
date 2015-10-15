@@ -333,7 +333,8 @@ class PaymentsController < ApplicationController
       petty_transaction.date = DateTime.now
       petty_transaction.petty_cash_id = petty_cash.id
       petty_transaction.is_income = true
-      petty_transaction.notes = "Transacción generada por pago en efectivo."
+      petty_transaction.notes = "Ingreso generado por pago en efectivo."
+      petty_transaction.open = true
 
       petty_transaction.save
 
@@ -344,15 +345,12 @@ class PaymentsController < ApplicationController
           petty_cash.cash = petty_cash.cash - petty_transaction.amount
         end
         if petty_cash.save
-          @json_response << "ok"
-          @json_response << petty_transaction
+
         else
-          @json_response << "error"
-          @json_response << petty_cash.errors
+          @errors << petty_cash.errors
         end
       else
-        @json_response << "error"
-        @json_response << petty_transaction.errors
+        @errors << petty_transaction.errors
       end
 
     end
@@ -523,6 +521,55 @@ class PaymentsController < ApplicationController
 
     payment = Payment.find(params[:payment_id])
 
+
+    #Check if it was payed in cash
+    #If so, create a petty_transaction outcome
+
+    if payment.payment_method_id == PaymentMethod.find_by_name("Efectivo").id
+
+      petty_cash = nil
+      if PettyCash.where(location_id: params[:location_id]).count > 0
+        petty_cash = PettyCash.find_by_location_id(params[:location_id])
+      else
+        petty_cash = PettyCash.create(:location_id => params[:location_id], :cash => 0, :open => true)
+      end
+
+      petty_transaction = PettyTransaction.new
+
+      petty_transaction.transactioner_id = payment.cashier_id
+      petty_transaction.transactioner_type = 2
+      petty_transaction.amount = payment.amount
+      petty_transaction.date = payment.updated_at
+      petty_transaction.petty_cash_id = petty_cash.id
+      petty_transaction.is_income = false
+      petty_transaction.notes = "Retiro generado por edición de un pago en efectivo."
+
+      if payment.updated_at < DateTime.now.beginning_of_day
+        petty_transaction.open = false
+      else
+        petty_transaction.open = true
+      end
+
+      petty_transaction.save
+
+      if petty_transaction.save
+        if petty_transaction.is_income
+          petty_cash.cash = petty_cash.cash + petty_transaction.amount
+        else
+          petty_cash.cash = petty_cash.cash - petty_transaction.amount
+        end
+        if petty_cash.save
+
+        else
+          @errors << petty_cash.errors
+        end
+      else
+        @errors << petty_transaction.errors
+      end
+
+    end
+
+
     #Find or create a client (update if necessary)
     if params[:set_client] == "1"
       
@@ -573,6 +620,8 @@ class PaymentsController < ApplicationController
       payment.company_payment_method_id = params[:payment_other_method_type]
     end
 
+
+
     payment.installments = params[:dues_number]
     payment.payed = true
     payment.payment_date = params[:payment_date].to_date
@@ -603,6 +652,52 @@ class PaymentsController < ApplicationController
     # MockBookings should be deleted and reconstructed.
     # Booking should be disasociated from payment and then reassociated with new params.
     #
+
+    #Create a new petty_transaction if the payment is payed in cash
+    if payment.payment_method_id == PaymentMethod.find_by_name("Efectivo").id
+
+      petty_cash = nil
+      if PettyCash.where(location_id: payment.location_id).count > 0
+        petty_cash = PettyCash.find_by_location_id(payment.location_id)
+      else
+        petty_cash = PettyCash.create(:location_id => payment.location_id, :cash => 0, :open => true)
+      end
+
+      petty_transaction = PettyTransaction.new
+
+      petty_transaction.transactioner_id = params[:cashier_id]
+      petty_transaction.transactioner_type = 2
+      petty_transaction.amount = params[:cost].to_f
+      petty_transaction.date = payment.updated_at
+      petty_transaction.petty_cash_id = petty_cash.id
+      petty_transaction.is_income = true
+      petty_transaction.notes = "Ingreso generado por pago en efectivo."
+      
+      if payment.updated_at < DateTime.now.beginning_of_day
+        petty_transaction.open = false
+      else
+        petty_transaction.open = true
+      end
+
+      petty_transaction.save
+
+      if petty_transaction.save
+        if petty_transaction.is_income
+          petty_cash.cash = petty_cash.cash + petty_transaction.amount
+        else
+          petty_cash.cash = petty_cash.cash - petty_transaction.amount
+        end
+        if petty_cash.save
+
+        else
+          @errors << petty_cash.errors
+        end
+      else
+        @errors << petty_transaction.errors
+      end
+
+    end
+
 
     payment.mock_bookings.each do |mock_booking|
       mock_booking.delete
@@ -963,7 +1058,55 @@ class PaymentsController < ApplicationController
       end
     end
 
+    #Check if it was payed in cash
+    #If so, create a petty_transaction outcome
+
+    if @payment.payment_method_id == PaymentMethod.find_by_name("Efectivo").id
+
+      petty_cash = nil
+      if PettyCash.where(location_id: @payment.location_id).count > 0
+        petty_cash = PettyCash.find_by_location_id(@payment.location_id)
+      else
+        petty_cash = PettyCash.create(:location_id => @payment.location_id, :cash => 0, :open => true)
+      end
+
+      petty_transaction = PettyTransaction.new
+
+      petty_transaction.transactioner_id = @payment.cashier_id
+      petty_transaction.transactioner_type = 2
+      petty_transaction.amount = @payment.amount
+      petty_transaction.date = @payment.updated_at
+      petty_transaction.petty_cash_id = petty_cash.id
+      petty_transaction.is_income = false
+      petty_transaction.notes = "Retiro generado por eliminación de un pago en efectivo."
+
+      if @payment.updated_at < DateTime.now.beginning_of_day
+        petty_transaction.open = false
+      else
+        petty_transaction.open = true
+      end
+
+      petty_transaction.save
+
+      if petty_transaction.save
+        if petty_transaction.is_income
+          petty_cash.cash = petty_cash.cash + petty_transaction.amount
+        else
+          petty_cash.cash = petty_cash.cash - petty_transaction.amount
+        end
+        if petty_cash.save
+
+        else
+          errors << petty_cash.errors
+        end
+      else
+        errors << petty_transaction.errors
+      end
+
+    end
+
     if errors.length == 0
+
       if @payment.delete
         json_response << "ok"
       else
@@ -1220,21 +1363,38 @@ class PaymentsController < ApplicationController
 
   def petty_transactions
     petty_cash = PettyCash.find(params[:petty_cash_id])
-    start_date = params[:start_date].to_datetime
-    end_date = params[:end_date].to_datetime + 1.days
+    start_date = DateTime.now.to_date.to_datetime
+    if !params[:start_date].blank?
+      start_date = params[:start_date].to_datetime
+    end
+    end_date = DateTime.now.to_date.to_datetime + 1.days
+    if !params[:end_date]
+      end_date = params[:end_date].to_datetime + 1.days
+    end
     petty_transactions = PettyTransaction.where(:petty_cash_id => petty_cash.id).where('? <= date and date <= ?', start_date, end_date)
     @petty_transactions = []
     petty_transactions.each do |petty_transaction|
+      arr_datetime = petty_transaction.date.to_s.split(" ")
+      str_time = arr_datetime[1]
+      arr_date = arr_datetime[0].split("-")
+      str_date = arr_date[2] + "/" + arr_date[1] + "/" + arr_date[0]
+      str_date = str_date + " " + str_time
       @petty_transactions << {
         id: petty_transaction.id,
-        date: petty_transaction.date,
+        date: str_date,
         amount: petty_transaction.amount,
         is_income: petty_transaction.is_income,
         transactioner: petty_transaction.get_transactioner_details,
-        notes: petty_transaction.notes
+        notes: petty_transaction.notes,
+        open: petty_transaction.open
       }
     end
     render :json => @petty_transactions
+  end
+
+  def petty_transaction
+    petty_transaction = PettyTransaction.find(params[:petty_transaction_id])
+    render :json => petty_transaction
   end
 
   def add_petty_transaction
@@ -1296,6 +1456,16 @@ class PaymentsController < ApplicationController
     petty_cash = PettyCash.find(params[:petty_cash_id])
 
     petty_transaction = PettyTransaction.new
+
+    if !params[:petty_transaction_id].blank? && params[:petty_transaction_id] != 0 && params[:petty_transaction_id] != "0"
+      petty_transaction = PettyTransaction.find(params[:petty_transaction_id])
+      if !petty_transaction.open
+        @json_response << "error"
+        @json_response << "No se puede editar una transferencia cerrada."
+        render :json => @json_response
+        return
+      end
+    end
     petty_transaction.transactioner_id = transactioner[0]
     petty_transaction.transactioner_type = transactioner[1]
     petty_transaction.amount = params[:amount].to_f
@@ -1305,17 +1475,13 @@ class PaymentsController < ApplicationController
     petty_transaction.notes = params[:notes]
 
     if petty_transaction.save
-      if petty_transaction.is_income
-        petty_cash.cash = petty_cash.cash + petty_transaction.amount
-      else
-        petty_cash.cash = petty_cash.cash - petty_transaction.amount
-      end
-      if petty_cash.save
+      
+      if petty_cash.save_with_cash
         @json_response << "ok"
         @json_response << petty_transaction
       else
         @json_response << "error"
-        @json_response << petty_cash.errors
+        @json_response << "No se puede hacer un retiro mayor que la cantidad de dinero en caja."
       end
     else
       @json_response << "error"
@@ -1324,6 +1490,100 @@ class PaymentsController < ApplicationController
 
     render :json => @json_response
 
+  end
+
+  def open_close_petty_cash
+
+    @json_response = []
+
+    transactioner = params[:transactioner].split("_")
+    transactioner_id = transactioner[0].to_i
+    transactioner_type = transactioner[1].to_i
+
+    if transactioner_type == 0
+      if ServiceProvider.where(:id => transactioner_id).count == 0
+        @json_response << "error"
+        @json_response << "El autor de la transacción es inválido."
+        render :json => @json_response
+        return
+      end
+    elsif transactioner_type == 1
+      if User.where(:id => transactioner_id).count == 0
+        @json_response << "error"
+        @json_response << "El autor de la transacción es inválido."
+        render :json => @json_response
+        return
+      end
+    elsif transactioner_type == 2
+      if Cashier.where(:id => transactioner_id).count == 0
+        @json_response << "error"
+        @json_response << "El autor de la transacción es inválido."
+        render :json => @json_response
+        return
+      end
+    else
+        @json_response << "error"
+        @json_response << "El autor de la transacción es inválido."
+        render :json => @json_response
+        return
+    end
+
+    petty_cash = PettyCash.find(params[:petty_cash_id])
+
+    if params[:option] == "open"
+      petty_cash.set_open(params[:new_cash].to_f, transactioner_id, transactioner_type)
+    elsif params[:option] == "close"
+      petty_cash.set_close(params[:new_cash].to_f, transactioner_id, transactioner_type)
+    else
+      @json_response << "error"
+      @json_response << "La opción ingresada es incorrecta."
+      render :json => @json_response
+      return
+    end
+
+    @json_response << "ok"
+    @json_response << petty_cash
+    render :json => @json_response
+
+  end
+
+  def delete_petty_transaction
+    @json_response = []
+    petty_transaction = PettyTransaction.find(params[:petty_transaction_id])
+    if petty_transaction.is_income
+      if petty_transaction.petty_cash.cash - petty_transaction.amount < 0
+        @json_response << "error"
+        @json_response << "La caja no puede tener saldo menor que 0."
+        render :json => @json_response
+        return
+      end
+    end
+    if petty_transaction.delete
+      @json_response << "ok"
+      @json_response << petty_transaction
+      render :json => @json_response
+    else
+      @json_response << "error"
+      @json_response << petty_transaction.errors
+      render :json => @json_response
+    end
+  end
+
+  def set_petty_cash_close_schedule
+    @json_response = []
+    petty_cash = PettyCash.find(params[:petty_cash_id])
+    petty_cash.scheduled_close = params[:scheduled_close]
+    petty_cash.scheduled_keep_cash = params[:scheduled_keep_cash]
+    petty_cash.scheduled_cash = params[:scheduled_cash]
+    if petty_cash.save
+      @json_response << "ok"
+      @json_response << petty_transaction
+      render :json => @json_response
+    else
+      @json_response << "error"
+      @json_response << petty_transaction.errors
+      render :json => @json_response
+    end
   end
 
   private

@@ -50,3 +50,19 @@ table.servicesTable td{
 .btn-caja{
 	width: 120px;
 }
+
+#pettyTransactionsSummaryModal .modal-dialog{
+	width: 70% !important;
+}
+
+#pettyTransactionsTable{
+	width: 100%;
+}
+
+#pettyTransactionsTable th, #pettyTransactionsTable td{
+	padding-left: 4px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-right: 4px;
+	text-align: left;
+}

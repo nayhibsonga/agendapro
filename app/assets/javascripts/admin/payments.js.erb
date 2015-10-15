@@ -708,7 +708,7 @@ function getPettyCash()
       {
         $("#petty_cash_state").text("Cerrada");
         $("#petty_cash_open").val("0");
-        $("#petty_cash_cash").text("");
+        $("#petty_cash_cash").text(petty_cash.cash);
         $("#openPettyCashBtn").show();
         $("#closePettyCashBtn").hide();
         $(".pettyCashActions").hide();
@@ -725,10 +725,97 @@ function getPettyCash()
   $("#pettyCashModal").modal('show');
 }
 
+function loadCloseConfigurations()
+{
+  var location_id = $("#petty_cash_location_id").val();
+
+  $.getJSON('/petty_cash', {location_id: location_id}, function (response) {
+    if(response[0] != "error")
+    {
+      var petty_cash = response[1];
+      if(petty_cash.scheduled_close)
+      {
+        $("#petty_scheduled_close").val("1");
+        if(!petty_cash.scheduled_keep_cash)
+        {
+          $("#petty_scheduled_keep_cash").val("1");
+          $("#petty_scheduled_cash").val(petty_cash.scheduled_cash);
+          $("#scheduled_cash_div").show();
+        }
+        else
+        {
+          $("#petty_scheduled_keep_cash").val("0");
+          $("#petty_scheduled_cash").val("0");
+          $("#scheduled_cash_div").hide();
+        }
+      }
+      else
+      {
+        $("#petty_scheduled_close").val("0");
+        if(!petty_cash.scheduled_keep_cash)
+        {
+          $("#petty_scheduled_keep_cash").val("1");
+          $("#petty_scheduled_cash").val(petty_cash.scheduled_cash);
+          $("#scheduled_cash_div").show();
+        }
+        else
+        {
+          $("#petty_scheduled_keep_cash").val("0");
+          $("#petty_scheduled_cash").val("0");
+          $("#scheduled_cash_div").hide();
+        }
+      }
+      $("#pettyCashModal").modal('hide');
+      $("#pettyScheduledCloseModal").modal('show');
+    }
+    else
+    {
+      alert("Ocurrió un error al cargar la caja chica.");
+    }
+  });
+}
+
+function saveCloseConfigurations()
+{
+  var petty_cash_id = $("#petty_cash_id").val();
+  var scheduled_close = $("#petty_scheduled_close").val();
+  var scheduled_keep_cash = $("#petty_scheduled_keep_cash").val();
+  var scheduled_cash = $("#petty_scheduled_cash").val();
+
+  $.ajax({
+    url: '/set_petty_cash_close_schedule',
+    type: 'post',
+    data: {petty_cash_id: petty_cash_id, scheduled_close: scheduled_close, scheduled_keep_cash: scheduled_keep_cash, scheduled_cash: scheduled_cash},
+    dataType: 'json',
+    error: function(){
+      alert("Ocurrió un error inesperado");
+      $("#pettyScheduledCloseModal").modal('hide');
+      getPettyCash();
+    },
+    success: function(response){
+
+      if(response[0] == "error")
+      {
+        alert("Error: " + response[1]);
+        $("#pettyScheduledCloseModal").modal('hide');
+        getPettyCash();
+      }
+      else
+      {
+        alert("Configuración guardada.");
+        $("#pettyScheduledCloseModal").modal('hide');
+        getPettyCash();
+      }
+
+    }
+  });
+
+}
+
 /*
 * Transactioners for a location are the same as sellers, so just get those.
 */
-function loadTransactioners()
+function loadTransactioners(option, petty_transaction_id)
 {
   $("#petty_cash_transactioner").empty();
   $.getJSON('/location_sellers', {id: parseInt($('#petty_cash_location_id').val()) }, function (sellers) {
@@ -737,17 +824,53 @@ function loadTransactioners()
       $("#petty_cash_transactioner").append('<option value="' + seller.id + '_' + seller.seller_type + '">' + seller.full_name + ' (' + seller.role_name + ')</option>');
     });
 
+    if(option == "new")
+    {
+      $("#is_transaction_edit").val("0");
+      $("#petty_transaction_id").val("0");
+      $("#petty_transaction_is_income").val("1");
+      $("#petty_transaction_amount").val("0.0");
+      $("#petty_transaction_notes").val("");
+      $("#pettyCashModal").modal('hide');
+      $("#addPettyTransactionModal").modal('show');
+    }
+    else
+    {
+      $("#is_transaction_edit").val("1");
+      $("#petty_transaction_id").val(petty_transaction_id);
+      $.getJSON('/petty_transaction', {petty_transaction_id: petty_transaction_id}, function (petty_transaction) {
+        if(petty_transaction.is_income)
+        {
+          $("#petty_transaction_is_income").val("1");
+        }
+        else
+        {
+          $("#petty_transaction_is_income").val("0");
+        }
+        $("#petty_transaction_amount").val(petty_transaction.amount);
+        $("#petty_transaction_notes").val(petty_transaction.notes);
+        var petty_transactioner = petty_transaction.transactioner_id + '_' + petty_transaction.transactioner_type;
+        $("#petty_cash_transactioner").val(petty_transactioner);
+        $("#pettyTransactionsSummaryModal").modal('hide');
+        $("#pettyCashModal").modal('hide');
+        $("#addPettyTransactionModal").modal('show');
+      });
+      
+    }
+    
+
   });
 }
 
 function newTransaction()
 {
-  loadTransactioners();
-  $("#petty_transaction_is_income").val("1");
-  $("#petty_transaction_amount").val("0.0");
-  $("#petty_transaction_notes").val("");
-  $("#pettyCashModal").modal('hide');
-  $("#addPettyTransactionModal").modal('show');
+  loadTransactioners("new", 0);
+  
+}
+
+function editTransaction(petty_transaction_id)
+{
+  loadTransactioners("edit", petty_transaction_id);
 }
 
 function saveTransaction()
@@ -757,10 +880,12 @@ function saveTransaction()
   var notes = $("#petty_transaction_notes").val();
   var transactioner = $("#petty_cash_transactioner").val();
   var is_income = $("#petty_transaction_is_income").val();
+  var petty_transaction_id = $("#petty_transaction_id").val();
+  var is_transaction_edit = $("#is_transaction_edit").val();
   $.ajax({
     url: '/add_petty_transaction',
     type: 'post',
-    data: {petty_cash_id: petty_cash_id, amount: amount, transactioner: transactioner, notes: notes, is_income: is_income},
+    data: {petty_cash_id: petty_cash_id, amount: amount, transactioner: transactioner, notes: notes, is_income: is_income, petty_transaction_id: petty_transaction_id},
     dataType: 'json',
     error: function(){
       alert("Ocurrió un error inesperado");
@@ -779,7 +904,44 @@ function saveTransaction()
       }
 
       $("#addPettyTransactionModal").modal('hide');
-      getPettyCash();
+      if(is_transaction_edit == "0")
+      {
+        getPettyCash();
+      }
+      else
+      {
+        loadTransactions();
+      }
+
+    }
+  });
+}
+
+function deleteTransaction(petty_transaction_id)
+{
+  $.ajax({
+    url: '/delete_petty_transaction',
+    type: 'post',
+    data: {petty_transaction_id: petty_transaction_id},
+    dataType: 'json',
+    error: function(){
+      alert("Ocurrió un error inesperado");
+      $("#pettyTransactionModal").modal('hide');
+      $("#pettyCashModal").modal('show');
+    },
+    success: function(response){
+
+      if(response[0] == "error")
+      {
+        alert("Error: " + response[1]);
+      }
+      else
+      {
+        alert("Transacción eliminada correctamente.");
+      }
+
+      $("#addPettyTransactionModal").modal('hide');
+      loadTransactions();
 
     }
   });
@@ -794,9 +956,14 @@ function loadTransactions()
   $.getJSON('/petty_transactions', {petty_cash_id: petty_cash_id, start_date: start_date, end_date: end_date}, function (petty_transactions) {
     $.each(petty_transactions, function (key, petty_transaction) {
       var trans_type = "Ingreso";
+      var petty_options = '<td>Transferencia cerrada</td>'
       if(!petty_transaction.is_income)
       {
         trans_type = "Retiro";
+      }
+      if(petty_transaction.open)
+      {
+        petty_options = '<td><button type="button" class="transaction_btn_edit btn btn-default" petty_transaction_id="' + petty_transaction.id + '">Editar</button>';
       }
       $("#pettyTransactionsTable").append(
         '<tr class="pettyTransactionsRow">' +
@@ -805,6 +972,7 @@ function loadTransactions()
         '<td>' + petty_transaction.date + '</td>' +
         '<td>' + petty_transaction.transactioner + '</td>' +
         '<td>' + petty_transaction.notes + '</td>' +
+        petty_options +
         '</tr>'
       );
     });
@@ -813,6 +981,74 @@ function loadTransactions()
     $("#pettyTransactionsSummaryModal").modal('show');
 
   });
+}
+
+function loadOpenClose(option)
+{
+
+  var location_id = $("#petty_cash_location_id").val();
+
+  $.getJSON('/petty_cash', {location_id: location_id}, function (response) {
+    if(response[0] != "error")
+    {
+      var petty_cash = response[1];
+      if(option == "open")
+      {
+        $("#openCloseOption").val("open");
+      }
+      else
+      {
+        $("#openCloseOption").val("close"); 
+      }
+      $("#openCloseCurrentCash").text(petty_cash.cash);
+      $("#petty_new_cash").val(petty_cash.cash);
+      $("#pettyCashModal").modal('hide');
+      $("#pettyOpenCloseModal").modal('show');
+    }
+    else
+    {
+      alert("Ocurrió un error al cargar la caja chica.");
+      $("#pettyCashModal").modal('hide');
+    }
+  });
+}
+
+function openClosePettyCash()
+{
+  var petty_cash_id = $("#petty_cash_id").val();
+  var new_cash = $("#petty_new_cash").val();
+  var option = $("#openCloseOption").val();
+  var transactioner = $("#petty_cash_cashier_id").val() + '_2';
+
+  $.ajax({
+    url: '/open_close_petty_cash',
+    type: 'post',
+    data: {petty_cash_id: petty_cash_id, new_cash: new_cash, option: option, transactioner: transactioner},
+    dataType: 'json',
+    error: function(response){
+      alert("Ocurrió un error al editar la caja.");
+    },
+    success: function(response){
+      if(response[0] == "ok")
+      {
+        if(option == "open")
+        {
+          alert("Caja abierta correctamente.");
+        }
+        else
+        {
+          alert("Caja cerrada correctamente.");
+        }
+      }
+      else
+      {
+        alert("Ocurrió un error al editar la caja.");
+      }
+      $("#pettyOpenCloseModal").modal('hide');
+      getPettyCash();
+    }
+  });
+
 }
 
 $(function() {
@@ -1091,8 +1327,50 @@ $(function() {
     loadTransactions();
   });
 
-  $("#pettyTransactionsSummaryModal").on('hidden.bs.modal', function(){
-    $("#pettyCashModal").modal('show');
+  $(".btn-petty-semi-close").on('click', function(){
+    $(this).closest('.modal').modal('hide');
+    getPettyCash();
+  });
+
+  $("#close")
+
+  $('body').on('click', '.transaction_btn_edit', function(){
+    editTransaction($(this).attr("petty_transaction_id"));
+  });
+
+  $('body').on('click', '.transaction_btn_delete', function(){
+    deleteTransaction($(this).attr("petty_transaction_id"));
+  });
+
+  $("#openPettyCashBtn").on('click', function(){
+    loadOpenClose("open");
+  });
+
+  $("#closePettyCashBtn").on('click', function(){
+    loadOpenClose("close");
+  });
+
+  $("#pettyOpenCloseSaveBtn").on('click', function(){
+    openClosePettyCash();
+  });
+
+  $("#configureCloseBtn").on('click', function(){
+    loadCloseConfigurations();
+  });
+
+  $("#petty_scheduled_keep_cash").on('change', function(){
+    if($(this).val() == "0")
+    {
+      $("#scheduled_cash_div").show();
+    }
+    else
+    {
+      $("#scheduled_cash_div").hide();
+    }
+  });
+
+  $("#pettyScheduledCloseSaveBtn").on('click', function(){
+    saveCloseConfigurations();
   });
 
 });

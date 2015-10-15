@@ -2,7 +2,7 @@
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Salir"><i class="fa fa-times" aria-hidden="true"></i></button>
         <h3 class="modal-title" id="pettyCashModalIntroTitle" style="line-height: 1.1;">Caja Chica</h3>
       </div>
       <div class="modal-body" id="pettyCashModalIntroBody">
@@ -35,7 +35,7 @@
             </div>
 
             <div class="payment-form-div form-group has-feedback">
-              <input type="hidden" id="payment_cashier_id" value="" />
+              <input type="hidden" id="petty_cash_cashier_id" value="" />
               <label for="petty_cash_cashier_name" class="col-xs-3 control-label"></label>
               <div class="col-xs-9">
                 <input type="text" class="form-control" id="petty_cash_cashier_name" name="petty_cash_cashier_name" value="" disabled />
@@ -49,8 +49,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
-        <button type="button" class="btn payment-btn-next" id="pettyCashIntroBtn" aria-label="Siguiente">Siguiente</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Salir">Salir</button>
+        <button type="button" class="btn btn-green" id="pettyCashIntroBtn" aria-label="Siguiente">Siguiente</button>
       </div>
     </div>
   </div>
@@ -60,7 +60,7 @@
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Salir"><i class="fa fa-times" aria-hidden="true"></i></button>
         <h3 class="modal-title" id="pettyCashModalTitle" style="line-height: 1.1;">Caja Chica</h3>
       </div>
       <div class="modal-body" id="pettyCashModalBody">
@@ -71,22 +71,22 @@
 
             <div class="payment-form-div form-group" id="pettyCashStatusDiv">
               <label class="col-xs-3 control-label">Estado</label>
-              <div class="col-xs-5">
-                <input type="hidden" class="form-control" id="petty_cash_open" name="petty_cash_open" value="" />
-                <span id="petty_cash_state"></span>
-              </div>
-              <div class="col-xs-4">
-                <button id="openPettyCashBtn" class="btn btn-green" hidden>Abrir</button>
-                <button id="closePettyCashBtn" class="btn btn-red" hidden>Cerrar</button>
+              <div class="col-xs-9" style="padding-top: 6px;">
+                <div class="input-group">
+                  <input type="hidden" class="form-control" id="petty_cash_open" name="petty_cash_open" value="" />
+                  <span id="petty_cash_state"></span>&nbsp;&nbsp;
+                  <button id="openPettyCashBtn" class="btn btn-green" hidden>Abrir</button>
+                  <button id="closePettyCashBtn" class="btn btn-red" hidden>Cerrar</button>
+                </div>
               </div>
             </div>
 
             <div style="clear: both;">
             </div>
 
-            <div class="payment-form-div form-group" id="pettyCashActions">
+            <div class="payment-form-div form-group">
               <label class="col-xs-3 control-label">Monto en caja</label>
-              <div class="col-xs-9">
+              <div class="col-xs-9" style="padding-top: 6px;">
                 <span id="petty_cash_cash"></span>
               </div>
             </div>
@@ -119,9 +119,14 @@
 
             <div class="payment-form-div form-group has-feedback pettyCashActions">
               
+              <%
+                now_date = DateTime.now.to_date.to_s.split("-")
+                now_date = now_date[2] + "/" + now_date[1] + "/" + now_date[0]
+              %>
+
               <label for="petty_cash_start_date" class="col-xs-3 control-label">Desde</label>
               <div class="col-xs-9">
-                <input type="text" class="form-control" id="petty_cash_start_date" name="petty_cash_start_date" value="" />
+                <input type="text" class="form-control" id="petty_cash_start_date" name="petty_cash_start_date" value="<%= now_date %>" />
                 <span class="help-block"></span>
                 <span class="form-control-feedback"></span>
               </div>
@@ -134,7 +139,7 @@
               
               <label for="petty_cash_end_date" class="col-xs-3 control-label">Hasta</label>
               <div class="col-xs-9">
-                <input type="text" class="form-control" id="petty_cash_end_date" name="petty_cash_end_date" value="" />
+                <input type="text" class="form-control" id="petty_cash_end_date" name="petty_cash_end_date" value="<%= now_date %>" />
                 <span class="help-block"></span>
                 <span class="form-control-feedback"></span>
               </div>
@@ -153,7 +158,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Salir">Salir</button>
       </div>
     </div>
   </div>
@@ -163,12 +168,15 @@
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
         <h3 class="modal-title" id="addPettyTransactionModalTitle" style="line-height: 1.1;">Agregar ingreso/retiro</h3>
       </div>
       <div class="modal-body" id="addPettyTransactionModalBody">
         <div class="row">
           <div class="col-xs-12">
+
+            <input type="hidden" id="is_transaction_edit" name="is_transaction_edit" value="0" />
+            <input type="hidden" id="petty_transaction_id" name="petty_transaction_id" value="0" />
 
             <div class="payment-form-div form-group">
               <label for="petty_transaction_is_income" class="col-xs-3 control-label">Tipo</label>
@@ -228,8 +236,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
-        <button type="button" class="btn payment-btn-next" id="pettyTransactionSaveBtn" aria-label="Siguiente">Guardar</button>
+        <button type="button" class="btn btn-default btn-petty-semi-close" id="closePettyTransactionBtn" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-green" id="pettyTransactionSaveBtn" aria-label="Siguiente">Guardar</button>
       </div>
     </div>
   </div>
@@ -239,39 +247,151 @@
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
         <h3 class="modal-title" id="pettyTransactionsSummaryModalTitle" style="line-height: 1.1;">Transacciones</h3>
       </div>
       <div class="modal-body" id="pettyTransactionsSummaryModalBody">
         <div class="row">
           <div class="col-xs-12">
+            <div style="max-height: 450px; overflow-y: auto;">
+              <table id="pettyTransactionsTable">
+                <tr>
+                  <th>
+                    Tipo
+                  </th>
+                  <th>
+                    Monto
+                  </th>
+                  <th>
+                    Fecha
+                  </th>
+                  <th>
+                    Autor
+                  </th>
+                  <th>
+                    Comentario
+                  </th>
+                  <th>
+                    Opciones
+                  </th>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-petty-semi-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-            <table id="pettyTransactionsTable">
-              <tr>
-                <th>
-                  Tipo
-                </th>
-                <th>
-                  Monto
-                </th>
-                <th>
-                  Fecha
-                </th>
-                <th>
-                  Autor
-                </th>
-                <th>
-                  Comentario
-                </th>
-              </tr>
-            </table>
+<div class="modal fade" id="pettyOpenCloseModal" tabindex="-1" role="dialog" aria-labelledby="Caja Chica" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="pettyOpenCloseModalTitle" style="line-height: 1.1;">Abrir/Cerrar Caja</h3>
+      </div>
+      <div class="modal-body" id="pettyOpenCloseModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <input type="hidden" id="openCloseOption" value="" />
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-3 control-label">Monto actual</label>
+              <div class="col-xs-9" style="padding-top: 6px;">
+                <span id="openCloseCurrentCash"></span>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group has-feedback">
+              <label for="petty_new_cash" class="col-xs-3 control-label">Monto final</label>
+              <div class="col-xs-9">
+                <input type="number" class="form-control" id="petty_new_cash" name="petty_new_cash" value="" />
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+
+            </div>
+
+            <div style="clear: both;">
+            </div>
 
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
-        <button type="button" class="btn payment-btn-next" id="pettyTransactionSaveBtn" aria-label="Siguiente">Guardar</button>
+        <button type="button" class="btn btn-default btn-petty-semi-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-green" id="pettyOpenCloseSaveBtn" aria-label="Siguiente">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pettyScheduledCloseModal" tabindex="-1" role="dialog" aria-labelledby="Caja Chica" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="pettyScheduledCloseModalTitle" style="line-height: 1.1;">Cierre programado</h3>
+      </div>
+      <div class="modal-body" id="pettyScheduledCloseModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <p>Puedes configurar la caja para que al final del día se cierre automáticamente, eligiendo mantener el monto actual o actualizarlo en cada cierre.</p>
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-5 control-label">Cerrar al final del día</label>
+              <div class="col-xs-7">
+                <select class="form-control" id="petty_scheduled_close">
+                  <option value="0">No</option>
+                  <option value="1">Sí</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-5 control-label">Mantener monto</label>
+              <div class="col-xs-7">
+                <select class="form-control" id="petty_scheduled_keep_cash">
+                  <option value="0">No</option>
+                  <option value="1">Sí</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="clear: both; margin-top: 2px;">
+            </div>
+
+            <div class="payment-form-div form-group has-feedback" id="scheduled_cash_div">
+              <label for="petty_scheduled_new_cash" class="col-xs-5 control-label">Nuevo monto</label>
+              <div class="col-xs-7">
+                <input type="number" class="form-control" id="petty_scheduled_cash" name="petty_scheduled_cash" value="" />
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-petty-semi-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-green" id="pettyScheduledCloseSaveBtn" aria-label="Siguiente">Guardar</button>
       </div>
     </div>
   </div>
