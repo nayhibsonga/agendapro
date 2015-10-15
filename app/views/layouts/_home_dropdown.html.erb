@@ -2,7 +2,7 @@
 	<a href="" class="dropdown-toggle menu-green" data-toggle="dropdown"><span class="email-dropdown"><%= current_user.email %></span> <i class="fa fa-chevron-down"></i></a>
 	<ul class="dropdown-menu">
 		<li>
-		<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
+		<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id || current_user.role_id == Role.find_by(:name => 'Ventas').id %>
 			<%= link_to '<i class="fa fa-dashboard fa-fw"></i> Panel Empresa'.html_safe, dashboard_url(subdomain: false) %>
 		<% else %>
 			<%= link_to '<i class="fa fa-building-o fa-fw"></i> Agregar mi Compañía'.html_safe, add_company_url(subdomain: false) %>

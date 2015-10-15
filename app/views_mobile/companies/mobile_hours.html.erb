@@ -8,9 +8,7 @@
     <div class="col-xs-12">
       <%= form_tag("select_hour", method: "get", role: "form", id: "form-date") do %>
         <%= hidden_field_tag :location, @location.id %>
-        <%= hidden_field_tag :service, @serviceStaff[0][:service] %>
-        <%= hidden_field_tag :provider, @serviceStaff[0][:provider] %>
-        <%= hidden_field_tag :serviceStaff %>
+        <%= hidden_field_tag :serviceStaff, @serviceStaff %>
         <%= hidden_field_tag :datepicker, @date %>
         <div class="form-group">
           <span class="pull-left action" data-date="<%= @date - 1 %>" style="z-index: 5;"><i class="fa fa-caret-left fa-lg"></i></span>
@@ -23,7 +21,7 @@
   <div class="row">
     <div class="col-xs-12">
       <%= form_tag("user_data", method: "get", role: "form") do %>
-        <%= hidden_field_tag :service, @serviceStaff[0][:service] %>
+        <%= hidden_field_tag :serviceStaff, @serviceStaff %>
         <%= hidden_field_tag :staff, nil %>
         <%= hidden_field_tag :start, nil %>
         <%= hidden_field_tag :end, nil %>
@@ -40,9 +38,9 @@
           <% @available_time.each do |time| %>
 
             <% if time[:status] == "available" %>
-              <button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>" data-provider="<%= time[:provider] %>" data-has-time-discount="false" data-time-discount="0" data-has-discount="false" data-discount="0" data-service-promo-id="0"><%= time[:hour][:start]  %></button>
+              <button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:start_block] %>" data-end="<%= time[:end_block] %>" data-provider="<%= time[:provider_id] %>" data-has-time-discount="false" data-time-discount="0" data-has-discount="false" data-discount="0" data-service-promo-id="0"><%= time[:start_block]  %></button>
             <% elsif time[:status] == "discount" %>
-              <button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:hour][:start] %>" data-end="<%= time[:hour][:end] %>" data-provider="<%= time[:provider] %>" data-has-time-discount="<%= time[:has_time_discount] %>" data-time-discount="<%= time[:time_discount] %>" data-has-discount="<%= time[:has_discount] %>" data-discount="<%= time[:discount] %>" data-service-promo-id="<%= time[:service_promo_id] %>"><%= image_tag('promociones/icono_promociones.png', :size => "18x18" ) %>&nbsp;<%= time[:hour][:start]  %></button>
+              <button type="submit" class="btn btn-block btn-default btn-lg" data-date="<%= time[:date] %>" data-start="<%= time[:start_block] %>" data-end="<%= time[:end_block] %>" data-provider="<%= time[:provider_id] %>" data-has-time-discount="<%= time[:has_time_discount] %>" data-time-discount="<%= time[:time_discount] %>" data-has-discount="<%= time[:has_discount] %>" data-discount="<%= time[:discount] %>" data-service-promo-id="<%= time[:service_promo_id] %>"><%= image_tag('promociones/icono_promociones.png', :size => "18x18" ) %>&nbsp;<%= time[:start_block]  %></button>
             <% end %>
           <% end %>
         </div>
@@ -92,13 +90,6 @@
     $('span.action').click(function (event) {
       var date = $(event.target).parent().data('date');
       $('#datepicker').val(date);
-      selects = [];
-      selects.push({
-        service: $("#service").val(),
-        provider: $("#provider").val()
-      });
-
-      $("#serviceStaff").val(JSON.stringify(selects));
       $('#form-date').submit();
     });
 
