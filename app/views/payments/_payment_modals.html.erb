@@ -425,36 +425,39 @@
         %>
 
         <div class="row">
-
-          <div class="col-xs-12">
-            
-            <table id="payment_transactions_table">
-              <tr>
-                <% active_payment_methods.each do |payment_method| %>
-                  <th><%= payment_method.name %></th>
-                <% end %>
-                <% company_payment_methods.each do |company_payment_method| %>
-                  <th><%= company_payment_method.name %></th>
-                <% end %>
-                <th>Paga</th>
-                <th>Total</th>
-                <th>Vuelto</th>
-              </tr>
-              <tr>
-                <% active_payment_methods.each do |payment_method| %>
-                  <td><input type="number" class="payment_method_amount" payment_method_id="<%= payment_method.id %>" value="0" disabled /></td>
-                <% end %>
-                <% company_payment_methods.each do |company_payment_method| %>
-                  <td><input type="number" class="company_payment_method_amount" company_payment_method_id="<%= company_payment_method.id %>" value="0" disabled /></td>
-                <% end %>
-                <td><input type="number" id="payment_transactions_sum" value="0" disabled /></td>
-                <td><input type="number" id="payment_total_cost" value="0" disabled /></td>
-                <td><input type="number" id="payment_total_change_amount" value="0" disabled /></td>
-              </tr>
-            </table>
+          <div class="col-xs-1">
+          </div>
+          <div class="col-xs-10">
+            <div style="display:block;">
+              <table id="payment_transactions_table">
+                <tr>
+                  <% active_payment_methods.each do |payment_method| %>
+                    <th><%= payment_method.name %></th>
+                  <% end %>
+                  <% company_payment_methods.each do |company_payment_method| %>
+                    <th><%= company_payment_method.name %></th>
+                  <% end %>
+                  <th>Paga</th>
+                  <th>Total</th>
+                  <th>Vuelto</th>
+                </tr>
+                <tr>
+                  <% active_payment_methods.each do |payment_method| %>
+                    <td><input type="number" class="payment_method_amount" payment_method_id="<%= payment_method.id %>" value="0" disabled /></td>
+                  <% end %>
+                  <% company_payment_methods.each do |company_payment_method| %>
+                    <td><input type="number" class="company_payment_method_amount" company_payment_method_id="<%= company_payment_method.id %>" value="0" disabled /></td>
+                  <% end %>
+                  <td><input type="number" id="payment_transactions_sum" value="0" disabled /></td>
+                  <td><input type="number" id="payment_total_cost" value="0" disabled /></td>
+                  <td><input type="number" id="payment_total_change_amount" value="0" disabled /></td>
+                </tr>
+              </table>
+            </div>
             
           </div>
-
+          <div class="col-xs-1">
+          </div>
         </div>
 
         <div class="row">
