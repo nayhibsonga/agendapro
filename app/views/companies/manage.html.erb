@@ -9,6 +9,7 @@
   <div class="row">
     <!-- Navegation Tabs -->
     <div class="col-md-2">
+      <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
       <ul class="nav nav-pills nav-stacked tab-margin">
         <li class="active"><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
         <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
@@ -17,6 +18,7 @@
         <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
         <li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
       </ul>
+      <% end %>
     </div>
     <!-- Panels -->
     <div class="col-md-10 left-panel">
@@ -106,9 +108,12 @@
               <thead>
                 <tr>
                   <th>Empresa</th>
-                  <th>Plan</th>
-                  <th>Último pago</th>
-                  <th>Meses restantes</th>
+                  <th>Última Reserva</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
+                  <th>% Reservas Web</th>
+                  <th>Último Pago</th>
+                  <th>Fecha Inicio</th>
                   <th>Ver/Manejar</th>
                   <th>Agregar pago</th>
                 </tr>
@@ -116,28 +121,15 @@
               <tbody>
                 <% @trial_companies.each do |company| %>
                   <tr>
-                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
-                    <td><%= company.plan.name %></td>
-                    <td>
-                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-                      <% if !bl.nil? && !rec.nil? %>
-                        <%if bl.created_at <= rec.date %>
-                          <%= rec.date %>
-                        <% else %>
-                          <%= bl.created_at %>
-                        <% end %>
-                      <% elsif bl.nil? && !rec.nil? %>
-                        <%= rec.date %>
-                      <% elsif !bl.nil? && rec.nil? %>
-                        <%= bl.created_at %>
-                      <% else %>
-                        No existen pagos
-                      <% end %>
-                    </td>
-                    <td><%= company.months_active_left.abs %></td>
-                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
-                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                    <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
+                    <td><%= company.week_bookings %></td>
+                    <td><%= company.past_week_bookings %></td>
+                    <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %> <small><%= company.last_payment_method %></small></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
                 <% end %>
               </tbody>
@@ -149,9 +141,12 @@
               <thead>
                 <tr>
                   <th>Empresa</th>
-                  <th>Plan</th>
-                  <th>Último pago</th>
-                  <th>Meses restantes</th>
+                  <th>Última Reserva</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
+                  <th>% Reservas Web</th>
+                  <th>Último Pago</th>
+                  <th>Fecha Inicio</th>
                   <th>Ver/Manejar</th>
                   <th>Agregar pago</th>
                 </tr>
@@ -159,28 +154,15 @@
               <tbody>
                 <% @active_companies.each do |company| %>
                   <tr>
-                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
-                    <td><%= company.plan.name %></td>
-                    <td>
-                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-                      <% if !bl.nil? && !rec.nil? %>
-                        <%if bl.created_at <= rec.date %>
-                          <%= rec.date %>
-                        <% else %>
-                          <%= bl.created_at %>
-                        <% end %>
-                      <% elsif bl.nil? && !rec.nil? %>
-                        <%= rec.date %>
-                      <% elsif !bl.nil? && rec.nil? %>
-                        <%= bl.created_at %>
-                      <% else %>
-                        No existen pagos
-                      <% end %>
-                    </td>
-                    <td><%= company.months_active_left.abs %></td>
-                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
-                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                    <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
+                    <td><%= company.week_bookings %></td>
+                    <td><%= company.past_week_bookings %></td>
+                    <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %> <small><%= company.last_payment_method %></small></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
                 <% end %>
               </tbody>
@@ -192,9 +174,12 @@
               <thead>
                 <tr>
                   <th>Empresa</th>
-                  <th>Plan</th>
-                  <th>Último pago</th>
-                  <th>Meses restantes</th>
+                  <th>Última Reserva</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
+                  <th>% Reservas Web</th>
+                  <th>Último Pago</th>
+                  <th>Fecha Inicio</th>
                   <th>Ver/Manejar</th>
                   <th>Agregar pago</th>
                 </tr>
@@ -202,28 +187,15 @@
               <tbody>
                 <% @issued_companies.each do |company| %>
                   <tr>
-                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
-                    <td><%= company.plan.name %></td>
-                    <td>
-                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-                      <% if !bl.nil? && !rec.nil? %>
-                        <%if bl.created_at <= rec.date %>
-                          <%= rec.date %>
-                        <% else %>
-                          <%= bl.created_at %>
-                        <% end %>
-                      <% elsif bl.nil? && !rec.nil? %>
-                        <%= rec.date %>
-                      <% elsif !bl.nil? && rec.nil? %>
-                        <%= bl.created_at %>
-                      <% else %>
-                        No existen pagos
-                      <% end %>
-                    </td>
-                    <td><%= company.months_active_left.abs %></td>
-                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
-                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                    <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
+                    <td><%= company.week_bookings %></td>
+                    <td><%= company.past_week_bookings %></td>
+                    <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %> <small><%= company.last_payment_method %></small></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
                 <% end %>
               </tbody>
@@ -235,10 +207,12 @@
               <thead>
                 <tr>
                   <th>Empresa</th>
-                  <th>Plan</th>
-                  <th>Último pago</th>
-                  <th>Deuda</th>
-                  <th>Meses adeudados</th>
+                  <th>Última Reserva</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
+                  <th>% Reservas Web</th>
+                  <th>Último Pago</th>
+                  <th>Fecha Inicio</th>
                   <th>Ver/Manejar</th>
                   <th>Agregar pago</th>
                 </tr>
@@ -246,29 +220,15 @@
               <tbody>
                 <% @late_companies.each do |company| %>
                   <tr>
-                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
-                    <td><%= company.plan.name %></td>
-                    <td>
-                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-                      <% if !bl.nil? && !rec.nil? %>
-                        <%if bl.created_at <= rec.date %>
-                          <%= rec.date %>
-                        <% else %>
-                          <%= bl.created_at %>
-                        <% end %>
-                      <% elsif bl.nil? && !rec.nil? %>
-                        <%= rec.date %>
-                      <% elsif !bl.nil? && rec.nil? %>
-                        <%= bl.created_at %>
-                      <% else %>
-                        No existen pagos
-                      <% end %>
-                    </td>
-                    <td><%= company.due_amount %></td>
-                    <td><%= company.months_active_left.abs %></td>
-                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
-                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                    <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
+                    <td><%= company.week_bookings %></td>
+                    <td><%= company.past_week_bookings %></td>
+                    <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %> <small><%= company.last_payment_method %></small></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
                 <% end %>
               </tbody>
@@ -276,14 +236,16 @@
           </div>
           <div class="tab-pane fade" id="blocked">
             <p>Número de empresas: <%= @blocked_companies.count %></p>
-            <table class="table table-hoover table-green">
+            <table class="table table-hover table-green">
               <thead>
                 <tr>
                   <th>Empresa</th>
-                  <th>Plan</th>
-                  <th>Último pago</th>
-                  <th>Deuda</th>
-                  <th>Meses adeudados</th>
+                  <th>Última Reserva</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
+                  <th>% Reservas Web</th>
+                  <th>Último Pago</th>
+                  <th>Fecha Inicio</th>
                   <th>Ver/Manejar</th>
                   <th>Agregar pago</th>
                 </tr>
@@ -291,29 +253,15 @@
               <tbody>
                 <% @blocked_companies.each do |company| %>
                   <tr>
-                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
-                    <td><%= company.plan.name %></td>
-                    <td>
-                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-                      <% if !bl.nil? && !rec.nil? %>
-                        <%if bl.created_at <= rec.date %>
-                          <%= rec.date %>
-                        <% else %>
-                          <%= bl.created_at %>
-                        <% end %>
-                      <% elsif bl.nil? && !rec.nil? %>
-                        <%= rec.date %>
-                      <% elsif !bl.nil? && rec.nil? %>
-                        <%= bl.created_at %>
-                      <% else %>
-                        No existen pagos
-                      <% end %>
-                    </td>
-                    <td><%= company.due_amount %></td>
-                    <td><%= company.months_active_left.abs %></td>
-                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
-                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                    <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
+                    <td><%= company.week_bookings %></td>
+                    <td><%= company.past_week_bookings %></td>
+                    <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %> <small><%= company.last_payment_method %></small></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
                 <% end %>
               </tbody>
@@ -325,10 +273,12 @@
               <thead>
                 <tr>
                   <th>Empresa</th>
-                  <th>Plan</th>
-                  <th>Último pago</th>
-                  <th>Deuda</th>
-                  <th>Meses adeudados</th>
+                  <th>Última Reserva</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
+                  <th>% Reservas Web</th>
+                  <th>Último Pago</th>
+                  <th>Fecha Inicio</th>
                   <th>Ver/Manejar</th>
                   <th>Agregar pago</th>
                 </tr>
@@ -336,29 +286,15 @@
               <tbody>
                 <% @pac_companies.each do |company| %>
                   <tr>
-                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
-                    <td><%= company.plan.name %></td>
-                    <td>
-                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-                      <% if !bl.nil? && !rec.nil? %>
-                        <%if bl.created_at <= rec.date %>
-                          <%= rec.date %>
-                        <% else %>
-                          <%= bl.created_at %>
-                        <% end %>
-                      <% elsif bl.nil? && !rec.nil? %>
-                        <%= rec.date %>
-                      <% elsif !bl.nil? && rec.nil? %>
-                        <%= bl.created_at %>
-                      <% else %>
-                        No existen pagos
-                      <% end %>
-                    </td>
-                    <td><%= company.due_amount %></td>
-                    <td><%= company.months_active_left.abs %></td>
-                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
-                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                    <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
+                    <td><%= company.week_bookings %></td>
+                    <td><%= company.past_week_bookings %></td>
+                    <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %> <small><%= company.last_payment_method %></small></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
                 <% end %>
               </tbody>
@@ -370,10 +306,12 @@
               <thead>
                 <tr>
                   <th>Empresa</th>
-                  <th>Plan</th>
-                  <th>Último pago</th>
-                  <th>Deuda</th>
-                  <th>Meses adeudados</th>
+                  <th>Última Reserva</th>
+                  <th>Reservas última semana</th>
+                  <th>Reservas semana anterior</th>
+                  <th>% Reservas Web</th>
+                  <th>Último Pago</th>
+                  <th>Fecha Inicio</th>
                   <th>Ver/Manejar</th>
                   <th>Agregar pago</th>
                 </tr>
@@ -381,29 +319,15 @@
               <tbody>
                 <% @inactive_companies.each do |company| %>
                   <tr>
-                    <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
-                    <td><%= company.plan.name %></td>
-                    <td>
-                      <% bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-                      <% rec = BillingRecord.where(:company_id => company.id).order('date desc').first %>
-                      <% if !bl.nil? && !rec.nil? %>
-                        <%if bl.created_at <= rec.date %>
-                          <%= rec.date %>
-                        <% else %>
-                          <%= bl.created_at %>
-                        <% end %>
-                      <% elsif bl.nil? && !rec.nil? %>
-                        <%= rec.date %>
-                      <% elsif !bl.nil? && rec.nil? %>
-                        <%= bl.created_at %>
-                      <% else %>
-                        No existen pagos
-                      <% end %>
-                    </td>
-                    <td><%= company.due_amount %></td>
-                    <td><%= company.months_active_left.abs %></td>
-                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.id}, class: "btn btn-sm btn-orange" %></td>
-                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.id}, class: "btn btn-sm btn-green" %></td>
+                    <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
+                    <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
+                    <td><%= company.week_bookings %></td>
+                    <td><%= company.past_week_bookings %></td>
+                    <td><%= number_to_percentage(company.web_bookings * 100, precision: 2) %></td>
+                    <td><%= company.last_payment ? l(company.last_payment, format: :short) : "" %> <small><%= company.last_payment_method %></small></td>
+                    <td><%= company.company_start ? l(company.company_start, format: :short) : "" %></td>
+                    <td><%= link_to '<i class="fa fa-pencil"></i> Manejar'.html_safe, {controller: "companies", action: "manage_company", id: company.company_id}, class: "btn btn-sm btn-orange" %></td>
+                    <td><%= link_to '<i class="fa fa-plus"></i> Agregar pago'.html_safe, {controller: "companies", action: "new_payment", id: company.company_id}, class: "btn btn-sm btn-green" %></td>
                   </tr>
                 <% end %>
               </tbody>

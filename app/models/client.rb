@@ -22,7 +22,7 @@ class Client < ActiveRecord::Base
 
         bookings = Array.new
         single_booking = Booking.new
-        
+
         potential_bookings = client.bookings.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
 
         potential_bookings.each do |booking|
@@ -237,25 +237,37 @@ class Client < ActiveRecord::Base
     end
   end
 
-  def self.filter_location(locations)
+  def self.filter_location(locations, attendace)
     if !locations.blank?
-      where(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
+      if attendace
+        where(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
+      else
+        where(id: Booking.where.not(location_id: Location.find(locations)).select(:client_id))
+      end
     else
       all
     end
   end
 
-  def self.filter_provider(providers)
+  def self.filter_provider(providers, attendace)
     if !providers.blank?
-      where(id: Booking.where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
+      if attendace
+        where(id: Booking.where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
+      else
+        where(id: Booking.where.not(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
+      end
     else
       all
     end
   end
 
-  def self.filter_service(services)
+  def self.filter_service(services, attendace)
     if !services.blank?
-      where(id: Booking.where(service_id: Service.find(services)).select(:client_id))
+      if attendace
+        where(id: Booking.where(service_id: Service.find(services)).select(:client_id))
+      else
+        where(id: Booking.where.not(service_id: Service.find(services)).select(:client_id))
+      end
     else
       all
     end
@@ -294,6 +306,22 @@ class Client < ActiveRecord::Base
   def self.filter_status(statuses)
     if !statuses.blank?
       where(id: Booking.where(status_id: Status.find(statuses)).select(:client_id))
+    else
+      all
+    end
+  end
+
+  def self.filter_range(from, to, attendace)
+    if from.present? and to.present?
+      # Transformar string a datetime
+      from = Date.parse(from).to_datetime
+      to = Date.parse(to).to_datetime
+
+      if attendace
+        where(id: Booking.where('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
+      else
+        where(id: Booking.where.not('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
+      end
     else
       all
     end

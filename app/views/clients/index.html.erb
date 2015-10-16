@@ -1,31 +1,40 @@
 <div class="container-fluid">
   <div class="row" style="margin-top: 15px;">
-    <small class="pull-right">* Enviar e-mail o Descargar este listado de clientes:</small>
-  </div>
-  <div class="row">
-    <div class="col-sm-3">
-      <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, :class => "btn btn-white" %>
-      <button id="import_clients" type="button" class="btn btn-white" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</button>
-    </div>
-    <div class="col-sm-6">
-      <div class="row" style="margin-bottom: 15px;">
-        <div class="col-sm-1">
-          <p><strong>Buscar:</strong></p>
-        </div>
-        <div class="col-sm-9">
-          <%= text_field_tag :search_bar, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o " + (I18n.t('ci')).capitalize + "..." %>
-        </div>
-        <div class="col-sm-2">
-          <button class="btn btn-green" id="search_btn"><i class="fa fa-search"></i> Buscar</button>
-        </div>
+    <div class="col-md-3">
+      <div class="dropdown btn-pseudo-block">
+        <button type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="clientsDropdownMenu"> Clientes <i class="fa fa-caret-down"></i></button>
+        <ul class="dropdown-menu" aria-labelledby="clientsDropdownMenu">
+          <li><%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path %></li>
+          <li><a id="import_clients" type="button" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</a></li>
+        </ul>
+      </div>
+      <div class="btn-pseudo-block">
+        <% if @from_collection.first %>
+          <% if @monthly_mails_sent < @monthly_mails %>
+            <%= link_to '<i class="fa fa-envelope"></i> Enviar e-mail a este listado'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], attendance: params[:attendance], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-green", id: 'sendMail' %>
+          <% else %>
+            <button class="btn btn-green">Has alcanzado el limite de e-mails.</button>
+          <% end %>
+        <% else %>
+          <a id="sendMail" type="button" class="btn btn-green" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar e-mail a este listado</a>
+        <% end %>
+        <span class="text-green" data-toggle="tooltip" data-placement="bottom" title="Al hacer click en este botón podrás enviar un correo a todos los clientes previamente filtrados por el buscador y los filtros avanzados. En caso de que no selecciones ningún filtro, se le enviará a la lista completa de clientes.">&nbsp;<i class="fa fa-question-circle fa-lg"></i></span>
       </div>
     </div>
-    <div class="col-sm-3">
-      <p class="text-right">
-        <%= link_to '<i class="fa fa-envelope"></i> Enviar E-mail'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white", id: 'sendMail' %>
-        <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white" %>
-        <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_path(format: "xls", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white" %>
-      </p>
+    <div class="col-md-9">
+      <div class="well">
+        <div class="row">
+          <div class="col-xs-3 col-md-3">
+            <p><strong>Buscar Clientes</strong></p>
+          </div>
+          <div class="col-xs-6 col-md-7">
+            <%= text_field_tag :search_bar, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o RUT..." %>
+          </div>
+          <div class="col-xs-3 col-md-2">
+            <button class="btn btn-green" id="search_btn"><i class="fa fa-search"></i> Buscar</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="row">
@@ -33,16 +42,18 @@
       <%= form_tag clients_path, name: "client_filter", id: "client_filter", method: "get" do %>
         <%= hidden_field_tag :search, params[:search] %>
         <div class="form-group filter-header">
-          <strong>Filtrar</strong>
+          <strong>Filtros Avanzados</strong>
           <div class="dropdwn pull-right">
             <button class="btn btn-green dropdown-toggle" type="button" id="addFilter" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus"></i></button>
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="addFilter" style="top: initial;">
               <li class="<%= 'hidden' if params[:locations] %>"><a href="#" id="addFilterLocations" data-target="#filterLocations">Por Local</a></li>
               <li class="<%= 'hidden' if params[:providers] %>"><a href="#" id="addFilterProviders" data-target="#filterProviders">Por Prestador</a></li>
               <li class="<%= 'hidden' if params[:services] %>"><a href="#" id="addFilterServices" data-target="#filterServices">Por Servicio</a></li>
-              <li class="<%= 'hidden' if params[:statuses] %>"><a href="#" id="addFilterStatuses" data-target="#filterStatuses">Por Estado</a></li>
+              <li class="<%= 'hidden' if params[:statuses] %>"><a href="#" id="addFilterStatuses" data-target="#filterStatuses">Por Estado de Reserva</a></li>
               <li class="<%= 'hidden' if params[:gender] %>"><a href="#" id="addFilterGender" data-target="#filterGender">Por Género</a></li>
-              <li class="<%= 'hidden' if !params[:from].blank? and !params[:to].blank? %>"><a href="#" id="addFilterBirthday" data-target="#filterBirthday">Por Cumpleaños</a></li>
+              <li class="<%= 'hidden' if !params[:birth_from].blank? and !params[:birth_to].blank? %>"><a href="#" id="addFilterBirthday" data-target="#filterBirthday">Por Cumpleaños</a></li>
+              <li class="<%= 'hidden' if !params[:range_from].blank? and !params[:range_to].blank? %>"><a href="#" id="addFilterRange" data-target="#filterRange">Por Rango de Fecha</a></li>
+              <li class="<%= 'hidden' if !params[:attendance].blank? %>"><a href="#" id="addFilterAttendance" data-target="#filterAttendance">Ha Reservado</a></li>
             </ul>
           </div>
         </div>
@@ -107,7 +118,7 @@
           <div class="form-group <%= 'hidden' if not params[:statuses] %>" id="filterStatuses">
             <div class="panel panel-green">
               <div class="panel-heading">
-                Estado
+                Estado de Reserva
                 <a class="pull-right" href="#" data-target="#addFilterStatuses"><i class="fa fa-times"></i></a>
               </div>
               <ul class="list-group">
@@ -154,7 +165,7 @@
               </ul>
             </div>
           </div>
-          <div class="form-group <%= 'hidden' if params[:from].blank? and params[:to].blank? %>" id="filterBirthday">
+          <div class="form-group <%= 'hidden' if params[:birth_from].blank? and params[:birth_to].blank? %>" id="filterBirthday">
             <div class="panel panel-green">
               <div class="panel-heading">
                 Cumpleaños
@@ -162,12 +173,54 @@
               </div>
               <ul class="list-group">
                 <li class="list-group-item">
-                  <%= text_field_tag :from_display, params[:from_display], class: "form-control", placeholder: "Desde" %>
-                  <%= hidden_field_tag :from, params[:from], class: "form-control" %>
+                  <%= text_field_tag :birth_from_display, params[:birth_from_display], class: "form-control", placeholder: "Desde" %>
+                  <%= hidden_field_tag :birth_from, params[:birth_from], class: "form-control" %>
                 </li>
                 <li class="list-group-item">
-                  <%= text_field_tag :to_display, params[:to_display], class: "form-control", placeholder: "Hasta" %>
-                  <%= hidden_field_tag :to, params[:to], class: "form-control" %>
+                  <%= text_field_tag :birth_to_display, params[:birth_to_display], class: "form-control", placeholder: "Hasta" %>
+                  <%= hidden_field_tag :birth_to, params[:birth_to], class: "form-control" %>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group <%= 'hidden' if params[:range_from].blank? and params[:range_to].blank? %>" id="filterRange">
+            <div class="panel panel-green">
+              <div class="panel-heading">
+                Rango de Fecha
+                <a class="pull-right" href="#" data-target="#addFilterRange"><i class="fa fa-times"></i></a>
+              </div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <%= text_field_tag :range_from_display, params[:range_from_display], class: "form-control", placeholder: "Desde" %>
+                  <%= hidden_field_tag :range_from, params[:range_from], class: "form-control" %>
+                </li>
+                <li class="list-group-item">
+                  <%= text_field_tag :range_to_display, params[:range_to_display], class: "form-control", placeholder: "Hasta" %>
+                  <%= hidden_field_tag :range_to, params[:range_to], class: "form-control" %>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group <%= 'hidden' if params[:attendance].blank? %>" id="filterAttendance">
+            <div class="panel panel-green">
+              <div class="panel-heading">
+                ¿Ha Reservado?<span data-toggle="tooltip" data-placement="bottom" title="Este filtro permite buscar clientes que tienen o no tienen reserva de acuerdo a los demás filtros utilizados.">&nbsp;<i class="fa fa-question-circle fa-lg"></i></span>
+                <a class="pull-right" href="#" data-target="#addFilterAttendance"><i class="fa fa-times"></i></a>
+              </div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <div class="checkbox">
+                    <label>
+                      <%= radio_button_tag "attendance", true, params[:attendance] && params[:attendance].include?("true") %> Tiene reserva según los filtros
+                    </label>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="checkbox">
+                    <label>
+                      <%= radio_button_tag "attendance", false, params[:attendance] && params[:attendance].include?("false") %> No tiene reserva según los filtros
+                    </label>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -202,9 +255,9 @@
               <td><%= client.email %></td>
               <td><%= client.identification_number %></td>
               <td>
-                <%= link_to '<i class="fa fa-eye"></i> Ver'.html_safe, client_path(client), class: 'btn btn-sm btn-margin-bottom btn-green' %>
-                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_client_path(client), :class => "btn btn-sm btn-margin-bottom btn-orange" %>
-                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, client, :class => "btn btn-sm btn-margin-bottom btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %>
+                <%= link_to '<i class="fa fa-eye"></i> <span class="hidden-xs">Ver</span>'.html_safe, client_path(client), class: 'btn btn-sm btn-margin-bottom btn-green' %>
+                <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar</span>'.html_safe, edit_client_path(client), :class => "btn btn-sm btn-margin-bottom btn-orange" %>
+                <%= link_to '<i class="fa fa-trash-o"></i> <span class="hidden-xs">Eliminar</span>'.html_safe, client, :class => "btn btn-sm btn-margin-bottom btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %>
               </td>
               <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
               <td class="centered">
@@ -219,8 +272,13 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-9 col-md-push-3">
+    <div class="col-sm-8 col-md-9 col-md-push-3">
       <%= will_paginate @clients, renderer: BootstrapPagination::Rails %>
+    </div>
+    <div class="col-sm-4 col-md-3">
+      <small class="pull-right">Descargar este listado de clientes:</small><br />
+      <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white pull-right" %>
+      <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_path(format: "xls", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white pull-right" %>
     </div>
   </div>
 </div>

@@ -923,6 +923,9 @@ class BookingMailer < ActionMailer::Base
 		# New subject
 		message[:subject] = 'Recuerda tu reserva en ' + book_info.service_provider.company.name
 
+		# Remove arrow
+		message[:images].pop
+
 		# Notificacion service provider
 		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), company_id: Company.where(active: true), receptor_type: 2, summary: false).select(:email).distinct
 		providers_emails.each do |provider|
@@ -1432,7 +1435,7 @@ class BookingMailer < ActionMailer::Base
 				{
 					:type => 'image/png',
 					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					:content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
 				},
 				{
 					:type => 'image/png',
@@ -1503,7 +1506,7 @@ class BookingMailer < ActionMailer::Base
 				{
 					:type => 'image/png',
 					:name => 'company_img.jpg',
-					:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+					:content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
 				},
 				{
 					:type => 'image/png',
@@ -1589,7 +1592,7 @@ class BookingMailer < ActionMailer::Base
 					{
 						:type => 'image/png',
 						:name => 'company_img.jpg',
-						:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+						:content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
 					},
 					{
 						:type => 'image/png',
@@ -1650,7 +1653,7 @@ class BookingMailer < ActionMailer::Base
 					{
 						:type => 'image/png',
 						:name => 'company_img.jpg',
-						:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+						:content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
 					},
 					{
 						:type => 'image/png',
@@ -1719,7 +1722,7 @@ class BookingMailer < ActionMailer::Base
 					{
 						:type => 'image/png',
 						:name => 'company_img.jpg',
-						:content => Base64.encode64(File.read('app/assets/ico/Iso_Pro_Color.png'))
+						:content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
 					},
 					{
 						:type => 'image/png',
