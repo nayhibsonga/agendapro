@@ -1,10 +1,7 @@
 class Payment < ActiveRecord::Base
   belongs_to :company
   has_many :receipts
-  belongs_to :payment_method
-  belongs_to :payment_method_type
-  belongs_to :company_payment_method
-  belongs_to :bank
+  has_many :payment_transactions
   belongs_to :client
   belongs_to :location
   has_many :bookings, dependent: :nullify

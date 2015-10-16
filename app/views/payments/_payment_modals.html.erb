@@ -400,7 +400,6 @@
   </div>
 </div>
 
-
 <div class="modal fade paymentModalStep paymentModal" id="paymentModal2" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
@@ -420,200 +419,61 @@
           credit_card_method_id = PaymentMethod.find_by_name("Tarjeta de Crédito").id
           debt_card_method_id = PaymentMethod.find_by_name("Tarjeta de Débito").id
           other_method_id = PaymentMethod.find_by_name("Otro").id
+
+          active_payment_methods = PaymentMethod.where(id: current_user.company.company_setting.payment_method_settings.where(active: true).pluck(:payment_method_id))
+          company_payment_methods = current_user.company.company_payment_methods.where(active: true)
         %>
 
         <div class="row">
-          <input type="hidden" id="selected_pay_method" name="selected_pay_method" value="cash" />
-          <input type="hidden" id="payment_method_id" name="payment_method_id" value="<%= cash_method_id %>" />
-          <div class="col-xs-2">
-            <table class="payment-total-table">
+
+          <div class="col-xs-12">
+            
+            <table id="payment_transactions_table">
               <tr>
-                <td class="payment-total-title">
-                  Total:
-                </td>
-                <td class="payment-total-amount">
-                  <span id="payment-total-amount"></span>
-                </td>
+                <% active_payment_methods.each do |payment_method| %>
+                  <th><%= payment_method.name %></th>
+                <% end %>
+                <% company_payment_methods.each do |company_payment_method| %>
+                  <th><%= company_payment_method.name %></th>
+                <% end %>
+                <th>Paga</th>
+                <th>Total</th>
+                <th>Vuelto</th>
+              </tr>
+              <tr>
+                <% active_payment_methods.each do |payment_method| %>
+                  <td><input type="number" class="payment_method_amount" payment_method_id="<%= payment_method.id %>" value="0" disabled /></td>
+                <% end %>
+                <% company_payment_methods.each do |company_payment_method| %>
+                  <td><input type="number" class="company_payment_method_amount" company_payment_method_id="<%= company_payment_method.id %>" value="0" disabled /></td>
+                <% end %>
+                <td><input type="number" id="payment_transactions_sum" value="0" disabled /></td>
+                <td><input type="number" id="payment_total_cost" value="0" disabled /></td>
+                <td><input type="number" id="payment_total_change_amount" value="0" disabled /></td>
               </tr>
             </table>
+            
           </div>
-          <div class="col-xs-2">
-            <div class="method-btn selected">
-              <a href="#cash_method_details" method_id="<%= cash_method_id %>" class="method-btn-name">Efectivo</a>
-            </div>
-          </div>
-          <div class="col-xs-2">
-            <div class="method-btn">
-              <a href="#check_method_details" method_id="<%= check_method_id %>" class="method-btn-name">Cheque</a>
-            </div>
-          </div>
-          <div class="col-xs-2">
-            <div class="method-btn">
-              <a href="#credit_card_method_details" method_id="<%= credit_card_method_id %>" class="method-btn-name">Tarjeta de crédito</a>
-            </div>
-          </div>
-          <div class="col-xs-2">
-            <div class="method-btn">
-              <a href="#debt_card_method_details" method_id="<%= debt_card_method_id %>" class="method-btn-name">Tarjeta de débito</a>
-            </div>
-          </div>
-          <div class="col-xs-2">
-            <div class="method-btn">
-              <a href="#other_method_details" method_id="<%= other_method_id %>" class="method-btn-name">Otro</a>
-            </div>
-          </div>
+
         </div>
 
-        <div class="row" style="margin-top: 15px; margin-bottom: 15px;">
-          <div class="col-xs-1">
+        <div class="row">
+          <div class="center-block">
 
-          </div>
-          <div class="col-xs-5">
-
-            <form id="fakePaymentStep2Form" action="">
-
-              <div class="payment-form-div">
-                <label for="payment_paid_amount" class="col-xs-3 control-label">Paga con</label>
-                <div class="col-xs-9">
-                    <input type="number" class="form-control" id="payment_paid_amount" name="payment_paid_amount" value="" />
-                    <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
-                </div>
-                <div style="clear: both;"></div>
-              </div>
-
-              <div class="payment-form-div">
-                <label for="payment_cost" class="col-xs-3 control-label">A pagar</label>
-                <div class="col-xs-9">
-                    <input type="number" class="form-control" id="payment_cost" name="payment_cost" value="" disabled />
-                    <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
-                </div>
-                <div style="clear: both;"></div>
-              </div>
-
-              <div class="payment-form-div">
-                <label for="payment_change_amount" class="col-xs-3 control-label">Vuelto</label>
-                <div class="col-xs-9">
-                    <input type="number" class="form-control" id="payment_change_amount" name="payment_change_amount" value="" disabled />
-                    <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
-                </div>
-                <div style="clear: both;"></div>
-              </div>
-
-            </form>
-
-          </div>
-          <div class="col-xs-5">
-
-            <form id="fakeMethodDetailsForm" action="">
-
-              <div id="cash_method_details" class="payment_method_details">
-
-              </div>
-
-              <div id="check_method_details" class="payment_method_details" hidden>
-                <div class="payment-form-div">
-                  <label for="payment_check_bank" class="col-xs-3 control-label">Banco</label>
-                  <div class="col-xs-9">
-                    <select class="form-control" id="payment_check_bank" name="payment_check_bank">
-                      <% Bank.all.order(:name).each do |bank| %>
-                        <option value="<%= bank.id %>"><%= bank.name %></option>
-                      <% end %>
-                    </select>
-                  </div>
-                  <div style="clear: both;"></div>
-                </div>
-                <div class="payment-form-div">
-                  <label for="payment_check_number" class="col-xs-3 control-label">Código de autorización</label>
-                  <div class="col-xs-9">
-                    <input type="text" class="form-control" id="payment_check_number" name="payment_check_number" />
-                    <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
-                  </div>
-                  <div style="clear: both;"></div>
-                </div>
-              </div>
-
-              <div id="credit_card_method_details" class="payment_method_details" hidden>
-
-                <div class="payment-form-div">
-                  <label for="payment_method_type" class="col-xs-3 control-label">Tipo de tarjeta</label>
-                  <div class="col-xs-9">
-                    <select class="form-control" id="payment_method_type" name="payment_method_type">
-                      <% PaymentMethodType.all.order(:name).each do |payment_method_type| %>
-                        <option value="<%= payment_method_type.id %>"><%= payment_method_type.name %></option>
-                      <% end %>
-                    </select>
-                  </div>
-                  <div style="clear: both;"></div>
-                </div>
-
-                <div class="payment-form-div">
-                  <label for="payment_credit_card_number" class="col-xs-3 control-label">Código de autorización</label>
-                  <div class="col-xs-9">
-                    <input type="text" class="form-control" id="payment_credit_card_number" name="payment_credit_card_number" />
-                    <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
-                  </div>
-                  <div style="clear: both;"></div>
-                </div>
-
-                <div class="payment-form-div">
-                  <label for="payment_credit_card_dues_number" class="col-xs-3 control-label">Cuotas</label>
-                  <div class="col-xs-9">
-                    <input type="number" class="form-control" id="payment_credit_card_dues_number" name="payment_credit_card_dues_number" />
-                    <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
-                  </div>
-                  <div style="clear: both;"></div>
-                </div>
-
-              </div>
-
-              <div id="debt_card_method_details" class="payment_method_details" hidden>
-                <div class="payment-form-div">
-                  <label for="payment_debt_card_number" class="col-xs-3 control-label">Código de autorización</label>
-                  <div class="col-xs-9">
-                    <input type="text" class="form-control" id="payment_debt_card_number" name="payment_debt_card_number" />
-                    <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
-                  </div>
-                  <div style="clear: both;"></div>
-                </div>
-              </div>
-
-              <div id="other_method_details" class="payment_method_details" hidden>
-                <div class="payment-form-div">
-                  <label for="payment_other_method_type" class="col-xs-3 control-label">Otro medio de pago</label>
-                  <div class="col-xs-9">
-                    <select class="form-control" id="payment_other_method_type" name="payment_other_method_type">
-                      <% company.company_payment_methods.where(:active => true).order(:name).each do |cpm| %>
-                        <option value="<%= cpm.id %>"><%= cpm.name %></option>
-                      <% end %>
-                    </select>
-                  </div>
-                  <% company.company_payment_methods.where(:active => true).order(:name).each do |cpm| %>
-                    <input type="hidden" class="payment_other_method_type_number_required" method_id="<%= cpm.id %>" value="<%= cpm.number_required %>" />
+            <div class="payment-form-div">
+              <label for="payment_method_select" class="col-xs-5 control-label">Medio de pago</label>
+              <div class="col-xs-7">
+                <select class="form-control" id="payment_method_select">
+                  <% active_payment_methods.each do |payment_method| %>
+                    <option value="0_<%= payment_method.id %>"><%= payment_method.name %></option>
                   <% end %>
-                  <div style="clear: both;"></div>
-                </div>
-                <div class="payment-form-div">
-                  <label for="payment_other_method_number" class="col-xs-3 control-label">Código de autorización</label>
-                  <div class="col-xs-9">
-                    <input type="text" class="form-control" id="payment_other_method_number" name="payment_other_method_number" />
-                    <span class="help-block"></span>
-                    <span class="form-control-feedback"></span>
-                  </div>
-                  <div style="clear: both;"></div>
-                </div>
+                  <% company_payment_methods.each do |company_payment_method| %>
+                    <option value="1_<%= company_payment_method.id %>"><%= company_payment_method.name %></option>
+                  <% end %>
+                </select>
               </div>
-
-            </form>
-
-          </div>
-          <div class="col-xs-1">
+              <div style="clear: both;"></div>
+            </div>
 
           </div>
         </div>

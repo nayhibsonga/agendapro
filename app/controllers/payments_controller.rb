@@ -19,7 +19,7 @@ class PaymentsController < ApplicationController
     @location_ids = params[:location_ids] ? params[:location_ids].split(',') : Location.where(company_id: current_user.company_id).accessible_by(current_ability).pluck(:id)
     @payment_method_ids = params[:payment_method_ids] ? params[:payment_method_ids].split(',') : PaymentMethod.all.pluck(:id)
 
-    @payments = Payment.where(payment_date: @from..@to, location_id: @location_ids, payment_method_id: @payment_method_ids).order(:payment_date)
+    @payments = Payment.where(payment_date: @from..@to, location_id: @location_ids).order(:payment_date)
 
     render "_index_content", layout: false
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151015162743) do
+ActiveRecord::Schema.define(version: 20151016161648) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -660,45 +660,48 @@ ActiveRecord::Schema.define(version: 20151015162743) do
     t.datetime "updated_at"
   end
 
-  create_table "payments", force: true do |t|
-    t.integer  "company_id"
-    t.float    "amount",                    default: 0.0
+  create_table "payment_transactions", force: true do |t|
+    t.integer  "payment_id"
     t.integer  "payment_method_id"
-    t.string   "payment_method_number",     default: "",    null: false
+    t.integer  "company_payment_method_id"
+    t.string   "number",                    default: ""
+    t.float    "amount",                    default: 0.0
+    t.integer  "installments",              default: 0
     t.integer  "payment_method_type_id"
-    t.integer  "installments"
-    t.boolean  "payed",                     default: false
-    t.date     "payment_date"
     t.integer  "bank_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "company_payment_method_id"
-    t.float    "discount",                  default: 0.0
-    t.text     "notes",                     default: ""
+  end
+
+  create_table "payments", force: true do |t|
+    t.integer  "company_id"
+    t.float    "amount",            default: 0.0
+    t.boolean  "payed",             default: false
+    t.date     "payment_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "discount",          default: 0.0
+    t.text     "notes",             default: ""
     t.integer  "location_id"
     t.integer  "client_id"
-    t.float    "bookings_amount",           default: 0.0
-    t.float    "bookings_discount",         default: 0.0
-    t.float    "products_amount",           default: 0.0
-    t.float    "products_discount",         default: 0.0
-    t.integer  "products_quantity",         default: 0
-    t.integer  "bookings_quantity",         default: 0
-    t.integer  "quantity",                  default: 0
-    t.float    "sessions_amount",           default: 0.0
-    t.float    "sessions_discount",         default: 0.0
-    t.integer  "sessions_quantity",         default: 0
-    t.float    "paid_amount",               default: 0.0
-    t.float    "change_amount",             default: 0.0
+    t.float    "bookings_amount",   default: 0.0
+    t.float    "bookings_discount", default: 0.0
+    t.float    "products_amount",   default: 0.0
+    t.float    "products_discount", default: 0.0
+    t.integer  "products_quantity", default: 0
+    t.integer  "bookings_quantity", default: 0
+    t.integer  "quantity",          default: 0
+    t.float    "sessions_amount",   default: 0.0
+    t.float    "sessions_discount", default: 0.0
+    t.integer  "sessions_quantity", default: 0
+    t.float    "paid_amount",       default: 0.0
+    t.float    "change_amount",     default: 0.0
     t.integer  "cashier_id"
   end
 
-  add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
   add_index "payments", ["client_id"], name: "index_payments_on_client_id", using: :btree
   add_index "payments", ["company_id"], name: "index_payments_on_company_id", using: :btree
-  add_index "payments", ["company_payment_method_id"], name: "index_payments_on_company_payment_method_id", using: :btree
   add_index "payments", ["location_id"], name: "index_payments_on_location_id", using: :btree
-  add_index "payments", ["payment_method_id"], name: "index_payments_on_payment_method_id", using: :btree
-  add_index "payments", ["payment_method_type_id"], name: "index_payments_on_payment_method_type_id", using: :btree
 
   create_table "petty_cashes", force: true do |t|
     t.integer  "location_id"
