@@ -18,23 +18,25 @@ class PayUController < ApplicationController
 
   #Métodos de pagos de compañía/plan
   def generate_transaction
-	form_data = { "merchantId" => "540049",
-		"accountId" => "547737",
-		"description" => "Boton de Prueba Colombia",
-		"referenceCode" => "200",
-		"amount" => "10000",
-		"tax" => "0",
-		"taxReturnBase" => "0",
-		"shipmentValue" => "0",
-		"currency" => "COP",
-		"lng" => "es",
-		"sourceUrl" => "http://lvh.me:3000/es_CL/select_plan",
-		"test" => "1",
-		"buttonType" => "SIMPLE",
-		"signature" => "3fe657d15f7db3a5693443556ff0bd0f52ea57db9b8533631f972441ff97ff7b"
-	}
+    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+    task = crypt.decrypt_and_verify(params[:encrypted_task])
+    task = task.to_hash
 
-	render layout: "search"
+    @merchantId = "540049"
+    @accountId = "547737"
+    @description = "Boton de Prueba Colombia"
+    @referenceCode = "200"
+    @amount = "10000.00"
+    @tax = "0.00"
+    @taxReturnBase = "0.00"
+    @shipmentValue = "0.00"
+    @currency = "COP"
+    @lng = "es"
+    @sourceUrl = ""
+    @buttonType = "SIMPLE"
+    @signature = "3fe657d15f7db3a5693443556ff0bd0f52ea57db9b8533631f972441ff97ff7b"
+
+    render layout: "empty"
   end
 
   def generate_company_transaction
@@ -77,7 +79,7 @@ class PayUController < ApplicationController
         resp = req.create(trx_id, due, payment_method)
         if resp.success?
           BillingLog.create(payment: due, amount: amount, company_id: company.id, plan_id: company.plan.id, transaction_type_id: TransactionType.find_by_name("Webpay").id, trx_id: trx_id)
-          PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
+          PayUCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
           redirect_to resp.payment_process_url
         else
           PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")

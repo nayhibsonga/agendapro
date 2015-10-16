@@ -1,23 +1,85 @@
-<form id="" method="post" action="https://gateway.payulatam.com/ppp-web-gateway/pb.zul" accept-charset="UTF-8" name="pay_u_submit">
-  <input name="merchantId" type="hidden" value="540049"/>
-  <input name="accountId" type="hidden" value="547737"/>
-  <input name="description" type="hidden" value="Boton de Prueba Colombia"/>
-  <input name="referenceCode" type="hidden" value="200"/>
-  <input name="amount" type="hidden" value="10000.00"/>
-  <input name="tax" type="hidden" value="0.00"/>
-  <input name="taxReturnBase" type="hidden" value="0.00"/>
-<input name="shipmentValue" value="0.00" type="hidden"/>
-  <input name="currency" type="hidden" value="COP"/>
-  <input name="lng" type="hidden" value="es"/>
-  <input name="sourceUrl" id="urlOrigen" value="" type="hidden"/>
-  <input name="buttonType" value="SIMPLE" type="hidden"/>
-  <input name="signature" value="3fe657d15f7db3a5693443556ff0bd0f52ea57db9b8533631f972441ff97ff7b" type="hidden"/>
-</form>
+<div class="table-cell">
+	<div class="logo">
+		<%= image_tag "logos/logo2.png", alt: "AgendaPro" %>
+	</div>
+	<div class="payment-title">
+		<h2>Te estamos redirigiendo a la página de pago</h2>
+	</div>
+	<div class="payment-text">
+		<p>Si estás teniendo problemas por favor haz click el siguiente botón</p>
+	</div>
+	<div class="">
+		<form id="" method="post" action="https://gateway.payulatam.com/ppp-web-gateway/pb.zul" accept-charset="UTF-8" name="pay_u_submit">
+			<input name="merchantId" type="hidden" value="<%= @merchantId %>"/>
+			<input name="accountId" type="hidden" value="<%= @accountId %>"/>
+			<input name="description" type="hidden" value="<%= @description %>"/>
+			<input name="referenceCode" type="hidden" value="<%= @referenceCode %>"/>
+			<input name="amount" type="hidden" value="<%= @amount %>"/>
+			<input name="tax" type="hidden" value="<%= @tax %>"/>
+			<input name="taxReturnBase" type="hidden" value="<%= @taxReturnBase %>"/>
+			<input name="shipmentValue" value="<%= @shipmentValue %>" type="hidden"/>
+			<input name="currency" type="hidden" value="<%= @currency %>"/>
+			<input name="lng" type="hidden" value="<%= @lng %>"/>
+			<input name="sourceUrl" value="<%= @sourceUrl %>" type="hidden"/>
+			<input name="buttonType" value="<%= @buttonType %>" type="hidden"/>
+			<input name="signature" value="<%= @signature %>" type="hidden"/>
+			<button type="submit" class="btn btn-green btn-lg" href="http://contacto.agendapro.cl" target="_blank" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:0;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:10px;padding-bottom:10px;padding-right:16px;padding-left:16px;font-size:18px;line-height:1.33;border-radius:6px;color:#ffffff;background-color:#22c488;border-color:#1ba970;" >Ir a página de pagos...</button>
+		</form>
+	</div>
+</div>
+
+<% content_for :stylesheets do %>
+	<style type="text/css">
+		html{
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			border: 0;
+			outline: 0;
+			vertical-align: baseline;
+		}
+		body {
+			background-color: #ffffff;
+			color: #ffffff;
+			height: 100%;
+			width: 100%;
+			display: table;
+			border: 0;
+			outline: 0;
+			vertical-align: baseline;
+			padding: 10px;
+		}
+		.table-cell {
+			text-align: center;
+			display: table-cell;
+			vertical-align: middle;
+		}
+		.logo {
+			margin: 30px;
+			margin-bottom: 0;
+		}
+		.payment-title {
+			display: inline-block;
+			text-align: center;
+		}
+		.payment-title > h2 {
+			border: 2px solid #22c488;
+			color: #22c488;
+			width: 600px;
+			padding: 10px;
+		}
+		.payment-text > p {
+			color: #5c5c5c;
+		}
+
+	</style>
+<% end %>
+
 
 <% content_for :scripts do %>
 	<script type="text/javascript">
-		window.onload = function(){
-			document.forms['pay_u_submit'].submit()
-		}
+		// window.onload = function(){
+		// 	document.forms['pay_u_submit'].submit()
+		// }
 	</script>
 <% end %>
