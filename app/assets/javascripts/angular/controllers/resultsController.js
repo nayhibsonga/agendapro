@@ -11,7 +11,8 @@
         var vm = this;
         vm.title = 'ResultsController';
         vm.address = $cookies.get('formatted_address');
-        vm.searchParam = $routeParams;
+        vm.showUrl = $rootScope.baseUrl + "/ver/"
+        vm.params = "?service=" + $routeParams.service + "&local=";
         activate();
 
         ////////////////

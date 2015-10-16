@@ -9,12 +9,14 @@
 
     function TemplateController($rootScope) {
         var vm = this;
+        var baseUrl = $rootScope.baseUrl;
         vm.lang = $rootScope.lang;
         vm.templates = {
-            landing: '/hora_chic/landing',
-            deals: '/hora_chic/deals',
-            search: '/hora_chic/search',
-            map: '/hora_chic/map'
+            landing: baseUrl + '/landing',
+            deals: baseUrl + '/deals',
+            search: baseUrl + '/search',
+            map: baseUrl + '/map',
+            schedule: baseUrl + '/schedule'
         };
         // To render a new element in the main content
         // section, just change the route to the template

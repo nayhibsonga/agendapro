@@ -6,7 +6,8 @@
         'ngResource',
         'ngRoute',
         'uiGmapgoogle-maps',
-        'ngCookies'
+        'ngCookies',
+        'ui.bootstrap'
       ])
     .config(config)
     .run(globalVariables);
@@ -36,6 +37,12 @@
           controllerAs: 'rc',
           cache: false
       })
+      .when($namespace + '/ver/:company', {
+          templateUrl: $namespace + '/show',
+          controller: 'ResultsController',
+          controllerAs: 'rc',
+          cache: false
+      })
       .otherwise({
           redirectTo: $namespace + '/'
       });
@@ -48,6 +55,7 @@
   }
 
   function globalVariables($rootScope, Translator) {
+    $rootScope.baseUrl = '/hora_chic';
     $rootScope.country = 'cl';
     $rootScope.lang = Translator.init($rootScope.country);
   }

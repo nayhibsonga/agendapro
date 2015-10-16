@@ -1,0 +1,192 @@
+<div id="show" class="container" ng-controller="ShowController as sc">
+
+  <div class="row">
+    <div class="col-lg-12 title">
+      <h3>Delicatta Hands</h3>
+      <p><span></span> Cerro El Plomo 5680, Local 002, Las Condes</p>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content" class="col-xs-12 col-md-8 pull-left">
+      <div class="info">
+        <figure>
+          <img src="http://www.todohabitat.es/img/empresas/3097_centro-de-estetica-form-studio.jpg" alt="">
+        </figure>
+
+        <div class="description">
+          <section class="detail">
+            <p>Multiespacio, Peluqueria, Manicure, Tratamientos Estéticos y capilaresm ropa y accesorios, Asesoria de imagen personal, Maquillaje y mas.</p>
+          </section>
+
+          <section class="time">
+            <span><strong>Lun:</strong> 08:00 - 19:30</span>
+            <span><strong>Mar:</strong> 08:00 - 19:30</span>
+            <span><strong>Mie:</strong> 08:00 - 19:30</span>
+            <span><strong>Jue:</strong> 08:00 - 19:30</span>
+            <span><strong>Vie:</strong> 08:00 - 19:30</span>
+            <span><strong>Sab:</strong> 08:00 - 19:30</span>
+          </section>
+        </div>
+
+      </div>
+
+      <div class="sub-menu text-center">
+         <span><a href="#" class="active">Resumen</a></span>
+         <span><a href="#">Servicios</a></span>
+         <span><a href="#">Comentarios</a></span>
+      </div>
+
+      <button class="btn btn-down hidden-md hidden-lg btn-lg btn-hora-chic">Reservar</button>
+
+      <div class="services">
+        <div>Categorías</div>
+
+        <section ng-repeat="category in sc.categories">
+
+          <button class="btn btn-service" type="button" data-toggle="collapse" data-target="#category-{{ category.id }}" aria-expanded="false" aria-controls="category-{{ category.id }}">
+            {{ category.name }}
+          </button>
+
+          <div id="category-{{ category.id }}" class="collapse clearfix category" style="background-color: white; color: black; font-size: 0.9em;">
+              <div class="service-detail col-xs-12 col-md-6" style="padding: 10px; cursor: pointer;" ng-repeat="service in category.services" ng-click="sc.selectService($parent.$index, $index);">
+                <div>
+                  <strong>{{ service.title }}</strong>
+                  <div class="pull-right" style="margin-bottom: 10px;">
+                    <span class="time-detailed" style="color: #A3A0A1; font-size: 0.9em">{{ service.time }}</span>
+                     ${{ service.price }} <span>$</span>
+                  </div>
+                </div>
+                <p style="clear: both; text-align: justify;">
+                  {{ service.description }}
+                </p>
+              </div>
+          </div>
+
+        </section>
+
+      </div>
+
+      <div class="clear"></div>
+
+      <div id="comments">
+
+        <div class="btn-hora-chic" style="margin-bottom: 20px;">Comentarios de Clientes</div>
+        <!-- COMMENT -->
+        <section class="post" style="padding: 20px 0; border-top: 1px solid black;">
+          <figure>
+            <img src="http://agendapro.co/assets/home/nico_r-c7b80914ac1beb95231319327dc4d7f8.png" alt="" class="" style="width:100px; vertical-align: top;">
+            <figcaption style="width: calc(100% - 110px); display: inline-block; padding-left: 20px;">
+              <p style="margin: 0;">
+                <strong>Nicolas Rossi</strong>
+                <span class="date pull-right">07/10/2015</span>
+              </p>
+              <p style="font-size: 20px; margin: 0 0 10px;">☆☆☆☆☆</p>
+              <p style="text-align: justify;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore repellendus maxime, reprehenderit sapiente accusamus voluptas vel. Cum corporis, alias obcaecati error culpa veniam soluta, id aliquam reprehenderit quaerat vel officiis!</p>
+            </figcaption>
+
+          </figure>
+        </section>
+        <!-- END OF COMMENT -->
+
+        <!-- COMMENT -->
+        <section class="post" style="padding: 20px 0; border-top: 1px solid black;">
+          <figure>
+            <img src="http://agendapro.co/assets/home/nico_f-d75e1cc5ed0b6f0bc93c1a2bebc73de4.png" alt="" class="" style="width:100px; vertical-align: top;">
+            <figcaption style="width: calc(100% - 110px); display: inline-block; padding-left: 20px;">
+              <p style="margin: 0;">
+                <strong>Nicolas Flores</strong>
+                <span class="date pull-right">07/10/2015</span>
+              </p>
+              <p style="font-size: 20px; margin: 0 0 10px;">☆☆☆☆☆</p>
+              <p style="text-align: justify;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore repellendus maxime, reprehenderit sapiente accusamus voluptas vel. Cum corporis, alias obcaecati error culpa veniam soluta, id aliquam reprehenderit quaerat vel officiis!</p>
+            </figcaption>
+
+          </figure>
+        </section>
+        <!-- END OF COMMENT -->
+
+        <!-- COMMENT -->
+        <section class="post" style="padding: 20px 0; border-top: 1px solid black;">
+          <figure>
+            <img src="http://agendapro.co/assets/home/mariapaz-3231ce2f2fb468ae82df0d468e0d7505.png" alt="" class="" style="width:100px; vertical-align: top;">
+            <figcaption style="width: calc(100% - 110px); display: inline-block; padding-left: 20px;">
+              <p style="margin: 0;">
+                <strong>María Paz del Pedregal</strong>
+                <span class="date pull-right">07/10/2015</span>
+              </p>
+              <p style="font-size: 20px; margin: 0 0 10px;">☆☆☆☆☆</p>
+              <p style="text-align: justify;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore repellendus maxime, reprehenderit sapiente accusamus voluptas vel. Cum corporis, alias obcaecati error culpa veniam soluta, id aliquam reprehenderit quaerat vel officiis!</p>
+            </figcaption>
+
+          </figure>
+        </section>
+        <!-- END OF COMMENT -->
+
+      </div>
+
+    </div>
+    <!-- END MAIN CONTENT -->
+
+
+
+
+
+    <!-- SIDE CONTENT -->
+    <div id="side-content" class="hidden-xs hidden-sm col-md-4 pull-right">
+
+      <div id="evaluation" class="text-center">
+        <div class="calification">
+          <span class="number">5</span>
+          <span class="stars"><span>☆☆☆☆☆</span> <br> 150 opiniones</span>
+        </div>
+        <div class="detailed">
+          <span>Calidad <br> <span>☆☆☆☆☆</span></span>
+          <span>Estilo <br> <span>☆☆☆☆☆</span></span>
+          <span>Precio <br> <span>☆☆☆☆☆</span></span>
+        </div>
+      </div>
+
+      <div id="map"></div>
+
+      <div id="summary">
+
+        <button class="btn btn-down hidden-xs hidden-sm btn-lg btn-hora-chic">Agendar</button>
+
+        <!-- Schedule Summary -->
+        <div class="added-service" ng-repeat="selected in sc.servicesList">
+          <section>
+            <span class="delete" ng-click="sc.removeService($index);">x</span> {{ selected.service.title }}
+          </section>
+          <section>
+            <span class="provider-name"> {{ selected.provider.name }}</span>
+            <span class="time-detail">® {{ selected.service.time }}</span>
+            <span class="pull-right">${{ selected.service.price }}</span>
+          </section>
+        </div>
+        <!-- End Schedule Summary -->
+
+        <div class="clear"></div>
+
+        <div class="text-center total">
+          <p>Total: <span class="price">{{ sc.total.price | clp }}</span> <span class="separator">|</span> <span>2 hrs 30 min</span></p>
+        </div>
+
+      </div>
+    </div>
+    <!-- END SIDE CONTENT -->
+
+  </div>
+
+  <ng-include src="tc.templates.schedule"></ng-include>
+
+</div>
+
+
+<style>
+  .category .service-detail:hover{
+    border: 2px solid #F26062;
+  }
+</style>

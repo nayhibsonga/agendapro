@@ -5,20 +5,23 @@
         .module('HoraChic')
         .controller('LinksController', LinksController);
 
-    function LinksController() {
+    LinksController.$inject = ['$rootScope'];
+
+    function LinksController($rootScope) {
         var vm = this;
-        var baseUrl = "/hora_chic/";
+        var baseUrl = $rootScope.baseUrl;
+        var searchUrl = baseUrl + "/buscar?service=";
 
         vm.title = 'LinksController';
         vm.services = [
-            { name: 'peluquerias', url: baseUrl + 'buscar?service=peluquerias'},
-            { name: 'maquillaje', url: baseUrl + 'maquillaje'},
-            { name: 'estetica', url: baseUrl + 'estetica'},
-            { name: 'spa', url: baseUrl + 'spa'},
-            { name: 'tratamientos', url: baseUrl + 'tratamientos'},
-            { name: 'manos_y_pies', url: baseUrl + 'manos-y-pies'},
-            { name: 'deals', url: baseUrl + 'promociones'},
-            { name: 'blog', url: baseUrl + 'blog'},
+            { name: 'peluquerias', url: searchUrl + 'peluquerias'},
+            { name: 'maquillaje', url: searchUrl + 'maquillaje'},
+            { name: 'estetica', url: searchUrl + 'estetica'},
+            { name: 'spa', url: searchUrl + 'spa'},
+            { name: 'tratamientos', url: searchUrl + 'tratamientos'},
+            { name: 'manos_y_pies', url: searchUrl + 'manos-y-pies'},
+            { name: 'deals', url: baseUrl + '/promociones'},
+            { name: 'blog', url: baseUrl + '/blog'},
         ];
 
         vm.social = [

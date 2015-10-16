@@ -205,8 +205,173 @@
   .deals-container {
     .deal:first-child{ margin-left: 4%; }
   }
+
+  #results {
+    #map {
+      .angular-google-map-container {
+        height: 200px;
+      }
+    }
+  }
+
+  #show {
+
+    #main-content {
+      .info {
+        border-bottom: none;
+        img {
+          height: 250px;
+        }
+        .description {
+          margin-top: 10px;
+          padding: 15px;
+          border: 1px solid $black;
+          .detail {
+            margin: 0;
+          }
+          .time {
+            padding: 0;
+            border: none;
+            &::before {
+              content: '®';
+              position: relative;
+              margin-left: 0;
+              margin-top: 0;
+              font-size: 20px;
+              vertical-align: middle;
+              margin-right: 8px;
+            }
+          }
+        }
+      }
+
+      .sub-menu {
+        margin-top: 0;
+        border: none;
+        text-align: left;
+        padding: 15px 0;
+        >span {
+          width: initial;
+          margin-right: 5px;
+          a{
+            padding: 10px 15px;
+            text-decoration: none;
+            color: $black;
+            &.active {
+              border: 1px solid $light-pink;
+            }
+          }
+        }
+      }
+
+      .services {
+        >div:first-child {
+          background-color: $light-pink;
+          color: $white;
+        }
+      }
+
+    }
+
+    #side-content {
+      padding: 10px 0;
+      #evaluation {
+        background-color: $lighterx-gray;
+        height: 190px;
+        padding: 10px;
+        margin-bottom: 15px;
+        .calification {
+          height: 58%;
+          border-bottom: 1px solid black;
+          .number {
+            color: $light-pink;
+            font-size: 6.5em;
+            display: inline-block;
+            height: 100%;
+            font-weight: 100;
+            line-height: 100%;
+          }
+          .stars {
+            display: inline-block;
+            vertical-align: top;
+            margin-top: 5%;
+            span{ font-size: 20px; }
+          }
+        }
+        .detailed {
+          height: 42%;
+          padding: 10px;
+          line-height: 25px;
+          >span {
+            display: inline-block;
+            width: 30%;
+            margin: 0 4px;
+            span { font-size: 20px; }
+          }
+        }
+      }
+
+      #map {
+        height: 220px;
+        border: 1px solid black;
+        width: 100%;
+        margin-bottom: 15px;
+      }
+
+      #summary {
+        padding: 15px;
+        border: 1px solid black;
+        margin-bottom: 15px;
+        >button {
+          width: 100%;
+          margin-bottom: 10px;
+          height: 70px;
+        }
+        .added-service {
+          border: 1px solid $light-gray;
+          margin-bottom: 10px;
+          section {
+            padding: 15px;
+            &:first-child {
+              background-color: $light-gray;
+              color: white;
+              padding: 10px;
+            }
+            span {
+              &.delete {
+                cursor: pointer;
+                font-weight: bold;
+                &:hover{
+                  color: $light-pink;
+                }
+              }
+              &.provider-name {
+                display: inline-block;
+                width: 55%;
+              }
+              &.time-detail{
+                color: $lighter-gray;
+                font-size: 12px;
+              }
+            }
+          }
+        }
+        .total {
+          padding: 10px 10px 0;
+          border-top: 1px solid black;
+          font-size: 21px;
+          font-weight: 100;
+          p{
+            margin-bottom: 0;
+            .price { color: $light-pink; }
+            .separator { margin: 0 10px; }
+          }
+        }
+      }
+    }
+
+  }
+
 }
 
-.angular-google-map-container {
-  height: 200px;
- }
+
