@@ -216,6 +216,8 @@ function loadUserModal () {
   $('#hoursOptimizer #new_booking').show();
   $('#optimizerTitle').html(userTitle);
 
+  $(userForm + '#booking_notes').val($('#calendar-data').data('preset-notes'));
+
   $('#nextButton').text('Reservar');
   $('#nextButton').off('click'); // Unbind click event
   $('#nextButton').click(function (e) {

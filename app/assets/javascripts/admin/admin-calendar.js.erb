@@ -812,7 +812,7 @@ function createBookingModal(date, provider_id) {
 			$('.client_link').attr('href','/clients');
 			$('.client_link').html('Ir a fichas de clientes...');
 			$('#booking_client_gender option[value="0"]').prop('selected', true);
-			$('#booking_notes').val('');
+			$('#booking_notes').val($('#calendar-data').data('preset-notes'));
 			$('#booking_company_comment').val('');
 			$('#booking_provider_lock').prop('checked', false);
 			$('#booking_service_provider_id').prop('disabled', false);
