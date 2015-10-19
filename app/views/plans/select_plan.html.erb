@@ -110,7 +110,7 @@
       <% else %>
       <div class="row mp_table">
         <div class="col-md-4 text-center">
-          <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_company_transaction_path(mp: "07", amount: 0), alt: "Botón de Pago Pay U", class: "mp_link" %>
+          <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_company_transaction_path(amount: 0), alt: "Botón de Pago Pay U", class: "mp_link" %>
         </div>
       </div>
       <% end %>
@@ -333,7 +333,7 @@
           <% else %>
           <div class="row mp_table">
             <div class="col-md-4 text-center">
-              <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_plan_transaction_path(mp: "07", plan_id: 0), alt: "Botón de Pago Pay U", class: "plan_mp_link" %>
+              <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_plan_transaction_path(plan_id: 0), alt: "Botón de Pago Pay U", class: "plan_mp_link" %>
             </div>
           </div>
           <% end %>

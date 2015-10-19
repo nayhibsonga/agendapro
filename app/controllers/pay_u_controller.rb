@@ -2,6 +2,7 @@ class PayUController < ApplicationController
   require "net/http"
   require "net/https"
   require "uri"
+  require 'digest/md5'
   
   skip_before_action :verify_authenticity_token
   before_action :authenticate_user!, :only => [:generate_company_transaction, :generate_plan_transaction]
@@ -24,33 +25,33 @@ class PayUController < ApplicationController
 
     @merchantId = "540049"
     @accountId = "547737"
-    @description = "Boton de Prueba Colombia"
-    @referenceCode = "200"
-    @amount = "10000.00"
+    @description = task[:description]
+    @referenceCode = task[:reference]
+    @amount = task[:amount]
     @tax = "0.00"
     @taxReturnBase = "0.00"
     @shipmentValue = "0.00"
     @currency = "COP"
     @lng = "es"
-    @sourceUrl = ""
+    @sourceUrl = task[:source_url]
     @buttonType = "SIMPLE"
-    @signature = "3fe657d15f7db3a5693443556ff0bd0f52ea57db9b8533631f972441ff97ff7b"
+    # “ApiKey~merchantId~referenceCode~amount~currency”.
+    @signature = Digest::MD5.hexdigest('5LG9s41B7yZWmYuLPs74I79dQE~' + @merchantId + '~' + @referenceCode + '~' + @amount + '~' + @currency)
 
     render layout: "empty"
   end
 
   def generate_company_transaction
     amount = params[:amount].to_i
-    payment_method = params[:mp]
     company = Company.find(current_user.company_id)
     company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
-    sales_tax = NumericParameter.find_by_name("sales_tax").value
+    # sales_tax = NumericParameter.find_by_name("sales_tax").value
+    sales_tax = 0
     day_number = Time.now.day
     month_number = Time.now.month
     month_days = Time.now.days_in_month
     accepted_amounts = [1,2,3,4,6,9,12]
-    accepted_payments = ["01","03","04","05","06","07"]
-    if accepted_amounts.include?(amount) && accepted_payments.include?(payment_method) && company
+    if accepted_amounts.include?(amount) && company
       mockCompany = Company.find(current_user.company_id)
       mockCompany.months_active_left += amount
       mockCompany.due_amount = 0.0
@@ -75,14 +76,18 @@ class PayUController < ApplicationController
 
         company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
         due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
-        req = PuntoPagos::Request.new()
-        resp = req.create(trx_id, due, payment_method)
-        if resp.success?
+        # req = PuntoPagos::Request.new()
+        # resp = req.create(trx_id, due, payment_method)
+
+        crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+        encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Pago plan " + company.plan.name, amount: due, source_url: select_plan_path})
+
+        if encrypted_data
           BillingLog.create(payment: due, amount: amount, company_id: company.id, plan_id: company.plan.id, transaction_type_id: TransactionType.find_by_name("Webpay").id, trx_id: trx_id)
-          PayUCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
-          redirect_to resp.payment_process_url
+          PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
+          redirect_to action: 'generate_transaction', encrypted_task: encrypted_data
         else
-          PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
+          PayUCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
           redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (6)"
         end
       end
@@ -93,19 +98,16 @@ class PayUController < ApplicationController
 
   def generate_plan_transaction
     plan_id = params[:plan_id].to_i
-    payment_method = params[:mp]
-    puts params[:plan_id]
-    puts payment_method
     company = Company.find(current_user.company_id)
-    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.plan_countries.find_by(country_id: company.country.id).price: price = company.plan.plan_countries.find_by(country_id: company.country.id).price
     new_plan = Plan.find(plan_id)
-    sales_tax = NumericParameter.find_by_name("sales_tax").value
+    # sales_tax = NumericParameter.find_by_name("sales_tax").value
+    sales_tax = 0
     day_number = Time.now.day
     month_number = Time.now.month
     month_days = Time.now.days_in_month
     accepted_plans = Plan.where(custom: false).pluck(:id)
-    accepted_payments = ["00","01","03","04","05","06","07"]
-    if accepted_plans.include?(plan_id) && accepted_payments.include?(payment_method) && company
+    if accepted_plans.include?(plan_id) && company
       if company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations 
       
         previous_plan_id = company.plan.id
@@ -127,7 +129,7 @@ class PayUController < ApplicationController
         end
 
         if months_active_left > 0
-          if plan_value_left > (plan_month_value + due_amount) && payment_method == "00"
+          if plan_value_left > (plan_month_value + due_amount)
             new_active_months_left = ((plan_value_left - plan_month_value - due_amount)/plan_price).floor + 1
             new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount)/plan_price)%1)*plan_price
             company.plan_id = plan_id
@@ -148,20 +150,20 @@ class PayUController < ApplicationController
             mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
             if !mockCompany.valid?
               redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (8)"
-            elsif payment_method != "00"
+            else
               due = sprintf('%.2f', ((plan_month_value + due_amount - plan_value_left)*(1+sales_tax)).round(0))
-              req = PuntoPagos::Request.new()
-              resp = req.create(trx_id, due, payment_method)
-              if resp.success?
+              # req = PuntoPagos::Request.new()
+              # resp = req.create(trx_id, due, payment_method)
+              crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+              encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Cambio a plan " + company.plan.name, amount: due, source_url: select_plan_path})
+              if encrypted_data
                 PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
-                PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
-                redirect_to resp.payment_process_url
+                PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
+                redirect_to action: 'generate_transaction', encrypted_task: encrypted_data
               else
-                PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
+                PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Error creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
                 redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (1)"
               end
-            else
-              redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (2)"
             end
           end
         else
@@ -173,20 +175,20 @@ class PayUController < ApplicationController
           mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
           if !mockCompany.valid?
             redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (9)"
-          elsif payment_method != "00"
+          else
             due = sprintf('%.2f', ((plan_month_value + due_amount)*(1+sales_tax)).round(0))
-            req = PuntoPagos::Request.new()
-            resp = req.create(trx_id, due, payment_method)
-            if resp.success?
+            # req = PuntoPagos::Request.new()
+            # resp = req.create(trx_id, due, payment_method)
+            crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+            encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Cambio a plan " + company.plan.name, amount: due, source_url: select_plan_path})
+            if encrypted_data
               PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
-              PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
-              redirect_to resp.payment_process_url
+              PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
+              redirect_to action: 'generate_transaction', encrypted_task: encrypted_data
             else
-              PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
+              PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Error creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
               redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (3)"
             end
-          else
-            redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (4)"
           end
         end
       else
