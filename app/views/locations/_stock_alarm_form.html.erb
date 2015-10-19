@@ -11,10 +11,20 @@
 		<div class="form-group">
 			<label for="location_email" class="col-md-5 control-label">Email</label>
 			<div class="col-md-7">
-				<input type="text" id="location_email" class="form-control" value="<%= @stock_alarm_setting.email %>" />
+				<%
+					emails = ""
+					@stock_alarm_setting.stock_setting_emails.each do |sse|
+						if emails == ""
+							emails = emails + sse.email
+						else
+							eals = email + ", " + sse.email
+						end
+					end
+				%>
+				<input type="text" id="location_email" class="form-control" value="<%= emails %>" />
 			</div>
 			<div class="col-md-12">
-				<span class="help-block">Establece el email al cual se enviarán las notificaciones. Podrás definir un email particular para cada producto además de éste.</span>
+				<span class="help-block">Establece los correos a los que se enviarán las notificaciones. Podrás definir correos particulares para cada producto además de los generales.</span>
 				<hr />
 			</div>
 		</div>

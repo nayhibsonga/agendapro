@@ -1,6 +1,7 @@
 class LocationProduct < ActiveRecord::Base
   belongs_to :product
   belongs_to :location
+  has_many :stock_emails, dependent: :destroy
 
   validates :stock, presence: true
 

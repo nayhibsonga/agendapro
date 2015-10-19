@@ -9,6 +9,7 @@ var paymentPastBookings = [];
 var paymentNewBookings = [];
 var paymentProducts = [];
 var paymentReceipts = [];
+var paymentTransactions = [];
 
 var existing_payment_changed = false;
 
@@ -167,10 +168,6 @@ $(function() {
 
   $("#payment_product").on('change', function(e){
     loadProductPrice();
-  });
-
-  $("#payment_paid_amount").on('change', function(e){
-    calculateReturn();
   });
 
   $("#checkAllItems").on('change', function(e){
@@ -382,7 +379,9 @@ $(function() {
     }
     else if(paymentModalState == 'Step2')
     {
-      if($("#fakePaymentStep2Form").valid() && $("#fakeMethodDetailsForm").valid())
+      total_cost = parseInt($("#payment_total_cost").val());
+      transactions_sum = parseInt($("#payment_transactions_sum").val());
+      if(total_cost <= transactions_sum)
       {
         //Check that paid_amount >= cost
         //if (parseFloat($("#payment_paid_amount").val()) >= parseFloat($("#payment_cost").val()))
@@ -395,6 +394,11 @@ $(function() {
           alert("El valor pagado no puede ser menor que el costo total.");
           return;
         }*/
+      }
+      else
+      {
+        alert("El valor pagado no puede ser menor que el costo total.");
+        return;
       }
     }
   });
@@ -461,8 +465,160 @@ $(function() {
     savePaymentIntro();
   });
 
+  $('#payment_method_select').on('change', function(){
+
+    $('#payment_transaction_number').val("");
+    $("#payment_transaction_amount").val("");
+    $("#payment_transaction_installments").val("");
+    $("#selected_method_number_required").val("");
+    clearValidations('#payment_transaction_number');
+    clearValidations('#payment_transaction_amount');
+    clearValidations('#payment_transaction_installments');
+
+    var payment_method_select = $(this).val().split("_");
+    var payment_method_type = payment_method_select[0];
+    var payment_method_id = payment_method_select[1];
+    var payment_method_name = $('#payment_method_select option:selected').text();
+    var method_number_required = $('#payment_method_select option:selected').attr("method_number_required");
+    console.log(method_number_required);
+    console.log("Type: " + typeof method_number_required);
+
+    if(method_number_required == "true")
+    {
+      $("#selected_method_number_required").val("1");
+    }
+    else
+    {
+      $("#selected_method_number_required").val("0");
+    }
+
+    /*
+    * payment_method_select = x_y
+    * x = 0 => it's a payment method
+    * x = 1 => it's a company_payment_method
+    * y = method_id (either regular or company payment_method)
+    */
+
+    if(payment_method_type == "0")
+    {
+      $('.payment-transaction-div').hide();
+      $('#payment_transaction_number_div').show();
+      if(payment_method_name == "Efectivo")
+      {
+        $("#selected_method_number_required").val("0");
+        $('#payment_transaction_number_div').hide();
+      }
+      if(payment_method_name == "Tarjeta de Crédito")
+      {
+        $('#payment_method_type_id_div').show();
+        $('#payment_transaction_installments_div').show();
+      }
+      else if(payment_method_name == "Cheque")
+      {
+        $('#payment_transaction_bank_id_div').show();
+      }
+    }
+    else
+    {
+      $('.payment-transaction-div').hide();
+      $('#payment_transaction_number_div').show();
+    }
+  });
+
+  $('#addTransactionBtn').on('click', function(){
+    addTransaction();
+  });
+
+
+  /*
+  * Check if company_setting requires client for payments
+  */
+
+  if($("#client_required").val() == "1")
+  {
+    $(".client-option").show();
+    $("#set_client").val("1");
+  }
+
 
 });
+
+/*
+* Transaction functions
+*/
+
+function addTransaction()
+{
+
+  var payment_method_select = $('#payment_method_select').val().split("_");
+  var payment_method_type = payment_method_select[0];
+  var payment_method_id = payment_method_select[1];
+  var payment_method_name = $('#payment_method_select option:selected').text();
+  var method_number_required = $(this).attr("method_number_required");
+
+  console.log($("#fakeMethodDetailsForm").valid());
+
+  if(!$("#fakeMethodDetailsForm").valid())
+  {
+    return;
+  }
+
+  var new_transaction = new Object();
+  new_transaction['payment_method_type'] = payment_method_type;
+  new_transaction['payment_method_id'] = payment_method_id;
+  new_transaction['amount'] = parseInt($("#payment_transaction_amount").val());
+  new_transaction['method_number'] = $("#payment_transaction_number").val();
+  if(payment_method_name == "Tarjeta de Crédito")
+  {
+    new_transaction['installments'] = $('#payment_transaction_installments').val();
+    new_transaction['payment_method_type_id'] = $("#payment_method_type_id").val();
+  }
+  else if(payment_method_name == "Cheque")
+  {
+    new_transaction['bank_id'] = $('#payment_transaction_bank_id').val();
+  }
+
+  paymentTransactions.push(new_transaction);
+
+  if(payment_method_type == "0")
+  {
+    current_method_amount = parseInt($('.payment_method_amount[payment_method_id="' + payment_method_id + '"]').val());
+    current_method_amount = current_method_amount + parseInt(new_transaction['amount']);
+    $('.payment_method_amount[payment_method_id="' + payment_method_id + '"]').val(current_method_amount);
+  }
+  else
+  {
+    current_method_amount = parseInt($('.company_payment_method_amount[company_payment_method_id="' + payment_method_id + '"]').val());
+    current_method_amount = current_method_amount + parseInt(new_transaction['amount']);
+    $('.company_payment_method_amount[company_payment_method_id="' + payment_method_id + '"]').val(current_method_amount);
+  }
+
+  current_sum = parseInt($('#payment_transactions_sum').val());
+  current_sum = current_sum + parseInt(new_transaction['amount']);
+  $("#payment_transactions_sum").val(current_sum);
+
+  total_cost = parseInt($('#payment_total_cost').val());
+  if(total_cost <= current_sum)
+  {
+    new_change = current_sum - total_cost;
+    $("#payment_total_change_amount").val(new_change);
+    $('#transactionsReadyBtn').prop('disabled', false);
+  }
+  else
+  {
+    $('#transactionsReadyBtn').prop('disabled', true);
+  }
+
+  $("#payment_method_select").val($('#payment_method_select option').filter(function () { return $(this).html() == "Efectivo"; }).val());
+
+  $('.payment-transaction-div').hide();
+  $("#payment_transaction_amount").val("");
+  $("#payment_transaction_number").val("");
+  $("#selected_method_number_required").val("0");
+  $("#payment_transaction_installments").val("");
+  $("#payment_transaction_number_div").hide();
+
+}
 
 
 /*
@@ -719,17 +875,9 @@ function getPayment(payment_id)
 
 /*
 * Calculations functions.
-* calculateReturn: Calculates change for given paid_amount and cost.
 * calculatePaymentTotal: Calculates payment cost using information from the paymentItems table (NOT the JS objects).
 */
 
-function calculateReturn()
-{
-  var paid_amount = parseInt($("#payment_paid_amount").val());
-  var price_amount = parseInt($("#payment_cost").val());
-  var return_amount = paid_amount - price_amount;
-  $("#payment_change_amount").val(return_amount);
-}
 
 function calculatePaymentTotal(){
 
@@ -748,10 +896,11 @@ function calculatePaymentTotal(){
 
   $("#paymentCalculatedTotal").empty();
   $("#paymentCalculatedTotal").append("$" + total);
+  $("#payment_total_cost").val(total);
 
   //Reset pay amounts if items list changed
-  $("#payment_paid_amount").val("");
-  $("#payment_change_amount").val("");
+  $("#payment_transactions_sum").val("0");
+  $("#payment_total_change_amount").val("0");
 }
 
 /*
@@ -782,6 +931,12 @@ function loadPaymentModal1(booking_id) {
 function loadPaymentModal2(booking_id) {
   $("#payment-total-amount").text($("#paymentCalculatedTotal").text());
   $("#payment_cost").val(parseInt($("#paymentCalculatedTotal").text().substring(1, $("#paymentCalculatedTotal").text().length)));
+  $("#payment_total_cost").val(parseInt($("#paymentCalculatedTotal").text().substring(1, $("#paymentCalculatedTotal").text().length)));
+  $("#payment_transactions_sum").val("0");
+  $("#payment_total_change_amount").val("0");
+  $('.payment_method_amount').val("0");
+  $('.company_payment_method_amount').val("0");
+  
   $("#paymentModal1").modal('hide');
   $("#paymentModal2").modal('show');
   $("#paymentModal3").modal('hide');
@@ -1459,6 +1614,7 @@ function parsePaymentItems()
   $('#paymentPastBookingsArray').val(JSON.stringify(parsedPaymentPastBookings));
   $('#paymentNewBookingsArray').val(JSON.stringify(parsedPaymentNewBookings));
   $('#paymentProductsArray').val(JSON.stringify(parsedPaymentProducts));
+  $("#paymentTransactionsArray").val(JSON.stringify(paymentTransactions));
 
 }
 
@@ -1505,19 +1661,20 @@ function createAndServePayment(option)
   var payment_new_bookings = $("#paymentNewBookingsArray").val();
   var payment_products = $("#paymentProductsArray").val();
   var payment_receipts = $("#paymentReceiptsArray").val();
-  var payment_paid_amount = $("#payment_paid_amount").val();
-  var payment_cost = $("#payment_cost").val();
-  var payment_change_amount = $("#payment_change_amount").val();
-  var pay_method = $("#selected_pay_method").val();
+  var payment_paid_amount = $("#payment_transactions_sum").val();
+  var payment_cost = $("#payment_total_cost").val();
+  var payment_change_amount = $("#payment_total_change_amount").val();
+  /*var pay_method = $("#selected_pay_method").val();
   var payment_method_id = $("#payment_method_id").val();
   var method_number = $('#payment_' + pay_method + '_method_number').val();
-  var dues_number = $("#payment_credit_card_dues_number").val();
+  var dues_number = $("#payment_credit_card_dues_number").val();*/
   var payment_date = $("#payment_date").val();
+  var transactions = $("#paymentTransactionsArray").val();
 
-
-  var pay_method_type = $("#payment_method_type").val(); //Credit card type
+  /*var pay_method_type = $("#payment_method_type").val(); //Credit card type
   var payment_bank = $("#payment_check_bank").val(); //Check bank
   var payment_other_method_type = $("#payment_other_method_type").val(); //Company method (Otro)
+  /
 
   /*
     var payment_receipt_type_id = $("#payment_receipt_type").val();
@@ -1546,13 +1703,7 @@ function createAndServePayment(option)
     paid_amount: payment_paid_amount, 
     cost: payment_cost, 
     change_amount: payment_change_amount, 
-    payment_method_id: payment_method_id, 
-    pay_method: pay_method, 
-    method_number: method_number, 
-    dues_number: dues_number, 
-    pay_method_type: pay_method_type, 
-    payment_bank: payment_bank, 
-    payment_other_method_type: payment_other_method_type, 
+    transactions: transactions,
     payment_date: payment_date, 
     receipts: payment_receipts,
     callback_option: callback_option_str
@@ -1835,43 +1986,20 @@ function resetPaymentStep2()
   /*
   * Step 2: Set cash for default, clean cost, paid amount and change. Clean all methods fields.
   */
-  $("#selected_pay_method").val("cash");
-  $("#payment-total-amount").text("");
+  paymentTransactions = [];
+  $("#payment_method_select").val($('#payment_method_select option').filter(function () { return $(this).html() == "Efectivo"; }).val());
 
-  $('.method-btn.selected').removeClass('selected');
-  $('.method-btn-name[method_id="1"]').closest(".method-btn").addClass('selected');
-
-  $("#payment_paid_amount").val("");
-  $("#payment_cost").val("");
-  $("#payment_change_amount").val("");
-
-  /*
-  * Methods
-  */
-
-  /*
-  * Check
-  */
-  $("#payment_check_bank").find("option").first().prop('selected', true);
-  $("#payment_check_number").val("");
-
-  /*
-  * Credit card
-  */
-  $("#payment_method_type").find("option").first().prop('selected', true);
-  $("#payment_credit_card_number").val("");
-  $("#payment_credit_card_dues_number").val("1");
-
-  /*
-  * Debt card
-  */
-  $("#payment_debt_card_number").val("");
-
-  /*
-  * Other
-  */
-  $("#payment_other_method_type").find("option").first().prop('selected', true);
-  $("#payment_other_method_number").val("");
+  $('.payment-transaction-div').hide();
+  $("#payment_transaction_amount").val("");
+  $("#payment_transaction_number").val("");
+  $("#payment_transaction_installments").val("");
+  $("#payment_transaction_number_div").hide();
+  $("#payment_transactions_sum").val("0");
+  $("#payment_total_change_amount").val("0");
+  $('.payment_method_amount').val("0");
+  $('.company_payment_method_amount').val("0");
+  $("#transactionsReadyBtn").prop('disabled', true);
+  
 
 }
 

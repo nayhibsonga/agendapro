@@ -25,6 +25,16 @@
                   <span class="form-control-feedback"></span>
                 </div>
               </div>
+              
+              <div class="payment-form-div form-group">
+                <label for="payment_date" class="col-xs-3 control-label">Fecha</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
 
               <div class="payment-form-div form-group has-feedback">
                 <label for="payment_cashier_code" class="col-xs-3 control-label">Cajero</label>
@@ -47,27 +57,25 @@
 
               </div>
 
-              <div class="payment-form-div form-group">
-                <label for="payment_date" class="col-xs-3 control-label">Fecha</label>
-                <div class="col-xs-9">
-                  <input type="text" class="form-control" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
-                </div>
+              <% if !current_user.company.company_setting.payment_client_required %>
+                <div class="payment-form-div form-group">
 
-              </div>
+                  <div class="col-xs-3">
+                  </div>
+                  <div class="col-xs-9" id="openClient">
+                    <span>Asociar o agregar cliente </span><span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
+                  </div>
+                  <div style="clear: both;">
+                  </div>
 
-              <div class="payment-form-div form-group">
+                </div>
+              <% end %>
 
-                <div class="col-xs-3">
-                </div>
-                <div class="col-xs-9" id="openClient">
-                  <span>Asociar o agregar cliente </span><span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
-                </div>
-                <div style="clear: both;">
-                </div>
-
-              </div>
+              <% if current_user.company.company_setting.payment_client_required %>
+                <input type="hidden" id="client_required" value="1" />
+              <% else %>
+                <input type="hidden" id="client_required" value="0" />
+              <% end %>
 
               <input type="hidden" id="set_client" value="0" />
 
@@ -420,7 +428,7 @@
           debt_card_method_id = PaymentMethod.find_by_name("Tarjeta de Débito").id
           other_method_id = PaymentMethod.find_by_name("Otro").id
 
-          active_payment_methods = PaymentMethod.where(id: current_user.company.company_setting.payment_method_settings.where(active: true).pluck(:payment_method_id))
+          active_payment_methods = PaymentMethod.where.not(name: "Otro").where(id: current_user.company.company_setting.payment_method_settings.where(active: true).pluck(:payment_method_id))
           company_payment_methods = current_user.company.company_payment_methods.where(active: true)
         %>
 
@@ -460,24 +468,89 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="center-block">
-
-            <div class="payment-form-div">
-              <label for="payment_method_select" class="col-xs-5 control-label">Medio de pago</label>
-              <div class="col-xs-7">
-                <select class="form-control" id="payment_method_select">
-                  <% active_payment_methods.each do |payment_method| %>
-                    <option value="0_<%= payment_method.id %>"><%= payment_method.name %></option>
-                  <% end %>
-                  <% company_payment_methods.each do |company_payment_method| %>
-                    <option value="1_<%= company_payment_method.id %>"><%= company_payment_method.name %></option>
-                  <% end %>
-                </select>
+        <div class="row" style="margin-top: 15px;">
+          <div class="col-xs-1">
+          </div>
+          <div class="col-xs-10">
+            <form id="fakeMethodDetailsForm" action="">
+              <div class="payment-form-div">
+                <label for="payment_method_select" class="col-xs-4 control-label">Medio de pago</label>
+                <div class="col-xs-6">
+                  <select class="form-control" id="payment_method_select">
+                    <% active_payment_methods.each do |payment_method| %>
+                      <% method_setting = PaymentMethodSetting.where(:company_setting_id => current_user.company.company_setting.id, :payment_method_id => payment_method.id).first %>
+                      <option value="0_<%= payment_method.id %>" method_number_required="<%= method_setting.number_required %>" ><%= payment_method.name %></option>
+                    <% end %>
+                    <% company_payment_methods.each do |company_payment_method| %>
+                      <option value="1_<%= company_payment_method.id %>" method_number_required="<%= company_payment_method.number_required %>" ><%= company_payment_method.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div style="clear: both;"></div>
               </div>
-              <div style="clear: both;"></div>
-            </div>
 
+              <input type="hidden" id="selected_method_number_required" value="" />
+
+              <div class="payment-form-div">
+                <label for="payment_transaction_amount" class="col-xs-4 control-label">Monto</label>
+                <div class="col-xs-6">
+                  <input type="number" class="form-control" name="payment_transaction_amount" id="payment_transaction_amount" value="" />
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div payment-transaction-div" id="payment_method_type_id_div" hidden>
+                <label for="payment_method_type_id" class="col-xs-4 control-label">Tipo</label>
+                <div class="col-xs-6">
+                  <select class="form-control" id="payment_method_type_id">
+                    <% PaymentMethodType.all.each do |payment_method_type| %>
+                      <option value="<%= payment_method_type.id %>"><%= payment_method_type.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div payment-transaction-div" id="payment_transaction_number_div" hidden>
+                <label for="payment_transaction_number" class="col-xs-4 control-label">N° de comprobante</label>
+                <div class="col-xs-6">
+                  <input type="text" class="form-control" name="payment_transaction_number" id="payment_transaction_number" value="" />
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div payment-transaction-div" id="payment_transaction_installments_div" hidden>
+                <label for="payment_transaction_installments" class="col-xs-4 control-label">Cuotas</label>
+                <div class="col-xs-6">
+                  <input type="text" class="form-control" name="payment_transaction_installments" id="payment_transaction_installments" value="" />
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div payment-transaction-div" id="payment_transaction_bank_id_div" hidden>
+                <label for="payment_transaction_bank_id" class="col-xs-4 control-label">Banco</label>
+                <div class="col-xs-6">
+                  <select class="form-control" id="payment_transaction_bank_id">
+                    <% Bank.all.each do |bank| %>
+                      <option value="<%= bank.id %>"><%= bank.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div">
+                <div class="col-xs-4">
+                </div>
+                <div class="col-xs-6">
+                  <button type="button" class="btn btn-dark-green" id="addTransactionBtn" aria-label="Agregar pago">Agregar pago</button>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+            </form>
+          </div>
+          <div class="col-xs-1">
           </div>
         </div>
 
@@ -485,7 +558,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
         <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
-        <button type="button" class="btn payment-btn-next" aria-label="Siguiente">Siguiente</button>
+        <button type="button" class="btn payment-btn-next" id="transactionsReadyBtn" aria-label="Siguiente" disabled>Siguiente</button>
       </div>
     </div>
   </div>
@@ -729,6 +802,7 @@
 <input type="hidden" id="paymentNewBookingsArray" value="" />
 <input type="hidden" id="paymentProductsArray" value="" />
 <input type="hidden" id="paymentReceiptsArray" value="" />
+<input type="hidden" id="paymentTransactionsArray" value="" />
 
 <input type="hidden" id="today_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
 

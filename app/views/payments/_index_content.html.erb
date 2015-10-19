@@ -37,7 +37,6 @@
           <th>Local</th>
           <th>Cliente</th>
           <th>Detalle</th>
-          <th>Medio de Pago</th>
           <th>Monto</th>
           <th>Descuento</th>
           <th>Opciones</th>
@@ -56,7 +55,6 @@
             <% end %>
           </td>
           <td><button class="btn btn-green btn-xs" id="payment_details_button_<%= payment.id %>">Vista Rápida</button></td>
-          <td><%= payment.payment_method ? payment.payment_method.name : '' %></td>
           <td><%= number_to_currency(payment.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
           <td><%= payment.discount.round(2) %> %</td>
           <td>

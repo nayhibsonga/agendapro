@@ -117,10 +117,13 @@ class ProductsController < ApplicationController
       @response_array << @location_product.stock_limit
     end
 
-    if @location_product.alarm_email.nil?
-      @response_array << @location.stock_alarm_setting.email
-    else
-      @response_array << @location_product.alarm_email
+    emails = ""
+    @location_product.stock_emails.each do |stock_email|
+      if emails == ""
+        emails = emails + stock_email.email
+      else
+        emails = emails + ", " + stock_email.email
+      end
     end
 
     render :json => @response_array

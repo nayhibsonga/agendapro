@@ -1003,9 +1003,17 @@
                 <div class="form-group">
                   <div class="checkbox">
                     <label>
+                      <%= f.check_box :payment_client_required %> Requerir cliente en pago
+                    </label>
+                    <span class="help-block">Habilita esta opción para que al registrar un pago sea obligatorio ingresar un cliente existente o nuevo.</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
                       <%= f.check_box :receipt_required %> Requerir número de comprobante de pago
                     </label>
-                    <span class="help-block">Habilita esta opción para registrar un pago sea obligatorio ingresar el número de comprobante de pago (número de boleta, factura, etc.).</span>
+                    <span class="help-block">Habilita esta opción para que al registrar un pago sea obligatorio ingresar el número de comprobante de pago (número de boleta, factura, etc.).</span>
                   </div>
                 </div>
                 <br />

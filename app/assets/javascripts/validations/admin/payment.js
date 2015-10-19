@@ -42,16 +42,16 @@ $(function() {
 			error.appendTo(element.next());
 		},
 		rules: {
-			'payment_cost': {
+			'payment_total_cost': {
 				required: true,
 				number: true
 			},
-			'payment_paid_amount': {
+			'payment_transactions_sum': {
 				required: true,
 				number: true,
-				min: function() { return parseFloat($("#payment_cost").val()); }
+				min: function() { return parseFloat($("#payment_total_cost").val()); }
 			},
-			'payment_change_amount': {
+			'payment_total_change_amount': {
 				required: true,
 				number: true
 			}
@@ -75,31 +75,20 @@ $(function() {
 			error.appendTo(element.next());
 		},
 		rules: {
-			'payment_check_number': {
+			'payment_transaction_number': {
 				required: {
-					depends: function () { return ($("#selected_pay_method").val() == "check"); }
+					depends: function () { return ($("#selected_method_number_required").val() == "1"); }
 				}
 			},
-			'payment_credit_card_number': {
+			'payment_transaction_installments': {
 				required: {
-					depends: function () { return ($("#selected_pay_method").val() == "credit_card"); }
+					depends: function () { return ($('#payment_method_select option:selected').text() == "Tarjeta de Crédito"); }
 				}
 			},
-			'payment_credit_card_dues_number': {
-				required: {
-					depends: function () { return ($("#selected_pay_method").val() == "credit_card"); }
-				},
-				number: true
-			},
-			'payment_debt_card_number': {
-				required: {
-					depends: function () { return ($("#selected_pay_method").val() == "debt_card"); }
-				}
-			},
-			'payment_other_method_number': {
-				required: {
-					depends: function () { return ($("#selected_pay_method").val() == "other" && $('.payment_other_method_type_number_required[method_id="' + $("#payment_other_method_type").val() + '"]').val() == "true"); }
-				}
+			'payment_transaction_amount': {
+				required: true,
+				number: true,
+				min: 1
 			}
 		},
 		highlight: function(element) {

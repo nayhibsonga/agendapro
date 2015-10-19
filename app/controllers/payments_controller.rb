@@ -17,9 +17,25 @@ class PaymentsController < ApplicationController
     @from = params[:from].blank? ? Date.today : Date.parse(params[:from])
     @to = params[:to].blank? ? Date.today : Date.parse(params[:to])
     @location_ids = params[:location_ids] ? params[:location_ids].split(',') : Location.where(company_id: current_user.company_id).accessible_by(current_ability).pluck(:id)
-    @payment_method_ids = params[:payment_method_ids] ? params[:payment_method_ids].split(',') : PaymentMethod.all.pluck(:id)
 
-    @payments = Payment.where(payment_date: @from..@to, location_id: @location_ids).order(:payment_date)
+    @payment_method_ids = []
+    @company_payment_method_ids = []
+    if params[:payment_method_ids].blank?
+      @payment_method_ids = PaymentMethod.all.pluck(:id)
+      @company_payment_method_ids = CompanyPaymentMethod.where(company_id: current_user.company_id).pluck(:id)
+    else
+      method_ids_arr = params[:payment_method_ids].split(",")
+      method_ids_arr.each do |method_str|
+        method_arr = method_str.split("_")
+        if method_arr[0] == "0"
+          @payment_method_ids << method_arr[1].to_i
+        else
+          @company_payment_method_ids << method_arr[1].to_i
+        end
+      end
+    end
+
+    @payments = Payment.where(payment_date: @from..@to, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).order(:payment_date)
 
     render "_index_content", layout: false
   end
@@ -304,70 +320,9 @@ class PaymentsController < ApplicationController
       payment.client_id = nil
     end
 
-    
-
-    payment.payment_method_id = params[:payment_method_id]
-
     payment.cashier_id = params[:cashier_id]
+    payment.company_id = current_user.company.id
 
-    if params[:method_number].blank?
-      payment.payment_method_number = ""
-    else
-      payment.payment_method_number = params[:method_number]
-    end
-
-    if payment.payment_method_id == PaymentMethod.find_by_name("Efectivo").id
-
-      petty_cash = nil
-      if PettyCash.where(location_id: params[:location_id]).count > 0
-        petty_cash = PettyCash.find_by_location_id(params[:location_id])
-      else
-        petty_cash = PettyCash.create(:location_id => params[:location_id], :cash => 0, :open => true)
-      end
-
-      petty_transaction = PettyTransaction.new
-
-      petty_transaction.transactioner_id = params[:cashier_id]
-      petty_transaction.transactioner_type = 2
-      petty_transaction.amount = params[:cost].to_f
-      petty_transaction.date = DateTime.now
-      petty_transaction.petty_cash_id = petty_cash.id
-      petty_transaction.is_income = true
-      petty_transaction.notes = "Ingreso generado por pago en efectivo."
-      petty_transaction.open = true
-
-      petty_transaction.save
-
-      if petty_transaction.save
-        if petty_transaction.is_income
-          petty_cash.cash = petty_cash.cash + petty_transaction.amount
-        else
-          petty_cash.cash = petty_cash.cash - petty_transaction.amount
-        end
-        if petty_cash.save
-
-        else
-          @errors << petty_cash.errors
-        end
-      else
-        @errors << petty_transaction.errors
-      end
-
-    end
-
-    if payment.payment_method_id == PaymentMethod.find_by_name("Tarjeta de Crédito").id
-      payment.payment_method_type_id = params[:pay_method_type]
-    end
-
-    if payment.payment_method_id == PaymentMethod.find_by_name("Cheque").id
-      payment.bank_id = params[:payment_bank]
-    end
-
-    if payment.payment_method_id == PaymentMethod.find_by_name("Otro").id
-      payment.company_payment_method_id = params[:payment_other_method_type]
-    end
-
-    payment.installments = params[:dues_number]
     payment.payed = true
     payment.payment_date = params[:payment_date].to_date
 
@@ -384,6 +339,7 @@ class PaymentsController < ApplicationController
     new_bookings = JSON.parse(params[:new_bookings], symbolize_names: true)
     products = JSON.parse(params[:products], symbolize_names: true)
     receipts = JSON.parse(params[:receipts], symbolize_names: true)
+    transactions = JSON.parse(params[:transactions], symbolize_names: true)
 
     @mockBookings = []
     @bookings = []
@@ -395,6 +351,70 @@ class PaymentsController < ApplicationController
       @errors << payment.errors
       render :json => @json_response
       return
+    end
+
+    check_method_id = PaymentMethod.find_by_name("Cheque").id
+    cash_method_id = PaymentMethod.find_by_name("Efectivo").id
+    credit_card_method_id = PaymentMethod.find_by_name("Tarjeta de Crédito").id
+    debt_card_method_id = PaymentMethod.find_by_name("Tarjeta de Débito").id
+    other_method_id = PaymentMethod.find_by_name("Otro").id
+
+    transactions.each do |transaction|
+      new_transaction = PaymentTransaction.new
+      if transaction[:payment_method_type] == "0"
+
+        new_transaction.payment_method_id = transaction[:payment_method_id]
+        if new_transaction.payment_method_id == credit_card_method_id
+          new_transaction.payment_method_type_id = transaction[:payment_method_type_id]
+          new_transaction.installments = transaction[:installments]
+        elsif new_transaction.payment_method_id == check_method_id
+          new_transaction.bank_id = transaction[:bank_id]
+        end
+
+        if new_transaction.payment_method_id != cash_method_id
+          if PaymentMethodSetting.where(:company_setting_id => current_user.company.company_setting.id, :payment_method_id => new_transaction.payment_method_id).count > 0
+            method_setting = PaymentMethodSetting.where(:company_setting_id => current_user.company.company_setting.id, :payment_method_id => new_transaction.payment_method_id).first
+            if method_setting.active
+              if method_setting.number_required
+                if !transaction[:method_number].blank?
+                  new_transaction.number = transaction[:method_number]
+                else
+                  @errors << "El número de comprobante no puede estar vacío."
+                end
+              else
+
+              end
+            else
+              @errors << "El tipo de pago no está activo."
+            end
+          end
+        end
+
+      else
+        new_transaction.company_payment_method_id = transaction[:payment_method_id]
+        company_method = CompanyPaymentMethod.find(transaction[:payment_method_id])
+        if !company_method.nil?
+          if company_method.number_required
+            if !transaction[:method_number].blank?
+              new_transaction.number = transaction[:method_number]
+            else
+              @errors << "El número de comprobante no puede estar vacío."
+            end
+          end
+        else
+          @errors << "No existe el medio de pago."
+        end
+      end
+
+      new_transaction.amount = transaction[:amount].to_f
+      new_transaction.payment = payment
+
+      if @errors.length == 0
+        unless new_transaction.save
+          @errors << new_transaction.errors
+        end
+      end
+
     end
 
 
@@ -466,10 +486,7 @@ class PaymentsController < ApplicationController
 
       new_receipt.payment = payment
       
-      if new_receipt.save
-        @json_response[0] = "ok"
-      else
-        @json_response[0] = "error"
+      unless new_receipt.save
         @errors << new_receipt.errors
       end
 
@@ -479,14 +496,18 @@ class PaymentsController < ApplicationController
     payment.mock_bookings = @mockBookings
     payment.payment_products = @paymentProducts
 
-    if payment.save
-      @json_response[0] = "ok"
+    if @errors.length == 0
+      if payment.save
+        @json_response[0] = "ok"
+      else
+        @json_response[0] = "error"
+        @errors << payment.errors
+      end
     else
       @json_response[0] = "error"
-      @errors << payment.errors
     end
 
-    if @json_response[0] == "ok"
+    if @json_response[0] == "ok" && @errors.length == 0
       @json_response << payment
       @json_response[2] = []
       payment.receipts.each do |receipt|
@@ -522,54 +543,6 @@ class PaymentsController < ApplicationController
     payment = Payment.find(params[:payment_id])
 
 
-    #Check if it was payed in cash
-    #If so, create a petty_transaction outcome
-
-    if payment.payment_method_id == PaymentMethod.find_by_name("Efectivo").id
-
-      petty_cash = nil
-      if PettyCash.where(location_id: params[:location_id]).count > 0
-        petty_cash = PettyCash.find_by_location_id(params[:location_id])
-      else
-        petty_cash = PettyCash.create(:location_id => params[:location_id], :cash => 0, :open => true)
-      end
-
-      petty_transaction = PettyTransaction.new
-
-      petty_transaction.transactioner_id = payment.cashier_id
-      petty_transaction.transactioner_type = 2
-      petty_transaction.amount = payment.amount
-      petty_transaction.date = payment.updated_at
-      petty_transaction.petty_cash_id = petty_cash.id
-      petty_transaction.is_income = false
-      petty_transaction.notes = "Retiro generado por edición de un pago en efectivo."
-
-      if payment.updated_at < DateTime.now.beginning_of_day
-        petty_transaction.open = false
-      else
-        petty_transaction.open = true
-      end
-
-      petty_transaction.save
-
-      if petty_transaction.save
-        if petty_transaction.is_income
-          petty_cash.cash = petty_cash.cash + petty_transaction.amount
-        else
-          petty_cash.cash = petty_cash.cash - petty_transaction.amount
-        end
-        if petty_cash.save
-
-        else
-          @errors << petty_cash.errors
-        end
-      else
-        @errors << petty_transaction.errors
-      end
-
-    end
-
-
     #Find or create a client (update if necessary)
     if params[:set_client] == "1"
       
@@ -596,33 +569,8 @@ class PaymentsController < ApplicationController
       payment.client_id = nil
     end
 
-    
-
-    payment.payment_method_id = params[:payment_method_id]
-
     payment.cashier_id = params[:cashier_id]
 
-    if params[:method_number].blank?
-      payment.payment_method_number = ""
-    else
-      payment.payment_method_number = params[:method_number]
-    end
-
-    if payment.payment_method_id == PaymentMethod.find_by_name("Tarjeta de Crédito").id
-      payment.payment_method_type_id = params[:pay_method_type]
-    end
-
-    if payment.payment_method_id == PaymentMethod.find_by_name("Cheque").id
-      payment.bank_id = params[:payment_bank]
-    end
-
-    if payment.payment_method_id == PaymentMethod.find_by_name("Otro").id
-      payment.company_payment_method_id = params[:payment_other_method_type]
-    end
-
-
-
-    payment.installments = params[:dues_number]
     payment.payed = true
     payment.payment_date = params[:payment_date].to_date
 
@@ -639,6 +587,7 @@ class PaymentsController < ApplicationController
     new_bookings = JSON.parse(params[:new_bookings], symbolize_names: true)
     products = JSON.parse(params[:products], symbolize_names: true)
     receipts = JSON.parse(params[:receipts], symbolize_names: true)
+    transactions = JSON.parse(params[:transactions], symbolize_names: true)
 
     @mockBookings = []
     @bookings = []
@@ -652,51 +601,6 @@ class PaymentsController < ApplicationController
     # MockBookings should be deleted and reconstructed.
     # Booking should be disasociated from payment and then reassociated with new params.
     #
-
-    #Create a new petty_transaction if the payment is payed in cash
-    if payment.payment_method_id == PaymentMethod.find_by_name("Efectivo").id
-
-      petty_cash = nil
-      if PettyCash.where(location_id: payment.location_id).count > 0
-        petty_cash = PettyCash.find_by_location_id(payment.location_id)
-      else
-        petty_cash = PettyCash.create(:location_id => payment.location_id, :cash => 0, :open => true)
-      end
-
-      petty_transaction = PettyTransaction.new
-
-      petty_transaction.transactioner_id = params[:cashier_id]
-      petty_transaction.transactioner_type = 2
-      petty_transaction.amount = params[:cost].to_f
-      petty_transaction.date = payment.updated_at
-      petty_transaction.petty_cash_id = petty_cash.id
-      petty_transaction.is_income = true
-      petty_transaction.notes = "Ingreso generado por pago en efectivo."
-      
-      if payment.updated_at < DateTime.now.beginning_of_day
-        petty_transaction.open = false
-      else
-        petty_transaction.open = true
-      end
-
-      petty_transaction.save
-
-      if petty_transaction.save
-        if petty_transaction.is_income
-          petty_cash.cash = petty_cash.cash + petty_transaction.amount
-        else
-          petty_cash.cash = petty_cash.cash - petty_transaction.amount
-        end
-        if petty_cash.save
-
-        else
-          @errors << petty_cash.errors
-        end
-      else
-        @errors << petty_transaction.errors
-      end
-
-    end
 
 
     payment.mock_bookings.each do |mock_booking|
@@ -728,11 +632,80 @@ class PaymentsController < ApplicationController
       receipt.delete
     end
 
+    payment.payment_transactions.each do |transaction|
+      transaction.delete
+    end
+
 
     #
     # Deletes and disassociations done.
     # Now reconstruct
     #
+
+    check_method_id = PaymentMethod.find_by_name("Cheque").id
+    cash_method_id = PaymentMethod.find_by_name("Efectivo").id
+    credit_card_method_id = PaymentMethod.find_by_name("Tarjeta de Crédito").id
+    debt_card_method_id = PaymentMethod.find_by_name("Tarjeta de Débito").id
+    other_method_id = PaymentMethod.find_by_name("Otro").id
+
+    transactions.each do |transaction|
+      new_transaction = PaymentTransaction.new
+      if transaction[:payment_method_type] == "0"
+
+        new_transaction.payment_method_id = transaction[:payment_method_id]
+        if new_transaction.payment_method_id == credit_card_method_id
+          new_transaction.payment_method_type_id = transaction[:payment_method_type_id]
+          new_transaction.installments = transaction[:installments]
+        elsif new_transaction.payment_method_id == check_method_id
+          new_transaction.bank_id = transaction[:bank_id]
+        end
+
+        if new_transaction.payment_method_id != cash_method_id
+          if PaymentMethodSetting.where(:company_setting_id => current_user.company.company_setting.id, :payment_method_id => new_transaction.payment_method_id).count > 0
+            method_setting = PaymentMethodSetting.where(:company_setting_id => current_user.company.company_setting.id, :payment_method_id => new_transaction.payment_method_id).first
+            if method_setting.active
+              if method_setting.number_required
+                if !transaction[:method_number].blank?
+                  new_transaction.number = transaction[:method_number]
+                else
+                  @errors << "El número de comprobante no puede estar vacío."
+                end
+              else
+
+              end
+            else
+              @errors << "El tipo de pago no está activo."
+            end
+          end
+        end
+
+      else
+        new_transaction.company_payment_method_id = transaction[:payment_method_id]
+        company_method = CompanyPaymentMethod.find(transaction[:payment_method_id])
+        if !company_method.nil?
+          if company_method.number_required
+            if !transaction[:method_number].blank?
+              new_transaction.number = transaction[:method_number]
+            else
+              @errors << "El número de comprobante no puede estar vacío."
+            end
+          end
+        else
+          @errors << "No existe el medio de pago."
+        end
+      end
+
+      new_transaction.amount = transaction[:amount].to_f
+      new_transaction.payment = payment
+
+      if @errors.length == 0
+        unless new_transaction.save
+          @errors << new_transaction.errors
+        end
+      end
+
+    end
+
 
     receipts.each do |receipt|
       new_receipt = Receipt.new
@@ -802,10 +775,7 @@ class PaymentsController < ApplicationController
 
       new_receipt.payment = payment
       
-      if new_receipt.save
-        @json_response[0] = "ok"
-      else
-        @json_response[0] = "error"
+      unless new_receipt.save
         @errors << new_receipt.errors
       end
 
@@ -1058,51 +1028,11 @@ class PaymentsController < ApplicationController
       end
     end
 
-    #Check if it was payed in cash
-    #If so, create a petty_transaction outcome
-
-    if @payment.payment_method_id == PaymentMethod.find_by_name("Efectivo").id
-
-      petty_cash = nil
-      if PettyCash.where(location_id: @payment.location_id).count > 0
-        petty_cash = PettyCash.find_by_location_id(@payment.location_id)
+    @payment.payment_transactions.each do |transaction|
+      if transaction.delete
       else
-        petty_cash = PettyCash.create(:location_id => @payment.location_id, :cash => 0, :open => true)
+        errors << transaction.errors
       end
-
-      petty_transaction = PettyTransaction.new
-
-      petty_transaction.transactioner_id = @payment.cashier_id
-      petty_transaction.transactioner_type = 2
-      petty_transaction.amount = @payment.amount
-      petty_transaction.date = @payment.updated_at
-      petty_transaction.petty_cash_id = petty_cash.id
-      petty_transaction.is_income = false
-      petty_transaction.notes = "Retiro generado por eliminación de un pago en efectivo."
-
-      if @payment.updated_at < DateTime.now.beginning_of_day
-        petty_transaction.open = false
-      else
-        petty_transaction.open = true
-      end
-
-      petty_transaction.save
-
-      if petty_transaction.save
-        if petty_transaction.is_income
-          petty_cash.cash = petty_cash.cash + petty_transaction.amount
-        else
-          petty_cash.cash = petty_cash.cash - petty_transaction.amount
-        end
-        if petty_cash.save
-
-        else
-          errors << petty_cash.errors
-        end
-      else
-        errors << petty_transaction.errors
-      end
-
     end
 
     if errors.length == 0

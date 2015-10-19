@@ -6,5 +6,4 @@ class PaymentTransaction < ActiveRecord::Base
 	belongs_to :bank
 
 	validates :amount, presence: true
-	validates :number, presence: true
 end

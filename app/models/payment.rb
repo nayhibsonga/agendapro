@@ -1,7 +1,7 @@
 class Payment < ActiveRecord::Base
   belongs_to :company
-  has_many :receipts
-  has_many :payment_transactions
+  has_many :receipts, dependent: :destroy
+  has_many :payment_transactions, dependent: :destroy
   belongs_to :client
   belongs_to :location
   has_many :bookings, dependent: :nullify

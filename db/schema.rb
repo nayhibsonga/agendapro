@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151016161648) do
+ActiveRecord::Schema.define(version: 20151019201101) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -316,6 +316,7 @@ ActiveRecord::Schema.define(version: 20151016161648) do
     t.boolean  "can_edit",                   default: true
     t.boolean  "can_cancel",                 default: true
     t.boolean  "use_identification_number",  default: false
+    t.boolean  "payment_client_required",    default: true
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -447,7 +448,6 @@ ActiveRecord::Schema.define(version: 20151016161648) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "stock_limit"
-    t.string   "alarm_email"
     t.boolean  "alert_flag",  default: true
   end
 
@@ -1185,7 +1185,20 @@ ActiveRecord::Schema.define(version: 20151016161648) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "periodic_send",           default: false
-    t.string   "email",                   default: ""
+  end
+
+  create_table "stock_emails", force: true do |t|
+    t.integer  "location_product_id"
+    t.string   "email"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "stock_setting_emails", force: true do |t|
+    t.integer  "stock_alarm_setting_id"
+    t.string   "email"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "tags", force: true do |t|

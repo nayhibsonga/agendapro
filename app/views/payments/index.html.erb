@@ -38,11 +38,16 @@
         <div class="col-sm-5">
         
           <select id="paymentMethodMultiSelect" multiple="multiple" style="margin-top: 7px;">
-            <% for payment_method in PaymentMethod.all do %>
-            <option value="<%= payment_method.id %>">
-              <%= payment_method.name.humanize %>
-            </option>
-          <% end %>
+            <% for payment_method in PaymentMethod.where.not(name: "Otro") do %>
+              <option value="0_<%= payment_method.id %>">
+                <%= payment_method.name.humanize %>
+              </option>
+            <% end %>
+            <% for payment_method in CompanyPaymentMethod.where(:company_id => current_user.company.id) do %>
+              <option value="1_<%= payment_method.id %>">
+                <%= payment_method.name.humanize %>
+              </option>
+            <% end %>
           </select>
 
         </div>
