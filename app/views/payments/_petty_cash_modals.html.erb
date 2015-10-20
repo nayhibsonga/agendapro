@@ -98,7 +98,7 @@
               <label class="col-xs-3 control-label">Opciones</label>
               <div class="col-xs-9">
                 <div class="input-group">
-                  <button type="button" class="btn btn-default" id="addPettyTransactionBtn" aria-label="Agregar Ingreso">Agregar Ingreso</button>&nbsp;
+                  <button type="button" class="btn btn-default" id="addPettyTransactionBtn" aria-label="Agregar Movimiento">Agregar Movimiento</button>&nbsp;
                   <button type="button" class="btn btn-default" id="configureCloseBtn" arua-label="Configurar cierre">Configurar cierre</button>
                 </div>
               </div>
@@ -169,68 +169,84 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
-        <h3 class="modal-title" id="addPettyTransactionModalTitle" style="line-height: 1.1;">Agregar ingreso/retiro</h3>
+        <h3 class="modal-title" id="addPettyTransactionModalTitle" style="line-height: 1.1;">Agregar movimiento</h3>
       </div>
       <div class="modal-body" id="addPettyTransactionModalBody">
         <div class="row">
           <div class="col-xs-12">
 
-            <input type="hidden" id="is_transaction_edit" name="is_transaction_edit" value="0" />
-            <input type="hidden" id="petty_transaction_id" name="petty_transaction_id" value="0" />
+            <form id="addPettyTransactionForm" action="">
 
-            <div class="payment-form-div form-group">
-              <label for="petty_transaction_is_income" class="col-xs-3 control-label">Tipo</label>
-              <div class="col-xs-9">
-                <select id="petty_transaction_is_income" name="petty_transaction_is_income" class="form-control">
-                  <option value="1">Ingreso</option>
-                  <option value="0">Retiro</option>
-                </select>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
+              <input type="hidden" id="is_transaction_edit" name="is_transaction_edit" value="0" />
+              <input type="hidden" id="petty_transaction_id" name="petty_transaction_id" value="0" />
 
-            <div style="clear: both;">
-            </div>
-
-            <div class="payment-form-div form-group has-feedback">
-              <label for="petty_cash_transactioner" class="col-xs-3 control-label">Autor</label>
-              <div class="col-xs-9">
-                <select class="form-control" id="petty_cash_transactioner" name="petty_cash_transactioner">    
-                  <option value="">
-                    
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <div style="clear: both;">
-            </div>
-
-            <div class="payment-form-div form-group has-feedback">
-              <label for="petty_transaction_amount" class="col-xs-3 control-label">Monto</label>
-              <div class="col-xs-9">
-                <input type="number" class="form-control" id="petty_transaction_amount" name="petty_transaction_amount" value="0.0" />
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-
-            <div style="clear: both;">
-            </div>
-
-            <div class="payment-form-div form-group has-feedback">
-              <label for="petty_transaction_notes" class="col-xs-3 control-label">Comentario</label>
-              <div class="col-xs-9">
-                <textarea class="form-control" id="petty_transaction_notes" name="petty_transaction_notes" value=""></textarea>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
+              <div class="payment-form-div form-group">
+                <label for="petty_transaction_is_income" class="col-xs-3 control-label">Tipo</label>
+                <div class="col-xs-9">
+                  <select id="petty_transaction_is_income" name="petty_transaction_is_income" class="form-control">
+                    <option value="1">Ingreso</option>
+                    <option value="0">Retiro</option>
+                  </select>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
               </div>
 
-            </div>
+              <div style="clear: both;">
+              </div>
 
-            <div style="clear: both;">
-            </div>
+              <div class="payment-form-div form-group has-feedback">
+                <label for="petty_cash_transactioner" class="col-xs-3 control-label">Autor</label>
+                <div class="col-xs-9">
+                  <select class="form-control" id="petty_cash_transactioner" name="petty_cash_transactioner">    
+                    <option value="">
+                      
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="petty_transaction_amount" class="col-xs-3 control-label">Monto</label>
+                <div class="col-xs-9">
+                  <input type="number" class="form-control" id="petty_transaction_amount" name="petty_transaction_amount" value="0.0" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group has-feedback" id="petty_transaction_receipt_number_div">
+                <label for="petty_transaction_receipt_number" class="col-xs-3 control-label">N° de comprobante</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="petty_transaction_receipt_number" name="petty_transaction_receipt_number" value="" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="petty_transaction_notes" class="col-xs-3 control-label">Comentario</label>
+                <div class="col-xs-9">
+                  <textarea class="form-control" id="petty_transaction_notes" name="petty_transaction_notes" value=""></textarea>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+            </form>
 
           </div>
         </div>

@@ -5,7 +5,7 @@
 <%= f.input :email, :label => "E-mail" %><br />
 <%= f.input :phone, :label => "Teléfono" %><br />
 <%= f.input :notes, :label => "Notas" %><br />
-<%= f.association :service_provider, :as => :collection_select, collection: ServiceProvider.where(company_id: current_user.company_id), :label => "Proveedor Servicio", :label_method => :public_name, value_method: :id %><br />
+<%= f.association :service_provider, :as => :collection_select, collection: ServiceProvider.where(company_id: current_user.company_id), :label => "Prestador Servicio", :label_method => :public_name, value_method: :id %><br />
 <%= f.association :service, :as => :collection_select, collection: Service.where(company_id: current_user.company_id), :label => "Servicio", :label_method => :name, value_method: :id %><br />
 <%= f.association :status, :label => "Estado" %><br />
 

@@ -19,7 +19,7 @@
               <td>
                 <select id="viewOptionsSelect" class="form-control">
                     <option value="services">Servicios</option>
-                    <option value="service_providers">Proveedores</option>
+                    <option value="service_providers">Prestadores</option>
                 </select>
               </td>
             </tr>
@@ -99,7 +99,7 @@
                   <table class="servicesTable">
                     <tr class="tableHeading">
                       <th>
-                        Proveedor
+                        Prestador
                       </th>
                       <th>
                         N° de servicios
@@ -180,7 +180,7 @@
 
                 <div class="row">
                   <div class="col-xs-12">
-                    <% if current_user.role_id = Role.find_by_name("Administrador General") %>
+                    <% if current_user.role_id == Role.find_by_name("Administrador General") %>
                       <p>
                         Al guardar se modificarán las comisiones de todos los prestadores que ofrecen este servicio, así como la comisión por defecto del servicio.
                       </p>

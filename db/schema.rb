@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151019201101) do
+ActiveRecord::Schema.define(version: 20151020154400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -510,6 +510,7 @@ ActiveRecord::Schema.define(version: 20151019201101) do
     t.datetime "updated_at"
     t.integer  "payment_id"
     t.integer  "receipt_id"
+    t.float    "list_price",          default: 0.0
   end
 
   create_table "notification_emails", force: true do |t|
@@ -648,6 +649,7 @@ ActiveRecord::Schema.define(version: 20151019201101) do
     t.integer  "seller_id"
     t.integer  "seller_type"
     t.integer  "receipt_id"
+    t.float    "list_price",  default: 0.0
   end
 
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
@@ -675,27 +677,18 @@ ActiveRecord::Schema.define(version: 20151019201101) do
 
   create_table "payments", force: true do |t|
     t.integer  "company_id"
-    t.float    "amount",            default: 0.0
-    t.boolean  "payed",             default: false
+    t.float    "amount",        default: 0.0
+    t.boolean  "payed",         default: false
     t.date     "payment_date"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "discount",          default: 0.0
-    t.text     "notes",             default: ""
+    t.float    "discount",      default: 0.0
+    t.text     "notes",         default: ""
     t.integer  "location_id"
     t.integer  "client_id"
-    t.float    "bookings_amount",   default: 0.0
-    t.float    "bookings_discount", default: 0.0
-    t.float    "products_amount",   default: 0.0
-    t.float    "products_discount", default: 0.0
-    t.integer  "products_quantity", default: 0
-    t.integer  "bookings_quantity", default: 0
-    t.integer  "quantity",          default: 0
-    t.float    "sessions_amount",   default: 0.0
-    t.float    "sessions_discount", default: 0.0
-    t.integer  "sessions_quantity", default: 0
-    t.float    "paid_amount",       default: 0.0
-    t.float    "change_amount",     default: 0.0
+    t.integer  "quantity",      default: 0
+    t.float    "paid_amount",   default: 0.0
+    t.float    "change_amount", default: 0.0
     t.integer  "cashier_id"
   end
 
@@ -725,6 +718,7 @@ ActiveRecord::Schema.define(version: 20151019201101) do
     t.datetime "updated_at"
     t.text     "notes"
     t.boolean  "open",               default: true
+    t.string   "receipt_number"
   end
 
   create_table "plan_countries", force: true do |t|

@@ -5,7 +5,7 @@ class PettyTransaction < ActiveRecord::Base
 	def get_transactioner_details
 	    if !self.transactioner_id.nil?
 	      if self.transactioner_type == 0
-	        return self.transactioner.public_name + " (proveedor)"
+	        return self.transactioner.public_name + " (prestador)"
 	      elsif self.transactioner_type == 1
 	        return self.transactioner.first_name + " " + self.transactioner.last_name + " (" + self.transactioner.role.name + ")"
 	      else

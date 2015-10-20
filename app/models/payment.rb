@@ -109,7 +109,7 @@ class Payment < ActiveRecord::Base
       receipt.mock_bookings.each do |mock_booking|
 
         service_name = "Sin servicio"
-        provider_name = "Sin proveedor"
+        provider_name = "Sin prestador"
 
         if !mock_booking.service_id.nil?
           service_name = mock_booking.service.name

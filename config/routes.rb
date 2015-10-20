@@ -408,8 +408,6 @@
 
     post '/delete_payment', :to => 'payments#delete_payment'
 
-    get '/day_payments', :to => 'payments#day_payments'
-
     #ServiceCommissions
     get '/commissions', :to => 'payments#commissions'
     get '/service_commissions', :to => 'payments#service_commissions'

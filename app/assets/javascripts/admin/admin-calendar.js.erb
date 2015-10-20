@@ -2209,6 +2209,8 @@ function checkClientSessions(service_change)
 									index = index + 1;
 								});
 							}
+							session_price = service.price/service.sessions_amount;
+							$("#booking_price").val(session_price);
 						}
 						else
 						{
@@ -2236,6 +2238,8 @@ function checkClientSessions(service_change)
 							$("#sessions-row").show();
 							$("#add-service-btn").hide();
 							$("#has_sessions").val("1");
+							session_price = service.price/service.sessions_amount;
+							$("#booking_price").val(session_price);
 						}
 						else
 						{

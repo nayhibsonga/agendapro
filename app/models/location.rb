@@ -521,9 +521,9 @@ class Location < ActiveRecord::Base
 
 		stocks = ''
 
-		email = self.stock_alarm_setting.email
-		if email.nil? || email == ""
-			email = self.email
+		emails = []
+		self.stock_alarm_setting.stock_setting_emails.each do |stock_email|
+			emails << stock_email.email
 		end
 
 		location_products.each do |location_product|
@@ -546,7 +546,7 @@ class Location < ActiveRecord::Base
 
 		end
 
-		PaymentsSystemMailer.stock_reminder_email(self, stocks, email)
+		PaymentsSystemMailer.stock_reminder_email(self, stocks, emails)
 
 	end
 

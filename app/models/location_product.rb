@@ -20,7 +20,7 @@ class LocationProduct < ActiveRecord::Base
       end
     
       #Check first for own settings
-    	if !self.stock_limit.nil? && !self.alarm_email.nil?
+    	if !self.stock_limit.nil? && self.stock_emails.count > 0
     		if self.stock < self.stock_limit && self.alert_flag
           #Send alert and mark flag
           self.update_column(:alert_flag, false)
@@ -45,7 +45,7 @@ class LocationProduct < ActiveRecord::Base
     if !self.location.stock_alarm_setting.nil? && self.location.stock_alarm_setting.periodic_send
 
       #Check first for own settings
-      if !self.stock_limit.nil? && !self.alarm_email.nil?
+      if !self.stock_limit.nil? && self.stock_emails.count > 0
         if self.stock < self.stock_limit
           #Send alert and mark flag
           return true

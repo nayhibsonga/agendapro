@@ -829,6 +829,8 @@ function loadTransactioners(option, petty_transaction_id)
       $("#is_transaction_edit").val("0");
       $("#petty_transaction_id").val("0");
       $("#petty_transaction_is_income").val("1");
+      $("#petty_transaction_receipt_number_div").hide();
+      $("#petty_transaction_receipt_number").val("");
       $("#petty_transaction_amount").val("0.0");
       $("#petty_transaction_notes").val("");
       $("#pettyCashModal").modal('hide');
@@ -842,13 +844,16 @@ function loadTransactioners(option, petty_transaction_id)
         if(petty_transaction.is_income)
         {
           $("#petty_transaction_is_income").val("1");
+          $("#petty_transaction_receipt_number_div").hide();
         }
         else
         {
           $("#petty_transaction_is_income").val("0");
+          $("#petty_transaction_receipt_number_div").show();
         }
         $("#petty_transaction_amount").val(petty_transaction.amount);
         $("#petty_transaction_notes").val(petty_transaction.notes);
+        $("#petty_transaction_receipt_number").val(petty_transaction.receipt_number);
         var petty_transactioner = petty_transaction.transactioner_id + '_' + petty_transaction.transactioner_type;
         $("#petty_cash_transactioner").val(petty_transactioner);
         $("#pettyTransactionsSummaryModal").modal('hide');
@@ -857,6 +862,10 @@ function loadTransactioners(option, petty_transaction_id)
       });
       
     }
+
+    clearValidations("#petty_transaction_amount");
+    clearValidations("#petty_transaction_notes");
+    clearValidations("#petty_transaction_receipt_number");
     
 
   });
@@ -875,6 +884,12 @@ function editTransaction(petty_transaction_id)
 
 function saveTransaction()
 {
+
+  if(!$('#addPettyTransactionForm').valid())
+  {
+    return;
+  }
+
   var petty_cash_id = $("#petty_cash_id").val();
   var amount = $("#petty_transaction_amount").val();
   var notes = $("#petty_transaction_notes").val();
@@ -1288,6 +1303,9 @@ $(function() {
   */
 
   $("#pettyCashBtn").on('click', function(){
+    $("#petty_cash_cashier_code").val("");
+    $("#petty_cash_cashier_id").val("");
+    $("#petty_cash_cashier_name").val("");
     $("#pettyCashModalIntro").modal('show');
   });
 
@@ -1371,6 +1389,17 @@ $(function() {
 
   $("#pettyScheduledCloseSaveBtn").on('click', function(){
     saveCloseConfigurations();
+  });
+
+  $('#petty_transaction_is_income').on('change', function(){
+    if($(this).val() == "1")
+    {
+      $('#petty_transaction_receipt_number_div').hide();
+    }
+    else
+    {
+      $('#petty_transaction_receipt_number_div').show();
+    }
   });
 
 });

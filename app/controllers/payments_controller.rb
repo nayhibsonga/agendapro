@@ -37,6 +37,25 @@ class PaymentsController < ApplicationController
 
     @payments = Payment.where(payment_date: @from..@to, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).order(:payment_date)
 
+    @products_sum = 0.0
+    @products_average_discount = 0.0
+    @products_total = 0
+    @products_discount = 0
+
+    @payments.each do |payment|
+      payment.payment_products.each do |payment_product|
+        @products_total += payment_product.quantity
+        @products_sum += payment_product.price * payment_product.quantity
+        @products_discount += payment_product.discount
+      end
+    end
+
+    if @products_total > 0
+      @products_average_discount = (@products_discount/@products_total).round(2)
+    else
+      @products_average_discount = 0
+    end
+
     render "_index_content", layout: false
   end
 
@@ -417,6 +436,8 @@ class PaymentsController < ApplicationController
 
     end
 
+    non_discount_total = 0.0
+    discount_total = 0.0
 
     receipts.each do |receipt|
       new_receipt = Receipt.new
@@ -440,8 +461,13 @@ class PaymentsController < ApplicationController
           if new_booking[:provider_id] != -1 && new_booking[:provider_id] != "-1"
             mock_booking.service_provider_id = new_booking[:provider_id]
           end
-          mock_booking.price = new_booking[:price]
-          mock_booking.discount = new_booking[:discount]
+          mock_booking.list_price = new_booking[:price].to_f
+          mock_booking.discount = new_booking[:discount].to_f
+          mock_booking.price = (mock_booking.list_price * (100 - mock_booking.discount) / 100).round(1)
+
+          non_discount_total += mock_booking.list_price
+          discount_total += mock_booking.price
+
           mock_booking.client_id = payment.client_id
           @mockBookings << mock_booking
 
@@ -454,15 +480,22 @@ class PaymentsController < ApplicationController
           booking.discount = past_booking[:discount]
           booking.price = (past_booking[:list_price].to_f*(100-booking.discount)/100).round(1)
 
+          non_discount_total += past_booking[:list_price]
+          discount_total += booking.price
+
           @bookings << booking
           new_receipt.bookings << booking
         else
           product = item
           payment_product = PaymentProduct.new
           payment_product.product_id = product[:id]
-          payment_product.price = product[:price]
+          payment_product.list_price = product[:price]
           payment_product.discount = product[:discount]
+          payment_product.price = (payment_product.list_price * (100 - payment_product.discount) / 100).round(1)
           payment_product.quantity = product[:quantity]
+
+          non_discount_total += payment_product.list_price * payment_product.quantity
+          discount_total +=payment_product.price * payment_product.quantity
 
           seller = product[:seller].split("_")
           payment_product.seller_id = seller[0]
@@ -491,6 +524,9 @@ class PaymentsController < ApplicationController
       end
 
     end
+
+    payment.amount = discount_total
+    payment.discount = ((1 - (discount_total/non_discount_total)) * 100).round(1)
 
     payment.bookings = @bookings
     payment.mock_bookings = @mockBookings
@@ -706,6 +742,8 @@ class PaymentsController < ApplicationController
 
     end
 
+    non_discount_total = 0.0
+    discount_total = 0.0
 
     receipts.each do |receipt|
       new_receipt = Receipt.new
@@ -731,6 +769,11 @@ class PaymentsController < ApplicationController
           end
           mock_booking.price = new_booking[:price]
           mock_booking.discount = new_booking[:discount]
+          mock_booking.price = (mock_booking.list_price * (100 - mock_booking.discount) / 100).round(1)
+
+          non_discount_total += mock_booking.list_price
+          discount_total += mock_booking.price
+
           mock_booking.client_id = payment.client_id
           @mockBookings << mock_booking
 
@@ -741,7 +784,11 @@ class PaymentsController < ApplicationController
           booking = Booking.find(past_booking[:id])
           #booking.list_price = past_booking[:]
           booking.discount = past_booking[:discount]
-          booking.price = (past_booking[:list_price].to_f*(100-booking.discount)/100).round(2)
+          booking.price = (past_booking[:list_price].to_f*(100-booking.discount)/100).round(1)
+
+          non_discount_total += past_booking[:list_price]
+          discount_total += booking.price
+
           booking.client_id = client.id
 
           @bookings << booking
@@ -751,9 +798,14 @@ class PaymentsController < ApplicationController
           product = item
           payment_product = PaymentProduct.new
           payment_product.product_id = product[:id]
-          payment_product.price = product[:price]
+
+          payment_product.list_price = product[:price]
           payment_product.discount = product[:discount]
+          payment_product.price = (payment_product.list_price * (100 - payment_product.discount) / 100).round(1)
           payment_product.quantity = product[:quantity]
+
+          non_discount_total += payment_product.list_price * payment_product.quantity
+          discount_total +=payment_product.price * payment_product.quantity
 
           seller = product[:seller].split("_")
           payment_product.seller_id = seller[0]
@@ -780,6 +832,9 @@ class PaymentsController < ApplicationController
       end
 
     end
+
+    payment.amount = discount_total
+    payment.discount = ((1 - (discount_total/non_discount_total)) * 100).round(1)
 
     payment.bookings = @bookings
     payment.mock_bookings = @mockBookings
@@ -1053,10 +1108,6 @@ class PaymentsController < ApplicationController
 
   end
 
-  def day_payments
-
-  end
-
   def commissions
 
     @locations = []
@@ -1074,6 +1125,10 @@ class PaymentsController < ApplicationController
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
       @service_categories = ServiceCategory.where(id: Service.where(id: ServiceStaff.where( service_provider_id: @service_providers.pluck(:id)).pluck(:service_id)).pluck(:service_category_id))
       @service_commissions = ServiceCommission.where(service_provider_id: @service_providers.pluck(:id))
+    end
+
+    respond_to do |format|
+      format.html
     end
 
   end

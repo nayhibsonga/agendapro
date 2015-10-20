@@ -10,7 +10,7 @@ class PaymentProduct < ActiveRecord::Base
   def get_seller_details
     if !self.seller_id.nil?
       if self.seller_type == 0
-        return self.seller.public_name + " (proveedor)"
+        return self.seller.public_name + " (prestador)"
       elsif self.seller_type == 1
         return self.seller.first_name + " " + self.seller.last_name + " (" + self.seller.role.name + ")"
       else

@@ -8,12 +8,27 @@ class PaymentsSystemMailer < ActionMailer::Base
     template_name = 'Stock Alarm'
     template_content = []
 
-    email = location_product.alarm_email
-    if email.nil? || email == ""
-      email = location_product.location.stock_alarm_setting.email
-      if email.nil? || email == ""
-        email = location_product.location.email
+    emails = []
+    recipients = []
+
+    location_product.stock_emails.each do |stock_email|
+      if !emails.include?(stock_email.email)
+        emails << stock_email.email
       end
+    end
+
+    location_product.location.stock_alarm_setting.stock_setting_emails.each do |stock_email|
+      if !emails.include?(stock_email.email)
+        emails << stock_email.email
+      end
+    end
+
+    emails.each do |email|
+      recipients << {
+        :email => email,
+        :name => email,
+        :type => 'to'
+      }
     end
 
     stock_limit = location_product.stock_limit
@@ -26,13 +41,7 @@ class PaymentsSystemMailer < ActionMailer::Base
       :from_email => 'no-reply@agendapro.cl',
       :from_name => 'AgendaPro',
       :subject => 'Alerta de stock en ' + location_product.location.name,
-      :to => [
-        {
-          :email => email,
-          :name => email,
-          :type => 'to'
-        }
-      ],
+      :to => recipients,
       :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
         {
@@ -82,26 +91,29 @@ class PaymentsSystemMailer < ActionMailer::Base
       raise
   end
 
-  def stock_reminder_email(location, stocks, email)
+  def stock_reminder_email(location, stocks, emails)
     mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
     # => Template
     template_name = 'Stock Reminder'
     template_content = []
 
+    recipients = []
+
+    emails.each do |email|
+      recipients << {
+        :email => email,
+        :name => email,
+        :type => 'to'
+      }
+    end
 
     # => Message
     message = {
       :from_email => 'no-reply@agendapro.cl',
       :from_name => 'AgendaPro',
       :subject => 'Recordatorio de stock para ' + location.name,
-      :to => [
-        {
-          :email => email,
-          :name => email,
-          :type => 'to'
-        }
-      ],
+      :to => recipients,
       :headers => { 'Reply-To' => "contacto@agendapro.cl" },
       :global_merge_vars => [
         {

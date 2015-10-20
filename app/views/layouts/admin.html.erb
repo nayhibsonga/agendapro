@@ -76,24 +76,23 @@
               <!-- Caja -->
               <% if current_user.role == Role.find_by(name: "Administrador General") || current_user.role == Role.find_by(name: "Administrador Local") %>
 
-              <li class="dropdown <%= 'active' if current_page?(payments_path) or current_page?(commissions_path) or current_page?(day_payments_path) %>">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Caja <i class="fa fa-chevron-down"></i></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to '<i class="fa fa-bar-chart-o"></i> General'.html_safe, payments_path %></li>
-                  <li><%= link_to '<i class="fa fa-money"></i> Comisiones'.html_safe, commissions_path %></li>
-                  <li><%= link_to '<i class="fa fa-book fa-fw"></i> Caja diaria'.html_safe, day_payments_path %></li>
-                </ul>
-              </li>
+                <li class="dropdown <%= 'active' if current_page?(payments_path) or current_page?(commissions_path) %>">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Caja <i class="fa fa-chevron-down"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-bar-chart-o"></i> General'.html_safe, payments_path %></li>
+                    <li><%= link_to '<i class="fa fa-money"></i> Comisiones'.html_safe, commissions_path %></li>
+                  </ul>
+                </li>
 
-              <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario', products_path %></li>
+                <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario', products_path %></li>
               <% end %>
               <!-- Clientes -->
               <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") and current_user.role != Role.find_by(name: "Super Admin") %>
-              <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes', clients_path %></li>
+                <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes', clients_path %></li>
               <% end %>
               <!-- Reportes -->
               <% if current_user.role == Role.find_by(name: "Administrador General") %>
-              <li class="<%= 'active' if current_page?(reports_path) %>"><%= link_to 'Reportes', reports_path %></li>
+                <li class="<%= 'active' if current_page?(reports_path) %>"><%= link_to 'Reportes', reports_path %></li>
               <% end %>
               <!-- Administracion -->
               <% if current_user.role == Role.find_by(name: "Super Admin") or current_user.role == Role.find_by(name: "Administrador General") or current_user.role == Role.find_by(name: "Administrador Local") %>

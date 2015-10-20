@@ -141,6 +141,15 @@ class BookingsController < ApplicationController
           @booking.session_booking_id = session_booking.id
           @booking.is_session = true
           @booking.is_session_booked = true
+
+          #Set list_price to it's service price
+          @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+
+          #If price is not equivalent, then it has discount
+          if @booking.price != @booking.list_price
+            @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+          end
+
           if @booking.payed
             @booking.user_session_confirmed = false
           else
@@ -154,6 +163,14 @@ class BookingsController < ApplicationController
           session_booking.service_id = buffer_params[:service_id]
           session_booking.sessions_amount = serv.sessions_amount
 
+        end
+      else
+        #Set list_price to it's service price
+        @booking.list_price = @booking.service.price
+
+        #If price is not equivalent, then it has discount
+        if @booking.price != @booking.list_price
+          @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
         end
       end
 
@@ -446,6 +463,15 @@ class BookingsController < ApplicationController
           @booking.session_booking_id = session_booking.id
           @booking.is_session = true
           @booking.is_session_booked = true
+
+          #Set list_price to it's service price
+          @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+
+          #If price is not equivalent, then it has discount
+          if @booking.price != @booking.list_price
+            @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+          end
+
           if @booking.payed
             @booking.user_session_confirmed = false
           else
@@ -458,6 +484,14 @@ class BookingsController < ApplicationController
           serv = Service.find(buffer_params[:service_id])
           session_booking.service_id = buffer_params[:service_id]
           session_booking.sessions_amount = serv.sessions_amount
+        end
+      else
+        #Set list_price to it's service price
+        @booking.list_price = @booking.service.price
+
+        #If price is not equivalent, then it has discount
+        if @booking.price != @booking.list_price
+          @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
         end
       end
 

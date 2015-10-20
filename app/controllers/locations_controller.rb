@@ -593,7 +593,9 @@ class LocationsController < ApplicationController
     if @location.stock_alarm_setting.nil?
       stock_alarm_setting = StockAlarmSetting.create
       stock_alarm_setting.location_id = @location.id
-      stock_alarm_setting.email = @location.email
+      stock_setting_email = StockSettingEmail.new
+      stock_setting_email.email = @location.email
+      stock_setting_email.stock_alarm_setting = stock_alarm_setting
       stock_alarm_setting.save
     end
     @stock_alarm_setting = @location.stock_alarm_setting
@@ -624,7 +626,15 @@ class LocationsController < ApplicationController
         @stock_alarm_setting.monthly = params[:monthly]
         @stock_alarm_setting.month_day = params[:month_day]
         @stock_alarm_setting.week_day = params[:week_day]
-        @stock_alarm_setting.email = params[:email]
+        
+        emails = []
+        emails_arr = params[:email].split(",")
+        emails_arr.each do |email|
+          email_str = email.strip
+          if email_str != ""
+            new_stock_setting_email = StockSettingEmail.create(:stock_alarm_setting_id => @stock_alarm_setting.id, :email => email_str)
+          end
+        end
 
         if @stock_alarm_setting.save
           @response_array << "ok"
@@ -651,7 +661,7 @@ class LocationsController < ApplicationController
         :id => service_provider.id,
         :seller_type => 0,
         :full_name => service_provider.public_name,
-        :role_name => "Proveedor"
+        :role_name => "Prestador"
       }
 
       @response_array << new_seller

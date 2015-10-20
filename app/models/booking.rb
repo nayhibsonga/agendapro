@@ -78,7 +78,7 @@ class Booking < ActiveRecord::Base
       if self.price == self.service.price
         self.update_column(:price, self.price / self.session_booking.sessions_amount)
       elsif self.discount > 0
-        if self.price.round = (self.service.price*(100-self.discount)/100).round
+        if self.price.round == (self.service.price*(100-self.discount)/100).round
           self.update_column(:price, self.price / self.session_booking.sessions_amount)
         end
       end

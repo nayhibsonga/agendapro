@@ -472,6 +472,10 @@ $(function() {
 					'<h3>Error</h3>' +
 					'<p>Ocurrió un error inesperado al guardar la alarma.</p>'
 				);
+				$("#productAlarmModal").modal('hide');
+				$("#location_product_id").val('');
+				$("#location_product_alarm_email").val('');
+				$("#location_product_stock_limit").val('');
 			}
 		});
 

@@ -126,6 +126,8 @@ class ProductsController < ApplicationController
       end
     end
 
+    @response_array << emails
+
     render :json => @response_array
 
   end
@@ -133,7 +135,15 @@ class ProductsController < ApplicationController
   def set_alarm
     @location_product = LocationProduct.find(params[:location_product_id])
     @location_product.stock_limit = params[:stock_limit]
-    @location_product.alarm_email = params[:alarm_email]
+    @location_product.stock_emails.delete_all
+    emails = []
+    emails_arr = params[:alarm_email].split(",")
+    emails_arr.each do |email|
+      email_str = email.strip
+      if email_str != ""
+        new_stock_email = StockEmail.create(:location_product_id => @location_product.id, :email => email_str)
+      end
+    end
     @response_array = []
     if @location_product.save
       @response_array << "ok"

@@ -37,3 +37,7 @@ end
 every 1.days, :at => '3 am' do
   runner "Company.invoice_email"
 end
+
+every 1.days, :at => '2:30 am' do
+  runner 'Location.stock_reminders'
+end
