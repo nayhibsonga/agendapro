@@ -182,6 +182,8 @@ class Ability
         can :set_default_commission, Payment, :company_id => user.company_id
         can :set_provider_default_commissions, Payment, :company_id => user.company_id
 
+        #Petty Cash
+
         can :petty_cash, Payment, :company_id => user.company_id
         can :petty_transactions, Payment, :company_id => user.company_id
         can :petty_transaction, Payment, :company_id => user.company_id
@@ -189,6 +191,14 @@ class Ability
         can :open_close_petty_cash, Payment, :company_id => user.company_id
         can :delete_petty_transaction, Payment, :company_id => user.company_id
         can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
+
+        #Sales Cash
+
+        can :sales_cash, Payment, :company_id => user.company_id
+
+        #Sales Reports
+        can :sales_reports, Payment, :company_id => user.company_id
+        can :service_providers_report, Payment, :company_id => user.company_id
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -410,6 +420,12 @@ class Ability
         can :delete_petty_transaction, Payment, :company_id => user.company_id
         can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
 
+        can :sales_cash, Payment, :company_id => user.company_id
+
+        #Sales Reports
+        can :sales_reports, Payment, :company_id => user.company_id
+        can :service_providers_report, Payment, :company_id => user.company_id
+
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
         can :create, ProductCategory, :company_id => user.company_id
@@ -501,6 +517,10 @@ class Ability
         can :region_cities, City
         can :city_districs, District
 
+        #Sales Reports
+        can :sales_reports, Payment, :company_id => user.company_id
+        can :service_providers_report, Payment, :company_id => user.company_id
+
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
         can :get_booking, Booking, :location_id => user.locations.pluck(:id)
@@ -576,6 +596,10 @@ class Ability
         can :delete_petty_transaction, Payment, :company_id => user.company_id
         can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
 
+        #Sales Reports
+        can :sales_reports, Payment, :company_id => user.company_id
+        can :service_providers_report, Payment, :company_id => user.company_id
+
     elsif user.role_id == Role.find_by_name("Staff").id
         
         can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
@@ -639,6 +663,10 @@ class Ability
         can :delete_petty_transaction, Payment, :company_id => user.company_id
         can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
 
+        #Sales Reports
+        can :sales_reports, Payment, :company_id => user.company_id
+        can :service_providers_report, Payment, :company_id => user.company_id
+
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 
         can :read, ServiceProvider, :id => user.service_providers.pluck(:id)
@@ -666,6 +694,10 @@ class Ability
         # can :suggestion, Client
         # can :rut_suggestion, Client
         # can :provider_service, ServiceProvider
+
+        #Sales Reports
+        can :sales_reports, Payment, :company_id => user.company_id
+        can :service_providers_report, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Ventas").id
 

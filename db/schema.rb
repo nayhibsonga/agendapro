@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151020154400) do
+ActiveRecord::Schema.define(version: 20151021134138) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -988,6 +988,29 @@ ActiveRecord::Schema.define(version: 20151020154400) do
   create_table "roles", force: true do |t|
     t.string   "name",        null: false
     t.text     "description", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sales_cashes", force: true do |t|
+    t.integer  "location_id"
+    t.float    "cash",                    default: 0.0
+    t.integer  "scheduled_reset_day",     default: 1
+    t.boolean  "scheduled_reset_monthly", default: true
+    t.datetime "last_reset_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sales_transactions", force: true do |t|
+    t.integer  "sales_cash_id"
+    t.integer  "transactioner_id"
+    t.integer  "transactioner_type", default: 1
+    t.datetime "date",               default: '2015-10-21 13:44:41'
+    t.float    "amount",             default: 0.0
+    t.boolean  "is_income",          default: false
+    t.text     "notes",              default: ""
+    t.string   "receipt_number",     default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
   end

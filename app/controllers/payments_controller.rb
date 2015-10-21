@@ -495,7 +495,7 @@ class PaymentsController < ApplicationController
           payment_product.quantity = product[:quantity]
 
           non_discount_total += payment_product.list_price * payment_product.quantity
-          discount_total +=payment_product.price * payment_product.quantity
+          discount_total += payment_product.price * payment_product.quantity
 
           seller = product[:seller].split("_")
           payment_product.seller_id = seller[0]
@@ -1108,6 +1108,10 @@ class PaymentsController < ApplicationController
 
   end
 
+  ###############
+  # Commissions #
+  ###############
+
   def commissions
 
     @locations = []
@@ -1328,6 +1332,10 @@ class PaymentsController < ApplicationController
 
   end
 
+  ##############
+  # Petty Cash #
+  ##############
+
   def petty_cash
     petty_cash = nil
     @json_response = []
@@ -1356,7 +1364,7 @@ class PaymentsController < ApplicationController
     if !params[:end_date]
       end_date = params[:end_date].to_datetime + 1.days
     end
-    petty_transactions = PettyTransaction.where(:petty_cash_id => petty_cash.id).where('? <= date and date <= ?', start_date, end_date)
+    petty_transactions = PettyTransaction.where(:petty_cash_id => petty_cash.id).where('? <= date and date <= ?', start_date, end_date).order('date asc')
     @petty_transactions = []
     petty_transactions.each do |petty_transaction|
       arr_datetime = petty_transaction.date.to_s.split(" ")
@@ -1364,6 +1372,12 @@ class PaymentsController < ApplicationController
       arr_date = arr_datetime[0].split("-")
       str_date = arr_date[2] + "/" + arr_date[1] + "/" + arr_date[0]
       str_date = str_date + " " + str_time
+
+      receipt_number = "No aplicable"
+      if !petty_transaction.is_income
+        receipt_number = petty_transaction.receipt_number
+      end
+
       @petty_transactions << {
         id: petty_transaction.id,
         date: str_date,
@@ -1371,7 +1385,8 @@ class PaymentsController < ApplicationController
         is_income: petty_transaction.is_income,
         transactioner: petty_transaction.get_transactioner_details,
         notes: petty_transaction.notes,
-        open: petty_transaction.open
+        open: petty_transaction.open,
+        receipt_number: receipt_number
       }
     end
     render :json => @petty_transactions
@@ -1458,6 +1473,11 @@ class PaymentsController < ApplicationController
     petty_transaction.petty_cash_id = petty_cash.id
     petty_transaction.is_income = params[:is_income]
     petty_transaction.notes = params[:notes]
+    if !petty_transaction.is_income
+      petty_transaction.receipt_number = params[:receipt_number]
+    else
+      petty_transaction.receipt_number = "No aplicable"
+    end
 
     if petty_transaction.save
       
@@ -1562,13 +1582,79 @@ class PaymentsController < ApplicationController
     petty_cash.scheduled_cash = params[:scheduled_cash]
     if petty_cash.save
       @json_response << "ok"
-      @json_response << petty_transaction
+      @json_response << petty_cash
       render :json => @json_response
     else
       @json_response << "error"
-      @json_response << petty_transaction.errors
+      @json_response << petty_cash.errors
       render :json => @json_response
     end
+  end
+
+  ##############
+  # Sales Cash #
+  ##############
+
+  def sales_cash
+    sales_cash = nil
+    if SalesCash.where(location_id: params[:location_id]).count > 0
+      sales_cash = SalesCash.find_by_location_id(params[:location_id])
+    else
+      sales_cash = SalesCash.create(:location_id => params[:location_id], :cash => 0, :last_reset_date => DateTime.now)
+    end
+  end
+
+  #################
+  # Sales Reports #
+  #################
+
+  def sales_reports
+
+    #Distinguish by role
+    #Administrador General can see any report.
+    #Administrador local and Recepcionista can see reports for their locations only.
+    #Staff can see reports associated to their providers only.
+
+    @locations = []
+    @service_providers = []
+    @cashiers = []
+    @users = []
+
+    if current_user.role_id == Role.find_by_name("Administrador General").id
+      @locations = current_user.company.locations
+      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
+      @cashiers = current_user.company.cashiers
+      @users = current_user.company.users
+    elsif current_user.role_id == Role.find_by_name("Administrador Local").id || current_user.role_id == Role.find_by_name("Recepcionista").id
+      @locations = current_user.locations
+      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
+      @users = User.where(id: UserLocation.where(location_id: @locations.pluck(:id)).pluck(:user_id))
+    elsif current_user.tole_id == Role.find_by_name("Staff") || current_user.role_id == Role.find_by_name("Staff (sin edición)")
+      @service_providers = current_user.service_providers
+    end
+
+  end
+
+  def service_providers_report
+
+    service_provider_ids = params[:service_provider_ids]
+    @service_providers = ServiceProvider.where(id: service_provider_ids)
+    @from = DateTime.now
+    @to = DateTime.now
+
+    respond_to do |format|
+      format.html { render :partial => 'service_providers_report' }
+      format.json { render json: @serviceProviders }
+    end
+
+  end
+
+  def users_report
+
+  end
+
+  def cashiers_report
+
   end
 
   private
@@ -1577,6 +1663,6 @@ class PaymentsController < ApplicationController
     end
 
     def payment_params
-      params.require(:payment).permit(:amount, :receipt_type_id, :receipt_number, :payment_method_id, :payment_method_number, :payment_method_type_id, :installments, :payed, :payment_date, :bank_id, :company_payment_method_id, :location_id, :client_id, :notes, booking_ids: [], bookings_attributes: [:id, :discount, :price], payment_products_attributes: [:product_id, :quantity, :discount, :price])
+      params.require(:payment).permit(:amount, :payed, :payment_date, :location_id, :client_id, :notes, booking_ids: [], bookings_attributes: [:id, :discount, :price], payment_products_attributes: [:product_id, :quantity, :discount, :price])
     end
 end

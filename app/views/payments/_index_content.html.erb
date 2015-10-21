@@ -17,7 +17,7 @@
     <div class="well revenue">
       <h4>Recaudación por Servicios:</h4>
       <p class="revenue-price"><strong><%= number_to_currency(MockBooking.where(payment_id: @payments).sum(:price), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
-      <p class="revenue-description">(Dando <%= MockBooking.where(payment_id: @payments).average(:discount) ? MockBooking.where(payment_id: @payments).average(:discount).round(2) : '0'  %> % de descuento en <%= MockBooking.where(payment_id: @payments).count %> servicios)</p>
+      <p class="revenue-description">(Dando <%= MockBooking.where(payment_id: @payments).average(:discount) ? MockBooking.where(payment_id: @payments).average(:discount).round(2) : '0'  %> % de descuento promedio en <%= MockBooking.where(payment_id: @payments).count %> servicios)</p>
     </div>
   </div>
   <div class="col-sm-3">

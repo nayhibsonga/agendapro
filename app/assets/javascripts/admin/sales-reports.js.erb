@@ -1,0 +1,133 @@
+function loadProvidersReport()
+{
+	var provider_ids = []
+
+	$("#serviceProvidersMultiSelect option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	provider_ids.push($(this).val());
+		}
+	});
+
+	$.ajax({
+		url: 'service_providers_report',
+		data: {service_provider_ids: provider_ids},
+		type: 'get',
+		error: function(response){
+		  	alert("Error");
+		},
+		success: function(response){
+		  	$('#render_content').empty();
+		  	$('#render_content').append(response);
+		}
+	});
+}
+
+$(document).ready(function(){
+
+	$('#serviceProvidersMultiSelect').multiselect({
+	    includeSelectAllOption: true,
+	    selectAllText: 'Todos',
+	    buttonContainer: '<div style="margin-top: 8px;"></div>',
+	    buttonText: function(options, select) {
+	      	console.log(select);
+	      	if (options.length === 0) {
+	        	return 'Ninguno';
+	      	}
+	      	else if(options.length == select[0].length)
+	      	{
+	        	return "Todos";
+	      	}
+	      	else if(options.length > 3)
+	      	{
+	        	return options.length + " seleccionados";
+	      	}
+	      	else {
+	        	var labels = [];
+	        	options.each(function() {
+	           		if ($(this).attr('label') !== undefined) {
+	               		labels.push($(this).attr('label'));
+	           		}
+	           		else {
+	               		labels.push($(this).html());
+	           		}
+	        	});
+	        	return labels.join(', ') + '';
+	      	}
+	    },
+	    onChange: function(option, checked, select){
+	    	loadProvidersReport();
+	    }
+	});
+
+	$('#usersMultiSelect').multiselect({
+	    includeSelectAllOption: true,
+	    selectAllText: 'Todos',
+	    buttonContainer: '<div style="margin-top: 8px;"></div>',
+	    buttonText: function(options, select) {
+	      	console.log(select);
+	      	if (options.length === 0) {
+	        	return 'Ninguno';
+	      	}
+	      	else if(options.length == select[0].length)
+	      	{
+	        	return "Todos";
+	      	}
+	      	else if(options.length > 3)
+	      	{
+	        	return options.length + " seleccionados";
+	      	}
+	      	else {
+	        	var labels = [];
+	        	options.each(function() {
+	           		if ($(this).attr('label') !== undefined) {
+	               		labels.push($(this).attr('label'));
+	           		}
+	           		else {
+	               		labels.push($(this).html());
+	           		}
+	        	});
+	        	return labels.join(', ') + '';
+	      	}
+	    },
+	    onChange: function(option, checked, select){
+	    	
+	    }
+	});
+
+	$('#cashiersMultiSelect').multiselect({
+	    includeSelectAllOption: true,
+	    selectAllText: 'Todos',
+	    buttonContainer: '<div style="margin-top: 8px;"></div>',
+	    buttonText: function(options, select) {
+	      	console.log(select);
+	      	if (options.length === 0) {
+	        	return 'Ninguno';
+	      	}
+	      	else if(options.length == select[0].length)
+	      	{
+	        	return "Todos";
+	      	}
+	      	else if(options.length > 3)
+	      	{
+	        	return options.length + " seleccionados";
+	      	}
+	      	else {
+	        	var labels = [];
+	        	options.each(function() {
+	           		if ($(this).attr('label') !== undefined) {
+	               		labels.push($(this).attr('label'));
+	           		}
+	           		else {
+	               		labels.push($(this).html());
+	           		}
+	        	});
+	        	return labels.join(', ') + '';
+	      	}
+	    },
+	    onChange: function(option, checked, select){
+	    	
+	    }
+	});
+
+});

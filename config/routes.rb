@@ -425,6 +425,13 @@
     post '/delete_petty_transaction', :to => 'payments#delete_petty_transaction'
     post '/set_petty_cash_close_schedule', :to => 'payments#set_petty_cash_close_schedule'
 
+    #SalesCash
+    get '/sales_cash', :to => 'payments#sales_cash'
+
+    #Payment Reports
+    get '/sales_reports', :to => 'payments#sales_reports'
+    get '/service_providers_report', :to => 'payments#service_providers_report'
+
   end
 
   namespace :api, defaults: {format: 'json'} do

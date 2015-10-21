@@ -153,7 +153,30 @@ $(function() {
   });
 
   $("body").on('change', '.itemDiscount', function(e){
-    console.log("Entra");
+
+    /*
+    * Update discount values for items on itemDiscount change.
+    */
+    var paymentItemsRow = $(this).closest('.paymentItemsRow');
+
+    if(paymentItemsRow.attr("product_index") != "-1")
+    {
+      paymentProducts[parseInt(paymentItemsRow.attr("product_index"))]['discount'] = $(this).val();
+    }
+    else if(paymentItemsRow.attr("past_booking_index") != "-1")
+    {
+      paymentPastBookings[parseInt(paymentItemsRow.attr("past_booking_index"))]['discount'] = $(this).val();
+    }
+    else if(paymentItemsRow.attr("new_booking_index") != "-1")
+    {
+      paymentNewBookings[parseInt(paymentItemsRow.attr("new_booking_index"))]['discount'] = $(this).val();
+    }
+
+    //paymentItems[parseInt(paymentItemsRow.attr("item_index"))]['discount'] = $(this).val();
+
+    /*
+    * Recalculate payment total.
+    */
     calculatePaymentTotal();
   });
 

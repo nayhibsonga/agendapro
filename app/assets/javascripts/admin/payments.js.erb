@@ -736,6 +736,25 @@ function loadCloseConfigurations()
       if(petty_cash.scheduled_close)
       {
         $("#petty_scheduled_close").val("1");
+      }
+      else
+      {
+        $("#petty_scheduled_close").val("0");
+      }
+      if(petty_cash.scheduled_keep_cash)
+      {
+        $("#petty_scheduled_keep_cash").val("1");
+        
+        $("#scheduled_cash_div").show();
+      }
+      else
+      {
+        $("#petty_scheduled_keep_cash").val("0");
+      }
+      $("#petty_scheduled_cash").val(petty_cash.scheduled_cash);
+      /*if(petty_cash.scheduled_close)
+      {
+        $("#petty_scheduled_close").val("1");
         if(!petty_cash.scheduled_keep_cash)
         {
           $("#petty_scheduled_keep_cash").val("1");
@@ -764,7 +783,7 @@ function loadCloseConfigurations()
           $("#petty_scheduled_cash").val("0");
           $("#scheduled_cash_div").hide();
         }
-      }
+      }*/
       $("#pettyCashModal").modal('hide');
       $("#pettyScheduledCloseModal").modal('show');
     }
@@ -897,10 +916,12 @@ function saveTransaction()
   var is_income = $("#petty_transaction_is_income").val();
   var petty_transaction_id = $("#petty_transaction_id").val();
   var is_transaction_edit = $("#is_transaction_edit").val();
+  var receipt_number = $("#petty_transaction_receipt_number").val();
+
   $.ajax({
     url: '/add_petty_transaction',
     type: 'post',
-    data: {petty_cash_id: petty_cash_id, amount: amount, transactioner: transactioner, notes: notes, is_income: is_income, petty_transaction_id: petty_transaction_id},
+    data: {petty_cash_id: petty_cash_id, amount: amount, transactioner: transactioner, notes: notes, is_income: is_income, petty_transaction_id: petty_transaction_id, receipt_number: receipt_number},
     dataType: 'json',
     error: function(){
       alert("Ocurrió un error inesperado");
@@ -987,6 +1008,7 @@ function loadTransactions()
         '<td>' + petty_transaction.date + '</td>' +
         '<td>' + petty_transaction.transactioner + '</td>' +
         '<td>' + petty_transaction.notes + '</td>' +
+        '<td>' + petty_transaction.receipt_number + '</td>' +
         petty_options +
         '</tr>'
       );
@@ -1205,7 +1227,7 @@ $(function() {
   });
 
   $("#petty_cash_start_date").datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,
@@ -1222,7 +1244,7 @@ $(function() {
   });
 
   $("#petty_cash_end_date").datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,

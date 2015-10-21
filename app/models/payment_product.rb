@@ -43,6 +43,7 @@ class PaymentProduct < ActiveRecord::Base
   #    seller_type:
   # => 0: service_provider
   # => 1: user (staff, recepcionista, etc.)
+  # => 2: cashier
 
   # def set_stock_create
   # 	if LocationProduct.where(location_id: self.payment.location, product: self.product).count > 0
