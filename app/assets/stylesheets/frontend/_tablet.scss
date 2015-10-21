@@ -332,6 +332,7 @@
           margin-bottom: 10px;
           section {
             padding: 15px;
+            background-color: $white;
             &:first-child {
               background-color: $light-gray;
               color: white;
@@ -352,6 +353,18 @@
               &.time-detail{
                 color: $lighter-gray;
                 font-size: 12px;
+              }
+              &.handle{
+                cursor: move;
+                &:hover{ color: $light-pink; }
+              }
+              &.service-title{
+                text-overflow: ellipsis;
+                max-width: 300px;
+                display: inline-block;
+                overflow: hidden;
+                white-space: nowrap;
+                vertical-align: bottom;
               }
             }
           }

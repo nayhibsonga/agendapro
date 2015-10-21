@@ -27,7 +27,7 @@
         return clpFilter;
 
         function clpFilter(price) {
-            return "$ ".concat(String(price).split('.')[0].replace(',','.'));
+            return String(price).split('.')[0].replace(',','.');
         }
     }
 

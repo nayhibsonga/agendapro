@@ -30,7 +30,7 @@
               <strong id="title">{{ sc.serviceDetail.title }}</strong>
               <div class="pull-right" style="margin-bottom: 10px;">
                 <span class="time-detailed" style="color: #C2C0BC; font-size: 0.9em">{{ sc.serviceDetail.time }}</span>
-                 ${{ sc.serviceDetail.price }} <span>$</span>
+                 {{ sc.serviceDetail.price | currency | clp  }} <span>$</span>
               </div>
             </div>
             <p style="clear: both; text-align: justify;">
@@ -43,6 +43,10 @@
               <strong>Elige tu Prestador</strong>
             </div>
             <div style="padding: 10px; display: inline-block; width: 100%;">
+
+              <span style="width: 25%; float: left;">
+                <label style="font-weight: normal;"><input type="radio" name="provider" value="-1" ng-model="sc.selectedProvider" style="margin: 10px;"> Cualquier prestador </label>
+              </span>
 
               <span style="width: 25%; float: left;" ng-repeat="provider in sc.serviceDetail.providers">
                 <label style="font-weight: normal;"><input type="radio" name="provider" value="{{$index}}" ng-model="sc.selectedProvider" style="margin: 10px;"> {{ provider.name }}</label>
@@ -64,8 +68,47 @@
 
 
         </div>
-        <div class="wrapper" ng-switch-when="3">
-          DATOS!
+        <div class="row wrapper" ng-controller="FormController as fc" ng-switch-when="3">
+          <div class="col-md-7">
+            <h3>Datos de Reserva</h3>
+            <form action="#">
+              <label for="name">Nombre</label>
+              <input type="text" id="name" class="form-control" ng-model="fc.user.name" required>
+              <div class="row">
+                <div class="col-md-6">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" class="form-control" ng-model="fc.user.email" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="phone">Telefono</label>
+                  <input type="tel" id="phone" class="form-control" ng-model="fc.user.phone" required>
+                </div>
+              </div>
+              <label for="comments">Comentarios</label>
+              <textarea name="comments" id="comments" class="form-control" rows="6" required="required"></textarea>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" ng-value="fc.user.promotions">
+                  Quiero recibir promociones a mi email
+                </label>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-5">
+            <h3>Resumen de tu Reserva</h3>
+            <div style="border: 1px solid black; padding:10px 20px; line-height: 25px;">
+              <strong>¿Qué estoy reservando?</strong>
+              <p style="border-bottom: 1px solid black; padding-bottom: 10px;">Alisado de keratina para pelo largo</p>
+              <strong>¿Dónde?</strong>
+              <p style="border-bottom: 1px solid black; padding-bottom: 10px;">Presidente Riesco 3160, Las Condes</p>
+              <strong>¿Cuándo?</strong>
+              <p style="border-bottom: 1px solid black; padding-bottom: 10px;">Viernes 11 de Septiembre a las 12:30 hrs</p>
+              <strong>Precios</strong>
+              <p style="border-bottom: 1px solid black; padding-bottom: 10px;">$20.000</p>
+              <strong>Precios en el local</strong>
+              <p style="">$20.000</p>
+            </div>
+          </div>
         </div>
 
 
@@ -73,9 +116,9 @@
       <div class="modal-footer" style="border-top: none;">
         <button type="button" class="btn btn-gray" style="background-color: #949292; color: white; width: 140px;padding: 10px 12px;" data-dismiss="modal" ng-show="sc.currentStep == 1" ng-click="sc.addService();">+ Agregar Servicio</button>
 
-        <button type="button" class="btn btn-gray" style="background-color: #949292; color: white; width: 140px;padding: 10px 12px;" ng-hide="sc.currentStep == 1" ng-click="sc.setStep(-1);">Atrás</button>
+        <button type="button" class="btn btn-gray" style="background-color: #949292; color: white; width: 140px;padding: 10px 12px;" ng-hide="sc.currentStep == 1" ng-click="sc.setStep(-1);">◀ Atrás</button>
 
-        <button type="button" class="btn btn-hora-chic" style="padding: 10px 12px; width: 140px;" ng-hide="sc.currentStep === sc.maxSteps" ng-click="sc.setStep(+1);">Siguiente ▸</button>
+        <button type="button" class="btn btn-hora-chic" style="padding: 10px 12px; width: 140px;" ng-hide="sc.currentStep === sc.maxSteps" ng-click="sc.setStep(+1);">Siguiente ▶</button>
 
         <button type="button" class="btn btn-hora-chic" style="padding: 10px 12px; width: 140px;" ng-show="sc.currentStep === sc.maxSteps" ng-click="sc.schedule();">Reservar</button>
       </div>
@@ -142,6 +185,11 @@
     top: 6px;
     background-color: #F26062;
     transform: rotate(45deg);
+  }
+
+  form .form-control{
+    border-radius: 0;
+    margin-bottom: 10px;
   }
 
 </style>

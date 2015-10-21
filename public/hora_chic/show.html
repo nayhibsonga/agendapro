@@ -36,7 +36,7 @@
       <div class="sub-menu text-center">
          <span><a href="#" class="active">Resumen</a></span>
          <span><a href="#">Servicios</a></span>
-         <span><a href="#">Comentarios</a></span>
+         <span ng-show="sc.showComments"><a href="#">Comentarios</a></span>
       </div>
 
       <button class="btn btn-down hidden-md hidden-lg btn-lg btn-hora-chic">Reservar</button>
@@ -51,17 +51,25 @@
           </button>
 
           <div id="category-{{ category.id }}" class="collapse clearfix category" style="background-color: white; color: black; font-size: 0.9em;">
-              <div class="service-detail col-xs-12 col-md-6" style="padding: 10px; cursor: pointer;" ng-repeat="service in category.services" ng-click="sc.selectService($parent.$index, $index);">
+              <div class="service-detail col-xs-12 col-md-6" style="padding: 8px; cursor: pointer; margin-bottom: 4px;" ng-repeat="service in category.services" ng-click="sc.serviceOptions($parent.$index, $index);">
                 <div>
                   <strong>{{ service.title }}</strong>
                   <div class="pull-right" style="margin-bottom: 10px;">
                     <span class="time-detailed" style="color: #A3A0A1; font-size: 0.9em">{{ service.time }}</span>
-                     ${{ service.price }} <span>$</span>
+                     {{ service.price | currency | clp  }} <span>$</span>
                   </div>
                 </div>
                 <p style="clear: both; text-align: justify;">
                   {{ service.description }}
                 </p>
+                <div id="service-{{ service.id }}-options" style="display:none; position: absolute;width: 100%;bottom: 0;background-color: #F26062;color: white;left: 0;height: 0;text-align: center;">
+                  <div style="height: 100%; display: table;">
+                    <p style="display: table-cell; vertical-align: middle; text-align: center; width: 100%;">
+                      <a href="#" class="add-service" style="margin-right: 10px; color:white;" ng-click="sc.addService()">+ Agregar</a>
+                    </p>
+                    <a href="#" class="close" style="color: white; opacity: 1; font-size: 16px; padding-right: 10px; padding-top: 5px;">x</a>
+                  </div>
+                </div>
               </div>
           </div>
 
@@ -71,7 +79,7 @@
 
       <div class="clear"></div>
 
-      <div id="comments">
+      <div id="comments" ng-show="sc.showComments">
 
         <div class="btn-hora-chic" style="margin-bottom: 20px;">Comentarios de Clientes</div>
         <!-- COMMENT -->
@@ -137,7 +145,7 @@
     <!-- SIDE CONTENT -->
     <div id="side-content" class="hidden-xs hidden-sm col-md-4 pull-right">
 
-      <div id="evaluation" class="text-center">
+      <div id="evaluation" class="text-center" ng-show="sc.showComments">
         <div class="calification">
           <span class="number">5</span>
           <span class="stars"><span>☆☆☆☆☆</span> <br> 150 opiniones</span>
@@ -156,22 +164,28 @@
         <button class="btn btn-down hidden-xs hidden-sm btn-lg btn-hora-chic">Agendar</button>
 
         <!-- Schedule Summary -->
-        <div class="added-service" ng-repeat="selected in sc.servicesList">
-          <section>
-            <span class="delete" ng-click="sc.removeService($index);">x</span> {{ selected.service.title }}
-          </section>
-          <section>
-            <span class="provider-name"> {{ selected.provider.name }}</span>
-            <span class="time-detail">® {{ selected.service.time }}</span>
-            <span class="pull-right">${{ selected.service.price }}</span>
-          </section>
+        <div ui-sortable="sc.sortableOptions" ng-model="sc.servicesList">
+          <div class="added-service" ng-repeat="selected in sc.servicesList">
+            <section>
+              <span class="delete" ng-click="sc.removeService($index);">x</span>
+              <span class="service-title">{{ selected.service.title }}</span>
+              <span class="pull-right handle">
+                <i class="fa fa-bars"></i>
+              </span>
+            </section>
+            <section>
+              <span class="provider-name"> {{ selected.provider.name }}</span>
+              <span class="time-detail">® {{ selected.service.time }}</span>
+              <span class="pull-right">{{ selected.service.price | currency | clp }}</span>
+            </section>
+          </div>
         </div>
         <!-- End Schedule Summary -->
 
-        <div class="clear"></div>
+        <div class="clear" ng-hide="sc.total.price === 0"></div>
 
-        <div class="text-center total">
-          <p>Total: <span class="price">{{ sc.total.price | clp }}</span> <span class="separator">|</span> <span>2 hrs 30 min</span></p>
+        <div class="text-center total" ng-hide="sc.total.price === 0">
+          <p>Total: <span class="price">{{ sc.total.price | currency | clp }}</span> <span class="separator">|</span> <span>2 hrs 30 min</span></p>
         </div>
 
       </div>
@@ -188,5 +202,37 @@
 <style>
   .category .service-detail:hover{
     border: 2px solid #F26062;
+    margin-bottom: 0 !important; /* Remove important in stylesheet */
+  }
+
+  .added-service.ng-enter,
+  .added-service.ng-leave,
+  .added-service.ng-move {
+    -webkit-transition: 0.4s linear all;
+    -moz-transition: 0.4s linear all;
+    -o-transition: 0.4s linear all;
+    transition: 0.4s linear all;
+    position:relative;
+  }
+
+  .added-service.ng-enter {
+    opacity:0;
+  }
+  .added-service.ng-enter.added-service.ng-enter-active {
+    opacity:1;
+  }
+
+  .added-service.ng-leave {
+    opacity:1;
+  }
+  .added-service.ng-leave.added-service.ng-leave-active {
+    opacity:0;
+  }
+
+  .added-service.ng-move {
+    opacity:0.5;
+  }
+  .added-service.ng-move.added-service.ng-move-active {
+    opacity:1;
   }
 </style>

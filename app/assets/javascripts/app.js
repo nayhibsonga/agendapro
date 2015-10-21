@@ -7,7 +7,9 @@
         'ngRoute',
         'uiGmapgoogle-maps',
         'ngCookies',
-        'ui.bootstrap'
+        'ngAnimate',
+        'ui.bootstrap',
+        'ui.sortable'
       ])
     .config(config)
     .run(globalVariables);

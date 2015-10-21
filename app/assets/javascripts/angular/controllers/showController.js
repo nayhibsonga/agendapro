@@ -12,10 +12,11 @@
         vm.title = 'ShowController';
         vm.currentStep = 1;
         vm.maxSteps = 3;
+        vm.inList = false;
         vm.scheduled = {};
         vm.selectedCategory = 0;
         vm.selectedService = 0;
-        vm.selectedProvider = 0;
+        vm.selectedProvider = -1;
         vm.selectService = selectService;
         vm.setStep = setStep;
         vm.serviceDetail = {};
@@ -23,12 +24,15 @@
         vm.servicesList = {};
         vm.addService = addService;
         vm.removeService = removeService;
-        vm.total = { price: 15900, time: 0 };
+        vm.showComments = true; // API TOGGLING
+        vm.total = { price: 0, time: 0 };
+        vm.sortableOptions = { handle: '.handle', 'ui-floating': true, cursor: 'move' };
+        vm.serviceOptions = serviceOptions;
 
         vm.categories = [
             {id: 1, name: 'Corte de Pelo', services: [
-                {id: 1, title: 'Decoloracion Completa pelo corto mediano y largo', price: 15900, time: '1 hr 30 min', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 2, name: 'Manuel Perez'},{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'},{id: 6, name: 'Christian Moreno'}]},
-                {id: 2, title: 'Decoloracion', price: 9900, time: '1 hr', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad incidunt alias modi rerum totam, aspernatur accusantium doloremque. Ab reprehenderit tenetur, voluptatibus est, ipsam veritatis, fugiat neque nemo quis tempore quidem.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 2, name: 'Manuel Perez'},{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'},{id: 6, name: 'Christian Moreno'}]}
+                {id: 1, title: 'Decoloración Completa pelo corto mediano y largo', price: 15900, time: '1 hr 30 min', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 2, name: 'Manuel Perez'},{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'},{id: 6, name: 'Christian Moreno'}]},
+                {id: 2, title: 'Decoloración', price: 9900, time: '1 hr', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad incidunt alias modi rerum totam, aspernatur accusantium doloremque. Ab reprehenderit tenetur, voluptatibus est, ipsam veritatis, fugiat neque nemo quis tempore quidem.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 2, name: 'Manuel Perez'},{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'},{id: 6, name: 'Christian Moreno'}]}
             ]},
             {id: 2, name: 'Manicure', services: [
                 {id: 3, title: 'Manicure Express', price: 7000, time: '1 hr 30 min', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae.', providers: [{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'},{id: 6, name: 'Christian Moreno'}]},
@@ -40,29 +44,67 @@
 
         vm.servicesList = [];
 
-        // vm.servicesList = [
-        //     {
-        //         service: { id: 1, title: 'Decoloracion Completa pelo corto mediano y largo', price: 15900, time: '1 hr 30 min'},
-        //         provider: { id: 4, name: 'Celine Dion' }
-        //     }
-        // ];
-
         // Main watcher for Steps
         $scope.$watch(function() {
                 return vm.currentStep;
             }, function() {
                 runSlider();
-                //ADD CONTROL FOR BUTTONS
             });
+
+        function serviceOptions(category, service) {
+            vm.selectedCategory = category;
+            vm.selectedService = service;
+            vm.serviceDetail = vm.categories[vm.selectedCategory].services[vm.selectedService];
+            showOptions();
+        }
+
+        function showOptions() {
+            var options = $('#service-'+ vm.serviceDetail.id +'-options'),
+                serviceContainer = options.closest('.service-detail'),
+                closeButton = options.find('.close'),
+                addButton = options.find('.add-service'),
+                customHeight = '30%',
+                speed = 100;
+
+            function bindShow() {
+                options.show().animate({
+                    height: customHeight
+                }, speed);
+            }
+
+            function bindHide() {
+                // Button close
+                closeButton.on('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    hideOptions();
+                });
+
+                // Mouse leaves from Container
+                serviceContainer.on('mouseleave', function() {
+                    hideOptions();
+                });
+
+                function hideOptions() {
+                    options.animate({
+                        height: '0'
+                    }, speed, function(){
+                        options.hide();
+                    });
+                }
+            }
+
+            bindShow();
+            bindHide();
+        }
 
         function selectService(category, index) {
             vm.selectedCategory = category;
             vm.selectedService = index;
-            activateScheduling();
+            addService();
         }
 
         function activateScheduling() {
-            vm.serviceDetail = vm.categories[vm.selectedCategory].services[vm.selectedService];
             $('#schedule').modal();
             runSlider();
         }
@@ -73,12 +115,20 @@
             newItem.provider = service.providers[vm.selectedProvider] || { id: -1, name: 'Cualquier Prestador' };
             newItem.service = {id: service.id, title: service.title, time: service.time, price: service.price};
             vm.servicesList.push(newItem);
+            vm.inList = false;
             calculateTotal();
         }
 
         function removeService(index) {
             vm.servicesList.splice(index, 1);
             calculateTotal();
+        }
+
+        function updateService(obj) {
+            var keys = Object.keys(obj);
+            for (var i = 0; i < keys.length; i++) {
+                keys[i];
+            };
         }
 
         function calculateTotal() {
@@ -109,12 +159,23 @@
             // This basically controls that steps dont go
             // out of bounds
             var calc;
+            checkSelectedService();
             if (step < 0) {
                 calc = vm.currentStep - Math.abs(step);
                 vm.currentStep = (calc < 0 ? 0 : calc);
             } else if (step > 0) {
                 calc = vm.currentStep + (Math.abs(step) || 1);
                 vm.currentStep = (calc > vm.maxSteps ? vm.maxSteps : calc);
+            }
+        }
+
+        function checkSelectedService(){
+            if (vm.currentStep == 1 && !vm.inList) {
+                addService();
+            }
+
+            if (vm.currentStep == 2) {
+                vm.inList = true;
             }
         }
 
