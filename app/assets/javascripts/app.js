@@ -50,7 +50,7 @@
       });
 
     GoogleMapApiProvider.configure({
-      key: 'AIzaSyDeFsCNzRfUK7Yretd1EBgGL73O1PJOEZM',
+      key: 'AIzaSyDo3-SMZv9iaJs-cCs59Vz-B89jKQb_rkw',
       v: '3.20', //defaults to latest 3.X anyhow
       libraries: 'weather,geometry,visualization'
     });

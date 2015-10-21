@@ -4,8 +4,7 @@
     display: block;
     $header-height: 75px;
     border-bottom: 1px solid $light-gray;
-    font-size: 11px; // IE Fallback
-    font-size: 1vw;
+    font-size: 11px;
     %links-tablet {
       line-height: $header-height;
       color: $light-gray;
