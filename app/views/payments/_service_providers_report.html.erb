@@ -3,6 +3,6 @@
     <%= pie_chart provider_sales_type_pie(@service_providers.pluck(:id), @from, @to), library: { title: "Ranking de recaudaciones" } %>
   </div>
   <div class="col-md-6">
-  	<%= pie_chart provider_commissions_pie(@service_providers.pluck(:id), @from, @to), library: { title: "Ranking de recaudaciones" } %>
+  	<%= pie_chart provider_commissions_pie(@service_providers.pluck(:id), @from, @to), library: { title: "Ranking de comisiones" } %>
   </div>
 </div>

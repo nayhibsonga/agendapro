@@ -170,6 +170,14 @@ module ApplicationHelper
 			end
 		end
 
+		payment_products.each do |payment_product|
+			if payment_product.product.comission_value == 0
+				count_products += payment_product.price*(payment_product.product.comission_value/100)
+			else
+				count_products += payment_product.product.comission_value
+			end
+		end
+
 		count_hash = {
 			"Reservas" => count_bookings,
 			"Servicios" => count_mock_bookings,
