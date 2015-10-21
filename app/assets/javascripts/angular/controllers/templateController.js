@@ -16,7 +16,8 @@
             deals: baseUrl + '/deals',
             search: baseUrl + '/search',
             map: baseUrl + '/map',
-            schedule: baseUrl + '/schedule'
+            schedule: baseUrl + '/schedule',
+            comments: baseUrl + '/comments'
         };
         // To render a new element in the main content
         // section, just change the route to the template

@@ -51,7 +51,7 @@
           </button>
 
           <div id="category-{{ category.id }}" class="collapse clearfix category" style="background-color: white; color: black; font-size: 0.9em;">
-              <div class="service-detail col-xs-12 col-md-6" style="padding: 8px; cursor: pointer; margin-bottom: 4px;" ng-repeat="service in category.services" ng-click="sc.serviceOptions($parent.$index, $index);">
+              <div class="service-detail col-xs-12 col-md-6" style="padding: 8px; cursor: pointer; margin-bottom: 4px;" ng-repeat="service in category.services" ng-click="sc.selectService($parent.$index, $index);">
                 <div>
                   <strong>{{ service.title }}</strong>
                   <div class="pull-right" style="margin-bottom: 10px;">
@@ -79,67 +79,10 @@
 
       <div class="clear"></div>
 
-      <div id="comments" ng-show="sc.showComments">
-
-        <div class="btn-hora-chic" style="margin-bottom: 20px;">Comentarios de Clientes</div>
-        <!-- COMMENT -->
-        <section class="post" style="padding: 20px 0; border-top: 1px solid black;">
-          <figure>
-            <img src="http://agendapro.co/assets/home/nico_r-c7b80914ac1beb95231319327dc4d7f8.png" alt="" class="" style="width:100px; vertical-align: top;">
-            <figcaption style="width: calc(100% - 110px); display: inline-block; padding-left: 20px;">
-              <p style="margin: 0;">
-                <strong>Nicolas Rossi</strong>
-                <span class="date pull-right">07/10/2015</span>
-              </p>
-              <p style="font-size: 20px; margin: 0 0 10px;">☆☆☆☆☆</p>
-              <p style="text-align: justify;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore repellendus maxime, reprehenderit sapiente accusamus voluptas vel. Cum corporis, alias obcaecati error culpa veniam soluta, id aliquam reprehenderit quaerat vel officiis!</p>
-            </figcaption>
-
-          </figure>
-        </section>
-        <!-- END OF COMMENT -->
-
-        <!-- COMMENT -->
-        <section class="post" style="padding: 20px 0; border-top: 1px solid black;">
-          <figure>
-            <img src="http://agendapro.co/assets/home/nico_f-d75e1cc5ed0b6f0bc93c1a2bebc73de4.png" alt="" class="" style="width:100px; vertical-align: top;">
-            <figcaption style="width: calc(100% - 110px); display: inline-block; padding-left: 20px;">
-              <p style="margin: 0;">
-                <strong>Nicolas Flores</strong>
-                <span class="date pull-right">07/10/2015</span>
-              </p>
-              <p style="font-size: 20px; margin: 0 0 10px;">☆☆☆☆☆</p>
-              <p style="text-align: justify;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore repellendus maxime, reprehenderit sapiente accusamus voluptas vel. Cum corporis, alias obcaecati error culpa veniam soluta, id aliquam reprehenderit quaerat vel officiis!</p>
-            </figcaption>
-
-          </figure>
-        </section>
-        <!-- END OF COMMENT -->
-
-        <!-- COMMENT -->
-        <section class="post" style="padding: 20px 0; border-top: 1px solid black;">
-          <figure>
-            <img src="http://agendapro.co/assets/home/mariapaz-3231ce2f2fb468ae82df0d468e0d7505.png" alt="" class="" style="width:100px; vertical-align: top;">
-            <figcaption style="width: calc(100% - 110px); display: inline-block; padding-left: 20px;">
-              <p style="margin: 0;">
-                <strong>María Paz del Pedregal</strong>
-                <span class="date pull-right">07/10/2015</span>
-              </p>
-              <p style="font-size: 20px; margin: 0 0 10px;">☆☆☆☆☆</p>
-              <p style="text-align: justify;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore repellendus maxime, reprehenderit sapiente accusamus voluptas vel. Cum corporis, alias obcaecati error culpa veniam soluta, id aliquam reprehenderit quaerat vel officiis!</p>
-            </figcaption>
-
-          </figure>
-        </section>
-        <!-- END OF COMMENT -->
-
-      </div>
+      <ng-include src="tc.templates.comments"></ng-include>
 
     </div>
     <!-- END MAIN CONTENT -->
-
-
-
 
 
     <!-- SIDE CONTENT -->
@@ -168,15 +111,19 @@
           <div class="added-service" ng-repeat="selected in sc.servicesList">
             <section>
               <span class="delete" ng-click="sc.removeService($index);">x</span>
-              <span class="service-title">{{ selected.service.title }}</span>
+              <span class="service-title">{{ selected.title }}</span>
               <span class="pull-right handle">
                 <i class="fa fa-bars"></i>
               </span>
             </section>
             <section>
-              <span class="provider-name"> {{ selected.provider.name }}</span>
-              <span class="time-detail">® {{ selected.service.time }}</span>
-              <span class="pull-right">{{ selected.service.price | currency | clp }}</span>
+              <span class="provider-name">
+                <select style="border: 1px solid rgb(221, 221, 221); height: 35px; padding: 0px 12px; border-radius: 0px; color: rgb(102, 102, 102); /* -webkit-appearance: none; */ background-color: white;" ng-options="provider.name for provider in selected.providers track by provider.id" ng-model="selected.providerAssigned" ng-change="sc.showMe(selected);">
+                  <option value="">Primero Disponible</option>
+                </select>
+              </span>
+              <span class="time-detail">® {{ selected.time }}</span>
+              <span class="pull-right" style="line-height: 35px; /* select height */">{{ selected.price | currency | clp }}</span>
             </section>
           </div>
         </div>

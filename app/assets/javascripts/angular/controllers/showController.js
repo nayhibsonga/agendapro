@@ -12,22 +12,23 @@
         vm.title = 'ShowController';
         vm.currentStep = 1;
         vm.maxSteps = 3;
-        vm.inList = false;
-        vm.scheduled = {};
         vm.selectedCategory = 0;
         vm.selectedService = 0;
         vm.selectedProvider = -1;
         vm.selectService = selectService;
         vm.setStep = setStep;
-        vm.serviceDetail = {};
         vm.schedule = schedule;
-        vm.servicesList = {};
-        vm.addService = addService;
-        vm.removeService = removeService;
+        vm.scheduled = {};
+        vm.serviceDetail = {};
+        vm.servicesList = [];
         vm.showComments = true; // API TOGGLING
         vm.total = { price: 0, time: 0 };
         vm.sortableOptions = { handle: '.handle', 'ui-floating': true, cursor: 'move' };
-        vm.serviceOptions = serviceOptions;
+
+        //Service CRUD
+        vm.addService = addService;
+        vm.removeService = removeService;
+        vm.updateService = updateService;
 
         vm.categories = [
             {id: 1, name: 'Corte de Pelo', services: [
@@ -42,7 +43,11 @@
             ]}
         ];
 
-        vm.servicesList = [];
+        vm.showMe = showMe;
+
+        function showMe(selected) { 
+            console.log(selected);
+        }
 
         // Main watcher for Steps
         $scope.$watch(function() {
@@ -51,11 +56,29 @@
                 runSlider();
             });
 
-        function serviceOptions(category, service) {
+        function selectService(category, service) {
             vm.selectedCategory = category;
             vm.selectedService = service;
             vm.serviceDetail = vm.categories[vm.selectedCategory].services[vm.selectedService];
             showOptions();
+        }
+
+        function addService(){
+            vm.servicesList.push(vm.serviceDetail);
+            console.log(vm.serviceDetail);
+            calculateTotal();
+        }
+
+        function removeService(index) {
+            vm.servicesList.splice(index, 1);
+            calculateTotal();
+        }
+
+        function updateService(obj) {
+            var keys = Object.keys(obj);
+            for (var i = 0; i < keys.length; i++) {
+                keys[i];
+            };
         }
 
         function showOptions() {
@@ -98,43 +121,17 @@
             bindHide();
         }
 
-        function selectService(category, index) {
-            vm.selectedCategory = category;
-            vm.selectedService = index;
-            addService();
-        }
 
         function activateScheduling() {
             $('#schedule').modal();
             runSlider();
         }
 
-        function addService() {
-            var newItem = {service: {}, provider: {}},
-                service = vm.serviceDetail;
-            newItem.provider = service.providers[vm.selectedProvider] || { id: -1, name: 'Cualquier Prestador' };
-            newItem.service = {id: service.id, title: service.title, time: service.time, price: service.price};
-            vm.servicesList.push(newItem);
-            vm.inList = false;
-            calculateTotal();
-        }
-
-        function removeService(index) {
-            vm.servicesList.splice(index, 1);
-            calculateTotal();
-        }
-
-        function updateService(obj) {
-            var keys = Object.keys(obj);
-            for (var i = 0; i < keys.length; i++) {
-                keys[i];
-            };
-        }
 
         function calculateTotal() {
             var price = 0;
             for (var i = 0; i < vm.servicesList.length; i++) {
-                price += vm.servicesList[i].service.price;
+                price += vm.servicesList[i].price;
                 // vm.total.time += vm.servicesList[i].service.time;
             };
             vm.total.price = price;
@@ -159,23 +156,12 @@
             // This basically controls that steps dont go
             // out of bounds
             var calc;
-            checkSelectedService();
             if (step < 0) {
                 calc = vm.currentStep - Math.abs(step);
                 vm.currentStep = (calc < 0 ? 0 : calc);
             } else if (step > 0) {
                 calc = vm.currentStep + (Math.abs(step) || 1);
                 vm.currentStep = (calc > vm.maxSteps ? vm.maxSteps : calc);
-            }
-        }
-
-        function checkSelectedService(){
-            if (vm.currentStep == 1 && !vm.inList) {
-                addService();
-            }
-
-            if (vm.currentStep == 2) {
-                vm.inList = true;
             }
         }
 
