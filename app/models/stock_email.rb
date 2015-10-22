@@ -1,3 +1,3 @@
 class StockEmail < ActiveRecord::Base
-	belongs_to :location_products
+	belongs_to :location_product
 end
