@@ -5722,7 +5722,7 @@ function AgendaEventRenderer() {
 		var hoverListener = getHoverListener();
 		var colCnt = getColCnt();
 		var colWidth = getColWidth();
-		var slotHeight = getSlotHeight();
+		var slotHeight = getSlotHeight() + 4;
 		eventElement.draggable({
 			zIndex: 9,
 			scroll: false,
