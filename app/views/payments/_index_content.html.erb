@@ -60,16 +60,16 @@
         <% bookings_text = ''
         sessions_text = ''
         products_text = '' %>
-        <% payment.bookings.where(is_session: false, session_booking_id: nil).each do |booking|
+        <% payment.bookings.where(is_session: false, session_booking_id: nil).where.not(price: nil).each do |booking|
           bookings_text += '* ' + booking.service.name + ' con ' + booking.service_provider.public_name + ' (' + booking.start.strftime('%R %d-%m-%Y') + ') ' + number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
         end %>
-        <% payment.bookings.where.not(is_session: false, session_booking_id: nil).pluck(:session_booking_id).uniq.each do |session_booking_id|
+        <% payment.bookings.where.not(is_session: false, session_booking_id: nil).where.not(price: nil).pluck(:session_booking_id).uniq.each do |session_booking_id|
           booking = SessionBooking.find(session_booking_id).bookings.first
           if booking
             sessions_text += '* ' + booking.service.name + ' con ' + booking.service_provider.public_name + ' (' + SessionBooking.find(session_booking_id).bookings.count.to_s + ' reservas) ' + number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
           end
         end %>
-        <% payment.payment_products.each do |payment_product|
+        <% payment.payment_products.where.not(price: nil).each do |payment_product|
           products_text += '* ' + payment_product.product.name + ' ' + number_to_currency(payment_product.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + '<br/>'
         end %>
         <% qtip_text = ''
