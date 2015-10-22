@@ -43,6 +43,7 @@ class Location < ActiveRecord::Base
   accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
   has_many :payments, dependent: :destroy
+  has_many :internal_sales, dependent: :destroy
 
   has_many :favorites, dependent: :destroy
   has_many :favorite_users, through: :favorites, source: :user

@@ -1,6 +1,7 @@
 class Cashier < ActiveRecord::Base
 	belongs_to :company
 	has_many :payments
+	has_many :internal_sales, dependent: :nullify
 
 	validate :code_uniqueness
 

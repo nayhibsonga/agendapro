@@ -408,6 +408,12 @@
 
     post '/delete_payment', :to => 'payments#delete_payment'
 
+    #Internal Sale
+    post '/save_internal_sale', :to => 'payments#save_internal_sale'
+    post '/delete_internal_sale', :to => 'payments#delete_internal_sale'
+    get '/get_internal_sale', :to => 'payments#get_internal_sale'
+    get '/get_product_for_payment_or_sale', :to => 'payments#get_product_for_payment_or_sale'
+
     #ServiceCommissions
     get '/commissions', :to => 'payments#commissions'
     get '/service_commissions', :to => 'payments#service_commissions'

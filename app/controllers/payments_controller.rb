@@ -50,11 +50,35 @@ class PaymentsController < ApplicationController
       end
     end
 
+    @internal_sales = InternalSale.where(location_id: @location_ids)
+
+    @internal_sales_sum = 0.0
+    @internal_sales_total = 0
+    @internal_sales_discount = 0
+
+    @internal_sales.each do |internal_sale|
+      @products_total += internal_sale.quantity
+      @products_sum += internal_sale.price*internal_sale.quantity
+      @products_discount += internal_sale.discount
+      @internal_sales_total += 1
+      @internal_sales_sum += internal_sale.price*internal_sale.quantity
+      @internal_sales_discount += internal_sale.discount
+    end
+
     if @products_total > 0
       @products_average_discount = (@products_discount/@products_total).round(2)
     else
       @products_average_discount = 0
     end
+
+    @payments_sum = @payments.sum(:amount) + @internal_sales_sum
+    @payments_discount = @payments.sum(:discount) + @internal_sales_discount
+    @payments_total = @payments.count + @internal_sales_total
+    @payments_average_discount = 0
+    if @payments_total > 0
+      @payments_average_discount = (@payments_discount/@payments_total).round(2)
+    end
+
 
     render "_index_content", layout: false
   end
@@ -1330,6 +1354,151 @@ class PaymentsController < ApplicationController
 
     render :json => @json_response
 
+  end
+
+  def get_product_for_payment_or_sale
+    
+    location_product = LocationProduct.where(:location_id => params[:location_id], :product_id => params[:product_id]).first
+    product_hash = {
+      location_product_id: location_product.id,
+      product_id: location_product.product.id,
+      product_name: location_product.product.name,
+      stock: location_product.stock,
+      price: location_product.product.price,
+      internal_price: location_product.product.internal_price
+    }
+    render :json => product_hash
+
+  end
+
+  def save_internal_sale
+    @json_response = []
+    @errors = []
+
+    if params[:location_id].blank? || params[:cashier_id].blank? || params[:service_provider_id].blank? || params[:product_id].blank? || params[:date].blank? || params[:price].blank? || params[:discount].blank? || params[:quantity].blank?
+      @json_response[0] = "error"
+      @json_response[1] = "No se ingresaron correctamente los datos."
+      render :json => @json_response
+      return
+    end
+
+    internal_sale = InternalSale.new
+    is_edit = false
+    old_location_product = nil
+    old_quantity = 0
+
+    if !params[:internal_sale_id].blank? && params[:internal_sale_id] != "-1"
+      internal_sale = InternalSale.find(params[:internal_sale_id])
+      if ! internal_sale.nil?
+        is_edit = true
+        old_location_product = LocationProduct.where(:location_id => internal_sale.location_id, :product_id => internal_sale.product_id).first
+        old_quantity = internal_sale.quantity
+      else
+        @errors << "No existe la venta ingresada."
+      end
+    end
+
+    if Location.where(id: params[:location_id]).count > 0
+      internal_sale.location_id = params[:location_id]
+    else
+      @errors << "No existe el local ingresado."
+    end
+
+    if Cashier.where(id: params[:cashier_id]).count > 0
+      internal_sale.cashier_id = params[:cashier_id]
+    else
+      @errors << "No existe el cajero ingresado."
+    end
+
+    if ServiceProvider.where(id: params[:service_provider_id]).count > 0
+      internal_sale.service_provider_id = params[:service_provider_id]
+    else
+      @errors << "No existe el prestador ingresado."
+    end
+
+    if Product.where(id: params[:product_id]).count > 0
+      internal_sale.product_id = params[:product_id]
+    else
+      @errors << "No existe el producto ingresado."
+    end
+
+    location_product = LocationProduct.where(:location_id => params[:location_id], :product_id => params[:product_id]).first
+
+    if !location_product.nil?
+      if location_product.stock < params[:quantity].to_i
+        @errors << "No hay suficiente stock del producto."
+      end
+    else
+      @errors << "No existe el producto para el local ingresado."
+    end
+
+    internal_sale.list_price = params[:price].to_f
+    internal_sale.discount = params[:discount].to_f
+    internal_sale.quantity = params[:quantity].to_i
+    internal_sale.price = (internal_sale.list_price*(100 - internal_sale.discount)/100).round(1)
+    internal_sale.date = params[:date].to_date
+
+    if @errors.length == 0
+      if internal_sale.save
+
+        if is_edit && !old_location_product.nil?
+          old_location_product.stock += old_quantity
+          old_location_product.save
+        end
+
+        location_product.stock = location_product.stock - internal_sale.quantity
+        if location_product.save
+          @json_response[0] = "ok"
+          @json_response[1] = internal_sale
+        else
+          @json_response[0] = "error"
+          @errors << location_product.errors
+          @json_response[1] = @errors
+        end
+      else
+        @json_response[0] = "error"
+        @errors << internal_sale.errors
+      end
+    end
+
+    render :json => @json_response
+
+  end
+
+  def delete_internal_sale
+
+    json_response = []
+    errors = []
+    internal_sale = InternalSale.find(params[:internal_sale_id])
+    location_product = LocationProduct.where(:location_id => internal_sale.location_id, :product_id => internal_sale.product_id).first
+
+    if internal_sale.nil? || location_product.nil?
+      json_response[0] = "error"
+      errors << "Datos ingresados incorrectamente."
+      json_response[1] << errors
+      render :json => json_response
+      return
+    end
+
+    quantity = internal_sale.quantity
+
+    if internal_sale.delete
+      location_product.stock += quantity
+      location_product.save
+      json_response[0] = "ok"
+    else
+      json_response[0] = "error"
+      errors << "No se pudo eliminar la venta."
+      json_response[1] << errors
+    end
+
+    render :json => json_response
+
+  end
+
+  def get_internal_sale
+    internal_sale = InternalSale.find(params[:internal_sale_id])
+    render :json => internal_sale
   end
 
   ##############

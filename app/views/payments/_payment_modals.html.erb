@@ -285,6 +285,8 @@
                           
                         </option>
                       </select>
+                      <input type="hidden" id="payment_product_stock" value="" />
+                      <span id="payment_product_stock_span" style="color: #949292; font-size: 14px;"></span>
                     </div>
                     <div style="clear: both;"></div>
                   </div>
@@ -797,6 +799,139 @@
     </div>
   </div>
 </div>
+
+
+<div class="modal fade paymentModal" id="internalSaleModal" tabindex="-1" role="dialog" aria-labelledby="Venta Interna" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="internalSaleModalTitle" style="line-height: 1.1;">Venta Interna</h3>
+      </div>
+      <div class="modal-body" id="internalSaleModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <form id="internalSaleForm" action="">
+
+              <input type="hidden" id="internal_sale_id" value="" />
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="internal_sale_location" class="col-xs-3 control-label">Local</label>
+                <div class="col-xs-9">
+                  <select id="internal_sale_location" name="internal_sale_location" class="form-control">
+                    <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) %>
+                      <option value="<%= location.id %>">
+                        <%= location.name.humanize %>
+                      </option>
+                    <% end %>
+                  </select>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              
+              <div class="payment-form-div form-group">
+                <label for="internal_sale_date" class="col-xs-3 control-label">Fecha</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="internal_sale_date" name="internal_sale_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="internal_sale_cashier_code" class="col-xs-3 control-label">Cajero</label>
+                <div class="col-xs-9">
+                  <input type="password" class="form-control" id="internal_sale_cashier_code" name="internal_sale_cashier_code" value="" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <input type="hidden" id="internal_sale_cashier_id" value="" />
+                <label for="internal_sale_cashier_name" class="col-xs-3 control-label"></label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="internal_sale_cashier_name" name="internal_sale_cashier_name" value="" disabled />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <div class="payment-form-div">
+                <label for="internal_sale_service_provider" class="col-xs-3 control-label">Prestador</label>
+                <div class="col-xs-9">
+                  <select class="form-control" id="internal_sale_service_provider" name="internal_sale_service_provider">    
+
+                  </select>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div">
+                <label for="internal_sale_product" class="col-xs-3 control-label">Producto</label>
+                <div class="col-xs-9">
+                  <select class="form-control" id="internal_sale_product" name="internal_sale_product">
+
+                  </select>
+                  <input type="hidden" id="internal_sale_product_stock" value="" />
+                  <span id="internal_sale_product_stock_span" style="color: #949292; font-size: 14px;"></span>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="internal_sale_quantity" class="col-xs-3 control-label">Cantidad</label>
+                <div class="col-xs-9">
+                  <input class="form-control" type="number" id="internal_sale_quantity" name="internal_sale_quantity" value="1" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="internal_sale_price" class="col-xs-3 control-label">Precio</label>
+                <div class="col-xs-9">
+                  <div class="input-group">
+                    <span class="input-group-addon">$</span>
+                    <input class="form-control" type="number" id="internal_sale_price" name="internal_sale_price" value="0" />
+                  </div>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="internal_sale_discount" class="col-xs-3 control-label">Descuento</label>
+                <div class="col-xs-9">
+                  <div class="input-group">
+                    <input class="form-control" type="number" id="internal_sale_discount" name="internal_sale_discount" value="0" />
+                    <span class="input-group-addon">%</span>
+                  </div>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+        <button type="button" class="btn btn-green" id="internalSaleSaveBtn" aria-label="Guardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <input type="hidden" id="paymentPastBookingsArray" value="" />
 <input type="hidden" id="paymentNewBookingsArray" value="" />

@@ -8,6 +8,7 @@ class Product < ActiveRecord::Base
   has_many :payment_products
   has_many :payments, through: :payment_products
   has_many :receipts, through: :payment_products
+  has_many :internal_sales
 
   accepts_nested_attributes_for :location_products, :reject_if => :all_blank, :allow_destroy => true
 

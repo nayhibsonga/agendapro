@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151021134138) do
+ActiveRecord::Schema.define(version: 20151022120527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -421,6 +421,20 @@ ActiveRecord::Schema.define(version: 20151021134138) do
 
   add_index "favorites", ["location_id"], name: "index_favorites_on_location_id", using: :btree
   add_index "favorites", ["user_id"], name: "index_favorites_on_user_id", using: :btree
+
+  create_table "internal_sales", force: true do |t|
+    t.integer  "location_id"
+    t.integer  "cashier_id"
+    t.integer  "service_provider_id"
+    t.integer  "product_id"
+    t.integer  "quantity",            default: 1
+    t.float    "list_price",          default: 0.0
+    t.float    "price",               default: 0.0
+    t.float    "discount",            default: 0.0
+    t.date     "date",                default: '2015-10-22'
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "last_minute_promos", force: true do |t|
     t.integer  "discount",    default: 0

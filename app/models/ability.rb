@@ -200,6 +200,12 @@ class Ability
         can :sales_reports, Payment, :company_id => user.company_id
         can :service_providers_report, Payment, :company_id => user.company_id
 
+        #Internal Sale
+        can :save_internal_sale, Payment, :company_id => user.company_id
+        can :delete_internal_sale, Payment, :company_id => user.company_id
+        can :get_internal_sale, Payment, :company_id => user.company_id
+        can :get_product_for_payment_or_sale, Payment, :company_id => user.company_id
+
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
         # can :create, CompanyFromEmail
@@ -426,6 +432,10 @@ class Ability
         can :sales_reports, Payment, :company_id => user.company_id
         can :service_providers_report, Payment, :company_id => user.company_id
 
+        #Internal Sale
+        can :save_internal_sale, Payment, :company_id => user.company_id
+        can :get_product_for_payment_or_sale, Payment, :company_id => user.company_id
+
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
         can :create, ProductCategory, :company_id => user.company_id
@@ -587,6 +597,10 @@ class Ability
         can :save_intro_info, Payment, :company_id => user.company_id
         can :check_booking_payment, Payment, :company_id => user.company_id
         can :get_formatted_booking, Payment, :company_id => user.company_id
+
+        #Internal Sale
+        can :save_internal_sale, Payment, :company_id => user.company_id
+        can :get_product_for_payment_or_sale, Payment, :company_id => user.company_id
 
         can :petty_cash, Payment, :company_id => user.company_id
         can :petty_transactions, Payment, :company_id => user.company_id

@@ -54,6 +54,23 @@ $(function() {
         clear: ''
   });
 
+  $("#internal_sale_date").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
   $("#createPaymentBtn").click(function(){
     paymentItems = [];
     paymentNewBookings = [];
@@ -111,6 +128,26 @@ $(function() {
         alert("El código de cajero ingresado es incorrecto.");
         $("#payment_cashier_name").val("");
         $("#payment_cashier_id").val("");
+      }
+    });
+    
+  });
+
+  $("#internal_sale_cashier_code").on('focusout', function(){
+
+    var cashier_code = $(this).val();
+
+    $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
+      if(response[0] != "error")
+      {
+        $("#internal_sale_cashier_name").val(response[0]['name']);
+        $("#internal_sale_cashier_id").val(response[0]['id']);
+      }
+      else
+      {
+        alert("El código de cajero ingresado es incorrecto.");
+        $("#internal_sale_cashier_name").val("");
+        $("#internal_sale_cashier_id").val("");
       }
     });
     
@@ -191,6 +228,10 @@ $(function() {
 
   $("#payment_product").on('change', function(e){
     loadProductPrice();
+  });
+
+  $('#internal_sale_product').on('change', function(e){
+    loadInternalSaleProductPrice();
   });
 
   $("#checkAllItems").on('change', function(e){
@@ -552,6 +593,13 @@ $(function() {
     addTransaction();
   });
 
+  $('#internalSaleBtn').on('click', function(){
+    loadInternalSale();
+  });
+
+  $('#internalSaleSaveBtn').on('click', function(){
+    saveInternalSale();
+  });
 
   /*
   * Check if company_setting requires client for payments
@@ -565,6 +613,194 @@ $(function() {
 
 
 });
+
+/*
+* Internal sale function
+*/
+
+function loadInternalSale(internal_sale)
+{
+  $('#internal_sale_id').val("");
+  $("#internal_sale_location").val($("#internal_sale_location option:first").val());
+  $("#internal_sale_cashier_name").val("");
+  $("#internal_sale_cashier_id").val("");
+  $("#internal_sale_cashier_code").val("");
+  $("#internal_sale_date").val($("#today_date").val());
+  $("#internal_sale_quantity").val("1");
+  $("#internal_sale_discount").val("0");
+  clearValidations("#internal_sale_date");
+  clearValidations("#internal_sale_price");
+  clearValidations("#internal_sale_quantity");
+  clearValidations("#internal_sale_discount");
+  loadInternalSaleProduct(internal_sale);
+  loadInternalSaleProviders(internal_sale);
+
+  if(internal_sale)
+  {
+    $('#internal_sale_id').val(internal_sale.id);
+    $('#internal_sale_date').val(internal_sale.date);
+  }
+
+  $('#internalSaleModal').modal('show');
+}
+
+function loadInternalSaleProduct(internal_sale)
+{
+  $("#internal_sale_product").empty();
+  $.getJSON('/location_products/', {id: parseInt($('#internal_sale_location').val()) }, function (products) {
+    $.each(products, function (key, product) {
+      $("#internal_sale_product").append('<option value="' + product.id + '">' + product.name + '</option>');
+    });
+    if(internal_sale)
+    {
+      $('#internal_sale_product').val(internal_sale.product_id)
+    }
+    loadInternalSaleProductPrice(internal_sale);
+  });
+}
+
+function loadInternalSaleProviders(internal_sale)
+{
+  $("#internal_sale_service_providers").empty();
+  $.getJSON('/local_providers/', {location: parseInt($('#internal_sale_location').val()) }, function (service_providers) {
+    $.each(service_providers, function (key, service_provider) {
+      $("#internal_sale_service_provider").append('<option value="' + service_provider.id + '">' + service_provider.public_name + '</option>');
+    });
+    if(internal_sale)
+    {
+      $('#internal_sale_service_provider').val(internal_sale.service_provider_id)
+    }
+  });
+}
+
+function loadInternalSaleProductPrice(internal_sale)
+{
+  if($("#internal_sale_product").val() == "")
+  {
+    return false;
+  }
+  $.getJSON('/get_product_for_payment_or_sale/', {product_id: $("#internal_sale_product").val(), location_id: parseInt($('#internal_sale_location').val())}, function (product) {
+    $('#internal_sale_product_stock').val(product.stock);
+    $('#internal_sale_product_stock_span').text("Quedan " + product.stock + " unidades.");
+    $("#internal_sale_price").val(product.internal_price);
+
+    if(internal_sale)
+    {
+      $("#internal_sale_price").val(internal_sale.price);
+      $('#internal_sale_discount').val(internal_sale.discount);
+      $('#internal_sale_quantity').val(internal_sale.quantity);
+    }
+
+  });
+}
+
+function saveInternalSale()
+{
+  var cashier_code = $('#internal_sale_cashier_code').val();
+  var internal_sale_id = $('#internal_sale_id').val();
+
+  $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
+    if(response[0] != "error")
+    {
+      $("#internal_sale_cashier_name").val(response[0]['name']);
+      $("#internal_sale_cashier_id").val(response[0]['id']);
+
+      if($('#internalSaleForm').valid())
+      {
+        var location_id = $('#internal_sale_location').val();
+        var cashier_id = $('#internal_sale_cashier_id').val();
+        var product_id = $('#internal_sale_product').val();
+        var service_provider_id = $('#internal_sale_service_provider').val();
+        var price = $('#internal_sale_price').val();
+        var quantity = $('#internal_sale_quantity').val();
+        var discount = $('#internal_sale_discount').val();
+        var date = $('#internal_sale_date').val();
+        if(internal_sale_id == "")
+        {
+          internal_sale_id = "-1";
+        }
+
+        $.ajax({
+          url: '/save_internal_sale',
+          method: 'post',
+          data: {location_id: location_id, cashier_id: cashier_id, product_id: product_id, service_provider_id: service_provider_id, price: price, quantity: quantity, discount: discount, date: date, internal_sale_id: internal_sale_id},
+          dataType: 'json',
+          error: function(response){
+            alert("Ocurrió un error al guardar la venta.");
+            $('#internalSaleModal').modal('hide');
+          },
+          success: function(response){
+            if(response[0] == "ok")
+            {
+              alert("Venta ingresada exitosamente.");
+              $('#internalSaleModal').modal('hide');
+            }
+            else
+            {
+              alert("Ocurrió un error al guardar la venta.");
+              $('#internalSaleModal').modal('hide');
+            }
+          }
+        });
+
+      }
+      else
+      {
+        return;
+      }
+
+    }
+    else
+    {
+      alert("El código de cajero ingresado es incorrecto.");
+      return;
+    }
+
+    loadPayments();
+
+  });
+}
+
+function deleteInternalSale(internal_sale_id)
+{
+  $.ajax({
+    url: '/delete_internal_sale',
+    type: 'post',
+    data: {internal_sale_id: internal_sale_id},
+    dataType: 'json',
+    error: function(resonse){
+      alert("Ocurrió un error al eliminar la venta.");
+    },
+    success: function(response){
+      if(response[0] == "ok")
+      {
+        alert("Venta eliminada correctamente.");
+      }
+      else
+      {
+        alert("Ocurrió un error al eliminar la venta.");
+      }
+      loadPayments();
+    }
+  })
+}
+
+function editInternalSale(internal_sale_id)
+{
+
+  $.ajax({
+    url: '/get_internal_sale',
+    data: {internal_sale_id: internal_sale_id},
+    method: 'get',
+    dataType: 'json',
+    error: function(){
+      alert("No se pudo cargar la venta.");
+    },
+    success: function(internal_sale){
+      loadInternalSale(internal_sale);
+    }
+  });
+}
 
 /*
 * Transaction functions
@@ -998,7 +1234,9 @@ function loadProductPrice()
   {
     return false;
   }
-  $.getJSON('/products/' + $("#payment_product").val(), function (product) {
+  $.getJSON('/get_product_for_payment_or_sale/', {product_id: $("#payment_product").val(), location_id: parseInt($('#payment_location').val())}, function (product) {
+    $('#payment_product_stock').val(product.stock);
+    $('#payment_product_stock_span').text("Quedan " + product.stock + " unidades.");
     $("#payment_product_price").val(product.price);
   });
 }
