@@ -71,6 +71,28 @@ class PaymentsController < ApplicationController
       @products_average_discount = 0
     end
 
+    products_total_price = 0
+    products_actual_price = 0
+
+    @payments.each do |payment|
+      payment.payment_products.each do |payment_product|
+        products_total_price += payment_product.list_price * payment_product.quantity
+        products_actual_price += payment_product.price * payment_product.quantity
+      end
+    end
+
+    @internal_sales.each do |internal_sale|
+      products_total_price += internal_sale.quantity*internal_sale.list_price
+      products_actual_price += internal_sale.quantity*internal_sale.price
+    end
+
+    logger.debug "Total: " + products_total_price.to_s
+    logger.debug "Pagado: " + products_actual_price.to_s
+
+    @products_actual_discount = ((1 - (products_actual_price/products_total_price))*100).round(1)
+
+    logger.debug "Descuento: " + @products_actual_discount.to_s + "%"
+
     @payments_sum = @payments.sum(:amount) + @internal_sales_sum
     @payments_discount = @payments.sum(:discount) + @internal_sales_discount
     @payments_total = @payments.count + @internal_sales_total

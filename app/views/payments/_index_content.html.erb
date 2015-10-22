@@ -3,7 +3,7 @@
     <div class="well revenue1">
       <h4>Recaudación:</h4>
       <p class="revenue-price"><strong><%= number_to_currency(@payments_sum, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
-      <p class="revenue-description">(Dando <%= @payments_average_discount ? @payments_average_discount.round(2) : '0' %> % de descuento promedio en <%= @payments_total %> pagos y ventas internas)</p>
+      <p class="revenue-description">(Dando <%= @payments_average_discount ? @payments_average_discount.round(2) : '0' %> % de descuento promedio en <%= @payments_total %> movimientos)</p>
     </div>
   </div>
   <div class="col-sm-3">
@@ -24,7 +24,7 @@
     <div class="well revenue">
       <h4>Recaudación por Productos:</h4>
       <p class="revenue-price"><strong><%= number_to_currency(@products_sum, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
-      <p class="revenue-description">(Dando <%= @products_average_discount.to_s %> % de descuento promedio en <%= @products_total %> productos)</p>
+      <p class="revenue-description">(Dando <%= @products_actual_discount.to_s %> % de descuento en <%= @products_total %> productos)</p>
     </div>
   </div>
 </div>
