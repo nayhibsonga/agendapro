@@ -439,6 +439,9 @@
       namespace :v1 do
         get 'promotions', to: 'promotions#index'
         get 'promotions/index/preview', to: 'promotions#preview'
+
+        get 'locations', to: 'locations#search'
+        get 'locations/:id', to: 'locations#show'
       end
     end
   end
