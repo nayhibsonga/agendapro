@@ -78,7 +78,7 @@ $(function() {
 				minlength: 3
 			}
 		},
-		
+
 		highlight: function(element) {
 			$(element).closest('.form-group').removeClass('has-success has-feedback').addClass('has-error has-feedback');
 			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
@@ -116,8 +116,11 @@ $(function() {
 			'service[service_category_id]': {
 				required: true
 			},
+			'service[sessions_amount]': {
+				required: true
+			},
 		},
-		
+
 		highlight: function(element) {
 			$(element).closest('.form-group').removeClass('has-success has-feedback').addClass('has-error has-feedback');
 			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');

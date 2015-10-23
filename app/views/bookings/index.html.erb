@@ -28,7 +28,7 @@
   </div>
 </div>
 
-<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required } do %>
+<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required, preset_notes: @company_setting.preset_notes } do %>
 <% end %>
 
 <%= content_tag "div", id: "products_data", data: { products: Product.where(company_id: current_user.company_id).to_json } do %>
@@ -245,13 +245,12 @@
                         <%= content_tag "div", id: "client_exclusive_data", data: { client_exclusive: @company_setting.client_exclusive } do %>
                         <% end %>
                         <% if @company_setting.client_exclusive || @company_setting.use_identification_number %>
-                        <div class="form-group has-feedback">
-                          <%= builder.label :identification_number, "RUT", class: "col-sm-4 control-label" %>
+                        <div class="form-group has-feedback has-feedback">
+                          <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-sm-4 control-label" %>
                           <div class="col-sm-8">
                             <%= builder.text_field :identification_number, class: "form-control", disabled: @company_setting.client_exclusive %>
-                            <ul id="rut_suggestions"></ul>
                             <span class="help-block"></span>
-                            <ul id="full_name_suggestions"></ul>
+                            <ul id="rut_suggestions"></ul>
                           </div>
                         </div>
                         <% end %>
@@ -346,7 +345,7 @@
                       <div class="form-group has-feedback">
                         <%= label_tag :booking_staff_code, "Código de Empleado", class: "col-sm-2 control-label" %>
                         <div class="col-sm-10">
-                          <%= text_field_tag :booking_staff_code, '',{class: "form-control", required: true} %>
+                          <%= password_field_tag :booking_staff_code, '',{class: "form-control", required: true} %>
                           <span class="help-block"></span>
                           <span class="form-control-feedback"></span>
                         </div>
@@ -390,7 +389,7 @@
                         </div>
                         <% unless @company_setting.client_exclusive || @company_setting.use_identification_number %>
                         <div class="form-group has-feedback">
-                          <%= builder.label :identification_number, "RUT", class: "col-sm-4 control-label" %>
+                          <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-sm-4 control-label" %>
                           <div class="col-sm-8">
                             <%= builder.text_field :identification_number, class: "form-control" %>
                             <span class="help-block"></span>
@@ -884,7 +883,7 @@
               <%= builder.hidden_field :city %>
               <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
                 <div class="form-group">
-                  <%= builder.label :identification_number, "RUT", class: "col-md-4 control-label" %>
+                  <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-md-4 control-label" %>
                   <div class="col-md-8">
                     <%= builder.text_field :identification_number, class: "form-control", disabled: true %>
                   </div>
@@ -1051,14 +1050,15 @@
 <% end %>
 
 <% content_for :scripts do %>
+  <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag "bookings" %>
 
 	<script type="text/javascript">
     <% if @company_setting.deal_activate && @company_setting.deal_identification_number%>
 		$('#booking_deal_code').change(function() {
-			var rut_string = $('#booking_deal_code').val()
-			if (rut_string != '') {
-				$('#booking_deal_code').val(rut_format(rut_string));
+			var id_string = $('#booking_deal_code').val()
+			if (id_string != '') {
+				$('#booking_deal_code').val(identification_number_format(id_string));
 			}
 		});
     <% end %>

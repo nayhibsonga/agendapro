@@ -69,7 +69,7 @@
           </div>
           <% if @location.company.company_setting.client_exclusive %>
           <div class="form-group">
-            <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "RUT" ) %>
+            <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => (I18n.t('ci')).capitalize ) %>
             <span class="help-block"></span>
           </div>
           <% end %>
@@ -80,7 +80,7 @@
           </div>
           <% end %>
           <div class="form-group">
-            <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario..", :rows => 4) %>
+            <%= text_area_tag(:comment, @location.company.company_setting.preset_notes, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario..", :rows => 4) %>
           </div>
       </div>
     </div>
@@ -168,7 +168,7 @@
         </div>
       </div>
       <div class="row">
-        
+
         <div class="col-xs-6">
           <input type="radio" name="mp" value="04" style="display: none !important;" class="mp_radio" />
           <image class="img-responsive" style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" />

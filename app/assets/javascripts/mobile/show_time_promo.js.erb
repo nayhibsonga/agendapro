@@ -31,4 +31,18 @@ $(document).ready(function(){
 		}
 	});
 
+	$("#openHoursBtn").on('click', function(){
+
+	    selects = [];
+	    selects.push({
+	      service: $("#service").val(),
+	      provider: $("#provider").val()
+	    });
+
+	    $("#serviceStaff").val(JSON.stringify(selects));
+
+	    $("#select-promo-hour-form").submit();
+
+	});
+
 });

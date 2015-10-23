@@ -6,6 +6,19 @@ class Company < ActiveRecord::Base
 
 	has_many :company_economic_sectors
 	has_many :economic_sectors, :through => :company_economic_sectors
+
+	has_many :company_countries
+	has_many :countries, :through => :company_countries
+
+	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
+
+	def reject_company_country(attributes)
+	  exists = attributes['id'].present?
+	  empty = attributes.slice(:web_address).blank?
+	  attributes.merge!({:_destroy => 1}) if exists and empty # destroy empty tour
+	  return (!exists and empty) # reject empty attributes
+	end
+
 	has_many :users, dependent: :nullify
 	has_many :plan_logs, dependent: :destroy
 	has_many :billing_logs, dependent: :destroy
@@ -35,7 +48,7 @@ class Company < ActiveRecord::Base
 
 	validate :plan_settings
 
-	after_update :update_online_payment
+	after_update :update_online_payment, :update_stats
 
 	def plan_settings
 		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
@@ -61,6 +74,9 @@ class Company < ActiveRecord::Base
 			end
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
+				if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id && company.country_id == 1
+					CompanyMailer.invoice_email(company.id)
+				end
 			else
 				errors = ""
 				company.errors.full_messages.each do |error|
@@ -76,6 +92,9 @@ class Company < ActiveRecord::Base
 			company.payment_status_id = PaymentStatus.find_by_name("Vencido").id
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 2, details: "OK payment_expiry")
+				if company.country_id == 1
+					CompanyMailer.invoice_email(company.id)
+				end
 			else
 				errors = ""
 				company.errors.full_messages.each do |error|
@@ -127,6 +146,9 @@ class Company < ActiveRecord::Base
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "OK end_trial")
+				if company.country_id == 1
+					CompanyMailer.invoice_email(company.id)
+				end
 			else
 				errors = ""
 				company.errors.full_messages.each do |error|
@@ -153,6 +175,12 @@ class Company < ActiveRecord::Base
 		end
 	end
 
+	def self.invoice_email
+		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id), due_date: [10.days.ago, 15.days.ago, 20.days.ago], country_id: 1).each do |company|
+			CompanyMailer.invoice_email(company.id)
+		end
+	end
+
 	def update_online_payment
 
 		if !self.company_setting.online_payment_capable
@@ -176,7 +204,47 @@ class Company < ActiveRecord::Base
 				pa.save
 			end
 		end
+	end
 
+	def update_stats
+		if changed_attributes['web_address'] || changed_attributes['country_id']
+			cc = CompanyCountry.find_by(company_id: self.id, country_id: self.country_id)
+			cc.web_address = self.web_address
+			cc.save
+		end
+
+		company = self
+		stats = StatsCompany.find_or_initialize_by(company_id: company.id)
+  		stats.company_name = company.name
+  		stats.company_start = company.created_at
+  		stats.company_payment_status_id = company.payment_status_id
+  		stats.company_sales_user_id = company.sales_user_id
+  		stats.web_bookings = 0.0
+  		if Booking.where(location_id: Location.where(company_id: company.id)).count > 0
+  			stats.last_booking = Booking.where(location_id: Location.where(company_id: company.id)).last.created_at
+  			stats.web_bookings = Booking.where(location_id: Location.where(company_id: company.id), web_origin: true).count.to_f / Booking.where(location_id: Location.where(company_id: company.id)).count.to_f
+  		end
+  		stats.week_bookings = Booking.where(location_id: Location.where(company_id: company.id), created_at: 7.days.ago..Time.now).count
+  		stats.past_week_bookings = Booking.where(location_id: Location.where(company_id: company.id), created_at: 14.days.ago..7.days.ago).count
+
+		bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
+		rec = BillingRecord.where(:company_id => company.id).order('date desc').first
+		if !bl.nil? && !rec.nil?
+			if bl.created_at <= rec.date
+				stats.last_payment = rec.date
+				stats.last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
+			else
+				stats.last_payment = bl.created_at
+				stats.last_payment_method = "Automático"
+			end
+		elsif bl.nil? && !rec.nil?
+			stats.last_payment = rec.date
+			stats.last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
+		elsif !bl.nil? && rec.nil?
+			stats.last_payment = bl.created_at
+			stats.last_payment_method = "Automático"
+		end
+		stats.save
 	end
 
 end

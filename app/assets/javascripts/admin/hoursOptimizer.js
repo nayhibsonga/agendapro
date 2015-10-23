@@ -30,6 +30,7 @@ function loadServiceModal () {
     loadService();
   }); // Bind click event
 
+  $('#nextButton').text('Siguiente');
   $('#nextButton').off('click'); // Unbind click event
   $('#nextButton').click(function (e) {
     loadHourModal();
@@ -153,6 +154,8 @@ function loadHours () {
 
   var start_date = $("#optimizerDateSelector").val();
 
+  bookings = []
+
   $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, start_date: start_date, admin: true }, function (hours_array) {
     $('#selectHour > p').remove();
     var services_str = "";
@@ -213,6 +216,9 @@ function loadUserModal () {
   $('#hoursOptimizer #new_booking').show();
   $('#optimizerTitle').html(userTitle);
 
+  $(userForm + '#booking_notes').val($('#calendar-data').data('preset-notes'));
+
+  $('#nextButton').text('Reservar');
   $('#nextButton').off('click'); // Unbind click event
   $('#nextButton').click(function (e) {
     if ($('#hoursOptimizer #new_booking').valid()) {

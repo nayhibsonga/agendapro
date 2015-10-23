@@ -28,6 +28,10 @@ class QuickAddController < ApplicationController
 	        @resource_category = ResourceCategory.new(name: "Otros", company_id: current_user.company_id)
 	        @resource_category.save
     	end
+    	if CompanyCountry.where(company_id: current_user.company_id).count < 1
+    		@company_country = CompanyCountry.new(company_id: current_user.company_id, country_id: current_user.company.country_id, web_address: current_user.company.web_address)
+    		@company_country.save
+    	end
 		@location = Location.new
 		@service_category = ServiceCategory.new
 		@service = Service.new
@@ -277,7 +281,7 @@ class QuickAddController < ApplicationController
     end
 
     def service_params
-      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, :outcall, :online_payable, :has_discount, :discount, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
+      params.require(:service).permit(:name, :price, :duration, :description, :group_service, :capacity, :waiting_list, :company_id, :service_category_id, :outcall, :online_payable, :has_discount, :discount, :has_sessions, :sessions_amount, service_category_attributes: [:name, :company_id],  :tag_ids => [] )
     end
 
     def company_params

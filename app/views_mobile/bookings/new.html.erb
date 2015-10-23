@@ -124,7 +124,7 @@
         </div>
         <% if @company.company_setting.client_exclusive %>
         <div class="form-group">
-          <%= label_tag :identification_number, "RUT", class: "control-label col-xs-3" %>
+          <%= label_tag :identification_number, (I18n.t('ci')).capitalize, class: "control-label col-xs-3" %>
           <div class="col-xs-9">
             <%= text_field_tag :identification_number, nil, class: "form-control" %>
           </div>
@@ -191,6 +191,7 @@
 <%= javascript_include_tag "admin/mobile-booking" %>
 <script type="text/javascript">
   $(function () {
+    $('#booking_notes').val(<%= @company.company_setting.preset_notes %>);
     loadServiceData($('#booking_service').val());
   });
 </script>
