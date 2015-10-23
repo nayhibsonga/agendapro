@@ -195,6 +195,9 @@ class Ability
         #Sales Cash
 
         can :sales_cash, Payment, :company_id => user.company_id
+        can :sales_cash_content, Payment, :company_id => user.company_id
+        can :get_sales_cash, Payment, :company_id => user.company_id
+        can :save_sales_cash, Payment, :company_id => user.company_id
 
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id
@@ -427,6 +430,9 @@ class Ability
         can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
 
         can :sales_cash, Payment, :company_id => user.company_id
+        can :sales_cash_content, Payment, :company_id => user.company_id
+        can :get_sales_cash, Payment, :company_id => user.company_id
+        can :save_sales_cash, Payment, :company_id => user.company_id
 
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id

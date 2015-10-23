@@ -71,3 +71,25 @@ table.servicesTable td{
 	max-height: 400px;
 	overflow-y: auto;
 }
+
+.btn-sales-cash{
+	width: 110px;
+}
+
+#sales-cash-title{
+	font-size: 20px;
+	color: #22c488;
+	margin: 4px;
+}
+
+#sales-cash-last-reset-date{
+	font-size: 18px;
+	color: #505050;
+	margin: 4px;
+}
+
+#sales-cash-schedule{
+	font-size: 18px;
+	color: #505050;
+	margin: 4px;
+}

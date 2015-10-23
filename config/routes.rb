@@ -433,6 +433,9 @@
 
     #SalesCash
     get '/sales_cash', :to => 'payments#sales_cash'
+    get '/sales_cash_content', :to => 'payments#sales_cash_content'
+    get '/get_sales_cash', :to => 'payments#get_sales_cash'
+    post '/save_sales_cash', :to => 'payments#save_sales_cash'
 
     #Payment Reports
     get '/sales_reports', :to => 'payments#sales_reports'

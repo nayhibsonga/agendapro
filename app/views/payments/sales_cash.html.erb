@@ -6,12 +6,10 @@
 
 <div class="container-fluid">
   <div class="row report-control-row" style="margin-top: 20px;">
-    <div class="col-sm-10">
+    <div class="col-sm-12">
       <div class="form-group">
-        <label for="locationMultiSelect" class="col-sm-1 control-label" style="margin-top: 20px;">Locales:</label><br />
-        <div class="col-sm-5">
-          
-          <select id="locationMultiSelect" multiple="multiple" style="margin-top: 7px;">
+        <div class="col-sm-3">
+          <select id="locationSelect" class="form-control">
             <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) do %>
               <option value="<%= location.id %>">
                 <%= location.name %>
@@ -20,34 +18,17 @@
           </select>
 
         </div>
-        
-        <label for="paymentMethodMultiSelect" class="col-sm-1 control-label" style="margin-top: 20px;">Tipo:</label>
-        <div class="col-sm-5">
-        
-          <select id="paymentMethodMultiSelect" multiple="multiple" style="margin-top: 7px;">
-            <% for payment_method in PaymentMethod.where.not(name: "Otro") do %>
-              <option value="0_<%= payment_method.id %>">
-                <%= payment_method.name.humanize %>
-              </option>
-            <% end %>
-            <% for payment_method in CompanyPaymentMethod.where(:company_id => current_user.company.id) do %>
-              <option value="1_<%= payment_method.id %>">
-                <%= payment_method.name.humanize %>
-              </option>
-            <% end %>
-          </select>
-
+        <div class="col-sm-6">
+          <%= link_to '<i class="fa fa-dollar"></i> Pago'.html_safe, '#', class: "btn btn-green btn-sales-cash", id: "createPaymentBtn" %>
+          <%= link_to '<i class="fa fa-dollar"></i> Venta Interna'.html_safe, '#', class: "btn btn-green btn-sales-cash", id: "internalSaleBtn" %>
+          <%= link_to '<i class="fa fa-share"></i> Traspaso'.html_safe, '#', class: "btn btn-green btn-sales-cash", id: "salesCashTransactionBtn" %>
+          <%= link_to '<i class="fa fa-reply"></i> Ingreso'.html_safe, '#', class: "btn btn-green btn-sales-cash", id: "salesCashIncomeBtn" %>
+          <%= link_to '<i class="fa fa-money"></i> Caja Chica'.html_safe, '#', class: "btn btn-green btn-sales-cash", id: "pettyCashBtn" %>
         </div>
-      </div>
-    </div>
-    <div class="col-sm-2">
-      <div class="form-group">
-        <!--<a class='btn btn-green' id="new_payment_button" onclick="loadPayment(0);"><i class="fa fa-plus"> </i> Nuevo Pago</a>-->
-        <%= link_to '<i class="fa fa-dollar"></i> Agregar Pago'.html_safe, '#', class: "btn btn-green btn-caja", id: "createPaymentBtn" %>
-      </div>
-      <div class="form-group">
-        <!--<a class='btn btn-green' id="new_payment_button" onclick="loadPayment(0);"><i class="fa fa-plus"> </i> Nuevo Pago</a>-->
-        <%= link_to '<i class="fa fa-money"></i> Caja Chica'.html_safe, '#', class: "btn btn-green btn-caja", id: "pettyCashBtn" %>
+        <div class="col-sm-3" style="text-align: right;">
+          <%= link_to '<i class="fa fa-cog"></i> Cerrar'.html_safe, '#', class: "btn btn-orange btn-sales-cash", id: "salesCashCloseBtn" %>
+          <%= link_to '<i class="fa fa-cog"></i> Configurar'.html_safe, '#', class: "btn btn-orange btn-sales-cash", id: "salesCashConfigurationBtn" %>
+        </div>
       </div>
     </div>
   </div>
@@ -62,6 +43,8 @@
 <%= render :partial => 'payment_modals', :locals => {:company => current_user.company} %>
 
 <%= render :partial => 'petty_cash_modals', :locals => {:company => current_user.company} %>
+
+<%= render :partial => 'sales_cash_modals', :locals => {:company => current_user.company} %>
 
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "payments" %>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151022120527) do
+ActiveRecord::Schema.define(version: 20151023150345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1006,6 +1006,44 @@ ActiveRecord::Schema.define(version: 20151022120527) do
     t.datetime "updated_at"
   end
 
+  create_table "sales_cash_emails", force: true do |t|
+    t.integer  "sales_cash_id"
+    t.string   "email"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sales_cash_incomes", force: true do |t|
+    t.integer  "sales_cash_id"
+    t.integer  "user_id"
+    t.float    "amount",        default: 0.0
+    t.datetime "date",          default: '2015-10-23 15:05:22'
+    t.text     "notes",         default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sales_cash_logs", force: true do |t|
+    t.integer  "sales_cash_id"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.float    "remaining_amount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sales_cash_transactions", force: true do |t|
+    t.integer  "sales_cash_id"
+    t.integer  "user_id"
+    t.float    "amount",                  default: 0.0
+    t.datetime "date",                    default: '2015-10-23 13:42:39'
+    t.text     "notes",                   default: ""
+    t.string   "receipt_number"
+    t.boolean  "is_internal_transaction", default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "sales_cashes", force: true do |t|
     t.integer  "location_id"
     t.float    "cash",                    default: 0.0
@@ -1014,6 +1052,7 @@ ActiveRecord::Schema.define(version: 20151022120527) do
     t.datetime "last_reset_date"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "scheduled_reset",         default: false
   end
 
   create_table "sales_transactions", force: true do |t|

@@ -1,0 +1,223 @@
+var numbered_days = {1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo"};
+
+function destroyPayment(payment_id) {
+  $.ajax({
+    type: 'DELETE',
+    url: '/payments/'+ payment_id + '.json',
+    dataType: 'json',
+    success: function(payment){
+      // window.console.log(payment);
+      alert('Pago eliminado exitosamente.');
+      $("#save_payment_button").html('Guardar Pago');
+      $('#save_payment_button').attr('disabled', false);
+      $('#delete_payment_button').attr('disabled', false);
+      $('#payment')
+      loadPayments();
+      $('#newPaymentModal').modal('hide');
+    },
+    error: function(xhr){
+      var errors = $.parseJSON(xhr.responseText).errors;
+      var errores = 'Error\n';
+      for (i in errors) {
+        errores += '*' + errors[i] + '\n';
+      }
+      alert(errores);
+      $("#save_payment_button").html('Guardar Pago');
+      $('#save_payment_button').attr('disabled', false);
+      $('#delete_payment_button').attr('disabled', false);
+    }
+  });
+
+  return false;
+}
+
+function loadPayments() {
+
+    var location_id = $('#locationSelect').val();
+
+    $('#render_content').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+    $.ajax({
+        url: '/sales_cash_content',
+        type: 'get',
+        data: {location_id: location_id},
+        cache: false,
+        success: function(html){
+          $('#render_content').html(html);
+        }
+    });
+
+    return false;
+}
+
+function loadSalesCash()
+{
+  var sales_cash_id = $('#sales_cash_id').val();
+
+  $.ajax({
+    url: '/get_sales_cash',
+    data: {sales_cash_id: sales_cash_id},
+    method: 'get',
+    dataType: 'json',
+    error: function(response){
+      alert("Error al cargarla información.")
+    },
+    success: function(sales_cash){
+      if(sales_cash.error)
+      {
+        alert("Error al cargarla información.")
+        return;
+      }
+      $("#sales_cash_scheduled_reset").val(sales_cash.scheduled_reset);
+      $("#sales_cash_scheduled_reset_monthly").val(sales_cash.scheduled_reset_monthly);
+      $('#sales_cash_scheduled_reset_day').empty();
+      if(sales_cash.scheduled_reset_monthly)
+      {
+        for(i = 1; i < 32; i++)
+        {
+          $('#sales_cash_scheduled_reset_day').append('<option value="' + i + '">' + i + '</option>');
+        }
+      }
+      else
+      {
+        for(i = 1; i < 8; i++)
+        {
+          $('#sales_cash_scheduled_reset_day').append('<option value="' + i + '">' + numbered_days[i] + '</option>');
+        }
+      }
+      $("#sales_cash_scheduled_reset_day").val(sales_cash.scheduled_reset_day);
+      $('#sales_cash_emails').val(sales_cash.emails);
+      $('#salesCashModal').modal('show');
+    }
+  });
+
+}
+
+function changeScheduledMonthly()
+{
+  $('#sales_cash_scheduled_reset_day').empty();
+  if($(this).val() == "1")
+  {
+    for(i = 1; i < 32; i++)
+    {
+      $('#sales_cash_scheduled_reset_day').append('<option value="' + i + '">' + i + '</option>');
+    }
+  }
+  else
+  {
+    for(i = 1; i < 8; i++)
+    {
+      $('#sales_cash_scheduled_reset_day').append('<option value="' + i + '">' + numbered_days[i] + '</option>');
+    }
+  }
+}
+
+function loadSalesCashTransaction(sales_cash_transaction)
+{
+  if(sales_cash_transaction)
+  {
+
+  }
+  else
+  {
+    $('#sales_cash_is_internal_transaction').val("1");
+    $('#sales_cash_transaction_amount').val("0");
+    $('#sales_cash_transaction_receipt_number').val("");
+    $("#sales_cash_transaction_date").val($("#today_date").val());
+    $('#sales_cash_transaction_notes').val("");
+    $('#salesCashTransactionModal').modal('show');
+  }
+}
+
+function loadSalesCashIncome(sales_cash_income)
+{
+  if(sales_cash_income)
+  {
+
+  }
+  else
+  {
+    $('#sales_cash_income_amount').val("0");
+    $("#sales_cash_income_date").val($("#today_date").val());
+    $('#sales_cash_income_notes').val("");
+    $('#salesCashIncomeModal').modal('show');
+  }
+}
+
+function saveSalesCash()
+{
+  var sales_cash_id = $('#sales_cash_id').val();
+  var scheduled_reset = $('#sales_cash_scheduled_reset').val();
+  var scheduled_reset_monthly = $('#sales_cash_scheduled_reset_monthly').val();
+  var scheduled_reset_day = $('#sales_cash_scheduled_reset_day').val();
+  var emails = $('#sales_cash_emails').val();
+
+  $.ajax({
+    url: '/save_sales_cash',
+    data: {sales_cash_id: sales_cash_id, scheduled_reset: scheduled_reset, scheduled_reset_monthly: scheduled_reset_monthly, scheduled_reset_day: scheduled_reset_day, emails: emails},
+    method: 'post',
+    dataType: 'json',
+    error: function(response){
+      alert("Ocurrió un error al guardar las opciones.");
+    },
+    success: function(response){
+      if(response[0] == "error")
+      {
+        alert("Ocurrió un error al guardar las opciones.");
+      }
+      else
+      {
+        alert("Opciones guardadas correctamente.");
+      }
+      $('#salesCashModal').modal('hide');
+      loadPayments();
+    }
+  });
+
+}
+
+$(function() {
+
+  $("#sales_cash_transaction_date").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
+  $('#locationSelect').on('change', function(){
+    loadPayments();
+  });
+
+  $('#salesCashConfigurationBtn').on('click', function(){
+    loadSalesCash();
+  });
+
+  $('#sales_cash_scheduled_reset_monthly').on('change', function(){
+    changeScheduledMonthly();
+  });
+
+  $('#salesCashSaveBtn').on('click', function(){
+    saveSalesCash();
+  });
+
+  $('#salesCashTransactionBtn').on('click', function(){
+    loadSalesCashTransaction();
+  });
+
+  $('#salesCashIncomeBtn').on('click', function(){
+    loadSalesCashIncome();
+  });
+
+  loadPayments();
+
+});

@@ -21,8 +21,8 @@ class PaymentsController < ApplicationController
     @payment_method_ids = []
     @company_payment_method_ids = []
     if params[:payment_method_ids].blank?
-      @payment_method_ids = PaymentMethod.all.pluck(:id)
-      @company_payment_method_ids = CompanyPaymentMethod.where(company_id: current_user.company_id).pluck(:id)
+      @payment_method_ids = []
+      @company_payment_method_ids = []
     else
       method_ids_arr = params[:payment_method_ids].split(",")
       method_ids_arr.each do |method_str|
@@ -50,7 +50,7 @@ class PaymentsController < ApplicationController
       end
     end
 
-    @internal_sales = InternalSale.where(location_id: @location_ids)
+    @internal_sales = InternalSale.where(location_id: @location_ids, date: @from..@to)
 
     @internal_sales_sum = 0.0
     @internal_sales_total = 0
@@ -89,7 +89,10 @@ class PaymentsController < ApplicationController
     logger.debug "Total: " + products_total_price.to_s
     logger.debug "Pagado: " + products_actual_price.to_s
 
-    @products_actual_discount = ((1 - (products_actual_price/products_total_price))*100).round(1)
+    @products_actual_discount = 0
+    if products_total_price != 0
+      @products_actual_discount = ((1 - (products_actual_price/products_total_price))*100).round(1)
+    end
 
     logger.debug "Descuento: " + @products_actual_discount.to_s + "%"
 
@@ -1793,6 +1796,177 @@ class PaymentsController < ApplicationController
     else
       sales_cash = SalesCash.create(:location_id => params[:location_id], :cash => 0, :last_reset_date => DateTime.now)
     end
+  end
+
+  def sales_cash_content
+
+    @location = Location.find(params[:location_id])
+    @sales_cash = SalesCash.find_by_location_id(@location.id)
+
+    if @sales_cash.nil?
+      @sales_cash = SalesCash.create(:location_id => @location.id, :cash => 0, :last_reset_date => DateTime.now)
+    end
+
+    start_date = @sales_cash.last_reset_date
+    end_date = DateTime.now
+
+
+    @payments = Payment.where(payment_date: start_date..end_date, location_id: @location.id).order(:payment_date)
+
+    @products_sum = 0.0
+    @products_average_discount = 0.0
+    @products_total = 0
+    @products_discount = 0
+
+    @payments.each do |payment|
+      payment.payment_products.each do |payment_product|
+        @products_total += payment_product.quantity
+        @products_sum += payment_product.price * payment_product.quantity
+        @products_discount += payment_product.discount
+      end
+    end
+
+    @internal_sales = InternalSale.where(location_id: @location.id, date: start_date..end_date)
+
+    @internal_sales_sum = 0.0
+    @internal_sales_total = 0
+    @internal_sales_discount = 0
+
+    @internal_sales.each do |internal_sale|
+      @products_total += internal_sale.quantity
+      @products_sum += internal_sale.price*internal_sale.quantity
+      @products_discount += internal_sale.discount
+      @internal_sales_total += 1
+      @internal_sales_sum += internal_sale.price*internal_sale.quantity
+      @internal_sales_discount += internal_sale.discount
+    end
+
+    if @products_total > 0
+      @products_average_discount = (@products_discount/@products_total).round(2)
+    else
+      @products_average_discount = 0
+    end
+
+    products_total_price = 0
+    products_actual_price = 0
+
+    @payments.each do |payment|
+      payment.payment_products.each do |payment_product|
+        products_total_price += payment_product.list_price * payment_product.quantity
+        products_actual_price += payment_product.price * payment_product.quantity
+      end
+    end
+
+    @internal_sales.each do |internal_sale|
+      products_total_price += internal_sale.quantity*internal_sale.list_price
+      products_actual_price += internal_sale.quantity*internal_sale.price
+    end
+
+    logger.debug "Total: " + products_total_price.to_s
+    logger.debug "Pagado: " + products_actual_price.to_s
+
+    @products_actual_discount = 0
+    if products_total_price != 0
+      @products_actual_discount = ((1 - (products_actual_price/products_total_price))*100).round(1)
+    end
+
+    logger.debug "Descuento: " + @products_actual_discount.to_s + "%"
+
+    @payments_sum = @payments.sum(:amount) + @internal_sales_sum
+    @payments_discount = @payments.sum(:discount) + @internal_sales_discount
+    @payments_total = @payments.count + @internal_sales_total
+    @payments_average_discount = 0
+    if @payments_total > 0
+      @payments_average_discount = (@payments_discount/@payments_total).round(2)
+    end
+
+
+    render "_sales_cash_content", layout: false
+  end
+
+  def get_sales_cash
+    sales_cash = SalesCash.find(params[:sales_cash_id])
+    json_response = nil
+    if sales_cash.nil?
+      json_response = {
+        error: "error"
+      }
+    end
+    sales_cash_emails = SalesCashEmail.where(sales_cash_id: sales_cash.id).pluck(:email)
+    scheduled_reset = sales_cash.scheduled_reset ? 1 : 0
+    scheduled_reset_monthly = sales_cash.scheduled_reset_monthly ? 1 : 0
+    json_response = {
+      id: sales_cash.id,
+      scheduled_reset: scheduled_reset,
+      scheduled_reset_monthly: scheduled_reset_monthly,
+      scheduled_reset_day: sales_cash.scheduled_reset_day,
+      emails: sales_cash_emails.join(", ")
+    }
+    render :json => json_response
+  end
+
+  def save_sales_cash
+
+    sales_cash = SalesCash.find(params[:sales_cash_id])
+    sales_cash.scheduled_reset = params[:scheduled_reset]
+    sales_cash.scheduled_reset_monthly = params[:scheduled_reset_monthly]
+    sales_cash.scheduled_reset_day = params[:scheduled_reset_day]
+    sales_cash.sales_cash_emails.delete_all
+
+    emails = []
+    emails_arr = params[:emails].split(",")
+    emails_arr.each do |email|
+      email_str = email.strip
+      if email_str != ""
+        new_sales_cash_email = SalesCashEmail.create(:sales_cash_id => sales_cash.id, :email => email_str)
+      end
+    end
+
+    json_response = []
+
+    if sales_cash.save
+      json_response << "ok"
+      json_response << sales_cash
+    else
+      json_response << "error"
+      json_response << sales_cash.errors
+    end
+
+    render :json => json_response
+
+  end
+
+  def get_sales_cash_transaction
+    sales_cash_transaction = SalesCashTransaction.find(params[:sales_cash_transaction_id])
+    render :json => sales_cash_transaction
+  end
+
+  def save_sales_cash_transaction
+    sales_cash_transaction = SalesCashTransaction.new
+
+    if !params[:sales_cash_transaction_id].blank?
+      sales_cash_transaction = SalesCashTransaction.find(params[:sales_cash_transaction_id])
+    end
+
+    sales_cash_transaction.sales_cash_id = params[:sales_cash_id]
+    sales_cash_transaction.is_internal_transaction = params[:is_internal]
+    sales_cash_transaction.amount = params[:amount]
+    sales_cash_transaction.user_id = current_user.id
+    sales_cash_transaction.date = params[:date].to_date
+    sales_cash_transaction.notes = params[:notes]
+
+    json_response = []
+
+    if sales_cash_transaction.save
+      json_response << "ok"
+      json_response << sales_cash_transaction
+    else
+      json_response << "error"
+      json_response << sales_cash_transaction.errors
+    end
+
+    render :json sales_cash_transaction
+
   end
 
   #################
