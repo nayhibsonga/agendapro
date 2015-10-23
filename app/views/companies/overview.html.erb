@@ -148,7 +148,7 @@
                     <p>
                       <span class="local-name"><%= local.name %></span><br/>
                       <% @second_address = local.second_address.blank? ? '' : ', ' + local.second_address %>
-                      <span class="local-address" localid="<%= local.id %>"><%= if !local.outcall then local.address+@second_address+', '+local.district.name else "A Domicilio" end %></span>
+                      <span class="local-address" localid="<%= local.id %>"><%= if !local.outcall then local.address+@second_address+', '+local.district.name+', '+local.district.city.name else "A Domicilio" end %></span>
                       <span class="local-phone" localid="<%= local.id %>" hidden><%= local.phone%></span>
                     </p>
                   </label>
