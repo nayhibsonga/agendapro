@@ -352,74 +352,77 @@ class PayUController < ApplicationController
   end
 
   def confirmation
-    punto_pagos_confirmation = PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id], payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
-    if params[:respuesta] == "00"
-      if BillingLog.find_by_trx_id(params[:trx_id])
-        billing_log = BillingLog.find_by_trx_id(params[:trx_id])
-        company = Company.find(billing_log.company_id)
-        company.months_active_left += billing_log.amount
-        company.due_amount = 0.0
-        company.due_date = nil
-        company.payment_status_id = PaymentStatus.find_by_name("Activo").id
-        if company.save
-          CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
-        else
-          CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
-        end
-      elsif PlanLog.find_by_trx_id(params[:trx_id])
-        plan_log = PlanLog.find_by_trx_id(params[:trx_id])
-        company = Company.find(plan_log.company_id)
-        company.plan_id = plan_log.new_plan_id
-        company.months_active_left = 1.0
-        company.due_amount = 0.0
-        company.due_date = nil
-        company.payment_status_id = PaymentStatus.find_by_name("Activo").id
-        if company.save
-          CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "OK notification_plan")
-        else
-          CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
-        end
-      elsif Booking.find_by_trx_id(params[:trx_id])
+    puts params.inspect
+    puts params[:post].inspect
+    render :nothing => true, :status => 200, :content_type => 'text/html'
+    # punto_pagos_confirmation = PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id], payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
+    # if params[:respuesta] == "00"
+    #   if BillingLog.find_by_trx_id(params[:trx_id])
+    #     billing_log = BillingLog.find_by_trx_id(params[:trx_id])
+    #     company = Company.find(billing_log.company_id)
+    #     company.months_active_left += billing_log.amount
+    #     company.due_amount = 0.0
+    #     company.due_date = nil
+    #     company.payment_status_id = PaymentStatus.find_by_name("Activo").id
+    #     if company.save
+    #       CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
+    #     else
+    #       CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
+    #     end
+    #   elsif PlanLog.find_by_trx_id(params[:trx_id])
+    #     plan_log = PlanLog.find_by_trx_id(params[:trx_id])
+    #     company = Company.find(plan_log.company_id)
+    #     company.plan_id = plan_log.new_plan_id
+    #     company.months_active_left = 1.0
+    #     company.due_amount = 0.0
+    #     company.due_date = nil
+    #     company.payment_status_id = PaymentStatus.find_by_name("Activo").id
+    #     if company.save
+    #       CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "OK notification_plan")
+    #     else
+    #       CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
+    #     end
+    #   elsif Booking.find_by_trx_id(params[:trx_id])
 
-        #Creamos el registro de la reserva pagada.
+    #     #Creamos el registro de la reserva pagada.
 
-        payed_booking = PayedBooking.new
-        payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
-        payed_booking.transfer_complete = false
-        payed_booking.save
+    #     payed_booking = PayedBooking.new
+    #     payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
+    #     payed_booking.transfer_complete = false
+    #     payed_booking.save
 
-        bookings = Array.new
-        Booking.where(:trx_id => params[:trx_id]).each do |booking|
-          booking.status_id = Status.find_by(:name => "Pagado").id
-          booking.payed = true
-          booking.payed_booking = payed_booking
-          booking.save
-          bookings << booking
-        end
+    #     bookings = Array.new
+    #     Booking.where(:trx_id => params[:trx_id]).each do |booking|
+    #       booking.status_id = Status.find_by(:name => "Pagado").id
+    #       booking.payed = true
+    #       booking.payed_booking = payed_booking
+    #       booking.save
+    #       bookings << booking
+    #     end
 
-        if bookings.count > 0
+    #     if bookings.count > 0
 
-          if bookings.first.booking_group.nil?
-            BookingMailer.book_service_mail(bookings.first)
-          else
-            if bookings.first.session_booking.nil?
-              Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
-            else
-              bookings.first.session_booking.send_sessions_booking_mail
-            end
-          end
+    #       if bookings.first.booking_group.nil?
+    #         BookingMailer.book_service_mail(bookings.first)
+    #       else
+    #         if bookings.first.session_booking.nil?
+    #           Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+    #         else
+    #           bookings.first.session_booking.send_sessions_booking_mail
+    #         end
+    #       end
 
-        else
-          #¿No bookings? There's an error
-          redirect_to action: 'failure', token: params[:token]
-          return
-        end
-        #Enviar comprobantes de pago
-        BookingMailer.book_payment_mail(payed_booking)
-        BookingMailer.book_payment_company_mail(payed_booking)
-        BookingMailer.book_payment_agendapro_mail(payed_booking)
+    #     else
+    #       #¿No bookings? There's an error
+    #       redirect_to action: 'failure', token: params[:token]
+    #       return
+    #     end
+    #     #Enviar comprobantes de pago
+    #     BookingMailer.book_payment_mail(payed_booking)
+    #     BookingMailer.book_payment_company_mail(payed_booking)
+    #     BookingMailer.book_payment_agendapro_mail(payed_booking)
         
-      end
-    end
+    #   end
+    # end
   end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151016220721) do
+ActiveRecord::Schema.define(version: 20151026222436) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,7 +120,6 @@ ActiveRecord::Schema.define(version: 20151016220721) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.integer  "payment_id"
     t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
     t.integer  "reminder_group"
@@ -432,13 +431,8 @@ ActiveRecord::Schema.define(version: 20151016220721) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-<<<<<<< HEAD
     t.integer  "location_id"
     t.integer  "stock"
-=======
-    t.integer  "location_id",             null: false
-    t.integer  "stock",       default: 0
->>>>>>> 994c62b99c294bb03c401d25f92add69aaa7c7b1
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -620,6 +614,11 @@ ActiveRecord::Schema.define(version: 20151016220721) do
     t.string   "transaction_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "cc_number"
+    t.string   "cc_holder"
+    t.string   "bank_referenced_name"
+    t.string   "payment_method_name"
+    t.string   "antifraudMerchantId"
   end
 
   create_table "pay_u_responses", force: true do |t|
