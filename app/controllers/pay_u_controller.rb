@@ -80,7 +80,7 @@ class PayUController < ApplicationController
         # resp = req.create(trx_id, due, payment_method)
 
         crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
-        encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Pago plan " + company.plan.name, amount: due, source_url: select_plan_path})
+        encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Pago plan " + company.plan.name, amount: due, source_url: select_plan_url})
 
         if encrypted_data
           BillingLog.create(payment: due, amount: amount, company_id: company.id, plan_id: company.plan.id, transaction_type_id: TransactionType.find_by_name("Webpay").id, trx_id: trx_id)
@@ -351,7 +351,7 @@ class PayUController < ApplicationController
     end
   end
 
-  def notification
+  def confirmation
     punto_pagos_confirmation = PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id], payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
     if params[:respuesta] == "00"
       if BillingLog.find_by_trx_id(params[:trx_id])
