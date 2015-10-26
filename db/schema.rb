@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151002211949) do
+ActiveRecord::Schema.define(version: 20151016143414) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -108,9 +108,9 @@ ActiveRecord::Schema.define(version: 20151002211949) do
     t.integer  "client_id"
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
+    t.integer  "max_changes",            default: 2
     t.boolean  "payed",                  default: false
     t.string   "trx_id",                 default: ""
-    t.integer  "max_changes",            default: 2
     t.string   "token",                  default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
@@ -282,7 +282,13 @@ ActiveRecord::Schema.define(version: 20151002211949) do
     t.boolean  "deal_activate",              default: false
     t.string   "deal_name",                  default: ""
     t.boolean  "deal_overcharge",            default: true
-    t.boolean  "deal_exclusive",             default: false
+    t.boolean  "allows_online_payment",      default: false
+    t.string   "account_number",             default: ""
+    t.string   "company_rut",                default: ""
+    t.string   "account_name",               default: ""
+    t.integer  "account_type",               default: 3
+    t.integer  "bank_id"
+    t.boolean  "deal_exclusive",             default: true
     t.integer  "deal_quantity",              default: 0
     t.integer  "deal_constraint_option",     default: 0
     t.integer  "deal_constraint_quantity",   default: 0
@@ -304,6 +310,7 @@ ActiveRecord::Schema.define(version: 20151002211949) do
     t.boolean  "can_edit",                   default: true
     t.boolean  "can_cancel",                 default: true
     t.boolean  "use_identification_number",  default: false
+    t.string   "preset_notes"
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
