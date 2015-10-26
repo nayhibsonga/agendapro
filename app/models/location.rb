@@ -311,6 +311,10 @@ class Location < ActiveRecord::Base
 	      services_array = Array.new
 	      services.each do |service|
 	        if service.service_category_id == category.id
+				service_providers_array = []
+				service.service_providers.where(active: true, online_booking: true).each do |service_provider|
+					service_providers_array.push({id: service_provider.id, public_name: service_provider.public_name})
+				end
 	          service_info = {
 	          	id: service.id,
 	          	name: service.name,
@@ -318,7 +322,8 @@ class Location < ActiveRecord::Base
 	          	duration: service.duration,
 	          	service_category_id: service.service_category_id,
 	          	order: service.order,
-	          	description: service.description
+	          	description: service.description,
+	          	service_providers: service_providers_array
 	          }
 	          services_array.push(service_info)
 	        end
