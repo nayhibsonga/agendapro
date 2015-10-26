@@ -120,6 +120,7 @@ ActiveRecord::Schema.define(version: 20151016220721) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
+    t.integer  "payment_id"
     t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
     t.integer  "reminder_group"
@@ -304,6 +305,7 @@ ActiveRecord::Schema.define(version: 20151016220721) do
     t.boolean  "can_edit",                   default: true
     t.boolean  "can_cancel",                 default: true
     t.boolean  "use_identification_number",  default: false
+    t.string   "preset_notes"
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -430,8 +432,13 @@ ActiveRecord::Schema.define(version: 20151016220721) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
+<<<<<<< HEAD
     t.integer  "location_id"
     t.integer  "stock"
+=======
+    t.integer  "location_id",             null: false
+    t.integer  "stock",       default: 0
+>>>>>>> 994c62b99c294bb03c401d25f92add69aaa7c7b1
     t.datetime "created_at"
     t.datetime "updated_at"
   end

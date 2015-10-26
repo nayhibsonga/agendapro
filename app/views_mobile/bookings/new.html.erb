@@ -191,6 +191,7 @@
 <%= javascript_include_tag "admin/mobile-booking" %>
 <script type="text/javascript">
   $(function () {
+    $('#booking_notes').val(<%= @company.company_setting.preset_notes %>);
     loadServiceData($('#booking_service').val());
   });
 </script>

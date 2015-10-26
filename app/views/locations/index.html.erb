@@ -121,5 +121,6 @@
 </div>
 
 <% content_for :scripts do %>
+  <script>$("#sortable").sortable();</script>
   <%= javascript_include_tag 'admin/location_draggable' %>
 <% end %>
