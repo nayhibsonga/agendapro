@@ -5,19 +5,19 @@
         .module('HoraChic')
         .controller('ShowController', ShowController);
 
-    ShowController.$inject = ['$rootScope', '$scope'];
+    ShowController.$inject = ['$rootScope', '$scope', 'AgendaProApi'];
 
-    function ShowController($rootScope, $scope) {
+    function ShowController($rootScope, $scope, Api) {
         var vm = this;
         vm.title = 'ShowController';
         vm.currentStep = 1;
-        vm.maxSteps = 3;
+        vm.maxSteps = 2;
         vm.selectedCategory = 0;
         vm.selectedService = 0;
         vm.selectedProvider = -1;
         vm.selectService = selectService;
         vm.setStep = setStep;
-        vm.schedule = schedule;
+        vm.schedule = activateScheduling;
         vm.scheduled = {};
         vm.serviceDetail = {};
         vm.servicesList = [];
@@ -43,12 +43,6 @@
             ]}
         ];
 
-        vm.showMe = showMe;
-
-        function showMe(selected) { 
-            console.log(selected);
-        }
-
         // Main watcher for Steps
         $scope.$watch(function() {
                 return vm.currentStep;
@@ -64,8 +58,7 @@
         }
 
         function addService(){
-            vm.servicesList.push(vm.serviceDetail);
-            console.log(vm.serviceDetail);
+            vm.servicesList.push(angular.copy(vm.serviceDetail));
             calculateTotal();
         }
 
@@ -86,6 +79,7 @@
                 serviceContainer = options.closest('.service-detail'),
                 closeButton = options.find('.close'),
                 addButton = options.find('.add-service'),
+                addContainer = addButton.closest('div'),
                 customHeight = '30%',
                 speed = 100;
 
@@ -121,12 +115,10 @@
             bindHide();
         }
 
-
         function activateScheduling() {
             $('#schedule').modal();
             runSlider();
         }
-
 
         function calculateTotal() {
             var price = 0;
@@ -139,9 +131,8 @@
 
         function runSlider() {
             var states = [
-                    {left: '0%', width: '31.4%'},
-                    {left: '31.3%', width: '33.4%'},
-                    {left: '64.6%', width: '35.4%'}
+                    {left: '0%', width: '50%'},
+                    {left: '50%', width: '50%'}
                     ],
                 currentState = states[vm.currentStep-1],
                 slider = $('.slider'),

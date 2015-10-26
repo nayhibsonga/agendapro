@@ -24,6 +24,13 @@ a{
   @include border-radius(0);
 }
 
+.btn-gray {
+  background-color: $light-gray;
+  color: white;
+  width: 140px;
+  padding: 10px 12px;
+}
+
 .btn-hora-chic {
   background-color: $light-pink;
   color: $white;
@@ -34,6 +41,10 @@ a{
     background-color: $lighter-pink;
   }
   &:focus{ color: $white; }
+  &.md{
+    padding: 10px 12px;
+    width: 140px;
+  }
 }
 
 .stop-scrolling {
