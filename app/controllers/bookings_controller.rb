@@ -7,6 +7,10 @@ class BookingsController < ApplicationController
   # GET /bookings
   # GET /bookings.json
   def index
+    if current_user.role_id == Role.find_by_name("Staff (sin edición)").id
+      redirect_to fixed_bookings_path
+    end
+
     @company = Company.find(current_user.company_id)
     if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
       @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).order(:order)
