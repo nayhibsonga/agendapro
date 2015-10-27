@@ -1803,6 +1803,8 @@ class PaymentsController < ApplicationController
     @location = Location.find(params[:location_id])
     @sales_cash = SalesCash.find_by_location_id(@location.id)
 
+    @sales_cash.cash = 0.0
+
     if @sales_cash.nil?
       @sales_cash = SalesCash.create(:location_id => @location.id, :cash => 0, :last_reset_date => DateTime.now)
     end
@@ -1810,6 +1812,13 @@ class PaymentsController < ApplicationController
     start_date = @sales_cash.last_reset_date
     end_date = DateTime.now
 
+    @sales_cash_transactions = SalesCashTransaction.where(sales_cash_id: @sales_cash.id, open: true, date: start_date..end_date)
+
+    @sales_cash.cash -= @sales_cash_transactions.sum(:amount)
+
+    @sales_cash_incomes = SalesCashIncome.where(sales_cash_id: @sales_cash.id, open: true, date: start_date..end_date)
+
+    @sales_cash.cash += @sales_cash_incomes.sum(:amount)
 
     @payments = Payment.where(payment_date: start_date..end_date, location_id: @location.id).order(:payment_date)
 
@@ -1826,6 +1835,8 @@ class PaymentsController < ApplicationController
       end
     end
 
+    @sales_cash.cash += @payments.sum(:amount)
+
     @internal_sales = InternalSale.where(location_id: @location.id, date: start_date..end_date)
 
     @internal_sales_sum = 0.0
@@ -1840,6 +1851,8 @@ class PaymentsController < ApplicationController
       @internal_sales_sum += internal_sale.price*internal_sale.quantity
       @internal_sales_discount += internal_sale.discount
     end
+
+    @sales_cash.cash += @internal_sales_sum
 
     if @products_total > 0
       @products_average_discount = (@products_discount/@products_total).round(2)
@@ -1876,6 +1889,9 @@ class PaymentsController < ApplicationController
     @payments_discount = @payments.sum(:discount) + @internal_sales_discount
     @payments_total = @payments.count + @internal_sales_total
     @payments_average_discount = 0
+
+    @sales_cash.save
+
     if @payments_total > 0
       @payments_average_discount = (@payments_discount/@payments_total).round(2)
     end
@@ -1936,36 +1952,324 @@ class PaymentsController < ApplicationController
 
   end
 
+  def close_sales_cash
+    
+    json_response = []
+    errors = []
+
+    sales_cash = SalesCash.find(params[:sales_cash_id])
+
+    if sales_cash.nil?
+      json_response << "error"
+      errors << "No existe el registro buscado."
+      json_response << errors
+      render :json => json_response
+      return
+    end
+
+    now = DateTime.now
+    
+    sales_cash.sales_cash_incomes.where('date <= ?', now).each do |income|
+      income.open = false
+      income.save
+    end
+
+    sales_cash.sales_cash_transactions.where('date <= ?', now).each do |transaction|
+      transaction.open = false
+      transaction.save
+    end
+
+    sales_cash.last_reset_date = now
+    sales_cash.cash = 0.0
+
+    if sales_cash.save
+      json_response << "ok"
+      json_response << sales_cash
+    else
+      json_response << "error"
+      errors << "No existe el registro buscado."
+      json_response << errors
+    end
+
+    render :json => json_response
+
+  end
+
+  ##
+  # Sales Cash Transactions
+  ##
+
   def get_sales_cash_transaction
     sales_cash_transaction = SalesCashTransaction.find(params[:sales_cash_transaction_id])
     render :json => sales_cash_transaction
   end
 
   def save_sales_cash_transaction
-    sales_cash_transaction = SalesCashTransaction.new
 
-    if !params[:sales_cash_transaction_id].blank?
+    errors = []
+    json_response = []
+
+    sales_cash_transaction = SalesCashTransaction.new
+    sales_cash = SalesCash.find(params[:sales_cash_id])
+    petty_cash = PettyCash.find_by_location_id(sales_cash.location_id)
+    old_amount = 0
+    old_petty_transaction = nil
+
+    #If it's edition, check that transaction is open
+    if !params[:sales_cash_transaction_id].blank? && params[:sales_cash_transaction_id] != 0 && params[:sales_cash_transaction_id] != "0"
+
+      if current_user.role_id != Role.find_by_name("Administrador General").id
+        json_response << "error"
+        errors << "No tienes permisos suficientes para editar un traspaso."
+        json_response << errors
+        render :json => json_response
+        return
+      end
+
       sales_cash_transaction = SalesCashTransaction.find(params[:sales_cash_transaction_id])
+      if !sales_cash_transaction.open
+        json_response << "error"
+        errors << "No se puede editar una transferencia cerrada."
+        json_response << errors
+        render :json => json_response
+        return
+      end
     end
+
+    #If it's edition, check that petty_transaction_deletion wouldn't leave petty_cash with cash < 0
+    if !params[:sales_cash_transaction_id].blank? && params[:sales_cash_transaction_id] != 0 && params[:sales_cash_transaction_id] != "0"
+      sales_cash_transaction = SalesCashTransaction.find(params[:sales_cash_transaction_id])
+      if !sales_cash_transaction.petty_transaction_id.nil?
+        petty_transaction = PettyTransaction.find(sales_cash_transaction.petty_transaction_id)
+        if !petty_transaction.nil?
+          if petty_transaction.petty_cash.cash - petty_transaction.amount + params[:amount].to_f < 0
+            json_response << "error"
+            errors << "No se puede editar la transacción pues la caja chica quedaría con dinero menor que 0."
+            json_response << errors
+            render :json => json_response
+            return
+          else
+            old_petty_transaction = petty_transaction
+          end
+        end
+      end
+    end
+
+    #Add old amount to sales_cash
+    old_amount = sales_cash_transaction.amount
 
     sales_cash_transaction.sales_cash_id = params[:sales_cash_id]
     sales_cash_transaction.is_internal_transaction = params[:is_internal]
-    sales_cash_transaction.amount = params[:amount]
+    sales_cash_transaction.amount = params[:amount].to_f
     sales_cash_transaction.user_id = current_user.id
     sales_cash_transaction.date = params[:date].to_date
     sales_cash_transaction.notes = params[:notes]
 
-    json_response = []
+    if sales_cash_transaction.is_internal_transaction
 
-    if sales_cash_transaction.save
-      json_response << "ok"
-      json_response << sales_cash_transaction
+      if !params[:receipt_number].blank?
+        sales_cash_transaction.receipt_number = params[:receipt_number]
+      end
+      
+        sales_cash_transaction.receipt_number = params[:receipt_number]
+        
+        petty_transaction = PettyTransaction.new
+        petty_transaction.petty_cash_id = petty_cash.id
+        petty_transaction.transactioner_type = 1
+        petty_transaction.transactioner_id = current_user.id
+        petty_transaction.date = DateTime.now
+        petty_transaction.amount = sales_cash_transaction.amount
+        petty_transaction.is_income = true
+        petty_transaction.notes = sales_cash_transaction.notes
+        petty_transaction.receipt_number = sales_cash_transaction.receipt_number
+
+        if !petty_transaction.save
+          errors << "Error al generar el traspaso a caja chica."
+        else
+          sales_cash_transaction.petty_transaction_id = petty_transaction.id
+        end
+
     else
-      json_response << "error"
-      json_response << sales_cash_transaction.errors
+      if params[:receipt_number].blank?
+        errors << "Se debe ingresar un número de comprobante asociado."
+      else
+        sales_cash_transaction.receipt_number = params[:receipt_number]
+      end
     end
 
-    render :json sales_cash_transaction
+    if errors.count == 0 && sales_cash_transaction.save
+
+      if !sales_cash_transaction.petty_transaction_id.nil?
+        petty_cash.cash += sales_cash_transaction.amount
+      end
+
+      if !old_petty_transaction.nil?
+        petty_cash.cash -= old_petty_transaction.amount
+        old_petty_transaction.delete
+      end
+
+      sales_cash.cash -= sales_cash_transaction.amount
+      sales_cash.cash += old_amount
+
+      if petty_cash.save && sales_cash.save
+        json_response << "ok"
+        json_response << sales_cash_transaction
+      else
+        json_response << "error"
+        errors << sales_cash.errors
+        errors << petty_cash.errors
+        json_response << errors
+      end
+    else
+      json_response << "error"
+      errors << sales_cash_transaction.errors
+      json_response << errors
+    end
+
+    render :json => json_response
+
+  end
+
+  def delete_sales_cash_transaction
+    
+    json_response = []
+    errors = []
+
+    sales_cash_transaction = SalesCashTransaction.find(params[:sales_cash_transaction_id])
+
+    if sales_cash_transaction.nil?
+      json_response << "error"
+      errors << "No se encontró el traspaso buscado."
+      json_response << errors
+      render :json => json_response
+      return
+    end
+
+    sales_cash = sales_cash_transaction.sales_cash
+    petty_cash = PettyCash.find_by_location_id(sales_cash.location_id)
+
+    if !sales_cash_transaction.petty_transaction_id.nil?
+      petty_transaction = PettyTransaction.find(sales_cash_transaction.petty_transaction_id)
+
+      if current_user.role_id != Role.find_by_name("Administrador General").id
+        json_response << "error"
+        errors << "No tienes permisos suficientes para editar un traspaso."
+        json_response << errors
+        render :json => json_response
+        return
+      end
+
+      if !petty_transaction.nil?
+        if petty_transaction.petty_cash.cash - petty_transaction.amount < 0
+          json_response << "error"
+          errors << "No se puede editar la transacción pues la caja chica quedaría con dinero menor que 0."
+          json_response << errors
+          render :json => json_response
+          return
+        else
+          petty_cash.cash -= petty_transaction.amount
+          petty_cash.save
+          petty_transaction.delete
+        end
+      end
+    end
+
+    sales_cash.cash += sales_cash_transaction.amount
+    if sales_cash_transaction.delete
+      sales_cash.save
+      json_response << "ok"
+      json_response << sales_cash
+    else
+      json_response << "error"
+      errors << sales_cash_transaction.errors
+      json_response << errors
+    end
+
+    render :json => json_response
+
+  end
+
+  def get_sales_cash_income
+    sales_cash_income = SalesCashIncome.find(params[:sales_cash_income_id])
+    render :json => sales_cash_income
+  end
+
+  def save_sales_cash_income
+    
+    json_response = []
+    errors = []
+
+    sales_cash_income = SalesCashIncome.new
+    sales_cash = SalesCash.find(params[:sales_cash_id])
+    old_amount = 0
+
+    if !params[:sales_cash_income_id].blank? && params[:sales_cash_income_id] != 0 && params[:sales_cash_income_id] != "0"
+      if current_user.role_id != Role.find_by_name("Administrador General").id
+        json_response << "error"
+        errors << "No tienes permisos suficientes para editar un ingreso."
+        json_response << errors
+        render :json => json_response
+        return
+      end
+      sales_cash_income = SalesCashIncome.find(params[:sales_cash_income_id])
+      old_amount = sales_cash_income.amount
+    end
+
+    sales_cash_income.sales_cash_id = sales_cash.id
+    sales_cash_income.amount = params[:amount]
+    sales_cash_income.notes = params[:notes]
+    sales_cash_income.date = params[:date]
+    sales_cash_income.user_id = current_user.id
+
+    if sales_cash_income.save
+      sales_cash.cash = sales_cash.cash - old_amount + sales_cash_income.amount
+      if sales_cash.save
+        json_response << "ok"
+        json_response << sales_cash_income
+      else
+        json_response << "error"
+        errors << sales_cash.errors
+        json_response << errors
+      end
+    else
+      json_response << "error"
+      errors << sales_cash_income.errors
+      json_response << errors
+    end
+
+    render :json => json_response
+
+  end
+
+  def delete_sales_cash_income
+
+    json_response = []
+    errors = []
+
+    if current_user.role_id != Role.find_by_name("Administrador General").id
+      json_response << "error"
+      errors << "No tienes permisos suficientes para editar un traspaso."
+      json_response << errors
+      render :json => json_response
+      return
+    end
+
+    sales_cash_income = SalesCashIncome.find(params[:sales_cash_income_id])
+    amount = sales_cash_income.amount
+    sales_cash = sales_cash_income.sales_cash
+
+    if sales_cash_income.delete
+      sales_cash.cash -= amount
+      sales_cash.save
+      json_response << "ok"
+      json_response << sales_cash
+    else
+      json_response << "error"
+      errors << sales_cash_income.errors
+      json_response << errors
+    end
+
+    render :json => json_response
 
   end
 

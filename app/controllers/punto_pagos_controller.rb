@@ -396,15 +396,22 @@ class PuntoPagosController < ApplicationController
         payment.paid_amount = params[:monto]
         payment.change_amount = 0.0
 
+        payment_transaction = PaymentTransaction.new
+
+        payment_transaction.amount = params[:monto].to_f
+
         if params[:medio_pago] == "3"
-          payment.payment_method_id = PaymentMethod.find_by_name("AgendaPro").id
-          payment.payment_method_number = params[:codigo_autorizacion]
-          payment.payment_method_type_id = PaymentMethodType.find_by_name("Sin información").id
-          payment.installments = params[:num_cuotas]
+          payment_transaction.payment_method_id = PaymentMethod.find_by_name("Online").id
+          payment_transaction.number = params[:codigo_autorizacion]
+          payment_transaction.payment_method_type_id = PaymentMethodType.find_by_name("Sin información").id
+          payment_transaction.installments = params[:num_cuotas]
         else
-          payment.payment_method_id = PaymentMethod.find_by_name("AgendaPro").id
-          payment.payment_method_number = params[:codigo_autorizacion]
+          payment_transaction.payment_method_id = PaymentMethod.find_by_name("Online").id
+          payment_transaction.payment_method_number = params[:codigo_autorizacion]
         end
+
+        payment_transaction.payment.save
+        payment.payment_transactions << payment_transaction
 
         payment.payment_date = DateTime.now.to_date
         payment.location_id = first_booking.location_id

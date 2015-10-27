@@ -20,9 +20,8 @@
 <div class="row">
   <div class="col-sm-3">
     <div class="well revenue1">
-      <h4>Recaudación:</h4>
-      <p class="revenue-price"><strong><%= number_to_currency(@payments_sum, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
-      <p class="revenue-description">(Dando <%= @payments_average_discount ? @payments_average_discount.round(2) : '0' %> % de descuento promedio en <%= @payments_total %> movimientos)</p>
+      <h4>Monto total:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@sales_cash.cash, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
     </div>
   </div>
   <div class="col-sm-3">
@@ -45,6 +44,26 @@
       <p class="revenue-price"><strong><%= number_to_currency(@products_sum, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
       <p class="revenue-description">(Dando <%= @products_actual_discount.to_s %> % de descuento en <%= @products_total %> productos)</p>
     </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-3">
+    <div class="well revenue">
+      <h4>Ingresos:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@sales_cash_incomes.sum(:amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="well revenue">
+      <h4>Egresos:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@sales_cash_transactions.sum(:amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+    </div>
+  </div>
+  <div class="col-sm-3">
+
+  </div>
+  <div class="col-sm-3">
+
   </div>
 </div>
 <div class="row">
@@ -183,6 +202,93 @@
                 <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
                   <button class="btn btn-warning btn-xs" onclick="editInternalSale(<%= internal_sale.id %>);"><i class="fa fa-pencil"></i></button> 
                   <button class="btn btn-red btn-xs" onclick="deleteInternalSale(<%= internal_sale.id %>);"><i class="fa fa-trash-o"></i></button>
+                <% else %>
+                  Sin opciones
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TRASPASOS E INGRESOS -->
+    <div class="table-div">
+      <span style="font-size: 19px; font-weight: bold; color: #22c488;">Traspasos</span>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Monto</th>
+            <th>N° de comprobante</th>
+            <th>Notas</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @sales_cash_transactions.each do |sales_cash_transaction| %>
+            <tr>
+              <td><%= sales_cash_transaction.date.strftime('%d-%m-%Y') %></td>
+              <td>
+                <% if sales_cash_transaction.is_internal_transaction %>
+                  A caja chica
+                <% else %>
+                  Externo
+                <% end %>
+              </td>
+              <td>
+                <%= number_to_currency(sales_cash_transaction.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+              </td>
+              <td>
+                <% if sales_cash_transaction.receipt_number.nil? || sales_cash_transaction.receipt_number = "" %>
+                  No aplica
+                <% else %>
+                  <%= sales_cash_transaction.receipt_number %>
+                <% end %>
+              </td>
+              <td>
+                <%= sales_cash_transaction.notes %>
+              </td>
+              <td>
+                <% if current_user.role_id == Role.find_by_name("Administrador General").id && sales_cash_transaction.open %>
+                  <button class="btn btn-warning btn-xs" onclick="editSalesCashTransaction(<%= sales_cash_transaction.id %>);"><i class="fa fa-pencil"></i></button> 
+                  <button class="btn btn-red btn-xs" onclick="deleteSalesCashTransaction(<%= sales_cash_transaction.id %>);"><i class="fa fa-trash-o"></i></button>
+                <% else %>
+                  Sin opciones
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-div">
+      <span style="font-size: 19px; font-weight: bold; color: #22c488;">Ingresos</span>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Monto</th>
+            <th>Notas</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @sales_cash_incomes.each do |sales_cash_income| %>
+            <tr>
+              <td><%= sales_cash_income.date.strftime('%d-%m-%Y') %></td>
+              <td>
+                <%= number_to_currency(sales_cash_income.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+              </td>
+              <td>
+                <%= sales_cash_income.notes %>
+              </td>
+              <td>
+                <% if current_user.role_id == Role.find_by_name("Administrador General").id && sales_cash_income.open %>
+                  <button class="btn btn-warning btn-xs" onclick="editSalesCashIncome(<%= sales_cash_income.id %>);"><i class="fa fa-pencil"></i></button> 
+                  <button class="btn btn-red btn-xs" onclick="deleteSalesCashIncome(<%= sales_cash_income.id %>);"><i class="fa fa-trash-o"></i></button>
                 <% else %>
                   Sin opciones
                 <% end %>

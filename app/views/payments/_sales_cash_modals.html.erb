@@ -67,7 +67,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default btn-petty-semi-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
         <button type="button" class="btn btn-green" id="salesCashSaveBtn" aria-label="Siguiente">Guardar</button>
       </div>
     </div>
@@ -84,6 +84,9 @@
       <div class="modal-body" id="salesCashTransactionModalBody">
         <div class="row">
           <div class="col-xs-12">
+
+            <input type="hidden" id="sales_cash_transaction_edit" name="sales_cash_transaction_edit" value="0" />
+            <input type="hidden" id="sales_cash_transaction_id" name="sales_cash_transaction_id" value="0" />
 
             <div class="payment-form-div form-group">
               <label class="col-xs-4 control-label">Tipo</label>
@@ -142,7 +145,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default btn-petty-semi-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
         <button type="button" class="btn btn-green" id="salesCashTransactionSaveBtn" aria-label="Siguiente">Guardar</button>
       </div>
     </div>
@@ -159,6 +162,9 @@
       <div class="modal-body" id="salesCashIncomeModalBody">
         <div class="row">
           <div class="col-xs-12">
+
+            <input type="hidden" id="sales_cash_income_edit" name="sales_cash_income_edit" value="0" />
+            <input type="hidden" id="sales_cash_income_id" name="sales_cash_income_id" value="0" />
 
             <div class="payment-form-div form-group">
               <label class="col-xs-4 control-label">Monto</label>
@@ -194,8 +200,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default btn-petty-semi-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
-        <button type="button" class="btn btn-green" id="salesCashIncomeSaveBtn" aria-label="Siguiente">Guardar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-green" id="salesCashIncomeSaveBtn" aria-label="Guardar">Guardar</button>
       </div>
     </div>
   </div>

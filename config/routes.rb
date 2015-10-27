@@ -436,6 +436,17 @@
     get '/sales_cash_content', :to => 'payments#sales_cash_content'
     get '/get_sales_cash', :to => 'payments#get_sales_cash'
     post '/save_sales_cash', :to => 'payments#save_sales_cash'
+    post '/close_sales_cash', :to => 'payments#close_sales_cash'
+
+    #SalesCashTransactions
+    get '/get_sales_cash_transaction', :to => 'payments#get_sales_cash_transaction'
+    post '/save_sales_cash_transaction', :to => 'payments#save_sales_cash_transaction'
+    post '/delete_sales_cash_transaction', :to => 'payments#delete_sales_cash_transaction'
+
+    #SalesCashIncome
+    get '/get_sales_cash_income', :to => 'payments#get_sales_cash_income'
+    post '/save_sales_cash_income', :to => 'payments#save_sales_cash_income'
+    post '/delete_sales_cash_income', :to => 'payments#delete_sales_cash_income'
 
     #Payment Reports
     get '/sales_reports', :to => 'payments#sales_reports'

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151023150345) do
+ActiveRecord::Schema.define(version: 20151027171646) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -431,9 +431,9 @@ ActiveRecord::Schema.define(version: 20151023150345) do
     t.float    "list_price",          default: 0.0
     t.float    "price",               default: 0.0
     t.float    "discount",            default: 0.0
-    t.date     "date",                default: '2015-10-22'
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "date",                default: '2015-10-27 17:17:43'
   end
 
   create_table "last_minute_promos", force: true do |t|
@@ -1021,6 +1021,7 @@ ActiveRecord::Schema.define(version: 20151023150345) do
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "open",          default: true
   end
 
   create_table "sales_cash_logs", force: true do |t|
@@ -1042,6 +1043,8 @@ ActiveRecord::Schema.define(version: 20151023150345) do
     t.boolean  "is_internal_transaction", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "petty_transaction_id"
+    t.boolean  "open",                    default: true
   end
 
   create_table "sales_cashes", force: true do |t|
@@ -1053,19 +1056,6 @@ ActiveRecord::Schema.define(version: 20151023150345) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "scheduled_reset",         default: false
-  end
-
-  create_table "sales_transactions", force: true do |t|
-    t.integer  "sales_cash_id"
-    t.integer  "transactioner_id"
-    t.integer  "transactioner_type", default: 1
-    t.datetime "date",               default: '2015-10-21 13:44:41'
-    t.float    "amount",             default: 0.0
-    t.boolean  "is_income",          default: false
-    t.text     "notes",              default: ""
-    t.string   "receipt_number",     default: ""
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "service_categories", force: true do |t|

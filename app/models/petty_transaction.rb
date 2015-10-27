@@ -1,6 +1,7 @@
 class PettyTransaction < ActiveRecord::Base
 
 	belongs_to :petty_cash
+	has_one :sales_cash_transaction
 
 	def get_transactioner_details
 	    if !self.transactioner_id.nil?
