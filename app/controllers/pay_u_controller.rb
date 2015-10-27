@@ -352,8 +352,7 @@ class PayUController < ApplicationController
   end
 
   def confirmation
-    Rails.logger.info params.inspect
-    Rails.logger.info params[:post].inspect
+    pay_u_notification = PayUNotification.create(params.slice(:action, :controller))
     render :nothing => true, :status => 200, :content_type => 'text/html'
     # punto_pagos_confirmation = PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id], payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
     # if params[:respuesta] == "00"
