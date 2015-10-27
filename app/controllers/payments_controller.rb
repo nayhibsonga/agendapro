@@ -1979,10 +1979,16 @@ class PaymentsController < ApplicationController
       transaction.save
     end
 
+    old_cash = sales_cash.cash
+    old_reset_date = sales_cash.last_reset_date
+
     sales_cash.last_reset_date = now
     sales_cash.cash = 0.0
 
     if sales_cash.save
+
+      SalesCashLog.create(sales_cash_id: sales_cash.id, start_date: old_reset_date, end_date: now, remaining_amount: old_cash)
+
       json_response << "ok"
       json_response << sales_cash
     else
