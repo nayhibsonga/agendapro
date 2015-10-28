@@ -3733,31 +3733,29 @@ class BookingsController < ApplicationController
         if in_provider_time
 
           if last_row >= 0
-            while table_rows[last_row][1] == 'Continuación...'  do
+            while table_rows[last_row][1] == 'OCUPADO'  do
               # Subir un nivel para ver si es el mismo servicio o no
                 last_row -=1
             end
 
-            # if in_provider_time
+            if !in_provider_booking
               Booking.where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: now.beginning_of_day..now.end_of_day).order(:start).each do |booking|
                 if (booking.start.to_datetime - block_close)*(block_open - booking.end.to_datetime) > 0
                   in_provider_booking = true
-                  service_name = booking.service.name
-                  client_name = booking.client.first_name + ' ' + booking.client.last_name
-                  client_phone = booking.client.phone
+                  table_rows.append([provider_open.strftime('%R'), 'OCUPADO', '...', '...'])
                   break
                 end
               end
-            # end
-
-            if (service_name != '') && (service_name == table_rows[last_row][1]) && (client_name == (table_rows[last_row][2]))
-
-              service_name = 'Continuación...'
-              client_name = '...'
-              client_phone = '...'
-
-              table_rows.append([provider_open.strftime('%R'), 'Continuación...', '...', '...'])
             end
+
+            # if (service_name != '') && (service_name == table_rows[last_row][1]) && (client_name == (table_rows[last_row][2]))
+
+            #   service_name = 'OCUPADO'
+            #   client_name = '...'
+            #   client_phone = '...'
+
+              
+            # end
           end
         end
 
