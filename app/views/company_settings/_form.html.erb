@@ -1003,6 +1003,14 @@
                 <div class="form-group">
                   <div class="checkbox">
                     <label>
+                      <%= f.check_box :show_cashes %> Habilitar caja avanzada
+                    </label>
+                    <span class="help-block">Habilita esta opción para que puedas llevar un balance completo de tus ventas y tu caja chica, incluyendo traspasos, ingresos por pagos de servicios y productos, movimientos varios y cierres de caja configurables.</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
                       <%= f.check_box :payment_client_required %> Requerir cliente en pago
                     </label>
                     <span class="help-block">Habilita esta opción para que al registrar un pago sea obligatorio ingresar un cliente existente o nuevo.</span>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151027171646) do
+ActiveRecord::Schema.define(version: 20151028134845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -317,6 +317,7 @@ ActiveRecord::Schema.define(version: 20151027171646) do
     t.boolean  "can_cancel",                 default: true
     t.boolean  "use_identification_number",  default: false
     t.boolean  "payment_client_required",    default: true
+    t.boolean  "show_cashes",                default: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree

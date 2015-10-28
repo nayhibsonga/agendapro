@@ -2314,8 +2314,24 @@ class PaymentsController < ApplicationController
 
     service_provider_ids = params[:service_provider_ids]
     @service_providers = ServiceProvider.where(id: service_provider_ids)
-    @from = DateTime.now
-    @to = DateTime.now
+    @from = params[:from].to_datetime
+    @to = params[:to].to_datetime
+
+    @status_cancelled_id = Status.find_by_name("Cancelado").id
+
+    bookings_amount = Booking.where.not(status_id: @status_cancelled_id).where(service_provider_id: service_provider_ids, start: @from.beginning_of_day..@to.end_of_day).sum(:price)
+
+    mock_bookings_amount = MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).sum(:price)
+
+    products_amount = PaymentProduct.where(seller_id: service_provider_ids, seller_type: 0, payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).sum(:price)
+
+    @services_amount = bookings_amount + mock_bookings_amount
+    @products_amount = products_amount
+    @total_amount = @services_amount + @products_amount
+
+    @services = Service.where(id: Booking.where.not(status_id: @status_cancelled_id).where(service_provider_id: service_provider_ids, start: @from.beginning_of_day..@to.end_of_day).pluck(:service_id))
+
+    logger.debug @bookings.inspect
 
     respond_to do |format|
       format.html { render :partial => 'service_providers_report' }

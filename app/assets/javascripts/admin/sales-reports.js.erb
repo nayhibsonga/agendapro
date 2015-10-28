@@ -2,6 +2,11 @@ function loadProvidersReport()
 {
 	var provider_ids = []
 
+	if($('[name="person_type"]:checked').val() != "service_provider")
+	{
+		return;
+	}
+
 	$("#serviceProvidersMultiSelect option").each(function(){
 		if ($(this).is(':selected'))
 		{
@@ -9,9 +14,14 @@ function loadProvidersReport()
 		}
 	});
 
+	if(provider_ids.length == 0)
+	{
+		return;
+	}
+
 	$.ajax({
 		url: 'service_providers_report',
-		data: {service_provider_ids: provider_ids},
+		data: {service_provider_ids: provider_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
 		  	alert("Error");
@@ -24,6 +34,59 @@ function loadProvidersReport()
 }
 
 $(document).ready(function(){
+
+
+	$("#reports_start").datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    autoSize: true,
+	    changeYear: true,
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	    prevText: 'Atrás',
+	    nextText: 'Adelante',
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    today: 'Hoy',
+	    clear: '',
+	    defaultDate: "+1w",
+	    changeMonth: true,
+	    numberOfMonths: 3,
+	    firstDay: 1,
+	    onClose: function( selectedDate ) {
+	      //$("#reports_start").datepicker( "option", "minDate", selectedDate );
+	    }
+	});
+	$("#reports_end").datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    autoSize: true,
+	    changeYear: true,
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	    prevText: 'Atrás',
+	    nextText: 'Adelante',
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    today: 'Hoy',
+	    clear: '',
+	    defaultDate: "+1w",
+	    changeMonth: true,
+	    numberOfMonths: 3,
+	    firstDay: 1,
+	    onClose: function( selectedDate ) {
+	      //$( "#reports_end" ).datepicker( "option", "maxDate", selectedDate );
+	    }
+	});
+
+	$('#reports_start').on('change', function(){
+		loadProvidersReport();
+	});
+
+	$('#reports_end').on('change', function(){
+		loadProvidersReport();
+	});
+
 
 	$('#serviceProvidersMultiSelect').multiselect({
 	    includeSelectAllOption: true,
