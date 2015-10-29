@@ -1,30 +1,20 @@
 <div class="row">
-  <div class="col-sm-3">
+  <div class="col-sm-4">
     <div class="well revenue1">
       <h4>Recaudación:</h4>
       <p class="revenue-price"><strong><%= number_to_currency(@payments_sum, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
-      <p class="revenue-description">(Dando <%= @payments_average_discount ? @payments_average_discount.round(2) : '0' %> % de descuento promedio en <%= @payments_total %> movimientos)</p>
     </div>
   </div>
-  <div class="col-sm-3">
-    <div class="well revenue">
-      <h4>Recaudación por Reservas:</h4>
-      <p class="revenue-price"><strong><%= number_to_currency(Booking.where(payment_id: @payments).sum(:price), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
-      <p class="revenue-description">(Dando <%= Booking.where(payment_id: @payments).average(:discount) ? Booking.where(payment_id: @payments).average(:discount).round(2) : '0'  %> % de descuento promedio en <%= Booking.where(payment_id: @payments).count %> reservas)</p>
-    </div>
-  </div>
-  <div class="col-sm-3">
+  <div class="col-sm-4">
     <div class="well revenue">
       <h4>Recaudación por Servicios:</h4>
-      <p class="revenue-price"><strong><%= number_to_currency(MockBooking.where(payment_id: @payments).sum(:price), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
-      <p class="revenue-description">(Dando <%= MockBooking.where(payment_id: @payments).average(:discount) ? MockBooking.where(payment_id: @payments).average(:discount).round(2) : '0'  %> % de descuento promedio en <%= MockBooking.where(payment_id: @payments).count %> servicios)</p>
+      <p class="revenue-price"><strong><%= number_to_currency(MockBooking.where(payment_id: @payments).sum(:price) + Booking.where(payment_id: @payments).sum(:price), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
     </div>
   </div>
-  <div class="col-sm-3">
+  <div class="col-sm-4">
     <div class="well revenue">
       <h4>Recaudación por Productos:</h4>
       <p class="revenue-price"><strong><%= number_to_currency(@products_sum, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
-      <p class="revenue-description">(Dando <%= @products_actual_discount.to_s %> % de descuento en <%= @products_total %> productos)</p>
     </div>
   </div>
 </div>
@@ -32,8 +22,8 @@
   <div class="col-sm-12">
 
     <div class="table-div">
-      <span style="font-size: 19px; font-weight: bold; color: #22c488;">Pagos</span>
-      <table class="table">
+      <div class="content_header">Pagos</div>
+      <table class="table sales_cash_table">
         <thead>
           <tr>
             <th>Fecha de Pago</th>
@@ -42,6 +32,7 @@
             <th>Detalle</th>
             <th>Monto</th>
             <th>Descuento</th>
+            <th></th>
             <th>Opciones</th>
           </tr>
         </thead>
@@ -60,6 +51,7 @@
             <td><button class="btn btn-green btn-xs" id="payment_details_button_<%= payment.id %>">Vista Rápida</button></td>
             <td><%= number_to_currency(payment.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
             <td><%= payment.discount.round(2) %> %</td>
+            <td>&nbsp;</td>
             <td>
               <button class="btn btn-dark-green btn-xs" onclick="openPaymentPdfs(<%= payment.id %>);"><i class="fa fa-file-pdf-o"></i></button>
               <button class="btn btn-orange btn-xs" onclick="openPaymentMailer(<%= payment.id %>);"><i class="fa fa-envelope"></i></button>
@@ -130,8 +122,8 @@
 
     <!-- VENTAS INTERNAS -->
     <div class="table-div">
-      <span style="font-size: 19px; font-weight: bold; color: #22c488;">Ventas internas</span>
-      <table class="table">
+      <div class="content_header sales_cash_table">Ventas internas</div>
+      <table class="table sales_cash_table">
         <thead>
           <tr>
             <th>Fecha</th>

@@ -93,3 +93,111 @@ table.servicesTable td{
 	color: #505050;
 	margin: 4px;
 }
+
+#payment_transactions_table{
+  width: 100%;
+}
+
+#payment_transactions_table input{
+  width: 100%;
+}
+
+#payment_transactions_table th, #payment_transactions_table td{
+  padding-left: 2px;
+  border: none;
+}
+
+#payment_transactions_table td.method_td{
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.cost_td{
+  padding-left: 8px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.change_td{
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.method_td input{
+  color: #fff !important;
+  border: 1px solid #d7d7d7 !important;
+  background-color: #d7d7d7;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.sum_td input{
+  color: #fff !important;
+  border: 1px solid #949292 !important;
+  background-color: #949292;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.cost_td input{
+  color: #22c488 !important;
+  border: 1px solid #22c488 !important;
+  background-color: #fff;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.change_td input{
+  color: #fff !important;
+  border: 1px solid #22c488 !important;
+  background-color: #22c488;
+  padding-left: 2px;
+  height: 30px;
+}
+
+.content_header{
+	background-color: #22c488;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	padding-left: 8px;
+	color: #fff;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.sales_cash_table th{
+	width: 12.5% !important;
+}
+
+.providers_report_table{
+	width: 100%;
+}
+
+.providers_report_table .provider_name_th{
+	color: #fff;
+	text-align: center;
+	background-color: #22c488;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.providers_report_table .first_row td{
+	color: #505050;
+	text-align: left;
+	background-color: #d7d7d7;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.providers_report_table .standard_row td{
+	color: #505050;
+	text-align: left;
+	background-color: #fff;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}

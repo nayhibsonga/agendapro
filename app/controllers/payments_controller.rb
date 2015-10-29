@@ -4,7 +4,7 @@ class PaymentsController < ApplicationController
   layout "admin"
   load_and_authorize_resource
 
-  respond_to :html, :json
+  respond_to :html, :json, :xls, :csv
 
   def index
     @payment = Payment.new
@@ -2300,12 +2300,16 @@ class PaymentsController < ApplicationController
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
       @cashiers = current_user.company.cashiers
       @users = current_user.company.users
-    elsif current_user.role_id == Role.find_by_name("Administrador Local").id || current_user.role_id == Role.find_by_name("Recepcionista").id
+    elsif current_user.role_id == Role.find_by_name("Administrador Local").id
       @locations = current_user.locations
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
       @users = User.where(id: UserLocation.where(location_id: @locations.pluck(:id)).pluck(:user_id))
+    elsif current_user.role_id == Role.find_by_name("Recepcionista").id
+      @locations = current_user.locations
+      @users = User.where(id: current_user.id)
     elsif current_user.tole_id == Role.find_by_name("Staff") || current_user.role_id == Role.find_by_name("Staff (sin edición)")
       @service_providers = current_user.service_providers
+      @users = User.where(id: current_user.id)
     end
 
   end
@@ -2317,34 +2321,131 @@ class PaymentsController < ApplicationController
     @from = params[:from].to_datetime
     @to = params[:to].to_datetime
 
+    @time_option = 0
+
+    if @to - @from > 28
+      @time_option = 1
+    end
+
     @status_cancelled_id = Status.find_by_name("Cancelado").id
 
-    bookings_amount = Booking.where.not(status_id: @status_cancelled_id).where(service_provider_id: service_provider_ids, start: @from.beginning_of_day..@to.end_of_day).sum(:price)
+    bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: service_provider_ids, start: @from.beginning_of_day..@to.end_of_day)
 
-    mock_bookings_amount = MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).sum(:price)
+    mock_bookings = MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
 
-    products_amount = PaymentProduct.where(seller_id: service_provider_ids, seller_type: 0, payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).sum(:price)
+    payment_products = PaymentProduct.where(seller_id: service_provider_ids, seller_type: 0, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
 
-    @services_amount = bookings_amount + mock_bookings_amount
-    @products_amount = products_amount
+    @services_amount = bookings.sum(:price) + mock_bookings.sum(:price)
+    @products_amount = 0.0
+
+    @commissions_amount = 0.0
+
+    bookings.each do |booking|
+      @commissions_amount += booking.get_commission
+    end
+
+    mock_bookings.where('service_id is not null').each do |mock_booking|
+      @commissions_amount += mock_booking.get_commission
+    end
+
+    payment_products.each do |payment_product|
+      @commissions_amount += payment_product.quantity * payment_product.product.get_commission
+      @products_amount += payment_product.quantity * payment_product.price
+    end
+
     @total_amount = @services_amount + @products_amount
 
-    @services = Service.where(id: Booking.where.not(status_id: @status_cancelled_id).where(service_provider_id: service_provider_ids, start: @from.beginning_of_day..@to.end_of_day).pluck(:service_id))
+    services1 = Service.where(id: Booking.where.not(status_id: @status_cancelled_id).where(service_provider_id: service_provider_ids, start: @from.beginning_of_day..@to.end_of_day).pluck(:service_id))
 
-    logger.debug @bookings.inspect
+    services2 = Service.where(id: MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).where('service_id is not null').where.not(service_id: services1.pluck(:id)).pluck(:service_id))
+
+    @services = services1 + services2
 
     respond_to do |format|
       format.html { render :partial => 'service_providers_report' }
-      format.json { render json: @serviceProviders }
+      format.json { render json: @service_providers }
     end
 
   end
 
   def users_report
 
+    user_ids = params[:user_ids]
+    @users = User.where(id: user_ids)
+
+    @from = params[:from].to_datetime
+    @to = params[:to].to_datetime
+
+    @time_option = 0
+
+    if @to - @from > 28
+      @time_option = 1
+    end
+
+    payment_products = PaymentProduct.where(seller_id: user_ids, seller_type: 1, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+
+    @products_amount = 0.0
+
+    @commissions_amount = 0.0
+
+    payment_products.each do |payment_product|
+      @commissions_amount += payment_product.quantity * payment_product.product.get_commission
+      @products_amount += payment_product.quantity * payment_product.price
+    end
+
+    @total_amount = @products_amount
+
+    respond_to do |format|
+      format.html { render :partial => 'users_report' }
+      format.json { render json: @users }
+    end
+
+
   end
 
   def cashiers_report
+
+    cashier_ids = params[:cashier_ids]
+    @cashiers = Cashier.where(id: cashier_ids)
+
+    @from = params[:from].to_datetime
+    @to = params[:to].to_datetime
+
+    @time_option = 0
+
+    if @to - @from > 28
+      @time_option = 1
+    end
+
+    payment_products = PaymentProduct.where(seller_id: cashier_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+
+    @products_amount = 0.0
+
+    @commissions_amount = 0.0
+
+    payment_products.each do |payment_product|
+      @commissions_amount += payment_product.quantity * payment_product.product.get_commission
+      @products_amount += payment_product.quantity * payment_product.price
+    end
+
+    @total_amount = @products_amount
+
+    respond_to do |format|
+      format.html { render :partial => 'cashiers_report' }
+      format.json { render json: @users }
+    end
+
+  end
+
+  def service_providers_report_file
+
+    service_provider_ids = params[:service_provider_ids].split(",")
+
+    @service_providers = ServiceProvider.where(id: service_provider_ids)
+    @from = params[:from].to_datetime
+    @to = params[:to].to_datetime
+
+    respond_with(@service_providers)
 
   end
 

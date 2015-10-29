@@ -551,7 +551,15 @@ class LocationsController < ApplicationController
   def location_products
 
     @location = Location.find(params[:id])
-    @products = Product.where(id: LocationProduct.where(:location_id => @location.id).where('stock > 0').pluck(:product_id))
+    products = Product.where(id: LocationProduct.where(:location_id => @location.id).where('stock > 0').pluck(:product_id))
+
+    @products = []
+
+    products.each do |product|
+      product_hash = product.attributes.to_options
+      product_hash[:full_name] = product.name + " " + " " + product.product_brand.name + " " + product.product_display.name
+      @products << product_hash
+    end
 
     render :json => @products
 

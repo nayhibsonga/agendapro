@@ -211,6 +211,9 @@ class Ability
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id
         can :service_providers_report, Payment, :company_id => user.company_id
+        can :users_report, Payment, :company_id => user.company_id
+        can :cashiers_report, Payment, :company_id => user.company_id
+        can :service_providers_report_file, Payment, :company_id => user.company_id
 
         #Internal Sale
         can :save_internal_sale, Payment, :company_id => user.company_id
@@ -453,6 +456,9 @@ class Ability
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id
         can :service_providers_report, Payment, :company_id => user.company_id
+        can :users_report, Payment, :company_id => user.company_id
+        can :cashiers_report, Payment, :company_id => user.company_id
+        can :service_providers_report_file, Payment, :company_id => user.company_id
 
         #Internal Sale
         can :save_internal_sale, Payment, :company_id => user.company_id
@@ -549,10 +555,6 @@ class Ability
         can :region_cities, City
         can :city_districs, District
 
-        #Sales Reports
-        can :sales_reports, Payment, :company_id => user.company_id
-        can :service_providers_report, Payment, :company_id => user.company_id
-
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
         can :get_booking, Booking, :location_id => user.locations.pluck(:id)
@@ -634,7 +636,7 @@ class Ability
 
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id
-        can :service_providers_report, Payment, :company_id => user.company_id
+        can :users_report, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff").id
         
@@ -702,6 +704,8 @@ class Ability
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id
         can :service_providers_report, Payment, :company_id => user.company_id
+        can :users_report, Payment, :company_id => user.company_id
+        can :service_providers_report_file, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 
@@ -734,6 +738,8 @@ class Ability
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id
         can :service_providers_report, Payment, :company_id => user.company_id
+        can :users_report, Payment, :company_id => user.company_id
+        can :service_providers_report_file, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Ventas").id
 

@@ -12,6 +12,14 @@ class Product < ActiveRecord::Base
 
   accepts_nested_attributes_for :location_products, :reject_if => :all_blank, :allow_destroy => true
 
+  def get_commission
+    if self.comission_option == 0
+      return self.price * self.comission_value / 100
+    else
+      return self.comission_value
+    end
+  end
+
   def full_name
 
     full_name = self.name + ", " + self.product_category.name + ", " + self.product_brand.name + ", " + self.product_display.name + " (SKU: " + self.sku + ")"

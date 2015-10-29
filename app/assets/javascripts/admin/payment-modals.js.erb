@@ -1223,7 +1223,7 @@ function loadLocationProducts()
   $("#payment_product").append('<option value="-1">Ninguno</option>');
   $.getJSON('/location_products/', {id: parseInt($('#payment_location').val()) }, function (products) {
     $.each(products, function (key, product) {
-      $("#payment_product").append('<option value="' + product.id + '">' + product.name + '</option>');
+      $("#payment_product").append('<option value="' + product.id + '">' + product.full_name + '</option>');
     });
   });
 }

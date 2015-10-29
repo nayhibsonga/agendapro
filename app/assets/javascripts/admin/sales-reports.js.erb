@@ -1,7 +1,8 @@
 function loadProvidersReport()
 {
 	var provider_ids = []
-
+	$('#render_content').empty();
+	
 	if($('[name="person_type"]:checked').val() != "service_provider")
 	{
 		return;
@@ -19,18 +20,109 @@ function loadProvidersReport()
 		return;
 	}
 
+	$('#loader-div').show();
+
 	$.ajax({
 		url: 'service_providers_report',
 		data: {service_provider_ids: provider_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
 		  	alert("Error");
+		  	$('#loader-div').hide();
 		},
 		success: function(response){
-		  	$('#render_content').empty();
+		  	
 		  	$('#render_content').append(response);
+		  	$('#loader-div').hide();
 		}
 	});
+}
+
+function loadUsersReport()
+{
+	var user_ids = []
+	$('#render_content').empty();
+	
+	if($('[name="person_type"]:checked').val() != "user")
+	{
+		return;
+	}
+
+	$("#usersMultiSelect option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	user_ids.push($(this).val());
+		}
+	});
+
+	if(user_ids.length == 0)
+	{
+		return;
+	}
+
+	$('#loader-div').show();
+
+	$.ajax({
+		url: 'users_report',
+		data: {user_ids: user_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
+		type: 'get',
+		error: function(response){
+		  	alert("Error");
+		  	$('#loader-div').hide();
+		},
+		success: function(response){
+		  	
+		  	$('#render_content').append(response);
+		  	$('#loader-div').hide();
+		}
+	});
+}
+
+function loadCashiersReport()
+{
+	var cashier_ids = []
+	$('#render_content').empty();
+	
+	if($('[name="person_type"]:checked').val() != "cashier")
+	{
+		return;
+	}
+
+	$("#cashiersMultiSelect option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	cashier_ids.push($(this).val());
+		}
+	});
+
+	if(cashier_ids.length == 0)
+	{
+		return;
+	}
+
+	$('#loader-div').show();
+
+	$.ajax({
+		url: 'cashiers_report',
+		data: {cashier_ids: cashier_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
+		type: 'get',
+		error: function(response){
+		  	alert("Error");
+		  	$('#loader-div').hide();
+		},
+		success: function(response){
+		  	
+		  	$('#render_content').append(response);
+		  	$('#loader-div').hide();
+		}
+	});
+}
+
+function loadReport()
+{
+	loadProvidersReport();
+	loadUsersReport();
+	loadCashiersReport();
 }
 
 $(document).ready(function(){
@@ -80,11 +172,11 @@ $(document).ready(function(){
 	});
 
 	$('#reports_start').on('change', function(){
-		loadProvidersReport();
+		loadReport();
 	});
 
 	$('#reports_end').on('change', function(){
-		loadProvidersReport();
+		loadReport();
 	});
 
 
@@ -119,7 +211,7 @@ $(document).ready(function(){
 	      	}
 	    },
 	    onChange: function(option, checked, select){
-	    	loadProvidersReport();
+	    	loadReport();
 	    }
 	});
 
@@ -154,7 +246,7 @@ $(document).ready(function(){
 	      	}
 	    },
 	    onChange: function(option, checked, select){
-	    	
+	    	loadReport();
 	    }
 	});
 
@@ -189,8 +281,12 @@ $(document).ready(function(){
 	      	}
 	    },
 	    onChange: function(option, checked, select){
-	    	
+	    	loadReport();
 	    }
+	});
+
+	$('[name="person_type"]').on('change', function(){
+		loadReport();
 	});
 
 });

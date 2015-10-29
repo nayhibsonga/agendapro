@@ -451,6 +451,9 @@
     #Payment Reports
     get '/sales_reports', :to => 'payments#sales_reports'
     get '/service_providers_report', :to => 'payments#service_providers_report'
+    get '/users_report', :to => 'payments#users_report'
+    get '/cashiers_report', :to => 'payments#cashiers_report'
+    get '/service_providers_report_file', :to => 'payments#service_providers_report_file'
 
   end
 
