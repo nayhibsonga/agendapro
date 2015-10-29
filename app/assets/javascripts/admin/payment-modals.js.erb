@@ -2327,7 +2327,7 @@ function deletePayment(payment_id)
     $.ajax({
       url: '/delete_payment',
       type: 'post',
-      data: {payment_id, payment_id},
+      data: {payment_id: payment_id},
       dataType: 'json',
       error: function(resonse){
         alert("Ocurrió un error al eliminar el pago.");
