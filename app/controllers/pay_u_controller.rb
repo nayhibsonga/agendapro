@@ -199,6 +199,19 @@ class PayUController < ApplicationController
     end
   end
 
+  def response
+    pay_u_response = PayUResponse.create(response_params)
+    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+    if response_params[:transactionState] == "4" || response_params[:transactionState] == "7"
+      if PayUNotification.find_by_transaction_id(response_params[:transactionId])
+        if PayUNotification.find_by_transaction_id(response_params[:transactionId]).state_pol == "4"
+        encrypted_data = crypt.encrypt_and_sign()
+
+    else
+
+    end
+  end
+
   def success
     if params[:token]
       if PuntoPagosConfirmation.find_by_token(params[:token])
@@ -352,83 +365,86 @@ class PayUController < ApplicationController
   end
 
   def confirmation
-    Rails.logger.info confirmation_params.inspect
     pay_u_notification = PayUNotification.create(confirmation_params)
     render :nothing => true, :status => 200, :content_type => 'text/html'
     # punto_pagos_confirmation = PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id], payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
-    # if params[:respuesta] == "00"
-    #   if BillingLog.find_by_trx_id(params[:trx_id])
-    #     billing_log = BillingLog.find_by_trx_id(params[:trx_id])
-    #     company = Company.find(billing_log.company_id)
-    #     company.months_active_left += billing_log.amount
-    #     company.due_amount = 0.0
-    #     company.due_date = nil
-    #     company.payment_status_id = PaymentStatus.find_by_name("Activo").id
-    #     if company.save
-    #       CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
-    #     else
-    #       CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
-    #     end
-    #   elsif PlanLog.find_by_trx_id(params[:trx_id])
-    #     plan_log = PlanLog.find_by_trx_id(params[:trx_id])
-    #     company = Company.find(plan_log.company_id)
-    #     company.plan_id = plan_log.new_plan_id
-    #     company.months_active_left = 1.0
-    #     company.due_amount = 0.0
-    #     company.due_date = nil
-    #     company.payment_status_id = PaymentStatus.find_by_name("Activo").id
-    #     if company.save
-    #       CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "OK notification_plan")
-    #     else
-    #       CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
-    #     end
-    #   elsif Booking.find_by_trx_id(params[:trx_id])
+    if confirmation_params[:reference_sale] == "4"
+      if BillingLog.find_by_trx_id(confirmation_params[:reference_sale])
+        billing_log = BillingLog.find_by_trx_id(confirmation_params[:reference_sale])
+        company = Company.find(billing_log.company_id)
+        company.months_active_left += billing_log.amount
+        company.due_amount = 0.0
+        company.due_date = nil
+        company.payment_status_id = PaymentStatus.find_by_name("Activo").id
+        if company.save
+          CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
+        else
+          CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
+        end
+      elsif PlanLog.find_by_trx_id(confirmation_params[:reference_sale])
+        plan_log = PlanLog.find_by_trx_id(confirmation_params[:reference_sale])
+        company = Company.find(plan_log.company_id)
+        company.plan_id = plan_log.new_plan_id
+        company.months_active_left = 1.0
+        company.due_amount = 0.0
+        company.due_date = nil
+        company.payment_status_id = PaymentStatus.find_by_name("Activo").id
+        if company.save
+          CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "OK notification_plan")
+        else
+          CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
+        end
+      elsif Booking.find_by_trx_id(confirmation_params[:reference_sale])
 
-    #     #Creamos el registro de la reserva pagada.
+        #Creamos el registro de la reserva pagada.
 
-    #     payed_booking = PayedBooking.new
-    #     payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
-    #     payed_booking.transfer_complete = false
-    #     payed_booking.save
+        payed_booking = PayedBooking.new
+        payed_booking.punto_pagos_confirmation = punto_pagos_confirmation
+        payed_booking.transfer_complete = false
+        payed_booking.save
 
-    #     bookings = Array.new
-    #     Booking.where(:trx_id => params[:trx_id]).each do |booking|
-    #       booking.status_id = Status.find_by(:name => "Pagado").id
-    #       booking.payed = true
-    #       booking.payed_booking = payed_booking
-    #       booking.save
-    #       bookings << booking
-    #     end
+        bookings = Array.new
+        Booking.where(:trx_id => confirmation_params[:reference_sale]).each do |booking|
+          booking.status_id = Status.find_by(:name => "Pagado").id
+          booking.payed = true
+          booking.payed_booking = payed_booking
+          booking.save
+          bookings << booking
+        end
 
-    #     if bookings.count > 0
+        if bookings.count > 0
 
-    #       if bookings.first.booking_group.nil?
-    #         BookingMailer.book_service_mail(bookings.first)
-    #       else
-    #         if bookings.first.session_booking.nil?
-    #           Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
-    #         else
-    #           bookings.first.session_booking.send_sessions_booking_mail
-    #         end
-    #       end
+          if bookings.first.booking_group.nil?
+            BookingMailer.book_service_mail(bookings.first)
+          else
+            if bookings.first.session_booking.nil?
+              Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+            else
+              bookings.first.session_booking.send_sessions_booking_mail
+            end
+          end
 
-    #     else
-    #       #¿No bookings? There's an error
-    #       redirect_to action: 'failure', token: params[:token]
-    #       return
-    #     end
-    #     #Enviar comprobantes de pago
-    #     BookingMailer.book_payment_mail(payed_booking)
-    #     BookingMailer.book_payment_company_mail(payed_booking)
-    #     BookingMailer.book_payment_agendapro_mail(payed_booking)
+        else
+          #¿No bookings? There's an error
+          redirect_to action: 'failure', token: params[:token]
+          return
+        end
+        #Enviar comprobantes de pago
+        BookingMailer.book_payment_mail(payed_booking)
+        BookingMailer.book_payment_company_mail(payed_booking)
+        BookingMailer.book_payment_agendapro_mail(payed_booking)
         
-    #   end
-    # end
+      end
+    end
   end
 
   private
 
   def confirmation_params
     return params.permit(:merchant_id,  :state_pol,  :risk,  :response_code_pol,  :reference_sale,  :reference_pol,  :sign,  :extra1,  :extra2,  :payment_method,  :payment_method_type,  :installments_number,  :value,  :tax,  :additional_value,  :transaction_date,  :currency,  :email_buyer,  :cus,  :pse_bank,  :test,  :description,  :billing_address,  :shipping_address,  :phone,  :office_phone,  :account_number_ach,  :account_type_ach,  :administrative_fee,  :administrative_fee_base,  :administrative_fee_tax,  :airline_code,  :attempts,  :authorization_code,  :bank_id,  :billing_city,  :billing_country,  :commision_pol,  :commision_pol_currency,  :customer_number,  :date,  :error_code_bank,  :error_message_bank,  :exchange_rate,  :ip,  :nickname_buyer,  :nickname_seller,  :payment_method_id,  :payment_request_state,  :pseReference1,  :pseReference2,  :pseReference3,  :response_message_pol,  :shipping_city,  :shipping_country,  :transaction_bank_id,  :transaction_id,  :cc_number,  :cc_holder,  :bank_referenced_name,  :payment_method_name,  :antifraudMerchantId)
+  end
+
+  def response_params
+    return params.permit(:merchantId, :transactionState, :risk, :polResponseCode, :referenceCode, :reference_pol, :signature, :polPaymentMethod, :polPaymentMethodType, :installmentsNumber, :TX_VALUE, :TX_TAX, :buyerEmail, :processingDate, :currency, :cus, :pseBank, :lng, :description, :lapResponseCode, :lapPaymentMethod, :lapPaymentMethodType, :lapTransactionState, :message, :extra1, :extra2, :extra3, :authorizationCode, :merchant_address, :merchant_name, :merchant_url, :orderLanguage, :pseCycle, :pseReference1, :pseReference2, :pseReference3, :telephone, :transactionId, :trazabilityCode, :TX_ADMINISTRATIVE_FEE, :TX_TAX_, :ADMINISTRATIVE_FEE, :TX_TAX_ADMINISTRATIVE, :_FEE_RETURN_BASE, :action_code_description, :cc_holder, :cc_number, :processing_date_time, :request_number)
   end
 end
