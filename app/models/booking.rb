@@ -33,8 +33,6 @@ class Booking < ActiveRecord::Base
   after_create :send_booking_mail, :wait_for_payment, :check_session
   after_update :send_update_mail, :check_session
 
-  procedure :check_hour
-
   def get_commission
     service_commission = ServiceCommission.where(:service_id => self.service_id, :service_provider_id => self.service_provider_id).first
     if !service_commission.nil?
