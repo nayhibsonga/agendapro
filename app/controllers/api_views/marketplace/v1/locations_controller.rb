@@ -228,6 +228,8 @@ module ApiViews
 	  	end
 
 	  	def show
+	  		@short_days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+	  		@long_days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
 			@location = Location.find(params[:id])
 		end
 	  end
