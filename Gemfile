@@ -180,4 +180,4 @@ gem 'rack-cors'
 gem "oink"
 
 #Squirm-rails for stored procedures
-gem "squirm_rails", require: "squirm/rails"
+#gem "squirm_rails", require: "squirm/rails"
