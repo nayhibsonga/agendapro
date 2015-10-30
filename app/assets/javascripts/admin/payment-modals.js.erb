@@ -635,10 +635,43 @@ function loadInternalSale(internal_sale)
   loadInternalSaleProduct(internal_sale);
   loadInternalSaleProviders(internal_sale);
 
+  var currentDate = new Date();
+  var new_hour = currentDate.getHours();
+  var new_minute = currentDate.getMinutes();
+  if(new_hour < 10)
+  {
+    new_hour = "0" + new_hour;
+  }
+  else
+  {
+    new_hour = "" + new_hour;
+  }
+  if(new_minute < 10)
+  {
+    new_minute = "0" + new_minute;
+  }
+  else
+  {
+    new_minute = "" + new_minute;
+  }
+  $("#internal_sale_time_4i").val(new_hour);
+  $("#internal_sale_time_5i").val(new_minute);
+
   if(internal_sale)
   {
+
+    var complete_date_array = internal_sale.date.split("T");
+    var edit_date_array = complete_date_array[0].split("-");
+    var edit_date = edit_date_array[2] + "/" + edit_date_array[1] + "/" + edit_date_array[0];
+
+    var edit_time_array = complete_date_array[1].split(":");
+    var edit_hour = edit_time_array[0];
+    var edit_minute = edit_time_array[1];
+
     $('#internal_sale_id').val(internal_sale.id);
-    $('#internal_sale_date').val(internal_sale.date);
+    $('#internal_sale_date').val(edit_date);
+    $("#internal_sale_time_4i").val(edit_hour);
+    $("#internal_sale_time_5i").val(edit_minute);
   }
 
   $('#internalSaleModal').modal('show');
@@ -715,6 +748,9 @@ function saveInternalSale()
         var quantity = $('#internal_sale_quantity').val();
         var discount = $('#internal_sale_discount').val();
         var date = $('#internal_sale_date').val();
+        var time = $('#internal_sale_time_4i').val() + ":" + $('#internal_sale_time_5i').val() + ":00";
+        date = date + " " + time;
+
         if(internal_sale_id == "")
         {
           internal_sale_id = "-1";

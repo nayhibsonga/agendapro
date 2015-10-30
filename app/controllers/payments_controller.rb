@@ -50,7 +50,7 @@ class PaymentsController < ApplicationController
       end
     end
 
-    @internal_sales = InternalSale.where(location_id: @location_ids, date: @from..@to)
+    @internal_sales = InternalSale.where(location_id: @location_ids, date: @from.beginning_of_day..@to.end_of_day)
 
     @internal_sales_sum = 0.0
     @internal_sales_total = 0
@@ -1461,7 +1461,7 @@ class PaymentsController < ApplicationController
     internal_sale.discount = params[:discount].to_f
     internal_sale.quantity = params[:quantity].to_i
     internal_sale.price = (internal_sale.list_price*(100 - internal_sale.discount)/100).round(1)
-    internal_sale.date = params[:date].to_date
+    internal_sale.date = params[:date].to_datetime
 
     if @errors.length == 0
       if internal_sale.save
@@ -1803,11 +1803,11 @@ class PaymentsController < ApplicationController
     @location = Location.find(params[:location_id])
     @sales_cash = SalesCash.find_by_location_id(@location.id)
 
-    @sales_cash.cash = 0.0
-
     if @sales_cash.nil?
       @sales_cash = SalesCash.create(:location_id => @location.id, :cash => 0, :last_reset_date => DateTime.now)
     end
+
+    @sales_cash.cash = 0.0
 
     start_date = @sales_cash.last_reset_date
     end_date = DateTime.now

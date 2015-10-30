@@ -154,8 +154,16 @@ function loadSalesCashTransaction(sales_cash_transaction)
       $('#sales_cash_transaction_receipt_number').val("");
     }
 
-    var edit_date_array = sales_cash_transaction.date.split("T")[0].split("-");
+    var complete_date_array = sales_cash_transaction.date.split("T");
+    var edit_date_array = complete_date_array[0].split("-");
     var edit_date = edit_date_array[2] + "/" + edit_date_array[1] + "/" + edit_date_array[0];
+
+    var edit_time_array = complete_date_array[1].split(":");
+    var edit_hour = edit_time_array[0];
+    var edit_minute = edit_time_array[1];
+
+    $("#sales_cash_transaction_time_4i").val(edit_hour);
+    $("#sales_cash_transaction_time_5i").val(edit_minute);
 
     $("#sales_cash_transaction_date").val(edit_date);
     $('#sales_cash_transaction_notes').val(sales_cash_transaction.notes);
@@ -169,6 +177,29 @@ function loadSalesCashTransaction(sales_cash_transaction)
     $('#sales_cash_transaction_receipt_number').val("");
     $("#sales_cash_transaction_date").val($("#today_date").val());
     $('#sales_cash_transaction_notes').val("");
+
+    var currentDate = new Date();
+    var new_hour = currentDate.getHours();
+    var new_minute = currentDate.getMinutes();
+    if(new_hour < 10)
+    {
+      new_hour = "0" + new_hour;
+    }
+    else
+    {
+      new_hour = "" + new_hour;
+    }
+    if(new_minute < 10)
+    {
+      new_minute = "0" + new_minute;
+    }
+    else
+    {
+      new_minute = "" + new_minute;
+    }
+    $("#sales_cash_transaction_time_4i").val(new_hour);
+    $("#sales_cash_transaction_time_5i").val(new_minute);
+
   }
   $('#salesCashTransactionModal').modal('show');
 }
@@ -183,6 +214,8 @@ function saveSalesCashTransaction()
     var date = $('#sales_cash_transaction_date').val();
     var notes = $('#sales_cash_transaction_notes').val();
     var receipt_number = $('#sales_cash_transaction_receipt_number').val();
+    var time = $('#sales_cash_transaction_time_4i').val() + ":" + $('#sales_cash_transaction_time_5i').val() + ":00";
+    date = date + " " + time;
 
     $.ajax({
       url: '/save_sales_cash_transaction',
@@ -246,9 +279,16 @@ function loadSalesCashIncome(sales_cash_income)
     $("#sales_cash_income_id").val(sales_cash_income.id)
     $('#sales_cash_income_amount').val(sales_cash_income.amount);
     $('#sales_cash_income_notes').val(sales_cash_income.notes);
-    var edit_date_array = sales_cash_income.date.split("T")[0].split("-");
+    var complete_date_array = sales_cash_income.date.split("T");
+    var edit_date_array = complete_date_array[0].split("-");
     var edit_date = edit_date_array[2] + "/" + edit_date_array[1] + "/" + edit_date_array[0];
+
+    var edit_time_array = complete_date_array[1].split(":");
+    var edit_hour = edit_time_array[0];
+    var edit_minute = edit_time_array[1];
     $("#sales_cash_income_date").val(edit_date);
+    $("#sales_cash_income_time_4i").val(edit_hour);
+    $("#sales_cash_income_time_5i").val(edit_minute);
   }
   else
   {
@@ -257,6 +297,27 @@ function loadSalesCashIncome(sales_cash_income)
     $('#sales_cash_income_amount').val("0");
     $("#sales_cash_income_date").val($("#today_date").val());
     $('#sales_cash_income_notes').val("");
+    var currentDate = new Date();
+    var new_hour = currentDate.getHours();
+    var new_minute = currentDate.getMinutes();
+    if(new_hour < 10)
+    {
+      new_hour = "0" + new_hour;
+    }
+    else
+    {
+      new_hour = "" + new_hour;
+    }
+    if(new_minute < 10)
+    {
+      new_minute = "0" + new_minute;
+    }
+    else
+    {
+      new_minute = "" + new_minute;
+    }
+    $("#sales_cash_income_time_4i").val(new_hour);
+    $("#sales_cash_income_time_5i").val(new_minute);
   }
   $('#salesCashIncomeModal').modal('show');
 }
@@ -285,6 +346,8 @@ function saveSalesCashIncome()
   var amount = $('#sales_cash_income_amount').val();
   var date = $('#sales_cash_income_date').val();
   var notes = $('#sales_cash_income_notes').val();
+  var time = $('#sales_cash_income_time_4i').val() + ":" + $('#sales_cash_income_time_5i').val() + ":00";
+  date = date + " " + time;
 
   $.ajax({
     url: '/save_sales_cash_income',
