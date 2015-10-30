@@ -176,7 +176,7 @@ class ServiceProvider < ActiveRecord::Base
 
 	        # Variable Data
 	        day = date.cwday
-	        ordered_providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(date) }
+	        ordered_providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(date) }
 	        location_times = local.location_times.where(day_id: day).order(:open)
 
 	        # time_offset = 0
@@ -624,9 +624,9 @@ class ServiceProvider < ActiveRecord::Base
 
 	def self.filter_location(location)
     if !location.blank? && location != '0'
-      where(location_id: location).order(:order)
+      where(location_id: location).order(:order, :name)
     else
-      all.order(:order)
+      all.order(:order, :name)
     end
   end
 
@@ -634,7 +634,7 @@ class ServiceProvider < ActiveRecord::Base
     if !provider.blank? && provider != '0'
       find(provider)
     else
-      all.order(:order)
+      all.order(:order, :public_name)
     end
   end
 end

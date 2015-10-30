@@ -1,6 +1,6 @@
 # encoding: utf-8
 class SearchsController < ApplicationController
-	
+
 	layout "results", except: [:index, :landing]
 	require 'amatch'
 	require 'benchmark'
@@ -30,7 +30,7 @@ class SearchsController < ApplicationController
 	def search
 
 		if params[:inputSearch].present? && params[:latitude].present? && params[:longitude].present? && params[:inputLocalization].present?
-			
+
 			@lat = params[:latitude]
 			@lng = params[:longitude]
 
@@ -479,7 +479,7 @@ class SearchsController < ApplicationController
 
 
 				#Iteramos sobre los locales de la compañía
-				elegible_locations = Location.where(:active => true, online_booking: true, :company_id => company.id).where(id: ServiceProvider.where(active: true, online_booking: true, company_id: company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, online_booking: true, company_id: company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+				elegible_locations = Location.where(:active => true, online_booking: true, :company_id => company.id).where(id: ServiceProvider.where(active: true, online_booking: true, company_id: company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, online_booking: true, company_id: company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(:order, :name)
 				locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
 
 				locations.each do |location|
@@ -697,7 +697,7 @@ class SearchsController < ApplicationController
 
 
 				#Iteramos sobre los locales de la compañía
-				elegible_locations = Location.where(:active => true, online_booking: true, :company_id => company.id).where(id: ServiceProvider.where(active: true, online_booking: true, company_id: company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, online_booking: true, company_id: company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+				elegible_locations = Location.where(:active => true, online_booking: true, :company_id => company.id).where(id: ServiceProvider.where(active: true, online_booking: true, company_id: company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, online_booking: true, company_id: company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(:order, :name)
 				locations = elegible_locations.where('sqrt((latitude - ' + lat.to_s + ')^2 + (longitude - ' + long.to_s + ')^2) < 0.25')
 
 				locations.each do |location|
@@ -1332,7 +1332,7 @@ class SearchsController < ApplicationController
 	def promotions
 
 
-			@lat = "-33.4052419" 
+			@lat = "-33.4052419"
 			@lng = "-70.597557"
 			@formatted_address = "Santiago, Región Metropolitana, Chile"
 
@@ -1349,7 +1349,7 @@ class SearchsController < ApplicationController
 			if params[:longitude] && params[:longitude] != ""
 				@lng = params[:longitude]
 			end
-	
+
 
 			if cookies[:formatted_address]
 				@formatted_address = cookies[:formatted_address].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
@@ -1502,7 +1502,7 @@ class SearchsController < ApplicationController
 
 					end
 
-					
+
 				end
 			end
 
@@ -1515,7 +1515,7 @@ class SearchsController < ApplicationController
 
 			# 		last_minute_promo_services = []
 
-			# 		ServiceProvider.where(:active => true, :location_id => s[0]).each do |service_provider|					
+			# 		ServiceProvider.where(:active => true, :location_id => s[0]).each do |service_provider|
 			# 			last_minute_promo_services = service_provider.services.with_last_minute_promotions
 			# 		end
 
@@ -1554,7 +1554,7 @@ class SearchsController < ApplicationController
 							c.pointsize "17"
 						end
 					end
-						
+
 					img.write("app/assets/images/search/pin_map#{i}.png")
 				end
 			end
@@ -1672,7 +1672,7 @@ class SearchsController < ApplicationController
 
 	def last_minute_promotions
 
-		@lat = "-33.4052419" 
+		@lat = "-33.4052419"
 		@lng = "-70.597557"
 
 		if params[:latitude] &&  params[:latitude] != ""
@@ -1833,7 +1833,7 @@ class SearchsController < ApplicationController
 							c.pointsize "17"
 						end
 					end
-						
+
 					img.write("app/assets/images/search/pin_map#{i}.png")
 				end
 			end

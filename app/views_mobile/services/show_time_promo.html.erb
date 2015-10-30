@@ -105,7 +105,7 @@
 		                  <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 
 		                    <%= image_tag "promociones/reloj_doble.png", :size => "20x20" %> &nbsp;&nbsp; Horarios de reserva
-		                    
+
 		                  </a>
 		                </h4>
 		              </div>
@@ -139,7 +139,7 @@
 		                  				<td>
 		                  					<span class="hours-title">
 		                  						Tarde:&nbsp;&nbsp;
-		                  					</span> 
+		                  					</span>
 		                  				</td>
 		                  				<td>
 		                  					<span class="hours"><%= service_promo.afternoon_start.strftime "%H:%M" %> - <%= service_promo.afternoon_end.strftime "%H:%M" %></span>
@@ -149,7 +149,7 @@
 		                  				<td>
 		                  					<span class="hours-title">
 		                  						Noche:&nbsp;&nbsp;
-		                  					</span> 
+		                  					</span>
 		                  				</td>
 		                  				<td>
 		                  					<span class="hours"><%= service_promo.night_start.strftime "%H:%M" %> - <%= service_promo.night_end.strftime "%H:%M" %></span>
@@ -335,7 +335,7 @@
 		                </div>
 		              </div>
 		            </div>
-		            
+
 		            <div class="panel panel-default">
 		              <div class="panel-heading" role="tab" id="headingThree">
 		                <h4 class="panel-title minus">
@@ -346,7 +346,7 @@
 		              </div>
 		              <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
 		                <div class="panel-body">
-		                    
+
 		                  <p style="color: #949292; font-size: 14px;">
 		                    La empresa no permite modificar ni cancelar reservas pagadas en promoción.
 		                  </p>
@@ -354,7 +354,7 @@
 		                  <p style="color: #949292; font-size: 14px;">
 		                    Si la empresa cancela o modifica sus promociones, se respetarán el precio y horario en que efectuaste tu reserva.
 		                  </p>
-		                    
+
 		                </div>
 		              </div>
 		            </div>
@@ -378,7 +378,7 @@
 		                            <option value="0">Sin Preferencia</option>
 		                        <% end %>
 		                    <% end %>
-		                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(order: :asc).each do |provider| %>
+		                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(:order, :public_name).each do |provider| %>
 
 		                      <option value="<%= provider.id %>">
 		                          <%= provider.public_name %>
@@ -406,7 +406,7 @@
 
 <!-- Localization inputs -->
 <% if params[:latitude] && params[:latitude] != "" && params[:longitude] && params[:longitude] != "" && params[:inputLocalization] && params[:inputLocalization] != "" %>
-	
+
 	<input type="hidden" id="latitude" value="<%= params[:latitude] %>" />
 	<input type="hidden" id="longitude" value="<%= params[:longitude] %>" />
 	<input type="hidden" id="inputLocalization" value="<%= params[:inputLocalization] %>" />

@@ -2,14 +2,14 @@ module Api
   module V1
   	class ServicesController < V1Controller
       before_action :check_service_providers_params, only: [:service_providers]
-      
+
       def show
         @service = Service.find(params[:id])
       end
 
       def service_providers
         @service = Service.find(params[:id])
-        @service_providers = @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', params[:location_id]).order(order: :asc)
+        @service_providers = @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', params[:location_id]).order(:order, :public_name)
       end
 
       private
