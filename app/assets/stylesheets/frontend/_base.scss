@@ -1,3 +1,5 @@
+@include font-face('FontAwesome', 'FontAwesome-webfont', 'FontAwesome', 'serif');
+
 // Initialized from hora_chic_base.css.scss
 html, body, header, footer {
   @include roboto-font(14px, normal);
@@ -209,6 +211,9 @@ footer {
     height: 100%;
     .logo {
       height: 100%;
+    }
+    .social {
+
     }
   }
 }
