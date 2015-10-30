@@ -319,6 +319,8 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 		},
 		eventDrop: function (event) {
 			editDrag(event);
+			dragInProgress = false;
+			dragUi = null;
 		},
 		slotMinutes: duration,
 		aspectRatio: setAspectRatio(),
@@ -525,6 +527,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 		},
 		eventDrop: function (event) {
 			editDrag(event);
+			dragInProgress = false;
+			dragUi = null;
 		},
 		slotMinutes: $('#providers-selector option:selected').data("block"),
 		aspectRatio: setAspectRatio(),
@@ -612,7 +616,6 @@ function editBookingModal(eventId) {
 			$('#booking_price').val(booking.price);
 			$('#booking_client_id').val(booking.client_id);
 			loadClientHistory(eventId);
-			loadBookingPayment(eventId);
 			$('#booking_client_first_name').val(booking.first_name);
 			$('#booking_client_last_name').val(booking.last_name);
 			$('#booking_client_identification_number').val(booking.identification_number);
@@ -745,6 +748,13 @@ function editBookingModal(eventId) {
 			$('#booking-tab').tab('show');
 			$('#payments-li, #payments-li > a[data-toggle=tab]').removeClass('disabled');
 			$('#bookingModal').modal('show');
+
+			/*
+			* Fill payment options
+			*/
+
+			checkBookingPayment(booking.id);
+
 		});
 	}
 }
@@ -856,7 +866,6 @@ function createBookingModal(date, provider_id) {
 			$('#payments-li, #payments-li > a[data-toggle=tab]').addClass('disabled');
 			$('#bookingModal #payment_client_group').hide();
 			$('#bookingModal').modal('show');
-			loadBookingPayment(0);
 		}
 		else {
 			alert('Este local no tiene prestadores o servicios\nPor favor completa los datos necesarios para poder generar reservas en este local.');
@@ -2200,6 +2209,8 @@ function checkClientSessions(service_change)
 									index = index + 1;
 								});
 							}
+							session_price = service.price/service.sessions_amount;
+							$("#booking_price").val(session_price);
 						}
 						else
 						{
@@ -2227,6 +2238,8 @@ function checkClientSessions(service_change)
 							$("#sessions-row").show();
 							$("#add-service-btn").hide();
 							$("#has_sessions").val("1");
+							session_price = service.price/service.sessions_amount;
+							$("#booking_price").val(session_price);
 						}
 						else
 						{
@@ -2552,7 +2565,6 @@ $(function() {
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
 			checkClientSessions(false);
-			loadBookingPayment(0);
 		},
 		focus: function (event, ui) {
 			event.preventDefault();
@@ -2605,7 +2617,6 @@ $(function() {
 			$("#full_name").prop('disabled', true);
 			loadClientHistory(0);
 			checkClientSessions(false);
-			loadBookingPayment(0);
 		},
 		focus: function (event, ui) {
 			event.preventDefault();
@@ -2659,7 +2670,6 @@ $(function() {
 			$('#full_name').val(client.first_name+' '+client.last_name);
 			loadClientHistory(0);
 			checkClientSessions(false);
-			loadBookingPayment(0);
 		},
 		focus: function (event, ui) {
 			event.preventDefault();

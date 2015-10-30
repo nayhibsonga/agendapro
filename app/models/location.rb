@@ -43,9 +43,15 @@ class Location < ActiveRecord::Base
   accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
   has_many :payments, dependent: :destroy
+  has_many :internal_sales, dependent: :destroy
 
   has_many :favorites, dependent: :destroy
   has_many :favorite_users, through: :favorites, source: :user
+
+  has_many :location_products, dependent: :destroy
+  has_many :products, through: :location_products
+  has_one :stock_alarm_setting, dependent: :destroy
+  has_one :sales_cash, dependent: :destroy
 
   mount_uploader :image1, LocationImagesUploader
   mount_uploader :image2, LocationImagesUploader
@@ -59,6 +65,7 @@ class Location < ActiveRecord::Base
   validate :new_plan_locations, :on => :create
 
   after_commit :extended_schedule
+  after_create :add_products
 
   pg_search_scope :search_company_name, :associated_against => {
     :company => :name
@@ -116,6 +123,14 @@ class Location < ActiveRecord::Base
   },
   :ignoring => :accents
 
+
+  	def add_products
+  		Product.where(:company_id => self.company.id).each do |product|
+  			if LocationProduct.where(:product_id => product.id, :location_id => self.id).count == 0
+  				location_product = LocationProduct.create(:product_id => product.id, :location_id => self.id, :stock => 0)
+  			end
+  		end
+  	end
 
 	def extended_schedule
 		company_setting = self.company.company_setting
@@ -466,6 +481,75 @@ class Location < ActiveRecord::Base
 			end
 		end
 		return closed_days
+	end
+
+	def self.stock_reminders
+
+		now = DateTime.now
+		week_locations = []
+		month_locations = []
+
+		#Check for locations that should be reminded today by week
+		week_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => false, :week_day => now.cwday).pluck(:location_id))
+
+		if (now + 1.days).mday == 1
+			month_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => true).where('month_day >= ?', now.mday).pluck(:location_id))
+		else
+			month_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => true, :month_day => now.mday).pluck(:location_id))
+		end
+
+		locations = week_locations + month_locations
+
+		locations.each do |location|
+			
+			location_products = []
+			
+			location.location_products.each do |location_product|
+				if location_product.check_stock_for_reminder
+					location_products << location_product
+				end
+			end
+
+			if location_products.count > 0
+				#Send reminder
+				location.send_stock_reminders(location_products)
+			end
+
+		end
+
+	end
+
+	def send_stock_reminders(location_products)
+
+		stocks = ''
+
+		emails = []
+		self.stock_alarm_setting.stock_setting_emails.each do |stock_email|
+			emails << stock_email.email
+		end
+
+		location_products.each do |location_product|
+
+			stock_limit = location_product.stock_limit
+			puts "LocationProduct: "
+			puts location_product.inspect
+		    if stock_limit.nil?
+		      stock_limit = location_product.location.stock_alarm_setting.default_stock_limit
+		  	else
+		  		puts "No era nulo. Stock limit: " + stock_limit.to_s
+		    end
+		    puts "Stock limit: " + stock_limit.to_s
+
+		    stocks = stocks + '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.product.full_name + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.stock.to_s + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + stock_limit.to_s + '</td>' +
+            '</tr>'
+
+		end
+
+		PaymentsSystemMailer.stock_reminder_email(self, stocks, emails)
+
 	end
 
 end

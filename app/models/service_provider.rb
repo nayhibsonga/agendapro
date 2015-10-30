@@ -15,6 +15,9 @@ class ServiceProvider < ActiveRecord::Base
 	has_many :bookings, dependent: :destroy
 	has_many :provider_breaks, dependent: :destroy
 
+	has_many :mock_bookings
+	has_many :internal_sales, dependent: :nullify
+
 	attr_accessor :_destroy
 
 	accepts_nested_attributes_for :provider_times, :reject_if => :all_blank, :allow_destroy => true

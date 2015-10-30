@@ -1,0 +1,992 @@
+<div class="modal fade paymentModal" id="paymentModalIntro" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="paymentModalIntroTitle" style="line-height: 1.1;">Pago</h3>
+      </div>
+      <div class="modal-body" id="paymentModalIntroBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <form id="fakePaymentIntroForm" action="">
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="payment_location" class="col-xs-3 control-label">Local</label>
+                <div class="col-xs-9">
+                  <select id="payment_location" name="payment_location" class="form-control">
+                    <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) %>
+                      <option value="<%= location.id %>">
+                        <%= location.name.humanize %>
+                      </option>
+                    <% end %>
+                  </select>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              
+              <div class="payment-form-div form-group">
+                <label for="payment_date" class="col-xs-3 control-label">Fecha</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="payment_cashier_code" class="col-xs-3 control-label">Cajero</label>
+                <div class="col-xs-9">
+                  <input type="password" class="form-control" id="payment_cashier_code" name="payment_cashier_code" value="" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <input type="hidden" id="payment_cashier_id" value="" />
+                <label for="payment_cashier_name" class="col-xs-3 control-label"></label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_cashier_name" name="payment_cashier_name" value="" disabled />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <% if !current_user.company.company_setting.payment_client_required %>
+                <div class="payment-form-div form-group">
+
+                  <div class="col-xs-3">
+                  </div>
+                  <div class="col-xs-9" id="openClient">
+                    <span>Asociar o agregar cliente </span><span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
+                  </div>
+                  <div style="clear: both;">
+                  </div>
+
+                </div>
+              <% end %>
+
+              <% if current_user.company.company_setting.payment_client_required %>
+                <input type="hidden" id="client_required" value="1" />
+              <% else %>
+                <input type="hidden" id="client_required" value="0" />
+              <% end %>
+
+              <input type="hidden" id="set_client" value="0" />
+
+              <div class="payment-form-div form-group has-feedback client-option" hidden>
+                <label for="payment_client_name" class="col-xs-3 control-label">Cliente</label>
+                <div class="col-xs-9">
+                  <input type="hidden" id="payment_client_id" name="payment_client_id" value="" />
+                  <input type="hidden" id="payment_client_first_name" name="payment_client_first_name" value="" />
+                  <input type="hidden" id="payment_client_last_name" name="payment_client_last_name" value="" />
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="payment_client_name" name="payment_client_name" value="" />
+                    <span class="input-group-btn">
+                      <button class="btn btn-red" type="button" id="payment_client_xButton"><i class="fa fa-times-circle"></i></button>
+                    </span>
+                  </div>
+                  <!--<span class="help-block"></span>-->
+                  <ul id="payment_client_suggestions"></ul>
+                </div>
+
+              </div>
+
+              <div class="payment-form-div form-group client-option" hidden>
+                <label for="payment_client_email" class="col-xs-3 control-label">Email</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_client_email" name="payment_client_email" value="" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <div class="payment-form-div form-group client-option" hidden>
+                <label for="payment_client_phone" class="col-xs-3 control-label">Teléfono</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_client_phone" name="payment_client_phone" value="" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <div class="payment-form-div form-group has-feedback client-option" hidden>
+                <label for="payment_client_gender" class="col-xs-3 control-label">Género</label>
+                <div class="col-xs-9">
+                  <select id="payment_client_gender" name="payment_client_gender" class="form-control">
+                    <option value="0">
+                      Indefinido
+                    </option>
+                    <option value="1">
+                      Femenino
+                    </option>
+                    <option value="2">
+                      Masculino
+                    </option>
+                  </select>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+        <button type="button" class="btn payment-btn-next" id="paymentIntroNextBtn" aria-label="Siguiente">Siguiente</button>
+        <button type="button" class="btn" id="paymentIntroSaveBtn" aria-label="Guardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade paymentModalStep paymentModal" id="paymentModal1" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="paymentModal1Title" style="line-height: 1.1;">Pago</h3>
+      </div>
+      <div class="modal-body" id="paymentModal1Body">
+
+        <div class="payment-modals-bar row">
+          <div class="col-md-4">
+            <div  style="text-align: left; width: 100%">
+              <%= image_tag 'admin/header_pago_1b.png', :class => 'img-responsive', :size => "132x60" %>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/header_pago_2a.png', :class => 'img-responsive center-block', :size => "132x60" %>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div style="text-align: right; width: 100%">
+              <%= image_tag 'admin/header_pago_3a.png', :class => 'img-responsive pull-right', :size => "132x60" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          
+          <div class="col-xs-2">
+            <button type="button" class="btn btn-default add-item-btn" id="addServiceBtn">Servicio&nbsp;<i class="fa fa-plus"></i></button><br />
+            <% if Product.where(:company_id => company.id).count > 0 %>
+              <button type="button" class="btn btn-default add-item-btn" id="addProductBtn">Producto&nbsp;<i class="fa fa-plus"></i></button>
+            <% end %>
+          </div>
+          <div class="col-xs-10">
+
+            <div class="row">
+              
+              <div class="col-xs-5">
+
+                <div id="paymentModalBookingForm" hidden>
+                	
+                  <div class="mbf-title">
+                    Agregar servicio
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="service" class="col-xs-3 control-label">Servicio</label>
+                    <div class="col-xs-9">
+                      <select class="form-control" id="payment_not_booked_service" name="payment_not_booked_service">
+                        <option value=""></option>
+                      </select>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="provider" class="col-xs-3 control-label">Prestador</label>
+                    <div class="col-xs-9">
+                      <select class="form-control" id="payment_not_booked_provider" name="payment_not_booked_provider">
+                          <option value=""></option>
+                      </select>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="price" class="col-xs-3 control-label">Precio</label>
+                    <div class="col-xs-9">
+                      <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" />
+                      </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="discount" class="col-xs-3 control-label">Descuento</label>
+                    <div class="col-xs-9">
+                      <div class="input-group">
+                        <input class="form-control" type="number" id="payment_not_booked_discount" name="payment_not_booked_discount" value="0" />
+                        <span class="input-group-addon">%</span>
+                      </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <div class="col-xs-9 col-xs-offset-3">
+                      <button id="addNotBooked" class="btn">Agregar</button>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="col-xs-7">
+
+                <div id="paymentClientPastBookings" hidden>
+                  <div class="cpb-title">
+                    Agrega una reserva existente
+                  </div>
+                  <div class="cpb-headers">
+                    <div class="col-xs-1">
+                      &nbsp;
+                    </div>
+                    <div class="col-xs-4">
+                      Servicio
+                    </div>
+                    <div class="col-xs-3">
+                      Prestador
+                    </div>
+                    <div class="col-xs-4">
+                      Fecha
+                    </div>
+                    <div style="clear: both;">
+                    </div>
+                  </div>
+                  <div style="clear: both;">
+                  </div>
+                  <div id="cpb-bookings">
+                    
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="row">
+              <div class="col-xs-6">
+
+                <div id="paymentModalProductForm" hidden>
+
+                <div class="mpf-title">
+                    Agregar producto
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="service" class="col-xs-3 control-label">Producto</label>
+                    <div class="col-xs-9">
+                      <select class="form-control" id="payment_product" name="payment_product">
+                        <option value="">
+                          
+                        </option>
+                      </select>
+                      <input type="hidden" id="payment_product_stock" value="" />
+                      <span id="payment_product_stock_span" style="color: #949292; font-size: 14px;"></span>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="payment_product_quantity" class="col-xs-3 control-label">Cantidad</label>
+                    <div class="col-xs-9">
+                      <input class="form-control" type="number" id="payment_product_quantity" name="payment_product_quantity" value="1" />
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="payment_product_price" class="col-xs-3 control-label">Precio</label>
+                    <div class="col-xs-9">
+                      <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        <input class="form-control" type="number" id="payment_product_price" name="payment_product_price" value="0" />
+                      </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="payment_product_discount" class="col-xs-3 control-label">Descuento</label>
+                    <div class="col-xs-9">
+                      <div class="input-group">
+                        <input class="form-control" type="number" id="payment_product_discount" name="payment_product_discount" value="0" />
+                        <span class="input-group-addon">%</span>
+                      </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="payment_product_seller" class="col-xs-3 control-label">Vendedor</label>
+                    <div class="col-xs-9">
+                      <select class="form-control" id="payment_product_seller" name="payment_product_seller">    
+                        <option value="">
+                          
+                        </option>
+                      </select>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <div class="col-xs-9 col-xs-offset-3">
+                      <button id="addProduct" class="btn">Agregar</button>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                </div>
+
+              </div>
+              <div class="col-xs-6">
+
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xs-9">
+                <div id="paymentItemsList" hidden>
+                  <table id="paymentItemsTable">
+                    <tr class="paymentItemsHeaders">
+                      <th>
+
+                      </th>
+                      <th>
+                        Id
+                      </th>
+                      <th>
+                        Tipo
+                      </th>
+                      <th>
+                        Nombre
+                      </th>
+                      <th>
+                        Cantidad
+                      </th>
+                      <th>
+                        Precio unitario
+                      </th>
+                      <th>
+                        Descuento
+                      </th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="col-xs-3">
+                <div id="paymentSumDiv" hidden>
+                  <table>
+                    <tr>
+                      <th>
+                        Total
+                      </th>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span id="paymentCalculatedTotal"></span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-back" id="paymentStep1BackBtn" aria-label="Atrás">Atrás</button>
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
+        <button type="button" class="btn payment-btn-next" aria-label="Siguiente">Siguiente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade paymentModalStep paymentModal" id="paymentModal2" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="paymentModal2Title" style="line-height: 1.1;">Pago</h3>
+      </div>
+      <div class="modal-body" id="paymentModal2Body">
+
+        <div class="payment-modals-bar row">
+          <div class="col-md-4">
+            <div  style="text-align: left; width: 100%">
+              <%= image_tag 'admin/header_pago_1a.png', :class => 'img-responsive', :size => "132x60" %>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/header_pago_2b.png', :class => 'img-responsive center-block', :size => "132x60" %>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div style="text-align: right; width: 100%">
+              <%= image_tag 'admin/header_pago_3a.png', :class => 'img-responsive pull-right', :size => "132x60" %>
+            </div>
+          </div>
+        </div>
+
+        <%
+          check_method_id = PaymentMethod.find_by_name("Cheque").id
+          cash_method_id = PaymentMethod.find_by_name("Efectivo").id
+          credit_card_method_id = PaymentMethod.find_by_name("Tarjeta de Crédito").id
+          debt_card_method_id = PaymentMethod.find_by_name("Tarjeta de Débito").id
+          other_method_id = PaymentMethod.find_by_name("Otro").id
+
+          active_payment_methods = PaymentMethod.where.not(name: ['Otro', 'Online']).where(id: current_user.company.company_setting.payment_method_settings.where(active: true).pluck(:payment_method_id))
+          company_payment_methods = current_user.company.company_payment_methods.where(active: true)
+        %>
+
+        <div class="row">
+          <div class="col-xs-1">
+          </div>
+          <div class="col-xs-10">
+            <div style="display:block;">
+              <table id="payment_transactions_table">
+                <tr>
+                  <% active_payment_methods.each do |payment_method| %>
+                    <th><%= payment_method.name %></th>
+                  <% end %>
+                  <% company_payment_methods.each do |company_payment_method| %>
+                    <th><%= company_payment_method.name %></th>
+                  <% end %>
+                  <th>Paga</th>
+                  <th>Total</th>
+                  <th>Vuelto</th>
+                </tr>
+                <tr>
+                  <% active_payment_methods.each do |payment_method| %>
+                    <td class="method_td"><input type="number" class="payment_method_amount" payment_method_id="<%= payment_method.id %>" value="0" disabled /></td>
+                  <% end %>
+                  <% company_payment_methods.each do |company_payment_method| %>
+                    <td class="method_td"><input type="number" class="company_payment_method_amount" company_payment_method_id="<%= company_payment_method.id %>" value="0" disabled /></td>
+                  <% end %>
+                  <td class="sum_td"><input type="number" id="payment_transactions_sum" value="0" disabled /></td>
+                  <td class="cost_td"><input type="number" id="payment_total_cost" value="0" disabled /></td>
+                  <td class="change_td"><input type="number" id="payment_total_change_amount" value="0" disabled /></td>
+                </tr>
+              </table>
+            </div>
+            
+          </div>
+          <div class="col-xs-1">
+          </div>
+        </div>
+
+        <div class="row" style="margin-top: 15px;">
+          <div class="col-xs-1">
+          </div>
+          <div class="col-xs-10">
+            <form id="fakeMethodDetailsForm" action="">
+              <div class="payment-form-div">
+                <label for="payment_method_select" class="col-xs-4 control-label">Medio de pago</label>
+                <div class="col-xs-6">
+                  <select class="form-control" id="payment_method_select">
+                    <% active_payment_methods.each do |payment_method| %>
+                      <% method_setting = PaymentMethodSetting.where(:company_setting_id => current_user.company.company_setting.id, :payment_method_id => payment_method.id).first %>
+                      <option value="0_<%= payment_method.id %>" method_number_required="<%= method_setting.number_required %>" ><%= payment_method.name %></option>
+                    <% end %>
+                    <% company_payment_methods.each do |company_payment_method| %>
+                      <option value="1_<%= company_payment_method.id %>" method_number_required="<%= company_payment_method.number_required %>" ><%= company_payment_method.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <input type="hidden" id="selected_method_number_required" value="" />
+
+              <div class="payment-form-div">
+                <label for="payment_transaction_amount" class="col-xs-4 control-label">Monto</label>
+                <div class="col-xs-6">
+                  <input type="number" class="form-control" name="payment_transaction_amount" id="payment_transaction_amount" value="" />
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div payment-transaction-div" id="payment_method_type_id_div" hidden>
+                <label for="payment_method_type_id" class="col-xs-4 control-label">Tipo</label>
+                <div class="col-xs-6">
+                  <select class="form-control" id="payment_method_type_id">
+                    <% PaymentMethodType.all.each do |payment_method_type| %>
+                      <option value="<%= payment_method_type.id %>"><%= payment_method_type.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div payment-transaction-div" id="payment_transaction_number_div" hidden>
+                <label for="payment_transaction_number" class="col-xs-4 control-label">N° de comprobante</label>
+                <div class="col-xs-6">
+                  <input type="text" class="form-control" name="payment_transaction_number" id="payment_transaction_number" value="" />
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div payment-transaction-div" id="payment_transaction_installments_div" hidden>
+                <label for="payment_transaction_installments" class="col-xs-4 control-label">Cuotas</label>
+                <div class="col-xs-6">
+                  <input type="text" class="form-control" name="payment_transaction_installments" id="payment_transaction_installments" value="" />
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div payment-transaction-div" id="payment_transaction_bank_id_div" hidden>
+                <label for="payment_transaction_bank_id" class="col-xs-4 control-label">Banco</label>
+                <div class="col-xs-6">
+                  <select class="form-control" id="payment_transaction_bank_id">
+                    <% Bank.all.each do |bank| %>
+                      <option value="<%= bank.id %>"><%= bank.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div">
+                <div class="col-xs-4">
+                </div>
+                <div class="col-xs-6">
+                  <button type="button" class="btn btn-dark-green" id="addTransactionBtn" aria-label="Agregar pago">Agregar pago</button>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+            </form>
+          </div>
+          <div class="col-xs-1">
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
+        <button type="button" class="btn payment-btn-next" id="transactionsReadyBtn" aria-label="Siguiente" disabled>Siguiente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade paymentModalStep paymentModal" id="paymentModal3" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="paymentModal3Title" style="line-height: 1.1;">Pago</h3>
+      </div>
+      <div class="modal-body" id="paymentModal3Body">
+
+        <div class="payment-modals-bar row">
+          <div class="col-md-4">
+            <div  style="text-align: left; width: 100%">
+              <%= image_tag 'admin/header_pago_1a.png', :class => 'img-responsive', :size => "132x60" %>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/header_pago_2a.png', :class => 'img-responsive center-block', :size => "132x60" %>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div style="text-align: right; width: 100%">
+              <%= image_tag 'admin/header_pago_3b.png', :class => 'img-responsive pull-right', :size => "132x60" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-3">
+            <button type="button" class="btn btn-default" id="openReceiptForm">Nuevo comprobante&nbsp;<i class="fa fa-plus"></i></button><br />
+            <div id="addedReceipts">
+
+            </div>
+          </div>
+          <div class="col-xs-9">
+
+            <div id="paymentReceiptsForms">
+              <div class="col-xs-7">
+                <form id="fakePaymentStep3Form" action="">
+
+                  <div class="receiptTitle">
+                    Detalle
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="payment_receipt_type" class="col-xs-5 control-label">Comprobante de pago</label>
+                    <div class="col-xs-7">
+                      <select class="form-control" id="payment_receipt_type" name="payment_receipt_type">
+                        <% ReceiptType.all.order(:name).each do |receipt_type| %>
+                          <option value="<%= receipt_type.id %>">
+                            <%= receipt_type.name %>
+                          </option>
+                        <% end %>
+                      </select>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="payment_receipt_number" class="col-xs-5 control-label">Número de comprobante</label>
+                    <div class="col-xs-7">
+                      <input type="text" class="form-control" id="payment_receipt_number" name="payment_receipt_number" />
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="payment_receipt_date" class="col-xs-5 control-label">Fecha de pago</label>
+                    <div class="col-xs-4">
+                      <input type="text" class="form-control" id="payment_receipt_date" name="payment_receipt_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <label for="payment_receipt_notes" class="col-xs-5 control-label">Comentario</label>
+                    <div class="col-xs-7">
+                      <textarea class="form-control" id="payment_receipt_notes" name="payment_receipt_notes"></textarea>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
+                    <div class="col-xs-5">
+                    </div>
+                    <div class="col-xs-7">
+                      <button type="button" class="btn btn-default" id="addReceiptBtn">Guardar</button>
+                    </div>
+                  </div>
+
+                </form>
+              </div>
+              <div class="col-xs-5">
+                <div id="receiptsItemsDiv">
+
+                  <div class="receiptTitle">
+                    Servicios/Productos
+                  </div>
+
+                  <table id="receiptsItemsTable">
+                    <tr class="paymentItemsHeaders">
+                      <th>
+                        <input type="checkbox" id="checkAllItems" />
+                      </th>
+                      <th>
+                        ID
+                      </th>
+                      <th>
+                        Tipo
+                      </th>
+                      <th>
+                        Nombre
+                      </th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div id="paymentReceiptsFinal" hidden>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnPrint" aria-label="Imprimir" hidden>Imprimir</button>
+        <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnSendEmail" aria-label="Enviar por email" hidden>Enviar por email</button>
+        <button type="button" class="btn payment-btn-next payment-btn-end" id="paymentBtnSave" aria-label="Guardar" hidden>Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="Imprimir" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="pdfModalIntroTitle" style="line-height: 1.1;">Imprimir</h3>
+      </div>
+      <div class="modal-body" id="pdfModalIntroBody">
+        <div class="row">
+          <div class="col-xs-10">
+
+
+              <div id="paymentPrintLink">
+
+              </div>
+
+              <div id="receiptsPrintLinks">
+
+              </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="sendEmailsModal" tabindex="-1" role="dialog" aria-labelledby="Enviar por email" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="sendEmailModalIntroTitle" style="line-height: 1.1;">Enviar por email</h3>
+      </div>
+      <div class="modal-body" id="sendEmailModalIntroBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+              <input type="hidden" id="sendEmailsPaymentId" value="" />
+              <div class="payment-form-div form-group">
+                <label for="payment_emails" class="col-xs-3 control-label">Email</label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="payment_emails" name="payment_emails" value="" />
+                  <span class="help-block">Ingresa los emails a los que quieras enviar el resumen separados por coma: ejemplo1@agendapro.cl, ejemplo2@agendapro.cl, ejemplo3@agendapro.cl</span>
+                </div>
+
+              </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        <button type="button" class="btn btn-green" id="sendEmailsBtn" aria-label="Enviar por email" hidden>Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editPaymentModal" tabindex="-1" role="dialog" aria-labelledby="Editar pago" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="editPaymentModalIntroTitle" style="line-height: 1.1;">Editar pago</h3>
+      </div>
+      <div class="modal-body" id="editPaymentModalIntroBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <input type="hidden" id="editPaymentId" value="" />
+
+            <div>  
+              <p>
+                Edita los distintos detalles del pago. Puedes editar sólo los datos de cajero y cliente, el conjunto de ítemes, forma de pago y comprobantes, o editar toda la información.
+              </p>
+            </div>
+
+            <div style="clear:both;">
+
+            </div>
+
+            <div class="payment-form-div form-group">
+              <div class="col-xs-4">
+                <button id="editPaymentIntroBtn" class="edit-option-btn btn btn-default"><i class="fa fa-users"></i>&nbsp;Editar cajero/cliente</button>
+              </div>
+              <div class="col-xs-4">
+                <button id="editPaymentItemsBtn" class="edit-option-btn btn btn-default"><i class="fa fa-list"></i>&nbsp;Editar ítemes</button>
+              </div>
+              <div class="col-xs-4">
+                <button id="editPaymentAllBtn" class="edit-option-btn btn btn-green"><i class="fa fa-pencil-square-o">&nbsp;</i>Editar todo</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade paymentModal" id="internalSaleModal" tabindex="-1" role="dialog" aria-labelledby="Venta Interna" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="internalSaleModalTitle" style="line-height: 1.1;">Venta Interna</h3>
+      </div>
+      <div class="modal-body" id="internalSaleModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <form id="internalSaleForm" action="">
+
+              <input type="hidden" id="internal_sale_id" value="" />
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="internal_sale_location" class="col-xs-3 control-label">Local</label>
+                <div class="col-xs-9">
+                  <select id="internal_sale_location" name="internal_sale_location" class="form-control">
+                    <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) %>
+                      <option value="<%= location.id %>">
+                        <%= location.name.humanize %>
+                      </option>
+                    <% end %>
+                  </select>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              
+              <div class="payment-form-div form-group">
+                <label for="internal_sale_date" class="col-xs-3 control-label">Fecha</label>
+                <div class="col-xs-5">
+                  <input type="text" class="form-control" id="internal_sale_date" name="internal_sale_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+                <div class="col-xs-4">
+                  <%= time_select 'internal_sale', 'time', {minute_step: 1}, {:class => 'form-control date-select', required: true} %>
+                </div>
+                <div style="clear: both;">
+
+                </div>
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="internal_sale_cashier_code" class="col-xs-3 control-label">Cajero</label>
+                <div class="col-xs-9">
+                  <input type="password" class="form-control" id="internal_sale_cashier_code" name="internal_sale_cashier_code" value="" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <input type="hidden" id="internal_sale_cashier_id" value="" />
+                <label for="internal_sale_cashier_name" class="col-xs-3 control-label"></label>
+                <div class="col-xs-9">
+                  <input type="text" class="form-control" id="internal_sale_cashier_name" name="internal_sale_cashier_name" value="" disabled />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+              </div>
+
+              <div class="payment-form-div">
+                <label for="internal_sale_service_provider" class="col-xs-3 control-label">Prestador</label>
+                <div class="col-xs-9">
+                  <select class="form-control" id="internal_sale_service_provider" name="internal_sale_service_provider">    
+
+                  </select>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div">
+                <label for="internal_sale_product" class="col-xs-3 control-label">Producto</label>
+                <div class="col-xs-9">
+                  <select class="form-control" id="internal_sale_product" name="internal_sale_product">
+
+                  </select>
+                  <input type="hidden" id="internal_sale_product_stock" value="" />
+                  <span id="internal_sale_product_stock_span" style="color: #949292; font-size: 14px;"></span>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="internal_sale_quantity" class="col-xs-3 control-label">Cantidad</label>
+                <div class="col-xs-9">
+                  <input class="form-control" type="number" id="internal_sale_quantity" name="internal_sale_quantity" value="1" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="internal_sale_price" class="col-xs-3 control-label">Precio</label>
+                <div class="col-xs-9">
+                  <div class="input-group">
+                    <span class="input-group-addon">$</span>
+                    <input class="form-control" type="number" id="internal_sale_price" name="internal_sale_price" value="0" />
+                  </div>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label for="internal_sale_discount" class="col-xs-3 control-label">Descuento</label>
+                <div class="col-xs-9">
+                  <div class="input-group">
+                    <input class="form-control" type="number" id="internal_sale_discount" name="internal_sale_discount" value="0" />
+                    <span class="input-group-addon">%</span>
+                  </div>
+                </div>
+                <div style="clear: both;"></div>
+              </div>
+
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+        <button type="button" class="btn btn-green" id="internalSaleSaveBtn" aria-label="Guardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<input type="hidden" id="paymentPastBookingsArray" value="" />
+<input type="hidden" id="paymentNewBookingsArray" value="" />
+<input type="hidden" id="paymentProductsArray" value="" />
+<input type="hidden" id="paymentReceiptsArray" value="" />
+<input type="hidden" id="paymentTransactionsArray" value="" />
+
+<input type="hidden" id="today_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+
+<a href="#" id="printReceipt" hidden></a>

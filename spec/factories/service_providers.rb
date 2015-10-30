@@ -4,7 +4,7 @@ FactoryGirl.define do
 
 		location							#FactoryGirl.create(:location)
 	    company 							#FactoryGirl.create(:company)
-	    public_name							"Proveedor"
+	    public_name							"Prestador"
 	    active 								true
 	    order 								0
 	    block_length 						30

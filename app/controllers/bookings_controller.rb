@@ -145,6 +145,15 @@ class BookingsController < ApplicationController
           @booking.session_booking_id = session_booking.id
           @booking.is_session = true
           @booking.is_session_booked = true
+
+          #Set list_price to it's service price
+          @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+
+          #If price is not equivalent, then it has discount
+          if @booking.price != @booking.list_price
+            @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+          end
+
           if @booking.payed
             @booking.user_session_confirmed = false
           else
@@ -158,6 +167,14 @@ class BookingsController < ApplicationController
           session_booking.service_id = buffer_params[:service_id]
           session_booking.sessions_amount = serv.sessions_amount
 
+        end
+      else
+        #Set list_price to it's service price
+        @booking.list_price = @booking.service.price
+
+        #If price is not equivalent, then it has discount
+        if @booking.price != @booking.list_price
+          @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
         end
       end
 
@@ -450,6 +467,15 @@ class BookingsController < ApplicationController
           @booking.session_booking_id = session_booking.id
           @booking.is_session = true
           @booking.is_session_booked = true
+
+          #Set list_price to it's service price
+          @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+
+          #If price is not equivalent, then it has discount
+          if @booking.price != @booking.list_price
+            @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+          end
+
           if @booking.payed
             @booking.user_session_confirmed = false
           else
@@ -462,6 +488,14 @@ class BookingsController < ApplicationController
           serv = Service.find(buffer_params[:service_id])
           session_booking.service_id = buffer_params[:service_id]
           session_booking.sessions_amount = serv.sessions_amount
+        end
+      else
+        #Set list_price to it's service price
+        @booking.list_price = @booking.service.price
+
+        #If price is not equivalent, then it has discount
+        if @booking.price != @booking.list_price
+          @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
         end
       end
 
@@ -1398,6 +1432,18 @@ class BookingsController < ApplicationController
     render :json => booking
   end
 
+  def get_booking_for_payment
+    booking = Booking.find(params[:id])
+    discount = 0
+    #if booking.service.price != 0
+    #  discount = 100*((booking.service.price - booking.price)/booking.service.price).round(1)
+    #end
+
+    #Return list_price and discount. Their combination should equal price. Return service_price also, just for reference.
+
+    render :json => {id: booking.id, service_name: booking.service.name, service_price: booking.service.price, discount: booking.discount, price: booking.price, list_price: booking.list_price}
+  end
+
   def get_booking_info
     booking = Booking.find(params[:id])
     render :json => {service_provider_active: booking.service_provider.active, service_active: booking.service.active, service_provider_name: booking.service_provider.public_name, service_name: booking.service.name}
@@ -1421,7 +1467,6 @@ class BookingsController < ApplicationController
     @cancelled_id = Status.find_by_name('Cancelado').id
 
     @bookings = Booking.where('bookings.service_provider_id IN (?)', @providers.pluck(:id)).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').includes(:client).includes(:service).includes(:session_booking)
-
 
     @bookings.each do |booking|
       if booking.status_id != @cancelled_id
@@ -1642,7 +1687,6 @@ class BookingsController < ApplicationController
         client = Client.where(identification_number: params[:identification_number], company_id: @company).first
         client.email = params[:email]
         client.phone = params[:phone]
-        client.save
         if client.save
 
         else
@@ -1864,6 +1908,7 @@ class BookingsController < ApplicationController
 
 
       @booking.price = service.price
+      @booking.list_price = service.price
       @booking.max_changes = @company.company_setting.max_changes
       @booking.booking_group = booking_group
 
@@ -2009,9 +2054,14 @@ class BookingsController < ApplicationController
             # If discount is for online_payment, it's always equal.
             if current_service.has_discount && current_service.discount > 0
               @bookings.each do |booking|
-                new_price = (service.price - current_service.discount*service.price/100).round
+                new_price = (current_service.price - current_service.discount*current_service.price/100).round
                 booking.price = new_price
                 final_price = new_price
+                if(booking.list_price > 0)
+                  booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+                else
+                  booking.discount = 0
+                end
               end
             elsif current_service.has_time_discount
 
@@ -2076,6 +2126,11 @@ class BookingsController < ApplicationController
                 new_price = (booking.service.price - sessions_max_discount*booking.service.price/100).round
                 booking.price = new_price
                 final_price = new_price
+                if(booking.list_price > 0)
+                  booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+                else
+                  booking.discount = 0
+                end
               end
 
             end
@@ -2095,6 +2150,14 @@ class BookingsController < ApplicationController
           if !booking.service.online_payable || !booking.service.company.company_setting.online_payment_capable || !booking.service.company.company_setting.allows_online_payment
 
             booking.price = booking.service.price
+            logger.debug "list_price: " + booking.list_price.to_s
+            logger.debug "price: " + booking.price.to_s
+
+            if(booking.list_price > 0)
+              booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+            else
+              booking.discount = 0
+            end
 
           else
 
@@ -2144,6 +2207,11 @@ class BookingsController < ApplicationController
               new_book_price = (booking.service.price - new_book_discount*booking.service.price/100).round
               booking.price = new_book_price
               final_price = final_price + new_book_price
+              if(booking.list_price > 0)
+                booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+              else
+                booking.discount = 0
+              end
 
             end
 
@@ -2257,17 +2325,18 @@ class BookingsController < ApplicationController
         end
 
         if proceed_with_payment
-
-          if @has_session_booking
-            service_promo = ServicePromo.find(@bookings.first.service.active_service_promo_id)
-            service_promo.max_bookings = service_promo.max_bookings - 1
-            service_promo.save
-          else
-            @bookings.each do |booking|
-              if !booking.service_promo_id.nil?
-                service_promo = ServicePromo.find(booking.service_promo_id)
-                service_promo.max_bookings = service_promo.max_bookings - 1
-                service_promo.save
+          if !@bookings.first.service.active_service_promo_id.nil?
+            if @has_session_booking
+              service_promo = ServicePromo.find(@bookings.first.service.active_service_promo_id)
+              service_promo.max_bookings = service_promo.max_bookings - 1
+              service_promo.save
+            else
+              @bookings.each do |booking|
+                if !booking.service_promo_id.nil?
+                  service_promo = ServicePromo.find(booking.service_promo_id)
+                  service_promo.max_bookings = service_promo.max_bookings - 1
+                  service_promo.save
+                end
               end
             end
           end
@@ -3644,7 +3713,7 @@ class BookingsController < ApplicationController
   def check_user_cross_bookings
     require 'date'
     if !params[:user_id].blank?
-      bookings = Booking.where(:user_id => params[:user_id], :status_id => [Status.find_by(:name => 'Reservado'), Status.find_by(:name => 'Pagado'), Status.find_by(:name => 'Confirmado')])
+      bookings = Booking.where(:user_id => params[:user_id], :status_id => [Status.find_by(:name => 'Reservado'), Status.find_by(:name => 'Confirmado')])
       booking_start = DateTime.parse(params[:booking_start])
       booking_end = DateTime.parse(params[:booking_end])
       bookings.each do |booking|
@@ -3684,7 +3753,7 @@ class BookingsController < ApplicationController
 
       provider_open = provider_times.first.open
 
-      Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: now.beginning_of_day..DateTime.new(now.year, now.mon, now.mday, open_provider_time.hour, open_provider_time.min)).order(:start).each do |booking|
+      Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado', 'Asiste']).pluck(:id), start: now.beginning_of_day..DateTime.new(now.year, now.mon, now.mday, open_provider_time.hour, open_provider_time.min)).order(:start).each do |booking|
         table_rows.append([booking.start.strftime('%R'), booking.service.name, booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone])
       end
       while (provider_open <=> close_provider_time) < 0 do
@@ -3712,7 +3781,7 @@ class BookingsController < ApplicationController
         end
         in_provider_booking = false
         # if in_provider_time
-          Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id)).where('bookings.start >= ? AND bookings.start < ?', block_open, block_close).order(:start).each do |booking|
+          Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id)).where('bookings.start >= ? AND bookings.start < ?', block_open, block_close).order(:start).each do |booking|
               in_provider_booking = true
               table_rows.append([booking.start.strftime('%R'), booking.service.name, booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone])
           end
@@ -3739,7 +3808,7 @@ class BookingsController < ApplicationController
             end
 
             if !in_provider_booking
-              Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: now.beginning_of_day..now.end_of_day).order(:start).each do |booking|
+              Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id), start: now.beginning_of_day..now.end_of_day).order(:start).each do |booking|
                 if (booking.start.to_datetime - block_close)*(block_open - booking.end.to_datetime) > 0
                   in_provider_booking = true
                   table_rows.append([provider_open.strftime('%R'), 'OCUPADO', '...', '...'])
@@ -3770,7 +3839,7 @@ class BookingsController < ApplicationController
 
         provider_open += block_length
       end
-      Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: DateTime.new(now.year, now.mon, now.mday, close_provider_time.hour, close_provider_time.min)..now.end_of_day).order(:start).each do |booking|
+      Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id), start: DateTime.new(now.year, now.mon, now.mday, close_provider_time.hour, close_provider_time.min)..now.end_of_day).order(:start).each do |booking|
         table_rows.append([booking.start.strftime('%R'), booking.service.name, booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone])
       end
     end
@@ -3919,6 +3988,7 @@ class BookingsController < ApplicationController
 
         while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date)
 
+
           #if !first_service.company.company_setting.allows_optimization
           #  if dateTimePointerEnd > dateTimePointer
           #    logger.debug "Entra acá"
@@ -3945,6 +4015,13 @@ class BookingsController < ApplicationController
           end
 
           #To deattach continous services, just delete the serviceStaffPos condition
+
+
+          #Uncomment for overlaping hours
+          
+          #if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization && last_check
+          #  dateTimePointer = dateTimePointer - total_services_duration.minutes + first_service.company.company_setting.calendar_duration.minutes
+          #end
 
           if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization
             #Calculate offset
@@ -4038,19 +4115,24 @@ class BookingsController < ApplicationController
                 end
               end
 
+              # #Stored procedure for time check
+
+              # proc_start_date = dateTimePointer.to_s.gsub('T', ' ')
+              # proc_end_date = dateTimePointer + service.duration.minutes
+              # proc_end_date = proc_end_date.to_s.gsub('T', ' ')
+
+              # if ActiveRecord::Base.connection.execute("select check_hour(#{local.id}, #{provider.id}, #{service.id}, '#{proc_start_date}', '#{proc_end_date}')")[0]['check_hour'] == 't'
+              #   service_valid = true
+              # else
+              #   service_valid = false
+              # end
+
               # Provider breaks
               if service_valid
 
                 if provider.provider_breaks.where.not('(provider_breaks.end <= ? or ? <= provider_breaks.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count > 0
                   service_valid = false
                 end
-
-                #provider.provider_breaks.each do |provider_break|
-                #  if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + service.duration.minutes) <= provider_break.start.to_datetime)
-                #    service_valid = false
-                #    break
-                #  end
-                #end
 
               end
 
@@ -4066,30 +4148,6 @@ class BookingsController < ApplicationController
                     service_valid = false
                   end
                 end
-
-
-                # Booking.where(service_provider_id: provider.id, start: dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |provider_booking|
-                #   unless provider_booking.status_id == cancelled_id
-                #     pointerEnd = dateTimePointer+service.duration.minutes
-                #     if !(pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
-                #       if !service.group_service || service.id != provider_booking.service_id
-                #         if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                #           service_valid = false
-                #           break
-                #         end
-                #       elsif service.group_service && service.id == provider_booking.service_id && provider.bookings.where(service_id: service.id, start: dateTimePointer).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
-                #         if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                #           service_valid = false
-                #           break
-                #         end
-                #       end
-                #     else
-                #       #if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-                #       #  service_valid = false
-                #       #end
-                #     end
-                #   end
-                # end
 
 
               end
@@ -5058,6 +5116,10 @@ class BookingsController < ApplicationController
 
           #To deattach continous services, just delete the serviceStaffPos condition
 
+          if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization && last_check
+            dateTimePointer = dateTimePointer - total_services_duration.minutes + first_service.company.company_setting.calendar_duration.minutes
+          end
+
           if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization
             #Calculate offset
             offset_diff = (dateTimePointer-day_open_time)*24*60
@@ -5157,6 +5219,18 @@ class BookingsController < ApplicationController
               end
 
               logger.info "Debug 10"
+
+              # #Stored procedure for time check
+
+              # proc_start_date = dateTimePointer.to_s.gsub('T', ' ')
+              # proc_end_date = dateTimePointer + service.duration.minutes
+              # proc_end_date = proc_end_date.to_s.gsub('T', ' ')
+
+              # if ActiveRecord::Base.connection.execute("select check_hour(#{local.id}, #{provider.id}, #{service.id}, '#{proc_start_date}', '#{proc_end_date}')")[0]['check_hour'] == 't'
+              #   service_valid = true
+              # else
+              #   service_valid = false
+              # end
 
               # Provider breaks
               if service_valid

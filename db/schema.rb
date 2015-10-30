@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151016143414) do
+ActiveRecord::Schema.define(version: 20151028134845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -305,6 +305,8 @@ ActiveRecord::Schema.define(version: 20151016143414) do
     t.boolean  "can_cancel",                 default: true
     t.boolean  "use_identification_number",  default: false
     t.string   "preset_notes"
+    t.boolean  "payment_client_required",    default: true
+    t.boolean  "show_cashes",                default: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -410,6 +412,20 @@ ActiveRecord::Schema.define(version: 20151016143414) do
   add_index "favorites", ["location_id"], name: "index_favorites_on_location_id", using: :btree
   add_index "favorites", ["user_id"], name: "index_favorites_on_user_id", using: :btree
 
+  create_table "internal_sales", force: true do |t|
+    t.integer  "location_id"
+    t.integer  "cashier_id"
+    t.integer  "service_provider_id"
+    t.integer  "product_id"
+    t.integer  "quantity",            default: 1
+    t.float    "list_price",          default: 0.0
+    t.float    "price",               default: 0.0
+    t.float    "discount",            default: 0.0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "date",                default: '2015-10-27 17:17:43'
+  end
+
   create_table "last_minute_promos", force: true do |t|
     t.integer  "discount",    default: 0
     t.integer  "hours",       default: 0
@@ -435,6 +451,9 @@ ActiveRecord::Schema.define(version: 20151016143414) do
     t.integer  "stock",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "stock_limit"
+    t.boolean  "alert_flag",  default: true
+
   end
 
   add_index "location_products", ["location_id"], name: "index_location_products_on_location_id", using: :btree
@@ -484,6 +503,19 @@ ActiveRecord::Schema.define(version: 20151016143414) do
     t.boolean  "mailing_option", default: true
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "mock_bookings", force: true do |t|
+    t.integer  "client_id"
+    t.integer  "service_id"
+    t.integer  "service_provider_id"
+    t.float    "price"
+    t.float    "discount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "payment_id"
+    t.integer  "receipt_id"
+    t.float    "list_price",          default: 0.0
   end
 
   create_table "notification_emails", force: true do |t|
@@ -618,7 +650,11 @@ ActiveRecord::Schema.define(version: 20151016143414) do
     t.float    "discount",   default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "quantity",   default: 1,   null: false
+    t.integer  "quantity",    default: 1,   null: false
+    t.integer  "seller_id"
+    t.integer  "seller_type"
+    t.integer  "receipt_id"
+    t.float    "list_price",  default: 0.0
   end
 
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
@@ -631,45 +667,65 @@ ActiveRecord::Schema.define(version: 20151016143414) do
     t.datetime "updated_at"
   end
 
-  create_table "payments", force: true do |t|
-    t.integer  "company_id"
-    t.float    "amount",                    default: 0.0
-    t.integer  "receipt_type_id"
-    t.string   "receipt_number",            default: "",    null: false
+  create_table "payment_transactions", force: true do |t|
+    t.integer  "payment_id"
     t.integer  "payment_method_id"
-    t.string   "payment_method_number",     default: "",    null: false
+    t.integer  "company_payment_method_id"
+    t.string   "number",                    default: ""
+    t.float    "amount",                    default: 0.0
+    t.integer  "installments",              default: 0
     t.integer  "payment_method_type_id"
-    t.integer  "installments"
-    t.boolean  "payed",                     default: false
-    t.date     "payment_date"
     t.integer  "bank_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "company_payment_method_id"
-    t.float    "discount",                  default: 0.0
-    t.text     "notes",                     default: ""
-    t.integer  "location_id"
-    t.integer  "client_id"
-    t.float    "bookings_amount",           default: 0.0
-    t.float    "bookings_discount",         default: 0.0
-    t.float    "products_amount",           default: 0.0
-    t.float    "products_discount",         default: 0.0
-    t.integer  "products_quantity",         default: 0
-    t.integer  "bookings_quantity",         default: 0
-    t.integer  "quantity",                  default: 0
-    t.float    "sessions_amount",           default: 0.0
-    t.float    "sessions_discount",         default: 0.0
-    t.integer  "sessions_quantity",         default: 0
   end
 
-  add_index "payments", ["bank_id"], name: "index_payments_on_bank_id", using: :btree
+  create_table "payments", force: true do |t|
+    t.integer  "company_id"
+    t.float    "amount",        default: 0.0
+    t.boolean  "payed",         default: false
+    t.date     "payment_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "discount",      default: 0.0
+    t.text     "notes",         default: ""
+    t.integer  "location_id"
+    t.integer  "client_id"
+    t.integer  "quantity",      default: 0
+    t.float    "paid_amount",   default: 0.0
+    t.float    "change_amount", default: 0.0
+    t.integer  "cashier_id"
+  end
+
   add_index "payments", ["client_id"], name: "index_payments_on_client_id", using: :btree
   add_index "payments", ["company_id"], name: "index_payments_on_company_id", using: :btree
-  add_index "payments", ["company_payment_method_id"], name: "index_payments_on_company_payment_method_id", using: :btree
   add_index "payments", ["location_id"], name: "index_payments_on_location_id", using: :btree
-  add_index "payments", ["payment_method_id"], name: "index_payments_on_payment_method_id", using: :btree
-  add_index "payments", ["payment_method_type_id"], name: "index_payments_on_payment_method_type_id", using: :btree
-  add_index "payments", ["receipt_type_id"], name: "index_payments_on_receipt_type_id", using: :btree
+
+  create_table "petty_cashes", force: true do |t|
+    t.integer  "location_id"
+    t.float    "cash",                default: 0.0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "open",                default: false
+    t.boolean  "scheduled_close",     default: false
+    t.boolean  "scheduled_keep_cash", default: false
+    t.float    "scheduled_cash",      default: 0.0
+  end
+
+  create_table "petty_transactions", force: true do |t|
+    t.integer  "petty_cash_id"
+    t.integer  "transactioner_id"
+    t.integer  "transactioner_type"
+    t.datetime "date"
+    t.float    "amount",             default: 0.0
+    t.boolean  "is_income",          default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "notes"
+    t.boolean  "open",               default: true
+    t.string   "receipt_number"
+  end
+
 
   create_table "plan_countries", force: true do |t|
     t.integer  "plan_id"
@@ -903,6 +959,58 @@ ActiveRecord::Schema.define(version: 20151016143414) do
     t.datetime "updated_at"
   end
 
+  create_table "sales_cash_emails", force: true do |t|
+    t.integer  "sales_cash_id"
+    t.string   "email"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sales_cash_incomes", force: true do |t|
+    t.integer  "sales_cash_id"
+    t.integer  "user_id"
+    t.float    "amount",        default: 0.0
+    t.datetime "date",          default: '2015-10-23 15:05:22'
+    t.text     "notes",         default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "open",          default: true
+  end
+
+  create_table "sales_cash_logs", force: true do |t|
+    t.integer  "sales_cash_id"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.float    "remaining_amount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sales_cash_transactions", force: true do |t|
+    t.integer  "sales_cash_id"
+    t.integer  "user_id"
+    t.float    "amount",                  default: 0.0
+    t.datetime "date",                    default: '2015-10-23 13:42:39'
+    t.text     "notes",                   default: ""
+    t.string   "receipt_number"
+    t.boolean  "is_internal_transaction", default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "petty_transaction_id"
+    t.boolean  "open",                    default: true
+  end
+
+  create_table "sales_cashes", force: true do |t|
+    t.integer  "location_id"
+    t.float    "cash",                    default: 0.0
+    t.integer  "scheduled_reset_day",     default: 1
+    t.boolean  "scheduled_reset_monthly", default: true
+    t.datetime "last_reset_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "scheduled_reset",         default: false
+  end
+
   create_table "service_categories", force: true do |t|
     t.string   "name",                   null: false
     t.integer  "company_id"
@@ -1066,6 +1174,33 @@ ActiveRecord::Schema.define(version: 20151016143414) do
   create_table "statuses", force: true do |t|
     t.string   "name",        null: false
     t.text     "description", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "stock_alarm_settings", force: true do |t|
+    t.integer  "location_id"
+    t.boolean  "quick_send",              default: false
+    t.boolean  "has_default_stock_limit", default: false
+    t.integer  "default_stock_limit",     default: 0
+    t.boolean  "monthly",                 default: true
+    t.integer  "month_day",               default: 1
+    t.integer  "week_day",                default: 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "periodic_send",           default: false
+  end
+
+  create_table "stock_emails", force: true do |t|
+    t.integer  "location_product_id"
+    t.string   "email"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "stock_setting_emails", force: true do |t|
+    t.integer  "stock_alarm_setting_id"
+    t.string   "email"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -37,3 +37,15 @@ end
 every 1.days, :at => '8 am' do
   runner "Company.invoice_email"
 end
+
+every 1.days, :at => '2:30 am' do
+  runner 'Location.stock_reminders'
+end
+
+every 1.days, :at => '0:15 am' do
+  runner 'SalesCash.check_close'
+end
+
+every 1.days, :at => '0:15 am' do
+  runner 'PettyCash.close_on_schedule'
+end

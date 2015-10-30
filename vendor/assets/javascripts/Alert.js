@@ -61,12 +61,13 @@ function Alert (appendTo) {
 	}
 
 	//==== Public Methods ====//
-	this.showAlert = function (message, close_function, close_text) {
+	this.showAlert = function (message, close_function, close_text, hide_function) {
 		// Modal Body
 		$('#alertModal #alertBody').html(message);
 
 		// Modal Footer
 		close_function = close_function || null;
+		hide_function = hide_function || null;
 		close_text = close_text || 'Aceptar';
 		if (close_function) {
 			$('#alertModal .modal-footer').append(
@@ -77,6 +78,13 @@ function Alert (appendTo) {
 				close_function();
 			});
 			$('#alertModal').on('hidden.bs.modal', function (e) {
+				$('#alertModal #closeModal').remove();
+			});
+		}
+
+		if(hide_function){
+			$('#alertModal').on('hidden.bs.modal', function (e) {
+				hide_function();
 				$('#alertModal #closeModal').remove();
 			});
 		}
