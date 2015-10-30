@@ -64,7 +64,7 @@
             </div>
           </div>
           <% if current_user.role == Role.find_by(name: 'Administrador General') %>
-          <div class="col-md-3">
+          <!-- <div class="col-md-3">
             <div class="square-highlight">
               <h2 class="text-green">
                 <% incomes = booking_revenue(Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
@@ -78,7 +78,7 @@
               </p>
               <p>Ingresos Estimados</p>
             </div>
-          </div>
+          </div> -->
           <% end %>
         </div>
       </div>
