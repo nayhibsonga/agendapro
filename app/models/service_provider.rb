@@ -627,9 +627,9 @@ class ServiceProvider < ActiveRecord::Base
 
 	def self.filter_location(location)
     if !location.blank? && location != '0'
-      where(location_id: location).order(:order, :name)
+      where(location_id: location).order(:order, :public_name)
     else
-      all.order(:order, :name)
+      all.order(:order, :public_name)
     end
   end
 
