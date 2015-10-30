@@ -1,11 +1,11 @@
 module ApiViews
   module Marketplace
 	module V1
-	  class CompaniesController < V1Controller
+	  class UsersController < V1Controller
 	  	skip_before_filter :permitted_params, only: [:oauth]
 		before_action :check_login_params, only: [:login]
 		before_action :parse_registration_params, only: [:create]
-		
+
 		  def create
 		    @user = User.new(user_params)
 		    @user.role = Role.find_by_name("Usuario Registrado")
