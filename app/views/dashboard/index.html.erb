@@ -102,7 +102,7 @@
                   <div class="form-group">
                     <%= label_tag :provider, 'Elige Prestador', class: 'col-sm-3 control-label' %>
                     <div class="col-sm-7">
-                      <%= select_tag :provider, '<option value="0">Todos</option>'.html_safe + options_from_collection_for_select(ServiceProvider.filter_location(params[:location]).accessible_by(current_ability), :id, :public_name, params[:provider]), class: 'form-control' %>
+                      <%= select_tag :provider, '<option value="0">Todos</option>'.html_safe + options_from_collection_for_select(ServiceProvider.filter_location(params[:location]).order(:order, :public_name).accessible_by(current_ability), :id, :public_name, params[:provider]), class: 'form-control' %>
                     </div>
                   </div>
                 </div>

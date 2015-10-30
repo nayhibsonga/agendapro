@@ -13,14 +13,14 @@ class BookingsController < ApplicationController
 
     @company = Company.find(current_user.company_id)
     if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
-      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).order(:order)
+      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).order(:order, :name)
     else
-      @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
+      @locations = Location.where(:active => true).accessible_by(current_ability).order(:order, :name)
     end
     @company_setting = @company.company_setting
-    @service_providers = ServiceProvider.where(location_id: @locations).order(:order)
+    @service_providers = ServiceProvider.where(location_id: @locations).order(:order, :public_name)
     @provider_groups = JbuilderTemplate.encode(view_context) do |json|
-      json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order) do |provider_group|
+      json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order, :name) do |provider_group|
         json.name  provider_group.name
         json.location_id provider_group.location_id
         json.resources provider_group.service_providers.where(active: true) do |service_provider|
@@ -38,11 +38,11 @@ class BookingsController < ApplicationController
   def fixed_index
     @company = Company.where(id: current_user.company_id)
     if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
-      @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true).pluck(:location_id)).accessible_by(current_ability).order(:order)
+      @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true).pluck(:location_id)).accessible_by(current_ability).order(:order, :name)
     else
-      @locations = Location.where(:active => true).accessible_by(current_ability).order(:order)
+      @locations = Location.where(:active => true).accessible_by(current_ability).order(:order, :name)
     end
-    @service_providers = ServiceProvider.where(location_id: @locations).order(:order)
+    @service_providers = ServiceProvider.where(location_id: @locations).order(:order, :public_name)
     @bookings = Booking.where(service_provider_id: @service_providers)
     @booking = Booking.new
     @provider_break = ProviderBreak.new
@@ -1421,7 +1421,7 @@ class BookingsController < ApplicationController
     @cancelled_id = Status.find_by_name('Cancelado').id
 
     @bookings = Booking.where('bookings.service_provider_id IN (?)', @providers.pluck(:id)).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').includes(:client).includes(:service).includes(:session_booking)
-    
+
 
     @bookings.each do |booking|
       if booking.status_id != @cancelled_id
@@ -2901,13 +2901,13 @@ class BookingsController < ApplicationController
 
     @bookings.each do |b|
       if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > b.start || b.status_id == status_cancelado.id
-          
+
           if b.status_id == status_cancelado.id
             reason = "fue cancelada."
           else
             reason = "ya ocurrió."
           end
-          
+
           redirect_to confirm_error_path(:id => @bookings.first.id, :group_confirm => true, :reason => reason)
           return
       end
@@ -3754,7 +3754,7 @@ class BookingsController < ApplicationController
             #   client_name = '...'
             #   client_phone = '...'
 
-              
+
             # end
           end
         end
@@ -3844,7 +3844,7 @@ class BookingsController < ApplicationController
     if serviceStaff[0][:provider] != "0"
       first_providers << ServiceProvider.find(serviceStaff[0][:provider])
     else
-      first_providers = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc)
+      first_providers = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(:order, :public_name)
     end
 
     #Look for services and providers and save them for later use.
@@ -3853,7 +3853,7 @@ class BookingsController < ApplicationController
     total_services_duration = 0
 
     #False if last tried block allocation failed.
-    #Used for searching gaps. They should be looked for only if last block culd be allocated, 
+    #Used for searching gaps. They should be looked for only if last block culd be allocated,
     #because if not, then there isn't anyway that coming back in time cause correct allocation.
     last_check = false
 
@@ -3890,7 +3890,7 @@ class BookingsController < ApplicationController
         next
       end
 
-      
+
 
 
       dateTimePointer = dtp.open
@@ -4003,12 +4003,12 @@ class BookingsController < ApplicationController
               if service.check_providers_day_times(dateTimePointer)
                 #providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
 
-                providers = providers_arr[serviceStaffPos].order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+                providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
 
               else
                 #providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
 
-                providers = providers_arr[serviceStaffPos].order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
               end
 
 
@@ -4751,7 +4751,7 @@ class BookingsController < ApplicationController
 
     #logger.debug "Max gaps: " + day_positive_gaps.max.to_s
     calendar_height = time_prop*67
-    adjusted_calendar_height = calendar_height + calendar_height*day_positive_gaps.max.to_f/hours_diff 
+    adjusted_calendar_height = calendar_height + calendar_height*day_positive_gaps.max.to_f/hours_diff
     #(day_positive_gaps.max.to_f * 100 / (60 * 100))*67
 
     #logger.debug calendar_height.to_s + " *** " + adjusted_calendar_height.to_s
@@ -4915,7 +4915,7 @@ class BookingsController < ApplicationController
     if serviceStaff[0][:provider] != "0"
       first_providers << ServiceProvider.find(serviceStaff[0][:provider])
     else
-      first_providers = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc)
+      first_providers = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(:order, :public_name)
     end
 
     #Look for services and providers and save them for later use.
@@ -4924,7 +4924,7 @@ class BookingsController < ApplicationController
     total_services_duration = 0
 
     #False if last tried block allocation failed.
-    #Used for searching gaps. They should be looked for only if last block culd be allocated, 
+    #Used for searching gaps. They should be looked for only if last block culd be allocated,
     #because if not, then there isn't anyway that coming back in time cause correct allocation.
     last_check = false
 
@@ -5117,12 +5117,12 @@ class BookingsController < ApplicationController
               if service.check_providers_day_times(dateTimePointer)
                 #providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
 
-                providers = providers_arr[serviceStaffPos].order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+                providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
 
               else
                 #providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
 
-                providers = providers_arr[serviceStaffPos].order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
               end
 
               logger.info "Debug 7"
@@ -5502,7 +5502,7 @@ class BookingsController < ApplicationController
       end
 
 
-    
+
     respond_to do |format|
       format.html
       format.json { render :json => @hours_array }

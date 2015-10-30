@@ -30,7 +30,7 @@ module Api
 
 			# Variable Data
 			day = @date.cwday
-			ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
+			ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
 			location_times = @location.location_times.where(day_id: day).order(:open)
 
 			if location_times.length > 0
@@ -340,7 +340,7 @@ module Api
 		@location = Location.find(params[:location_id])
 		company_setting = CompanySetting.find(Company.find(@location.company_id).company_setting)
 		cancelled_id = Status.find_by(name: 'Cancelado').id
-		
+
 		if params[:id] == "0"
 			# Data
 			provider_breaks = ProviderBreak.where(:service_provider_id => @location.service_providers.pluck(:id))
@@ -363,7 +363,7 @@ module Api
 				# Variable Data
 				day = wdate.cwday
 				@available_days[day - 1] = { date: wdate, available: false }
-				ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
+				ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
 				location_times = @location.location_times.where(day_id: day).order(:open)
 
 				if location_times.length > 0
@@ -673,7 +673,7 @@ module Api
 	end
 
       private
-      
+
   	  def check_available_hours_params
   	  	if !params[:service_id].present? || !params[:date].present?
           render json: { error: 'Invalid User. Param(s) missing.' }, status: 500

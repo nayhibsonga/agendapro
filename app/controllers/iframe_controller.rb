@@ -79,7 +79,7 @@ class IframeController < ApplicationController
 			redirect_to iframe_construction_path
 			return
 		end
-		@locations = Location.where(:active => true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+		@locations = Location.where(:active => true).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(:order, :name)
 
 		render layout: "iframe"
 	end
@@ -103,7 +103,7 @@ class IframeController < ApplicationController
 			@before_now = (now + company_setting.before_booking / 24.0).rfc2822
 			@after_now = (now + company_setting.after_booking * 30).rfc2822
 		end
-		
+
 		render layout: "iframe"
 	end
 
@@ -615,7 +615,7 @@ class IframeController < ApplicationController
                   if booking.end.to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
 
                     if !(service_promo.morning_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-                      
+
                       new_book_discount = promo.morning_discount
 
                     elsif !(service_promo.afternoon_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
@@ -764,7 +764,7 @@ class IframeController < ApplicationController
                 service_promo.save
               end
             end
-          end     
+          end
 
           PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de varios servicios a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
           redirect_to resp.payment_process_url and return
@@ -892,7 +892,7 @@ class IframeController < ApplicationController
 
     @location = Location.find(params[:location])
     @company = @location.company
-    
+
     @tried_bookings = []
     if(params[:bookings])
       @tried_bookings = Booking.find(params[:bookings])
