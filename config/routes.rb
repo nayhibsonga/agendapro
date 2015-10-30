@@ -450,7 +450,7 @@
         post 'users/session', to: 'users#login'
         post 'users/registration', to: 'users#create'
         put 'users/me', to: 'users#edit'
-        get 'users/me', to: 'users#mobile_user'
+        get 'users/me', to: 'users#api_user'
         get 'users/bookings', to: 'users#bookings'
         get 'users/favorites', to: 'users#favorites'
         # get 'users/searches', to: 'users#searches'
