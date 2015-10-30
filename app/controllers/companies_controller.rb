@@ -954,6 +954,8 @@ class CompaniesController < ApplicationController
 			@products = @company.products.order(:product_category_id, :product_brand_id)
 		end
 
+		logger.info @products.inspect
+
 	    respond_to do |format|
 	      format.html { render :partial => 'inventory' }
 	      format.json { render :json => @products }
