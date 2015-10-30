@@ -446,6 +446,14 @@
         get 'locations/:id', to: 'locations#show'
 
         get 'service_providers/available_hours', to: 'service_providers#available_hours'
+
+        get 'users/me', to: 'users#api_user'
+        get 'users/favorites', to: 'users#favorites'
+        post 'users/new', to: 'users#create'
+        put 'users/me', to: 'users#edit'
+        get 'users/bookings', to: 'users#bookings'
+        get 'users/session', to: 'users#login'
+
       end
     end
   end

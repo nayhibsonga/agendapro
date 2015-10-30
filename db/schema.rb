@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151016143414) do
+ActiveRecord::Schema.define(version: 20151030192436) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20151016143414) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes",               default: ""
-    t.text     "company_comment",     default: ""
+    t.text     "notes"
+    t.text     "company_comment"
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -115,11 +115,11 @@ ActiveRecord::Schema.define(version: 20151016143414) do
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
+    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.integer  "payment_id"
     t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
     t.integer  "reminder_group"
@@ -282,17 +282,17 @@ ActiveRecord::Schema.define(version: 20151016143414) do
     t.boolean  "deal_activate",              default: false
     t.string   "deal_name",                  default: ""
     t.boolean  "deal_overcharge",            default: true
-    t.boolean  "deal_exclusive",             default: false
-    t.integer  "deal_quantity",              default: 0
-    t.integer  "deal_constraint_option",     default: 0
-    t.integer  "deal_constraint_quantity",   default: 0
-    t.boolean  "deal_identification_number", default: false
     t.boolean  "allows_online_payment",      default: false
     t.string   "account_number",             default: ""
     t.string   "company_rut",                default: ""
     t.string   "account_name",               default: ""
     t.integer  "account_type",               default: 3
     t.integer  "bank_id"
+    t.boolean  "deal_exclusive",             default: true
+    t.integer  "deal_quantity",              default: 0
+    t.integer  "deal_constraint_option",     default: 0
+    t.integer  "deal_constraint_quantity",   default: 0
+    t.boolean  "deal_identification_number", default: false
     t.boolean  "deal_required",              default: false,                 null: false
     t.boolean  "online_payment_capable",     default: false
     t.boolean  "allows_optimization",        default: true
@@ -431,8 +431,8 @@ ActiveRecord::Schema.define(version: 20151016143414) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-    t.integer  "location_id",             null: false
-    t.integer  "stock",       default: 0
+    t.integer  "location_id"
+    t.integer  "stock"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -543,6 +543,136 @@ ActiveRecord::Schema.define(version: 20151016143414) do
     t.integer  "modification_unit",  default: 1
     t.integer  "cancel_unit",        default: 2
     t.integer  "company_setting_id"
+  end
+
+  create_table "pay_u_creations", force: true do |t|
+    t.string   "trx_id",         null: false
+    t.string   "payment_method", null: false
+    t.float    "amount",         null: false
+    t.text     "details"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "pay_u_notifications", force: true do |t|
+    t.string   "merchant_id"
+    t.string   "state_pol"
+    t.string   "risk"
+    t.string   "response_code_pol"
+    t.string   "reference_sale"
+    t.string   "reference_pol"
+    t.string   "sign"
+    t.string   "extra1"
+    t.string   "extra2"
+    t.string   "payment_method"
+    t.string   "payment_method_type"
+    t.string   "installments_number"
+    t.string   "value"
+    t.string   "tax"
+    t.string   "additional_value"
+    t.string   "transaction_date"
+    t.string   "currency"
+    t.string   "email_buyer"
+    t.string   "cus"
+    t.string   "pse_bank"
+    t.string   "test"
+    t.string   "description"
+    t.string   "billing_address"
+    t.string   "shipping_address"
+    t.string   "phone"
+    t.string   "office_phone"
+    t.string   "account_number_ach"
+    t.string   "account_type_ach"
+    t.string   "administrative_fee"
+    t.string   "administrative_fee_base"
+    t.string   "administrative_fee_tax"
+    t.string   "airline_code"
+    t.string   "attempts"
+    t.string   "authorization_code"
+    t.string   "bank_id"
+    t.string   "billing_city"
+    t.string   "billing_country"
+    t.string   "commision_pol"
+    t.string   "commision_pol_currency"
+    t.string   "customer_number"
+    t.string   "date"
+    t.string   "error_code_bank"
+    t.string   "error_message_bank"
+    t.string   "exchange_rate"
+    t.string   "ip"
+    t.string   "nickname_buyer"
+    t.string   "nickname_seller"
+    t.string   "payment_method_id"
+    t.string   "payment_request_state"
+    t.string   "pseReference1"
+    t.string   "pseReference2"
+    t.string   "pseReference3"
+    t.string   "response_message_pol"
+    t.string   "shipping_city"
+    t.string   "shipping_country"
+    t.string   "transaction_bank_id"
+    t.string   "transaction_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "cc_number"
+    t.string   "cc_holder"
+    t.string   "bank_referenced_name"
+    t.string   "payment_method_name"
+    t.string   "antifraudMerchantId"
+  end
+
+  create_table "pay_u_responses", force: true do |t|
+    t.string   "merchantId"
+    t.string   "transactionState"
+    t.string   "risk"
+    t.string   "polResponseCode"
+    t.string   "referenceCode"
+    t.string   "reference_pol"
+    t.string   "signature"
+    t.string   "polPaymentMethod"
+    t.string   "polPaymentMethodType"
+    t.string   "installmentsNumber"
+    t.string   "TX_VALUE"
+    t.string   "TX_TAX"
+    t.string   "buyerEmail"
+    t.string   "processingDate"
+    t.string   "currency"
+    t.string   "cus"
+    t.string   "pseBank"
+    t.string   "lng"
+    t.string   "description"
+    t.string   "lapResponseCode"
+    t.string   "lapPaymentMethod"
+    t.string   "lapPaymentMethodType"
+    t.string   "lapTransactionState"
+    t.string   "message"
+    t.string   "extra1"
+    t.string   "extra2"
+    t.string   "extra3"
+    t.string   "authorizationCode"
+    t.string   "merchant_address"
+    t.string   "merchant_name"
+    t.string   "merchant_url"
+    t.string   "orderLanguage"
+    t.string   "pseCycle"
+    t.string   "pseReference1"
+    t.string   "pseReference2"
+    t.string   "pseReference3"
+    t.string   "telephone"
+    t.string   "transactionId"
+    t.string   "trazabilityCode"
+    t.string   "TX_ADMINISTRATIVE_FEE"
+    t.string   "TX_TAX_"
+    t.string   "ADMINISTRATIVE_FEE"
+    t.string   "TX_TAX_ADMINISTRATIVE"
+    t.string   "_FEE_RETURN_BASE"
+    t.string   "action_code_description"
+    t.string   "cc_holder"
+    t.string   "cc_number"
+    t.string   "processing_date_time"
+    t.string   "request_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "payed_bookings", force: true do |t|
@@ -1143,6 +1273,7 @@ ActiveRecord::Schema.define(version: 20151016143414) do
     t.string   "uid"
     t.boolean  "receives_offers",        default: true
     t.string   "mobile_token"
+    t.string   "api_token"
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree

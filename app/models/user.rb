@@ -68,6 +68,12 @@ class User < ActiveRecord::Base
 		end
 	end
 
+	def request_api_token
+		while self.mobile_token.blank? || User.where(mobile_token: self.mobile_token).where.not(id: self.id).count > 0
+			self.mobile_token = SecureRandom.base64(32)
+		end
+	end
+
 	def self.find_for_facebook_oauth(auth, signed_in_resource=nil)
     	user = User.where(:provider => auth.provider, :uid => auth.uid).first
 	    if user
