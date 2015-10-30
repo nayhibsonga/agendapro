@@ -194,10 +194,10 @@ class PayedBookingsController < ApplicationController
 		@payment_account.status = true
 		@payment_account.payed_bookings.each do |payed_booking|
 			payed_booking.transfer_complete = true
-			payed_booking.bookings.each do |booking|
-				booking.status_id = Status.find_by_name("Pagado").id
-				booking.save
-			end
+			# payed_booking.bookings.each do |booking|
+			# 	booking.status_id = Status.find_by_name("Pagado").id
+			# 	booking.save
+			# end
 			payed_booking.save
 		end
 		if @payment_account.save
@@ -231,10 +231,10 @@ class PayedBookingsController < ApplicationController
 			payment_account.status = true
 			payment_account.payed_bookings.each do |payed_booking|
 				payed_booking.transfer_complete = true
-				payed_booking.bookings.each do |booking|
-					booking.status_id = Status.find_by_name("Pagado").id
-					booking.save
-				end
+				# payed_booking.bookings.each do |booking|
+				# 	booking.status_id = Status.find_by_name("Pagado").id
+				# 	booking.save
+				# end
 				payed_booking.save
 			end
 			if payment_account.save
@@ -259,10 +259,10 @@ class PayedBookingsController < ApplicationController
 		@payment_account.status = false
 		@payment_account.payed_bookings.each do |payed_booking|
 			payed_booking.transfer_complete = false
-			payed_booking.bookings.each do |booking|
-				booking.status_id = Status.find_by_name("Pagado").id
-				booking.save
-			end
+			# payed_booking.bookings.each do |booking|
+			# 	booking.status_id = Status.find_by_name("Pagado").id
+			# 	booking.save
+			# end
 			payed_booking.save
 		end
 		if @payment_account.save
@@ -288,10 +288,10 @@ class PayedBookingsController < ApplicationController
 			payment_account.status = false
 			payment_account.payed_bookings.each do |payed_booking|
 				payed_booking.transfer_complete = false
-				payed_booking.bookings.each do |booking|
-					booking.status_id = Status.find_by_name("Pagado").id
-					booking.save
-				end
+				# payed_booking.bookings.each do |booking|
+				# 	booking.status_id = Status.find_by_name("Pagado").id
+				# 	booking.save
+				# end
 				payed_booking.save
 			end
 			if payment_account.save
