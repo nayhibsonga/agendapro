@@ -5,7 +5,7 @@ class Product < ActiveRecord::Base
   belongs_to :product_display
   has_many :location_products, dependent: :destroy
   has_many :locations, through: :location_products
-  has_many :payment_products
+  has_many :payment_products, dependent: :destroy
   has_many :payments, through: :payment_products
   has_many :receipts, through: :payment_products
   has_many :internal_sales

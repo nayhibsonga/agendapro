@@ -1520,5 +1520,4 @@ class Booking < ActiveRecord::Base
       # logger.debug @data.inspect
     end
   end
-
 end

@@ -130,7 +130,7 @@ class BookingMailer < ActionMailer::Base
 							]
 						}]
 
-			if book_info.location.company.company_setting.can_edit
+			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
 					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
@@ -345,7 +345,7 @@ class BookingMailer < ActionMailer::Base
 							]
 						}]
 
-			if book_info.location.company.company_setting.can_edit
+			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
 					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
@@ -922,7 +922,7 @@ class BookingMailer < ActionMailer::Base
 						  ]
 						}]
 
-			if book_info.location.company.company_setting.can_edit
+			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
 					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
@@ -2039,7 +2039,7 @@ class BookingMailer < ActionMailer::Base
 							]
 						}]
 
-			if book_info.location.company.company_setting.can_edit
+			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
 					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
