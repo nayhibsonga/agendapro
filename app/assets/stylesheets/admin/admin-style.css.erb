@@ -449,34 +449,6 @@ a:active {
   ================================
 */
 
-.btn-alarm {
-  color: #fff;
-  background-color: #fbcd5d;
-  border-color: #e6ba55;
-  text-decoration: none;
-}
-.btn-alarm:hover,
-{
-  color: #fff !important;
-  background-color: #e6ba55 !important;
-  border-color: #fbcd5d !important;
-  text-decoration: none;
-}
-.btn-alarm:active,
-{
-  color: #fff !important;
-  background-color: #e6ba55 !important;
-  border-color: #fbcd5d !important;
-  text-decoration: none;
-}
-.btn-alarm:focus,
-{
-  color: #fff !important;
-  background-color: #e6ba55 !important;
-  border-color: #fbcd5d !important;
-  text-decoration: none;
-}
-
 
 .btn-green {
   color: #ffffff;
@@ -1456,6 +1428,10 @@ tr[class*="break"] {
   border-top: none;
 }
 
+.paymentModalStep .modal-body{
+  padding-top: 0px !important;
+}
+
 #paymentModalIntro .modal-footer{
   background-color: #fff;
   border-top: none;
@@ -1463,6 +1439,9 @@ tr[class*="break"] {
 
 .payment-modals-bar{
   margin-bottom: 12px;
+  background-color: #f0f0f0;
+  padding-top: 15px;
+  padding-bottom: 15px;
 }
 
 .add-item-btn{
@@ -1953,4 +1932,66 @@ tr[class*="break"] {
 #paymentIntroSaveBtn:hover, #paymentSaveIntroBtn:focus{
   background-color: #1ba970;
   color: #fff;
+}
+
+#payment_transactions_table{
+  width: 100%;
+}
+
+#payment_transactions_table input{
+  width: 100%;
+}
+
+#payment_transactions_table th, #payment_transactions_table td{
+  padding-left: 2px;
+  border: none;
+}
+
+#payment_transactions_table td.method_td{
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.cost_td{
+  padding-left: 8px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.change_td{
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.method_td input{
+  color: #fff !important;
+  border: 1px solid #d7d7d7 !important;
+  background-color: #d7d7d7;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.sum_td input{
+  color: #22c488 !important;
+  border: 1px solid #22c488 !important;
+  background-color: #fff;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.cost_td input{
+  
+  color: #fff !important;
+  border: 1px solid #22c488 !important;
+  background-color: #22c488;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.change_td input{
+  
+  color: #fff !important;
+  border: 1px solid #949292 !important;
+  background-color: #949292;
+  padding-left: 2px;
+  height: 30px;
 }

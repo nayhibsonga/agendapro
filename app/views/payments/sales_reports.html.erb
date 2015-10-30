@@ -24,8 +24,8 @@
 
         <% if @service_providers.count > 0 %>
           <div class="col-sm-4">
-            <input type="radio" id="person_type_provider" name="person_type" value="service_provider" />&nbsp;&nbsp;<label for="person_type_provider" class="control-label" style="margin-top: 5px; cursor:pointer;">Prestadores:</label><br />
-            <select id="serviceProvidersMultiSelect" multiple="multiple" style="margin-top: 7px;">
+            <input type="radio" id="person_type_provider" name="person_type" value="service_provider" checked />&nbsp;&nbsp;<label for="person_type_provider" class="control-label" style="margin-top: 5px; cursor:pointer;">Prestadores:</label><br />
+            <select id="serviceProvidersMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
               <% @service_providers.each do |service_provider| %>
                 <option value="<%= service_provider.id %>">
                   <%= service_provider.public_name %>
@@ -40,7 +40,7 @@
         <% if @users.count > 0 %>
           <div class="col-sm-4">
             <input type="radio" id="person_type_user" name="person_type" value="user" />&nbsp;&nbsp;<label for="person_type_user" class="control-label" style="margin-top: 5px; cursor:pointer;">Usuarios:</label>
-            <select id="usersMultiSelect" multiple="multiple" style="margin-top: 7px;">
+            <select id="usersMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
               <% @users.each do |user| %>
                 <option value="<%= user.id %>">
                   <%= user.first_name + " " + user.last_name + " (" + user.role.name + ")" %>
@@ -54,7 +54,7 @@
         <% if @cashiers.count > 0 %>
           <div class="col-sm-4">
             <input type="radio" id="person_type_cashier" name="person_type" value="cashier" />&nbsp;&nbsp;<label for="person_type_cashier" class="control-label" style="margin-top: 5px; cursor:pointer;">Cajeros:</label>
-            <select id="cashiersMultiSelect" multiple="multiple" style="margin-top: 7px;">
+            <select id="cashiersMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
               <% @cashiers.each do |cashier| %>
                 <option value="<%= cashier.id %>">
                   <%= cashier.name %>

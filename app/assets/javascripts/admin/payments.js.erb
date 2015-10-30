@@ -96,7 +96,11 @@ $(function() {
     },
     onChange: function(option, checked, select){
       loadPayments();
+    },
+    onInitialized: function(select, container){
+      $('#locationMultiSelect').show();
     }
+
   });
 
   $('#paymentMethodMultiSelect').multiselect({
@@ -131,6 +135,9 @@ $(function() {
     },
     onChange: function(option, checked, select){
       loadPayments();
+    },
+    onInitialized: function(select, container){
+      $('#paymentMethodMultiSelect').show();
     }
   });
 

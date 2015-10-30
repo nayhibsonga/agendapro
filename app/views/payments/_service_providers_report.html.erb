@@ -30,10 +30,7 @@
 			<table class="providers_report_table">
 				<tr>
 					<th class="excel_th">
-						<% 
-							sp_ids = @service_providers.pluck(:id).join(",")
-						%>
-						<a href="/service_providers_report_file.xls?from=<%= @from.to_s %>&to=<%= @to.to_s %>&service_provider_ids=<%= sp_ids %>"><button type="button" class="btn btn-green" class="getExcel" provider_ids="<%= @service_providers.pluck(:id).to_s %>">Descargar Excel</button></a>
+						
 					</th>
 					<% @service_providers.each do |provider| %>
 						<th colspan="3" class="provider_name_th">
@@ -46,13 +43,13 @@
 						Servicio
 					</td>
 					<% @service_providers.each do |provider| %>
-						<td>
+						<td class="left_header_td">
 							Cantidad
 						</td>
 						<td>
 							Recaudación
 						</td>
-						<td>
+						<td class="right_header_td">
 							Comisión
 						</td>
 					<% end %>
@@ -96,15 +93,26 @@
 						    		end
 
 					    	%>
-					    	<td><%= bookings_count %></td>
+					    	<td class="left_td"><%= bookings_count %></td>
 					    	<td><%= bookings_prices %></td>
-					    	<td><%= commission %></td>
+					    	<td class="right_td"><%= commission %></td>
 
 				    	<% end %>
 			    	</tr>
 			    <% end %>
 		    </table>
 	    </div>
+	</div>
+</div>
+<div class="row" style="margin-top: 10px;">
+	<div class="col-md-9">
+
+	</div>
+	<div class="col-md-3" style="text-align: right;">
+		<% 
+			sp_ids = @service_providers.pluck(:id).join(",")
+		%>
+		<a href="/service_providers_report_file.xls?from=<%= @from.to_s %>&to=<%= @to.to_s %>&service_provider_ids=<%= sp_ids %>"><button type="button" class="btn btn-green" class="getExcel" provider_ids="<%= @service_providers.pluck(:id).to_s %>">Descargar a Excel</button></a>
 	</div>
 </div>
 <div class="row" style="margin-top: 20px;">

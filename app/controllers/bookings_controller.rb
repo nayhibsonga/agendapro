@@ -2050,7 +2050,7 @@ class BookingsController < ApplicationController
             # If discount is for online_payment, it's always equal.
             if current_service.has_discount && current_service.discount > 0
               @bookings.each do |booking|
-                new_price = (service.price - current_service.discount*service.price/100).round
+                new_price = (current_service.price - current_service.discount*current_service.price/100).round
                 booking.price = new_price
                 final_price = new_price
                 if(booking.list_price > 0)
@@ -2321,17 +2321,18 @@ class BookingsController < ApplicationController
         end
 
         if proceed_with_payment
-
-          if @has_session_booking
-            service_promo = ServicePromo.find(@bookings.first.service.active_service_promo_id)
-            service_promo.max_bookings = service_promo.max_bookings - 1
-            service_promo.save
-          else
-            @bookings.each do |booking|
-              if !booking.service_promo_id.nil?
-                service_promo = ServicePromo.find(booking.service_promo_id)
-                service_promo.max_bookings = service_promo.max_bookings - 1
-                service_promo.save
+          if !@bookings.first.service.active_service_promo_id.nil?
+            if @has_session_booking
+              service_promo = ServicePromo.find(@bookings.first.service.active_service_promo_id)
+              service_promo.max_bookings = service_promo.max_bookings - 1
+              service_promo.save
+            else
+              @bookings.each do |booking|
+                if !booking.service_promo_id.nil?
+                  service_promo = ServicePromo.find(booking.service_promo_id)
+                  service_promo.max_bookings = service_promo.max_bookings - 1
+                  service_promo.save
+                end
               end
             end
           end
@@ -3967,6 +3968,7 @@ class BookingsController < ApplicationController
 
         while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date)
 
+
           #if !first_service.company.company_setting.allows_optimization
           #  if dateTimePointerEnd > dateTimePointer
           #    logger.debug "Entra acá"
@@ -3994,9 +3996,12 @@ class BookingsController < ApplicationController
 
           #To deattach continous services, just delete the serviceStaffPos condition
 
-          if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization && last_check
-            dateTimePointer = dateTimePointer - total_services_duration.minutes + first_service.company.company_setting.calendar_duration.minutes
-          end
+
+          #Uncomment for overlaping hours
+          
+          #if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization && last_check
+          #  dateTimePointer = dateTimePointer - total_services_duration.minutes + first_service.company.company_setting.calendar_duration.minutes
+          #end
 
           if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization
             #Calculate offset

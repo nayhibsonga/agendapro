@@ -212,6 +212,9 @@ $(document).ready(function(){
 	    },
 	    onChange: function(option, checked, select){
 	    	loadReport();
+	    },
+	    onInitialized: function(select, container){
+	    	$('#serviceProvidersMultiSelect').show();
 	    }
 	});
 
@@ -247,6 +250,9 @@ $(document).ready(function(){
 	    },
 	    onChange: function(option, checked, select){
 	    	loadReport();
+	    },
+	    onInitialized: function(select, container){
+	    	$('#usersMultiSelect').show();
 	    }
 	});
 
@@ -282,6 +288,9 @@ $(document).ready(function(){
 	    },
 	    onChange: function(option, checked, select){
 	    	loadReport();
+	    },
+	    onInitialized: function(select, container){
+	    	$('#cashiersMultiSelect').show();
 	    }
 	});
 

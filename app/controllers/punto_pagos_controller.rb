@@ -396,6 +396,13 @@ class PuntoPagosController < ApplicationController
         payment.paid_amount = params[:monto]
         payment.change_amount = 0.0
 
+        cashier = first_booking.service.company.cashiers.first
+        if cashier.nil?
+          cashier = Cashier.create(company_id: first_booking.service.company.id, name: "Cajero por defecto", active: true, code: "12345678")
+        end
+
+        payment.cashier_id = cashier.id
+
         payment_transaction = PaymentTransaction.new
 
         payment_transaction.amount = params[:monto].to_f
@@ -407,10 +414,10 @@ class PuntoPagosController < ApplicationController
           payment_transaction.installments = params[:num_cuotas]
         else
           payment_transaction.payment_method_id = PaymentMethod.find_by_name("Online").id
-          payment_transaction.payment_method_number = params[:codigo_autorizacion]
+          payment_transaction.number = params[:codigo_autorizacion]
         end
 
-        payment_transaction.payment.save
+        payment_transaction.payment = payment
         payment.payment_transactions << payment_transaction
 
         payment.payment_date = DateTime.now.to_date
@@ -430,7 +437,7 @@ class PuntoPagosController < ApplicationController
           #Instead of generating status "Pagado", mark it as "Reservado" and generate a Payment containing all bookings
           #If they are sessions, assign the Payment to their SessionBooking once
 
-          if(!booking.is_session)
+          if !booking.is_session
             sum_normal_price = sum_normal_price + booking.service.price
             #book_discount = ((booking.service.price - booking.price)/booking.service.price).round(0)
           else
@@ -446,7 +453,11 @@ class PuntoPagosController < ApplicationController
           booking.status_id = Status.find_by(:name => "Reservado").id
           booking.payed = true
           booking.payed_booking = payed_booking
-          booking.discount = (1 - booking.price/booking.service.price).round(2)*100
+          if booking.is_session
+            booking.discount = (1 - booking.service.sessions_amount*booking.price/booking.service.price).round(2)*100
+          else
+            booking.discount = (1 - booking.price/booking.service.price).round(2)*100
+          end
           booking.save
           bookings << booking
         end
