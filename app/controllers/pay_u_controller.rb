@@ -202,76 +202,80 @@ class PayUController < ApplicationController
   def response
     pay_u_response = PayUResponse.create(response_params)
     crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
-    if response_params[:transactionState] == "4" || response_params[:transactionState] == "7"
-      if PayUNotification.find_by_transaction_id(response_params[:transactionId])
-        if PayUNotification.find_by_transaction_id(response_params[:transactionId]).state_pol == "4"
-        encrypted_data = crypt.encrypt_and_sign()
+    encrypted_transaction = ''
+    if PayUNotification.find_by_transaction_id(response_params[:transactionId])
+    encrypted_transaction = crypt.encrypt_and_sign(PayUNotification.find_by_transaction_id(response_params[:transactionId]).reference_sale)
+      if response_params[:transactionState] == "4"
+          if PayUNotification.find_by_transaction_id(response_params[:transactionId]).state_pol == "4"
+            redirect_to pay_u_success_path(encrypted_transaction: encrypted_transaction)
+            return
+          end
+      elsif response_params[:transactionState] == "7"
 
-    else
-
+      end
     end
+    redirect_to pay_u_failure_path(encrypted_transaction: encrypted_transaction)
+    return
   end
 
   def success
-    if params[:token]
-      if PuntoPagosConfirmation.find_by_token(params[:token])
-        trx_id = PuntoPagosConfirmation.find_by_token(params[:token]).trx_id
-        if BillingLog.find_by_trx_id(trx_id)
-          @billing_log = BillingLog.find_by_trx_id(trx_id)
-          @company = Company.find(@billing_log.company_id)
-          @success_page = "billing"
-        elsif PlanLog.find_by_trx_id(trx_id)
-          @plan_log = PlanLog.find_by_trx_id(trx_id)
-          @company = Company.find(@plan_log.company_id)
-          @success_page = "plan"
-        elsif Booking.find_by_trx_id(trx_id)
-          #Mostrar página similar a la de reserva hecha, confirmando que se pagó
-          @bookings = Booking.where(:trx_id => trx_id)
-          @has_session_booking = false
-          @session_booking = nil
-          if @bookings.first.is_session
-            @has_session_booking = true
-            @session_booking = @bookings.first.session_booking
-          end
-          @token = params[:token]
-          @success_page = "booking"
-          host = request.host_with_port
-          @url = @bookings.first.location.get_web_address + '.' + host[host.index(request.domain)..host.length]
+    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+    trx_id = crypt.decrypt_and_verify(params[:encrypted_transaction])
+    if BillingLog.find_by_trx_id(trx_id)
+      @billing_log = BillingLog.find_by_trx_id(trx_id)
+      @company = Company.find(@billing_log.company_id)
+      @success_page = "billing"
+    elsif PlanLog.find_by_trx_id(trx_id)
+      @plan_log = PlanLog.find_by_trx_id(trx_id)
+      @company = Company.find(@plan_log.company_id)
+      @success_page = "plan"
+    elsif Booking.find_by_trx_id(trx_id)
+      #Mostrar página similar a la de reserva hecha, confirmando que se pagó
+      @bookings = Booking.where(:trx_id => trx_id)
+      @has_session_booking = false
+      @session_booking = nil
+      if @bookings.first.is_session
+        @has_session_booking = true
+        @session_booking = @bookings.first.session_booking
+      end
+      @token = params[:token]
+      @success_page = "booking"
+      host = request.host_with_port
+      @url = @bookings.first.location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
-          if !@bookings.first.booking_group.nil?
-            not_payed_bookings = Booking.where(:booking_group => @bookings.first.booking_group, :payed => false)
-            not_payed_bookings.each do |not_payed_booking|
-              @bookings << not_payed_booking
-            end 
-          end
+      if !@bookings.first.booking_group.nil?
+        not_payed_bookings = Booking.where(:booking_group => @bookings.first.booking_group, :payed => false)
+        not_payed_bookings.each do |not_payed_booking|
+          @bookings << not_payed_booking
+        end 
+      end
 
-          @try_register = false
-          client = @bookings.first.client
-          @company = @bookings.first.location.company
+      @try_register = false
+      client = @bookings.first.client
+      @company = @bookings.first.location.company
 
-          if !user_signed_in?
-            if !User.find_by_email(client.email)
-              @try_register = true
-              @user = User.new
-              @user.email = client.email
-              @user.first_name = client.first_name
-              @user.last_name = client.last_name
-              @user.phone = client.phone
-            end
-          end
-          render layout: "workflow"
-        else
-          #Something (lie a booking) was deleted, should redirect to failure
-          redirect_to action: 'failure', token: params[:token]
-          #@success_page = ""
+      if !user_signed_in?
+        if !User.find_by_email(client.email)
+          @try_register = true
+          @user = User.new
+          @user.email = client.email
+          @user.first_name = client.first_name
+          @user.last_name = client.last_name
+          @user.phone = client.phone
         end
       end
+      render layout: "workflow"
+    else
+      #Something (lie a booking) was deleted, should redirect to failure
+      redirect_to action: 'failure', token: params[:token]
+      #@success_page = ""
     end
   end
 
   def failure
-    if PuntoPagosConfirmation.find_by_token(params[:token])
-      trx_id = PuntoPagosConfirmation.find_by_token(params[:token]).trx_id
+    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+    trx_id = crypt.decrypt_and_verify(params[:encrypted_transaction])
+    if trx_id.present?
       if(Booking.find_by_trx_id(trx_id))
         bookings = Booking.where(:trx_id => trx_id)
 
@@ -425,8 +429,6 @@ class PayUController < ApplicationController
           end
 
         else
-          #¿No bookings? There's an error
-          redirect_to action: 'failure', token: params[:token]
           return
         end
         #Enviar comprobantes de pago
