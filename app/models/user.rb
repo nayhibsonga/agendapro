@@ -69,8 +69,8 @@ class User < ActiveRecord::Base
 	end
 
 	def request_api_token
-		while self.mobile_token.blank? || User.where(mobile_token: self.mobile_token).where.not(id: self.id).count > 0
-			self.mobile_token = SecureRandom.base64(32)
+		while self.api_token.blank? || User.where(api_token: self.api_token).where.not(id: self.id).count > 0
+			self.api_token = SecureRandom.base64(32)
 		end
 	end
 
