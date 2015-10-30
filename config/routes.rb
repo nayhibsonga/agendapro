@@ -444,6 +444,8 @@
 
         get 'locations', to: 'locations#search'
         get 'locations/:id', to: 'locations#show'
+
+        get 'service_providers/available_hours', to: 'service_providers#available_hours'
       end
     end
   end
