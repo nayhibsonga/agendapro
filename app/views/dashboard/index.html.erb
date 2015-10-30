@@ -46,8 +46,6 @@
                   <td>
                     <% if booking.status == Status.find_by_name('Cancelado') %>
                     <span class="label label-danger">Cancelado</span>
-                    <% elsif booking.status == Status.find_by_name('Pagado') %>
-                    <span class="label label-success">Pagado</span>
                     <% elsif booking.status == Status.find_by_name('Confirmado') %>
                     <span class="label label-primary">Confirmado</span>
                     <% elsif booking.created_at != booking.updated_at %>

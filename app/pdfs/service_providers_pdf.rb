@@ -86,7 +86,7 @@ class ServiceProvidersPdf < Prawn::Document
 
 			provider_open = provider_times.first.open
 
-			Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: now.beginning_of_day..DateTime.new(now.year, now.mon, now.mday, open_provider_time.hour, open_provider_time.min)).order(:start).each do |booking|
+			Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id), start: now.beginning_of_day..DateTime.new(now.year, now.mon, now.mday, open_provider_time.hour, open_provider_time.min)).order(:start).each do |booking|
 				table_rows.append([booking.start.strftime('%R'), booking.service.name, booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone])
 			end
 			while (provider_open <=> close_provider_time) < 0 do
@@ -114,7 +114,7 @@ class ServiceProvidersPdf < Prawn::Document
 				end
 				in_provider_booking = false
 		        # if in_provider_time
-		          Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id)).where('bookings.start >= ? AND bookings.start < ?', block_open, block_close).order(:start).each do |booking|
+		          Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id)).where('bookings.start >= ? AND bookings.start < ?', block_open, block_close).order(:start).each do |booking|
 		              in_provider_booking = true
 		              table_rows.append([booking.start.strftime('%R'), booking.service.name, booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone])
 		          end
@@ -141,7 +141,7 @@ class ServiceProvidersPdf < Prawn::Document
 		            end
 
 		            if !in_provider_booking
-		              Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: now.beginning_of_day..now.end_of_day).order(:start).each do |booking|
+		              Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id), start: now.beginning_of_day..now.end_of_day).order(:start).each do |booking|
 		                if (booking.start.to_datetime - block_close)*(block_open - booking.end.to_datetime) > 0
 		                  in_provider_booking = true
 		                  table_rows.append([provider_open.strftime('%R'), 'OCUPADO', '...', '...'])
@@ -172,7 +172,7 @@ class ServiceProvidersPdf < Prawn::Document
 
 				provider_open += block_length
 			end
-			Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Pagado','Asiste']).pluck(:id), start: DateTime.new(now.year, now.mon, now.mday, close_provider_time.hour, close_provider_time.min)..now.end_of_day).order(:start).each do |booking|
+			Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id), start: DateTime.new(now.year, now.mon, now.mday, close_provider_time.hour, close_provider_time.min)..now.end_of_day).order(:start).each do |booking|
 				table_rows.append([booking.start.strftime('%R'), booking.service.name, booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone])
 			end
 		end

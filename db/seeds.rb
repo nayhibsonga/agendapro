@@ -33,7 +33,6 @@
 	reservado = Status.create(name: "Reservado", description: "Reserva agendada")
 	bloqueado = Status.create(name: "Confirmado", description: "Reserva confirmada por el Usuario")
 	asiste = Status.create(name: "Asiste", description: "Reserva completada con el cliente")
-	pagado = Status.create(name: "Pagado", description: "Cliente pre-pago la cita")
 	cancelado = Status.create(name: "Cancelado", description: "Reserva sólo ha sido agendada")
 	no_asiste = Status.create(name: "No Asiste", description: "Cliente no llego a la cita")
 
