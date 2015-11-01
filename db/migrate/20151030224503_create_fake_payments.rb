@@ -12,8 +12,6 @@ class CreateFakePayments < ActiveRecord::Migration
       t.boolean :payed
       t.date :payment_date
       t.integer :bank_id
-      t.datetime :created_at
-      t.datetime :updated_at
       t.integer :company_payment_method_id
       t.float :discount
       t.text :notes
