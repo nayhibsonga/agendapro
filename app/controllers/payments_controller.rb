@@ -2317,7 +2317,7 @@ class PaymentsController < ApplicationController
   def service_providers_report
 
     service_provider_ids = params[:service_provider_ids]
-    @service_providers = ServiceProvider.where(id: service_provider_ids)
+    @service_providers = ServiceProvider.where(id: service_provider_ids, active: true)
     @from = params[:from].to_datetime
     @to = params[:to].to_datetime
 
