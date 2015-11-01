@@ -1247,6 +1247,7 @@ function loadPaymentModal3(booking_id) {
   fillReceiptsItemsTable();
   $("#paymentModal2").modal('hide');
   $("#paymentModal3").modal('show');
+  $("#openReceiptForm").trigger("click");
   paymentModalState = 'Step3';
 }
 
