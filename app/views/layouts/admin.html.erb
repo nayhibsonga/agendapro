@@ -233,7 +233,7 @@
               <div class="form-group">
                 <%= label_tag "location_id", "Local", class: "col-sm-4 control-label" %>
                 <div class="col-sm-8">
-                  <%= select_tag "location_id", options_from_collection_for_select(Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability).order(:order), "id", "name"), prompt: "Elige el local...", class: "form-control" %>
+                  <%= select_tag "location_id", options_from_collection_for_select(Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability).order(:order, :name), "id", "name"), prompt: "Elige el local...", class: "form-control" %>
                 </div>
               </div>
               <div class="form-group">

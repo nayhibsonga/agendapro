@@ -240,8 +240,8 @@ class Location < ActiveRecord::Base
 	    location_resources = self.resource_locations.pluck(:resource_id)
 	    service_providers = self.service_providers.where(active: true, online_booking: true)
 
-	    categories = ServiceCategory.where(:company_id => self.company_id).order(order: :asc)
-	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+	    categories = ServiceCategory.where(:company_id => self.company_id).order(:order, :name)
+	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
 	    service_resources_unavailable = ServiceResource.where(service_id: services)
 	    if location_resources.any?
 	      if location_resources.length > 1
@@ -303,8 +303,8 @@ class Location < ActiveRecord::Base
 	    location_resources = self.resource_locations.pluck(:resource_id)
 	    service_providers = self.service_providers.where(active: true, online_booking: true)
 
-	    categories = ServiceCategory.where(:company_id => self.company_id).order(order: :asc)
-	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+	    categories = ServiceCategory.where(:company_id => self.company_id).order(:order, :name)
+	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
 	    service_resources_unavailable = ServiceResource.where(service_id: services)
 	    if location_resources.any?
 	      if location_resources.length > 1

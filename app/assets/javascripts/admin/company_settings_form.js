@@ -74,6 +74,21 @@ $(function () {
     }
   });
 
+  if ($('#company_setting_activate_notes').prop('checked')) {
+    $('#company_setting_preset_notes').closest('.form-group').removeClass('hidden');
+  } else{
+    $('#company_setting_preset_notes').closest('.form-group').addClass('hidden');
+  };
+
+  $('#company_setting_activate_notes').change(function () {
+    var presetNotes = $('#company_setting_preset_notes').closest('.form-group');
+    if ($(this).prop('checked')) {
+      presetNotes.removeClass('hidden');
+    } else{
+      presetNotes.addClass('hidden');
+    };
+  });
+
   if ($('#company_setting_can_edit').prop('checked')) {
     $('#company_setting_max_changes').closest('.form-group').removeClass('hidden');
   } else{

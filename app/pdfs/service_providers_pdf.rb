@@ -21,7 +21,7 @@ class ServiceProvidersPdf < Prawn::Document
 			font 'Roboto'
 
 			@provider_date = provider_date
-			@providers = ServiceProvider.where(location_id: location_id, active: true).accessible_by(current_ability).order(:order)
+			@providers = ServiceProvider.where(location_id: location_id, active: true).accessible_by(current_ability).order(:order, :public_name)
 			@providers.each do |provider|
 				@service_provider = provider
 				header
@@ -156,7 +156,7 @@ class ServiceProvidersPdf < Prawn::Document
 		            #   client_name = '...'
 		            #   client_phone = '...'
 
-		              
+
 		            # end
 		          end
 		        end
