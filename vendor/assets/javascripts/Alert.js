@@ -71,7 +71,7 @@ function Alert (appendTo) {
 		close_text = close_text || 'Aceptar';
 		if (close_function) {
 			$('#alertModal .modal-footer').append(
-				'<button type="button" class="btn btn-info" id="closeModal">' + close_text + '</button>'
+				'<button type="button" class="btn btn-green" id="closeModal">' + close_text + '</button>'
 			);
 			$('#alertModal #closeModal').click(function (e) {
 				hide();

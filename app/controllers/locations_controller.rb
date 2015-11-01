@@ -641,6 +641,11 @@ class LocationsController < ApplicationController
           email_str = email.strip
           if email_str != ""
             new_stock_setting_email = StockSettingEmail.create(:stock_alarm_setting_id => @stock_alarm_setting.id, :email => email_str)
+            LocationProduct.where(:location_id => @stock_alarm_setting.location_id).each do |location_product|
+              if StockEmail.where(:location_product_id => location_product.id, :email => email_str).count == 0
+                new_stock_email = StockEmail.create(:location_product_id => location_product.id, :email => email_str)
+              end
+            end
           end
         end
 
