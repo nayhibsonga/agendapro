@@ -3777,7 +3777,7 @@ class BookingsController < ApplicationController
 
       provider_open = provider_times.first.open
 
-      Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado', 'Asiste']).pluck(:id), start: now.beginning_of_day..DateTime.new(now.year, now.mon, now.mday, open_provider_time.hour, open_provider_time.min)).order(:start).each do |booking|
+      Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado', 'Asiste']).pluck(:id)).where('bookings.start >= ? AND bookings.start < ?', now.beginning_of_day, DateTime.new(now.year, now.mon, now.mday, open_provider_time.hour, open_provider_time.min)).order(:start).each do |booking|
         table_rows.append([booking.start.strftime('%R'), booking.service.name, booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone])
       end
       while (provider_open <=> close_provider_time) < 0 do
@@ -3818,6 +3818,7 @@ class BookingsController < ApplicationController
               service_name = "Bloqueo: "+provider_break.name
               client_name = '...'
               client_phone = '...'
+              table_rows.append([provider_break.start.strftime('%R'), service_name, client_name, client_phone])
               break
             end
           end
