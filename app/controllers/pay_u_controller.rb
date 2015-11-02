@@ -86,13 +86,16 @@ class PayUController < ApplicationController
           BillingLog.create(payment: due, amount: amount, company_id: company.id, plan_id: company.plan.id, transaction_type_id: TransactionType.find_by_name("Webpay").id, trx_id: trx_id)
           PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
           redirect_to action: 'generate_transaction', encrypted_task: encrypted_data
+          return
         else
           PayUCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de pago empresa id "+company.id.to_s+", nombre "+company.name+". Paga plan "+company.plan.name+"("+company.plan.id.to_s+") "+amount.to_s+" veces, por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
           redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (6)"
+          return
         end
       end
     else
       redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (7)"
+      return
     end
   end
 
@@ -138,8 +141,10 @@ class PayUController < ApplicationController
             if company.save
               PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."
+              return
             else
               redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales y/o prestadores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
+              return
             end
           else
             mockCompany = Company.find(current_user.company_id)
@@ -160,9 +165,11 @@ class PayUController < ApplicationController
                 PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
                 PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
                 redirect_to action: 'generate_transaction', encrypted_task: encrypted_data
+                return
               else
                 PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Error creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
                 redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (1)"
+                return
               end
             end
           end
@@ -188,23 +195,26 @@ class PayUController < ApplicationController
             else
               PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Error creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
               redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (3)"
+              return
             end
           end
         end
       else
         redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales y/o prestadores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
+        return
       end
     else
       redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (5)"
+      return
     end
   end
 
-  def response
-    pay_u_response = PayUResponse.create(response_params)
+  def response_handler
     crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
     encrypted_transaction = ''
     if PayUNotification.find_by_transaction_id(response_params[:transactionId])
-    encrypted_transaction = crypt.encrypt_and_sign(PayUNotification.find_by_transaction_id(response_params[:transactionId]).reference_sale)
+      encrypted_transaction = crypt.encrypt_and_sign(PayUNotification.find_by_transaction_id(response_params[:transactionId]).reference_sale)
+      pay_u_response = PayUResponse.create(response_params)
       if response_params[:transactionState] == "4"
           if PayUNotification.find_by_transaction_id(response_params[:transactionId]).state_pol == "4"
             redirect_to pay_u_success_path(encrypted_transaction: encrypted_transaction)
