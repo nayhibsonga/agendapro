@@ -5034,6 +5034,7 @@ class BookingsController < ApplicationController
       dateTimePointerEnd = dateTimePointer
 
       now = dateTimePointer
+      date = now
 
       hours_array = []
 
