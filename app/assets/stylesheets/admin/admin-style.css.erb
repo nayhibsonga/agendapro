@@ -448,6 +448,8 @@ a:active {
   =========== Buttons ============
   ================================
 */
+
+
 .btn-green {
   color: #ffffff;
   background-color: #22c488;
@@ -864,6 +866,100 @@ tr.tr-disabled td {
   ========== Dashboard ===========
   ================================
 */
+.rec-highlight {
+  background-color: #f5f5f5;
+  padding: 5px 7px;
+  font-weight: 600;
+}
+.square-highlight,
+.square-green {
+  background-color: #f5f5f5;
+  padding: 5px;
+  text-align: center;
+  font-weight: 600;
+  height: auto;
+}
+.square-green {
+  background-color: #22c488;
+  color: #ffffff;
+}
+.square-highlight > h2,
+.square-green > h2 {
+  /*font-size: 3.5em;*/
+  margin-top: 10px;
+  font-weight: bold;
+}
+.panel-body-grey {
+  background-color: #f5f5f5;
+}
+@media(max-width: 767px) {
+  .rec-highlight {
+    text-align: center;
+  }
+}
+@media(max-width: 991px) {
+  .rec-highlight,
+  .square-highlight,
+  .square-green {
+    border: solid #e3e3e3 1px;
+    margin-bottom: 5px;
+  }
+  .square-green {
+    border-color: #1ba970;
+  }
+}
+@media(min-width: 768px) {
+  .rec-highlight {
+    padding-left: 15%;
+  }
+  .square-highlight > h2,
+  .square-green > h2 {
+    font-size: 1.52em;
+  }
+}
+@media(min-width: 992px) {
+  .rec-highlight + .rec-highlight {
+    margin-top: 3px;
+  }
+  .square-highlight,
+  .square-green {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    height: 219px;
+    padding: 10px 5px;
+  }
+  .square-highlight > h2,
+  .square-green > h2 {
+    margin-top: 20px;
+  }
+  .square-green > h2 {
+    font-size: 1.72em;
+  }
+}
+@media(min-width: 1200px) {
+  .rec-highlight {
+    padding-left: 22%;
+  }
+  .square-highlight > h2,
+  .square-green > h2 {
+    font-size: 1.72em;
+  }
+  .square-green > h2 {
+    font-size: 2.47em;
+  }
+}
+
 .panel-green {
   border-color: #1ba970;
 }
@@ -1365,4 +1461,631 @@ tr[class*="break"] {
 
 .promotions-input.error{
   border-color: red;
+}
+
+#addNotBooked{
+  width: 120px;
+  margin-top: 7px;
+  background-color: #22c488;
+  color: #fff;
+  border: 1px solid #22c488;
+  border-radius: 3px;
+  float: right;
+}
+
+#addNotBooked:hover{
+  background-color: #1ba970;
+  border: 1px solid #1ba970;
+}
+
+#addProduct{
+  width: 120px;
+  margin-top: 7px;
+  background-color: #22c488;
+  color: #fff;
+  border: 1px solid #22c488;
+  border-radius: 3px;
+  float: right;
+}
+
+#addProduct:hover{
+  background-color: #1ba970;
+  border: 1px solid #1ba970;
+}
+
+#pdfModal .modal-dialog{
+  width: 40% !important; 
+}
+
+#sendEmailsModal .modal-dialog{
+  width: 40% !important; 
+}
+
+#paymentModalIntro .modal-dialog{
+  width: 40% !important; 
+}
+
+#editPaymentModal .modal-dialog{
+  width: 40% !important; 
+}
+
+.paymentModalStep{
+  overflow-y: auto;
+}
+
+.paymentModalStep .modal-dialog{
+  width: 85% !important;
+}
+
+.paymentModalStep .modal-footer{
+  background-color: #fff;
+  border-top: none;
+}
+
+.paymentModalStep .modal-body{
+  padding-top: 0px !important;
+}
+
+#paymentModalIntro .modal-footer{
+  background-color: #fff;
+  border-top: none;
+}
+
+.payment-modals-bar{
+  margin-bottom: 12px;
+  background-color: #f0f0f0;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.add-item-btn{
+  width: 100%;
+  background-color: #22c488;
+  color: #fff;
+  text-align: center;
+  border: none;
+  margin-bottom: 3px;
+  font-weight: bold;
+}
+
+.add-item-btn:hover{
+  background-color: #1ba970;
+  color: #fff;
+  border: none;
+}
+
+.add-item-btn:focus{
+  background-color: #1ba970;
+  color: #fff;
+  border: none;
+}
+
+.payment-btn-next{
+  width: 120px;
+  background-color: #22c488;
+  color: #fff;
+  text-align: center;
+}
+
+.payment-btn-next:hover, .payment-btn-next:focus{
+  background-color: #1ba970;
+  color: #fff;
+}
+
+.payment-btn-close{
+  width: 120px;
+  background-color: #ccc;
+  color: #fff;
+  text-align: center;
+  border: none;
+}
+
+.payment-btn-close:hover, .payment-btn-close:focus{
+  width: 120px;
+  background-color: #bebebe;
+  color: #fff;
+  text-align: center;
+  border: none;
+}
+
+.payment-btn-back{
+  float: left;
+  width: 120px;
+  background-color: #fd9610;
+  color: #fff;
+  text-align: center;
+  border: none;
+}
+
+.payment-btn-back:hover, .payment-btn-back:focus{
+  float: left;
+  width: 120px;
+  background-color: #db7400;
+  color: #fff;
+  text-align: center;
+  border: none;
+}
+
+.payment-btn-send{
+  width: 120px;
+  background-color: #0f91cf;
+  color: #fff;
+  text-align: center;
+  border: none;
+}
+
+.payment-btn-send:hover, .payment-btn-send:focus{
+  width: 120px;
+  background-color: #0b587b;
+  color: #fff;
+  text-align: center;
+  border: none;
+}
+
+.method-btn{
+  width: 100%;
+  border: none;
+  background-color: #ccc;
+  color: #fff;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.method-btn.selected{
+  background-color: #22c488;
+}
+
+.method-btn-name{
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.method-btn-name:hover, .method-btn-name:focus{
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.payment-form-div{
+  margin-bottom: 10px !important;
+}
+
+.payment-form-div label{
+  text-align: right;
+  margin-top: 6px !important;
+}
+
+#method-amount-table td{
+  border: 1px solid #949292;
+}
+
+.payment-total-table{
+  width: 100%;
+}
+
+.payment-total-table td{
+  border: 1px solid #949292;
+}
+
+.payment-total-title{
+  width: 45%;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-weight: bold;
+  font-size: 17px;
+  text-align: center;
+}
+
+.payment-total-amount{
+  width: 55%;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-weight: bold;
+  font-size: 17px;
+  color: #22c488;
+  text-align: center;
+}
+
+#paymentModalBookingForm{
+  border: 1px solid #949292;
+}
+
+.mbf-title{
+  border-bottom: 1px solid #949292;
+  margin-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  font-size: 16px;
+}
+
+#paymentClientPastBookings{
+  border: 1px solid #949292;
+}
+
+.cpb-title{
+  border-bottom: 1px solid #949292;
+  margin-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.cpb-headers{
+  border-bottom: 1px solid #949292;
+  margin-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.cpb-headers div{
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  text-align: left;
+}
+
+#cpb-bookings{
+  max-height: 185px;
+  overflow-y: auto;
+}
+
+.addPastBooking{
+  background-color: #22c488;
+  color: #fff;
+  text-align: center;
+  border-radius: 3px;
+  border: none;
+}
+
+.addPastBooking:hover{
+  background-color: #1ba970;
+  color: #fff;
+  text-align: center;
+  border-radius: 3px;
+  border: none;
+}
+
+.addPastBooking:focus{
+  background-color: #1ba970;
+  color: #fff;
+  text-align: center;
+  border-radius: 3px;
+  border: none;
+}
+
+.pastBookingRow{
+  margin-bottom: 2px;
+  width: 98%;
+}
+
+.pastBookingCol{
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  font-size: 15px;
+}
+
+#paymentItemsList{
+  margin-top: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#paymentItemsTable{
+  width: 100%;
+}
+
+#paymentItemsTable td{
+  border: 1px solid #949292;
+  padding: 3px;
+  text-align: left;
+}
+
+#paymentItemsTable th{
+  border: 1px solid #949292;
+  padding: 3px;
+  text-align: left;
+}
+
+#paymentSumDiv{
+  margin-top: 10px;
+}
+
+#paymentSumDiv table{
+  width: 100%;
+}
+
+#paymentSumDiv table td{
+  border: 1px solid #949292;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: bold;
+  color: #22c488;
+}
+
+#paymentSumDiv table th{
+  border: 1px solid #949292;
+  padding: 3px;
+  text-align: center;
+}
+
+
+#paymentModalProductForm{
+  border: 1px solid #949292;
+}
+
+.mpf-title{
+  border-bottom: 1px solid #949292;
+  margin-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.removePaymentItem button{
+  background-color: #fd633f;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+}
+
+.removePaymentItem button:hover, .removePaymentItem button:focus{
+  background-color: #e55938;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+}
+
+.editPaymentItem button{
+  background-color: #fd9610;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  text-align: center;
+}
+
+.editPaymentItem button:hover, .editPaymentItem button:focus{
+  background-color: #db7400;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  text-align: center;
+}
+
+#openReceiptForm{
+  width: 100%;
+  background-color: #22c488;
+  color: #fff;
+  text-align: center;
+  border: 1px solid #22c488;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+
+#openReceiptForm:hover, #openReceiptForm:focus{
+  background-color: #1ba970;
+  color: #fff;
+  border: 1px solid #1ba970;
+}
+
+#addReceiptBtn{
+  width: 120px;
+  background-color: #22c488;
+  color: #fff;
+  text-align: center;
+  border: 1px solid #22c488;
+  border-radius: 3px;
+}
+
+#addReceiptBtn:hover, #addReceiptBtn:focus{
+  background-color: #1ba970;
+  color: #fff;
+  border: 1px solid #1ba970;
+}
+
+#receiptsItemsTable{
+  width: 100%;
+}
+
+#receiptsItemsTable td{
+  border: 1px solid #949292;
+  padding: 3px;
+  text-align: left;
+}
+
+#receiptsItemsTable th{
+  border: 1px solid #949292;
+  padding: 3px;
+  text-align: left;
+}
+
+.addedReceipt{
+  border: 1px solid #949292;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+.removeReceipt{
+  float: right;
+  cursor: pointer;
+}
+
+.receiptFinal{
+  border: 1px solid #505050;
+  padding: 20px;
+  text-align: center;
+}
+
+.receiptItem{
+  border: 1px solid #949292;
+  padding: 10px;
+}
+
+.receiptTitle{
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.receiptNumber{
+  font-size: 18px;
+  float: right;
+}
+
+.receiptFinal table td{
+  padding: 5px;
+  text-align: left;
+}
+
+.receiptFinal table th{
+  padding: 5px;
+  text-align: left;
+}
+
+.receiptFinal table{
+  width: 90%;
+  margin: auto;
+}
+
+.receipt_item_checkbox{
+  cursor: pointer;
+}
+
+#checkAllItems{
+  cursor: pointer;
+}
+
+.lowStock{
+  background-color: #fd633f;
+}
+
+.mediumStock{
+  background-color: #fbcd5d
+}
+
+#inventoryFiltersTable{
+  border: none;
+}
+
+#inventoryFiltersTable tr{
+  border: none;
+}
+
+#inventoryFiltersTable td{
+  border: none;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+#openClientIcon{
+  color: #22c488;
+  float: right;
+}
+
+#closeClientIcon{
+  color: #22c488;
+  float: right;
+}
+
+#openClient{
+  cursor: pointer;
+}
+
+.edit-option-btn{
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#paymentIntroSaveBtn{
+  width: 120px;
+  background-color: #22c488;
+  color: #fff;
+  text-align: center;
+  display: none;
+}
+
+#paymentIntroSaveBtn:hover, #paymentSaveIntroBtn:focus{
+  background-color: #1ba970;
+  color: #fff;
+}
+
+#payment_transactions_table{
+  width: 100%;
+}
+
+#payment_transactions_table input{
+  width: 100%;
+}
+
+#payment_transactions_table th, #payment_transactions_table td{
+  padding-left: 2px;
+  border: none;
+}
+
+#payment_transactions_table td.method_td{
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.cost_td{
+  padding-left: 8px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.change_td{
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.method_td input{
+  color: #fff !important;
+  border: 1px solid #d7d7d7 !important;
+  background-color: #d7d7d7;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.sum_td input{
+  color: #22c488 !important;
+  border: 1px solid #22c488 !important;
+  background-color: #fff;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.cost_td input{
+  
+  color: #fff !important;
+  border: 1px solid #22c488 !important;
+  background-color: #22c488;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.change_td input{
+  
+  color: #fff !important;
+  border: 1px solid #949292 !important;
+  background-color: #949292;
+  padding-left: 2px;
+  height: 30px;
 }

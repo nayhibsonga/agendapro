@@ -9,6 +9,21 @@ class BookingMailer < ActionMailer::Base
 		template_name = 'Booking'
 		template_content = []
 
+		sessions_ratio = ""
+
+		if book_info.is_session && !book_info.session_booking_id.nil?
+			session_index = 1
+			Booking.where(:session_booking_id => book_info.session_booking_id, :is_session_booked => true).order('start asc').each do |b|
+				if b.id == book_info.id
+				  break
+				else
+				  session_index = session_index + 1
+				end
+			end
+
+			sessions_ratio = "(Sesión " + session_index.to_s + " de " + book_info.session_booking.sessions_amount.to_s + ")"
+		end
+
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
@@ -48,6 +63,10 @@ class BookingMailer < ActionMailer::Base
 				{
 					:name => 'DOMAIN',
 					:content => book_info.location.company.country.domain
+				},
+				{
+					:name => 'SESSIONSRATIO',
+					:content => sessions_ratio
 				}
 			],
 			:merge_vars => [],
@@ -922,6 +941,9 @@ class BookingMailer < ActionMailer::Base
 
 		# New subject
 		message[:subject] = 'Recuerda tu reserva en ' + book_info.service_provider.company.name
+
+		# Remove arrow
+		message[:images].pop
 
 		# Notificacion service provider
 		providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), company_id: Company.where(active: true), receptor_type: 2, summary: false).select(:email).distinct

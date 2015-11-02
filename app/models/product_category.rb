@@ -1,3 +1,4 @@
 class ProductCategory < ActiveRecord::Base
-	has_many :products
+	belongs_to :company
+	has_many :products, dependent: :nullify
 end

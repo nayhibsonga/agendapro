@@ -8,7 +8,7 @@ $(function () {
       $helper.children().each(function(index)
       {
         // Set helper cell sizes to match the original sizes
-        $(this).width($originals.eq(index).width());
+        $(this).width($originals.eq(index).outerWidth());
       });
       return $helper;
     },

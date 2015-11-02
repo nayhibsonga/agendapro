@@ -59,7 +59,7 @@
           </div>
           <div id="collapse<%= company.id.to_s %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= company.id.to_s %>">
             <ul class="list-group">
-              <% company.locations.where(active: true).order(order: :desc, name: :asc).each do |location| %>
+              <% company.locations.where(active: true).order(:order, :name).each do |location| %>
               <li class="list-group-item">
                 <%= form_for location, html: {class: "form-horizontal", multipart: true} do |f| %>
                   <div class="form-group">
@@ -121,5 +121,6 @@
 </div>
 
 <% content_for :scripts do %>
+  <script>$("#sortable").sortable();</script>
   <%= javascript_include_tag 'admin/location_draggable' %>
 <% end %>

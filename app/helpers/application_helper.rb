@@ -95,8 +95,6 @@ module ApplicationHelper
 		end
 	end
 
-
-
 	# Reporting
 	# Count
 	def booking_count(from, to, status, option, company_id)
@@ -450,4 +448,24 @@ module ApplicationHelper
 			return Booking.where(is_session: false).where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
 		end
 	end
+
+	def number_to_day(number)
+		case number
+		when 1
+			return "Lunes"
+		when 2
+			return "Martes"
+		when 3
+			return "Miércoles"
+		when 4
+			return "Jueves"
+		when 5
+			return "Viernes"
+		when 6
+			return "Sábado"
+		when 7
+			return "Domingo"
+		end
+	end
+
 end

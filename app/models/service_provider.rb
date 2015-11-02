@@ -15,6 +15,9 @@ class ServiceProvider < ActiveRecord::Base
 	has_many :bookings, dependent: :destroy
 	has_many :provider_breaks, dependent: :destroy
 
+	has_many :mock_bookings
+	has_many :internal_sales, dependent: :nullify
+
 	attr_accessor :_destroy
 
 	accepts_nested_attributes_for :provider_times, :reject_if => :all_blank, :allow_destroy => true
@@ -176,7 +179,7 @@ class ServiceProvider < ActiveRecord::Base
 
 	        # Variable Data
 	        day = date.cwday
-	        ordered_providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(date) }
+	        ordered_providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(date) }
 	        location_times = local.location_times.where(day_id: day).order(:open)
 
 	        # time_offset = 0
@@ -315,7 +318,7 @@ class ServiceProvider < ActiveRecord::Base
 			                    	promo = Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).first
 
 		                    		if !(service_promo.morning_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= service_promo.morning_start.strftime("%H:%M"))
-				                    		
+
 				                    	status = 'hora-promocion'
 				                    	promo_discount = promo.morning_discount
 
@@ -544,7 +547,7 @@ class ServiceProvider < ActiveRecord::Base
 			                    	promo = Promo.where(:service_promo_id => service_promo.id, :day_id => day, :location_id => local.id).first
 
 		                    		if !(promo_time.morning_end.strftime("%H:%M") <= start_time_block.strftime("%H:%M") || end_time_block.strftime("%H:%M") <= promo_time.morning_start.strftime("%H:%M"))
-					                    		
+
 				                    	status = 'hora-promocion'
 				                    	promo_discount = promo.morning_discount
 
@@ -621,4 +624,20 @@ class ServiceProvider < ActiveRecord::Base
 
 	    return { panel_body: week_blocks, days_row: days_row, days_count: days_count }
 	end
+
+	def self.filter_location(location)
+    if !location.blank? && location != '0'
+      where(location_id: location).order(:order, :public_name)
+    else
+      all.order(:order, :public_name)
+    end
+  end
+
+  def self.filter_provider(provider)
+    if !provider.blank? && provider != '0'
+      find(provider)
+    else
+      all.order(:order, :public_name)
+    end
+  end
 end

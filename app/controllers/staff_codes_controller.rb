@@ -69,6 +69,20 @@ class StaffCodesController < ApplicationController
     render :json => !@staff_code.nil?
   end
 
+  def get_staff_by_code
+
+    staff_code = StaffCode.where(code: params[:payment_staff_code], company_id: current_user.company_id).first
+
+    return_array = []
+    if staff_code.nil?
+      return_array << "error"
+    else
+      return_array << staff_code
+    end
+
+    render :json => return_array
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_staff_code

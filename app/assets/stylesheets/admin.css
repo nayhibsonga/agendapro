@@ -2,4 +2,5 @@
  *= require application
  *= require jquery-ui
  *= require admin/admin-style
+ *= require payments.css
  */
