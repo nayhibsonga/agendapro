@@ -284,8 +284,8 @@ class PayUController < ApplicationController
 
   def failure
     @token = ''
-    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
     if params[:encrypted_transaction].present?
+      crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
       trx_id = crypt.decrypt_and_verify(params[:encrypted_transaction])
       @token = trx_id
       if trx_id.present?
