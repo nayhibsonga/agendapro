@@ -1170,12 +1170,12 @@ class PaymentsController < ApplicationController
 
     if current_user.role_id == Role.find_by_name("Administrador General").id
       @locations = current_user.company.locations.where(:active => true).order(name: :asc)
-      @service_providers = current_user.company.service_providers
+      @service_providers = current_user.company.service_providers.where(active: true)
       @service_categories = current_user.company.service_categories
       @service_commissions = ServiceCommission.where(service_provider_id: @service_providers.pluck(:id))
     elsif current_user.role_id == Role.find_by_name("Administrador Local").id
       @locations = current_user.locations.where(:active => true).order(name: :asc)
-      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
+      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id), active: true)
       @service_categories = ServiceCategory.where(id: Service.where(id: ServiceStaff.where( service_provider_id: @service_providers.pluck(:id)).pluck(:service_id)).pluck(:service_category_id))
       @service_commissions = ServiceCommission.where(service_provider_id: @service_providers.pluck(:id))
     end
@@ -2297,12 +2297,12 @@ class PaymentsController < ApplicationController
 
     if current_user.role_id == Role.find_by_name("Administrador General").id
       @locations = current_user.company.locations
-      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
+      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id), active:true)
       @cashiers = current_user.company.cashiers
       @users = current_user.company.users
     elsif current_user.role_id == Role.find_by_name("Administrador Local").id
       @locations = current_user.locations
-      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
+      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id), active:true)
       @users = User.where(id: UserLocation.where(location_id: @locations.pluck(:id)).pluck(:user_id))
     elsif current_user.role_id == Role.find_by_name("Recepcionista").id
       @locations = current_user.locations
