@@ -39,10 +39,6 @@ table.servicesTable td{
 	border-radius: 3px;
 }
 
-.paymentModal .modal-dialog{
-	width: 40% !important;
-}
-
 .salesCashModal .modal-dialog{
 	width: 40% !important;
 }

@@ -2297,12 +2297,12 @@ class PaymentsController < ApplicationController
 
     if current_user.role_id == Role.find_by_name("Administrador General").id
       @locations = current_user.company.locations
-      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
+      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id), active:true)
       @cashiers = current_user.company.cashiers
       @users = current_user.company.users
     elsif current_user.role_id == Role.find_by_name("Administrador Local").id
       @locations = current_user.locations
-      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
+      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id), active:true)
       @users = User.where(id: UserLocation.where(location_id: @locations.pluck(:id)).pluck(:user_id))
     elsif current_user.role_id == Role.find_by_name("Recepcionista").id
       @locations = current_user.locations
