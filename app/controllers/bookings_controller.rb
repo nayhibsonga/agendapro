@@ -151,7 +151,13 @@ class BookingsController < ApplicationController
 
           #If price is not equivalent, then it has discount
           if @booking.price != @booking.list_price
-            @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+            if @booking.list_price != 0
+              @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+            else
+              if @booking.price > 0
+                @booking.list_price = @booking.price
+              end
+            end
           end
 
           if @booking.payed
@@ -174,7 +180,13 @@ class BookingsController < ApplicationController
 
         #If price is not equivalent, then it has discount
         if @booking.price != @booking.list_price
-          @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+          if @booking.list_price != 0
+            @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+          else
+            if @booking.price > 0
+              @booking.list_price = @booking.price
+            end
+          end
         end
       end
 
@@ -473,7 +485,13 @@ class BookingsController < ApplicationController
 
           #If price is not equivalent, then it has discount
           if @booking.price != @booking.list_price
-            @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+            if @booking.list_price != 0
+              @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+            else
+              if @booking.price > 0
+                @booking.list_price = @booking.price
+              end
+            end
           end
 
           if @booking.payed
@@ -495,7 +513,13 @@ class BookingsController < ApplicationController
 
         #If price is not equivalent, then it has discount
         if @booking.price != @booking.list_price
-          @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+          if @booking.list_price != 0
+            @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+          else
+            if @booking.price > 0
+              @booking.list_price = @booking.price
+            end
+          end
         end
       end
 
