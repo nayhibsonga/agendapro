@@ -2307,7 +2307,7 @@ class PaymentsController < ApplicationController
     elsif current_user.role_id == Role.find_by_name("Recepcionista").id
       @locations = current_user.locations
       @users = User.where(id: current_user.id)
-    elsif current_user.role_id == Role.find_by_name("Staff") || current_user.role_id == Role.find_by_name("Staff (sin edición)")
+    elsif current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
       @service_providers = current_user.service_providers
       @users = User.where(id: current_user.id)
     end
