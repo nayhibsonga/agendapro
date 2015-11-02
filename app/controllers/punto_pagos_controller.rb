@@ -37,7 +37,7 @@ class PuntoPagosController < ApplicationController
     payment_method = params[:mp]
     company = Company.find(current_user.company_id)
     company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
-    sales_tax = NumericParameter.find_by_name("sales_tax").value
+    sales_tax = company.country.sales_tax
     day_number = Time.now.day
     month_number = Time.now.month
     month_days = Time.now.days_in_month
@@ -92,7 +92,7 @@ class PuntoPagosController < ApplicationController
     company = Company.find(current_user.company_id)
     company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
     new_plan = Plan.find(plan_id)
-    sales_tax = NumericParameter.find_by_name("sales_tax").value
+    sales_tax = company.country.sales_tax
     day_number = Time.now.day
     month_number = Time.now.month
     month_days = Time.now.days_in_month
@@ -127,7 +127,7 @@ class PuntoPagosController < ApplicationController
             company.months_active_left = new_active_months_left
             company.due_amount = (new_amount_due).round(0)
             if company.save
-              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."
             else
               redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales y/o prestadores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
@@ -146,7 +146,7 @@ class PuntoPagosController < ApplicationController
               req = PuntoPagos::Request.new()
               resp = req.create(trx_id, due, payment_method)
               if resp.success?
-                PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+                PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
                 PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
                 redirect_to resp.payment_process_url
               else
@@ -171,7 +171,7 @@ class PuntoPagosController < ApplicationController
             req = PuntoPagos::Request.new()
             resp = req.create(trx_id, due, payment_method)
             if resp.success?
-              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
               PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
               redirect_to resp.payment_process_url
             else
