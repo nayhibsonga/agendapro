@@ -182,6 +182,7 @@
     get "/pay_u/generate_company_transaction/:amount", :to => 'pay_u#generate_company_transaction', :as => 'pu_generate_company_transaction'
     get "/pay_u/generate_plan_transaction/:plan_id", :to => 'pay_u#generate_plan_transaction', :as => 'pu_generate_plan_transaction'
     post "/pay_u/confirmation", :to => 'pay_u#confirmation', :as => 'pay_u_confirmation'
+    get "/pay_u/response", :to => 'pay_u#response_handler', :as => 'pay_u_response'
     get "/pay_u/success", :to => 'pay_u#success', :as => 'pay_u_success'
     get "/pay_u/failure", :to => 'pay_u#failure', :as => 'pay_u_failure'
     get "/companies/:id/edit_payment", :to => 'companies#edit_payment', :as => 'edit_payment_company'
