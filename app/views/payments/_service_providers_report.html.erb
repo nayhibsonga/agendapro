@@ -115,13 +115,13 @@
 		<a href="/service_providers_report_file.xls?from=<%= @from.to_s %>&to=<%= @to.to_s %>&service_provider_ids=<%= sp_ids %>"><button type="button" class="btn btn-green" class="getExcel" provider_ids="<%= @service_providers.pluck(:id).to_s %>">Descargar a Excel</button></a>
 	</div>
 </div>
-<div class="row" style="margin-top: 20px;">
+<div class="row" style="margin-top: 35px;">
 	<div class="col-md-12">
 		<div class="content_header">Seguimiento de recaudación</div>
 		<%= line_chart (provider_sales(@service_providers.pluck(:id), @from, @to, @time_option)) %>
 	</div>
 </div>
-<div class="row" style="margin-top: 20px;">
+<div class="row" style="margin-top: 35px;">
 	<div class="col-md-12">
 	<div class="content_header">Recaudaciones y comisiones</div>
 	</div>
