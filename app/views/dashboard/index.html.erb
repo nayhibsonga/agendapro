@@ -1,11 +1,3 @@
-<div class="container-fluid background-grey">
-  <div class="row">
-    <div class="col-md-12">
-      <h2 class="text-green">Resumen</h2>
-      <p>Revisa las estadisticas de tus locales:</p>
-    </div>
-  </div>
-</div>
 
 <div class="container-fluid" style="padding-top: 10px;">
   <% unless current_user.role == Role.find_by(name: "Super Admin") || current_user.role == Role.find_by_name("Ventas") %>
@@ -54,7 +46,7 @@
                 <% occupation = booking_occupation(Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
                 <%= number_to_percentage occupation * 100, precision: 1, strip_insignificant_zeros: true %>
               </h2>
-              <p data-toggle="toltip" title="Que tan ocupada tienen la agenda los prestadores" data-placement="top" role="button">
+              <p data-toggle="tooltip" title="Que tan ocupada tienen la agenda los prestadores. Se calcula dividiendo la cantidad de horas reservadas sobre la cantidad de horas disponibles por horario." data-placement="top" role="button">
                 <span class="fa-stack text-green">
                   <i class="fa fa-square fa-stack-2x"></i>
                   <i class="fa fa-question fa-stack-1x fa-inverse"></i>
@@ -70,7 +62,7 @@
                 <% incomes = booking_revenue(Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
                 <%= number_to_currency incomes %>
               </h2>
-              <p data-toggle="toltip" title="La suma de los precios de todas las reservas del mes" data-placement="top" role="button">
+              <p data-toggle="tooltip" title="La suma de los precios de todas las reservas del mes" data-placement="top" role="button">
                 <span class="fa-stack text-green">
                   <i class="fa fa-square fa-stack-2x"></i>
                   <i class="fa fa-question fa-stack-1x fa-inverse"></i>
@@ -94,7 +86,7 @@
                   <div class="form-group">
                     <%= label_tag :location, 'Elige Local', class: 'col-sm-3 control-label' %>
                     <div class="col-sm-7">
-                      <%= select_tag :location, '<option value="0">Todos</option>'.html_safe + options_from_collection_for_select(@locations, :id, :name, params[:location]), class: 'form-control' %>
+                      <%= select_tag :location, '<option value="0">Todos</option>'.html_safe + options_from_collection_for_select(@locations.where(active: true), :id, :name, params[:location]), class: 'form-control' %>
                     </div>
                   </div>
                 </div>
@@ -102,7 +94,7 @@
                   <div class="form-group">
                     <%= label_tag :provider, 'Elige Prestador', class: 'col-sm-3 control-label' %>
                     <div class="col-sm-7">
-                      <%= select_tag :provider, '<option value="0">Todos</option>'.html_safe + options_from_collection_for_select(ServiceProvider.filter_location(params[:location]).order(:order, :public_name).accessible_by(current_ability), :id, :public_name, params[:provider]), class: 'form-control' %>
+                      <%= select_tag :provider, '<option value="0">Todos</option>'.html_safe + options_from_collection_for_select(ServiceProvider.filter_location(params[:location]).where(active: true).order(:order, :public_name).accessible_by(current_ability), :id, :public_name, params[:provider]), class: 'form-control' %>
                     </div>
                   </div>
                 </div>
@@ -242,7 +234,7 @@
     $('#provider').change(function() {
       $(this).closest('form').submit();
     });
-    $('[data-toggle="toltip"]').toltip();
+    $('[data-toggle="tooltip"]').tooltip();
   });
 </script>
 <% end %>
