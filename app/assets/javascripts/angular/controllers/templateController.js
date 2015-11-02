@@ -11,17 +11,45 @@
         var vm = this;
         var baseUrl = $rootScope.baseUrl;
         vm.lang = $rootScope.lang;
+        vm.option = 'login'; //Controls Login/Register modal
+        vm.signIn = signIn;
+        vm.signUp = signUp;
+
+        // Templates are using when no Redirect to new
+        // page is required, this will store every
+        // reference to views included as partials.
+        // Use routing/templates render for redirections
         vm.templates = {
-            landing: baseUrl + '/landing',
+            header: baseUrl + '/header',
+            footer: baseUrl + '/footer',
             deals: baseUrl + '/deals',
             search: baseUrl + '/search',
             map: baseUrl + '/map',
-            schedule: baseUrl + '/schedule',
-            comments: baseUrl + '/comments'
+            login: baseUrl + '/login',
+            show: {
+                categories: baseUrl + '/show/_categories',
+                comments: baseUrl + '/show/_comments',
+                schedule: baseUrl + '/show/_schedule',
+                summary: baseUrl + '/show/_summary'
+            }
         };
         // To render a new element in the main content
         // section, just change the route to the template
         // In its scope.
         vm.template = vm.templates.landing;
+
+        function signIn(){
+            vm.option = 'login';
+            showModal();
+        }
+
+        function signUp(){
+            vm.option = 'register';
+            showModal();
+        }
+
+        function showModal(){
+            $('#login').modal({backdrop: 'static'});
+        }
     }
 })();

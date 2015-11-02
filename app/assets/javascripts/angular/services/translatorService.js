@@ -56,6 +56,35 @@
               timeout: 'La consulta tardó mucho, por favor inténtalo nuevamente o escribe tu ubicación.',
               unknown_error: 'Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación.'
             }
+          },
+          account: {
+            sign_up: 'Registrate',
+            sign_in: 'Ingresar',
+            login: {
+              title: 'Inicia Sesión',
+              optional: 'Ingresa con tus cuentas de Facebook o Google',
+              hora_chic: 'O ingresa con tu cuenta',
+              check: 'Recordarme',
+              retrieve_passwd: '¿Olvidaste tu contraseña?',
+              account_question: '¿Aún no tienes cuenta?',
+              toggle_button: 'Registrate',
+              go: 'Ingresa'
+            },
+            register: {
+              title: 'Regístrate',
+              optional: 'Regístrate con tus cuentas de Facebook o Google',
+              hora_chic: 'O crea tu cuenta',
+              check: '¿Quieres recibir nuestras promociones a tu email?',
+              retrieve_passwd: '',
+              account_question: '¿Ya tienes cuenta?',
+              toggle_button: 'Ingresar',
+              go: 'Regístrate'
+            },
+            form: {
+              name: 'Nombre',
+              email: 'Email',
+              password: 'Contraseña'
+            }
           }
         }
       }

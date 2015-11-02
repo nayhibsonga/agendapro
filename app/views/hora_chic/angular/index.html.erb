@@ -11,14 +11,16 @@
     <%= stylesheet_link_tag 'ionicons.min' %>
     <%= stylesheet_link_tag 'frontend/jPushMenu.css' %>
     <%= stylesheet_link_tag 'hora_chic_base' %>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
 
     <title>HoraChic - By AgendaPro</title>
   </head>
 
   <body ng-controller="TemplateController as tc">
-    <div ng-include="'/hora_chic/header'"></div>
+    <ng-include src="tc.templates.header"></ng-include>
     <div id="mainContent" ng-view class="view-animate"></div>
-    <footer ng-include="'/hora_chic/footer'"></footer>
+    <ng-include src="tc.templates.footer"></ng-include>
+    <ng-include src="tc.templates.login"></ng-include>
   </body>
 
 </html>

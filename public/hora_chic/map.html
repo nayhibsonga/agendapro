@@ -1,3 +1,5 @@
 <div id="map" ng-controller="MapsController as mc">
-  <ui-gmap-google-map center="mc.map.center" zoom="mc.map.zoom" options="options"></ui-gmap-google-map>
+  <ui-gmap-google-map center="mc.map.center" zoom="mc.map.zoom" options="options">
+    <ui-gmap-markers models="mc.markers" click="mc.markerClick" coords="'self'" icon="'icon'"></ui-gmap-markers>
+  </ui-gmap-google-map>
 </div>

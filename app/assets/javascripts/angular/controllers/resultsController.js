@@ -5,14 +5,20 @@
         .module('HoraChic')
         .controller('ResultsController', ResultsController);
 
-    ResultsController.$inject = ['$rootScope', '$cookies', '$routeParams'];
+    ResultsController.$inject = ['$scope','$rootScope', '$cookies', '$routeParams', 'AgendaProApi'];
 
-    function ResultsController($rootScope, $cookies, $routeParams) {
+    function ResultsController($scope, $rootScope, $cookies, $routeParams, AgendaProApi) {
         var vm = this;
-        vm.title = 'ResultsController';
+        vm.title = 'Results';
         vm.address = $cookies.get('formatted_address');
-        vm.showUrl = $rootScope.baseUrl + "/ver/"
+        vm.showUrl = $rootScope.baseUrl + "/show/"
         vm.params = "?service=" + $routeParams.service + "&local=";
+        vm.searchResults = [];
+
+        AgendaProApi.search($routeParams).then(function(data){
+          vm.searchResults = data;
+        });
+
         activate();
 
         ////////////////
