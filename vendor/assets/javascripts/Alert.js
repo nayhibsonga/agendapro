@@ -61,22 +61,30 @@ function Alert (appendTo) {
 	}
 
 	//==== Public Methods ====//
-	this.showAlert = function (message, close_function, close_text) {
+	this.showAlert = function (message, close_function, close_text, hide_function) {
 		// Modal Body
 		$('#alertModal #alertBody').html(message);
 
 		// Modal Footer
 		close_function = close_function || null;
+		hide_function = hide_function || null;
 		close_text = close_text || 'Aceptar';
 		if (close_function) {
 			$('#alertModal .modal-footer').append(
-				'<button type="button" class="btn btn-info" id="closeModal">' + close_text + '</button>'
+				'<button type="button" class="btn btn-green" id="closeModal">' + close_text + '</button>'
 			);
 			$('#alertModal #closeModal').click(function (e) {
 				hide();
 				close_function();
 			});
 			$('#alertModal').on('hidden.bs.modal', function (e) {
+				$('#alertModal #closeModal').remove();
+			});
+		}
+
+		if(hide_function){
+			$('#alertModal').on('hidden.bs.modal', function (e) {
+				hide_function();
 				$('#alertModal #closeModal').remove();
 			});
 		}

@@ -641,7 +641,7 @@ class CompaniesController < ApplicationController
 
 	##### Workflow #####
 	def overview
-		
+
 		@company = CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)) ? CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)).company : nil
 		if @company.nil?
 			@company = CompanyCountry.find_by(web_address: request.subdomain.gsub(/www\./i, ''), country_id: Country.find_by(locale: I18n.locale.to_s)) ? CompanyCountry.find_by(web_address: request.subdomain.gsub(/www\./i, ''), country_id: Country.find_by(locale: I18n.locale.to_s)).company : nil
@@ -656,7 +656,7 @@ class CompaniesController < ApplicationController
 			end
 		end
 
-		@locations = Location.where(:active => true, online_booking: true, district_id: District.where(city_id: City.where(region_id: Region.where(country_id: Country.find_by(locale: I18n.locale.to_s))))).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(order: :asc)
+		@locations = Location.where(:active => true, online_booking: true, district_id: District.where(city_id: City.where(region_id: Region.where(country_id: Country.find_by(locale: I18n.locale.to_s))))).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(:order, :name)
 
 		unless @company.company_setting.activate_workflow && @company.active && @locations.count > 0
 			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
@@ -806,7 +806,7 @@ class CompaniesController < ApplicationController
 		rescue ActionView::MissingTemplate => e
 			redirect_to :action => "overview"
 			return
-		
+
 	end
 
 	def select_session_hour
@@ -924,6 +924,66 @@ class CompaniesController < ApplicationController
 		@web_address = current_user.company.company_countries.find_by(country_id: Country.find_by(locale: I18n.locale.to_s)).web_address
 	end
 
+	def inventory
+
+		if current_user.role_id != Role.find_by_name("Administrador General").id
+			errors = ['No tienes suficientes privilegios para ver esta página.']
+			format.html { redirect_to products_path, alert: 'No tienes suficientes privilegios para ver esta página.' }
+        	format.json { render :json => { :errors => errors }, :status => 422 }
+        	return
+		end
+
+		@company = current_user.company
+		@products = []
+
+		if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
+			@products = @company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
+			@products = @company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
+			@products = @company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
+			@products = @company.products.where(:product_category_id => params[:category]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
+			@products = @company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
+			@products = @company.products.where(:product_brand_id => params[:brand]).order(:product_category_id, :product_brand_id)
+		elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
+			@products = @company.products.where(:product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+		else
+			@products = @company.products.order(:product_category_id, :product_brand_id)
+		end
+
+		logger.info @products.inspect
+
+	    respond_to do |format|
+	      format.html { render :partial => 'inventory' }
+	      format.json { render :json => @products }
+	    end
+
+	end
+
+	def stock_alarm_form
+
+		if current_user.role_id != Role.find_by_name("Administrador General").id
+			errors = ['No tienes suficientes privilegios para ver esta página.']
+			format.html { redirect_to products_path, alert: 'No tienes suficientes privilegios para ver esta página.' }
+        	format.json { render :json => { :errors => errors }, :status => 422 }
+        	return
+		end
+		
+		@stock_alarm_settings = StockAlarmSetting.where(location_id: current_user.company.locations.where(:active => true).pluck(:id))
+		respond_to do |format|
+	      format.html { render :partial => 'stock_alarm_form' }
+	      format.json { render :json => @locations }
+	    end
+	end
+
+	def get_cashiers_by_code
+		@cashier = Cashier.find_by_code(params[:cashier_code])
+		render :json => @cashier
+	end
+
 	private
 
 		#Common method to obtain available hours
@@ -978,7 +1038,7 @@ class CompaniesController < ApplicationController
 		    if serviceStaff[0][:provider] != "0"
 		      first_providers << ServiceProvider.find(serviceStaff[0][:provider])
 		    else
-		      first_providers = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc)
+		      first_providers = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(:order, :public_name)
 		    end
 
 		    #Look for services and providers and save them for later use.
@@ -987,7 +1047,7 @@ class CompaniesController < ApplicationController
 		    total_services_duration = 0
 
 		    #False if last tried block allocation failed.
-		    #Used for searching gaps. They should be looked for only if last block culd be allocated, 
+		    #Used for searching gaps. They should be looked for only if last block culd be allocated,
 		    #because if not, then there isn't anyway that coming back in time cause correct allocation.
 		    last_check = false
 
@@ -1064,7 +1124,7 @@ class CompaniesController < ApplicationController
 			    @bookSummaries = book_summaries
 				return
 			end
-			
+
 
 			day_close = local.location_times.where(day_id: day).order(:close).first.close
 			limit_date = DateTime.new(now.year, now.mon, now.mday, day_close.hour, day_close.min)
@@ -1089,6 +1149,10 @@ class CompaniesController < ApplicationController
 				  end
 
 				  #To deattach continous services, just delete the serviceStaffPos condition
+
+				  if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization && last_check
+		            dateTimePointer = dateTimePointer - total_services_duration.minutes + first_service.company.company_setting.calendar_duration.minutes
+		          end
 
 				  if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization
 				    #Calculate offset
@@ -1137,11 +1201,11 @@ class CompaniesController < ApplicationController
 						  #If they don't, choose the one that starts earlier.
 						  if service.check_providers_day_times(dateTimePointer)
 
-						    providers = providers_arr[serviceStaffPos].order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+						    providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
 
 						  else
 
-						    providers = providers_arr[serviceStaffPos].order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+						    providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
 						  end
 
 
@@ -1730,7 +1794,6 @@ class CompaniesController < ApplicationController
 		    @available_time
 
 		end
-
 
 		# Use callbacks to share common setup or constraints between actions.
 		def set_company

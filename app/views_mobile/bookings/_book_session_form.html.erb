@@ -14,7 +14,7 @@
 	        		<%= hidden_field_tag :booking_id, @booking.id %>
 	        		<%= hidden_field_tag :serviceStaff %>
 	        		<!--<%= hidden_field_tag :provider, @booking.service_provider.id %>-->
-	        			
+
 	        			<div class="form-group" <%= 'style="display:none;"'.html_safe if @booking.location.company.company_setting.provider_preference == 2 %>>
 	        				<select class="form-control" name="provider" id="provider">
 				            	<% if @booking.service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @booking.location.id).count > 1 %>
@@ -22,7 +22,7 @@
 		                                <option value="0">Sin Preferencia</option>
 		                            <% end %>
 		                        <% end %>
-		                        <% @booking.service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @booking.location.id).order(order: :asc).each do |provider| %>
+		                        <% @booking.service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @booking.location.id).order(:order, :public_name).each do |provider| %>
 		                            <% if @booking.is_session_booked && @booking.service_provider_id == provider.id %>
 		                                <option value="<%= provider.id %>" selected>
 		                                    <%= provider.public_name %>

@@ -1,0 +1,550 @@
+var numbered_days = {1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo"};
+myAlert = new Alert();
+
+function destroyPayment(payment_id) {
+  $.ajax({
+    type: 'DELETE',
+    url: '/payments/'+ payment_id + '.json',
+    dataType: 'json',
+    success: function(payment){
+      // window.console.log(payment);
+      alert('Pago eliminado exitosamente.');
+      $("#save_payment_button").html('Guardar Pago');
+      $('#save_payment_button').attr('disabled', false);
+      $('#delete_payment_button').attr('disabled', false);
+      $('#payment')
+      loadPayments();
+      $('#newPaymentModal').modal('hide');
+    },
+    error: function(xhr){
+      var errors = $.parseJSON(xhr.responseText).errors;
+      var errores = 'Error\n';
+      for (i in errors) {
+        errores += '*' + errors[i] + '\n';
+      }
+      alert(errores);
+      $("#save_payment_button").html('Guardar Pago');
+      $('#save_payment_button').attr('disabled', false);
+      $('#delete_payment_button').attr('disabled', false);
+    }
+  });
+
+  return false;
+}
+
+function loadPayments() {
+
+    var location_id = $('#locationSelect').val();
+
+    $('#render_content').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+    $.ajax({
+        url: '/sales_cash_content',
+        type: 'get',
+        data: {location_id: location_id},
+        cache: false,
+        success: function(html){
+          $('#render_content').html(html);
+        }
+    });
+
+    return false;
+}
+
+function loadSalesCash()
+{
+  var sales_cash_id = $('#sales_cash_id').val();
+
+  $.ajax({
+    url: '/get_sales_cash',
+    data: {sales_cash_id: sales_cash_id},
+    method: 'get',
+    dataType: 'json',
+    error: function(response){
+      alert("Error al cargarla información.")
+    },
+    success: function(sales_cash){
+      if(sales_cash.error)
+      {
+        alert("Error al cargarla información.")
+        return;
+      }
+      $("#sales_cash_scheduled_reset").val(sales_cash.scheduled_reset);
+      $("#sales_cash_scheduled_reset_monthly").val(sales_cash.scheduled_reset_monthly);
+      $('#sales_cash_scheduled_reset_day').empty();
+      if(sales_cash.scheduled_reset_monthly)
+      {
+        for(i = 1; i < 32; i++)
+        {
+          $('#sales_cash_scheduled_reset_day').append('<option value="' + i + '">' + i + '</option>');
+        }
+      }
+      else
+      {
+        for(i = 1; i < 8; i++)
+        {
+          $('#sales_cash_scheduled_reset_day').append('<option value="' + i + '">' + numbered_days[i] + '</option>');
+        }
+      }
+      $("#sales_cash_scheduled_reset_day").val(sales_cash.scheduled_reset_day);
+      $('#sales_cash_emails').val(sales_cash.emails);
+      $('#salesCashModal').modal('show');
+    }
+  });
+
+}
+
+function changeScheduledMonthly()
+{
+  $('#sales_cash_scheduled_reset_day').empty();
+  console.log($('#sales_cash_scheduled_reset_monthly').val());
+  console.log($('#sales_cash_scheduled_reset_monthly').val() == "1");
+  if($('#sales_cash_scheduled_reset_monthly').val() == "1")
+  {
+    for(i = 1; i < 32; i++)
+    {
+      $('#sales_cash_scheduled_reset_day').append('<option value="' + i + '">' + i + '</option>');
+    }
+  }
+  else
+  {
+    for(i = 1; i < 8; i++)
+    {
+      $('#sales_cash_scheduled_reset_day').append('<option value="' + i + '">' + numbered_days[i] + '</option>');
+    }
+  }
+}
+
+function editSalesCashTransaction(sales_cash_transaction_id)
+{
+  $.ajax({
+    url: '/get_sales_cash_transaction',
+    type: 'get',
+    data: {sales_cash_transaction_id: sales_cash_transaction_id},
+    dataType: 'json',
+    error: function(response){
+      alert("Error al cargar el traspaso.");
+    },
+    success: function(response)
+    {
+      loadSalesCashTransaction(response);
+    }
+  });
+}
+
+function loadSalesCashTransaction(sales_cash_transaction)
+{
+  if(sales_cash_transaction)
+  {
+    $('#sales_cash_transaction_id').val(sales_cash_transaction.id);
+    $('#sales_cash_transaction_edit').val("1");
+
+    if(sales_cash_transaction.is_internal_transaction)
+    {
+      $('#sales_cash_is_internal_transaction').val("1");
+    }
+    else
+    {
+      $('#sales_cash_is_internal_transaction').val("0");
+    }
+    $('#sales_cash_transaction_amount').val(sales_cash_transaction.amount);
+    if(sales_cash_transaction.receipt_number)
+    {
+      $('#sales_cash_transaction_receipt_number').val(sales_cash_transaction.receipt_number);
+    }
+    else
+    {
+      $('#sales_cash_transaction_receipt_number').val("");
+    }
+
+    var complete_date_array = sales_cash_transaction.date.split("T");
+    var edit_date_array = complete_date_array[0].split("-");
+    var edit_date = edit_date_array[2] + "/" + edit_date_array[1] + "/" + edit_date_array[0];
+
+    var edit_time_array = complete_date_array[1].split(":");
+    var edit_hour = edit_time_array[0];
+    var edit_minute = edit_time_array[1];
+
+    $("#sales_cash_transaction_time_4i").val(edit_hour);
+    $("#sales_cash_transaction_time_5i").val(edit_minute);
+
+    $("#sales_cash_transaction_date").val(edit_date);
+    $('#sales_cash_transaction_notes').val(sales_cash_transaction.notes);
+  }
+  else
+  {
+    $('#sales_cash_transaction_id').val("0");
+    $('#sales_cash_transaction_edit').val("0");
+    $('#sales_cash_is_internal_transaction').val("1");
+    $('#sales_cash_transaction_amount').val("0");
+    $('#sales_cash_transaction_receipt_number').val("");
+    $("#sales_cash_transaction_date").val($("#today_date").val());
+    $('#sales_cash_transaction_notes').val("");
+
+    var currentDate = new Date();
+    var new_hour = currentDate.getHours();
+    var new_minute = currentDate.getMinutes();
+    if(new_hour < 10)
+    {
+      new_hour = "0" + new_hour;
+    }
+    else
+    {
+      new_hour = "" + new_hour;
+    }
+    if(new_minute < 10)
+    {
+      new_minute = "0" + new_minute;
+    }
+    else
+    {
+      new_minute = "" + new_minute;
+    }
+    $("#sales_cash_transaction_time_4i").val(new_hour);
+    $("#sales_cash_transaction_time_5i").val(new_minute);
+
+  }
+  $('#salesCashTransactionModal').modal('show');
+}
+
+function saveSalesCashTransaction()
+{
+
+    var sales_cash_transaction_id = $('#sales_cash_transaction_id').val();
+    var sales_cash_id = $('#sales_cash_id').val();
+    var is_internal = $('#sales_cash_transaction_is_internal_transaction').val();
+    var amount = $('#sales_cash_transaction_amount').val();
+    var date = $('#sales_cash_transaction_date').val();
+    var notes = $('#sales_cash_transaction_notes').val();
+    var receipt_number = $('#sales_cash_transaction_receipt_number').val();
+    var time = $('#sales_cash_transaction_time_4i').val() + ":" + $('#sales_cash_transaction_time_5i').val() + ":00";
+    date = date + " " + time;
+
+    $.ajax({
+      url: '/save_sales_cash_transaction',
+      type: 'post',
+      data: {sales_cash_id: sales_cash_id, is_internal: is_internal, amount: amount, date: date, notes: notes, receipt_number: receipt_number, sales_cash_transaction_id: sales_cash_transaction_id},
+      dataType: 'json',
+      error: function(response){
+        alert('Ocurrió un error al guardar la transacción.');
+        $('#salesCashTransactionModal').modal('hide');
+      },
+      success: function(response){
+        if(response[0] == "ok")
+        {
+          alert('Transacción guardada correctamente.');
+        }
+        else
+        {
+          alert('Ocurrió un error al guardar la transacción.');
+        }
+        $('#salesCashTransactionModal').modal('hide');
+        loadPayments();
+      }
+    });
+
+}
+
+function deleteSalesCashTransaction(sales_cash_transaction_id)
+{
+  var r = confirm("¿Estás seguro que deseas eliminar el traspaso?");
+  if (r == true) {
+    $.ajax({
+      url: '/delete_sales_cash_transaction',
+      method: 'post',
+      data: {sales_cash_transaction_id: sales_cash_transaction_id},
+      dataType: 'json',
+      error: function(response){
+        alert('Ocurrió un error al eliminar el traspaso.');
+        loadPayments();
+      },
+      success: function(response){
+        if(response[0] == "error")
+        {
+          alert('Ocurrió un error al eliminar el traspaso.');
+        }
+        else
+        {
+          alert('Traspaso eliminado correctamente.');
+        }
+        loadPayments();
+      }
+    });
+  }
+}
+
+function loadSalesCashIncome(sales_cash_income)
+{
+
+  if(sales_cash_income)
+  {
+    $("#sales_cash_income_edit").val("1");
+    $("#sales_cash_income_id").val(sales_cash_income.id)
+    $('#sales_cash_income_amount').val(sales_cash_income.amount);
+    $('#sales_cash_income_notes').val(sales_cash_income.notes);
+    var complete_date_array = sales_cash_income.date.split("T");
+    var edit_date_array = complete_date_array[0].split("-");
+    var edit_date = edit_date_array[2] + "/" + edit_date_array[1] + "/" + edit_date_array[0];
+
+    var edit_time_array = complete_date_array[1].split(":");
+    var edit_hour = edit_time_array[0];
+    var edit_minute = edit_time_array[1];
+    $("#sales_cash_income_date").val(edit_date);
+    $("#sales_cash_income_time_4i").val(edit_hour);
+    $("#sales_cash_income_time_5i").val(edit_minute);
+  }
+  else
+  {
+    $("#sales_cash_income_edit").val("0");
+    $("#sales_cash_income_id").val("0");
+    $('#sales_cash_income_amount').val("0");
+    $("#sales_cash_income_date").val($("#today_date").val());
+    $('#sales_cash_income_notes').val("");
+    var currentDate = new Date();
+    var new_hour = currentDate.getHours();
+    var new_minute = currentDate.getMinutes();
+    if(new_hour < 10)
+    {
+      new_hour = "0" + new_hour;
+    }
+    else
+    {
+      new_hour = "" + new_hour;
+    }
+    if(new_minute < 10)
+    {
+      new_minute = "0" + new_minute;
+    }
+    else
+    {
+      new_minute = "" + new_minute;
+    }
+    $("#sales_cash_income_time_4i").val(new_hour);
+    $("#sales_cash_income_time_5i").val(new_minute);
+  }
+  $('#salesCashIncomeModal').modal('show');
+}
+
+function editSalesCashIncome(sales_cash_income_id)
+{
+  $.ajax({
+    url: '/get_sales_cash_income',
+    type: 'get',
+    data: {sales_cash_income_id: sales_cash_income_id},
+    dataType: 'json',
+    error: function(response){
+      alert("Error al cargar el ingreso.");
+    },
+    success: function(response)
+    {
+      loadSalesCashIncome(response);
+    }
+  });
+}
+
+function saveSalesCashIncome()
+{
+  var sales_cash_income_id = $('#sales_cash_income_id').val();
+  var sales_cash_id = $('#sales_cash_id').val();
+  var amount = $('#sales_cash_income_amount').val();
+  var date = $('#sales_cash_income_date').val();
+  var notes = $('#sales_cash_income_notes').val();
+  var time = $('#sales_cash_income_time_4i').val() + ":" + $('#sales_cash_income_time_5i').val() + ":00";
+  date = date + " " + time;
+
+  $.ajax({
+    url: '/save_sales_cash_income',
+    type: 'post',
+    data: {sales_cash_id: sales_cash_id, amount: amount, date: date, notes: notes, sales_cash_income_id: sales_cash_income_id},
+    dataType: 'json',
+    error: function(response){
+      alert('Ocurrió un error al guardar el ingreso.');
+      $('#salesCashIncomeModal').modal('hide');
+    },
+    success: function(response){
+      if(response[0] == "ok")
+      {
+        alert('Transacción guardada correctamente.');
+      }
+      else
+      {
+        alert('Ocurrió un error al guardar el ingreso.');
+      }
+      $('#salesCashIncomeModal').modal('hide');
+      loadPayments();
+    }
+  });
+}
+
+function deleteSalesCashIncome(sales_cash_income_id)
+{
+  var r = confirm("¿Estás seguro que deseas eliminar el ingreso?");
+  if (r == true) {
+    $.ajax({
+      url: '/delete_sales_cash_income',
+      method: 'post',
+      data: {sales_cash_income_id: sales_cash_income_id},
+      dataType: 'json',
+      error: function(response){
+        alert('Ocurrió un error al eliminar el ingreso.');
+        loadPayments();
+      },
+      success: function(response){
+        if(response[0] == "error")
+        {
+          alert('Ocurrió un error al eliminar el ingreso.');
+        }
+        else
+        {
+          alert('Ingreso eliminado correctamente.');
+        }
+        loadPayments();
+      }
+    });
+  }
+}
+
+function saveSalesCash()
+{
+  var sales_cash_id = $('#sales_cash_id').val();
+  var scheduled_reset = $('#sales_cash_scheduled_reset').val();
+  var scheduled_reset_monthly = $('#sales_cash_scheduled_reset_monthly').val();
+  var scheduled_reset_day = $('#sales_cash_scheduled_reset_day').val();
+  var emails = $('#sales_cash_emails').val();
+
+  $.ajax({
+    url: '/save_sales_cash',
+    data: {sales_cash_id: sales_cash_id, scheduled_reset: scheduled_reset, scheduled_reset_monthly: scheduled_reset_monthly, scheduled_reset_day: scheduled_reset_day, emails: emails},
+    method: 'post',
+    dataType: 'json',
+    error: function(response){
+      alert("Ocurrió un error al guardar las opciones.");
+    },
+    success: function(response){
+      if(response[0] == "error")
+      {
+        alert("Ocurrió un error al guardar las opciones.");
+      }
+      else
+      {
+        alert("Opciones guardadas correctamente.");
+      }
+      $('#salesCashModal').modal('hide');
+      loadPayments();
+    }
+  });
+
+}
+
+function openSalesCashCloseModal()
+{
+  myAlert.showAlert(
+    '<h3>Cerrar Caja de Ventas.</h3>' +
+    '<p>Al cerrar tu Caja de Ventas se reinician las recaudaciones y movimientos generados, quedando el monto de ventas actual en 0. Esto no borra los registros históricos ocurridos, sólo es una forma de cuadrar tu balance. Al cerrar, además, se generarán reportes que podrás descargar con el detalle del último período.</p>',
+    function(){
+      closeSalesCash();
+    }
+  );
+}
+
+function closeSalesCash()
+{
+  var sales_cash_id = $('#sales_cash_id').val();
+  $.ajax({
+    url: '/close_sales_cash',
+    method: 'post',
+    data: {sales_cash_id: sales_cash_id},
+    dataType: 'json',
+    error: function(response)
+    {
+      alert("Ocurrió un error al cerrar la caja.");
+    },
+    success: function(response)
+    {
+      if(response[0] == "error")
+      {
+        alert("Ocurrió un error al cerrar la caja.");
+      }
+      else
+      {
+        alert("Caja cerrada exitosamente.");
+      }
+      loadPayments();
+    }
+  });
+}
+
+$(function() {
+
+  $("#sales_cash_transaction_date").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
+  $('#sales_cash_income_date').datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
+  $('#locationSelect').on('change', function(){
+    loadPayments();
+  });
+
+  $('#salesCashConfigurationBtn').on('click', function(){
+    loadSalesCash();
+  });
+
+  $('#sales_cash_scheduled_reset_monthly').on('change', function(){
+    changeScheduledMonthly();
+  });
+
+  $('#salesCashSaveBtn').on('click', function(){
+    saveSalesCash();
+  });
+
+  $('#salesCashTransactionBtn').on('click', function(){
+    loadSalesCashTransaction();
+  });
+
+  $('#salesCashIncomeBtn').on('click', function(){
+    loadSalesCashIncome();
+  });
+
+  $('#salesCashTransactionSaveBtn').on('click', function(){
+    saveSalesCashTransaction();
+  });
+
+  $('#salesCashIncomeSaveBtn').on('click', function(){
+    saveSalesCashIncome();
+  });
+
+  $('#salesCashCloseBtn').on('click', function(){
+    openSalesCashCloseModal();
+  });
+
+  loadPayments();
+
+});

@@ -13,7 +13,7 @@ class Client < ActiveRecord::Base
   def self.bookings_reminder
 
     canceled_status = Status.find_by_name("Cancelado")
-
+    bookings = Array.new
     #Send all services from same client (each company has diferent clients)
     Client.where(id: Booking.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
 

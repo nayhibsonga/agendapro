@@ -108,9 +108,9 @@ ActiveRecord::Schema.define(version: 20151102012032) do
     t.integer  "client_id"
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
-    t.integer  "max_changes",            default: 2
     t.boolean  "payed",                  default: false
     t.string   "trx_id",                 default: ""
+    t.integer  "max_changes",            default: 2
     t.string   "token",                  default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
@@ -120,10 +120,18 @@ ActiveRecord::Schema.define(version: 20151102012032) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.float    "discount",               default: 0.0
+<<<<<<< HEAD
+=======
     t.integer  "service_promo_id"
-    t.integer  "reminder_group"
+    t.integer  "payment_id"
+>>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
+    t.float    "discount",               default: 0.0
     t.boolean  "is_booked",              default: true
+    t.integer  "reminder_group"
+<<<<<<< HEAD
+    t.boolean  "is_booked",              default: true
+=======
+>>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.float    "list_price",             default: 0.0
     t.integer  "receipt_id"
   end
@@ -291,9 +299,16 @@ ActiveRecord::Schema.define(version: 20151102012032) do
     t.boolean  "booking_history",            default: true
     t.boolean  "staff_code",                 default: false
     t.integer  "monthly_mails",              default: 0,                     null: false
+    t.boolean  "allows_online_payment",      default: false
+    t.string   "account_number",             default: ""
+    t.string   "company_rut",                default: ""
+    t.string   "account_name",               default: ""
+    t.integer  "account_type",               default: 3
+    t.integer  "bank_id"
     t.boolean  "deal_activate",              default: false
     t.string   "deal_name",                  default: ""
     t.boolean  "deal_overcharge",            default: true
+<<<<<<< HEAD
     t.boolean  "allows_online_payment",      default: false
     t.string   "account_number",             default: ""
     t.string   "company_rut",                default: ""
@@ -301,6 +316,9 @@ ActiveRecord::Schema.define(version: 20151102012032) do
     t.integer  "account_type",               default: 3
     t.integer  "bank_id"
     t.boolean  "deal_exclusive",             default: true
+=======
+    t.boolean  "deal_exclusive",             default: false
+>>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.integer  "deal_quantity",              default: 0
     t.integer  "deal_constraint_option",     default: 0
     t.integer  "deal_constraint_quantity",   default: 0
@@ -316,6 +334,8 @@ ActiveRecord::Schema.define(version: 20151102012032) do
     t.boolean  "can_edit",                   default: true
     t.boolean  "can_cancel",                 default: true
     t.boolean  "use_identification_number",  default: false
+    t.boolean  "payment_client_required",    default: true
+    t.boolean  "show_cashes",                default: false
     t.string   "preset_notes"
     t.boolean  "payment_client_required",    default: true
     t.boolean  "show_cashes",                default: false
@@ -436,7 +456,11 @@ ActiveRecord::Schema.define(version: 20151102012032) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
+<<<<<<< HEAD
     t.datetime "date",                default: '2015-10-30 21:54:55'
+=======
+    t.datetime "date",                default: '2015-10-27 17:17:43'
+>>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
   end
 
   create_table "last_minute_promos", force: true do |t|
@@ -460,8 +484,13 @@ ActiveRecord::Schema.define(version: 20151102012032) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
+<<<<<<< HEAD
     t.integer  "location_id"
     t.integer  "stock"
+=======
+    t.integer  "location_id",                null: false
+    t.integer  "stock",       default: 0
+>>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "stock_limit"
@@ -795,6 +824,10 @@ ActiveRecord::Schema.define(version: 20151102012032) do
     t.integer  "quantity",    default: 1,   null: false
     t.integer  "seller_id"
     t.integer  "seller_type"
+<<<<<<< HEAD
+=======
+    t.integer  "receipt_id"
+>>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.float    "list_price",  default: 0.0
   end
 
@@ -1150,7 +1183,11 @@ ActiveRecord::Schema.define(version: 20151102012032) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
+<<<<<<< HEAD
     t.datetime "date",          default: '2015-10-30 21:54:55'
+=======
+    t.datetime "date",          default: '2015-10-23 15:05:22'
+>>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1170,7 +1207,11 @@ ActiveRecord::Schema.define(version: 20151102012032) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
+<<<<<<< HEAD
     t.datetime "date",                    default: '2015-10-30 21:54:55'
+=======
+    t.datetime "date",                    default: '2015-10-23 13:42:39'
+>>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false
@@ -1311,7 +1352,7 @@ ActiveRecord::Schema.define(version: 20151102012032) do
     t.boolean  "has_time_discount",        default: false
     t.boolean  "has_last_minute_discount", default: false
     t.boolean  "time_promo_active",        default: false
-    t.string   "time_promo_photo",         default: ""
+    t.string   "time_promo_photo"
     t.integer  "active_service_promo_id"
     t.boolean  "must_be_paid_online",      default: false
     t.text     "promo_description",        default: ""

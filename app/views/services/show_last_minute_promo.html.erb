@@ -62,7 +62,7 @@
           <div style="clear: both;"></div>
         </div>
         <div class="social-links">
-          <% 
+          <%
             share_text = "Promoción de " + @service.name + " con " + @service.get_last_minute_discount(@location.id).to_s+ "% de descuento en AgendaPro"
             share_text = url_encode(share_text)
           %>
@@ -82,15 +82,15 @@
                   <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 
                     <%= image_tag "promociones/reloj_doble.png", :size => "30x30" %> &nbsp;&nbsp; Horarios de reserva
-                    
+
                   </a>
                 </h4>
               </div>
               <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
-                  
+
                     <p style="color: #949292;">Reserva hasta <%= @service.get_last_minute_hours(@location.id) %> antes y obtén un <%= @service.get_last_minute_discount(@location.id) %>% de descuento.</p>
-                      
+
 
                 </div>
               </div>
@@ -165,7 +165,7 @@
                             <option value="0">Sin Preferencia</option>
                         <% end %>
                     <% end %>
-                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(order: :asc).each do |provider| %>
+                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(:order, :public_name).each do |provider| %>
 
                       <option value="<%= provider.id %>">
                           <%= provider.public_name %>
@@ -183,7 +183,7 @@
         </div>
 
         <div id="hoursList" style="display: none;">
-          
+
         </div>
 
         <div class="row" id="loader-div" hidden>
@@ -193,7 +193,7 @@
         </div>
       </div>
 
-      <div class="modal-footer">          
+      <div class="modal-footer">
           <a type="button" class="btn open-calendar-btn" id="openHoursBtn"><i class="fa fa-calendar-o"></i>&nbsp;Elegir hora</a>
           <a type="button" class="btn hour-selected-btn" id="openPayFormBtn" style="display: none;" disabled="true"><i class="fa fa-usd"></i>&nbsp;Pagar</a>
           <!--<button type="button" class="btn session-btn" id="openOptimizerBtn"><i class="fa fa-calendar-o"></i>&nbsp;Sugerir hora</button>-->
@@ -216,14 +216,14 @@
 <% end %>
 
 <% content_for :scripts do %>
-  
+
   <%= javascript_include_tag 'workflow/promotions-calendar' %>
-    
+
   <script type="text/javascript">
 
-    
+
     var currMarker;
-   
+
     //====== Google Map ======//
     function initializeMap(lat, lng, mapDiv) {
         var properties = {
@@ -285,7 +285,7 @@
     $(document).ready(function(){
       var map;
       initializeMap(-33.413084, -70.592161, 'map');
-      
+
       if ($("#locationId").val() != "") {
         var localId = $("#locationId").val();
 
