@@ -34,7 +34,12 @@ function loadTable() {
 		$('#provider-table-body').empty();
 		if (rows.length > 0) {
 			$.each(rows, function (key, row) {
-				$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td></tr>');
+				if(row.length == 4) {
+					$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td></tr>');
+				}
+				else {
+					$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td><td>' + row[4] + '</td></tr>');
+				}
 			});
 		}
 		else {

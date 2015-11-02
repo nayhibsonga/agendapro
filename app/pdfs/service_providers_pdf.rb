@@ -6,12 +6,12 @@ class ServiceProvidersPdf < Prawn::Document
 				bold: { file: "#{Rails.root.join('public/fonts/RobotoCondensed-Bold.ttf')}", font: 'Roboto Condensed Bold'}
 			}
 		)
-
 		if service_provider != 0
 			super()
 			font 'Roboto'
 
 			@service_provider = ServiceProvider.find(service_provider)
+			@use_identification_number = @service_provider.company.company_setting.use_identification_number
 			@provider_date = provider_date
 			header
 			text_content
@@ -22,6 +22,7 @@ class ServiceProvidersPdf < Prawn::Document
 
 			@provider_date = provider_date
 			@providers = ServiceProvider.where(location_id: location_id, active: true).accessible_by(current_ability).order(:order, :public_name)
+			@use_identification_number = Location.find(location_id).company.company_setting.use_identification_number
 			@providers.each do |provider|
 				@service_provider = provider
 				header
@@ -54,13 +55,20 @@ class ServiceProvidersPdf < Prawn::Document
 
 	def table_content
 		move_down 10
+		if @use_identification_number
+			columns_num = 5
+			columns_width = [60,170,100,150,60]
+		else
+			columns_num = 4
+			columns_width = [60,190,190,100]
+		end
 
-		table(provider_hours, header: true, position: :center, row_colors: ['fbe09c', 'FFFFFF'], width: 540, :column_widths => [60,190,190,100]) do
+		table(provider_hours, header: true, position: :center, row_colors: ['fbe09c', 'FFFFFF'], width: 540, :column_widths => columns_width) do
 			cells.borders = []
 
-			columns(0..2).text_color = '4a4644'
-			columns(0..2).borders = [:right]
-			columns(0..2).border_color = '4a4644'
+			columns(0..(columns_num - 2)).text_color = '4a4644'
+			columns(0..(columns_num - 2)).borders = [:right]
+			columns(0..(columns_num - 2)).border_color = '4a4644'
 
 			row(0).font_style = :bold
 			row(0).text_color = 'FFFFFF'
@@ -87,7 +95,11 @@ class ServiceProvidersPdf < Prawn::Document
 			provider_open = provider_times.first.open
 
 			Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id)).where('bookings.start >= ? AND bookings.start < ?', now.beginning_of_day, DateTime.new(now.year, now.mon, now.mday, open_provider_time.hour, open_provider_time.min)).order(:start).each do |booking|
-				table_rows.append([booking.start.strftime('%R'), booking.service.name, booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone])
+				if @use_identification_number
+					table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.identification_number, booking.service.name, booking.status.name])
+				else
+					table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.service.name, booking.status.name])
+				end
 			end
 			while (provider_open <=> close_provider_time) < 0 do
 				provider_close = provider_open + block_length
@@ -99,16 +111,20 @@ class ServiceProvidersPdf < Prawn::Document
 				block_close = DateTime.new(now.year, now.mon, now.mday, provider_close.hour, provider_close.min)
 
 				service_name = 'Descanso por Horario'
+				booking_status = '...'
 				client_name = '...'
 				client_phone = '...'
+				client_identification = '...'
 
 				in_provider_time = false
 				provider_times.each do |provider_time|
 					if (provider_time.open - provider_close)*(provider_open - provider_time.close) > 0
 						in_provider_time = true
+						booking_status = ''
 						service_name = ''
 						client_name = ''
 						client_phone = ''
+						client_identification = ''
 						break
 					end
 				end
@@ -116,19 +132,29 @@ class ServiceProvidersPdf < Prawn::Document
 		        # if in_provider_time
 		          Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id)).where('bookings.start >= ? AND bookings.start < ?', block_open, block_close).order(:start).each do |booking|
 		              in_provider_booking = true
-		              table_rows.append([booking.start.strftime('%R'), booking.service.name, booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone])
+		              if @use_identification_number
+							table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.identification_number, booking.service.name, booking.status.name])
+						else
+							table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.service.name, booking.status.name])
+						end
 		          end
 		        # end
 		        in_provider_break = false
 		        if in_provider_time && !in_provider_booking
 		          ProviderBreak.where(service_provider: @service_provider, start: now.beginning_of_day..now.end_of_day).each do |provider_break|
 		            if (provider_break.start.to_datetime - block_close)*(block_open - provider_break.end.to_datetime) > 0
-		              in_provider_booking = true
-		              service_name = "Bloqueo: "+provider_break.name
-		              client_name = '...'
-		              client_phone = '...'
-		              table_rows.append([provider_break.start.strftime('%R'), service_name, client_name, client_phone])
-		              break
+		              	in_provider_booking = true
+		              	service_name = "Bloqueo: "+provider_break.name
+		              	booking_status = '...'
+						client_name = '...'
+						client_phone = '...'
+						client_identification = '...'
+						if @use_identification_number
+							table_rows.append([provider_break.start.strftime('%R'), service_name, client_name, client_phone, client_identification])
+						else
+		              		table_rows.append([provider_break.start.strftime('%R'), service_name, client_name, client_phone])
+						end
+		              	break
 		            end
 		          end
 		        end
@@ -145,7 +171,11 @@ class ServiceProvidersPdf < Prawn::Document
 		              Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id), start: now.beginning_of_day..now.end_of_day).order(:start).each do |booking|
 		                if (booking.start.to_datetime - block_close)*(block_open - booking.end.to_datetime) > 0
 		                  in_provider_booking = true
-		                  table_rows.append([provider_open.strftime('%R'), 'OCUPADO', '...', '...'])
+		                  if @use_identification_number
+							table_rows.append([provider_open.strftime('%R'), 'OCUPADO', '...', '...', '...'])
+							else
+		                  		table_rows.append([provider_open.strftime('%R'), 'OCUPADO', '...', '...'])
+							end
 		                  break
 		                end
 		              end
@@ -164,8 +194,11 @@ class ServiceProvidersPdf < Prawn::Document
 
 		        if !in_provider_booking
 		          table_row << service_name
+		          table_row << booking_status
 		          table_row << client_name
-		          table_row << client_phone
+		          if @use_identification_number
+		          	table_row << client_identification
+		          end
 		          table_row.compact!
 
 		          table_rows.append(table_row)
@@ -174,11 +207,20 @@ class ServiceProvidersPdf < Prawn::Document
 				provider_open += block_length
 			end
 			Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id), start: DateTime.new(now.year, now.mon, now.mday, close_provider_time.hour, close_provider_time.min)..now.end_of_day).order(:start).each do |booking|
-				table_rows.append([booking.start.strftime('%R'), booking.service.name, booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone])
+				if @use_identification_number
+					table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.identification_number, booking.service.name, booking.status.name])
+				else
+					table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.service.name, booking.status.name])
+				end
 			end
 		end
 
-		table_header = [['Hora', 'Servicio', 'Cliente', 'Teléfono']]
+		if @use_identification_number
+			table_header = [['Hora', 'Cliente', 'CI', 'Servicio', 'Estado' ]]
+		else
+			table_header = [['Hora', 'Cliente', 'Servicio', 'Estado']]
+		end
+
 
 		return table_header + table_rows
 
