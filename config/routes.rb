@@ -437,11 +437,25 @@
   namespace :api_views, defaults: {format: 'json'} do
     namespace :marketplace do
       namespace :v1 do
+        get 'companies_preview', to: 'companies#preview'
+
         get 'promotions', to: 'promotions#index'
         get 'promotions/index/preview', to: 'promotions#preview'
 
         get 'locations', to: 'locations#search'
         get 'locations/:id', to: 'locations#show'
+
+        get 'service_providers/available_hours', to: 'service_providers#available_hours'
+
+        post 'users/session', to: 'users#login'
+        post 'users/registration', to: 'users#create'
+        put 'users/me', to: 'users#edit'
+        get 'users/me', to: 'users#api_user'
+        get 'users/bookings', to: 'users#bookings'
+        get 'users/favorites', to: 'users#favorites'
+        # get 'users/searches', to: 'users#searches'
+        post 'users/oauth', to: 'users#oauth'
+
       end
     end
   end

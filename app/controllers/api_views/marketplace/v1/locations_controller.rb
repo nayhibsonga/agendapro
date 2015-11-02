@@ -5,9 +5,9 @@ module ApiViews
 	  	def search
 	  		if (params[:search_text].present? || params[:economic_sector_id].present?) && params[:latitude].present? && params[:longitude].present?
 
-	      		if params[:search_text].present?
-		      		UserSearch.create(user_id: @mobile_user.id, search_text: params[:search_text])
-		      	end
+	      		# if params[:search_text].present?
+		      	# 	UserSearch.create(user_id: @mobile_user.id, search_text: params[:search_text])
+		      	# end
 
 				@lat = params[:latitude]
 				@lng = params[:longitude]
@@ -228,6 +228,8 @@ module ApiViews
 	  	end
 
 	  	def show
+	  		@short_days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+	  		@long_days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
 			@location = Location.find(params[:id])
 		end
 	  end
