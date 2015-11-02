@@ -46,7 +46,7 @@ class PayUController < ApplicationController
     company = Company.find(current_user.company_id)
     company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
     # sales_tax = NumericParameter.find_by_name("sales_tax").value
-    sales_tax = 0
+    sales_tax = company.country.sales_tax
     day_number = Time.now.day
     month_number = Time.now.month
     month_days = Time.now.days_in_month
@@ -102,7 +102,7 @@ class PayUController < ApplicationController
     company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.plan_countries.find_by(country_id: company.country.id).price: price = company.plan.plan_countries.find_by(country_id: company.country.id).price
     new_plan = Plan.find(plan_id)
     # sales_tax = NumericParameter.find_by_name("sales_tax").value
-    sales_tax = 0
+    sales_tax = company.country.sales_tax
     day_number = Time.now.day
     month_number = Time.now.month
     month_days = Time.now.days_in_month

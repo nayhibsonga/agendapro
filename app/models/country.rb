@@ -5,7 +5,7 @@ class Country < ActiveRecord::Base
 	has_many :plan_countries
 	has_many :plans, through: :plan_countires
 
-	validates :name, :locale, :currency_code, :latitude, :longitude, :formatted_address, :domain, :presence => true
+	validates :name, :locale, :currency_code, :latitude, :longitude, :formatted_address, :domain, :sales_tax, :presence => true
 
 	mount_uploader :flag_photo, CountryUploader
 end
