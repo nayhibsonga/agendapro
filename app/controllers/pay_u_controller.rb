@@ -136,7 +136,7 @@ class PayUController < ApplicationController
             company.months_active_left = new_active_months_left
             company.due_amount = (new_amount_due).round(0)
             if company.save
-              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."
             else
               redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales y/o prestadores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
@@ -157,7 +157,7 @@ class PayUController < ApplicationController
               crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
               encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Cambio a plan " + company.plan.name, amount: due, source_url: select_plan_path})
               if encrypted_data
-                PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+                PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
                 PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
                 redirect_to action: 'generate_transaction', encrypted_task: encrypted_data
               else
@@ -182,7 +182,7 @@ class PayUController < ApplicationController
             crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
             encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Cambio a plan " + company.plan.name, amount: due, source_url: select_plan_path})
             if encrypted_data
-              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
               PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
               redirect_to action: 'generate_transaction', encrypted_task: encrypted_data
             else

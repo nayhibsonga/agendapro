@@ -127,7 +127,7 @@ class PuntoPagosController < ApplicationController
             company.months_active_left = new_active_months_left
             company.due_amount = (new_amount_due).round(0)
             if company.save
-              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."
             else
               redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales y/o prestadores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
@@ -146,7 +146,7 @@ class PuntoPagosController < ApplicationController
               req = PuntoPagos::Request.new()
               resp = req.create(trx_id, due, payment_method)
               if resp.success?
-                PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+                PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
                 PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
                 redirect_to resp.payment_process_url
               else
@@ -171,7 +171,7 @@ class PuntoPagosController < ApplicationController
             req = PuntoPagos::Request.new()
             resp = req.create(trx_id, due, payment_method)
             if resp.success?
-              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
               PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
               redirect_to resp.payment_process_url
             else
