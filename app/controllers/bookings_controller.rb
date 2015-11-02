@@ -61,14 +61,18 @@ class BookingsController < ApplicationController
     if u.is_session
       is_session = true
       session_index = 1
-      Booking.where(:session_booking_id => u.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
-        if b.id == u.id
-          break
-        else
-          session_index = session_index + 1
+      if !u.session_booking_id.nil? && !u.session_booking.nil?
+        Booking.where(:session_booking_id => u.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+          if b.id == u.id
+            break
+          else
+            session_index = session_index + 1
+          end
         end
+        sessions_ratio = "sesión " + session_index.to_s + " (de un total de " + u.session_booking.sessions_amount.to_s + ")"
+      else
+        sessions_ratio = "0/0"
       end
-      sessions_ratio = "sesión " + session_index.to_s + " (de un total de " + u.session_booking.sessions_amount.to_s + ")"
     else
       sessions_ratio = "0/0"
     end
@@ -147,7 +151,16 @@ class BookingsController < ApplicationController
           @booking.is_session_booked = true
 
           #Set list_price to it's service price
-          @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+          if @booking.service.price != 0
+            @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+          else
+            @booking.list_price = 0
+            @booking.price = 0
+          end
+
+          if @booking.price.nil?
+            @booking.price = 0
+          end
 
           #If price is not equivalent, then it has discount
           if @booking.price != @booking.list_price
@@ -177,6 +190,13 @@ class BookingsController < ApplicationController
       else
         #Set list_price to it's service price
         @booking.list_price = @booking.service.price
+
+        if @booking.list_price.nil?
+          @booking.list_price = 0
+        end
+        if @booking.price.nil?
+          @booking.price = 0
+        end
 
         #If price is not equivalent, then it has discount
         if @booking.price != @booking.list_price
@@ -481,7 +501,16 @@ class BookingsController < ApplicationController
           @booking.is_session_booked = true
 
           #Set list_price to it's service price
-          @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+          if @booking.service.price != 0
+            @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+          else
+            @booking.list_price = 0
+            @booking.price = 0
+          end
+
+          if @booking.price.nil?
+            @booking.price = 0
+          end
 
           #If price is not equivalent, then it has discount
           if @booking.price != @booking.list_price
@@ -510,6 +539,13 @@ class BookingsController < ApplicationController
       else
         #Set list_price to it's service price
         @booking.list_price = @booking.service.price
+
+        if @booking.list_price.nil?
+          @booking.list_price = 0
+        end
+        if @booking.price.nil?
+          @booking.price = 0
+        end
 
         #If price is not equivalent, then it has discount
         if @booking.price != @booking.list_price
