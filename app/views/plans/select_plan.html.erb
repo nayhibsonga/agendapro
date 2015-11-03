@@ -86,10 +86,10 @@
       <p>Y, luego, selecciona el medio de pago haciendo click sobre su imagen:</p>
       <% if @company.country_id == Country.find_by_name('Chile').id %>
       <div class="row mp_table">
-        <div class="col-md-4 hidden text-center">
+        <div class="col-md-4 text-center">
           <%= link_to image_tag("https://www.puntopagos.com/content/mp16.gif"), pp_generate_company_transaction_path(mp: "16", amount: 0), alt: "Botón de Pago Banco BBVA", class: "mp_link" %>
         </div>
-        <div class="col-md-4 col-md-offset-2 text-center">
+        <div class="col-md-4 text-center">
           <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), pp_generate_company_transaction_path(mp: "04", amount: 0), alt: "Botón de Pago Banco de Chile", class: "mp_link" %>
         </div>
         <div class="col-md-4 text-center">
