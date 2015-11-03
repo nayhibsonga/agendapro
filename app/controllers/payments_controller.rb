@@ -312,27 +312,40 @@ class PaymentsController < ApplicationController
     #Only leave out those that haven't been booked yet.
     #IMPORTANT: Leave out bookings that are already associated to a payment.
 
-    @full_past_bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado")).where.not('is_session = true and is_session_booked = false').where('payment_id is null').where(client_id: params[:client_id], location_id: params[:location_id], payment_id: nil).order(start: :desc).limit(100)
+    @full_past_bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado")).where('payment_id is null').where(client_id: params[:client_id], location_id: params[:location_id], payment_id: nil).order(session_booking_id: :desc).order(start: :desc).limit(100)
     @past_bookings = []
     @full_past_bookings.each do |b|
 
       #Dummy amount for services whitout sessions
       sessions_amount = 1
       session_number = 1
+      is_booked = true
+      session_booking_id = -1
+
       if !b.session_booking_id.nil?
 
+        session_booking_id = b.session_booking_id
+
         sessions_amount = b.session_booking.sessions_amount
-        Booking.where(:session_booking_id => b.session_booking.id, :is_session_booked => true).order('start asc').each do |u|
-          if u.id == b.id
-            break
-          else
-            session_number = session_number + 1
+
+        if b.is_session_booked
+
+          Booking.where(:session_booking_id => b.session_booking.id, :is_session_booked => true).order('start asc').each do |u|
+            if u.id == b.id
+              break
+            else
+              session_number = session_number + 1
+            end
           end
+
+        else
+          session_number = -1
+          is_booked = false
         end
 
       end
 
-      @past_bookings.push({ booking: b, booking_checked: true, booking_service: b.service.name, booking_provider: b.service_provider.public_name, booking_date: weekdays[b.start.wday] + ' ' + b.start.strftime('%d-%m-%Y'), booking_time: b.start.strftime('%R'), booking_datetime: b.start.strftime('%d/%m/%Y') + ' - ' + b.start.strftime('%R'), booking_price: b.price, sessions_amount: sessions_amount, session_number: session_number })
+      @past_bookings.push({ booking: b, booking_checked: true, booking_service: b.service.name, booking_provider: b.service_provider.public_name, booking_date: weekdays[b.start.wday] + ' ' + b.start.strftime('%d-%m-%Y'), booking_time: b.start.strftime('%R'), booking_datetime: b.start.strftime('%d/%m/%Y') + ' - ' + b.start.strftime('%R'), booking_price: b.price, sessions_amount: sessions_amount, session_number: session_number, is_booked: is_booked, session_booking_id: session_booking_id })
     end
     render :json => { past_bookings: @past_bookings }
   end
@@ -527,6 +540,7 @@ class PaymentsController < ApplicationController
           booking = Booking.find(past_booking[:id])
           #booking.list_price = past_booking[:]
           booking.discount = past_booking[:discount]
+          booking.list_price = past_booking[:list_price].to_f
           booking.price = (past_booking[:list_price].to_f*(100-booking.discount)/100).round(1)
 
           non_discount_total += past_booking[:list_price]
@@ -833,6 +847,7 @@ class PaymentsController < ApplicationController
           booking = Booking.find(past_booking[:id])
           #booking.list_price = past_booking[:]
           booking.discount = past_booking[:discount]
+          booking.list_price = past_booking[:list_price].to_f
           booking.price = (past_booking[:list_price].to_f*(100-booking.discount)/100).round(1)
 
           non_discount_total += past_booking[:list_price]
