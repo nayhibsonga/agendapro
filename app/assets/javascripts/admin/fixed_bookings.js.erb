@@ -22,6 +22,24 @@ function loadProviders () {
 	return false;
 }
 
+function getStatusColor(status_name) {
+	if (status_name == "Reservado") {
+		return '#77d0fa';
+	}
+	else if (status_name == "Confirmado") {
+		return '#fbe09f';
+	}
+	else if (status_name == "Asiste") {
+		return '#fab5fb';
+	}
+	else if (status_name == "No Asiste") {
+		return '#fbc1b3';
+	}
+	else  {
+		return '';
+	}
+}
+
 function loadTable() {
 	$('#provider-table-body').empty();
 	$('#provider-table-body').append('<tr><td colspan="4"><%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %></td></tr>');
@@ -35,10 +53,10 @@ function loadTable() {
 		if (rows.length > 0) {
 			$.each(rows, function (key, row) {
 				if(row.length == 4) {
-					$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td></tr>');
+					$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td style="background-color: ' + getStatusColor(row[3]) + ';">' + row[3] + '</td></tr>');
 				}
 				else {
-					$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td><td>' + row[4] + '</td></tr>');
+					$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td><td style="background-color: ' + getStatusColor(row[4]) + ';">' + row[4] + '</td></tr>');
 				}
 			});
 		}
