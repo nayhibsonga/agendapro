@@ -668,7 +668,7 @@ class LocationsController < ApplicationController
 
     @response_array = []
 
-    @location.service_providers.each do |service_provider|
+    @location.service_providers.where(active: true).each do |service_provider|
 
       new_seller ={
         :id => service_provider.id,
@@ -694,7 +694,7 @@ class LocationsController < ApplicationController
 
     end
 
-    @location.company.cashiers.each do |cashier|
+    @location.company.cashiers.where(active: true).each do |cashier|
       new_seller ={
         :id => cashier.id,
         :seller_type => 2,
