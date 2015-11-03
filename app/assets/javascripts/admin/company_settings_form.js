@@ -270,8 +270,8 @@ $(function () {
 
   CKEDITOR.replace(company_setting_signature);
 
-  $('#notification_email_receptor_type').change(function (e) {
-    var val = $(e.target).val();
+  $('#notification_email_receptor_type').change(function () {
+    var val = $(this).val();
     if (val == 1) {
       $('#local-notification').removeClass('hidden');
       if (!$('#provider-notification').hasClass('hidden')) {
