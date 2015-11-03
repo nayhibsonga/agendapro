@@ -120,18 +120,10 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-<<<<<<< HEAD
-=======
     t.integer  "service_promo_id"
-    t.integer  "payment_id"
->>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.float    "discount",               default: 0.0
     t.boolean  "is_booked",              default: true
     t.integer  "reminder_group"
-<<<<<<< HEAD
-    t.boolean  "is_booked",              default: true
-=======
->>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.float    "list_price",             default: 0.0
     t.integer  "receipt_id"
     t.boolean  "payed_state",            default: false
@@ -309,7 +301,6 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.boolean  "deal_activate",              default: false
     t.string   "deal_name",                  default: ""
     t.boolean  "deal_overcharge",            default: true
-<<<<<<< HEAD
     t.boolean  "allows_online_payment",      default: false
     t.string   "account_number",             default: ""
     t.string   "company_rut",                default: ""
@@ -317,9 +308,6 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.integer  "account_type",               default: 3
     t.integer  "bank_id"
     t.boolean  "deal_exclusive",             default: true
-=======
-    t.boolean  "deal_exclusive",             default: false
->>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.integer  "deal_quantity",              default: 0
     t.integer  "deal_constraint_option",     default: 0
     t.integer  "deal_constraint_quantity",   default: 0
@@ -488,11 +476,7 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-<<<<<<< HEAD
     t.datetime "date",                default: '2015-10-30 21:54:55'
-=======
-    t.datetime "date",                default: '2015-10-27 17:17:43'
->>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
   end
 
   create_table "last_minute_promos", force: true do |t|
@@ -516,13 +500,8 @@ ActiveRecord::Schema.define(version: 20151102044642) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-<<<<<<< HEAD
     t.integer  "location_id"
     t.integer  "stock"
-=======
-    t.integer  "location_id",                null: false
-    t.integer  "stock",       default: 0
->>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "stock_limit"
@@ -856,10 +835,7 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.integer  "quantity",    default: 1,   null: false
     t.integer  "seller_id"
     t.integer  "seller_type"
-<<<<<<< HEAD
-=======
     t.integer  "receipt_id"
->>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.float    "list_price",  default: 0.0
   end
 
@@ -1215,11 +1191,7 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
-<<<<<<< HEAD
     t.datetime "date",          default: '2015-10-30 21:54:55'
-=======
-    t.datetime "date",          default: '2015-10-23 15:05:22'
->>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1239,11 +1211,7 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
-<<<<<<< HEAD
     t.datetime "date",                    default: '2015-10-30 21:54:55'
-=======
-    t.datetime "date",                    default: '2015-10-23 13:42:39'
->>>>>>> a7ba21579e02bf97cd10aaaf3506fb80e0887ebb
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false

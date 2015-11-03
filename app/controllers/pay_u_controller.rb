@@ -386,7 +386,7 @@ class PayUController < ApplicationController
     pay_u_notification = PayUNotification.create(confirmation_params)
     render :nothing => true, :status => 200, :content_type => 'text/html'
     # punto_pagos_confirmation = PuntoPagosConfirmation.create(response: params[:respuesta], token: params[:token], trx_id: params[:trx_id], payment_method: params[:medio_pago], amount: params[:monto], approvement_date: params[:fecha_aprobacion], card_number: params[:numero_tarjeta], dues_number: params[:num_cuotas], dues_type: params[:tipo_cuotas], dues_amount:params[:valor_cuota], first_due_date: params[:primer_vencimiento], operation_number: params[:numero_operacion], authorization_code: params[:codigo_autorizacion])
-    if confirmation_params[:reference_sale] == "4"
+    if confirmation_params[:state_pol] == "4"
       if BillingLog.find_by_trx_id(confirmation_params[:reference_sale])
         billing_log = BillingLog.find_by_trx_id(confirmation_params[:reference_sale])
         company = Company.find(billing_log.company_id)
@@ -451,6 +451,8 @@ class PayUController < ApplicationController
         BookingMailer.book_payment_agendapro_mail(payed_booking)
         
       end
+    else
+      CompanyCronLog.create(company_id: nil, action_ref: 7, details: "ERROR notification_billing "+pay_u_notification.id)
     end
   end
 
