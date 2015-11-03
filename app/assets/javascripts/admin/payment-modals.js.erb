@@ -1339,7 +1339,7 @@ function loadServiceProviders(){
   }
   $("#payment_not_booked_provider").empty();
   $("#payment_not_booked_provider").append('<option value="-1">Ninguno</option>');
-  $.getJSON('/providers_services/', {id: parseInt($("#payment_not_booked_service").val()),local: parseInt($('#payment_location').val()) }, function (providers) {
+  $.getJSON('/providers_services/', {id: parseInt($("#payment_not_booked_service").val()),local: parseInt($('#payment_location').val()), admin_origin: true }, function (providers) {
     $.each(providers, function (key, provider) {
       $("#payment_not_booked_provider").append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
     });
