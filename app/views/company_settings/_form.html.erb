@@ -1128,7 +1128,7 @@
                       <td><%= cashier.code %></td>
                       <td><button class="btn btn-orange edit_cashier_button" data-name="<%= cashier.name %>" data-active="<%= cashier.active %>" data-code="<%= cashier.code %>" data-id="<%= cashier.id %>"><i class="fa fa-pencil"></i> Editar</button>
                       
-                        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, cashier, method: :delete, data: { confirm: '¿Estás seguro de eliminar el cajero seleccionado?' }, class: 'btn btn-red' %>
+                        <!-- link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, cashier, method: :delete, data: { confirm: '¿Estás seguro de eliminar el cajero seleccionado?' }, class: 'btn btn-red' -->
                       
                         <% if cashier.active %>
                           <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_cashier_path(id: cashier.id), data: { confirm: '¿Estás seguro de desactivar el cajero seleccionado?' }, class: 'btn btn-red' %>
