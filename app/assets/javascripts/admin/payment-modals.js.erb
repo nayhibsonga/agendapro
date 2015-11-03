@@ -1404,7 +1404,12 @@ function loadClientPastBookings(){
                     service_name = service_name + " (no agendada)";
                   }
 
-                  treatment_btn = '<button class="addPastBookingTreatment" session_booking_id="' + past_booking.session_booking_id + '"><i class="fa fa-plus"></i></button>';
+                  treatment_btn = '<button class="addPastBookingTreatment" title="Haz click en este botón para agregar todas las sesiones de este tratamiento que no estén asociadas a otro pago." session_booking_id="' + past_booking.session_booking_id + '"><i class="fa fa-plus"></i></button>';
+
+                  $('.addPastBookingTreatment').tooltip({
+                    placement: "right",
+                    template: '<div class="tooltip custom-tooltip-div" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner custom-tooltip"></div></div>'
+                  });
                   
                 }
 
