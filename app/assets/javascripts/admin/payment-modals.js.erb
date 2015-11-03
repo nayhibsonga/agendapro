@@ -189,6 +189,10 @@ $(function() {
     addPastBooked($(this).attr("booking_id"));
   });
 
+  $("body").on('click', '.addPastBookingTreatment', function(e){
+    addPastBookedTreatment($(this).attr("session_booking_id"));
+  });
+
   $("body").on('change', '.itemDiscount', function(e){
 
     /*
@@ -215,6 +219,26 @@ $(function() {
     * Recalculate payment total.
     */
     calculatePaymentTotal();
+  });
+
+  $("body").on('change', '.itemPrice', function(e){
+    var paymentItemsRow = $(this).closest('.paymentItemsRow');
+
+    if(paymentItemsRow.attr("product_index") != "-1")
+    {
+      paymentProducts[parseInt(paymentItemsRow.attr("product_index"))]['price'] = parseInt($(this).val());
+    }
+    else if(paymentItemsRow.attr("past_booking_index") != "-1")
+    {
+      paymentPastBookings[parseInt(paymentItemsRow.attr("past_booking_index"))]['list_price'] = parseInt($(this).val());
+    }
+    else if(paymentItemsRow.attr("new_booking_index") != "-1")
+    {
+      paymentNewBookings[parseInt(paymentItemsRow.attr("new_booking_index"))]['price'] = parseInt($(this).val());
+    }
+
+    calculatePaymentTotal();
+
   });
 
   $("body").on('click', '.removePaymentItem', function(e){
@@ -1093,7 +1117,7 @@ function getPayment(payment_id)
           '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
           '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
           '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
-          '<td style="width: 18%;"><span class="itemPrice">$' + Math.round(booking.list_price * 100)/100 + '</span></td>' +
+          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" /></div></td>' +
           '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
           '</tr>'
         );
@@ -1121,7 +1145,7 @@ function getPayment(payment_id)
           '<td style="width: 24%;"><span>Servicio</span></td>' + 
           '<td style="width: 24%;"><span class="itemName">' + new_booking['service_name'] + '</span></td>' + 
           '<td style="width: 7%;"><input type="number" class="form-control itemQuantity" value="1" disabled /></td>' + 
-          '<td style="width: 18%;"><span class="itemPrice">$' + new_booking['price'] + '</span></td>' +
+          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + new_booking['price'] + '" /></div></td>' +
           '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + new_booking['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
           '</tr>'
         );
@@ -1148,7 +1172,7 @@ function getPayment(payment_id)
           '<td style="width: 24%;"><span>Producto</span></td>' + 
           '<td style="width: 24%;"><span class="itemName">' + product['name'] + '</span></td>' + 
           '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="' + product['quantity'] + '" /></span></td>' + 
-          '<td style="width: 18%;"><span class="itemPrice">$' + product['price'] + '</span></td>' +
+          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + product['price'] + '" /></div></td>' +
           '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + product['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
           '</tr>'
         );
@@ -1181,8 +1205,8 @@ function calculatePaymentTotal(){
   $('.paymentItemsRow').each(function(e){
 
     var quantity = parseInt($(this).find('.itemQuantity').val());
-    var price_str = $(this).find('.itemPrice').text();
-    var price = parseInt(price_str.substring(1, price_str.length));
+    var price_str = $(this).find('.itemPrice').val();
+    var price = parseInt(price_str);
     var discount = parseInt($(this).find('.itemDiscount').val());
     
     total = total + (quantity*price*(100-discount)/100);
@@ -1368,17 +1392,33 @@ function loadClientPastBookings(){
               {
 
                 var service_name = past_booking.booking_service;
-
+                var treatment_btn = "No"
                 if(past_booking.booking.is_session && past_booking.sessions_amount > 1)
                 {
-                  service_name = service_name + " (" + past_booking.session_number + "/" + past_booking.sessions_amount + ")";
+                  if(past_booking.is_booked)
+                  {
+                    service_name = service_name + " (" + past_booking.session_number + "/" + past_booking.sessions_amount + ")";
+                  }
+                  else
+                  {
+                    service_name = service_name + " (no agendada)";
+                  }
+
+                  treatment_btn = '<button class="addPastBookingTreatment" title="Haz click en este botón para agregar todas las sesiones de este tratamiento que no estén asociadas a otro pago." session_booking_id="' + past_booking.session_booking_id + '"><i class="fa fa-plus"></i></button>';
+
+                  $('.addPastBookingTreatment').tooltip({
+                    placement: "right",
+                    template: '<div class="tooltip custom-tooltip-div" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner custom-tooltip"></div></div>'
+                  });
+                  
                 }
 
-                $("#cpb-bookings").append('<div class="pastBookingRow" booking_id="' + past_booking.booking.id + '">' +
+                $("#cpb-bookings").append('<div class="pastBookingRow" session_booking_id="' + past_booking.session_booking_id + '" booking_id="' + past_booking.booking.id + '">' +
                   '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-1 pastBookingCol"><button class="addPastBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
-                  '<div class="col-xs-4 pastBookingCol">' + service_name + '</div>' +
+                  '<div class="col-xs-2 pastBookingCol">' + treatment_btn + '</div>' +
+                  '<div class="col-xs-3 pastBookingCol">' + service_name + '</div>' +
                   '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_provider + '</div>' +
-                  '<div class="col-xs-4 pastBookingCol">' + past_booking.booking_datetime + '</div>' +
+                  '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_datetime + '</div>' +
                   '</div></div>'
                 );
               }
@@ -1429,7 +1469,7 @@ function addNotBooked(){
     '<td style="width: 24%;"><span>Servicio</span></td>' + 
     '<td style="width: 24%;"><span class="itemName">' + new_booking['service_name'] + '</span></td>' + 
     '<td style="width: 7%;"><input type="number" class="form-control itemQuantity" value="1" disabled /></td>' + 
-    '<td style="width: 18%;"><span class="itemPrice">$' + new_booking['price'] + '</span></td>' +
+    '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + new_booking['price'] + '" /></div></td>' +
     '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + new_booking['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
     '</tr>'
   );
@@ -1466,10 +1506,57 @@ function addPastBooked(booking_id){
       '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
       '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
       '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
-      '<td style="width: 18%;"><span class="itemPrice">$' + Math.round(booking.list_price * 100)/100 + '</span></td>' +
+      '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" /></div></td>' +
       '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
       '</tr>'
     );
+
+    $("#paymentItemsTable").show();
+
+    calculatePaymentTotal();
+
+  });
+
+  $("#paymentItemsList").show();
+  $("#paymentSumDiv").show();
+  
+  loadClientPastBookings();
+
+  //$('.pastBookingRow[booking_id="' + booking_id + '"]').remove();
+}
+
+function addPastBookedTreatment(session_booking_id){
+
+  var booking_ids = [];
+
+  $('.pastBookingRow[session_booking_id="' + session_booking_id + '"]').each(function(){
+    booking_ids.push($(this).attr("booking_id"));
+  });
+
+  $.getJSON('/get_session_booking_for_payment', {booking_ids: booking_ids}, function (bookings) {
+
+    $.each(bookings, function (key, booking) {
+
+      booking['item_id'] = paymentItems.length;
+      booking['item_type'] = 'past_booking';
+
+      paymentItems.push(booking);
+      paymentPastBookings.push(booking);
+      var item_id = paymentItems.length-1;
+      var past_booking_index = paymentPastBookings.length-1;
+
+      $("#paymentItemsTable").append(
+        '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' + 
+        '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+        '<td style="width: 5%;">' + item_id + '</td>' +
+        '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
+        '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
+        '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
+        '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" /></div></td>' +
+        '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
+        '</tr>'
+      );
+    });
 
     $("#paymentItemsTable").show();
 
@@ -1511,7 +1598,7 @@ function addProduct()
     '<td style="width: 24%;"><span>Producto</span></td>' + 
     '<td style="width: 24%;"><span class="itemName">' + product['name'] + '</span></td>' + 
     '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="' + product['quantity'] + '" /></span></td>' + 
-    '<td style="width: 18%;"><span class="itemPrice">$' + product['price'] + '</span></td>' +
+    '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + product['price'] + '" /></div></td>' +
     '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + product['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
     '</tr>'
   );
@@ -1748,8 +1835,8 @@ function addReceipt()
 
           //Add to amount
           var quantity = parseInt(current_item.find('.itemQuantity').val());
-          var price_str = current_item.find('.itemPrice').text();
-          var price = parseInt(price_str.substring(1, price_str.length));
+          var price_str = current_item.find('.itemPrice').val();
+          var price = parseInt(price_str);
           var discount = parseInt(current_item.find('.itemDiscount').val());
 
           receipt_amount = receipt_amount + (quantity*price*(100-discount)/100);
@@ -1810,8 +1897,8 @@ function addReceiptFinal(receipt)
     var current_item = $('.paymentItemsRow[item_id="'+ receipt['items'][y]['item_id'] +'"]');
     
     var item_quantity = parseInt(current_item.find('.itemQuantity').val());
-    var item_price_str = current_item.find('.itemPrice').text();
-    var item_price = parseInt(item_price_str.substring(1, item_price_str.length));
+    var item_price_str = current_item.find('.itemPrice').val();
+    var item_price = parseInt(item_price_str);
     var item_discount = parseInt(current_item.find('.itemDiscount').val());
     var current_name = current_item.find('.itemName').text();
 

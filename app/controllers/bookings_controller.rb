@@ -154,21 +154,28 @@ class BookingsController < ApplicationController
           #Set list_price to it's service price
           if @booking.service.price != 0
             @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+            logger.debug "Debug 1"
           else
             @booking.list_price = 0
             @booking.price = 0
+            logger.debug "Debug 2"
           end
 
           if @booking.price.nil?
             @booking.price = 0
+            logger.debug "Debug 3"
           end
 
           #If price is not equivalent, then it has discount
           if @booking.price != @booking.list_price
+            logger.debug "Debug 4"
             if @booking.list_price != 0
+              logger.debug "Debug 5"
               @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
             else
+              logger.debug "Debug 6"
               if @booking.price > 0
+                logger.debug "Debug 7"
                 @booking.list_price = @booking.price
               end
             end
@@ -348,6 +355,36 @@ class BookingsController < ApplicationController
         else
           @booking.user_session_confirmed = true
         end
+
+        if @booking.service.price != 0
+            @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+            logger.debug "Debug 1"
+        else
+          @booking.list_price = 0
+          @booking.price = 0
+          logger.debug "Debug 2"
+        end
+
+        if @booking.price.nil?
+          @booking.price = 0
+          logger.debug "Debug 3"
+        end
+
+        #If price is not equivalent, then it has discount
+        if @booking.price != @booking.list_price
+          logger.debug "Debug 4"
+          if @booking.list_price != 0
+            logger.debug "Debug 5"
+            @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+          else
+            logger.debug "Debug 6"
+            if @booking.price > 0
+              logger.debug "Debug 7"
+              @booking.list_price = @booking.price
+            end
+          end
+        end
+
       end
 
       if @booking.save
@@ -366,6 +403,36 @@ class BookingsController < ApplicationController
               new_booking.is_session_booked = false
               new_booking.user_session_confirmed = false
               new_booking.session_booking_id = session_booking.id
+
+              if new_booking.service.price != 0
+                  new_booking.list_price = new_booking.service.price / new_booking.service.sessions_amount
+                  logger.debug "Debug 1"
+              else
+                new_booking.list_price = 0
+                new_booking.price = 0
+                logger.debug "Debug 2"
+              end
+
+              if new_booking.price.nil?
+                new_booking.price = 0
+                logger.debug "Debug 3"
+              end
+
+              #If price is not equivalent, then it has discount
+              if new_booking.price != new_booking.list_price
+                logger.debug "Debug 4"
+                if new_booking.list_price != 0
+                  logger.debug "Debug 5"
+                  new_booking.discount = ((1 - new_booking.price / new_booking.list_price) * 100).round()
+                else
+                  logger.debug "Debug 6"
+                  if new_booking.price > 0
+                    logger.debug "Debug 7"
+                    new_booking.list_price = @booking.price
+                  end
+                end
+              end
+
               new_booking.save
             end
           end
@@ -703,6 +770,36 @@ class BookingsController < ApplicationController
         else
           @booking.user_session_confirmed = true
         end
+
+        if @booking.service.price != 0
+            @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+            logger.debug "Debug 1"
+        else
+          @booking.list_price = 0
+          @booking.price = 0
+          logger.debug "Debug 2"
+        end
+
+        if @booking.price.nil?
+          @booking.price = 0
+          logger.debug "Debug 3"
+        end
+
+        #If price is not equivalent, then it has discount
+        if @booking.price != @booking.list_price
+          logger.debug "Debug 4"
+          if @booking.list_price != 0
+            logger.debug "Debug 5"
+            @booking.discount = ((1 - @booking.price / @booking.list_price) * 100).round()
+          else
+            logger.debug "Debug 6"
+            if @booking.price > 0
+              logger.debug "Debug 7"
+              @booking.list_price = @booking.price
+            end
+          end
+        end
+
       end
 
 
@@ -720,6 +817,36 @@ class BookingsController < ApplicationController
             new_booking.is_session_booked = false
             new_booking.user_session_confirmed = false
             new_booking.session_booking_id = session_booking.id
+
+            if new_booking.service.price != 0
+                new_booking.list_price = new_booking.service.price / new_booking.service.sessions_amount
+                logger.debug "Debug 1"
+            else
+              new_booking.list_price = 0
+              new_booking.price = 0
+              logger.debug "Debug 2"
+            end
+
+            if new_booking.price.nil?
+              new_booking.price = 0
+              logger.debug "Debug 3"
+            end
+
+            #If price is not equivalent, then it has discount
+            if new_booking.price != new_booking.list_price
+              logger.debug "Debug 4"
+              if new_booking.list_price != 0
+                logger.debug "Debug 5"
+                new_booking.discount = ((1 - new_booking.price / new_booking.list_price) * 100).round()
+              else
+                logger.debug "Debug 6"
+                if new_booking.price > 0
+                  logger.debug "Debug 7"
+                  new_booking.list_price = @booking.price
+                end
+              end
+            end
+
             new_booking.save
           end
 
@@ -1503,6 +1630,24 @@ class BookingsController < ApplicationController
     #Return list_price and discount. Their combination should equal price. Return service_price also, just for reference.
 
     render :json => {id: booking.id, service_name: booking.service.name, service_price: booking.service.price, discount: booking.discount, price: booking.price, list_price: booking.list_price}
+  end
+
+  def get_session_booking_for_payment
+
+    bookings_arr = Booking.find(params[:booking_ids])
+    discount = 0
+    bookings = []
+
+    bookings_arr.each do |booking|
+      bookings << {id: booking.id, service_name: booking.service.name, service_price: booking.service.price, discount: booking.discount, price: booking.price, list_price: booking.list_price}
+    end
+    #if booking.service.price != 0
+    #  discount = 100*((booking.service.price - booking.price)/booking.service.price).round(1)
+    #end
+
+    #Return list_price and discount. Their combination should equal price. Return service_price also, just for reference.
+
+    render :json => bookings
   end
 
   def get_booking_info
