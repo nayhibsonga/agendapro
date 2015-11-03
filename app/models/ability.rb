@@ -136,7 +136,8 @@ class Ability
 
         can :get_booking, Booking, :service_provider => { :company_id => user.company_id }
         can :get_booking_info, Booking, :service_provider => { :company_id => user.company_id }
-        can :get_booking_for_payment, Booking, :service_provider => { :company_id => user.company_id }
+        can :get_booking_for_payment, Booking, :company_id => user.company_id
+        can :get_session_booking_for_payment, Booking, :company_id => user.company_id
         can :available_providers, ServiceProvider
         can :provider_breaks, ProviderBreak
         can :get_provider_break, ProviderBreak
@@ -363,6 +364,9 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
+        can :get_booking_for_payment, Booking, :company_id => user.company_id
+        can :get_session_booking_for_payment, Booking, :company_id => user.company_id
+
         can :get_booking, Booking, :location_id => user.locations.pluck(:id)
         can :get_booking_info, Booking, :location_id => user.locations.pluck(:id)
         can :available_providers, ServiceProvider, :location_id => user.locations.pluck(:id)
@@ -558,6 +562,9 @@ class Ability
         can :city_districs, District
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
+
+        can :get_booking_for_payment, Booking, :company_id => user.company_id
+        can :get_session_booking_for_payment, Booking, :company_id => user.company_id
 
         can :get_booking, Booking, :location_id => user.locations.pluck(:id)
         can :get_booking_info, Booking, :location_id => user.locations.pluck(:id)

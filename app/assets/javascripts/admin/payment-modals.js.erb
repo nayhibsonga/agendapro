@@ -189,6 +189,10 @@ $(function() {
     addPastBooked($(this).attr("booking_id"));
   });
 
+  $("body").on('click', '.addPastBookingTreatment', function(e){
+    addPastBookedTreatment($(this).attr("session_booking_id"));
+  });
+
   $("body").on('change', '.itemDiscount', function(e){
 
     /*
@@ -1388,7 +1392,7 @@ function loadClientPastBookings(){
               {
 
                 var service_name = past_booking.booking_service;
-                var treatment_id = "No"
+                var treatment_btn = "No"
                 if(past_booking.booking.is_session && past_booking.sessions_amount > 1)
                 {
                   if(past_booking.is_booked)
@@ -1397,16 +1401,16 @@ function loadClientPastBookings(){
                   }
                   else
                   {
-                    service_name = service_name + " (sesión no agendada)";
+                    service_name = service_name + " (no agendada)";
                   }
 
-                  treatment_id = past_booking.session_booking_id;
+                  treatment_btn = '<button class="addPastBookingTreatment" session_booking_id="' + past_booking.session_booking_id + '"><i class="fa fa-plus"></i></button>';
                   
                 }
 
-                $("#cpb-bookings").append('<div class="pastBookingRow" booking_id="' + past_booking.booking.id + '">' +
+                $("#cpb-bookings").append('<div class="pastBookingRow" session_booking_id="' + past_booking.session_booking_id + '" booking_id="' + past_booking.booking.id + '">' +
                   '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-1 pastBookingCol"><button class="addPastBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
-                  '<div class="col-xs-2 pastBookingCol">' + treatment_id + '</div>' +
+                  '<div class="col-xs-2 pastBookingCol">' + treatment_btn + '</div>' +
                   '<div class="col-xs-3 pastBookingCol">' + service_name + '</div>' +
                   '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_provider + '</div>' +
                   '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_datetime + '</div>' +
@@ -1501,6 +1505,53 @@ function addPastBooked(booking_id){
       '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
       '</tr>'
     );
+
+    $("#paymentItemsTable").show();
+
+    calculatePaymentTotal();
+
+  });
+
+  $("#paymentItemsList").show();
+  $("#paymentSumDiv").show();
+  
+  loadClientPastBookings();
+
+  //$('.pastBookingRow[booking_id="' + booking_id + '"]').remove();
+}
+
+function addPastBookedTreatment(session_booking_id){
+
+  var booking_ids = [];
+
+  $('.pastBookingRow[session_booking_id="' + session_booking_id + '"]').each(function(){
+    booking_ids.push($(this).attr("booking_id"));
+  });
+
+  $.getJSON('/get_session_booking_for_payment', {booking_ids: booking_ids}, function (bookings) {
+
+    $.each(bookings, function (key, booking) {
+
+      booking['item_id'] = paymentItems.length;
+      booking['item_type'] = 'past_booking';
+
+      paymentItems.push(booking);
+      paymentPastBookings.push(booking);
+      var item_id = paymentItems.length-1;
+      var past_booking_index = paymentPastBookings.length-1;
+
+      $("#paymentItemsTable").append(
+        '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' + 
+        '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+        '<td style="width: 5%;">' + item_id + '</td>' +
+        '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
+        '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
+        '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
+        '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" /></div></td>' +
+        '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
+        '</tr>'
+      );
+    });
 
     $("#paymentItemsTable").show();
 

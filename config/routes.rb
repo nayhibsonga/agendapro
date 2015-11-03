@@ -231,6 +231,7 @@
     get '/get_booking', :to => 'bookings#get_booking'
     get '/get_booking_info', :to => 'bookings#get_booking_info'
     get '/get_booking_for_payment', :to => 'bookings#get_booking_for_payment'
+    get '/get_session_booking_for_payment', :to => 'bookings#get_session_booking_for_payment'
     get "/book", :to => 'bookings#book_service'
     post "/book", :to => 'bookings#book_service'
     get '/book_error', :to => 'bookings#book_error', :as => 'book_error'

@@ -522,7 +522,7 @@
                   </div>
                 </div>
                 <% end %>
-                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista", "Staff"]).include?(current_user.role) %>
+                <% if Role.where(name: ["Administrador General", "Administrador Local"]).include?(current_user.role) %>
                   <div class="tab-pane" id="payments-pane">
                     <input type="hidden" id="paymentBookingId" value="" />
                     <div class="row" id="bookingPaymentEdit" hidden>
@@ -543,6 +543,8 @@
                       </div>
                     </div>
                   </div>
+                <% else %>
+                  <p>Esta reserva ya tiene asociada un pago. Ponte en contacto con el administrador de tu local si necesitas editar o borrar el pago.</p>
                 <% end %>
               </div>
             </div>

@@ -112,7 +112,7 @@ function loadBookingNewPayment(booking_id)
 	          '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
 	          '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
 	          '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
-	          '<td style="width: 18%;"><span class="itemPrice">$' + Math.round(booking.list_price * 100)/100 + '</span></td>' +
+	          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" /></div></td>' +
 	          '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
 	          '</tr>'
 	        );
