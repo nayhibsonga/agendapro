@@ -20,7 +20,19 @@ $( "#datepicker" ).datepicker({
   dayNamesMin: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
   firstDay: 1,
   prevText: "",
-  nextText: ""
+  nextText: "",
+  dateFormat: "dd-mm-yy",
+  onSelect: function(date) {
+    console.log("onSelect", date);
+  },
+  beforeShowDay: function(date) {
+    var array = ["03-11-2015","13-11-2015","23-11-2015"];
+    if($.inArray($.datepicker.formatDate('dd-mm-yy', date ), array) > -1) {
+        return [true,"deal-day",''];
+    } else {
+        return [true,'',''];
+    }
+  }
 });
 
 </script>
@@ -94,5 +106,26 @@ $( "#datepicker" ).datepicker({
   .ui-datepicker-next:before {
     content: "\f105";
     font-family: 'FontAwesome';
+  }
+
+  .deal-day:before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background-color: #F26062;
+    position: absolute;
+    margin-left: 6px;
+    margin-top: 1px;
+  }
+
+  .deal-day:after {
+    content: '';
+    width: 11px;
+    height: 6px;
+    background-color: white;
+    position: absolute;
+    margin-top: -26px;
+    margin-left: 3px;
+    transform: rotate(45deg);
   }
 </style>
