@@ -18,10 +18,14 @@
 
       <div class="options col-lg-4 col-md-4">
         <div class="pull-right content">
-          <div class="login">
+          <div class="login" ng-hide="tc.loggedIn">
             <a href="#" ng-click="tc.signIn()">{{ tc.lang.login }}</a>
-            <span class="separator">|</span>
+            <span class="separator"> | </span>
             <a href="#" ng-click="tc.signUp()"> {{ tc.lang.register }}</a>
+          </div>
+          <div class="login" ng-show="tc.loggedIn">
+            <a href="#">{{ tc.user.first_name }}</a>
+            <a href="#" ng-click="tc.logout()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Logout</a>
           </div>
           <div class="add-company">
             <a href="#"> {{ tc.lang.add_company }} </a>

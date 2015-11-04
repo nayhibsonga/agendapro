@@ -10,30 +10,60 @@
     function LoginController($scope, $rootScope, Auth) {
         var vm = this;
         vm.title = 'LoginController';
-        vm.option = 'login';
+        vm.option = $scope.tc.option;
         vm.toggleAccount = toggleAccount;
-        vm.userInfo = {
-            name: '',
-            email: '',
-            password: '',
-            type: vm.option,
-            remember_me: false,
-            deals: false
-        };
+        vm.userInfo = newUser();
+        vm.newUser = newUser;
         vm.submit = submit;
+        vm.error = "";
 
-        $scope.$watch(function(){
-          return $scope.tc.option;
+        bindModalCleanUp();
+
+        $scope.$watch(function() {
+            return $scope.tc.option;
         },function(){
-          vm.option = $scope.tc.option;
+            vm.option = $scope.tc.option;
         });
 
-        function toggleAccount(){
-          vm.option = (vm.option === 'login' ? 'register' : 'login');
+        function toggleAccount() {
+            resetForm();
+            vm.option = (vm.option === 'login' ? 'register' : 'login');
         }
 
-        function submit(){
+        function submit() {
+            Auth[vm.option](vm.userInfo).then( handleResponse );
+        }
 
+        function handleResponse(response) {
+            if( response.error ) {
+                vm.error = response.message;
+            } else {
+                $scope.tc.user = response;
+            }
+        }
+
+        function newUser() {
+            var user = {};
+            user.name = '';
+            user.email = '';
+            user.password = '';
+            user.remember_me = false;
+            user.deals = false;
+
+            vm.userInfo = user;
+        }
+
+        function resetForm() {
+            vm.form.$setUntouched();
+            newUser();
+        }
+
+        function bindModalCleanUp() {
+            $(document).on('hide.bs.modal', '#login', function() {
+                resetForm();
+            }).on('show.bs.modal', '#login', function() {
+                resetForm();
+            });
         }
     }
 })();
