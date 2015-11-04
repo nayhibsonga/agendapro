@@ -63,6 +63,7 @@
           <% bookings_text = ''
             products_text = ''
             mock_bookings_text = ''
+            notes = ''
            %>
           <% payment.bookings.each do |booking|
             bookings_text += '* ' + booking.service.name + ' con ' + booking.service_provider.public_name + ' (' + booking.start.strftime('%R %d-%m-%Y') + ') ' + number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + booking.discount.to_s + '% de descuento<br/>'
@@ -86,10 +87,19 @@
             end
               
           end %>
+
+          <% payment.receipts.each do |receipt|
+            if receipt.notes != ""
+              notes += receipt.notes + '<br />'
+            end
+          end %>
+
           <% qtip_text = ''
           if bookings_text != '' then qtip_text += '<strong>Reservas:</strong><br/>' + bookings_text + '<br/>' end
           if mock_bookings_text != '' then qtip_text += '<strong>Servicios:</strong><br/>' + mock_bookings_text + '<br/>' end
-          if products_text != '' then qtip_text += '<strong>Productos:</strong><br/>' + products_text + '<br/>' end %>
+          if products_text != '' then qtip_text += '<strong>Productos:</strong><br/>' + products_text + '<br/>' end
+          if notes != '' then qtip_text += '<strong>Comentarios:</strong><br/>' + notes + '<br/>' 
+          end %>
           <script type="text/javascript">
             $('#payment_details_button_<%= payment.id %>').qtip({
                show: {

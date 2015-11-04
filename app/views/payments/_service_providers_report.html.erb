@@ -1,27 +1,37 @@
 <div class="row">
-	<div class="col-md-3">
+	<div class="col-md-1">
+	</div>
+	<div class="col-md-2">
 		<div class="well revenue">
 	      	<h4>Recaudación total:</h4>
 	      	<p class="revenue-price"><strong><%= number_to_currency(@total_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
 	    </div>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-2">
 		<div class="well revenue">
 	      	<h4>Recaudación por Servicios:</h4>
 	      	<p class="revenue-price"><strong><%= number_to_currency(@services_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
 	    </div>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-2">
 		<div class="well revenue">
 	      	<h4>Recaudación por Productos:</h4>
 	      	<p class="revenue-price"><strong><%= number_to_currency(@products_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
 	    </div>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-2">
 		<div class="well revenue">
 	      	<h4>Comisiones:</h4>
 	      	<p class="revenue-price"><strong><%= number_to_currency(@commissions_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
 	    </div>
+	</div>
+	<div class="col-md-2">
+		<div class="well revenue">
+	      	<h4>Cobros por ventas internas:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@internal_sales_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+	<div class="col-md-1">
 	</div>
 </div>
 <div class="row">
@@ -82,19 +92,21 @@
 						    			if service_commission.is_percent
 						    				commission = service_commission.amount.to_s + " %"
 						    			else
-						    				commission = "$ " + service_commission.amount.to_s
+						    				commission = "$ " + number_to_currency(service_commission, currency: ' $', separator: ',', delimeter: '.', precision: 0)
 						    			end
 						    		else
 						    			if service.comission_option == 0
 						    				commission = service.comission_value.to_s + " %"
 						    			else
-						    				commission = "$ " + service.comission_value.to_s
+						    				commission = "$ " + number_to_currency(service.commission, currency: ' $', separator: ',', delimeter: '.', precision: 0)
 						    			end
 						    		end
 
 					    	%>
 					    	<td class="left_td"><%= bookings_count %></td>
-					    	<td><%= bookings_prices %></td>
+					    	<td>
+					    		<%= number_to_currency(bookings_prices, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+					    	</td>
 					    	<td class="right_td"><%= commission %></td>
 
 				    	<% end %>

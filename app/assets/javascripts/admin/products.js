@@ -349,6 +349,10 @@ $(function() {
 		getProductDisplays();
 	});
 
+	$('.product-tooltip').tooltip({
+	    placement: "top"
+	});
+
 	$('#productCategoryModal').on('hidden.bs.modal', function (e) {
 		validator_product_category.resetForm();
 		$('.has-success').removeClass('has-success');
