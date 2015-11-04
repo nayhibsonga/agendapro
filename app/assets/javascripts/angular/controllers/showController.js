@@ -31,19 +31,6 @@
         vm.map = {};
         vm.categories = [];
 
-        // vm.categories = [
-        //     {id: 1, name: 'Corte de Pelo', services: [
-        //         {id: 1, name: 'Decoloración Completa pelo corto mediano y largo', price: 15900, duration: 90, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 2, name: 'Manuel Perez'},{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'},{id: 6, name: 'Christian Moreno'}]},
-        //         {id: 2, name: 'Decoloración', price: 9900, duration: 60, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad incidunt alias modi rerum totam, aspernatur accusantium doloremque. Ab reprehenderit tenetur, voluptatibus est, ipsam veritatis, fugiat neque nemo quis tempore quidem.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 2, name: 'Manuel Perez'},{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'},{id: 6, name: 'Christian Moreno'}]}
-        //     ]},
-        //     {id: 2, name: 'Manicure', services: [
-        //         {id: 3, name: 'Manicure Express', price: 7000, duration: 90, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae.', providers: [{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'},{id: 6, name: 'Christian Moreno'}]},
-        //         {id: 4, name: 'Manicure SPA', price: 10900, duration: 100, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 2, name: 'Manuel Perez'},{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 6, name: 'Christian Moreno'}]},
-        //         {id: 5, name: 'Uñas Acrilicas Francesa', price: 35000, duration: 90, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae.', providers: [{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'}]},
-        //         {id: 6, name: 'Cambio de esmalte', price: 6000, duration: 60, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad incidunt alias modi rerum totam, aspernatur accusantium doloremque. Ab reprehenderit tenetur, voluptatibus est, ipsam veritatis, fugiat neque nemo quis tempore quidem.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 6, name: 'Christian Moreno'}]}
-        //     ]}
-        // ];
-
         AgendaProApi.show($routeParams.id).then(function(data){
             vm.company = data;
             vm.categories = vm.company.categorized_services;
@@ -81,7 +68,7 @@
                 closeButton = options.find('.close'),
                 addButton = options.find('.add-service'),
                 addContainer = addButton.closest('div'),
-                customHeight = '30%',
+                customHeight = '45px',
                 speed = 100;
 
             function bindShow() {

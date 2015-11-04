@@ -1,0 +1,98 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <div id="datepicker"></div>
+    </div>
+    <div class="col-md-4">
+      DATES
+    </div>
+    <div class="col-md-4">
+      RESERVATION
+    </div>
+  </div>
+</div>
+
+<script>
+$( "#datepicker" ).datepicker({
+  inline: true,
+  showOtherMonths: true,
+  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+  dayNamesMin: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+  firstDay: 1,
+  prevText: "",
+  nextText: ""
+});
+
+</script>
+
+
+<style>
+
+  #datepicker {
+    width: 280px;
+    text-align: center;
+    margin: auto;
+  }
+
+  .ui-datepicker-header {
+    padding: 0 5px;
+    margin-bottom: 10px;
+  }
+
+  .ui-datepicker-title {
+    border-bottom: 1px solid black;
+    padding: 5px;
+    font-size: 1.2em;
+  }
+
+  th {
+    font-weight: 400;
+    padding: 5px;
+  }
+
+  td {
+    padding: 5px;
+  }
+
+  .ui-datepicker-unselectable {
+    color: #ccc;
+  }
+
+  .ui-state-default {
+      padding: 0;
+      border: 1px solid black;
+      width: 30px;
+      display: block;
+      height: 30px;
+      text-align: center;
+      line-height: 28px;
+  }
+
+  .ui-datepicker-unselectable > .ui-state-default {
+    border: 1px solid #ccc;
+  }
+
+  .ui-datepicker-prev {
+    float: left;
+    font-size: 25px;
+    color: #ccc;
+    cursor: pointer;
+  }
+
+  .ui-datepicker-next {
+    float: right;
+    font-size: 25px;
+    color: #ccc;
+    cursor: pointer;
+  }
+
+  .ui-datepicker-prev:before {
+    content: "\f104";
+    font-family: 'FontAwesome';
+  }
+
+  .ui-datepicker-next:before {
+    content: "\f105";
+    font-family: 'FontAwesome';
+  }
+</style>
