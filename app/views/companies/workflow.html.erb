@@ -363,7 +363,7 @@
                   <div class="collapse" id="staffCollapse">
                     <div class="changeStaff" style="margin-top: 5px;">
 
-                      
+
                     </div>
                   </div>-->
 
@@ -377,7 +377,7 @@
                       </select>
                     </div>
                   </div>
-                  
+
                 </div>
 
                 <div class="panel panel-default">
@@ -501,10 +501,10 @@
                       </div>
                       <div class="row">
                         <div class="col-sm-6">
-                          
+
                         </div>
                         <div class="col-sm-6">
-                          
+
                         </div>
                       </div>
                     </div>
@@ -607,7 +607,7 @@
                     <div class="row">
                       <div class="col-sm-12">
                         <div class="form-group">
-                          <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+                          <%= text_area_tag(:comment, @company.company_setting.preset_notes, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
                         </div>
                       </div>
                     </div>
@@ -1042,7 +1042,7 @@
 
             /*$(document).on('hourClick', function (e) {
               selected = true;
-    
+
               bookSummary = bookSummaries[e.index];
 
               $("#selected-hour-body").empty();
@@ -1056,7 +1056,7 @@
 
                 bookDetailsDiscountPrice = bookDetails.price;
 
-                
+
                 if(bookDetails.has_discount && bookDetails.has_time_discount)
                 {
                   if(bookDetails.discount > bookDetails.time_discount)
@@ -1104,7 +1104,7 @@
                     '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> ' + simple_currency(bookDetails.price) + '<br /></div>'
                   );
                 }
-                
+
 
               }
               console.log(e);

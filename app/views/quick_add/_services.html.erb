@@ -47,7 +47,8 @@
             <% @company.services.where(active: true).each do |service| %>
             <tr id="service_<%= service.id %>">
               <td><%= service.name %></td>
-              <td><%= number_to_currency(service.price, currency: '$ ', separator: ',', delimeter: '.', precision: 0) %></td><td><%= service.duration %> min.</td>
+              <td><%= number_to_currency(service.price, currency: '$ ', separator: ',', delimeter: '.', precision: 0) %></td>
+              <td><%= service.duration %> min.</td>
               <td><%= service.service_category.name %></td>
               <td><button id="service_delete_<%= service.id %>" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td>
             </tr>
@@ -56,21 +57,33 @@
         </div>
         <div class="col-sm-12 text-center">
           <%= form_for @service, html: {class: "form-inline" } do |f| %>
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 15px;">
               <%= f.label :name, "Nombre: ", class: "control-label" %>
               <%= f.text_field :name, class: "form-control" %>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 15px;">
               <%= f.label :price, "Precio: ", class: "control-label" %>
               <%= f.number_field :price, placeholder: "$15000 (pesos)", value: nil, class: "form-control" %>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 15px;">
               <%= f.label :duration, "Duración: ", class: "control-label" %>
               <%= f.number_field :duration, placeholder: "30 (minutos)", step: 5, class: "form-control" %>
             </div>
-            <div class="form-group">
+            <br />
+            <div class="form-group" style="margin-bottom: 15px;">
               <%= f.label :service_category_id, "Categoría: ", class: "control-label" %>
               <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+              <div class="checkbox">
+                <label>
+                  <%= f.check_box :has_sessions %> Este servicio tiene sesiones
+                </label>
+              </div>
+            </div>
+            <div class="form-group hidden" style="margin-bottom: 15px;">
+              <%= f.label :sessions_amount, "Cantidad", class: "control-label" %>
+              <%= f.number_field :sessions_amount, class: "form-control", :min => 2, disabled: true, placeholder: '2 (requerido)' %>
             </div>
             <button id="update_service_button" class="btn btn-green">Guardar</button>
             <i id="update_service_spinner" class="fa fa-spinner fa-spin" style="display:none;"></i>

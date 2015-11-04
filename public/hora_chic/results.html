@@ -18,8 +18,9 @@
   </section>
   <!-- END CHANGE LOCATION -->
 
-  <!-- SERVICES LIST -->
-  <div id="places" class="row">
+
+  <!-- STATIC SERVICES LIST -->
+  <div class="places row">
     <!-- IMAGE -->
     <div class="col-md-4 img-container">
       <figure>
@@ -69,7 +70,62 @@
     </div>
     <!-- END SERVICES -->
   </div>
+  <!-- END STATIC SERVICES LIST -->
+
+
+  <!-- SERVICES LIST -->
+  <div id="company-{{ company.id }}" class="places row" ng-repeat="company in rc.searchResults">
+    <!-- IMAGE -->
+    <div class="col-md-4 img-container">
+      <figure>
+        <img ng-src="{{ company.photo }}" title="{{ company.name }}" alt="{{ company.name }}">
+      </figure>
+    </div>
+    <!-- END IMAGE -->
+
+    <!-- DESCRIPTION -->
+    <div class="col-md-4 description-container">
+      <h3>
+        <a ng-href="{{ rc.showUrl + 'delicatta-hands' + rc.params + '1' }}">{{ company.name }}
+        </a>
+      </h3>
+      <p class="address"><span></span> {{ company.address }}, {{ company.district }}</p>
+      <p>&#9734; &#9734; &#9734; &#9734; &#9734;</p>
+      <p class="detail">Multiespacio, Peluqueria, Manicure, Tratamientos Estéticos y capilaresm ropa y accesorios, Asesoria de imagen personal, Maquillaje y mas.</p>
+    </div>
+    <!-- END DESCRIPTION -->
+
+    <!-- SERVICES -->
+    <div class="col-md-4 services-container">
+      <div class="service">
+        <span>Corte de Pelo Mujer</span>
+        <span class="time">©  1hr</span>
+        <span class="pull-right price">$15.990</span>
+      </div>
+      <div class="service">
+        <span>Corte de Pelo mas teñido</span>
+        <span class="time">©  1hr 30 min</span>
+        <span class="pull-right price">$35.990</span>
+      </div>
+      <div class="service">
+        <span>Corte de puntas</span>
+        <span class="time">©  30 min</span>
+        <span class="pull-right price">$9.990</span>
+      </div>
+      <div class="service">
+        <span>Corte de Pelo Hombre</span>
+        <span class="time">©  20 min</span>
+        <span class="pull-right price">$6.990</span>
+      </div>
+      <div class="pull-right view-more">
+        <button class="btn btn-down"><a ng-href="{{ rc.showUrl + company.id }}">Ver más servicios
+        </a></button>
+      </div>
+    </div>
+    <!-- END SERVICES -->
+  </div>
   <!-- END SERVICES LIST -->
+
 
 </div>
 

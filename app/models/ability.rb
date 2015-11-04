@@ -280,6 +280,8 @@ class Ability
         can :create_provider_break, ProviderBreak
         can :update_provider_break, ProviderBreak
         can :destroy_provider_break, ProviderBreak
+        can :update_repeat_break, ProviderBreak
+        can :destroy_repeat_break, ProviderBreak
 
         # can :read, StaffCode, :company_id => user.company_id
         can :read, BookingHistory, :company_id => user.company_id
@@ -406,6 +408,8 @@ class Ability
         can :create_provider_break, ProviderBreak
         can :update_provider_break, ProviderBreak
         can :destroy_provider_break, ProviderBreak
+        can :update_repeat_break, ProviderBreak
+        can :destroy_repeat_break, ProviderBreak
 
         can :read, Service, :company_id => user.company_id
 
@@ -475,6 +479,8 @@ class Ability
         can :create_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
         can :update_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
         can :destroy_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
+        can :update_repeat_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
+        can :destroy_repeat_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
         
         can :name_suggestion, Client
         can :suggestion, Client

@@ -26,6 +26,13 @@ a{
   @include border-radius(0);
 }
 
+.btn-gray {
+  background-color: $light-gray;
+  color: white;
+  width: 140px;
+  padding: 10px 12px;
+}
+
 .btn-hora-chic {
   background-color: $light-pink;
   color: $white;
@@ -36,8 +43,37 @@ a{
     background-color: $lighter-pink;
   }
   &:focus{ color: $white; }
+  &.md{
+    padding: 10px 12px;
+    width: 140px;
+  }
 }
 
+.stop-scrolling {
+  overflow: hidden !important;
+}
+
+.hightlight {
+  background-color: $light-pink;
+}
+
+.logo-sm {
+  // @include logo;
+  background: url("hora_chic/logo/sm.png") no-repeat;
+  height: 26px;
+  width: 174px;
+  background-size: 120px;
+}
+
+#login {
+  @include roboto-font(14px, normal);
+  @include font-smoothing;
+  .modal-dialog {
+    width: 470px;
+    margin: 30px auto;
+    @include breakpoint(0, 470px) { width: 100%; }
+  }
+}
 
 // Base Styles made for XS Breakpoint to Up
 
@@ -348,7 +384,10 @@ footer {
     span { color: $light-pink; }
   }
 
-  #places {
+  .places {
+    padding: 35px 0;
+    border-bottom: 1px solid $light-gray;
+    // margin-bottom: 25px;
     .img-container {
       margin-bottom: 20px;
       img { width: 100%; }
@@ -374,7 +413,7 @@ footer {
     }
 
     .services-container {
-      margin-bottom: 20px;
+      // margin-bottom: 20px;
       .service {
         padding: 10px;
         border: 1px $light-gray solid;

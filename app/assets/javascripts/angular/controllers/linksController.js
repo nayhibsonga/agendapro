@@ -10,7 +10,7 @@
     function LinksController($rootScope) {
         var vm = this;
         var baseUrl = $rootScope.baseUrl;
-        var searchUrl = baseUrl + "/buscar?service=";
+        var searchUrl = baseUrl + "/browse?search_text=";
 
         vm.title = 'LinksController';
         vm.services = [

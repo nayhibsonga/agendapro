@@ -5,15 +5,18 @@
         .module('HoraChic')
         .controller('SearchController', SearchController);
 
-    SearchController.$inject = ['uiGmapGoogleMapApi', '$cookies', '$rootScope'];
+    SearchController.$inject = ['uiGmapGoogleMapApi', '$cookies', '$rootScope','$window'];
 
-    function SearchController(GoogleMapApi, $cookies, $rootScope) {
+    function SearchController(GoogleMapApi, $cookies, $rootScope, $window) {
         // vm = ViewModel
         var vm = this;
         vm.lang = $rootScope.lang;
         var geoErrors = vm.lang.error.geolocation;
-        vm.addressName = $cookies.get('formatted_address') || '';
+        vm.addressName = unescape($cookies.get('formatted_address') || '');
         vm.getLocation = getLocation;
+        vm.search = search;
+        vm.searchCriteria = '';
+        vm.searchOptions = { country: $rootScope.country };
         vm.showPosition = showPosition;
         vm.showError = showError;
 
@@ -41,6 +44,7 @@
                 geocoder.geocode({'latLng': latlng}, function(results, status) {
                     vm.addressName = results[0].formatted_address;
                     $cookies.put('formatted_address', vm.addressName);
+                    console.log(results[0]);
                     vm.$apply();
                 });
             });
@@ -61,6 +65,14 @@
                 vm.error = geoErrors.unknown_error;
                 break;
             }
+        }
+
+        function search() {
+            $window.location.href = $rootScope.baseUrl + '/browse?' + $.param({
+                search_text: vm.searchCriteria,
+                longitude: $cookies.get('lng'),
+                latitude: $cookies.get('lat')
+            });
         }
 
     }

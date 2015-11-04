@@ -9,7 +9,8 @@
         'ngCookies',
         'ngAnimate',
         'ui.bootstrap',
-        'ui.sortable'
+        'ui.sortable',
+        'ngAutocomplete'
       ])
     .config(config)
     .run(globalVariables);
@@ -27,22 +28,19 @@
           controller: 'LandingController',
           controllerAs: 'lc'
       })
-      .when($namespace + '/header', {
-          templateUrl: $namespace + '/header'
-      })
       .when($namespace + '/footer', {
           templateUrl: $namespace + '/footer'
       })
-      .when($namespace + '/buscar', {
+      .when($namespace + '/browse', {
           templateUrl: $namespace + '/results',
           controller: 'ResultsController',
           controllerAs: 'rc',
           cache: false
       })
-      .when($namespace + '/ver/:company', {
-          templateUrl: $namespace + '/show',
-          controller: 'ResultsController',
-          controllerAs: 'rc',
+      .when($namespace + '/show/:id', {
+          templateUrl: $namespace + '/show/index',
+          controller: 'ShowController',
+          controllerAs: 'sc',
           cache: false
       })
       .otherwise({
@@ -61,4 +59,5 @@
     $rootScope.country = 'cl';
     $rootScope.lang = Translator.init($rootScope.country);
   }
+
 })();

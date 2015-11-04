@@ -7,6 +7,7 @@
 //= require ./angular/libs/javascripts/google-maps/lodash.min
 //= require ./angular/libs/javascripts/google-maps/index
 //= require ./angular/libs/javascripts/google-maps/angular-google-maps.min
+//= require ./angular/libs/javascripts/google-maps/ngAutocomplete
 //= require ./angular/libs/javascripts/jquery-ui.min
 //= require app
 //= require_tree ./angular

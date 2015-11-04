@@ -58,8 +58,6 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
             <div class="col-md-6">
               <div onclick="$('#minisite_link').click();" class="media">
                 <div class="media-left">
@@ -80,8 +78,6 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
             <div class="col-md-6">
               <div onclick="$('#calendar_link').click();" class="media">
                 <div class="media-left">
@@ -102,8 +98,6 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
             <div class="col-md-6">
               <div onclick="$('#cashier_link').click();" class="media">
                 <div class="media-left">
@@ -126,10 +120,6 @@
               </div>
             </div>
             <% end %>
-          </div>
-
-          <div class="row">
-
             <% if current_user.company.company_setting.online_payment_capable && current_user.company.company_setting.promo_offerer_capable %>
               <div class="col-md-6">
                 <div onclick="$('#promotions_link').click();" class="media">
@@ -154,10 +144,8 @@
                 </div>
               </div>
             <% end %>
-
           </div>
         </div>
-
         <!-- Company -->
         <div class="tab-pane" id="company">
           <div class="row">
@@ -300,31 +288,36 @@
                     <div class="form-group">
                       <div class="checkbox">
                         <label>
-                          <%= f.check_box :activate_notes %> Permitir notas del cliente
-                        </label>
-                        <span class="help-block">Habilita esta opción para que tus clientes puedan incluir un comentario de texto libre al reservar a través de la página.</span>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <div class="checkbox">
-                        <label>
                           <%= f.check_box :client_exclusive %> Exclusivo para Clientes
                         </label>
                         <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el <%= (I18n.t('ci')).capitalize %>.</span>
                       </div>
                     </div>
                     <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :activate_notes %> Permitir notas del cliente
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tus clientes puedan incluir un comentario de texto libre al reservar a través de la página.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :preset_notes, 'Notas Predefinidas' %>
+                      <span class="help-block">Un comentario predefinido que aparecera en la sección de notas del cliente</span>
+                      <%= f.text_area :preset_notes, class: 'form-control' %>
+                    </div>
+                    <div class="form-group">
                       <%= f.label :provider_preference, 'Preferencia Prestador' %>
                       <span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
                       <%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
                     </div>
+                  </div>
+                  <div class="col-md-6">
                     <div class="form-group">
                       <%= f.label :booking_confirmation_time, 'Recordatorios' %>
                       <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
                       <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
                     </div>
-                  </div>
-                  <div class="col-md-6">
                     <div class="form-group has-feedback">
                       <%= f.label :before_booking, 'Tiempo Mínimo de Reserva' %>
                       <span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
