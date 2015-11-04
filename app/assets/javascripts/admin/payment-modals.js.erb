@@ -1253,6 +1253,10 @@ function loadPaymentIntro(payment_id) {
   $("#paymentIntroSaveBtn").hide();
   $("#paymentIntroNextBtn").show();
   $("#payment_location").prop("disabled", false);
+  if($("#client_required").val() == "1")
+  {
+    $('.client-option').show();
+  }
   paymentModalState = 'Intro';
 }
 

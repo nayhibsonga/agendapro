@@ -22,8 +22,12 @@
 
             <%
               payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+
               mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+
               bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, start: @from.beginning_of_day..@to.end_of_day)
+
+              internal_sales = InternalSale.where(service_provider_id: service_provider.id, date: @from.beginning_of_day..@to.end_of_day)
             %>
 
             <Row>
@@ -40,9 +44,26 @@
               <Cell><Data ss:Type="String">Precio</Data></Cell>
               <Cell><Data ss:Type="String">Cantidad</Data></Cell>
               <Cell><Data ss:Type="String">Comisión</Data></Cell>
+              <Cell><Data ss:Type="String">Medios de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
+              <Cell><Data ss:Type="String">N° de comprobante</Data></Cell>
             </Row>
 
             <% payment_products.each do |payment_product| %>
+
+              <%
+
+                payment_methods_arr = []
+                payment_methods = ""
+                payment_product.payment.payment_transactions.each do |payment_transaction|
+                  payment_methods_arr << payment_transaction.payment_method.name
+                end
+
+                if payment_methods_arr.count > 0
+                  payment_methods = payment_methods_arr.join(", ")
+                end
+
+              %>
 
               <Row>
                 <Cell><Data ss:Type="String"><%= payment_product.payment.payment_date.to_s %></Data></Cell>
@@ -54,6 +75,9 @@
                 <Cell><Data ss:Type="Number"><%= payment_product.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= payment_product.quantity %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= payment_product.product.get_commission * payment_product.quantity %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_product.receipt.notes %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_product.receipt.number %></Data></Cell>
               </Row>
             <% end %>
 
@@ -70,9 +94,26 @@
               <Cell><Data ss:Type="String">Servicio</Data></Cell>
               <Cell><Data ss:Type="String">Precio</Data></Cell>
               <Cell><Data ss:Type="String">Comisión</Data></Cell>
+              <Cell><Data ss:Type="String">Medios de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
+              <Cell><Data ss:Type="String">N° de comprobante</Data></Cell>
             </Row>
 
             <% mock_bookings.each do |mock_booking| %>
+
+              <%
+
+                payment_methods_arr = []
+                payment_methods = ""
+                mock_booking.payment.payment_transactions.each do |payment_transaction|
+                  payment_methods_arr << payment_transaction.payment_method.name
+                end
+
+                if payment_methods_arr.count > 0
+                  payment_methods = payment_methods_arr.join(", ")
+                end
+
+              %>
 
               <Row>
                 <Cell><Data ss:Type="String"><%= mock_booking.payment.payment_date.to_s %></Data></Cell>
@@ -85,6 +126,9 @@
                 </Data></Cell>
                 <Cell><Data ss:Type="Number"><%= mock_booking.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= mock_booking.get_commission %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= mock_booking.receipt.notes %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= mock_booking.receipt.number %></Data></Cell>
               </Row>
             <% end %>
 
@@ -102,9 +146,26 @@
               <Cell><Data ss:Type="String">Servicio</Data></Cell>
               <Cell><Data ss:Type="String">Precio</Data></Cell>
               <Cell><Data ss:Type="String">Comisión</Data></Cell>
+              <Cell><Data ss:Type="String">Medios de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
+              <Cell><Data ss:Type="String">N° de comprobante</Data></Cell>
             </Row>
 
             <% bookings.each do |booking| %>
+
+              <%
+
+                payment_methods_arr = []
+                payment_methods = ""
+                booking.payment.payment_transactions.each do |payment_transaction|
+                  payment_methods_arr << payment_transaction.payment_method.name
+                end
+
+                if payment_methods_arr.count > 0
+                  payment_methods = payment_methods_arr.join(", ")
+                end
+
+              %>
 
               <Row>
                 <Cell><Data ss:Type="String"><%= booking.payment.payment_date.to_s %></Data></Cell>
@@ -112,9 +173,48 @@
                 <Cell><Data ss:Type="String"><%= booking.service.name %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= booking.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= booking.get_commission %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= booking.receipt.notes %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= booking.receipt.number %></Data></Cell>
               </Row>
             <% end %>
 
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Ventas internas (cobros a prestador)</Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Fecha de venta</Data></Cell>
+              <Cell><Data ss:Type="String">Sku</Data></Cell>
+              <Cell><Data ss:Type="String">Categoría</Data></Cell>
+              <Cell><Data ss:Type="String">Marca</Data></Cell>
+              <Cell><Data ss:Type="String">Nombre</Data></Cell>
+              <Cell><Data ss:Type="String">Cantidad/Unidad</Data></Cell>
+              <Cell><Data ss:Type="String">Precio</Data></Cell>
+              <Cell><Data ss:Type="String">Cantidad</Data></Cell>
+              <Cell><Data ss:Type="String">Descuento</Data></Cell>
+              <Cell><Data ss:Type="String">Cobro total</Data></Cell>
+            </Row>
+
+            <% internal_sales.each do |internal_sale| %>
+
+              <Row>
+                <Cell><Data ss:Type="String"><%= internal_sale.date.to_s %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.product.sku %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.product.product_category.name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.product.product_brand.name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.product.name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.product.product_display.name %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.discount %>%</Data></Cell>
+                <Cell><Data ss:Type="Number"><%= internal_sale.quantity * (internal_sale.price * (100 - internal_sale.discount) / 100) %></Data></Cell>
+              </Row>
+            <% end %>
 
         </Table>
 

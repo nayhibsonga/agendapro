@@ -47,12 +47,20 @@ table.servicesTable td{
 	width: 40% !important;
 }
 
+.commissionsModal .modal-dialog{
+	width: 40% !important;
+}
+
 .pettyCashModal .modal-dialog{
 	width: 40% !important;
 }
 
 .multiselect{
 	width: 100% !important;
+}
+
+.service-commission-div{
+	margin-bottom: 10px;
 }
 
 .btn-caja{

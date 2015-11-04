@@ -2344,6 +2344,7 @@ class PaymentsController < ApplicationController
     elsif current_user.role_id == Role.find_by_name("Administrador Local").id
       @locations = current_user.locations
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id), active:true)
+      @cashiers = current_user.company.cashiers
       @users = User.where(id: UserLocation.where(location_id: @locations.pluck(:id)).pluck(:user_id))
     elsif current_user.role_id == Role.find_by_name("Recepcionista").id
       @locations = current_user.locations
@@ -2370,7 +2371,7 @@ class PaymentsController < ApplicationController
 
     @status_cancelled_id = Status.find_by_name("Cancelado").id
 
-    bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: service_provider_ids, start: @from.beginning_of_day..@to.end_of_day)
+    bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
 
     mock_bookings = MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
 
@@ -2396,11 +2397,19 @@ class PaymentsController < ApplicationController
 
     @total_amount = @services_amount + @products_amount
 
-    services1 = Service.where(id: Booking.where.not(status_id: @status_cancelled_id).where(service_provider_id: service_provider_ids, start: @from.beginning_of_day..@to.end_of_day).pluck(:service_id))
+    services1 = Service.where(id: Booking.where.not(status_id: @status_cancelled_id).where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).pluck(:service_id))
 
     services2 = Service.where(id: MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).where('service_id is not null').where.not(service_id: services1.pluck(:id)).pluck(:service_id))
 
     @services = services1 + services2
+
+    @internal_sales = InternalSale.where(service_provider_id: service_provider_ids, date: @from.beginning_of_day..@to.end_of_day)
+
+    @internal_sales_amount = 0.0
+
+    @internal_sales.each do |internal_sale|
+      @internal_sales_amount += internal_sale.quantity*(internal_sale.price * (100 - internal_sale.discount) / 100)
+    end
 
     respond_to do |format|
       format.html { render :partial => 'service_providers_report' }
@@ -2458,7 +2467,12 @@ class PaymentsController < ApplicationController
       @time_option = 1
     end
 
-    payment_products = PaymentProduct.where(seller_id: cashier_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+    locations = current_user.locations
+    if current_user.role_id == Role.find_by_name("Administrador General").id
+      location = current_user.company.locations
+    end
+
+    payment_products = PaymentProduct.where(seller_id: cashier_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from..@to, location_id: locations.pluck(:id)).pluck(:id))
 
     @products_amount = 0.0
 
