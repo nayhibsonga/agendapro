@@ -67,6 +67,9 @@
               <th>Estado</th>
               <th>Nota Cliente</th>
               <th>Nota Interna</th>
+              <% if @client.company.company_setting.staff_code %>
+              <th>Último Responsable</th>
+              <% end %>
             </tr>
           </thead>
           <tbody>
@@ -112,6 +115,9 @@
               <td><%= booking.status.name %></td>
               <td><%= booking.notes %></td>
               <td><%= booking.company_comment %></td>
+              <% if @client.company.company_setting.staff_code %>
+              <td><%= if booking.booking_histories.count > 0 && booking.booking_histories.order(:created_at).last.staff_code_id then StaffCode.find(booking.booking_histories.order(:created_at).last.staff_code_id).staff end %><%= if booking.booking_histories.count > 0 then (' <small>(' + booking.booking_histories.order(:created_at).last.action + ')</small>').html_safe end %></td>
+              <% end %>
             </tr>
             <% end %>
           </tbody>
