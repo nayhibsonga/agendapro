@@ -322,7 +322,7 @@ class PaymentsController < ApplicationController
       is_booked = true
       session_booking_id = -1
 
-      if !b.session_booking_id.nil?
+      if !b.session_booking_id.nil? && !b.session_booking.nil?
 
         session_booking_id = b.session_booking_id
 
@@ -1398,7 +1398,27 @@ class PaymentsController < ApplicationController
 
   def get_product_for_payment_or_sale
     
+    json_response = []
+    errors = []
+
+    if params[:location_id].blank?
+      json_response << "error"
+      errors << "No se puede encontrar un resultado sin un id de local."
+      render :json => json_response
+      return
+    elsif params[:product_id].blank?
+      json_response << "error"
+      errors << "No se puede encontrar un resultado sin un id de producto."
+      render :json => json_response
+      return
+    end
+
     location_product = LocationProduct.where(:location_id => params[:location_id], :product_id => params[:product_id]).first
+
+    if location_product.nil?
+      location_product = LocationProduct.create(:location_id => params[:location_id], :product_id => params[:product_id], :stock => 0, :stock_limit => 0)
+    end
+
     product_hash = {
       location_product_id: location_product.id,
       product_id: location_product.product.id,
@@ -1407,7 +1427,11 @@ class PaymentsController < ApplicationController
       price: location_product.product.price,
       internal_price: location_product.product.internal_price
     }
-    render :json => product_hash
+
+    json_response << "ok"
+    json_response << product_hash
+
+    render :json => json_response
 
   end
 
@@ -1429,7 +1453,7 @@ class PaymentsController < ApplicationController
 
     if !params[:internal_sale_id].blank? && params[:internal_sale_id] != "-1"
       internal_sale = InternalSale.find(params[:internal_sale_id])
-      if ! internal_sale.nil?
+      if !internal_sale.nil?
         is_edit = true
         old_location_product = LocationProduct.where(:location_id => internal_sale.location_id, :product_id => internal_sale.product_id).first
         old_quantity = internal_sale.quantity
@@ -1465,7 +1489,7 @@ class PaymentsController < ApplicationController
     location_product = LocationProduct.where(:location_id => params[:location_id], :product_id => params[:product_id]).first
 
     if !location_product.nil?
-      if location_product.stock < params[:quantity].to_i
+      if location_product.stock < params[:quantity].to_i && !is_edit
         @errors << "No hay suficiente stock del producto."
       end
     else
@@ -1500,6 +1524,8 @@ class PaymentsController < ApplicationController
         @errors << internal_sale.errors
       end
     end
+
+    @json_response << @errors
 
     render :json => @json_response
 
