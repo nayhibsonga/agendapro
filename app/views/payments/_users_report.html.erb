@@ -1,0 +1,20 @@
+<div class="row">
+	<div class="col-md-6">
+		<div class="well revenue">
+	      	<h4>Recaudación por productos:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@total_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+	<div class="col-md-6">
+		<div class="well revenue">
+	      	<h4>Comisiones:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@commissions_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<%= line_chart (user_sales(@users.pluck(:id), @from, @to, @time_option)) %>
+	</div>
+</div>

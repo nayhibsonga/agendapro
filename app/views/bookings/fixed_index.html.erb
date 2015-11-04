@@ -34,9 +34,12 @@
 		<table class="table table-bordered" id="provider-table">
 			<thead id="provider-table-head">
 				<th>Hora</th>
-				<th>Servicio</th>
 				<th>Cliente</th>
-				<th>Teléfono</th>
+				<% if @use_identification_number %>
+				<th>CI</th>
+				<% end %>
+				<th>Servicio</th>
+				<th>Estado</th>
 			</thead>
 			<tbody id="provider-table-body">
 				<td colspan="4"><%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %></td>

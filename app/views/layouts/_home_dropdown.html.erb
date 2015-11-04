@@ -1,6 +1,7 @@
 <li class="dropdown">
-	<a href="" class="dropdown-toggle menu-green" data-toggle="dropdown"><span class="email-dropdown"><%= current_user.email %></span> <i class="fa fa-chevron-down"></i></a>
+	<a href="" class="dropdown-toggle menu-green" data-toggle="dropdown"><span class="email-dropdown"><i class="fa fa-user fa-lg"></i></span> <i class="fa fa-chevron-down"></i></a>
 	<ul class="dropdown-menu">
+		<li><p style="font-style: italic; max-width: 160px; text-overflow: clip; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; padding-left:10px; font-size: 12px;"><%= current_user.email %></p></li>
 		<li>
 		<% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id || current_user.role_id == Role.find_by(:name => 'Ventas').id %>
 			<%= link_to '<i class="fa fa-dashboard fa-fw"></i> Panel Empresa'.html_safe, dashboard_url(subdomain: false) %>

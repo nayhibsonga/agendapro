@@ -8,7 +8,7 @@ class ProviderGroupsController < ApplicationController
   respond_to :html
 
   def index
-    @provider_groups = ProviderGroup.where(company_id: current_user.company_id).order(:location_id, :order)
+    @provider_groups = ProviderGroup.where(company_id: current_user.company_id).order(:location_id, :order, :name)
     respond_with(@provider_groups)
   end
 
@@ -29,7 +29,7 @@ class ProviderGroupsController < ApplicationController
     @provider_group.company_id = current_user.company_id
     respond_with(@provider_group) do |format|
       if @provider_group.save
-        flash[:notice] = "Grupo de Prestadores creado." 
+        flash[:notice] = "Grupo de Prestadores creado."
         format.html { redirect_to provider_groups_path }
       end
     end
@@ -38,7 +38,7 @@ class ProviderGroupsController < ApplicationController
   def update
     respond_with(@provider_group) do |format|
       if @provider_group.update(provider_group_params)
-        flash[:notice] = "Grupo de Prestadores actualizado." 
+        flash[:notice] = "Grupo de Prestadores actualizado."
         format.html { redirect_to provider_groups_path }
       end
     end

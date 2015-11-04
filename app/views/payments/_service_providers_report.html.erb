@@ -1,0 +1,134 @@
+<div class="row">
+	<div class="col-md-3">
+		<div class="well revenue">
+	      	<h4>Recaudación total:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@total_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+	<div class="col-md-3">
+		<div class="well revenue">
+	      	<h4>Recaudación por Servicios:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@services_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+	<div class="col-md-3">
+		<div class="well revenue">
+	      	<h4>Recaudación por Productos:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@products_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+	<div class="col-md-3">
+		<div class="well revenue">
+	      	<h4>Comisiones:</h4>
+	      	<p class="revenue-price"><strong><%= number_to_currency(@commissions_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+	    </div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<div style="width: 100%; max-height: 400px; overflow:auto; margin-top: 20px;">
+			<table class="providers_report_table">
+				<tr>
+					<th class="excel_th">
+						
+					</th>
+					<% @service_providers.each do |provider| %>
+						<th colspan="3" class="provider_name_th">
+							<%= provider.public_name %>
+						</th>
+					<% end %>
+				</tr>
+				<tr class="first_row">
+					<td>
+						Servicio
+					</td>
+					<% @service_providers.each do |provider| %>
+						<td class="left_header_td">
+							Cantidad
+						</td>
+						<td>
+							Recaudación
+						</td>
+						<td class="right_header_td">
+							Comisión
+						</td>
+					<% end %>
+				</tr>
+				<% @services.each do |service| %>
+					<tr class="standard_row">
+						<td>
+							<%= service.name %>
+						</td>
+						<% @service_providers.each do |provider| %>
+
+							<%
+									bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: provider.id, start: @from.beginning_of_day..@to.end_of_day, service_id: service.id)
+
+						    		bookings_count = bookings.count
+
+						    		bookings_prices = bookings.sum(:price)
+
+						    		mock_bookings = MockBooking.where(service_provider_id: provider.id, service_id: service.id, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+
+						    		bookings_count += mock_bookings.count
+
+						    		bookings_prices += mock_bookings.sum(:price)
+
+						    		service_commission = ServiceCommission.where(service_provider_id: provider.id, service_id: service.id).first
+
+						    		commission = ""
+
+						    		if !service_commission.nil?
+						    			if service_commission.is_percent
+						    				commission = service_commission.amount.to_s + " %"
+						    			else
+						    				commission = "$ " + service_commission.amount.to_s
+						    			end
+						    		else
+						    			if service.comission_option == 0
+						    				commission = service.comission_value.to_s + " %"
+						    			else
+						    				commission = "$ " + service.comission_value.to_s
+						    			end
+						    		end
+
+					    	%>
+					    	<td class="left_td"><%= bookings_count %></td>
+					    	<td><%= bookings_prices %></td>
+					    	<td class="right_td"><%= commission %></td>
+
+				    	<% end %>
+			    	</tr>
+			    <% end %>
+		    </table>
+	    </div>
+	</div>
+</div>
+<div class="row" style="margin-top: 10px;">
+	<div class="col-md-9">
+
+	</div>
+	<div class="col-md-3" style="text-align: right;">
+		<% 
+			sp_ids = @service_providers.pluck(:id).join(",")
+		%>
+		<a href="/service_providers_report_file.xls?from=<%= @from.to_s %>&to=<%= @to.to_s %>&service_provider_ids=<%= sp_ids %>"><button type="button" class="btn btn-green" class="getExcel" provider_ids="<%= @service_providers.pluck(:id).to_s %>">Descargar a Excel</button></a>
+	</div>
+</div>
+<div class="row" style="margin-top: 35px;">
+	<div class="col-md-12">
+		<div class="content_header">Seguimiento de recaudación</div>
+		<%= line_chart (provider_sales(@service_providers.pluck(:id), @from, @to, @time_option)) %>
+	</div>
+</div>
+<div class="row" style="margin-top: 35px;">
+	<div class="col-md-12">
+	<div class="content_header">Recaudaciones y comisiones</div>
+	</div>
+  <div class="col-md-6">
+    <%= pie_chart provider_sales_type_pie(@service_providers.pluck(:id), @from, @to), library: { title: "Ranking de recaudaciones" } %>
+  </div>
+  <div class="col-md-6">
+  	<%= pie_chart provider_commissions_pie(@service_providers.pluck(:id), @from, @to), library: { title: "Ranking de comisiones" } %>
+  </div>
+</div>

@@ -16,7 +16,7 @@ class CompanyMailer < ActionMailer::Base
 		end
 		admin = company.users.where(role_id: Role.find_by_name('Administrador General')).first
 
-		sales_tax = NumericParameter.find_by_name("sales_tax").value
+		sales_tax = company.country.sales_tax
 		current_amount = ((company.due_amount + (month_days - day_number + 1)*price/month_days)).round(0)
 		plan_amount = price
 		debt_amount = current_amount - price

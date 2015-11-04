@@ -1,0 +1,274 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Comisiones de servicios</h2>
+      <p>Configura las comisiones por los servicios prestados.</p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-5">
+      <div class="form-group" style="margin-top: 10px;">
+        <div class="col-md-12">
+          <table>
+            <tr>
+              <td>
+                Ver por:&nbsp;&nbsp;
+              </td>
+              <td>
+                <select id="viewOptionsSelect" class="form-control">
+                    <option value="services">Servicios</option>
+                    <option value="service_providers">Prestadores</option>
+                </select>
+              </td>
+            </tr>
+          </table>     
+        </div>
+      </div>
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div id="servicesCommissionsDiv">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="panel-group" id="accordion">
+            <% @service_categories.each do |service_category| %>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= service_category.id %>">
+                  <a><%= service_category.name %></a>
+                </h4>
+              </div>
+              <div id="collapse<%= service_category.id %>" class="panel-collapse collapse<% if @service_categories.count == 1%> in<% end %>">
+                <div class="panel-body">
+                  <table class="servicesTable">
+                    <tr class="tableHeading">
+                      <th>
+                        Servicio
+                      </th>
+                      <th>
+                        Comisión por defecto
+                      </th>
+                      <th>
+                        Opciones
+                      </th>
+                    </tr>
+                    <% service_category.services.each do |service| %>
+                      <tr>
+                        <td>
+                          <%= service.name %>
+                        </td>
+                        <td>
+                          <input type="hidden" class="service_comission_option" service_id="<%= service.id %>" value="<%= service.comission_option %>" />
+                          <% if service.comission_option == 0 %>
+                            <span class="service_comission_value" service_id="<%= service.id %>"><%= service.comission_value %> %</span>
+                          <% else %>
+                            <span class="service_comission_value" service_id="<%= service.id %>">$ <%= service.comission_value %></span>
+                          <% end %>
+                        </td>
+                        <td>
+                          <button class="editServiceCommissionBtn commissions-options-btn btn btn-orange" onclick="loadServiceCommissions(<%= service.id %>);" service_id="<%= service.id %>">Editar por proveedor</button>
+                          <button class="setServiceCommissionDefaultBtn commissions-options-btn btn btn-green" service_id="<%= service.id %>" onclick="loadDefaultCommissions(<%= service.id %>);">Editar por defecto</button>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="serviceProvidersCommissionsDiv" hidden>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="panel-group" id="accordion2">
+            <% @locations.each do |location| %>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion2" href="#collapse<%= location.id %>">
+                  <a><%= location.name %></a>
+                </h4>
+              </div>
+              <div id="collapse<%= location.id %>" class="panel-collapse collapse<% if @locations.count == 1%> in<% end %>">
+                <div class="panel-body">
+                  <table class="servicesTable">
+                    <tr class="tableHeading">
+                      <th>
+                        Prestador
+                      </th>
+                      <th>
+                        N° de servicios
+                      </th>
+                      <th>
+                        Opciones
+                      </th>
+                    </tr>
+                    <% location.service_providers.each do |provider| %>
+                      <tr>
+                        <td>
+                          <%= provider.public_name %>
+                        </td>
+                        <td>
+                          <%= provider.services.count.to_s %>
+                        </td>
+                        <td>
+                          <button class="editProviderCommissionBtn commissions-options-btn btn btn-orange" onclick="loadProviderCommissions(<%= provider.id %>);" provider_id="<%= provider.id %>">Editar por servicio</button>
+                          <button class="setProviderCommissionDefaultBtn commissions-options-btn btn btn-green" provider_id="<%= provider.id %>" onclick="loadProviderDefaultCommissions(<%= provider.id %>);">Editar todos</button>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="serviceCommissionsModal" tabindex="-1" role="dialog" aria-labelledby="Comisiones" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="serviceCommissionsModalTitle" style="line-height: 1.1;"></h3>
+      </div>
+      <div class="modal-body" id="serviceCommissionsModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+              <!--<input type="hidden" id="serviceId" value="" />
+              <input type="hidden" id="serviceCommissionsArray" value="" />-->
+
+              <div id="serviceCommissionsModalDiv">
+
+              </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        <button type="button" class="btn btn-default btn-green" id="saveServiceCommissionsBtn" aria-label="Guardar" hidden>Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="defaultCommissionsModal" tabindex="-1" role="dialog" aria-labelledby="Comisiones por defecto" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="defaultCommissionsModalTitle" style="line-height: 1.1;"></h3>
+      </div>
+      <div class="modal-body" id="defaultCommissionsModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+              <input type="hidden" id="defaultCommissionServiceId" value="" />
+
+              <div id="defaultCommissionsModalDiv">
+
+                <div class="row">
+                  <div class="col-xs-12">
+                    <% if current_user.role_id == Role.find_by_name("Administrador General") %>
+                      <p>
+                        Al guardar se modificarán las comisiones de todos los prestadores que ofrecen este servicio, así como la comisión por defecto del servicio.
+                      </p>
+                    <% else %>
+                      <p>
+                        Al guardar se modificarán las comisiones de todos los prestadores que pertenecen a los locales que puedes manejar, así como la comisión por defecto del servicio.
+                      </p>
+                    <% end %>
+                  </div>
+                </div>
+
+                <div class="row default-commission-row">
+                <div class="col-xs-5">Comisión</div>
+                <div class="col-xs-4">
+                  <input type="number" class="form-control" id="defaultComissionValue" value="" />
+                </div>
+                <div class="col-xs-3">
+                  <select class="form-control" id="defaultComissionOption">
+                    <option value="0">%</option>
+                    <option value="1">$</option></select>
+                </div>
+                </div><div style="clear: both;"></div>
+              </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        <button type="button" class="btn btn-default btn-green" id="saveDefaultCommissionsBtn" aria-label="Guardar" hidden>Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="providerDefaultCommissionsModal" tabindex="-1" role="dialog" aria-labelledby="Comisiones por defecto" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="providerDefaultCommissionsModalTitle" style="line-height: 1.1;"></h3>
+      </div>
+      <div class="modal-body" id="providerDefaultCommissionsModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+              <input type="hidden" id="defaultCommissionProviderId" value="" />
+
+              <div id="providerDefaultCommissionsModalDiv">
+
+                <div class="row">
+                  <div class="col-xs-12">
+                    <p>
+                      Al guardar se modificarán las comisiones deeste prestador.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="row default-commission-row">
+                <div class="col-xs-5">Comisión</div>
+                <div class="col-xs-4">
+                  <input type="number" class="form-control" id="providerDefaultAmount" value="" />
+                </div>
+                <div class="col-xs-3">
+                  <select class="form-control" id="providerDefaultIsPercent">
+                    <option value="1">%</option>
+                    <option value="0">$</option></select>
+                </div>
+                </div><div style="clear: both;"></div>
+              </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cerrar">Cerrar</button>
+        <button type="button" class="btn btn-default btn-green" id="saveProviderDefaultCommissionsBtn" aria-label="Guardar" hidden>Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "payments" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/payment-commissions" %>
+<% end %>

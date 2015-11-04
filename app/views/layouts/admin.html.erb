@@ -75,26 +75,46 @@
               <% end %>
               <!-- Caja -->
               <% if current_user.role == Role.find_by(name: "Administrador General") || current_user.role == Role.find_by(name: "Administrador Local") %>
-              <li class="<%= 'active' if current_page?(payments_path) %>"><%= link_to 'Caja', payments_path %></li>
+
+                <li class="dropdown <%= 'active' if current_page?(payments_path) or current_page?(sales_cash_path) or current_page?(sales_reports_path) %>">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-money"></i>  Recaudaciones'.html_safe, payments_path %></li>
+                    <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes'.html_safe, sales_reports_path %></li>
+                    <% if current_user.company.company_setting.show_cashes %>
+                      <li><%= link_to '<i class="fa fa-university"></i> Cajas de Ventas'.html_safe, sales_cash_path %></li>
+                    <% end %>
+                  </ul>
+                </li>
+
+                <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario', products_path %></li>
+
+              <% elsif current_user.role == Role.find_by(name: "Staff") || current_user.role == Role.find_by(name: "Recepcionista") %>
+                <li class="dropdown <%= 'active' if current_page?(payments_path) or current_page?(sales_cash_path) or current_page?(sales_reports_path) %>">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes'.html_safe, sales_reports_path %></li>
+                  </ul>
+                </li>
               <% end %>
               <!-- Clientes -->
               <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") and current_user.role != Role.find_by(name: "Super Admin") %>
-              <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes', clients_path %></li>
+                <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes', clients_path %></li>
               <% end %>
               <!-- Reportes -->
               <% if current_user.role == Role.find_by(name: "Administrador General") %>
-              <li class="<%= 'active' if current_page?(reports_path) %>"><%= link_to 'Reportes', reports_path %></li>
+                <li class="<%= 'active' if current_page?(reports_path) %>"><%= link_to 'Reportes', reports_path %></li>
               <% end %>
               <!-- Administracion -->
               <% if current_user.role == Role.find_by(name: "Super Admin") or current_user.role == Role.find_by(name: "Administrador General") or current_user.role == Role.find_by(name: "Administrador Local") %>
-              <li class="dropdown <%= 'active' if current_page?(locations_path) or current_page?(service_providers_path) or current_page?(services_path) or current_page?(service_categories_path) or current_page?(resources_path) or current_page?("/company_bookings") %>">
+              <li class="dropdown <%= 'active' if current_page?(locations_path) or current_page?(service_providers_path) or current_page?(services_path) or current_page?(service_categories_path) or current_page?(commissions_path) or current_page?(resources_path) or current_page?("/company_bookings") %>">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Administracion <i class="fa fa-chevron-down"></i></a>
                 <ul class="dropdown-menu" role="menu">
                   <li><%= link_to '<i class="fa fa-home fa-fw"></i> Locales'.html_safe, locations_path %></li>
                   <li><%= link_to '<i class="fa fa-user fa-fw"></i> Prestadores de Servicios'.html_safe, service_providers_path %></li>
                   <li><%= link_to '<i class="fa fa-book fa-fw"></i> Servicios'.html_safe, services_path %></li>
+                  <li><%= link_to '<i class="fa fa-money"></i>  Comisiones'.html_safe, commissions_path %></li>
                   <li><%= link_to '<i class="fa fa-cubes fa-fw"></i> Recursos'.html_safe, resources_path %></li>
-                  <li><%= link_to '<i class="fa fa-shopping-cart fa-fw"></i> Productos'.html_safe, products_path %></li>
                   <% if current_user.role == Role.find_by(name: "Administrador General") %>
                   <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Pagos en línea'.html_safe, '/company_bookings' %></li>
                   <% end %>
@@ -188,12 +208,39 @@
             <p class="justified">¡Recuerda activar tu cuenta AgendaPro! No te pierdas un segundo el acceso a las oportunidades que te da tu cuenta AgendaPro. Si no eres el(la) administrador(a), ponte en contacto con él(ella) para que active la cuenta.</p>
             <p class="justified">¡Aprovecha las facilidades de pago que ofrecemos y descuentos al pagar por adelantado! Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un e-mail a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir.</p>
             <p>Medios de pago disponibles:</p>
-            <table class="table">
-              <tr><td><%= image_tag("https://www.puntopagos.com/content/mp4.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp5.gif") %></td></tr>
-              <tr><td><%= image_tag("https://www.puntopagos.com/content/mp6.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp7.gif") %></td><td><%= image_tag("https://www.puntopagos.com/content/mp3.gif") %></td></tr>
-            </table>
+            <% if !(current_user.role_id == Role.find_by_name("Super Admin").id || current_user.role_id == Role.find_by_name("Ventas").id) && current_user.company.country_id == Country.find_by_name('Chile').id %>
+            <div class="row mp_table">
+              <div class="col-md-4 text-center">
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp16.gif"), pp_generate_company_transaction_path(mp: "16", amount: 1), alt: "Botón de Pago Banco BBVA", class: "mp_link" %>
+              </div>
+              <div class="col-md-4 text-center">
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), pp_generate_company_transaction_path(mp: "04", amount: 1), alt: "Botón de Pago Banco de Chile", class: "mp_link" %>
+              </div>
+              <div class="col-md-4 text-center">
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), pp_generate_company_transaction_path(mp: "05", amount: 1), alt: "Botón de Pago BCI", class: "mp_link" %>
+              </div>
+            </div>
+            <div class="row mp_table">
+              <div class="col-md-4 text-center">
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), pp_generate_company_transaction_path(mp: "06", amount: 1), alt: "Botón de Pago TBanc", class: "mp_link" %>
+              </div>
+              <div class="col-md-4 text-center">
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), pp_generate_company_transaction_path(mp: "07", amount: 1), alt: "Botón de Pago Banco Estado", class: "mp_link" %>
+              </div>
+              <div class="col-md-4 text-center">
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), pp_generate_company_transaction_path(mp: "03", amount: 1), alt: "Webpay Transbank", class: "mp_link" %>
+              </div>
+            </div>
+            <% else %>
+            <div class="row mp_table">
+              <div class="col-md-4 text-center">
+                <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_company_transaction_path(amount: 1), alt: "Botón de Pago Pay U", class: "mp_link" %>
+              </div>
+            </div>
+            <% end %>
             <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
-            <p>Ir a <%= link_to "PLANES", select_plan_path %> para proceder.</p>
+            <br />
+            <p>Ir a <%= link_to "PLANES", select_plan_path %> para obtener más información de los planes y tu cuenta.</p>
             <% end %>
           </div>
           <div class="modal-footer">
@@ -213,7 +260,7 @@
               <div class="form-group">
                 <%= label_tag "location_id", "Local", class: "col-sm-4 control-label" %>
                 <div class="col-sm-8">
-                  <%= select_tag "location_id", options_from_collection_for_select(Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability).order(:order), "id", "name"), prompt: "Elige el local...", class: "form-control" %>
+                  <%= select_tag "location_id", options_from_collection_for_select(Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability).order(:order, :name), "id", "name"), prompt: "Elige el local...", class: "form-control" %>
                 </div>
               </div>
               <div class="form-group">

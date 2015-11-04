@@ -46,7 +46,7 @@
           <div style="clear: both;"></div>
         </div>
         <div class="social-links">
-          <% 
+          <%
             share_text = "Promoción de " + @service.name + " con " + @service.get_max_time_discount.to_s + "% de descuento en AgendaPro"
             share_text = url_encode(share_text)
           %>
@@ -89,7 +89,7 @@
                   <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 
                     <%= image_tag "promociones/reloj_doble.png", :size => "30x30" %> &nbsp;&nbsp; Horarios de reserva
-                    
+
                   </a>
                 </h4>
               </div>
@@ -106,7 +106,7 @@
                     %>
 
                     <p style="color: #949292;">Revisa los descuentos para cada horario y elige la opción que más te convenga.</p>
-                      
+
                   <table class="discounts-table">
                     <tr>
                       <th class="first-cell">
@@ -162,7 +162,7 @@
                           <% end %>
                         </td>
 
-                      <% end %>               
+                      <% end %>
 
                     </tr>
                     <tr>
@@ -200,7 +200,7 @@
                         <span>Noche</span><br />
                         <span class="hours"><%= service_promo.night_start.strftime "%H:%M" %> - <%= service_promo.night_end.strftime "%H:%M" %></span>
                       </td>
-                      
+
                       <%
                         for i in 1..7
                         promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id, :day_id => i).first
@@ -230,7 +230,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="panel panel-default">
               <div class="panel-heading" role="tab" id="headingThree">
                 <h4 class="panel-title minus">
@@ -242,7 +242,7 @@
               <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
                 <div class="panel-body">
                   <h3 style="color: #949292;">Modificación/Cancelación:</h3>
-                    
+
                   <p style="color: #949292;">
                     La empresa no permite modificar ni cancelar reservas pagadas en promoción.
                   </p>
@@ -250,7 +250,7 @@
                   <p style="color: #949292;">
                     Si la empresa cancela o modifica sus promociones, se respetarán el precio y horario en que efectuaste tu reserva.
                   </p>
-                    
+
                 </div>
               </div>
             </div>
@@ -362,7 +362,7 @@
                             <option value="0">Sin Preferencia</option>
                         <% end %>
                     <% end %>
-                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(order: :asc).each do |provider| %>
+                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(:order, :public_name).each do |provider| %>
 
                       <option value="<%= provider.id %>">
                           <%= provider.public_name %>
@@ -385,7 +385,7 @@
           <div class="row" id="past_date_alert" style="display: none;">
             <div class="col-md-12">
 
-            <% 
+            <%
               after_date = DateTime.now + @service.company.company_setting.after_booking.months
               book_limit_date = @service.active_service_promo.book_limit_date
               limit_date = after_date
@@ -446,7 +446,7 @@
                       </div>-->
                       <option value="0">Sin preferencia</option>
                     <% end %>
-                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(order: :asc).each do |provider| %>
+                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(:order, :public_name).each do |provider| %>
                         <!--<div class="radio">
                           <label>
                             <p>
@@ -471,7 +471,7 @@
                 <div id="selected-hour-body">
 
                 </div>
-                
+
               </div>
             </div>
           </div>
@@ -502,7 +502,7 @@
                     <div style="text-align: center;">
                       Descuento a aplicar: <span id="current-discount" style="color: #22c488;">0%</span>
                     </div>
-                    
+
                   </div>
                   <div><label id="booking-error" style="color: #fd633f;"></label></div>
               </div>
@@ -519,7 +519,7 @@
           </div>
           <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
             <div class="row" style="margin-left: 0px !important;">
-              
+
 
                 <div class="col-md-6">
                   <!-- INICIO FORM -->
@@ -758,9 +758,9 @@
                       </table>
                     </div>
                   </div>
-                  
+
                 </div>
-            
+
           </div>
 
         <% end %>
@@ -775,7 +775,7 @@
 
 
 
-      <div class="modal-footer">          
+      <div class="modal-footer">
           <a type="button" class="btn open-calendar-btn" id="openCalendarBtn"><i class="fa fa-calendar-o"></i>&nbsp;Ver calendario</a>
           <a type="button" class="btn promo-back-btn" id="backBtn1" style="display: none;" disabled="true">Atrás</a>
           <a type="button" class="btn promo-back-btn" id="backBtn2" style="display: none;" disabled="true">Atrás</a>
@@ -810,7 +810,7 @@
 <% end %>
 
 <% content_for :scripts do %>
-  
+
   <%= javascript_include_tag 'workflow/promotions-calendar' %>
   <%= javascript_include_tag 'validations/validate' %>
   <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
@@ -855,5 +855,5 @@
 
 
   </script>
-    
+
 <% end %>

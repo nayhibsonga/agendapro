@@ -136,6 +136,8 @@ class Ability
 
         can :get_booking, Booking, :service_provider => { :company_id => user.company_id }
         can :get_booking_info, Booking, :service_provider => { :company_id => user.company_id }
+        can :get_booking_for_payment, Booking, :company_id => user.company_id
+        can :get_session_booking_for_payment, Booking, :company_id => user.company_id
         can :available_providers, ServiceProvider
         can :provider_breaks, ProviderBreak
         can :get_provider_break, ProviderBreak
@@ -149,6 +151,76 @@ class Ability
         can :destroy, Company, :id => user.company_id
         can :create, Company, :id => user.company_id
         can :update, Company, :id => user.company_id
+
+        can :location_products, Location, :company_id => user.company_id
+        can :get_staff_by_code, StaffCode, :company_id => user.company_id
+        can :create_new_payment, Payment, :company_id => user.company_id
+        can :alarm_form, Product, :company_id => user.company_id
+        can :inventory, Location, :company_id => user.company_id
+        can :set_alarm, Product, :company_id => user.company_id
+        can :inventory, Company, :company_id => user.company_id
+        can :stock_alarm_form, Company, :company_id => user.company_id
+        can :stock_alarm_form, Location, :company_id => user.company_id
+        can :save_stock_alarm, Location, :company_id => user.company_id
+        can :sellers, Location, :company_id => user.company_id
+        can :get_by_code, Cashier, :company_id => user.company_id
+        can :receipt_pdf, Payment, :company_id => user.company_id
+        can :payment_pdf, Payment, :company_id => user.company_id
+        can :send_receipts_email, Payment, :company_id => user.company_id
+        can :get_receipts, Payment, :company_id => user.company_id
+        can :get_intro_info, Payment, :company_id => user.company_id
+        can :save_intro_info, Payment, :company_id => user.company_id
+        can :update_payment, Payment, :company_id => user.company_id
+        can :check_booking_payment, Payment, :company_id => user.company_id
+        can :get_formatted_booking, Payment, :company_id => user.company_id
+        can :delete_payment, Payment, :company_id => user.company_id
+
+        can :commissions, Payment, :company_id => user.company_id
+
+        can :provider_commissions, Payment, :company_id => user.company_id
+        can :service_commissions, Payment, :company_id => user.company_id
+        can :set_commissions, Payment, :company_id => user.company_id
+        can :set_default_commission, Payment, :company_id => user.company_id
+        can :set_provider_default_commissions, Payment, :company_id => user.company_id
+
+        #Petty Cash
+
+        can :petty_cash, Payment, :company_id => user.company_id
+        can :petty_transactions, Payment, :company_id => user.company_id
+        can :petty_transaction, Payment, :company_id => user.company_id
+        can :add_petty_transaction, Payment, :company_id => user.company_id
+        can :open_close_petty_cash, Payment, :company_id => user.company_id
+        can :delete_petty_transaction, Payment, :company_id => user.company_id
+        can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
+
+        #Sales Cash
+
+        can :sales_cash, Payment, :company_id => user.company_id
+        can :sales_cash_content, Payment, :company_id => user.company_id
+        can :get_sales_cash, Payment, :company_id => user.company_id
+        can :save_sales_cash, Payment, :company_id => user.company_id
+        can :close_sales_cash, Payment, :company_id => user.company_id
+
+        can :get_sales_cash_transaction, Payment, :company_id => user.company_id
+        can :save_sales_cash_transaction, Payment, :company_id => user.company_id
+        can :delete_sales_cash_transaction, Payment, :company_id => user.company_id
+
+        can :get_sales_cash_income, Payment, :company_id => user.company_id
+        can :save_sales_cash_income, Payment, :company_id => user.company_id
+        can :delete_sales_cash_income, Payment, :company_id => user.company_id
+
+        #Sales Reports
+        can :sales_reports, Payment, :company_id => user.company_id
+        can :service_providers_report, Payment, :company_id => user.company_id
+        can :users_report, Payment, :company_id => user.company_id
+        can :cashiers_report, Payment, :company_id => user.company_id
+        can :service_providers_report_file, Payment, :company_id => user.company_id
+
+        #Internal Sale
+        can :save_internal_sale, Payment, :company_id => user.company_id
+        can :delete_internal_sale, Payment, :company_id => user.company_id
+        can :get_internal_sale, Payment, :company_id => user.company_id
+        can :get_product_for_payment_or_sale, Payment, :company_id => user.company_id
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -208,11 +280,22 @@ class Ability
         can :destroy, Product, :company_id => user.company_id
         can :create, Product, :company_id => user.company_id
         can :update, Product, :company_id => user.company_id
+        can :edit, Product, :company_id => user.company_id
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
         can :create, ProductCategory, :company_id => user.company_id
         can :update, ProductCategory, :company_id => user.company_id
+
+        can :read, ProductBrand, :company_id => user.company_id
+        can :destroy, ProductBrand, :company_id => user.company_id
+        can :create, ProductBrand, :company_id => user.company_id
+        can :update, ProductBrand, :company_id => user.company_id
+
+        can :read, ProductDisplay, :company_id => user.company_id
+        can :destroy, ProductDisplay, :company_id => user.company_id
+        can :create, ProductDisplay, :company_id => user.company_id
+        can :update, ProductDisplay, :company_id => user.company_id
 
         can :provider_service, ServiceProvider
 
@@ -245,6 +328,8 @@ class Ability
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 
+        can :import, Product
+
         can :change_categories_order, ServiceCategory
         can :change_services_order, Service
         can :change_location_order, Location
@@ -266,11 +351,21 @@ class Ability
         can :activate, CompanyPaymentMethod, :company_id => user.company_id
         can :deactivate, CompanyPaymentMethod, :company_id => user.company_id
 
+        can :read, Cashier, :company_id => user.company_id
+        can :create, Cashier, :company_id => user.company_id
+        can :update, Cashier, :company_id => user.company_id
+        can :destroy, Cashier, :company_id => user.company_id
+        can :activate, Cashier, :company_id => user.company_id
+        can :deactivate, Cashier, :company_id => user.company_id
+
         can :read, Deal, :company_id => user.company_id
         can :create, Deal, :company_id => user.company_id
         can :update, Deal, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
+
+        can :get_booking_for_payment, Booking, :company_id => user.company_id
+        can :get_session_booking_for_payment, Booking, :company_id => user.company_id
 
         can :get_booking, Booking, :location_id => user.locations.pluck(:id)
         can :get_booking_info, Booking, :location_id => user.locations.pluck(:id)
@@ -318,10 +413,77 @@ class Ability
         can :create, Product, :company_id => user.company_id
         can :update, Product, :company_id => user.company_id
 
+        can :location_products, Location, :company_id => user.company_id
+        can :get_staff_by_code, StaffCode, :company_id => user.company_id
+        can :create_new_payment, Payment, :company_id => user.company_id
+        can :alarm_form, Product, :company_id => user.company_id
+        can :inventory, Location, :company_id => user.company_id
+        can :set_alarm, Product, :company_id => user.company_id
+        can :stock_alarm_form, Location, :company_id => user.company_id
+        can :save_stock_alarm, Location, :company_id => user.company_id
+        can :sellers, Location, :company_id => user.company_id
+        can :get_by_code, Cashier, :company_id => user.company_id
+        can :receipt_pdf, Payment, :company_id => user.company_id
+        can :payment_pdf, Payment, :company_id => user.company_id
+        can :send_receipts_email, Payment, :company_id => user.company_id
+        can :get_receipts, Payment, :company_id => user.company_id
+        can :get_intro_info, Payment, :company_id => user.company_id
+        can :save_intro_info, Payment, :company_id => user.company_id
+        can :check_booking_payment, Payment, :company_id => user.company_id
+        can :get_formatted_booking, Payment, :company_id => user.company_id
+        can :commissions, Payment, :company_id => user.company_id
+
+        can :provider_commissions, Payment, :company_id => user.company_id
+        can :service_commissions, Payment, :company_id => user.company_id
+        can :set_commissions, Payment, :company_id => user.company_id
+        can :set_default_commission, Payment, :company_id => user.company_id
+        can :set_provider_default_commissions, Payment, :company_id => user.company_id
+
+        can :petty_cash, Payment, :company_id => user.company_id
+        can :petty_transactions, Payment, :company_id => user.company_id
+        can :petty_transaction, Payment, :company_id => user.company_id
+        can :add_petty_transaction, Payment, :company_id => user.company_id
+        can :open_close_petty_cash, Payment, :company_id => user.company_id
+        can :delete_petty_transaction, Payment, :company_id => user.company_id
+        can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
+
+        can :sales_cash, Payment, :company_id => user.company_id
+        can :sales_cash_content, Payment, :company_id => user.company_id
+        can :get_sales_cash, Payment, :company_id => user.company_id
+        can :save_sales_cash, Payment, :company_id => user.company_id
+        can :close_sales_cash, Payment, :company_id => user.company_id
+
+        can :get_sales_cash_transaction, Payment, :company_id => user.company_id
+        can :save_sales_cash_transaction, Payment, :company_id => user.company_id
+
+        can :get_sales_cash_income, Payment, :company_id => user.company_id
+        can :save_sales_cash_income, Payment, :company_id => user.company_id
+
+        #Sales Reports
+        can :sales_reports, Payment, :company_id => user.company_id
+        can :service_providers_report, Payment, :company_id => user.company_id
+        can :users_report, Payment, :company_id => user.company_id
+        can :cashiers_report, Payment, :company_id => user.company_id
+        can :service_providers_report_file, Payment, :company_id => user.company_id
+
+        #Internal Sale
+        can :save_internal_sale, Payment, :company_id => user.company_id
+        can :get_product_for_payment_or_sale, Payment, :company_id => user.company_id
+
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
         can :create, ProductCategory, :company_id => user.company_id
         can :update, ProductCategory, :company_id => user.company_id
+
+        can :read, ProductBrand, :company_id => user.company_id
+        can :destroy, ProductBrand, :company_id => user.company_id
+        can :create, ProductBrand, :company_id => user.company_id
+        can :update, ProductBrand, :company_id => user.company_id
+
+        can :read, ProductDisplay, :company_id => user.company_id
+        can :destroy, ProductDisplay, :company_id => user.company_id
+        can :create, ProductDisplay, :company_id => user.company_id
+        can :update, ProductDisplay, :company_id => user.company_id
 
         @roles = Role.where(:name => ["Recepcionista","Staff"]).pluck(:id)
 
@@ -380,13 +542,14 @@ class Ability
         can :client_sessions, Payment
         can :index_content, Payment
         can :read, Payment, :company_id => user.company_id
-        can :destroy, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
-        can :update, Payment, :company_id => user.company_id
+        can :sellers, Location, :company_id => user.company_id
         
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
+
+        can :import, Product
 
         can :change_categories_order, ServiceCategory
         can :change_services_order, Service
@@ -399,6 +562,9 @@ class Ability
         can :city_districs, District
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
+
+        can :get_booking_for_payment, Booking, :company_id => user.company_id
+        can :get_session_booking_for_payment, Booking, :company_id => user.company_id
 
         can :get_booking, Booking, :location_id => user.locations.pluck(:id)
         can :get_booking_info, Booking, :location_id => user.locations.pluck(:id)
@@ -443,9 +609,8 @@ class Ability
         can :client_bookings, Payment
         can :client_sessions, Payment
         can :read, Payment, :company_id => user.company_id
-        can :destroy, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
-        can :update, Payment, :company_id => user.company_id
+        can :sellers, Location, :company_id => user.company_id
         
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
@@ -454,6 +619,35 @@ class Ability
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
+
+        can :location_products, Location, :company_id => user.company_id
+        can :get_staff_by_code, StaffCode, :company_id => user.company_id
+        can :create_new_payment, Payment, :company_id => user.company_id
+        can :get_by_code, Cashier, :company_id => user.company_id
+        can :receipt_pdf, Payment, :company_id => user.company_id
+        can :payment_pdf, Payment, :company_id => user.company_id
+        can :send_receipts_email, Payment, :company_id => user.company_id
+        can :get_receipts, Payment, :company_id => user.company_id
+        can :get_intro_info, Payment, :company_id => user.company_id
+        can :save_intro_info, Payment, :company_id => user.company_id
+        can :check_booking_payment, Payment, :company_id => user.company_id
+        can :get_formatted_booking, Payment, :company_id => user.company_id
+
+        #Internal Sale
+        can :save_internal_sale, Payment, :company_id => user.company_id
+        can :get_product_for_payment_or_sale, Payment, :company_id => user.company_id
+
+        can :petty_cash, Payment, :company_id => user.company_id
+        can :petty_transactions, Payment, :company_id => user.company_id
+        can :petty_transaction, Payment, :company_id => user.company_id
+        can :add_petty_transaction, Payment, :company_id => user.company_id
+        can :open_close_petty_cash, Payment, :company_id => user.company_id
+        can :delete_petty_transaction, Payment, :company_id => user.company_id
+        can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
+
+        #Sales Reports
+        can :sales_reports, Payment, :company_id => user.company_id
+        can :users_report, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff").id
         
@@ -496,9 +690,35 @@ class Ability
         can :client_bookings, Payment
         can :client_sessions, Payment
         can :read, Payment, :company_id => user.company_id
-        can :destroy, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
-        can :update, Payment, :company_id => user.company_id
+        can :sellers, Location, :company_id => user.company_id
+
+        can :location_products, Location, :company_id => user.company_id
+        can :get_staff_by_code, StaffCode, :company_id => user.company_id
+        can :create_new_payment, Payment, :company_id => user.company_id
+        can :get_by_code, Cashier, :company_id => user.company_id
+        can :receipt_pdf, Payment, :company_id => user.company_id
+        can :payment_pdf, Payment, :company_id => user.company_id
+        can :send_receipts_email, Payment, :company_id => user.company_id
+        can :get_receipts, Payment, :company_id => user.company_id
+        can :get_intro_info, Payment, :company_id => user.company_id
+        can :save_intro_info, Payment, :company_id => user.company_id
+        can :check_booking_payment, Payment, :company_id => user.company_id
+        can :get_formatted_booking, Payment, :company_id => user.company_id
+
+        can :petty_cash, Payment, :company_id => user.company_id
+        can :petty_transactions, Payment, :company_id => user.company_id
+        can :petty_transaction, Payment, :company_id => user.company_id
+        can :add_petty_transaction, Payment, :company_id => user.company_id
+        can :open_close_petty_cash, Payment, :company_id => user.company_id
+        can :delete_petty_transaction, Payment, :company_id => user.company_id
+        can :set_petty_cash_close_schedule, Payment, :company_id => user.company_id
+
+        #Sales Reports
+        can :sales_reports, Payment, :company_id => user.company_id
+        can :service_providers_report, Payment, :company_id => user.company_id
+        can :users_report, Payment, :company_id => user.company_id
+        can :service_providers_report_file, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 
@@ -527,6 +747,12 @@ class Ability
         # can :suggestion, Client
         # can :rut_suggestion, Client
         # can :provider_service, ServiceProvider
+
+        #Sales Reports
+        can :sales_reports, Payment, :company_id => user.company_id
+        can :service_providers_report, Payment, :company_id => user.company_id
+        can :users_report, Payment, :company_id => user.company_id
+        can :service_providers_report_file, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Ventas").id
 

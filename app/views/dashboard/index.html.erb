@@ -1,11 +1,3 @@
-<div class="container-fluid background-grey">
-  <div class="row">
-    <div class="col-md-12">
-      <h2 class="text-green">Resumen</h2>
-      <p>Revisa las estadisticas de tus locales:</p>
-    </div>
-  </div>
-</div>
 
 <div class="container-fluid" style="padding-top: 10px;">
   <% unless current_user.role == Role.find_by(name: "Super Admin") || current_user.role == Role.find_by_name("Ventas") %>
@@ -54,7 +46,7 @@
                 <% occupation = booking_occupation(Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
                 <%= number_to_percentage occupation * 100, precision: 1, strip_insignificant_zeros: true %>
               </h2>
-              <p data-toggle="toltip" title="Que tan ocupada tienen la agenda los prestadores" data-placement="top" role="button">
+              <p data-toggle="tooltip" title="Que tan ocupada tienen la agenda los prestadores. Se calcula dividiendo la cantidad de horas reservadas sobre la cantidad de horas disponibles por horario." data-placement="top" role="button">
                 <span class="fa-stack text-green">
                   <i class="fa fa-square fa-stack-2x"></i>
                   <i class="fa fa-question fa-stack-1x fa-inverse"></i>
@@ -64,13 +56,13 @@
             </div>
           </div>
           <% if current_user.role == Role.find_by(name: 'Administrador General') %>
-          <div class="col-md-3">
+          <!-- <div class="col-md-3">
             <div class="square-highlight">
               <h2 class="text-green">
                 <% incomes = booking_revenue(Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
                 <%= number_to_currency incomes %>
               </h2>
-              <p data-toggle="toltip" title="La suma de los precios de todas las reservas del mes" data-placement="top" role="button">
+              <p data-toggle="tooltip" title="La suma de los precios de todas las reservas del mes" data-placement="top" role="button">
                 <span class="fa-stack text-green">
                   <i class="fa fa-square fa-stack-2x"></i>
                   <i class="fa fa-question fa-stack-1x fa-inverse"></i>
@@ -78,7 +70,7 @@
               </p>
               <p>Ingresos Estimados</p>
             </div>
-          </div>
+          </div> -->
           <% end %>
         </div>
       </div>
@@ -94,7 +86,7 @@
                   <div class="form-group">
                     <%= label_tag :location, 'Elige Local', class: 'col-sm-3 control-label' %>
                     <div class="col-sm-7">
-                      <%= select_tag :location, '<option value="0">Todos</option>'.html_safe + options_from_collection_for_select(@locations, :id, :name, params[:location]), class: 'form-control' %>
+                      <%= select_tag :location, '<option value="0">Todos</option>'.html_safe + options_from_collection_for_select(@locations.where(active: true), :id, :name, params[:location]), class: 'form-control' %>
                     </div>
                   </div>
                 </div>
@@ -102,7 +94,7 @@
                   <div class="form-group">
                     <%= label_tag :provider, 'Elige Prestador', class: 'col-sm-3 control-label' %>
                     <div class="col-sm-7">
-                      <%= select_tag :provider, '<option value="0">Todos</option>'.html_safe + options_from_collection_for_select(ServiceProvider.filter_location(params[:location]).accessible_by(current_ability), :id, :public_name, params[:provider]), class: 'form-control' %>
+                      <%= select_tag :provider, '<option value="0">Todos</option>'.html_safe + options_from_collection_for_select(ServiceProvider.filter_location(params[:location]).where(active: true).order(:order, :public_name).accessible_by(current_ability), :id, :public_name, params[:provider]), class: 'form-control' %>
                     </div>
                   </div>
                 </div>
@@ -143,40 +135,40 @@
           </div>
           <div class="tab-content">
             <div class="panel-body panel-scrollable tab-pane fade in active" id="summary">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Estado</th>
-                    <th>Cliente</th>
-                    <th>Servicio</th>
-                    <th>Prestador</th>
-                    <th>Horario</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @lastBookings.each do |booking| %>
-                  <tr>
-                    <td>
-                      <% if booking.status == Status.find_by_name('Cancelado') %>
-                      <span class="label label-danger">Cancelado</span>
-                      <% elsif booking.status == Status.find_by_name('Pagado') %>
-                      <span class="label label-success">Pagado</span>
-                      <% elsif booking.status == Status.find_by_name('Confirmado') %>
-                      <span class="label label-primary">Confirmado</span>
-                      <% elsif booking.created_at != booking.updated_at %>
-                      <span class="label label-warning">Modificado</span>
-                      <% else %>
-                      <span class="label label-agendapro">Reservado</span>
-                      <% end %>
-                    </td>
-                    <td><%= booking.client.first_name %> <%= booking.client.last_name %></td>
-                    <td><%= booking.service.name %></td>
-                    <td><%= booking.service_provider.public_name %></td>
-                    <td><span class="badge"><%= l booking.start %></span></td>
-                  </tr>
-                  <% end %>
-                </tbody>
-              </table>
+              <div class="tab-content">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Estado</th>
+                  <th>Cliente</th>
+                  <th>Servicio</th>
+                  <th>Prestador</th>
+                  <th>Horario</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @lastBookings.each do |booking| %>
+                <tr>
+                  <td>
+                    <% if booking.status == Status.find_by_name('Cancelado') %>
+                    <span class="label label-danger">Cancelado</span>
+                    <% elsif booking.status == Status.find_by_name('Confirmado') %>
+                    <span class="label label-primary">Confirmado</span>
+                    <% elsif booking.created_at != booking.updated_at %>
+                    <span class="label label-warning">Modificado</span>
+                    <% else %>
+                    <span class="label label-agendapro">Reservado</span>
+                    <% end %>
+                  </td>
+                  <td><%= booking.client.first_name %> <%= booking.client.last_name %></td>
+                  <td><%= booking.service.name %></td>
+                  <td><%= booking.service_provider.public_name %></td>
+                  <td><span class="badge"><%= l booking.start %></span></td>
+                </tr>
+                <% end %>
+              </tbody>
+            </table>
+            </div>
             </div>
 
             <div class="panel-body panel-scrollable tab-pane fade" id="sessions">
@@ -242,7 +234,7 @@
     $('#provider').change(function() {
       $(this).closest('form').submit();
     });
-    $('[data-toggle="toltip"]').toltip();
+    $('[data-toggle="tooltip"]').tooltip();
   });
 </script>
 <% end %>

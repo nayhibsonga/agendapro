@@ -20,8 +20,8 @@ class DashboardController < ApplicationController
       # Datos estaticos
       @due_payment = true if Company.find(current_user.company_id).payment_status == PaymentStatus.find_by_name("Emitido") unless current_user.role_id == Role.find_by_name("Super Admin").id
 
-      @locations = Location.where(company_id: current_user.company_id).accessible_by(current_ability).order(:order)
-      @service_providers = ServiceProvider.where(location_id: @locations).order(:order)
+      @locations = Location.where(company_id: current_user.company_id).accessible_by(current_ability).order(:order, :name)
+      @service_providers = ServiceProvider.where(location_id: @locations).order(:order, :public_name)
 
       @monthBookings = Booking.where(service_provider_id: @service_providers).where("created_at BETWEEN ? AND ?", Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now).where('is_session = false or (is_session = true and is_session_booked = true)')
       @statusArray = []
@@ -31,7 +31,7 @@ class DashboardController < ApplicationController
 
       @lastBookings = Booking.where(service_provider_id: @service_providers).where('start >= ?', Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)').order(updated_at: :desc).limit(50)
 
-      @services = Service.where(:company_id => current_user.company_id).order(:order)
+      @services = Service.where(:company_id => current_user.company_id).order(:order, :name)
       @potential_session_bookings = SessionBooking.where('client_id is not null').where(service_id: @services).order('updated_at desc').limit(20)
       @session_bookings = []
       @potential_session_bookings.each do |session_booking|

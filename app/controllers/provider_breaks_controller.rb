@@ -66,9 +66,9 @@ class ProviderBreaksController < ApplicationController
     if(ids.nil? || ids.length < 1)
       @break_json = Array.new
       @break_errors = Array.new
-      @break_errors.push("No se seleccionaron proveedores.")
+      @break_errors.push("No se seleccionaron prestadores.")
       respond_to do |format|
-        format.html { redirect_to bookings_path, notice: 'No se seleccionaron proveedores.' }
+        format.html { redirect_to bookings_path, notice: 'No se seleccionaron prestadores.' }
         format.json { render :json => @break_errors }
         format.js { }
       end
@@ -522,9 +522,9 @@ class ProviderBreaksController < ApplicationController
       if(ids.nil? || ids.length < 1)
         @break_json = Array.new
         @break_errors = Array.new
-        @break_errors.push("No se seleccionaron proveedores.")
+        @break_errors.push("No se seleccionaron prestadores.")
         respond_to do |format|
-          format.html { redirect_to bookings_path, notice: 'No se seleccionaron proveedores.' }
+          format.html { redirect_to bookings_path, notice: 'No se seleccionaron prestadores.' }
           format.json { render :json => @break_errors }
           format.js { }
         end
@@ -756,9 +756,9 @@ class ProviderBreaksController < ApplicationController
     if(ids.nil? || ids.length < 1)
       @break_json = Array.new
       @break_errors = Array.new
-      @break_errors.push("No se seleccionaron proveedores.")
+      @break_errors.push("No se seleccionaron prestadores.")
       respond_to do |format|
-        format.html { redirect_to bookings_path, notice: 'No se seleccionaron proveedores.' }
+        format.html { redirect_to bookings_path, notice: 'No se seleccionaron prestadores.' }
         format.json { render :json => @break_errors }
         format.js { }
       end
