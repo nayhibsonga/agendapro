@@ -248,8 +248,18 @@ footer {
     .logo {
       height: 100%;
     }
-    .social {
-
+    .wrapper {
+      display: inline-block;
+      width: 50%;
+      height: 100%;
+      .social {
+        height: 100%;
+        padding-top: 34px;
+        padding-bottom: 34px;
+        a {
+          color: $dark-gray;
+        }
+      }
     }
   }
 }
