@@ -9,8 +9,8 @@
         <div>
           <strong>{{ service.name }}</strong>
           <div class="pull-right" style="margin-bottom: 10px;">
-            <span class="time-detailed" style="color: #A3A0A1; font-size: 0.9em">{{ service.time }}</span>
-             {{ service.price | currency | clp  }} <span>$</span>
+            <span class="time-detailed" style="color: #A3A0A1; font-size: 0.9em"><i class="icon ion-ios-clock-outline"></i> {{ service.duration | inHours }}</span>
+            &nbsp;&nbsp;{{ service.price | currency | clp  }} <span>$</span>
           </div>
         </div>
         <p style="clear: both; text-align: justify;">

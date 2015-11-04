@@ -9,6 +9,11 @@ html, body, header, footer {
 // Removes Bootstrap default styles
 *:focus{ outline: none !important; }
 
+// Remove IonIcons display block
+.icon:before{
+  display: inline !important;
+}
+
 .clear {
   width: 100%;
   margin: 15px 0;
@@ -491,11 +496,22 @@ footer {
         text-align: left;
         padding-left: 7%;
         &.time::before {
-          content: '®';
+          content: "\f402";
           position: absolute;
           margin-left: -20px;
           margin-top: 5px;
           font-size: 20px;
+          // ionicons
+          font-family: "Ionicons";
+          speak: none;
+          font-style: normal;
+          font-weight: normal;
+          font-variant: normal;
+          text-transform: none;
+          text-rendering: auto;
+          line-height: 1;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale
         }
       }
     }
