@@ -83,7 +83,7 @@ class BookingsController < ApplicationController
     after_book_date = DateTime.now + u.service.company.company_setting.after_booking.months
     after_book_date = I18n.l after_book_date.to_date, format: :day
 
-    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking}
+    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id}
     respond_to do |format|
       format.html { }
       format.json { render :json => @booking_json }
@@ -5855,6 +5855,47 @@ class BookingsController < ApplicationController
     end
 
     render layout: "workflow"
+  end
+
+  def get_treatment_price
+
+    json_response = []
+    errors = []
+
+    if params[:service_id].blank?
+      errors << "No se puede encontrar un servicio sin id."
+      json_response << "error"
+      json_response << errors
+      render :json => json_response
+      return
+    end
+
+    service = Service.find(params[:service_id])
+
+    session_booking = nil
+    if !params[:session_booking_id].blank? && params[:session_booking_id] != "0" && params[:session_booking_id] != 0
+      session_booking = SessionBooking.find(params[:session_booking_id])
+    end
+
+    treatment_price = 0.0
+
+    if session_booking.nil?
+      treatment_price = service.price
+    else
+      session_booking.bookings.each do |booking|
+        if booking.is_session_booked
+          treatment_price += booking.price
+        else
+          treatment_price += service.price / session_booking.sessions_amount
+        end
+      end
+    end
+
+    json_response << "ok"
+    json_response << treatment_price
+
+    render :json => json_response
+
   end
 
 

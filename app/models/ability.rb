@@ -117,6 +117,7 @@ class Ability
     can :show_time_promo, Service
     can :show_last_minute_promo, Service
     can :last_minute_hours, Service
+    can :get_treatment_price, Booking
 
 
     if user.role_id == Role.find_by_name("Super Admin").id
@@ -174,6 +175,8 @@ class Ability
         can :check_booking_payment, Payment, :company_id => user.company_id
         can :get_formatted_booking, Payment, :company_id => user.company_id
         can :delete_payment, Payment, :company_id => user.company_id
+
+        can :summary, Payment, :company_id => user.company_id
 
         can :commissions, Payment, :company_id => user.company_id
 
@@ -433,6 +436,8 @@ class Ability
         can :get_formatted_booking, Payment, :company_id => user.company_id
         can :commissions, Payment, :company_id => user.company_id
 
+        can :summary, Payment, :company_id => user.company_id
+
         can :provider_commissions, Payment, :company_id => user.company_id
         can :service_commissions, Payment, :company_id => user.company_id
         can :set_commissions, Payment, :company_id => user.company_id
@@ -633,6 +638,8 @@ class Ability
         can :check_booking_payment, Payment, :company_id => user.company_id
         can :get_formatted_booking, Payment, :company_id => user.company_id
 
+        can :summary, Payment, :company_id => user.company_id
+
         #Internal Sale
         can :save_internal_sale, Payment, :company_id => user.company_id
         can :get_product_for_payment_or_sale, Payment, :company_id => user.company_id
@@ -706,6 +713,8 @@ class Ability
         can :check_booking_payment, Payment, :company_id => user.company_id
         can :get_formatted_booking, Payment, :company_id => user.company_id
 
+        can :summary, Payment, :company_id => user.company_id
+
         can :petty_cash, Payment, :company_id => user.company_id
         can :petty_transactions, Payment, :company_id => user.company_id
         can :petty_transaction, Payment, :company_id => user.company_id
@@ -753,6 +762,8 @@ class Ability
         can :service_providers_report, Payment, :company_id => user.company_id
         can :users_report, Payment, :company_id => user.company_id
         can :service_providers_report_file, Payment, :company_id => user.company_id
+
+        can :summary, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Ventas").id
 

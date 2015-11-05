@@ -740,6 +740,8 @@ function editBookingModal(eventId) {
 				$("#sessions-info").empty();
 				$("#sessions-info").append("Esta reserva corresponde a la " + booking.sessions_ratio + " del servicio.");
 				$("#sessions-row").show();
+
+				checkTreatmentPrice(booking.service_id, booking.session_booking_id);
 				//$("#xButton").attr("disabled", true);
 			}
 
@@ -2213,9 +2215,13 @@ function checkClientSessions(service_change)
 							}
 							session_price = service.price/service.sessions_amount;
 							$("#booking_price").val(session_price);
+							$("#treatment_price_div").show();
+							$("#treatment_price").text("$ " + service.price);
 						}
 						else
 						{
+							$("#treatment_price_div").hide();
+							$("#treatment_price").text("");
 							$("#has_sessions").val("0");
 						}
 					}
@@ -2242,10 +2248,14 @@ function checkClientSessions(service_change)
 							$("#has_sessions").val("1");
 							session_price = service.price/service.sessions_amount;
 							$("#booking_price").val(session_price);
+							$("#treatment_price_div").show();
+							$("#treatment_price").text("$ " + service.price);
 						}
 						else
 						{
 							$("#has_sessions").val("0");
+							$("#treatment_price_div").hide();
+							$("#treatment_price").text("");
 						}
 					}
 				});
@@ -2323,10 +2333,14 @@ function checkClientSessions(service_change)
 										index = index + 1;
 									});
 								}
+								$("#treatment_price_div").show();
+								$("#treatment_price").text("$ " + service.price);
 							}
 							else
 							{
 								$("#has_sessions").val("0");
+								$("#treatment_price_div").hide();
+								$("#treatment_price").text("");
 							}
 						}
 					});
@@ -2347,10 +2361,14 @@ function checkClientSessions(service_change)
 								$("#sessions-row").show();
 								$("#add-service-btn").hide();
 								$("#has_sessions").val("1");
+								$("#treatment_price_div").show();
+								$("#treatment_price").text("$ " + service.price);
 							}
 							else
 							{
 								$("#has_sessions").val("0");
+								$("#treatment_price_div").hide();
+								$("#treatment_price").text("");
 							}
 						}
 					});
@@ -2396,6 +2414,30 @@ function loadClientHistory(booking_id) {
 		});
 	}
 	return false;
+}
+
+function checkTreatmentPrice(service_id, session_booking_id)
+{
+	$.ajax({
+		url: '/get_treatment_price',
+		method: 'get',
+		data: {service_id: service_id, session_booking_id: session_booking_id},
+		dataType: 'json',
+		error: function(response){
+
+		},
+		success: function(response){
+			if(response[0] == "ok")
+			{
+				$("#treatment_price_div").show();
+				$("#treatment_price").text("$ " + response[1]);
+			}
+			else
+			{
+				alert(response[1]);
+			}
+		}
+	});
 }
 
 var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
@@ -2809,4 +2851,15 @@ $(function() {
 			$('.modal.in').modal('handleUpdate');
 	    } , 100 );
 	});
+
+	$('body').on('change', '[name="sessions-choice"]', function(){
+		
+		var service_id = $("#booking_service_id").val();
+		var session_booking_id = $('[name="sessions-choice"]:checked').val();
+
+		checkTreatmentPrice(service_id, session_booking_id);
+
+	});
+	
+
 });

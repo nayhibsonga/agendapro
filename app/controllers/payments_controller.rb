@@ -384,8 +384,21 @@ class PaymentsController < ApplicationController
         client = Client.find(params[:client_id])
       end
         
-      client.first_name = params[:client_first_name]
-      client.last_name = params[:client_last_name]
+      first_name = ""
+      last_name = ""
+      client_name = params[:client_name]
+
+      if params[:client_first_name].blank? || params[:client_last_name].blank?
+        full_name = helper.split_name(client_name)
+        first_name = full_name[:first_name]
+        last_name = full_name[:last_name]
+      else
+        first_name = params[:client_first_name]
+        last_name = params[:client_last_name]
+      end
+
+      client.first_name = first_name
+      client.last_name = last_name
       client.email = params[:client_email]
       client.phone = params[:client_phone]
       client.gender = params[:client_gender]
@@ -2502,6 +2515,19 @@ class PaymentsController < ApplicationController
 
     respond_with(@service_providers)
 
+  end
+
+  #
+  # Payment Summary
+  # To be shown on "Ver" and on "Pago" of a booking's modal
+  #
+
+  def summary
+    @payment = Payment.find(params[:payment_id])
+    respond_to do |format|
+      format.html { render :partial => 'summary' }
+      format.json { render :json => @payment }
+    end
   end
 
   private

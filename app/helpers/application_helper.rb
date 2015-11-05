@@ -1,5 +1,36 @@
 module ApplicationHelper
 
+	def split_name(full_name)
+
+		returnHash = Hash.new
+		nameArray = []
+        nameArray = full_name.to_s.gsub(/\s+/, ' ').split(' ')
+        if nameArray.length == 0
+
+        elsif nameArray.length == 1
+          returnHash[:first_name] = nameArray[0] unless nameArray[0].blank?
+          returnHash[:last_name] = "Sin apellido"
+        elsif nameArray.length == 2
+          returnHash[:first_name] = nameArray[0] unless nameArray[0].blank?
+          returnHash[:last_name] = nameArray[1] unless nameArray[1].blank?
+        elsif nameArray.length == 3
+          returnHash[:first_name] = nameArray[0] unless nameArray[0].blank?
+          returnHash[:last_name] = nameArray[1] + ' ' + nameArray[2]
+        else 
+          returnHash[:first_name] = nameArray[0] + ' ' + nameArray[1]
+          last_name = ''
+          (2..nameArray.length - 1).each do |i|
+            last_name += nameArray[i]+' '
+          end
+          strLen = last_name.length
+          last_name = last_name[0..strLen-1]
+          returnHash[:last_name] = last_name unless last_name.blank?
+        end
+
+        return returnHash
+
+	end
+
 	def int_with_variation(int, past_int)
 		if past_int > 0
 			variation = ((int - past_int)/past_int.to_f).round(2)
