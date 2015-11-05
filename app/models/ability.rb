@@ -117,6 +117,7 @@ class Ability
     can :show_time_promo, Service
     can :show_last_minute_promo, Service
     can :last_minute_hours, Service
+    can :get_treatment_price, Booking
 
 
     if user.role_id == Role.find_by_name("Super Admin").id

@@ -463,6 +463,8 @@
     get '/cashiers_report', :to => 'payments#cashiers_report'
     get '/service_providers_report_file', :to => 'payments#service_providers_report_file'
 
+    get '/get_treatment_price', :to => 'bookings#get_treatment_price'
+
   end
 
   namespace :api, defaults: {format: 'json'} do
