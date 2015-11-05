@@ -531,15 +531,26 @@
                 <% if Role.where(name: ["Administrador General", "Administrador Local"]).include?(current_user.role) %>
                   <div class="tab-pane" id="payments-pane">
                     <input type="hidden" id="paymentBookingId" value="" />
-                    <div class="row" id="bookingPaymentEdit" hidden>
-                      <div class="col-xs-4">
-                        <button id="bookingPaymentEditBtn" class="edit-option-btn btn btn-default">
-                          <i class="fa fa-pencil-square-o"></i>Editar pago
-                        </button><br />
-                        <button id="bookingPaymentDeleteBtn" class="edit-option-btn btn btn-red">
-                          <i class="fa fa-times"></i>Eliminar pago
-                        </button>
+                    <div class="row" id="bookingPaymentEdit" style="padding-left: 12px; padding-right: 10px;" hidden>
+
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <button style="width: 150px; margin-right: 5px;" id="bookingPaymentEditBtn" class="edit-option-btn btn btn-default">
+                            <i class="fa fa-pencil-square-o"></i>Editar pago
+                          </button> 
+                          <button style="width: 150px;" id="bookingPaymentDeleteBtn" class="edit-option-btn btn btn-red">
+                            <i class="fa fa-times"></i>Eliminar pago
+                          </button>
+                        </div>
                       </div>
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <div id="bookingPaymentSummary">
+
+                          </div>
+                        </div>
+                      </div>
+
                     </div>
                     <div class="row" id="bookingPaymentCreate" hidden>
                       <div class="col-xs-4">
