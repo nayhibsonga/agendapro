@@ -56,7 +56,11 @@
                 payment_methods_arr = []
                 payment_methods = ""
                 payment_product.payment.payment_transactions.each do |payment_transaction|
-                  payment_methods_arr << payment_transaction.payment_method.name
+                  if !payment_transaction.payment_method_id.nil?
+                    payment_methods_arr << payment_transaction.payment_method.name
+                  else
+                    payment_methods_arr << payment_transaction.company_payment_method.name
+                  end
                 end
 
                 if payment_methods_arr.count > 0
@@ -106,7 +110,11 @@
                 payment_methods_arr = []
                 payment_methods = ""
                 mock_booking.payment.payment_transactions.each do |payment_transaction|
-                  payment_methods_arr << payment_transaction.payment_method.name
+                  if !payment_transaction.payment_method_id.nil?
+                    payment_methods_arr << payment_transaction.payment_method.name
+                  else
+                    payment_methods_arr << payment_transaction.company_payment_method.name
+                  end
                 end
 
                 if payment_methods_arr.count > 0
@@ -158,7 +166,11 @@
                 payment_methods_arr = []
                 payment_methods = ""
                 booking.payment.payment_transactions.each do |payment_transaction|
-                  payment_methods_arr << payment_transaction.payment_method.name
+                  if !payment_transaction.payment_method_id.nil?
+                    payment_methods_arr << payment_transaction.payment_method.name
+                  else
+                    payment_methods_arr << payment_transaction.company_payment_method.name
+                  end
                 end
 
                 if payment_methods_arr.count > 0

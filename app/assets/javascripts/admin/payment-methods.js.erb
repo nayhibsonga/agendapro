@@ -68,6 +68,20 @@ function checkBookingPayment(booking_id)
 		success: function(response){
 			if(response[0] == "yes")
 			{
+
+				$.ajax({
+				    url: '/payment_summary',
+				    method: 'get',
+				    data: {payment_id: response[1].id},
+				    error: function(response){
+
+				    },
+				    success: function(response){
+				      $('#bookingPaymentSummary').empty();
+				      $('#bookingPaymentSummary').append(response);
+				    }
+				});
+
 				$("#paymentBookingId").val(booking_id);
 				$("#bookingPaymentEdit").show();
 				$("#bookingPaymentCreate").hide();
