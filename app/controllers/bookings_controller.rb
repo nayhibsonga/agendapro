@@ -1718,7 +1718,7 @@ class BookingsController < ApplicationController
           comment = booking.company_comment
         end
 
-        if !booking.payed_booking.nil? && booking.payed
+        if booking.payed_state
           prepayed = 'Sí'
         else
           prepayed = 'No'
