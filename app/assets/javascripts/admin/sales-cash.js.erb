@@ -437,13 +437,7 @@ function saveSalesCash()
 
 function openSalesCashCloseModal()
 {
-  myAlert.showAlert(
-    '<h3>Cerrar Caja de Ventas.</h3>' +
-    '<p>Al cerrar tu Caja de Ventas se reinician las recaudaciones y movimientos generados, quedando el monto de ventas actual en 0. Esto no borra los registros históricos ocurridos, sólo es una forma de cuadrar tu balance. Al cerrar, además, se generarán reportes que podrás descargar con el detalle del último período.</p>',
-    function(){
-      closeSalesCash();
-    }
-  );
+  $('#salesCashCloseModal').modal('show');
 }
 
 function closeSalesCash()
@@ -544,6 +538,10 @@ $(function() {
   $('#salesCashCloseBtn').on('click', function(){
     openSalesCashCloseModal();
   });
+
+  $('#salesCashCloseBtnSave').on('click', function(){
+    closeSalesCash();
+  })
 
   loadPayments();
 

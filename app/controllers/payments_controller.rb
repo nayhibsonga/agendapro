@@ -322,7 +322,7 @@ class PaymentsController < ApplicationController
       is_booked = true
       session_booking_id = -1
 
-      if !b.session_booking_id.nil?
+      if !b.session_booking_id.nil? && !b.session_booking.nil?
 
         session_booking_id = b.session_booking_id
 
@@ -384,8 +384,21 @@ class PaymentsController < ApplicationController
         client = Client.find(params[:client_id])
       end
         
-      client.first_name = params[:client_first_name]
-      client.last_name = params[:client_last_name]
+      first_name = ""
+      last_name = ""
+      client_name = params[:client_name]
+
+      if params[:client_first_name].blank? || params[:client_last_name].blank?
+        full_name = helper.split_name(client_name)
+        first_name = full_name[:first_name]
+        last_name = full_name[:last_name]
+      else
+        first_name = params[:client_first_name]
+        last_name = params[:client_last_name]
+      end
+
+      client.first_name = first_name
+      client.last_name = last_name
       client.email = params[:client_email]
       client.phone = params[:client_phone]
       client.gender = params[:client_gender]
@@ -1398,7 +1411,27 @@ class PaymentsController < ApplicationController
 
   def get_product_for_payment_or_sale
     
+    json_response = []
+    errors = []
+
+    if params[:location_id].blank?
+      json_response << "error"
+      errors << "No se puede encontrar un resultado sin un id de local."
+      render :json => json_response
+      return
+    elsif params[:product_id].blank?
+      json_response << "error"
+      errors << "No se puede encontrar un resultado sin un id de producto."
+      render :json => json_response
+      return
+    end
+
     location_product = LocationProduct.where(:location_id => params[:location_id], :product_id => params[:product_id]).first
+
+    if location_product.nil?
+      location_product = LocationProduct.create(:location_id => params[:location_id], :product_id => params[:product_id], :stock => 0, :stock_limit => 0)
+    end
+
     product_hash = {
       location_product_id: location_product.id,
       product_id: location_product.product.id,
@@ -1407,7 +1440,11 @@ class PaymentsController < ApplicationController
       price: location_product.product.price,
       internal_price: location_product.product.internal_price
     }
-    render :json => product_hash
+
+    json_response << "ok"
+    json_response << product_hash
+
+    render :json => json_response
 
   end
 
@@ -1429,7 +1466,7 @@ class PaymentsController < ApplicationController
 
     if !params[:internal_sale_id].blank? && params[:internal_sale_id] != "-1"
       internal_sale = InternalSale.find(params[:internal_sale_id])
-      if ! internal_sale.nil?
+      if !internal_sale.nil?
         is_edit = true
         old_location_product = LocationProduct.where(:location_id => internal_sale.location_id, :product_id => internal_sale.product_id).first
         old_quantity = internal_sale.quantity
@@ -1465,7 +1502,7 @@ class PaymentsController < ApplicationController
     location_product = LocationProduct.where(:location_id => params[:location_id], :product_id => params[:product_id]).first
 
     if !location_product.nil?
-      if location_product.stock < params[:quantity].to_i
+      if location_product.stock < params[:quantity].to_i && !is_edit
         @errors << "No hay suficiente stock del producto."
       end
     else
@@ -1500,6 +1537,8 @@ class PaymentsController < ApplicationController
         @errors << internal_sale.errors
       end
     end
+
+    @json_response << @errors
 
     render :json => @json_response
 
@@ -2318,6 +2357,7 @@ class PaymentsController < ApplicationController
     elsif current_user.role_id == Role.find_by_name("Administrador Local").id
       @locations = current_user.locations
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id), active:true)
+      @cashiers = current_user.company.cashiers
       @users = User.where(id: UserLocation.where(location_id: @locations.pluck(:id)).pluck(:user_id))
     elsif current_user.role_id == Role.find_by_name("Recepcionista").id
       @locations = current_user.locations
@@ -2344,7 +2384,7 @@ class PaymentsController < ApplicationController
 
     @status_cancelled_id = Status.find_by_name("Cancelado").id
 
-    bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: service_provider_ids, start: @from.beginning_of_day..@to.end_of_day)
+    bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
 
     mock_bookings = MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
 
@@ -2370,11 +2410,19 @@ class PaymentsController < ApplicationController
 
     @total_amount = @services_amount + @products_amount
 
-    services1 = Service.where(id: Booking.where.not(status_id: @status_cancelled_id).where(service_provider_id: service_provider_ids, start: @from.beginning_of_day..@to.end_of_day).pluck(:service_id))
+    services1 = Service.where(id: Booking.where.not(status_id: @status_cancelled_id).where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).pluck(:service_id))
 
     services2 = Service.where(id: MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).where('service_id is not null').where.not(service_id: services1.pluck(:id)).pluck(:service_id))
 
     @services = services1 + services2
+
+    @internal_sales = InternalSale.where(service_provider_id: service_provider_ids, date: @from.beginning_of_day..@to.end_of_day)
+
+    @internal_sales_amount = 0.0
+
+    @internal_sales.each do |internal_sale|
+      @internal_sales_amount += internal_sale.quantity*(internal_sale.price * (100 - internal_sale.discount) / 100)
+    end
 
     respond_to do |format|
       format.html { render :partial => 'service_providers_report' }
@@ -2432,7 +2480,12 @@ class PaymentsController < ApplicationController
       @time_option = 1
     end
 
-    payment_products = PaymentProduct.where(seller_id: cashier_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+    locations = current_user.locations
+    if current_user.role_id == Role.find_by_name("Administrador General").id
+      location = current_user.company.locations
+    end
+
+    payment_products = PaymentProduct.where(seller_id: cashier_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from..@to, location_id: locations.pluck(:id)).pluck(:id))
 
     @products_amount = 0.0
 
@@ -2462,6 +2515,19 @@ class PaymentsController < ApplicationController
 
     respond_with(@service_providers)
 
+  end
+
+  #
+  # Payment Summary
+  # To be shown on "Ver" and on "Pago" of a booking's modal
+  #
+
+  def summary
+    @payment = Payment.find(params[:payment_id])
+    respond_to do |format|
+      format.html { render :partial => 'summary' }
+      format.json { render :json => @payment }
+    end
   end
 
   private

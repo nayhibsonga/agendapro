@@ -736,19 +736,38 @@ function loadInternalSaleProductPrice(internal_sale)
   {
     return false;
   }
-  $.getJSON('/get_product_for_payment_or_sale/', {product_id: $("#internal_sale_product").val(), location_id: parseInt($('#internal_sale_location').val())}, function (product) {
-    $('#internal_sale_product_stock').val(product.stock);
-    $('#internal_sale_product_stock_span').text("Quedan " + product.stock + " unidades.");
-    $("#internal_sale_price").val(product.internal_price);
 
-    if(internal_sale)
-    {
-      $("#internal_sale_price").val(internal_sale.list_price);
-      $('#internal_sale_discount').val(internal_sale.discount);
-      $('#internal_sale_quantity').val(internal_sale.quantity);
+  $.ajax({
+    url: '/get_product_for_payment_or_sale',
+    method: 'get',
+    data: {product_id: $("#internal_sale_product").val(), location_id: parseInt($('#internal_sale_location').val())},
+    dataType: 'json',
+    error: function(response){
+      alert("Ocurrió un error al obtener el precio del producto.");
+    },
+    success: function(response){
+      if(response[0] == "ok")
+      {
+        var product = response[1];
+        $('#internal_sale_product_stock').val(product.stock);
+        $('#internal_sale_product_stock_span').text("Quedan " + product.stock + " unidades.");
+        $("#internal_sale_price").val(product.internal_price);
+
+        if(internal_sale)
+        {
+          $("#internal_sale_price").val(internal_sale.list_price);
+          $('#internal_sale_discount').val(internal_sale.discount);
+          $('#internal_sale_quantity').val(internal_sale.quantity);
+        }
+      }
+      else
+      {
+        var error = response[1];
+        alert(error);
+      }
     }
-
   });
+
 }
 
 function saveInternalSale()
@@ -798,6 +817,7 @@ function saveInternalSale()
             else
             {
               alert("Ocurrió un error al guardar la venta.");
+              console.log(response[1]);
               $('#internalSaleModal').modal('hide');
             }
           }
@@ -1233,6 +1253,10 @@ function loadPaymentIntro(payment_id) {
   $("#paymentIntroSaveBtn").hide();
   $("#paymentIntroNextBtn").show();
   $("#payment_location").prop("disabled", false);
+  if($("#client_required").val() == "1")
+  {
+    $('.client-option').show();
+  }
   paymentModalState = 'Intro';
 }
 
@@ -1296,11 +1320,31 @@ function loadProductPrice()
   {
     return false;
   }
-  $.getJSON('/get_product_for_payment_or_sale/', {product_id: $("#payment_product").val(), location_id: parseInt($('#payment_location').val())}, function (product) {
-    $('#payment_product_stock').val(product.stock);
-    $('#payment_product_stock_span').text("Quedan " + product.stock + " unidades.");
-    $("#payment_product_price").val(product.price);
+
+  $.ajax({
+    url: '/get_product_for_payment_or_sale',
+    method: 'get',
+    data: {product_id: $("#payment_product").val(), location_id: parseInt($('#payment_location').val())},
+    dataType: 'json',
+    error: function(response){
+      alert("Ocurrió un error al obtener el precio del producto.");
+    },
+    success: function(response){
+      if(response[0] == "ok")
+      {
+        var product = response[1];
+        $('#payment_product_stock').val(product.stock);
+        $('#payment_product_stock_span').text("Quedan " + product.stock + " unidades.");
+        $("#payment_product_price").val(product.price);
+      }
+      else
+      {
+        var error = response[1];
+        alert("Error: " + error);
+      }
+    }
   });
+
 }
 
 function loadProductSellers()
@@ -2473,6 +2517,23 @@ function deletePayment(payment_id)
       }
     });
   }
+}
+
+function openPaymentSummary(payment_id)
+{
+  $.ajax({
+    url: '/payment_summary',
+    method: 'get',
+    data: {payment_id: payment_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#paymentSummaryModalBody').empty();
+      $('#paymentSummaryModalBody').append(response);
+      $('#paymentSummaryModal').modal('show');
+    }
+  });
 }
 
 

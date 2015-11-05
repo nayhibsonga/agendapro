@@ -551,13 +551,13 @@ class LocationsController < ApplicationController
   def location_products
 
     @location = Location.find(params[:id])
-    products = Product.where(id: LocationProduct.where(:location_id => @location.id).where('stock > 0').pluck(:product_id))
+    products = Product.where(id: LocationProduct.where(:location_id => @location.id).pluck(:product_id))
 
     @products = []
 
     products.each do |product|
       product_hash = product.attributes.to_options
-      product_hash[:full_name] = product.name + " " + " " + product.product_brand.name + " " + product.product_display.name
+      product_hash[:full_name] = product.sku + " " + product.name + " " + product.product_brand.name + " " + product.product_display.name
       @products << product_hash
     end
 
@@ -599,13 +599,15 @@ class LocationsController < ApplicationController
     @location = Location.find(params[:id])
 
     if @location.stock_alarm_setting.nil?
-      stock_alarm_setting = StockAlarmSetting.create
-      stock_alarm_setting.location_id = @location.id
+
+      stock_alarm_setting = StockAlarmSetting.create(location_id: @location.id)
+
       stock_setting_email = StockSettingEmail.new
       stock_setting_email.email = @location.email
-      stock_setting_email.stock_alarm_setting = stock_alarm_setting
-      stock_alarm_setting.save
+      stock_setting_email.stock_alarm_setting_id = stock_alarm_setting.id
+      #stock_alarm_setting.save
     end
+
     @stock_alarm_setting = @location.stock_alarm_setting
 
     respond_to do |format|
