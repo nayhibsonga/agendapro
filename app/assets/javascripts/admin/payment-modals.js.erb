@@ -692,6 +692,8 @@ function loadInternalSale(internal_sale)
     var edit_hour = edit_time_array[0];
     var edit_minute = edit_time_array[1];
 
+    $('#internal_sale_location').val(internal_sale.location_id);
+
     $('#internal_sale_id').val(internal_sale.id);
     $('#internal_sale_date').val(edit_date);
     $("#internal_sale_time_4i").val(edit_hour);
@@ -826,6 +828,7 @@ function saveInternalSale()
       }
       else
       {
+        console.log("No es valido.");
         return;
       }
 
