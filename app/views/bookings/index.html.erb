@@ -543,22 +543,23 @@
                   </div>
                 </div>
                 <% end %>
-                <% if Role.where(name: ["Administrador General", "Administrador Local"]).include?(current_user.role) %>
+                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
                   <div class="tab-pane" id="payments-pane">
                     <input type="hidden" id="paymentBookingId" value="" />
                     <div class="row" id="bookingPaymentEdit" style="padding-left: 12px; padding-right: 10px;" hidden>
 
                       <div class="row">
                         <div class="col-xs-12">
-                          <% else %>
+                          <% if current_user.role == Role.find_by_name("Recepcionista") %>
                             <p>Esta reserva ya tiene asociada un pago. Ponte en contacto con el administrador de tu local si necesitas editar o borrar el pago.</p>
+                          <% else %>
+                            <button style="width: 150px; margin-right: 5px;" id="bookingPaymentEditBtn" class="edit-option-btn btn btn-default">
+                              <i class="fa fa-pencil-square-o"></i>Editar pago
+                            </button> 
+                            <button style="width: 150px;" id="bookingPaymentDeleteBtn" class="edit-option-btn btn btn-red">
+                              <i class="fa fa-times"></i>Eliminar pago
+                            </button>
                           <% end %>
-                          <button style="width: 150px; margin-right: 5px;" id="bookingPaymentEditBtn" class="edit-option-btn btn btn-default">
-                            <i class="fa fa-pencil-square-o"></i>Editar pago
-                          </button> 
-                          <button style="width: 150px;" id="bookingPaymentDeleteBtn" class="edit-option-btn btn btn-red">
-                            <i class="fa fa-times"></i>Eliminar pago
-                          </button>
                         </div>
                       </div>
                       <div class="row">
@@ -578,6 +579,7 @@
                       </div>
                     </div>
                   </div>
+                <% end %>
               </div>
             </div>
         </div>
