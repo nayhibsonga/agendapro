@@ -244,6 +244,21 @@
                           <span id="treatment_price"></span>
                         </div>
                       </div>
+                      <div class="form-group has-feedback" id="payed_state_select_div">
+                        <%= f.label :payed_state, "Pagado", class: "col-sm-4 control-label" %>
+                        <div class="col-sm-8">
+                          <select id="booking_payed_state" class="form-control" name="booking[payed_state]">
+                            <option value="0">No</option>
+                            <option value="1">Sí</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group has-feedback" id="payed_state_fixed_div">
+                        <label class="col-sm-4 control-label">Pagado</label>
+                        <div class="col-sm-8" style="padding-top: 7px;">
+                          <span id="payed_state_fixed"></span>
+                        </div>
+                      </div>
                     </div>
                     <div class="col-md-6">
                       <% if @booking.client.nil? then @booking.build_client end %>
@@ -528,18 +543,33 @@
                   </div>
                 </div>
                 <% end %>
-                <% if Role.where(name: ["Administrador General", "Administrador Local"]).include?(current_user.role) %>
+                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
                   <div class="tab-pane" id="payments-pane">
                     <input type="hidden" id="paymentBookingId" value="" />
-                    <div class="row" id="bookingPaymentEdit" hidden>
-                      <div class="col-xs-4">
-                        <button id="bookingPaymentEditBtn" class="edit-option-btn btn btn-default">
-                          <i class="fa fa-pencil-square-o"></i>Editar pago
-                        </button><br />
-                        <button id="bookingPaymentDeleteBtn" class="edit-option-btn btn btn-red">
-                          <i class="fa fa-times"></i>Eliminar pago
-                        </button>
+                    <div class="row" id="bookingPaymentEdit" style="padding-left: 12px; padding-right: 10px;" hidden>
+
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <% if current_user.role == Role.find_by_name("Recepcionista") %>
+                            <p>Esta reserva ya tiene asociada un pago. Ponte en contacto con el administrador de tu local si necesitas editar o borrar el pago.</p>
+                          <% else %>
+                            <button style="width: 150px; margin-right: 5px;" id="bookingPaymentEditBtn" class="edit-option-btn btn btn-default">
+                              <i class="fa fa-pencil-square-o"></i>Editar pago
+                            </button> 
+                            <button style="width: 150px;" id="bookingPaymentDeleteBtn" class="edit-option-btn btn btn-red">
+                              <i class="fa fa-times"></i>Eliminar pago
+                            </button>
+                          <% end %>
+                        </div>
                       </div>
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <div id="bookingPaymentSummary">
+
+                          </div>
+                        </div>
+                      </div>
+
                     </div>
                     <div class="row" id="bookingPaymentCreate" hidden>
                       <div class="col-xs-4">
@@ -549,8 +579,6 @@
                       </div>
                     </div>
                   </div>
-                <% else %>
-                  <p>Esta reserva ya tiene asociada un pago. Ponte en contacto con el administrador de tu local si necesitas editar o borrar el pago.</p>
                 <% end %>
               </div>
             </div>

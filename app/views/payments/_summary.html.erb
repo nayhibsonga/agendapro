@@ -1,33 +1,35 @@
-<div class="row">
+<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
 	<div class="col-md-12">
-		<div>
+		<div style="font-size: 22px; color: #22c488;" margin-bottom: 5px;"">
 			Resumen de pago
 		</div>
 	</div>
 </div>
+
 <div class="row">
 	<div class="col-md-6">
-		<div>
-			<label class="control-label col-md-4">
+		<div class="row">
+			<label class="control-label col-md-5">
 				Fecha
 			</label>
-			<div class="col-md-8">
-				<%= @payment.payment_date.to_s %>
+			<div class="col-md-7">
+				<% date_arr = @payment.payment_date.to_s.split("-") %>
+				<%= date_arr[2] + "/" + date_arr[1] + "/" + date_arr[0] %>
 			</div>
 		</div>
-		<div>
-			<label class="control-label col-md-4">
+		<div class="row">
+			<label class="control-label col-md-5">
 				Cajero
 			</label>
-			<div class="col-md-8">
+			<div class="col-md-7">
 				<%= @payment.cashier.name %>
 			</div>
 		</div>
-		<div>
-			<label class="control-label col-md-4">
+		<div class="row">
+			<label class="control-label col-md-5">
 				Cliente
 			</label>
-			<div class="col-md-8">
+			<div class="col-md-7">
 				<% if @payment.client_id.nil? %>
 					Sin cliente asociado
 				<% else %>
@@ -37,29 +39,241 @@
 		</div>
 	</div>
 	<div class="col-md-6">
-		<div>
-			<label class="control-label col-md-4">
+		<div class="row">
+			<label class="control-label col-md-5">
 				Monto total
 			</label>
-			<div class="col-md-8">
-				<%= @payment.amount.to_s %>
+			<div class="col-md-7">
+				<%= number_to_currency(@payment.amount.to_s, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
 			</div>
 		</div>
-		<div>
-			<label class="control-label col-md-4">
+		<div class="row">
+			<label class="control-label col-md-5">
 				Monto cancelado
 			</label>
-			<div class="col-md-8">
-				<%= @payment.paid_amount.to_s %>
+			<div class="col-md-7">
+				<%= number_to_currency(@payment.paid_amount.to_s, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
 			</div>
 		</div>
-		<div>
-			<label class="control-label col-md-4">
+		<div class="row">
+			<label class="control-label col-md-5">
 				Vuelto
 			</label>
-			<div class="col-md-8">
-				<%= @payment.change_amount.to_s %>
+			<div class="col-md-7">
+				<%= number_to_currency(@payment.change_amount.to_s, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
 			</div>
 		</div>
 	</div>
 </div>
+
+<div class="row" style="margin-top: 15px; margin-bottom: 5px;">
+	<div class="col-md-12">
+		<div style="font-size: 20px; color: #1ba970;">
+			Medios de pago
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+
+		<table class="payment-summary-table">
+			<tr>
+				<th>
+					Medio
+				</th>
+				<th>
+					Monto
+				</th>
+				<th>
+					N° de comprobante
+				</th>
+			</tr>
+			<% @payment.payment_transactions.each do |payment_transaction| %>
+				<tr>
+					<% if !payment_transaction.payment_method_id.nil? %>
+						<td>
+							<%= payment_transaction.payment_method.name %>
+						</td> 
+						<td>
+							<%= number_to_currency(payment_transaction.amount.to_s, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+						</td>
+						<td>
+							<%= payment_transaction.number %>
+						</td>
+					<% else %>
+						<td>
+							<%= payment_transaction.company_payment_method.name %>
+						</td>
+						<td>
+							<%= number_to_currency(payment_transaction.amount.to_s, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+						</td>
+						<td>
+							<%= payment_transaction.number %>
+						</td>
+					<% end %>
+				</tr>
+			<% end %>
+		</table>
+
+	</div>
+</div>
+
+<% @payment.receipts.each do |receipt| %>
+
+	<div class="row" style="margin-top: 15px; margin-bottom: 5px;">
+		<div class="col-md-12">
+			<div style="font-size: 20px; color: #1ba970">
+				Boleta N° <%= receipt.number %>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" style="margin-top: 15px; margin-bottom: 5px;">
+		<div class="col-md-3">
+			<span style="font-size: 20px; color: #505050">Comentarios:</span>
+		</div>
+		<div class="col-md-9">
+			<%= receipt.notes %>
+		</div>
+	</div>
+
+	<% if receipt.payment_products.count > 0 %>
+		<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
+			<div class="col-md-12">
+				<div style="font-size: 20px; color: #505050;">
+					Productos:
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+
+				<table class="payment-summary-table">
+					<tr>
+		              	<th>Sku</th>
+		              	<th>Categoría</th>
+		              	<th>Marca</th>
+		              	<th>Nombre</th>
+		              	<th>Cantidad/Unidad</th>
+		              	<th>Precio</th>
+		              	<th>Cantidad</th>
+	              	</tr>
+
+	              	<% receipt.payment_products.each do |payment_product| %>
+		                <td><%= payment_product.product.sku %></td>
+		                <td><%= payment_product.product.product_category.name %></td>
+		                <td><%= payment_product.product.product_brand.name %></td>
+		                <td><%= payment_product.product.name %></td>
+		                <td><%= payment_product.product.product_display.name %></td>
+		                <td><%= number_to_currency(payment_product.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+		                <td><%= payment_product.quantity %></td>
+	              	<% end %>
+
+	            </table>
+
+			</div>
+		</div>
+
+	<% end %>
+
+
+	<% if receipt.mock_bookings.count > 0 %>
+		<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
+			<div class="col-md-12">
+				<div style="font-size: 20px; color: #505050;">
+					Servicios (sin reserva):
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<table class="payment-summary-table">
+					<tr>
+		              	<th>Servicio</th>
+		              	<th>Prestador</th>
+		              	<th>Precio</th>
+		              	<th></th>
+		              	<th></th>
+		              	<th></th>
+		              	<th></th>
+              		</tr>
+              		<% receipt.mock_bookings.each do |mock_booking| %>
+              			<tr>
+              				<td>
+              					<% if mock_booking.service_id.nil? %>
+              						Sin servicio
+              					<% else %>
+              						<%= mock_booking.service.name %>
+              					<% end %>
+              				</td>
+              				<td>
+              					<% if mock_booking.service_provider_id.nil? %>
+              						Sin prestador
+              					<% else %>
+              						<%= mock_booking.service_provider.public_name %>
+              					<% end %>
+              				</td>
+              				<td>
+              					<%= number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+              				</td>
+              				<td></td>
+              				<td></td>
+              				<td></td>
+              				<td></td>
+              			</tr>
+              		<% end %>
+             	</table>
+			</div>
+		</div>
+
+	<% end %>
+
+	<% if receipt.bookings.count > 0 %>
+		<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
+			<div class="col-md-12">
+				<div style="font-size: 20px; color: #505050;">
+					Reservas:
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<table class="payment-summary-table">
+					<tr>
+						<th>Fecha de reserva</th>
+		              	<th>Servicio</th>
+		              	<th>Prestador</th>
+		              	<th>Precio</th>
+		              	<th></th>
+		              	<th></th>
+		              	<th></th>
+              		</tr>
+              		<% receipt.bookings.each do |booking| %>
+              			<tr>
+              				<td>
+              					<%= I18n.l(booking.start.to_datetime, :format => :short) %>
+              				</td>
+              				<td>
+              					<%= booking.service.name %>
+              				</td>
+              				<td>
+              					<%= booking.service_provider.public_name %>
+              				</td>
+              				<td>
+              					<%= number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+              				</td>
+              				<td></td>
+              				<td></td>
+              				<td></td>
+              			</tr>
+              		<% end %>
+             	</table>
+			</div>
+		</div>
+
+	<% end %>
+<% end %>

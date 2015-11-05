@@ -568,6 +568,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
+        can :index_content, Payment
+
         can :get_booking_for_payment, Booking, :company_id => user.company_id
         can :get_session_booking_for_payment, Booking, :company_id => user.company_id
 
@@ -655,6 +657,7 @@ class Ability
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id
         can :users_report, Payment, :company_id => user.company_id
+        can :service_providers_report, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff").id
         

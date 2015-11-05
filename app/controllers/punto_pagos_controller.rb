@@ -452,6 +452,7 @@ class PuntoPagosController < ApplicationController
 
           booking.status_id = Status.find_by(:name => "Reservado").id
           booking.payed = true
+          booking.payed_state = true
           booking.payed_booking = payed_booking
           if booking.is_session
             booking.discount = (1 - booking.service.sessions_amount*booking.price/booking.service.price).round(2)*100

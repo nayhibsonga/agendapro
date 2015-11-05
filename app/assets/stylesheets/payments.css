@@ -245,3 +245,16 @@ table.servicesTable td{
 .excel_th{
 	text-align: center;
 }
+
+.payment-summary-table{
+	width: 90%;
+}
+
+.payment-summary-table th{
+	padding: 3px;
+	color: #949292;
+}
+
+.payment-summary-table td{
+	padding: 3px;
+}

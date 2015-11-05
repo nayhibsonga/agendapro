@@ -215,7 +215,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 							'Teléfono: ' + event.phone_qtip + '<br/>' +
 							'E-mail: ' + event.email_qtip + '<br/>' +
 							'Comentario: ' + event.comment_qtip + '<br />' +
-							'Pagado en línea: ' + prepayed + '<br />' +
+							'Pagado: ' + prepayed + '<br />' +
 							event.sessions_ratio_qtip
 					   },
 					   position: {
@@ -251,7 +251,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
 							'Teléfono: ' + event.phone_qtip + '<br/>' +
 							'E-mail: ' + event.email_qtip + '<br/>' +
 							'Comentario: ' + event.comment_qtip + '<br />' +
-							'Pagado en línea: ' + prepayed
+							'Pagado: ' + prepayed
 					   },
 					   position: {
 							my: 'bottom center',  // el triángulo sale de abajo al medio
@@ -423,7 +423,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 									   'Teléfono: ' + event.phone_qtip + '<br/>' +
 									   'E-mail: ' + event.email_qtip + '<br/>' +
 									   'Comentario: ' + event.comment_qtip + '<br />' +
-									   'Pagado en línea: ' + prepayed + '<br />' +
+									   'Pagado: ' + prepayed + '<br />' +
 									   event.sessions_ratio_qtip
 						   },
 						   position: {
@@ -459,7 +459,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
 									   'Teléfono: ' + event.phone_qtip + '<br/>' +
 									   'E-mail: ' + event.email_qtip + '<br/>' +
 									   'Comentario: ' + event.comment_qtip + '<br />' +
-									   'Pagado en línea: ' + prepayed
+									   'Pagado: ' + prepayed
 						   },
 						   position: {
 							   my: 'bottom center',  // el triángulo sale de abajo al medio
@@ -569,6 +569,9 @@ function loadProviderEvents(providerId) {
 }
 
 function editBookingModal(eventId) {
+
+	$("#treatment_price_div").hide();
+	$("#treatment_price").text("");
 
 	$("#is_edit_modal").val("1");
 	$("#full_name").attr("disabled", false);
@@ -756,6 +759,34 @@ function editBookingModal(eventId) {
 			* Fill payment options
 			*/
 
+			if(booking.payed_state)
+			{
+				$('#booking_payed_state').val("1");
+				if(booking.payment_id)
+				{
+					$('#payed_state_fixed').text("Sí (Pago asociado)");
+					$('#payed_state_select_div').hide();
+					$('#payed_state_fixed_div').show();
+				}
+				else if(booking.payed_booking_id)
+				{
+					$('#payed_state_fixed').text("Sí (Pago en línea)");
+					$('#payed_state_select_div').hide();
+					$('#payed_state_fixed_div').show();
+				}
+				else
+				{
+					$('#payed_state_select_div').show();
+					$('#payed_state_fixed_div').hide();
+				}
+			}
+			else
+			{
+				$('#booking_payed_state').val("0");
+				$('#payed_state_select_div').show();
+				$('#payed_state_fixed_div').hide();
+			}
+
 			checkBookingPayment(booking.id);
 
 		});
@@ -770,6 +801,9 @@ function createBookingModal(date, provider_id) {
 	$("#sessions-row").hide();
 	$("#is_edit_modal").val("0");
 	$('#booking_service_id').empty();
+	$("#treatment_price_div").hide();
+	$("#treatment_price").text("");
+
 	$.getJSON('/local_providers', {location: localId}, function (providersArray) {
 		if (providersArray.length > 0) {
 			if (date != 0) {
@@ -991,7 +1025,8 @@ function jsonBooking() {
 		"send_mail": $('#booking_send_mail').prop('checked'),
 		"provider_lock": $('#booking_provider_lock').prop('checked'),
 		"staff_code": $('#booking_staff_code').val(),
-		"deal_code": $('#booking_deal_code').val()
+		"deal_code": $('#booking_deal_code').val(),
+		"payed_state": $('#booking_payed_state').val()
 	};
 	if($("#has_sessions").val() == "1")
 	{
