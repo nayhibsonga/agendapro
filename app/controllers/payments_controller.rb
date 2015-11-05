@@ -555,6 +555,7 @@ class PaymentsController < ApplicationController
           booking.discount = past_booking[:discount]
           booking.list_price = past_booking[:list_price].to_f
           booking.price = (past_booking[:list_price].to_f*(100-booking.discount)/100).round(1)
+          booking.payed_state = true
 
           non_discount_total += past_booking[:list_price]
           discount_total += booking.price
@@ -737,6 +738,9 @@ class PaymentsController < ApplicationController
     old_bookings.each do |booking|
       booking.receipt_id = nil
       booking.payment_id = nil
+      if booking.payed_booking_id.nil?
+        booking.payed_state = false
+      end
       booking.save
     end
 
@@ -862,6 +866,7 @@ class PaymentsController < ApplicationController
           booking.discount = past_booking[:discount]
           booking.list_price = past_booking[:list_price].to_f
           booking.price = (past_booking[:list_price].to_f*(100-booking.discount)/100).round(1)
+          booking.payed_state = true
 
           non_discount_total += past_booking[:list_price]
           discount_total += booking.price
@@ -1519,11 +1524,18 @@ class PaymentsController < ApplicationController
       if internal_sale.save
 
         if is_edit && !old_location_product.nil?
-          old_location_product.stock += old_quantity
-          old_location_product.save
+          logger.debug "Entra a old_location"       
+          if old_location_product.id == location_product.id
+            location_product.stock = location_product.stock - internal_sale.quantity + old_quantity
+          else
+            old_location_product.stock += old_quantity
+            old_location_product.save
+            location_product.stock = location_product.stock - internal_sale.quantity
+          end
+        else
+          location_product.stock = location_product.stock - internal_sale.quantity
         end
 
-        location_product.stock = location_product.stock - internal_sale.quantity
         if location_product.save
           @json_response[0] = "ok"
           @json_response[1] = internal_sale

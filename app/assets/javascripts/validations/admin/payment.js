@@ -168,9 +168,6 @@ $(function() {
 			error.appendTo(element.next());
 		},
 		rules: {
-			'internal_sale_date': {
-				required: true
-			},
 			'internal_sale_quantity': {
 				required: true,
 				number: true,

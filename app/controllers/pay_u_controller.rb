@@ -425,6 +425,7 @@ class PayUController < ApplicationController
         Booking.where(:trx_id => confirmation_params[:reference_sale]).each do |booking|
           booking.status_id = Status.find_by(:name => "Pagado").id
           booking.payed = true
+          booking.payed_state = true
           booking.payed_booking = payed_booking
           booking.save
           bookings << booking
