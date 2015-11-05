@@ -1681,7 +1681,12 @@ class BookingsController < ApplicationController
         event = Hash.new
         booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
         booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
-        originClass += providerLock + statusIcon[booking.status_id]
+
+        payedClass = ''
+        if booking.payed_state
+          payedClass = '-payed'
+        end
+        originClass += providerLock + payedClass + statusIcon[booking.status_id]
 
         title = ''
         qtip = ''

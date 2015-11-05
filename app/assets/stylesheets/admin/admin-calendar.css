@@ -42,6 +42,26 @@
 .completed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
   content:"\f046";
 }
+
+.origin-web-lock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f0ac   \f023";
+}
+.origin-web-unlock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f0ac   \f09c";
+}
+.origin-manual-lock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f007   \f023";
+}
+.origin-manual-unlock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f007   \f09c";
+}
+.confirmed-payed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
+  content:"\f00c";
+}
+.completed-payed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
+  content:"\f046";
+}
+
 .noshow > .fc-event-inner > .fc-event-head > .fc-event-time:after {
   content:"\f00d";
 }
