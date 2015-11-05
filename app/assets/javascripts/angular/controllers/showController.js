@@ -22,7 +22,7 @@
         vm.schedule = activateScheduling;
         vm.scheduled = {};
         vm.serviceDetail = {};
-        vm.servicesList = [];
+        vm.servicesList = []; // Reservation serviced added here
         vm.showComments = false; // API TOGGLING
         vm.total = { price: 0, duration: 0 };
         vm.sortableOptions = { handle: '.handle', 'ui-floating': true, cursor: 'move' };
@@ -30,6 +30,27 @@
         vm.removeService = removeService;
         vm.map = {};
         vm.categories = [];
+
+        vm.available = {
+            'Mañana': [
+                {id: '1', from: '09:30', to: '10:30'},
+                {id: '2', from: '10:30', to: '11:30'},
+                {id: '3', from: '11:30', to: '12:30'}
+                ],
+            'Tarde': [
+                {id: '4', from: '13:30', to: '14:30'},
+                {id: '5', from: '14:30', to: '15:30'},
+                {id: '6', from: '15:30', to: '16:30'},
+                {id: '7', from: '16:30', to: '17:30'},
+                {id: '8', from: '17:30', to: '18:30'},
+                {id: '9', from: '18:30', to: '19:30'},
+                {id: '10', from: '19:30', to: '19:40'},
+                {id: '11', from: '19:40', to: '20:00'}
+                ],
+            'Noche': []
+        }
+
+        vm.sections = Object.keys(vm.available);
 
         AgendaProApi.show($routeParams.id).then(function(data){
             vm.company = data;
@@ -105,6 +126,7 @@
 
         function activateScheduling() {
             $('#schedule').modal();
+            showCalendar();
             runSlider();
         }
 
@@ -169,6 +191,30 @@
                 }
             };
             return mapSettings;
+        }
+
+        function showCalendar() {
+            $( "#datepicker" ).datepicker({
+              inline: true,
+              showOtherMonths: true,
+              monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+              dayNamesMin: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+              firstDay: 1,
+              prevText: "",
+              nextText: "",
+              dateFormat: "dd-mm-yy",
+              onSelect: function(date) {
+                console.log("onSelect", date);
+              },
+              beforeShowDay: function(date) {
+                var array = ["03-11-2015","13-11-2015","23-11-2015"];
+                if( $.inArray( $.datepicker.formatDate('dd-mm-yy', date), array) > -1 ) {
+                    return [true,"deal-day",''];
+                } else {
+                    return [true,'',''];
+                }
+              }
+            });
         }
 
     }

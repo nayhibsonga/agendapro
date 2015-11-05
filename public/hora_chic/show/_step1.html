@@ -1,131 +1,59 @@
-<div class="container">
+<div id="step1" class="no-select">
   <div class="row">
-    <div class="col-md-4">
+
+    <div id="calendar" class="col-md-4">
       <div id="datepicker"></div>
+
+      <div class="legend">
+        <span class="date-square"></span>
+        Día con promociones disponibles
+      </div>
     </div>
-    <div class="col-md-4">
-      DATES
+
+    <div id="hours" class="col-md-5">
+      <div class="row" ng-repeat="section in sc.sections">
+        <div class="col-xs-12 text-center">
+          {{ section }}
+        </div>
+
+        <div class="col-md-4 hour-container" ng-repeat="date in sc.available[section]">
+          <div class="available">
+            {{ date.from }} - {{ date.to }}
+          </div>
+        </div>
+
+        <div class="col-xs-12 text-center empty-hours" style="" ng-show="sc.available[section].length === 0">
+          <span>*No hay horarios disponibles...</span>
+        </div>
+
+      </div>
     </div>
-    <div class="col-md-4">
-      RESERVATION
+
+    <div id="detail-summary" class="col-md-3">
+      <div class="detail-container">
+        <div>
+          Detalle de Reserva
+        </div>
+
+        <div class="reservation-detail" ng-repeat="service in sc.servicesList">
+          <div>
+            {{ service.name }}
+          </div>
+
+          <div>
+            <span>® XX:XX - XX-XX</span>
+          </div>
+
+          <div>
+            ∑
+            <span class="discount">$28.000</span>
+            <span class="price"> {{ service.price | currency | clp }} </span>
+            <span>(50% dcto)</span>
+          </div>
+        </div>
+
+      </div>
     </div>
+
   </div>
 </div>
-
-<script>
-$( "#datepicker" ).datepicker({
-  inline: true,
-  showOtherMonths: true,
-  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-  dayNamesMin: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
-  firstDay: 1,
-  prevText: "",
-  nextText: "",
-  dateFormat: "dd-mm-yy",
-  onSelect: function(date) {
-    console.log("onSelect", date);
-  },
-  beforeShowDay: function(date) {
-    var array = ["03-11-2015","13-11-2015","23-11-2015"];
-    if($.inArray($.datepicker.formatDate('dd-mm-yy', date ), array) > -1) {
-        return [true,"deal-day",''];
-    } else {
-        return [true,'',''];
-    }
-  }
-});
-
-</script>
-
-
-<style>
-
-  #datepicker {
-    width: 280px;
-    text-align: center;
-    margin: auto;
-  }
-
-  .ui-datepicker-header {
-    padding: 0 5px;
-    margin-bottom: 10px;
-  }
-
-  .ui-datepicker-title {
-    border-bottom: 1px solid black;
-    padding: 5px;
-    font-size: 1.2em;
-  }
-
-  th {
-    font-weight: 400;
-    padding: 5px;
-  }
-
-  td {
-    padding: 5px;
-  }
-
-  .ui-datepicker-unselectable {
-    color: #ccc;
-  }
-
-  .ui-state-default {
-      padding: 0;
-      border: 1px solid black;
-      width: 30px;
-      display: block;
-      height: 30px;
-      text-align: center;
-      line-height: 28px;
-  }
-
-  .ui-datepicker-unselectable > .ui-state-default {
-    border: 1px solid #ccc;
-  }
-
-  .ui-datepicker-prev {
-    float: left;
-    font-size: 25px;
-    color: #ccc;
-    cursor: pointer;
-  }
-
-  .ui-datepicker-next {
-    float: right;
-    font-size: 25px;
-    color: #ccc;
-    cursor: pointer;
-  }
-
-  .ui-datepicker-prev:before {
-    content: "\f104";
-    font-family: 'FontAwesome';
-  }
-
-  .ui-datepicker-next:before {
-    content: "\f105";
-    font-family: 'FontAwesome';
-  }
-
-  .deal-day:before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    background-color: #F26062;
-    position: absolute;
-    margin-left: 6px;
-    margin-top: 1px;
-  }
-
-  .deal-day:after {
-    content: '';
-    width: 11px;
-    height: 6px;
-    background-color: white;
-    position: absolute;
-    margin-top: -26px;
-    margin-left: 3px;
-    transform: rotate(45deg);
-  }
-</style>
