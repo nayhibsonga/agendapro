@@ -44,22 +44,22 @@
 }
 
 .origin-web-lock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
-  content:"\f0ac   \f023";
+  content:"\f155   \f00c      \f0ac   \f023";
 }
 .origin-web-unlock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
-  content:"\f0ac   \f09c";
+  content:"\f155   \f00c      \f0ac   \f09c";
 }
 .origin-manual-lock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
-  content:"\f007   \f023";
+  content:"\f155   \f00c      \f007   \f023";
 }
 .origin-manual-unlock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
-  content:"\f007   \f09c";
+  content:"\f155   \f00c      \f007   \f09c";
 }
 .confirmed-payed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
-  content:"\f00c";
+  content:"\f155   \f00c      \f00c";
 }
 .completed-payed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
-  content:"\f046";
+  content:"\f155   \f00c      \f046";
 }
 
 .noshow > .fc-event-inner > .fc-event-head > .fc-event-time:after {
