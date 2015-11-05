@@ -2373,6 +2373,7 @@ class PaymentsController < ApplicationController
       @users = User.where(id: UserLocation.where(location_id: @locations.pluck(:id)).pluck(:user_id))
     elsif current_user.role_id == Role.find_by_name("Recepcionista").id
       @locations = current_user.locations
+      @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id), active:true)
       @users = User.where(id: current_user.id)
     elsif current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
       @service_providers = current_user.service_providers
