@@ -464,6 +464,7 @@
     get '/service_providers_report_file', :to => 'payments#service_providers_report_file'
 
     get '/get_treatment_price', :to => 'bookings#get_treatment_price'
+    get '/payment_summary', :to => 'payments#summary'
 
   end
 

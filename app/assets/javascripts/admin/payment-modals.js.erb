@@ -2519,6 +2519,23 @@ function deletePayment(payment_id)
   }
 }
 
+function openPaymentSummary(payment_id)
+{
+  $.ajax({
+    url: '/payment_summary',
+    method: 'get',
+    data: {payment_id: payment_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#paymentSummaryModalBody').empty();
+      $('#paymentSummaryModalBody').append(response);
+      $('#paymentSummaryModal').modal('show');
+    }
+  });
+}
+
 
 /*
 * New payment methods end

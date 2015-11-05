@@ -1,0 +1,65 @@
+<div class="row">
+	<div class="col-md-12">
+		<div>
+			Resumen de pago
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<div>
+			<label class="control-label col-md-4">
+				Fecha
+			</label>
+			<div class="col-md-8">
+				<%= @payment.payment_date.to_s %>
+			</div>
+		</div>
+		<div>
+			<label class="control-label col-md-4">
+				Cajero
+			</label>
+			<div class="col-md-8">
+				<%= @payment.cashier.name %>
+			</div>
+		</div>
+		<div>
+			<label class="control-label col-md-4">
+				Cliente
+			</label>
+			<div class="col-md-8">
+				<% if @payment.client_id.nil? %>
+					Sin cliente asociado
+				<% else %>
+					<%= @payment.client.first_name + ' ' + @payment.client.last_name %>
+				<% end %>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div>
+			<label class="control-label col-md-4">
+				Monto total
+			</label>
+			<div class="col-md-8">
+				<%= @payment.amount.to_s %>
+			</div>
+		</div>
+		<div>
+			<label class="control-label col-md-4">
+				Monto cancelado
+			</label>
+			<div class="col-md-8">
+				<%= @payment.paid_amount.to_s %>
+			</div>
+		</div>
+		<div>
+			<label class="control-label col-md-4">
+				Vuelto
+			</label>
+			<div class="col-md-8">
+				<%= @payment.change_amount.to_s %>
+			</div>
+		</div>
+	</div>
+</div>
