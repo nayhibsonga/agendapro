@@ -30,33 +30,36 @@
         vm.removeService = removeService;
         vm.map = {};
         vm.categories = [];
+        vm.mobileSummary = mobileSummary;
 
-        vm.available = {
-            'Mañana': [
-                {id: '1', from: '09:30', to: '10:30'},
-                {id: '2', from: '10:30', to: '11:30'},
-                {id: '3', from: '11:30', to: '12:30'}
-                ],
-            'Tarde': [
-                {id: '4', from: '13:30', to: '14:30'},
-                {id: '5', from: '14:30', to: '15:30'},
-                {id: '6', from: '15:30', to: '16:30'},
-                {id: '7', from: '16:30', to: '17:30'},
-                {id: '8', from: '17:30', to: '18:30'},
-                {id: '9', from: '18:30', to: '19:30'},
-                {id: '10', from: '19:30', to: '19:40'},
-                {id: '11', from: '19:40', to: '20:00'}
-                ],
-            'Noche': []
-        }
+        // vm.available = {
+        //     'Mañana': [
+        //         {id: '1', from: '09:30', to: '10:30'},
+        //         {id: '2', from: '10:30', to: '11:30'},
+        //         {id: '3', from: '11:30', to: '12:30'}
+        //         ],
+        //     'Tarde': [
+        //         {id: '4', from: '13:30', to: '14:30'},
+        //         {id: '5', from: '14:30', to: '15:30'},
+        //         {id: '6', from: '15:30', to: '16:30'},
+        //         {id: '7', from: '16:30', to: '17:30'},
+        //         {id: '8', from: '17:30', to: '18:30'},
+        //         {id: '9', from: '18:30', to: '19:30'},
+        //         {id: '10', from: '19:30', to: '19:40'},
+        //         {id: '11', from: '19:40', to: '20:00'}
+        //         ],
+        //     'Noche': []
+        // }
 
-        vm.sections = Object.keys(vm.available);
+        vm.availableHours = {};
+        vm.sections = [];
 
         AgendaProApi.show($routeParams.id).then(function(data){
             vm.company = data;
             vm.categories = vm.company.categorized_services;
             vm.map = getCompanyMap();
             vm.showComments = vm.company.show_comments;
+            showCalendar();
         });
 
         // Main watcher for Steps
@@ -65,6 +68,19 @@
             }, function() {
                 runSlider();
             });
+
+        $scope.$watch(function() {
+            return vm.availableHours;
+        }, function() {
+            vm.sections = Object.keys(vm.availableHours).slice(0,2);
+        })
+
+        // $scope.$on('$includeContentLoaded', function (e, tmpl) {
+        //     var step1 = vm.tmpl.step1;
+        //     if( tmpl === step1 ) {
+        //         showCalendar();
+        //     }
+        // });
 
         function selectService(category, service) {
             vm.selectedCategory = category;
@@ -126,8 +142,15 @@
 
         function activateScheduling() {
             $('#schedule').modal();
-            showCalendar();
+            getAvailableHours();
             runSlider();
+        }
+
+        function getAvailableHours() {
+            AgendaProApi.weeklyHours($routeParams.id, vm.servicesList).then(function(response) {
+                vm.availableHours = response;
+                console.log(vm.availableHours);
+            });
         }
 
         function calculateTotal() {
@@ -194,9 +217,9 @@
         }
 
         function showCalendar() {
-            $( "#datepicker" ).datepicker({
+            $("#datepicker").datepicker({
               inline: true,
-              showOtherMonths: true,
+              showOtherMonths: false,
               monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
               dayNamesMin: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
               firstDay: 1,
@@ -207,13 +230,55 @@
                 console.log("onSelect", date);
               },
               beforeShowDay: function(date) {
-                var array = ["03-11-2015","13-11-2015","23-11-2015"];
-                if( $.inArray( $.datepicker.formatDate('dd-mm-yy', date), array) > -1 ) {
-                    return [true,"deal-day",''];
-                } else {
-                    return [true,'',''];
+                var dateFormatted = $.datepicker.formatDate('dd-mm-yy', date),
+                    dayName = $.datepicker.formatDate('DD', date),
+                    mappedDays = { 'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles', 'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado', 'Sunday': 'Domingo' },
+                    klass = '',
+                    show = false;
+
+                if ( localOpensThisDay() ) {
+                    if ( isDealDay() ) { klass += 'deal-day' }
+                    show = true;
+                }
+
+                return [show, klass, ''];
+
+                function isDealDay() {
+                    var dealDays = ["03-11-2015","13-11-2015","23-11-2015"];
+                    return $.inArray( dateFormatted, dealDays ) > -1;
+                }
+
+                function localOpensThisDay() {
+                    var openedDays = vm.company.location_times,
+                        days = [];
+                    for (var i = 0; i < openedDays.length; i++) {
+                        days.push(openedDays[i].long_day);
+                    };
+
+                    return $.inArray( mappedDays[dayName], days ) > -1;
                 }
               }
+            });
+        }
+
+        function mobileSummary() {
+            var btn = $('#summary-button'),
+                content = $('#summary-detail-xs'),
+                contentHeight = content.height(),
+                contentAutoHeight = content.css('height', 'auto').height();
+
+            if( btn.hasClass('pressed') ) {
+                contentAutoHeight = 0;
+            }
+
+            btn.toggleClass('pressed');
+
+            content.height(contentHeight).animate({
+                height: contentAutoHeight
+            }, 400, function() {
+                if( btn.hasClass('pressed') ) {
+                    content.css('height', 'auto');
+                }
             });
         }
 

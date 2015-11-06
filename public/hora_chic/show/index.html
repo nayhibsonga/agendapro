@@ -77,9 +77,9 @@
 
       </div>
 
-      <div id="summary">
+      <div id="summary-md">
 
-        <button class="btn btn-down hidden-xs hidden-sm btn-lg btn-hora-chic" ng-click="sc.schedule();">
+        <button class="btn btn-down btn-lg btn-hora-chic" ng-click="sc.schedule();">
           Agendar
         </button>
 
@@ -90,10 +90,33 @@
         <div class="text-center total" ng-hide="sc.total.price === 0">
           <p>Total: <span class="price">{{ sc.total.price | currency | clp }}</span> <span class="separator">|</span> <span>{{ sc.total.duration | inHours }}</span></p>
         </div>
-
       </div>
     </div>
     <!-- END SIDE CONTENT -->
+
+    <div id="summary-xs" class="hidden-md hidden-lg" style="height: auto; width: 100%; position: fixed; bottom: 0; right: 0; color: white;">
+      <div id="summary-button" class="small-button" ng-click="sc.mobileSummary()" >
+        <span style="font-size: 18px;">{{ sc.servicesList.length }} <i class="fa fa-calendar"></i></span>
+      </div>
+      <div id="summary-detail-xs">
+        <div ng-repeat="selected in sc.servicesList track by $index">
+          <div style="display: inline-block; width: 65%; text-align: right;">
+            <div class="detail-name">
+              {{ selected.name }}
+            </div>
+            <div class="detail-time-price">
+              <span>{{ selected.duration | inHours }}</span>
+              <span>{{ selected.price | currency | clp }} </span>
+            </div>
+          </div>
+
+          <div style="display: inline-block; line-height: 40px; height: 40px; vertical-align: top; padding: 0 10px;">
+            <i class="fa fa-pencil" style="font-size: 25px; padding: 0 15px; cursor: pointer;"></i>
+            <i class="fa fa-trash-o" ng-click="sc.removeService($index);" style="font-size: 25px; padding: 0 15px; cursor: pointer;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 
@@ -103,6 +126,52 @@
 
 
 <style>
+
+  #summary-button {
+    border-radius: 100%;
+    background-color: #F26062;
+    height: 65px;
+    width: 65px;
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    text-align: center;
+    padding-top: 20px;
+    clear: both;
+    transition: margin-bottom 0.6s ease;
+  }
+
+  #summary-button:active {
+    background-color: #fa878b;
+  }
+
+  #summary-button.pressed {
+    margin-bottom: -5px;
+  }
+
+  #summary-detail-xs {
+    width: 100%;
+    height: 0;
+    background-color: rgb(242, 96, 98);
+    bottom: 0;
+    clear: both;
+    float: left;
+    transition: all 0.4s ease;
+  }
+
+  .active {
+    height: auto !important;
+  }
+
+  #summary-detail-xs .detail-time-price{
+    padding: 0 10px;
+  }
+
+  #summary-detail-xs > div {
+    padding: 20px 10px;
+  }
+
   .category .service-detail:hover{
     border: 2px solid #F26062;
     margin-bottom: 0 !important; /* Remove important in stylesheet */
@@ -138,6 +207,5 @@
   .added-service.ng-move.added-service.ng-move-active {
     opacity:1;
   }
-
 
 </style>

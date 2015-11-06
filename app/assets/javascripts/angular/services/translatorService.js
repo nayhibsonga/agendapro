@@ -85,6 +85,20 @@
               email: 'Email',
               password: 'Contraseña'
             }
+          },
+          step1: {
+            legend: {
+              deals: 'Día con promociones disponibles'
+            },
+            section: {
+              morning_hours: 'Mañana',
+              afternoon_hours: 'Tarde',
+              night_hours: 'Noche',
+              empty_hours: '*No hay horarios disponibles...'
+            },
+            detail: {
+              appointment: 'Detalle de Reserva'
+            }
           }
         }
       }

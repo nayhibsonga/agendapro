@@ -20,7 +20,7 @@
             {{ service.description || 'No hay descripción disponible'}}
           </p>
 
-          <div id="service-{{ service.id }}-options" style="display:none; position: absolute;width: 100%;bottom: 0;background-color: #F26062;color: white;left: 0;height: 0;text-align: center;">
+          <div id="service-{{ service.id }}-options" class="add-service-container" style="display:none; position: absolute;width: 100%;bottom: 0;background-color: #F26062;color: white;left: 0;height: 0;text-align: center;">
             <div style="height: 100%; display: table;">
               <p style="display: table-cell; vertical-align: middle; text-align: center; width: 100%;" ng-click="sc.addService()">
                 <span class="add-service" style="margin-right: 10px; color:white;">+ Agregar</span>
@@ -36,3 +36,9 @@
       </div>
   </div>
 </section>
+
+<style>
+  .add-service-container:hover {
+    background-color: #fa878b;
+  }
+</style>

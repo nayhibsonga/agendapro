@@ -16,7 +16,8 @@
         var service = {
             deals_preview: deals_preview,
             search: search,
-            show: show
+            show: show,
+            weeklyHours: weeklyHours
         }
 
         var ApiCalls = { get: get, post: post }
@@ -37,6 +38,30 @@
 
         function show(id) {
             var url = '/locations/'.concat(id);
+            return ApiCalls.get(url);
+        }
+
+        function weeklyHours(local, services) {
+            // i.e ?date=yyyy-mm-dd&local=1&serviceStaff=[{"service":serviceID,"provider": providerID}]
+            var params = {},
+                today = new Date(),
+                servicesStaff = [];
+
+            params.date =  today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + (today.getDay() + 1);
+            params.local = local;
+
+            for (var i = 0; i < services.length; i++) {
+                servicesStaff.push({
+                    'service': services[i].id.toString(),
+                    'provider': (services[i].providerAssigned || 0).toString()
+                });
+            };
+
+            params.serviceStaff = JSON.stringify(servicesStaff);
+
+            // var url = '/service_providers/available_hours?'.concat($.param(params));
+            var url = '/service_providers/available_hours?date=2015-11-26&local=1&serviceStaff=[{"service":"1","provider":"1"}]';
+
             return ApiCalls.get(url);
         }
 
