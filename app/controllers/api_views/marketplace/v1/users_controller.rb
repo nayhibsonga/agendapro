@@ -128,6 +128,14 @@ module ApiViews
 	      def searches
 	      end
 
+	      def oauth_login_link
+	      	if params[:device] == 'facebook'
+	      		render json: {link: social_login_url('facebook_marketplace') }
+	      	elsif params[:device] == 'google'
+	      		render json: {link: social_login_url('google_oauth2_marketplace') }
+	      	end
+	      end
+
 	      private
 	      
 	  	  def check_login_params

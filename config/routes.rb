@@ -554,6 +554,7 @@
         get 'users/favorites', to: 'users#favorites'
         # get 'users/searches', to: 'users#searches'
         post 'users/oauth', to: 'users#oauth'
+        get 'users/oauth_login_link', to: 'users#oauth_login_link'
 
       end
     end
