@@ -226,6 +226,9 @@
               prevText: "",
               nextText: "",
               dateFormat: "dd-mm-yy",
+              hideIfNoPrevNext: true,
+              minDate: "0m",
+              maxDate: "+6m",
               onSelect: function(date) {
                 console.log("onSelect", date);
               },
