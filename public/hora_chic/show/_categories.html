@@ -1,4 +1,4 @@
-<section ng-repeat="category in sc.categories">
+<section class="categories" ng-repeat="category in sc.categories">
 
   <button class="btn btn-service" type="button" data-toggle="collapse" data-target="#category-{{ category.id }}" aria-expanded="false" aria-controls="category-{{ category.id }}">
     {{ category.category }}
@@ -13,7 +13,7 @@
             <strong>{{ service.name }}</strong>
             <div class="pull-right" style="margin-bottom: 10px;">
               <span class="time-detailed" style="color: #A3A0A1; font-size: 0.9em"><i class="icon ion-ios-clock-outline"></i> {{ service.duration | inHours }}</span>
-              &nbsp;&nbsp;{{ service.price | currency | clp  }} <span>$</span>
+              &nbsp;&nbsp;{{ service.price | currency | clp  }} <div class="currency-symbol"></div>
             </div>
           </div>
           <p style="clear: both; text-align: justify;">

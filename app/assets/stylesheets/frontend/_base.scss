@@ -74,6 +74,13 @@ a{
   @include no-select;
 }
 
+.currency-symbol {
+  @include currency-symbol;
+}
+
+
+// Base Styles made for XS Breakpoint to Up
+
 #login {
   @include roboto-font(14px, normal);
   @include font-smoothing;
@@ -83,8 +90,6 @@ a{
     @include breakpoint(0, 470px) { width: 100%; }
   }
 }
-
-// Base Styles made for XS Breakpoint to Up
 
 header {
   $header-height: 75px;
@@ -588,6 +593,12 @@ footer {
         text-align: left;
         @include border-radius(0);
       }
+    }
+  }
+
+  .categories {
+    .currency-symbol {
+      @include currency-symbol(sm);
     }
   }
 }

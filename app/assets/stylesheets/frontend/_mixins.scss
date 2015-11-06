@@ -119,6 +119,30 @@
   }
 }
 
+@mixin currency-symbol($size: default) {
+  background: url('#{$image-base}/currency-symbol.png') no-repeat center;
+  display: inline-block;
+  @if $size == default {
+    height: 47px;
+    width: 47px;
+  }
+  @else if $size == sm {
+    height: 18px;
+    width: 18px;
+    background-size: 18px;
+    vertical-align: bottom;
+  }
+  @else if $size == md {
+    height: 118px;
+    width: 410px;
+  }
+  @else if $size == lg {
+    height: 189px;
+    width: 627px;
+  }
+  @content;
+}
+
 @mixin border-radius($radius) {
   -webkit-border-radius: $radius;
   border-radius: $radius;
