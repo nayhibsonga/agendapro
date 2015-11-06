@@ -22,7 +22,7 @@
         vm.schedule = activateScheduling;
         vm.scheduled = {};
         vm.serviceDetail = {};
-        vm.servicesList = [];
+        vm.servicesList = []; // Reservation serviced added here
         vm.showComments = false; // API TOGGLING
         vm.total = { price: 0, duration: 0 };
         vm.sortableOptions = { handle: '.handle', 'ui-floating': true, cursor: 'move' };
@@ -31,18 +31,26 @@
         vm.map = {};
         vm.categories = [];
 
-        // vm.categories = [
-        //     {id: 1, name: 'Corte de Pelo', services: [
-        //         {id: 1, name: 'Decoloración Completa pelo corto mediano y largo', price: 15900, duration: 90, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 2, name: 'Manuel Perez'},{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'},{id: 6, name: 'Christian Moreno'}]},
-        //         {id: 2, name: 'Decoloración', price: 9900, duration: 60, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad incidunt alias modi rerum totam, aspernatur accusantium doloremque. Ab reprehenderit tenetur, voluptatibus est, ipsam veritatis, fugiat neque nemo quis tempore quidem.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 2, name: 'Manuel Perez'},{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'},{id: 6, name: 'Christian Moreno'}]}
-        //     ]},
-        //     {id: 2, name: 'Manicure', services: [
-        //         {id: 3, name: 'Manicure Express', price: 7000, duration: 90, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae.', providers: [{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'},{id: 6, name: 'Christian Moreno'}]},
-        //         {id: 4, name: 'Manicure SPA', price: 10900, duration: 100, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 2, name: 'Manuel Perez'},{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 6, name: 'Christian Moreno'}]},
-        //         {id: 5, name: 'Uñas Acrilicas Francesa', price: 35000, duration: 90, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae.', providers: [{id: 3, name: 'Jesus De Nazareth'},{id: 4, name: 'Celine Dion'},{id: 5, name: 'Antonio Banderas'}]},
-        //         {id: 6, name: 'Cambio de esmalte', price: 6000, duration: 60, description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto consequatur perferendis odio quis natus rerum quod, laboriosam minus modi nostrum totam iure ipsam mollitia tenetur, doloribus minima, nihil autem! Recusandae. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad incidunt alias modi rerum totam, aspernatur accusantium doloremque. Ab reprehenderit tenetur, voluptatibus est, ipsam veritatis, fugiat neque nemo quis tempore quidem.', providers: [{id: 1, name: 'Rodrigo Ramirez'},{id: 6, name: 'Christian Moreno'}]}
-        //     ]}
-        // ];
+        vm.available = {
+            'Mañana': [
+                {id: '1', from: '09:30', to: '10:30'},
+                {id: '2', from: '10:30', to: '11:30'},
+                {id: '3', from: '11:30', to: '12:30'}
+                ],
+            'Tarde': [
+                {id: '4', from: '13:30', to: '14:30'},
+                {id: '5', from: '14:30', to: '15:30'},
+                {id: '6', from: '15:30', to: '16:30'},
+                {id: '7', from: '16:30', to: '17:30'},
+                {id: '8', from: '17:30', to: '18:30'},
+                {id: '9', from: '18:30', to: '19:30'},
+                {id: '10', from: '19:30', to: '19:40'},
+                {id: '11', from: '19:40', to: '20:00'}
+                ],
+            'Noche': []
+        }
+
+        vm.sections = Object.keys(vm.available);
 
         AgendaProApi.show($routeParams.id).then(function(data){
             vm.company = data;
@@ -81,7 +89,7 @@
                 closeButton = options.find('.close'),
                 addButton = options.find('.add-service'),
                 addContainer = addButton.closest('div'),
-                customHeight = '30%',
+                customHeight = '45px',
                 speed = 100;
 
             function bindShow() {
@@ -118,6 +126,7 @@
 
         function activateScheduling() {
             $('#schedule').modal();
+            showCalendar();
             runSlider();
         }
 
@@ -182,6 +191,30 @@
                 }
             };
             return mapSettings;
+        }
+
+        function showCalendar() {
+            $( "#datepicker" ).datepicker({
+              inline: true,
+              showOtherMonths: true,
+              monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+              dayNamesMin: [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ],
+              firstDay: 1,
+              prevText: "",
+              nextText: "",
+              dateFormat: "dd-mm-yy",
+              onSelect: function(date) {
+                console.log("onSelect", date);
+              },
+              beforeShowDay: function(date) {
+                var array = ["03-11-2015","13-11-2015","23-11-2015"];
+                if( $.inArray( $.datepicker.formatDate('dd-mm-yy', date), array) > -1 ) {
+                    return [true,"deal-day",''];
+                } else {
+                    return [true,'',''];
+                }
+              }
+            });
         }
 
     }

@@ -18,9 +18,9 @@
         vm.loggedIn = false;
         vm.logout = logout;
 
-        // Templates are using when no Redirect to new
+        // Templates are used when no Redirect to new
         // page is required, this will store every
-        // reference to views included as partials.
+        // reference to views 'included', as partials.
         // Use routing/templates render for redirections
         vm.templates = {
             header: baseUrl + '/header',
@@ -33,7 +33,8 @@
                 categories: baseUrl + '/show/_categories',
                 comments: baseUrl + '/show/_comments',
                 schedule: baseUrl + '/show/_schedule',
-                summary: baseUrl + '/show/_summary'
+                summary: baseUrl + '/show/_summary',
+                step1: baseUrl + '/show/_step1'
             }
         };
         // To render a new element in the main content

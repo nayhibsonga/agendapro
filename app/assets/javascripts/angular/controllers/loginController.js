@@ -31,7 +31,12 @@
         }
 
         function submit() {
-            Auth[vm.option](vm.userInfo).then( handleResponse );
+            var result = Auth[vm.option](vm.userInfo);
+            if( angular.isDefined(result) && result.data && !result.data.error ) {
+                result.then( handleResponse );
+            } else {
+                console.log("SOME ERROR IN OBJ: ", result);
+            }
         }
 
         function handleResponse(response) {

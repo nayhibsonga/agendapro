@@ -5,25 +5,34 @@
   </button>
 
   <div id="category-{{ category.id }}" class="collapse clearfix category" style="background-color: white; color: black; font-size: 0.9em;">
-      <div class="service-detail col-xs-12 col-md-6" style="padding: 8px; cursor: pointer; margin-bottom: 4px;" ng-repeat="service in category.services" ng-click="sc.selectService($parent.$index, $index);">
-        <div>
-          <strong>{{ service.name }}</strong>
-          <div class="pull-right" style="margin-bottom: 10px;">
-            <span class="time-detailed" style="color: #A3A0A1; font-size: 0.9em"><i class="icon ion-ios-clock-outline"></i> {{ service.duration | inHours }}</span>
-            &nbsp;&nbsp;{{ service.price | currency | clp  }} <span>$</span>
+
+      <div class="service-detail col-xs-12 col-md-6" style="padding: 8px 20px; cursor: pointer; margin-bottom: 4px;" ng-repeat="service in category.services" ng-click="sc.selectService($parent.$index, $index);">
+        <div style="border-bottom: 3px solid lightgray;">
+
+          <div>
+            <strong>{{ service.name }}</strong>
+            <div class="pull-right" style="margin-bottom: 10px;">
+              <span class="time-detailed" style="color: #A3A0A1; font-size: 0.9em"><i class="icon ion-ios-clock-outline"></i> {{ service.duration | inHours }}</span>
+              &nbsp;&nbsp;{{ service.price | currency | clp  }} <span>$</span>
+            </div>
           </div>
-        </div>
-        <p style="clear: both; text-align: justify;">
-          {{ service.description }}
-        </p>
-        <div id="service-{{ service.id }}-options" style="display:none; position: absolute;width: 100%;bottom: 0;background-color: #F26062;color: white;left: 0;height: 0;text-align: center;">
-          <div style="height: 100%; display: table;">
-            <p style="display: table-cell; vertical-align: middle; text-align: center; width: 100%;" ng-click="sc.addService()">
-              <span class="add-service" style="margin-right: 10px; color:white;">+ Agregar</span>
-            </p>
-            <a href="#" class="close" style="color: white; opacity: 1; font-size: 16px; padding-right: 10px; padding-top: 5px;">x</a>
+          <p style="clear: both; text-align: justify;">
+            {{ service.description || 'No hay descripción disponible'}}
+          </p>
+
+          <div id="service-{{ service.id }}-options" style="display:none; position: absolute;width: 100%;bottom: 0;background-color: #F26062;color: white;left: 0;height: 0;text-align: center;">
+            <div style="height: 100%; display: table;">
+              <p style="display: table-cell; vertical-align: middle; text-align: center; width: 100%;" ng-click="sc.addService()">
+                <span class="add-service" style="margin-right: 10px; color:white;">+ Agregar</span>
+              </p>
+              <a href="#" class="close" style="color: white; opacity: 1; font-size: 16px; padding-right: 10px; padding-top: 5px;">x</a>
+            </div>
           </div>
+
         </div>
+
+
+
       </div>
   </div>
 </section>

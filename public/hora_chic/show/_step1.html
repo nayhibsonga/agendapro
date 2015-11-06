@@ -1,0 +1,59 @@
+<div id="step1" class="no-select">
+  <div class="row">
+
+    <div id="calendar" class="col-md-4">
+      <div id="datepicker"></div>
+
+      <div class="legend">
+        <span class="date-square"></span>
+        Día con promociones disponibles
+      </div>
+    </div>
+
+    <div id="hours" class="col-md-5">
+      <div class="row" ng-repeat="section in sc.sections">
+        <div class="col-xs-12 text-center">
+          {{ section }}
+        </div>
+
+        <div class="col-md-4 hour-container" ng-repeat="date in sc.available[section]">
+          <div class="available">
+            {{ date.from }} - {{ date.to }}
+          </div>
+        </div>
+
+        <div class="col-xs-12 text-center empty-hours" style="" ng-show="sc.available[section].length === 0">
+          <span>*No hay horarios disponibles...</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="detail-summary" class="col-md-3">
+      <div class="detail-container">
+        <div>
+          Detalle de Reserva
+        </div>
+
+        <div class="reservation-detail" ng-repeat="service in sc.servicesList">
+          <div>
+            {{ service.name }}
+          </div>
+
+          <div>
+            <span>® XX:XX - XX-XX</span>
+          </div>
+
+          <div>
+            ∑
+            <span class="discount">$28.000</span>
+            <span class="price"> {{ service.price | currency | clp }} </span>
+            <span>(50% dcto)</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
