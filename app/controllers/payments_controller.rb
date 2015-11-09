@@ -389,7 +389,7 @@ class PaymentsController < ApplicationController
       client_name = params[:client_name]
 
       if params[:client_first_name].blank? || params[:client_last_name].blank?
-        full_name = helper.split_name(client_name)
+        full_name = application_helper.split_name(client_name)
         first_name = full_name[:first_name]
         last_name = full_name[:last_name]
       else
