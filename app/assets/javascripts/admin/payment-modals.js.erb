@@ -708,7 +708,7 @@ function loadInternalSaleProduct(internal_sale)
   $("#internal_sale_product").empty();
   $.getJSON('/location_products/', {id: parseInt($('#internal_sale_location').val()) }, function (products) {
     $.each(products, function (key, product) {
-      $("#internal_sale_product").append('<option value="' + product.id + '">' + product.name + '</option>');
+      $("#internal_sale_product").append('<option value="' + product.id + '">' + product.full_name + '</option>');
     });
     if(internal_sale)
     {

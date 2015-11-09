@@ -601,7 +601,6 @@ class CompaniesController < ApplicationController
 
 		respond_to do |format|
 			if @company.save
-				@cashier = Cashier.create(company_id: @company.id, name: "Cajero 1", code: "12345678", active: true)
 				if @user.role_id != Role.find_by_name("Super Admin").id
 					@user.company_id = @company.id
 					@user.role_id = Role.find_by_name("Administrador General").id
