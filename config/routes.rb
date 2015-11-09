@@ -556,6 +556,11 @@
         post 'users/oauth', to: 'users#oauth'
         get 'users/oauth_login_link', to: 'users#oauth_login_link'
 
+        post 'bookings', to: 'bookings#book_service'
+        get 'bookings/:id', to: 'bookings#show'
+        put 'bookings/:id', to: 'bookings#edit_booking'
+        delete 'bookings/:id', to: 'bookings#destroy'
+
       end
     end
   end
