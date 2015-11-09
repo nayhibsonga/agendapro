@@ -60,16 +60,27 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-5" style="margin: 5px 0;">
+    <div class="col-md-3" style="margin: 5px 0;">
       <p style="text-align: left; font-size: 20px; color: #22c488;">Inventario de <span id="selectedLocationInventory"></span></p>
     </div>
-    <div class="col-md-7" style="margin: 5px 0;">
+    <div class="col-md-9" style="margin: 5px 0;">
       <div class="pull-right">
         <table id="inventoryFiltersTable">
           <tr>
-            <td>
+            <td style="width: 22%;">
+              <div class="form-group">
+                <div class="col-md-12">
+                  <div class="input-group">
+                    <input class="form-control" id="productSearch" name="productSearch" placeholder="Buscar..."  type="search" value="">
+                    <span class="input-group-btn">
+                      <button id="product_search_btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                      <button class="btn btn-red" type="button" id="product_clear_btn"><i class="fa fa-times-circle"></i></button>
+                    </span>
+                  </div>
+                </div>
+              </div>
             </td>
-            <td>
+            <td style="width: 26%;">
               <div class="form-group">
                 <div class="col-md-5" style="text-align: right; padding-top: 5px;">
                 Categoría:
@@ -84,7 +95,7 @@
                 </div>
               </div>
             </td>
-            <td>
+            <td style="width: 26%;">
               <div class="form-group">
                 <div class="col-md-5" style="text-align: right; padding-top: 5px;">
                   Marca:
@@ -99,7 +110,7 @@
                 </div>
               </div>
             </td>
-            <td>
+            <td style="width: 26%;">
               <div class="form-group">
                 <div class="col-md-5" style="text-align: right; padding-top: 5px;">
                   Cantidad:
