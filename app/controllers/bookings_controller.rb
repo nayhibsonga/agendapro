@@ -483,7 +483,8 @@ class BookingsController < ApplicationController
           :is_session => u.is_session,
           :is_session_booked => u.is_session_booked,
           :user_session_confirmed => u.user_session_confirmed,
-          :sessions_ratio => sessions_ratio
+          :sessions_ratio => sessions_ratio,
+          :payed_state => u.payed_state
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -895,7 +896,8 @@ class BookingsController < ApplicationController
           :is_session => u.is_session,
           :is_session_booked => u.is_session_booked,
           :user_session_confirmed => u.user_session_confirmed,
-          :sessions_ratio => sessions_ratio
+          :sessions_ratio => sessions_ratio,
+          :payed_state => u.payed_state
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -1385,7 +1387,7 @@ class BookingsController < ApplicationController
 
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
-        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings , :is_session => u.is_session, :is_session_booked => u.is_session_booked, :user_session_confirmed => u.user_session_confirmed, :sessions_ratio => sessions_ratio}
+        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings , :is_session => u.is_session, :is_session_booked => u.is_session_booked, :user_session_confirmed => u.user_session_confirmed, :sessions_ratio => sessions_ratio, :payed_state => u.payed_state}
         BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking_json }
@@ -1681,7 +1683,12 @@ class BookingsController < ApplicationController
         event = Hash.new
         booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
         booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
-        originClass += providerLock + statusIcon[booking.status_id]
+
+        payedClass = ''
+        if booking.payed_state
+          payedClass = ' payed'
+        end
+        originClass += providerLock + statusIcon[booking.status_id] + payedClass
 
         title = ''
         qtip = ''
@@ -3964,9 +3971,9 @@ class BookingsController < ApplicationController
 
       Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id)).where('bookings.start >= ? AND bookings.start < ?', now.beginning_of_day, DateTime.new(now.year, now.mon, now.mday, open_provider_time.hour, open_provider_time.min)).order(:start).each do |booking|
         if @use_identification_number
-          table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.identification_number, booking.service.name, booking.status.name])
+          table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone, booking.client.identification_number, booking.service.name, booking.status.name])
         else
-          table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.service.name, booking.status.name])
+          table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone, booking.service.name, booking.status.name])
         end
       end
       while (provider_open <=> close_provider_time) < 0 do
@@ -4001,9 +4008,9 @@ class BookingsController < ApplicationController
               Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id)).where('bookings.start >= ? AND bookings.start < ?', block_open, block_close).order(:start).each do |booking|
                   in_provider_booking = true
                   if @use_identification_number
-              table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.identification_number, booking.service.name, booking.status.name])
+              table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone, booking.client.identification_number, booking.service.name, booking.status.name])
             else
-              table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.service.name, booking.status.name])
+              table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone, booking.service.name, booking.status.name])
             end
               end
             # end
@@ -4018,9 +4025,9 @@ class BookingsController < ApplicationController
             client_phone = '...'
             client_identification = '...'
             if @use_identification_number
-              table_rows.append([provider_break.start.strftime('%R'), service_name, client_name, client_phone, client_identification])
+              table_rows.append([provider_break.start.strftime('%R'), service_name, client_name, client_phone, client_identification, 'Bloqueado'])
             else
-                      table_rows.append([provider_break.start.strftime('%R'), service_name, client_name, client_phone])
+                      table_rows.append([provider_break.start.strftime('%R'), service_name, client_name, client_phone, 'Bloqueado'])
             end
                     break
                 end
@@ -4040,9 +4047,9 @@ class BookingsController < ApplicationController
                     if (booking.start.to_datetime - block_close)*(block_open - booking.end.to_datetime) > 0
                       in_provider_booking = true
                       if @use_identification_number
-              table_rows.append([provider_open.strftime('%R'), 'OCUPADO', '...', '...', '...'])
+              table_rows.append([provider_open.strftime('%R'), 'OCUPADO', '...', '...', '...', '...'])
               else
-                          table_rows.append([provider_open.strftime('%R'), 'OCUPADO', '...', '...'])
+                          table_rows.append([provider_open.strftime('%R'), 'OCUPADO', '...', '...', '...'])
               end
                       break
                     end
@@ -4064,6 +4071,7 @@ class BookingsController < ApplicationController
               table_row << service_name
               table_row << booking_status
               table_row << client_name
+              table_row << client_phone
               if @use_identification_number
                 table_row << client_identification
               end
@@ -4076,9 +4084,9 @@ class BookingsController < ApplicationController
       end
       Booking.where('bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)').where(service_provider: @service_provider, status_id: Status.where(name: ['Reservado', 'Confirmado','Asiste']).pluck(:id), start: DateTime.new(now.year, now.mon, now.mday, close_provider_time.hour, close_provider_time.min)..now.end_of_day).order(:start).each do |booking|
         if @use_identification_number
-          table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.identification_number, booking.service.name, booking.status.name])
+          table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone, booking.client.identification_number, booking.service.name, booking.status.name])
         else
-          table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.service.name, booking.status.name])
+          table_rows.append([booking.start.strftime('%R'), booking.client.first_name + ' ' + booking.client.last_name, booking.client.phone, booking.service.name, booking.status.name])
         end
       end
     end

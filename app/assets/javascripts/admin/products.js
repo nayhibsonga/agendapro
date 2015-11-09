@@ -268,13 +268,14 @@ function getInventory()
 	var category = $("#categoryFilterSelect").val();
 	var brand = $("#brandFilterSelect").val();
 	var display = $("#displayFilterSelect").val();
+	var searchInput = $('#productSearch').val();
 
 	if(location_id == "0")
 	{
 		$.ajax({
 			url: '/company_inventory',
 			type: 'get',
-			data: {category: category, brand: brand, display: display},
+			data: {category: category, brand: brand, display: display, searchInput: searchInput},
 			success: function(response)
 			{
 				$("#locationInventory").empty();
@@ -288,7 +289,7 @@ function getInventory()
 		$.ajax({
 			url: '/inventory',
 			type: 'get',
-			data: {id: location_id, category: category, brand: brand, display: display},
+			data: {id: location_id, category: category, brand: brand, display: display, searchInput: searchInput},
 			success: function(response)
 			{
 				$("#locationInventory").empty();
@@ -351,6 +352,15 @@ $(function() {
 
 	$('.product-tooltip').tooltip({
 	    placement: "top"
+	});
+
+	$('#product_search_btn').on('click', function(){
+		getInventory();
+	});
+
+	$('#product_clear_btn').on('click', function(){
+		$('#productSearch').val('');
+		getInventory();
 	});
 
 	$('#productCategoryModal').on('hidden.bs.modal', function (e) {

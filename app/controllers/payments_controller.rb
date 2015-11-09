@@ -676,6 +676,10 @@ class PaymentsController < ApplicationController
         payment.client_id = client.id
       else
         @errors << "No se pudo guardar al cliente"
+        @json_response[0] = "error"
+        @json_response << @errors
+        render :json => @json_response
+        return
       end   
 
     else

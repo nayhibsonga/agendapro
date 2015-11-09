@@ -1,4 +1,7 @@
 class LocationProduct < ActiveRecord::Base
+  require 'pg_search'
+  include PgSearch
+  
   belongs_to :product
   belongs_to :location
   has_many :stock_emails, dependent: :destroy
@@ -6,6 +9,22 @@ class LocationProduct < ActiveRecord::Base
   validates :stock, presence: true
 
   after_save :check_stock
+
+  pg_search_scope :search, :associated_against => {
+    :product => [:name, :sku]
+  },
+  :using => {
+    :trigram => {
+      :threshold => 0.1,
+      :prefix => true,
+      :any_word => true
+      },
+      :tsearch => {
+        :prefix => true,
+        :any_word => true
+      }
+  },
+  :ignoring => :accents
 
   #Send notice to indicate stock is low
   #Switch flag to show alert was sent and should not be sent 

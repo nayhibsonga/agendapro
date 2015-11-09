@@ -1,6 +1,6 @@
 <div class="row" style="margin-top: 5px; margin-bottom: 5px;">
-	<div class="col-md-12">
-		<div style="font-size: 22px; color: #22c488;" margin-bottom: 5px;"">
+	<div class="col-md-12 payment_summary_col">
+		<div class="payment_summary_title">
 			Resumen de pago
 		</div>
 	</div>
@@ -67,8 +67,8 @@
 </div>
 
 <div class="row" style="margin-top: 15px; margin-bottom: 5px;">
-	<div class="col-md-12">
-		<div style="font-size: 20px; color: #1ba970;">
+	<div class="col-md-12 payment_summary_col">
+		<div class="payment_summary_title">
 			Medios de pago
 		</div>
 	</div>
@@ -122,8 +122,8 @@
 <% @payment.receipts.each do |receipt| %>
 
 	<div class="row" style="margin-top: 15px; margin-bottom: 5px;">
-		<div class="col-md-12">
-			<div style="font-size: 20px; color: #1ba970">
+		<div class="col-md-12 payment_summary_col">
+			<div class="payment_summary_title">
 				Boleta N° <%= receipt.number %>
 			</div>
 		</div>
@@ -131,7 +131,7 @@
 
 	<div class="row" style="margin-top: 15px; margin-bottom: 5px;">
 		<div class="col-md-3">
-			<span style="font-size: 20px; color: #505050">Comentarios:</span>
+			<span style="font-size: 18px; color: #505050">Comentarios:</span>
 		</div>
 		<div class="col-md-9">
 			<%= receipt.notes %>
@@ -140,8 +140,8 @@
 
 	<% if receipt.payment_products.count > 0 %>
 		<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
-			<div class="col-md-12">
-				<div style="font-size: 20px; color: #505050;">
+			<div class="col-md-12 payment_summary_col">
+				<div class="payment_summary_subtitle">
 					Productos:
 				</div>
 			</div>
@@ -181,8 +181,8 @@
 
 	<% if receipt.mock_bookings.count > 0 %>
 		<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
-			<div class="col-md-12">
-				<div style="font-size: 20px; color: #505050;">
+			<div class="col-md-12 payment_summary_col">
+				<div class="payment_summary_subtitle">
 					Servicios (sin reserva):
 				</div>
 			</div>
@@ -233,8 +233,8 @@
 
 	<% if receipt.bookings.count > 0 %>
 		<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
-			<div class="col-md-12">
-				<div style="font-size: 20px; color: #505050;">
+			<div class="col-md-12 payment_summary_col">
+				<div class="payment_summary_subtitle">
 					Reservas:
 				</div>
 			</div>

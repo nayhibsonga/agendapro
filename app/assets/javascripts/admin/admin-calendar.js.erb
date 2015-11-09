@@ -1119,6 +1119,12 @@ function editDrag(event) {
 						originClass = 'origin-web';
 					};
 
+					var payedState = '';
+					if (booking.payed_state)
+					{
+						payedState = ' payed';
+					}
+
 					var backColor = backColors[booking.status_id];
 					var textColor = textColors[booking.status_id];
 					if (booking.is_session && !booking.user_session_confirmed)
@@ -1127,7 +1133,7 @@ function editDrag(event) {
 						textColor = "#DFDBDB";
 					}
 
-					originClass += providerLock + statusIcon[booking.status_id];
+					originClass += providerLock + statusIcon[booking.status_id] + payedState;
 					event.className = originClass;
 					event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
 					event.start = booking.start;
@@ -1241,7 +1247,14 @@ function saveBooking(typeURL, extraURL) {
 							backColor = "#105E82";
 							textColor = "#DFDBDB";
 						}
-						originClass += providerLock + statusIcon[booking.status_id];
+
+						var payedState = '';
+						if (booking.payed_state)
+						{
+							payedState = ' payed';
+						}
+
+						originClass += providerLock + statusIcon[booking.status_id] + payedState;
 						event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
 						event.start = booking.start;
 						event.end = booking.end;
@@ -1349,7 +1362,14 @@ function saveBookingBuffer () {
 							providerLock = '-lock';
 						};
 						var originClass = 'origin-manual';
-						originClass += providerLock + statusIcon[booking.status_id];
+
+						var payedState = '';
+						if (booking.payed_state)
+						{
+							payedState = ' payed';
+						}
+
+						originClass += providerLock + statusIcon[booking.status_id] + payedState;
 						var backColor = backColors[booking.status_id];
 						var textColor = textColors[booking.status_id];
 						if (booking.is_session && !booking.user_session_confirmed)
@@ -1422,8 +1442,15 @@ function saveBookingBuffer () {
 								if (booking.provider_lock) {
 									providerLock = '-lock';
 								};
+
+								var payedState = '';
+								if (booking.payed_state)
+								{
+									payedState = ' payed';
+								}
+
 								var originClass = 'origin-manual';
-								originClass += providerLock + statusIcon[booking.status_id];
+								originClass += providerLock + statusIcon[booking.status_id] + payedState;
 								var backColor = backColors[booking.status_id];
 								var textColor = textColors[booking.status_id];
 								if (booking.is_session && !booking.user_session_confirmed)
