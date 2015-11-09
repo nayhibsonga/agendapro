@@ -2349,6 +2349,18 @@ class PaymentsController < ApplicationController
 
   end
 
+  def sales_cash_report_file
+
+    @sales_cash = SalesCash.find(params[:sales_cash_id])
+
+    @service_providers = ServiceProvider.where(id: service_provider_ids)
+    @from = params[:from].to_datetime
+    @to = params[:to].to_datetime
+
+    respond_with(@service_providers)
+
+  end
+
   #################
   # Sales Reports #
   #################
