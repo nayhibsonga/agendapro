@@ -24,14 +24,17 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="status_ids[]" class="col-md-1 control-label" style="margin-top: 20px;">Estado:</label>
-        <div class="col-md-8">
+        <label for="status_ids[]" class="col-sm-1 control-label" style="margin-top: 20px;">Estado:</label>
+        <div class="col-sm-8">
           <% for status in Status.all do %>
             <label class="checkbox-inline" style="margin-top: 20px;">
               <%= check_box_tag 'status_ids[]', status.id, params[:status_ids].blank? && status.name != 'Cancelado' ? true : params[:status_ids] && params[:status_ids].includes(status.id), {class: "report_select"} %>
               <%= status.name.humanize %>
             </label>
           <% end %>
+        </div>
+        <div class="col-sm-3">
+          <p><small>* Este reporte considera todas las reservas y sesiones agendadas, sin importar si tienen un pago asociado o no.</small></p>
         </div>
       </div>
     </div>
@@ -66,14 +69,6 @@
             <% location.service_providers.where(active: true).order(:order, :public_name).each do |service_provider| %>
             <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="provider_services<%=service_provider.id%>"><%= service_provider.public_name %></a></li>
             <% end %>
-            <% end %>
-          </ul>
-        </li>
-        <li class="dropdown">
-          <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Comisiones por Local<span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
-            <% @locations.each do |location| %>
-            <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="location_comission<%=location.id%>"><%= location.name %></a></li>
             <% end %>
           </ul>
         </li>
