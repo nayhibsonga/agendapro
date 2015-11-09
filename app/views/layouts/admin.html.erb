@@ -97,6 +97,7 @@
                     <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes'.html_safe, sales_reports_path %></li>
                   </ul>
                 </li>
+                <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario', products_path %></li>
               <% end %>
               <!-- Clientes -->
               <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") and current_user.role != Role.find_by(name: "Super Admin") %>

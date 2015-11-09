@@ -640,6 +640,11 @@ class Ability
         can :check_booking_payment, Payment, :company_id => user.company_id
         can :get_formatted_booking, Payment, :company_id => user.company_id
 
+        can :inventory, Location, :company_id => user.company_id
+        can :inventory, Company, :company_id => user.company_id
+        can :index, Product, :company_id => user.company_id
+        can :read, Product, :company_id => user.company_id
+
         can :summary, Payment, :company_id => user.company_id
 
         #Internal Sale
