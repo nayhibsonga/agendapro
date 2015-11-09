@@ -92,7 +92,7 @@
 						    			if service_commission.is_percent
 						    				commission = service_commission.amount.to_s + " %"
 						    			else
-						    				commission = "$ " + number_to_currency(service_commission, currency: ' $', separator: ',', delimeter: '.', precision: 0)
+						    				commission = "$ " + number_to_currency(service_commission.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0)
 						    			end
 						    		else
 						    			if service.comission_option == 0

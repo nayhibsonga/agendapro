@@ -570,22 +570,38 @@ class LocationsController < ApplicationController
     @location = Location.find(params[:id])
     @location_products = []
 
-    if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
-      @location_products = @location.location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
-    elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
-      @location_products = @location.location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
-    elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
-      @location_products = @location.location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
-    elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
-      @location_products = @location.location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category]).pluck(:id)).order('stock asc')
-    elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
-      @location_products = @location.location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
-    elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
-      @location_products = @location.location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
-    elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
-      @location_products = @location.location_products.where(:product_id => @location.company.products.where(:product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    normalized_search = ""
+
+    if !params[:searchInput].blank?
+      search = params[:searchInput].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+      normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+    end
+
+    location_products = nil
+
+    if normalized_search != ""
+      location_products = @location.location_products.search(normalized_search)
     else
-      @location_products = @location.location_products.order('stock asc')
+      location_products = @location.location_products
+    end
+
+    if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+    elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category]).pluck(:id)).order('stock asc')
+    elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+    elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    else
+      @location_products = location_products.order('stock asc')
     end    
 
     respond_to do |format|
