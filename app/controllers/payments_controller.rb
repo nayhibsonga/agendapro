@@ -4,6 +4,8 @@ class PaymentsController < ApplicationController
   layout "admin"
   load_and_authorize_resource
 
+  include ApplicationHelper
+
   respond_to :html, :json, :xls, :csv
 
   def index
