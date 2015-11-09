@@ -280,3 +280,26 @@ table.servicesTable td{
 .payment_summary_col{
 	padding: 0px !important;
 }
+
+/*
+*
+* Fix de help blocks
+*
+*/
+
+.salesCashModal .form-control-feedback{
+	top: 10px;
+	right: 15px;
+}
+.internalSaleModal .form-control-feedback{
+	top: 10px;
+	right: 15px;
+}
+.pettyCashModal .form-control-feedback{
+	top: 10px;
+	right: 15px;
+}
+.paymentModal .form-control-feedback{
+	top: 10px;
+	right: 15px;
+}

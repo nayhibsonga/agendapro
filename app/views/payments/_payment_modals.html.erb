@@ -657,6 +657,11 @@
                   <div class="payment-form-div">
                     <label for="payment_receipt_number" class="col-xs-5 control-label">Número de comprobante</label>
                     <div class="col-xs-7">
+                      <% if current_user.company.company_setting.receipt_required %>
+                        <input type="hidden" id="payment_receipt_number_required" name="payment_receipt_number_required" value="1" />
+                      <% else %>
+                        <input type="hidden" id="payment_receipt_number_required" name="payment_receipt_number_required" value="0" />
+                      <% end %>
                       <input type="text" class="form-control" id="payment_receipt_number" name="payment_receipt_number" />
                       <span class="help-block"></span>
                       <span class="form-control-feedback"></span>
