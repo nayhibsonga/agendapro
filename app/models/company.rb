@@ -55,6 +55,12 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
+	after_create :create_cashier
+
+	def create_cashier
+		cashier = Cashier.create(company_id: self.id, name: "Cajero 1", code: "12345678", active: true)
+	end
+
 	def plan_settings
 		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
 			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/prestadores activos que lo que permite el plan.")

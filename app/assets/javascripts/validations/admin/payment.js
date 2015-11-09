@@ -143,7 +143,9 @@ $(function() {
 		},
 		rules: {
 			'payment_receipt_number': {
-				required: true
+				required: {
+					depends: function () { return ($('#payment_receipt_number_required').val() == "1"); }
+				}
 			},
 			'payment_receipt_date': {
 				required: true
