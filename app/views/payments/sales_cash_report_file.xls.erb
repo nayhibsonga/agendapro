@@ -222,6 +222,81 @@
             </Row>
 
             <Row>
+              <Cell><Data ss:Type="String">Resumen de pagos</Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Fecha de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Cliente</Data></Cell>
+              <Cell><Data ss:Type="String">Cajero</Data></Cell>
+              <Cell><Data ss:Type="String">#Productos</Data></Cell>
+              <Cell><Data ss:Type="String">#Servicios</Data></Cell>
+              <Cell><Data ss:Type="String">#Reservas</Data></Cell>
+              <Cell><Data ss:Type="String">Métodos de pago</Data></Cell>
+              <Cell><Data ss:Type="String">#Boletas</Data></Cell>           
+              <Cell><Data ss:Type="String">Precio</Data></Cell>
+              <Cell><Data ss:Type="String">Monto pagado</Data></Cell>
+              <Cell><Data ss:Type="String">Vuelto</Data></Cell>
+            </Row>
+
+            <% @payments.each do |payment| %>
+
+
+                <%
+                  payment_methods_arr = []
+                  payment_methods = ""
+                  payment.payment_transactions.each do |payment_transaction|
+                    if !payment_transaction.payment_method_id.nil?
+                      payment_methods_arr << payment_transaction.payment_method.name
+                    else
+                      payment_methods_arr << payment_transaction.company_payment_method.name
+                    end
+                  end
+
+                  if payment_methods_arr.count > 0
+                    payment_methods = payment_methods_arr.join(", ")
+                  end
+                %>
+
+              <Row>
+                <Cell><Data ss:Type="String"><%= payment.date.to_s %></Data></Cell>
+                <Cell><Data ss:Type="String">
+                  <% if payment.client_id.nil? || payment.client.nil? %>
+                    Sin cliente
+                  <% else %>
+                    <%= payment.client.first_name + " " + payment.client.last_name %>
+                  <% end %>
+                </Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment.cashier.name %></Data></Cell>
+                <Cell><Data ss:Type="Number">
+
+                  <% 
+
+                    payment_products_num = 0
+
+                    payment.payment_products.each do |payment_product| 
+                      payment_products_num += payment_product.quantity
+                    end 
+
+                  %>
+                  <%= payment_products_num %>
+                </Data></Cell>
+                <Cell><Data ss:Type="Number"><%= payment.mock_bookings.count %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= payment.bookings.count %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment.receipts.count %></Data></Cell>           
+                <Cell><Data ss:Type="String"><%= payment.amount %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment.paid_amount %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment.change_amount %></Data></Cell>
+              </Row>
+
+            <% end %>
+
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
               <Cell><Data ss:Type="String">Ventas internas (cobros a prestador)</Data></Cell>
             </Row>
 
@@ -257,6 +332,60 @@
                 <Cell><Data ss:Type="Number"><%= internal_sale.quantity * (internal_sale.price * (100 - internal_sale.discount) / 100) %></Data></Cell>
               </Row>
             <% end %>
+
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Otros Ingresos</Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Fecha de ingreso</Data></Cell>
+              <Cell><Data ss:Type="String">Monto</Data></Cell>
+              <Cell><Data ss:Type="String">Usuario</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
+            </Row>
+
+            <% @sales_cash_incomes.each do |sales_cash_income| %>
+
+              <Row>
+                <Cell><Data ss:Type="String"><%= sales_cash_income.date.to_s %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= sales_cash_income.amount %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= sales_cash_income.user.first_name + " " + sales_cash_income.user.last_name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= sales_cash_income.notes %></Data></Cell>
+              </Row>
+
+            <% end %> 
+
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Egresos</Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Fecha de egreso</Data></Cell>
+              <Cell><Data ss:Type="String">Destino</Data></Cell>
+              <Cell><Data ss:Type="String">Monto</Data></Cell>
+              <Cell><Data ss:Type="String">Usuario</Data></Cell>
+              <Cell><Data ss:Type="String">N° de comprobante</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
+            </Row>
+
+            <% @sales_cash_incomes.each do |sales_cash_income| %>
+
+              <Row>
+                <Cell><Data ss:Type="String"><%= sales_cash_income.date.to_s %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= sales_cash_income.amount %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= sales_cash_income.user.first_name + " " + sales_cash_income.user.last_name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= sales_cash_income.notes %></Data></Cell>
+              </Row>
+
+            <% end %> 
 
             <Row>
               <Cell><Data ss:Type="String"></Data></Cell>
