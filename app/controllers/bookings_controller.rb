@@ -483,7 +483,8 @@ class BookingsController < ApplicationController
           :is_session => u.is_session,
           :is_session_booked => u.is_session_booked,
           :user_session_confirmed => u.user_session_confirmed,
-          :sessions_ratio => sessions_ratio
+          :sessions_ratio => sessions_ratio,
+          :payed_state => u.payed_state
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -895,7 +896,8 @@ class BookingsController < ApplicationController
           :is_session => u.is_session,
           :is_session_booked => u.is_session_booked,
           :user_session_confirmed => u.user_session_confirmed,
-          :sessions_ratio => sessions_ratio
+          :sessions_ratio => sessions_ratio,
+          :payed_state => u.payed_state
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -1385,7 +1387,7 @@ class BookingsController < ApplicationController
 
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
-        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings , :is_session => u.is_session, :is_session_booked => u.is_session_booked, :user_session_confirmed => u.user_session_confirmed, :sessions_ratio => sessions_ratio}
+        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings , :is_session => u.is_session, :is_session_booked => u.is_session_booked, :user_session_confirmed => u.user_session_confirmed, :sessions_ratio => sessions_ratio, :payed_state => u.payed_state}
         BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking_json }
@@ -1681,7 +1683,12 @@ class BookingsController < ApplicationController
         event = Hash.new
         booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
         booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
-        originClass += providerLock + statusIcon[booking.status_id]
+
+        payedClass = ''
+        if booking.payed_state
+          payedClass = ' payed'
+        end
+        originClass += providerLock + statusIcon[booking.status_id] + payedClass
 
         title = ''
         qtip = ''

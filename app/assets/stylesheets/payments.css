@@ -252,9 +252,31 @@ table.servicesTable td{
 
 .payment-summary-table th{
 	padding: 3px;
-	color: #949292;
+	color: #505050;
 }
 
 .payment-summary-table td{
 	padding: 3px;
+}
+
+.payment_summary_title{
+	background-color: #22C488;
+	color: #fff;
+	font-size: 22px;
+	padding-top: 5px;
+	padding-left: 15px;
+	padding-bottom: 5px;
+}
+
+.payment_summary_subtitle{
+	background-color: #a1a1a1;
+	color: #fff;
+	font-size: 20px;
+	padding-top: 5px;
+	padding-left: 15px;
+	padding-bottom: 5px;
+}
+
+.payment_summary_col{
+	padding: 0px !important;
 }

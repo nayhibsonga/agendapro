@@ -1,4 +1,7 @@
 class Product < ActiveRecord::Base
+  require 'pg_search'
+  include PgSearch
+  
   belongs_to :company
   belongs_to :product_category
   belongs_to :product_brand
@@ -11,6 +14,21 @@ class Product < ActiveRecord::Base
   has_many :internal_sales
 
   accepts_nested_attributes_for :location_products, :reject_if => :all_blank, :allow_destroy => true
+
+  pg_search_scope :search,
+  :against => [:name, :sku],
+  :using => {
+    :trigram => {
+      :threshold => 0.1,
+      :prefix => true,
+      :any_word => true
+      },
+      :tsearch => {
+        :prefix => true,
+        :any_word => true
+      }
+  },
+  :ignoring => :accents
 
   def get_commission
     if self.comission_option == 0
