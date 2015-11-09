@@ -4,6 +4,8 @@ class PaymentsController < ApplicationController
   layout "admin"
   load_and_authorize_resource
 
+  include ApplicationHelper
+
   respond_to :html, :json, :xls, :csv
 
   def index
@@ -389,7 +391,7 @@ class PaymentsController < ApplicationController
       client_name = params[:client_name]
 
       if params[:client_first_name].blank? || params[:client_last_name].blank?
-        full_name = helper.split_name(client_name)
+        full_name = split_name(client_name)
         first_name = full_name[:first_name]
         last_name = full_name[:last_name]
       else
@@ -2346,6 +2348,18 @@ class PaymentsController < ApplicationController
     end
 
     render :json => json_response
+
+  end
+
+  def sales_cash_report_file
+
+    @sales_cash = SalesCash.find(params[:sales_cash_id])
+
+    @service_providers = ServiceProvider.where(id: service_provider_ids)
+    @from = params[:from].to_datetime
+    @to = params[:to].to_datetime
+
+    respond_with(@service_providers)
 
   end
 
