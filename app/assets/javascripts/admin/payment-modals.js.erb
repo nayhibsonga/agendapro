@@ -1380,8 +1380,12 @@ function loadPaymentServices(){
 }
 
 function loadServiceProviders(){
-  if($("not_booked_service").val() == "")
+  if($("#payment_not_booked_service").val() == "" || $("#payment_not_booked_service").val() == "-1")
   {
+    $("#payment_not_booked_provider").empty();
+    $("#payment_not_booked_provider").append('<option value="-1">Ninguno</option>');
+    $("#payment_not_booked_price").val("0");
+    $("#payment_not_booked_discount").val("0");
     return false;
   }
   $("#payment_not_booked_provider").empty();
@@ -1394,7 +1398,7 @@ function loadServiceProviders(){
 }
 
 function getServicePrice(){
-  if($("#payment_not_booked_service").val() == "")
+  if($("#payment_not_booked_service").val() == "" || $("#payment_not_booked_service").val() == "-1")
   {
     return false;
   }
