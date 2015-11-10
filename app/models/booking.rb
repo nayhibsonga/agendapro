@@ -35,7 +35,7 @@ class Booking < ActiveRecord::Base
 
   def get_commission
     service_commission = ServiceCommission.where(:service_id => self.service_id, :service_provider_id => self.service_provider_id).first
-    if !service_commission.nil?
+    if !service_commission.nil? && !service_commission.amount.nil?
       if service_commission.is_percent
         return self.price * service_commission.amount/100
       else
@@ -83,6 +83,15 @@ class Booking < ActiveRecord::Base
 			end
 			self.session_booking.sessions_taken = sessions_count
 			self.session_booking.save
+
+      if self.price.nil?
+        if self.list_price.nil?
+          self.price = self.list_price
+        else
+          self.list_price = self.service.price
+          self.price = self.service.price
+        end
+      end
 
       #On creation, mark list_price as a proportion of the treatment's list_price.
       if self.list_price == self.service.price

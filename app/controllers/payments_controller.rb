@@ -37,7 +37,7 @@ class PaymentsController < ApplicationController
       end
     end
 
-    @payments = Payment.where(payment_date: @from..@to, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).order(:payment_date)
+    @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).order('payment_date desc')
 
     @products_sum = 0.0
     @products_average_discount = 0.0
@@ -420,7 +420,7 @@ class PaymentsController < ApplicationController
     payment.company_id = current_user.company.id
 
     payment.payed = true
-    payment.payment_date = params[:payment_date].to_date
+    payment.payment_date = params[:payment_date].to_datetime
 
     #payment.notes = params[:payment_notes]
     payment.notes = ""
@@ -691,7 +691,7 @@ class PaymentsController < ApplicationController
     payment.cashier_id = params[:cashier_id]
 
     payment.payed = true
-    payment.payment_date = params[:payment_date].to_date
+    payment.payment_date = params[:payment_date].to_datetime
 
     #payment.notes = params[:payment_notes]
     payment.notes = ""
@@ -1068,7 +1068,7 @@ class PaymentsController < ApplicationController
     end
 
     payment.cashier_id = params[:cashier_id]
-    payment.payment_date = params[:payment_date].to_date
+    payment.payment_date = params[:payment_date].to_datetime
 
     payment.mock_bookings.each do |mock_booking|
       mock_booking.client_id = payment.client_id
@@ -1881,8 +1881,8 @@ class PaymentsController < ApplicationController
 
     @sales_cash.cash = 0.0
 
-    start_date = @sales_cash.last_reset_date
-    end_date = DateTime.now
+    start_date = @sales_cash.last_reset_date - eval(ENV["TIME_ZONE_OFFSET"])
+    end_date = DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])
 
     @sales_cash_transactions = SalesCashTransaction.where(sales_cash_id: @sales_cash.id, open: true, date: start_date..end_date)
 
@@ -1964,6 +1964,8 @@ class PaymentsController < ApplicationController
 
     @sales_cash.save
 
+    @sales_cash_log = SalesCashLog.where(:sales_cash_id => @sales_cash.id).order('end_date desc').first
+
     if @payments_total > 0
       @payments_average_discount = (@payments_discount/@payments_total).round(2)
     end
@@ -1974,10 +1976,12 @@ class PaymentsController < ApplicationController
 
   def sales_cash_report_file
 
-    @sales_cash = SalesCash.find(params[:sales_cash_id])
+    @sales_cash_log = SalesCashLog.find(params[:sales_cash_log_id])
 
-    start_date = params[:start_date].to_datetime
-    end_date = params[:end_date].to_datetime
+    start_date = @sales_cash_log.start_date - eval(ENV["TIME_ZONE_OFFSET"])
+    end_date = @sales_cash_log.end_date - eval(ENV["TIME_ZONE_OFFSET"])
+
+    @sales_cash = @sales_cash_log.sales_cash
 
     @sales_cash_log = SalesCashLog.where(sales_cash_id: @sales_cash.id, start_date: start_date, end_date: end_date)
 
@@ -2430,11 +2434,11 @@ class PaymentsController < ApplicationController
 
     @status_cancelled_id = Status.find_by_name("Cancelado").id
 
-    bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+    bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
 
-    mock_bookings = MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+    mock_bookings = MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
 
-    payment_products = PaymentProduct.where(seller_id: service_provider_ids, seller_type: 0, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+    payment_products = PaymentProduct.where(seller_id: service_provider_ids, seller_type: 0, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
 
     @services_amount = bookings.sum(:price) + mock_bookings.sum(:price)
     @products_amount = 0.0
@@ -2456,9 +2460,9 @@ class PaymentsController < ApplicationController
 
     @total_amount = @services_amount + @products_amount
 
-    services1 = Service.where(id: Booking.where.not(status_id: @status_cancelled_id).where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).pluck(:service_id))
+    services1 = Service.where(id: Booking.where.not(status_id: @status_cancelled_id).where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id)).pluck(:service_id))
 
-    services2 = Service.where(id: MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).where('service_id is not null').where.not(service_id: services1.pluck(:id)).pluck(:service_id))
+    services2 = Service.where(id: MockBooking.where(service_provider_id: service_provider_ids, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id)).where('service_id is not null').where.not(service_id: services1.pluck(:id)).pluck(:service_id))
 
     @services = services1 + services2
 
@@ -2491,7 +2495,7 @@ class PaymentsController < ApplicationController
       @time_option = 1
     end
 
-    payment_products = PaymentProduct.where(seller_id: user_ids, seller_type: 1, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+    payment_products = PaymentProduct.where(seller_id: user_ids, seller_type: 1, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
 
     @products_amount = 0.0
 
@@ -2531,7 +2535,7 @@ class PaymentsController < ApplicationController
       location = current_user.company.locations
     end
 
-    payment_products = PaymentProduct.where(seller_id: cashier_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from..@to, location_id: locations.pluck(:id)).pluck(:id))
+    payment_products = PaymentProduct.where(seller_id: cashier_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: locations.pluck(:id)).pluck(:id))
 
     @products_amount = 0.0
 

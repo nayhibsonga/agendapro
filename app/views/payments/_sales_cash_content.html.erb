@@ -1,8 +1,10 @@
 <input type="hidden" id="sales_cash_id" value="<%= @sales_cash.id %>" />
-<div class="row">
-  <div class="col-xs-12">
+<div class="row" style="margin-bottom: 5px;">
+  <div class="col-xs-6">
     <div id="sales-cash-title">Caja de ventas de <%= @location.name %></div>
-    <div id="sales-cash-last-reset-date">Último cierre de caja: <%= I18n.l(@sales_cash.last_reset_date - eval(ENV["TIME_ZONE_OFFSET"])).capitalize %>.</div>
+    <div id="sales-cash-last-reset-date">
+      Último cierre de caja: <%= I18n.l(@sales_cash.last_reset_date - eval(ENV["TIME_ZONE_OFFSET"])).capitalize %>.
+    </div>
     <div id="sales-cash-schedule">Cierre programado:
       <% if @sales_cash.scheduled_reset %>
         <% if @sales_cash.scheduled_reset_monthly %>
@@ -14,6 +16,26 @@
         no se ha programado un cierre automático.
       <% end %>
     </div>
+  </div>
+  <div class="col-xs-6" style="text-align: right">
+    <% if !@sales_cash_log.nil? %>
+      <div style="font-size: 18px; color: #505050; margin: 4px; display: inline;">
+        Descargar reportes pasados:
+      </div>
+      <div style="margin-bottom: 5px; display: block; text-align: right;">
+        <select id="sales_cash_log_select" class="form-control pull-right" style="width: 95% !important; text-align: right !important;">
+          <% @sales_cash.sales_cash_logs.order('end_date desc').each do |sales_cash_log| %>
+            <option value="<%= sales_cash_log.id %>"><%= "Del  " + I18n.l(sales_cash_log.start_date - eval(ENV["TIME_ZONE_OFFSET"])) + "  al  " + I18n.l(sales_cash_log.end_date - eval(ENV["TIME_ZONE_OFFSET"])) %></option>
+          <% end %>
+        </select>
+        <br />
+      </div>
+      <div style="clear:both;">
+      </div>
+      <div style="text-align: right; padding-top: 5px; padding-bottom: 5px;">
+        <a id="sales_cash_log_link" href="/sales_cash_report_file.xls?sales_cash_log_id=<%= @sales_cash_log.id %>"><button type="button" class="btn btn-green" class="getExcel">Descargar a Excel</button></a>
+      </div>
+    <% end %>
   </div>
 </div>
 <div class="row">

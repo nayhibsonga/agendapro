@@ -11,7 +11,7 @@ class MockBooking < ActiveRecord::Base
 			return 0
 		else
 			service_commission = ServiceCommission.where(:service_id => self.service_id, :service_provider_id => self.service_provider_id).first
-		    if !service_commission.nil?
+		    if !service_commission.nil? && !service_commission.amount.nil?
 		      if service_commission.is_percent
 		        return self.price * service_commission.amount / 100
 		      else
