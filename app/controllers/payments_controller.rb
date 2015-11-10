@@ -1972,6 +1972,33 @@ class PaymentsController < ApplicationController
     render "_sales_cash_content", layout: false
   end
 
+  def sales_cash_report_file
+
+    @sales_cash = SalesCash.find(params[:sales_cash_id])
+
+    start_date = params[:start_date].to_datetime
+    end_date = params[:end_date].to_datetime
+
+    @sales_cash_log = SalesCashLog.where(sales_cash_id: @sales_cash.id, start_date: start_date, end_date: end_date)
+
+    @sales_cash_transactions = SalesCashTransaction.where(sales_cash_id: @sales_cash.id, open: false, date: start_date..end_date)
+
+    @sales_cash_incomes = SalesCashIncome.where(sales_cash_id: @sales_cash.id, open: false, date: start_date..end_date)
+
+    @payments = Payment.where(payment_date: start_date..end_date, location_id: @sales_cash.location.id).order(:payment_date)
+
+    @payment_products = PaymentProduct.where(payment_id: Payment.where(payment_date: start_date..end_date, location_id: @sales_cash.location.id).pluck(:id))
+
+    @bookings = Booking.where(payment_id: Payment.where(payment_date: start_date..end_date, location_id: @sales_cash.location.id).pluck(:id))
+
+    @mock_bookings = MockBooking.where(payment_id: Payment.where(payment_date: start_date..end_date, location_id: @sales_cash.location.id).pluck(:id))
+
+    @internal_sales = InternalSale.where(location_id: @sales_cash.location.id, date: start_date..end_date)
+
+    respond_with(@sales_cash)
+
+  end
+
   def get_sales_cash
     sales_cash = SalesCash.find(params[:sales_cash_id])
     json_response = nil
@@ -2348,18 +2375,6 @@ class PaymentsController < ApplicationController
     end
 
     render :json => json_response
-
-  end
-
-  def sales_cash_report_file
-
-    @sales_cash = SalesCash.find(params[:sales_cash_id])
-
-    @service_providers = ServiceProvider.where(id: service_provider_ids)
-    @from = params[:from].to_datetime
-    @to = params[:to].to_datetime
-
-    respond_with(@service_providers)
 
   end
 
