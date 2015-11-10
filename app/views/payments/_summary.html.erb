@@ -13,8 +13,9 @@
 				Fecha
 			</label>
 			<div class="col-md-7">
-				<% date_arr = @payment.payment_date.to_s.split("-") %>
+				<% date_arr = @payment.payment_date.to_s.split(" ")[0].split("-") %>
 				<%= date_arr[2] + "/" + date_arr[1] + "/" + date_arr[0] %>
+				<%= time_arr = @payment.payment_date.to_s.split(" ")[1].to_s %>
 			</div>
 		</div>
 		<div class="row">

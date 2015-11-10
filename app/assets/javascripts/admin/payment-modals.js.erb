@@ -991,9 +991,18 @@ function getPaymentIntro(payment_id)
       $("#payment_cashier_code").val(response.cashier.code);
       $("#payment_cashier_name").val(response.cashier.name);
       $("#payment_cashier_id").val(response.cashier.id);
-      var given_date_arr = response.payment.payment_date.split("-");
-      var given_date = given_date_arr[2] + "/" + given_date_arr[1] + "/" + given_date_arr[0];
-      $("#payment_date").val(given_date);
+
+      var complete_date_array = response.payment.payment_date.split("T");
+      var edit_date_array = complete_date_array[0].split("-");
+      var edit_date = edit_date_array[2] + "/" + edit_date_array[1] + "/" + edit_date_array[0];
+
+      var edit_time_array = complete_date_array[1].split(":");
+      var edit_hour = edit_time_array[0];
+      var edit_minute = edit_time_array[1];
+
+      $("#payment_date").val(edit_date);
+      $('#payment_date_time_4i').val(edit_hour);
+      $('#payment_date_time_5i').val(edit_minute);
 
       if(response.payment.client_id != null)
       {
@@ -1046,7 +1055,9 @@ function savePaymentIntro()
   var client_email = $("#payment_client_email").val();
   var client_phone = $("#payment_client_phone").val();
   var client_gender = $("#payment_client_gender").val();
-  var payment_date = $("#payment_date").val();
+  var date = $("#payment_date").val();
+  var time = $('#payment_date_time_4i').val() + ":" + $('#payment_date_time_5i').val() + ":00";
+  var payment_date = date + " " + time;
 
   var payment_data = {
     payment_id: payment_id,
@@ -1263,6 +1274,29 @@ function loadPaymentIntro(payment_id) {
   $("#paymentIntroSaveBtn").hide();
   $("#paymentIntroNextBtn").show();
   $("#payment_location").prop("disabled", false);
+
+  var currentDate = new Date();
+  var new_hour = currentDate.getHours();
+  var new_minute = currentDate.getMinutes();
+  if(new_hour < 10)
+  {
+    new_hour = "0" + new_hour;
+  }
+  else
+  {
+    new_hour = "" + new_hour;
+  }
+  if(new_minute < 10)
+  {
+    new_minute = "0" + new_minute;
+  }
+  else
+  {
+    new_minute = "" + new_minute;
+  }
+  $("#payment_date_time_4i").val(new_hour);
+  $("#payment_date_time_5i").val(new_minute);
+
   if($("#client_required").val() == "1")
   {
     $('.client-option').show();
@@ -2116,7 +2150,11 @@ function createAndServePayment(option)
   var payment_method_id = $("#payment_method_id").val();
   var method_number = $('#payment_' + pay_method + '_method_number').val();
   var dues_number = $("#payment_credit_card_dues_number").val();*/
-  var payment_date = $("#payment_date").val();
+
+  var date = $("#payment_date").val();
+  var time = $('#payment_date_time_4i').val() + ":" + $('#payment_date_time_5i').val() + ":00";
+  var payment_date = date + " " + time;
+
   var transactions = $("#paymentTransactionsArray").val();
 
   /*var pay_method_type = $("#payment_method_type").val(); //Credit card type

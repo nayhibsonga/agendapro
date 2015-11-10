@@ -33,12 +33,16 @@
               
               <div class="payment-form-div form-group">
                 <label for="payment_date" class="col-xs-3 control-label">Fecha</label>
-                <div class="col-xs-9">
-                  <input type="text" class="form-control" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                <div class="col-xs-5">
+                  <input type="text" class="form-control payment_date_ignore" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                </div>
+                <div class="col-xs-4">
+                <%= time_select 'payment_date', 'time', {minute_step: 1}, {:class => 'form-control date-select payment_date_ignore', required: true} %>
                 </div>
 
+              </div>
+
+              <div style="clear: both; margin-bottom: 8px;">
               </div>
 
               <div class="payment-form-div form-group has-feedback">
