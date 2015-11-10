@@ -1107,6 +1107,9 @@ module ApiViews
           #
 
         end
+
+        def available_days
+        end
       end
     end
   end
