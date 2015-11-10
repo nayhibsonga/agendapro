@@ -5892,7 +5892,26 @@ class BookingsController < ApplicationController
     else
       session_booking.bookings.each do |booking|
         if booking.is_session_booked
-          treatment_price += booking.price
+          if !booking.price.nil?
+            treatment_price += booking.price
+          elsif !booking.list_price.nil? 
+            if !booking.discount.nil?
+              booking.price = booking.list_price * (100 - booking.discount) / 100
+              treatment_price += booking.price
+              booking.save
+            else
+              booking.discount = 0
+              booking.price = booking.list_price
+              treatment_price += booking.price
+              booking.save
+            end
+          else
+            booking.list_price = service.price / session_booking.sessions_amount
+            booking.price = service.price / session_booking.sessions_amount
+            booking.discount = 0
+            booking.save
+            treatment_price += service.price / session_booking.sessions_amount
+          end
         else
           treatment_price += service.price / session_booking.sessions_amount
         end

@@ -612,19 +612,21 @@ class LocationsController < ApplicationController
   end
 
   def stock_alarm_form
+
     @location = Location.find(params[:id])
 
-    if @location.stock_alarm_setting.nil?
+    @stock_alarm_setting = @location.stock_alarm_setting
 
-      stock_alarm_setting = StockAlarmSetting.create(location_id: @location.id)
+    if @stock_alarm_setting.nil?
+
+      @stock_alarm_setting = StockAlarmSetting.create(location_id: @location.id)
 
       stock_setting_email = StockSettingEmail.new
       stock_setting_email.email = @location.email
-      stock_setting_email.stock_alarm_setting_id = stock_alarm_setting.id
+      stock_setting_email.stock_alarm_setting_id = @stock_alarm_setting.id
+      stock_setting_email.save
       #stock_alarm_setting.save
     end
-
-    @stock_alarm_setting = @location.stock_alarm_setting
 
     respond_to do |format|
         format.html { render :partial => 'stock_alarm_form' }
