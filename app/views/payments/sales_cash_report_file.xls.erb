@@ -376,13 +376,11 @@
               <Cell><Data ss:Type="String">Comentarios</Data></Cell>
             </Row>
 
-            <% @sales_cash_incomes.each do |sales_cash_income| %>
+            <% @sales_cash_transactions.each do |sales_cash_transaction| %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= sales_cash_income.date.to_s %></Data></Cell>
-                <Cell><Data ss:Type="Number"><%= sales_cash_income.amount %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= sales_cash_income.user.first_name + " " + sales_cash_income.user.last_name %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= sales_cash_income.notes %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= sales_cash_transaction.date.to_s %></Data></Cell>
+                
               </Row>
 
             <% end %> 
