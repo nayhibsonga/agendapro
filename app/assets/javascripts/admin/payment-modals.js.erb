@@ -1042,6 +1042,11 @@ function editPaymentIntro(payment_id)
 function savePaymentIntro()
 {
 
+  if($("#client_required").val() == "1")
+  {
+    $("#set_client").val("1");
+  }
+
   var payment_id = $("#editPaymentId").val();
   var cashier_code = $("#payment_cashier_code").val();
   var cashier_name = $("#payment_cashier_name").val();
@@ -2132,6 +2137,11 @@ function createAndServePayment(option)
 {
 
   $("#paymentBtnSave").prop('disabled', true);
+
+  if($("#client_required").val() == "1")
+  {
+    $("#set_client").val("1");
+  }
 
   var location_id = parseInt($('#payment_location').val());
   var cashier_code = $("#payment_cashier_code").val();
