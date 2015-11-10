@@ -13,12 +13,19 @@ var paymentTransactions = [];
 
 var existing_payment_changed = false;
 
+var disabledPrice = '';
+
 
 /*
 * Initializations and event triggers.
 */
 
 $(function() {
+
+  if($('#editable_payment_prices').val() == "0")
+  {
+    disabledPrice = 'disabled';
+  }
 
   $("#payment_receipt_date").datepicker({
     dateFormat: 'dd/mm/yy',
@@ -1140,7 +1147,7 @@ function getPayment(payment_id)
           '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
           '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
           '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
-          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" /></div></td>' +
+          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" ' + disabledPrice + ' /></div></td>' +
           '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
           '</tr>'
         );
@@ -1168,7 +1175,7 @@ function getPayment(payment_id)
           '<td style="width: 24%;"><span>Servicio</span></td>' + 
           '<td style="width: 24%;"><span class="itemName">' + new_booking['service_name'] + '</span></td>' + 
           '<td style="width: 7%;"><input type="number" class="form-control itemQuantity" value="1" disabled /></td>' + 
-          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + new_booking['price'] + '" /></div></td>' +
+          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + new_booking['price'] + '" ' + disabledPrice + ' /></div></td>' +
           '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + new_booking['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
           '</tr>'
         );
@@ -1195,7 +1202,7 @@ function getPayment(payment_id)
           '<td style="width: 24%;"><span>Producto</span></td>' + 
           '<td style="width: 24%;"><span class="itemName">' + product['name'] + '</span></td>' + 
           '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="' + product['quantity'] + '" /></span></td>' + 
-          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + product['price'] + '" /></div></td>' +
+          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + product['price'] + '" ' + disabledPrice + ' /></div></td>' +
           '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + product['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
           '</tr>'
         );
@@ -1520,7 +1527,7 @@ function addNotBooked(){
     '<td style="width: 24%;"><span>Servicio</span></td>' + 
     '<td style="width: 24%;"><span class="itemName">' + new_booking['service_name'] + '</span></td>' + 
     '<td style="width: 7%;"><input type="number" class="form-control itemQuantity" value="1" disabled /></td>' + 
-    '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + new_booking['price'] + '" /></div></td>' +
+    '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + new_booking['price'] + '" ' + disabledPrice + ' /></div></td>' +
     '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + new_booking['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
     '</tr>'
   );
@@ -1557,7 +1564,7 @@ function addPastBooked(booking_id){
       '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
       '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
       '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
-      '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" /></div></td>' +
+      '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" ' + disabledPrice + ' /></div></td>' +
       '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
       '</tr>'
     );
@@ -1596,6 +1603,7 @@ function addPastBookedTreatment(session_booking_id){
       var item_id = paymentItems.length-1;
       var past_booking_index = paymentPastBookings.length-1;
 
+
       $("#paymentItemsTable").append(
         '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' + 
         '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
@@ -1603,7 +1611,7 @@ function addPastBookedTreatment(session_booking_id){
         '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
         '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
         '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
-        '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" /></div></td>' +
+        '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" ' + disabledPrice + ' /></div></td>' +
         '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
         '</tr>'
       );
@@ -1649,7 +1657,7 @@ function addProduct()
     '<td style="width: 24%;"><span>Producto</span></td>' + 
     '<td style="width: 24%;"><span class="itemName">' + product['name'] + '</span></td>' + 
     '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="' + product['quantity'] + '" /></span></td>' + 
-    '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + product['price'] + '" /></div></td>' +
+    '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + product['price'] + '" ' + disabledPrice + ' /></div></td>' +
     '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + product['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
     '</tr>'
   );
