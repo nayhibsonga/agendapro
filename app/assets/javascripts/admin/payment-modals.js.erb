@@ -1667,6 +1667,13 @@ function addPastBookedTreatment(session_booking_id){
 
 function addProduct()
 {
+
+  if($("#payment_product").val() == "-1")
+  {
+    alert("Debes elegir un producto antes de agregarlo.");
+    return; 
+  }
+
   var product = new Object();
 
   product['item_id'] = paymentItems.length;
