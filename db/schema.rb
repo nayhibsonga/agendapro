@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151102044642) do
+ActiveRecord::Schema.define(version: 20151110125843) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes"
-    t.text     "company_comment"
+    t.text     "notes",               default: ""
+    t.text     "company_comment",     default: ""
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -115,12 +115,12 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
-    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
     t.integer  "service_promo_id"
+    t.integer  "payment_id"
     t.float    "discount",               default: 0.0
     t.boolean  "is_booked",              default: true
     t.integer  "reminder_group"
@@ -301,13 +301,7 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.boolean  "deal_activate",              default: false
     t.string   "deal_name",                  default: ""
     t.boolean  "deal_overcharge",            default: true
-    t.boolean  "allows_online_payment",      default: false
-    t.string   "account_number",             default: ""
-    t.string   "company_rut",                default: ""
-    t.string   "account_name",               default: ""
-    t.integer  "account_type",               default: 3
-    t.integer  "bank_id"
-    t.boolean  "deal_exclusive",             default: true
+    t.boolean  "deal_exclusive",             default: false
     t.integer  "deal_quantity",              default: 0
     t.integer  "deal_constraint_option",     default: 0
     t.integer  "deal_constraint_quantity",   default: 0
@@ -326,8 +320,7 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.boolean  "payment_client_required",    default: true
     t.boolean  "show_cashes",                default: false
     t.string   "preset_notes"
-    t.boolean  "payment_client_required",    default: true
-    t.boolean  "show_cashes",                default: false
+    t.boolean  "editable_payment_prices",    default: true
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -476,7 +469,7 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "date",                default: '2015-10-30 21:54:55'
+    t.datetime "date",                default: '2015-10-27 17:17:43'
   end
 
   create_table "last_minute_promos", force: true do |t|
@@ -500,8 +493,8 @@ ActiveRecord::Schema.define(version: 20151102044642) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-    t.integer  "location_id"
-    t.integer  "stock"
+    t.integer  "location_id",                null: false
+    t.integer  "stock",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "stock_limit"
@@ -1191,7 +1184,7 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
-    t.datetime "date",          default: '2015-10-30 21:54:55'
+    t.datetime "date",          default: '2015-10-23 15:05:22'
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1211,7 +1204,7 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
-    t.datetime "date",                    default: '2015-10-30 21:54:55'
+    t.datetime "date",                    default: '2015-10-23 13:42:39'
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false
@@ -1508,7 +1501,6 @@ ActiveRecord::Schema.define(version: 20151102044642) do
     t.string   "uid"
     t.boolean  "receives_offers",        default: true
     t.string   "mobile_token"
-    t.string   "api_token"
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree
