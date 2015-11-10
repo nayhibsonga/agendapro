@@ -2196,6 +2196,11 @@ function createAndServePayment(option)
           {
             $(".payment-btn-close").trigger("click");
           }
+          if($("#calendar").length > 0)
+          {
+            var providerId = parseInt($('#providers-selector').val());
+            loadProviderEvents(providerId);
+          }
         }
         else
         {
@@ -2241,6 +2246,12 @@ function createAndServePayment(option)
             $("#paymentEmails").val("");
             $("#sendEmailsPaymentId").val(response[1]['id']);
             $("#sendEmailsModal").modal('show');
+          }
+          if($("#calendar").length > 0)
+          {
+            console.log("Hay calendario.");
+            var providerId = parseInt($('#providers-selector').val());
+            loadProviderEvents(providerId);
           }
         }
         else
