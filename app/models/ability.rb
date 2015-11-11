@@ -212,7 +212,7 @@ class Ability
         can :save_sales_cash_income, Payment, :company_id => user.company_id
         can :delete_sales_cash_income, Payment, :company_id => user.company_id
 
-        can :sales_cash_report_file, Payment, :company_id => user.company.id
+        can :sales_cash_report_file, Payment, :company_id => user.company_id
 
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id
@@ -470,7 +470,7 @@ class Ability
         can :save_sales_cash_income, Payment, :company_id => user.company_id
         can :delete_sales_cash_income, Payment, :company_id => user.company_id
 
-        can :sales_cash_report_file, Payment, :company_id => user.company.id
+        can :sales_cash_report_file, Payment, :company_id => user.company_id
 
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id
