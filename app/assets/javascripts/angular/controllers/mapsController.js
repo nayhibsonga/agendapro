@@ -5,15 +5,12 @@
         .module('HoraChic')
         .controller('MapsController', MapsController);
 
-    MapsController.$inject = ['$cookies', '$scope'];
+    MapsController.$inject = ['$cookies', '$scope', '$rootScope'];
 
-    function MapsController($cookies, $scope) {
-        var vm = this,
-            lat = $cookies.get('lat'),
-            lng = $cookies.get('lng');
-
+    function MapsController($cookies, $scope, $rootScope) {
+        var vm = this;
         vm.title = 'Maps';
-        vm.map = {center: {latitude: lat, longitude: lng }, zoom: 14 };
+        vm.map = getMap();
         vm.results = [];
         vm.markers = [];
         vm.markerClick = markerClick;
@@ -24,6 +21,19 @@
             vm.results = $scope.rc.searchResults || [];
             vm.markers = getMarkers();
         });
+
+        function getMap() {
+            var lat = $cookies.get('lat'),
+                lng = $cookies.get('lng'),
+                map = { center: { latitude: lat, longitude: lng }, zoom: 14 };
+
+            if( !lat || !lng ) {
+                map.center = $rootScope.defaultLatLng;
+                map.zoom = 10;
+            }
+
+            return map;
+        }
 
         function getMarkers() {
             var markers = [];

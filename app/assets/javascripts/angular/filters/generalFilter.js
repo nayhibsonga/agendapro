@@ -6,7 +6,8 @@
         .filter('dealsCurrency', dealsCurrency)
         .filter('startFrom', startFrom)
         .filter('clp', clp)
-        .filter('inHours', inHours);
+        .filter('inHours', inHours)
+        .filter('appointmentDates', appointmentDates);
 
     function dealsCurrency() {
         return dealsCurrencyFilter;
@@ -54,6 +55,24 @@
             }
 
             return result;
+        }
+    }
+
+    function appointmentDates() {
+        return appointmentDatesFilter;
+
+        function appointmentDatesFilter(appointment) {
+            var dateRange = "";
+
+            if( angular.isUndefined(appointment) ) {
+                dateRange = "No ha seleccionado hora";
+            } else {
+                dateRange += appointment.start.split("T")[1].slice(0,5);
+                dateRange += " - ";
+                dateRange += appointment.end.split("T")[1].slice(0,5);
+            }
+
+            return dateRange;
         }
     }
 

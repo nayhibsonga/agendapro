@@ -11,6 +11,10 @@
     </div>
 
     <div id="hours" class="col-md-5">
+      <div class="loading-container" ng-show="sc.sections.length === 0">
+        <div class="loading"></div>
+      </div>
+
       <div class="row">
         <div class="col-xs-6" ng-repeat="section in sc.sections" style="height: 345px; overflow: auto;">
           <div class="col-xs-12 text-center">

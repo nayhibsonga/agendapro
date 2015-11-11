@@ -12,50 +12,36 @@
         vm.title = 'ShowController';
         vm.tmpl = $scope.tc.templates.show;
         vm.company = {};
+        vm.companyLoaded = false;
         vm.currentStep = 1;
         vm.maxSteps = 2;
         vm.selectedCategory = 0;
         vm.selectedService = 0;
         vm.selectedProvider = -1;
-        vm.selectService = selectService;
-        vm.setStep = setStep;
-        vm.schedule = activateScheduling;
         vm.scheduled = {};
         vm.serviceDetail = {};
         vm.servicesList = []; // Reservation serviced added here
         vm.showComments = false; // API TOGGLING
-        vm.total = { price: 0, duration: 0 };
-        vm.sortableOptions = { handle: '.handle', 'ui-floating': true, cursor: 'move' };
-        vm.addService = addService;
-        vm.removeService = removeService;
-        vm.map = {};
-        vm.categories = [];
-        vm.mobileSummary = mobileSummary;
-
-        // vm.available = {
-        //     'Mañana': [
-        //         {id: '1', from: '09:30', to: '10:30'},
-        //         {id: '2', from: '10:30', to: '11:30'},
-        //         {id: '3', from: '11:30', to: '12:30'}
-        //         ],
-        //     'Tarde': [
-        //         {id: '4', from: '13:30', to: '14:30'},
-        //         {id: '5', from: '14:30', to: '15:30'},
-        //         {id: '6', from: '15:30', to: '16:30'},
-        //         {id: '7', from: '16:30', to: '17:30'},
-        //         {id: '8', from: '17:30', to: '18:30'},
-        //         {id: '9', from: '18:30', to: '19:30'},
-        //         {id: '10', from: '19:30', to: '19:40'},
-        //         {id: '11', from: '19:40', to: '20:00'}
-        //         ],
-        //     'Noche': []
-        // }
-
         vm.availableHours = {};
         vm.sections = [];
+        vm.map = {};
+        vm.categories = [];
+        vm.user = {};
+        vm.total = { price: 0, duration: 0 };
+        vm.sortableOptions = { handle: '.handle', 'ui-floating': true, cursor: 'move' };
+
+        vm.selectService = selectService;
+        vm.setStep = setStep;
+        vm.schedule = schedule;
+        vm.addService = addService;
+        vm.removeService = removeService;
+        vm.mobileSummary = mobileSummary;
+        vm.setAppointment = setAppointment;
+        vm.submitBooking = submitBooking;
 
         AgendaProApi.show($routeParams.id).then(function(data){
             vm.company = data;
+            vm.companyLoaded = true;
             vm.categories = vm.company.categorized_services;
             vm.map = getCompanyMap();
             vm.showComments = vm.company.show_comments;
@@ -72,15 +58,16 @@
         $scope.$watch(function() {
             return vm.availableHours;
         }, function() {
-            vm.sections = Object.keys(vm.availableHours).slice(0,2);
+            vm.sections = Object.keys(vm.availableHours).slice(0,3);
         })
 
-        // $scope.$on('$includeContentLoaded', function (e, tmpl) {
-        //     var step1 = vm.tmpl.step1;
-        //     if( tmpl === step1 ) {
-        //         showCalendar();
-        //     }
-        // });
+        $scope.$on('$includeContentLoaded', function (e, tmpl) {
+            var step1 = vm.tmpl.step1,
+                loadedCompany = Object.keys(vm.company).length > 0;
+            if( tmpl === step1 && loadedCompany ) {
+                showCalendar();
+            }
+        });
 
         function selectService(category, service) {
             vm.selectedCategory = category;
@@ -140,17 +127,20 @@
             bindHide();
         }
 
-        function activateScheduling() {
+        function schedule() {
             $('#schedule').modal();
             getAvailableHours();
             runSlider();
         }
 
-        function getAvailableHours() {
-            AgendaProApi.weeklyHours($routeParams.id, vm.servicesList).then(function(response) {
-                vm.availableHours = response;
-                console.log(vm.availableHours);
-            });
+        function getAvailableHours(date) {
+            var date = (date || new Date());
+            vm.availableHours = {};
+            AgendaProApi.weeklyHours(date, $routeParams.id, vm.servicesList)
+                .then( function(response) {
+                    vm.availableHours = response;
+                }
+            );
         }
 
         function calculateTotal() {
@@ -191,9 +181,21 @@
             }
         }
 
-        function schedule() {
-            //TODO TO SCHEDULE
-            return true;
+        function submitBooking() {
+            var data = {},
+                bookings = [];
+
+            for (var i = 0; i < vm.servicesList.length; i++) {
+              bookings.push(vm.servicesList[i].appointment);
+            };
+
+            console.log(vm.user);
+
+            data.bookings = bookings;
+            data.client = vm.user;
+
+            console.log("THIS IS WHAT I'LL SEND TO THE SERVER");
+            console.log(data);
         }
 
         function getCompanyMap() {
@@ -225,15 +227,15 @@
               firstDay: 1,
               prevText: "",
               nextText: "",
-              dateFormat: "dd-mm-yy",
+              dateFormat: "yy-mm-dd",
               hideIfNoPrevNext: true,
               minDate: "0m",
               maxDate: "+6m",
               onSelect: function(date) {
-                console.log("onSelect", date);
+                getAvailableHours(date);
               },
               beforeShowDay: function(date) {
-                var dateFormatted = $.datepicker.formatDate('dd-mm-yy', date),
+                var dateFormatted = $.datepicker.formatDate('yy-mm-dd', date),
                     dayName = $.datepicker.formatDate('DD', date),
                     mappedDays = { 'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles', 'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado', 'Sunday': 'Domingo' },
                     klass = '',
@@ -247,7 +249,7 @@
                 return [show, klass, ''];
 
                 function isDealDay() {
-                    var dealDays = ["03-11-2015","13-11-2015","23-11-2015"];
+                    var dealDays = ["2015-11-03","2015-11-13","2015-11-23"];
                     return $.inArray( dateFormatted, dealDays ) > -1;
                 }
 
@@ -263,6 +265,9 @@
               }
             });
         }
+
+        // Toggler for Mobile Bubble, and
+        // sets the container Height.
 
         function mobileSummary() {
             var btn = $('#summary-button'),
@@ -283,6 +288,26 @@
                     content.css('height', 'auto');
                 }
             });
+        }
+
+        // When an Hour is selected, this sets all
+        // booking hours to listed services (Appointmets)
+
+        function setAppointment(section, index) {
+            var section = vm.availableHours[section],
+                bookings = section[index].bookings;
+
+            for (var i = 0; i < vm.servicesList.length; i++) {
+                vm.servicesList[i].appointment = {
+                    service_id: bookings[i].service,
+                    service_provider_id: bookings[i].provider_id,
+                    start: bookings[i].start,
+                    end: bookings[i].end,
+                    provider_lock: bookings[i].provider_lock,
+                    price: bookings[i].price
+                }
+            };
+
         }
 
     }

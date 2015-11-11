@@ -170,11 +170,26 @@
   }
 }
 
-@mixin no-select{
+@mixin no-select {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+@mixin loading($size: default) {
+  background: url('#{$loading}') no-repeat center;
+  margin: auto;
+  text-align: center;
+  @if $size == default {
+    height: 180px;
+    width: 180px;
+  }
+  @else if $size == sm {
+    height: 30px;
+    width: 30px;
+    background-size: 30px;
+  }
 }

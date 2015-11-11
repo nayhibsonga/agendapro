@@ -12,18 +12,31 @@
         vm.title = 'Results';
         vm.address = $cookies.get('formatted_address');
         vm.showUrl = $rootScope.baseUrl + "/show/"
-        vm.params = "?service=" + $routeParams.service + "&local=";
         vm.searchResults = [];
+        vm.error = '';
 
-        AgendaProApi.search($routeParams).then(function(data){
-          vm.searchResults = data;
-        });
+        checkLocation();
 
-        activate();
 
-        ////////////////
+        function checkLocation(){
+            var criteria = $routeParams;
+            if ( !criteria.latitude || !criteria.longitude ) {
+                angular.merge( criteria, $rootScope.defaultLatLng );
+            }
 
-        function activate() {
+            getResults(criteria);
+        }
+
+
+        function getResults( criteria ) {
+            AgendaProApi.search(criteria).then(function(data){
+                if( angular.isObject(data) && data.length == 0 ) {
+                    vm.error = "No se encontraron coincidencias, Intente Nuevamente.";
+                } else {
+                    vm.error = "";
+                    vm.searchResults = data;
+                }
+            });
         }
     }
 })();

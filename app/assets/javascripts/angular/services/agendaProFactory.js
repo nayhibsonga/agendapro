@@ -17,7 +17,8 @@
             deals_preview: deals_preview,
             search: search,
             show: show,
-            weeklyHours: weeklyHours
+            weeklyHours: weeklyHours,
+            defaultLocation: defaultLocation
         }
 
         var ApiCalls = { get: get, post: post }
@@ -41,13 +42,20 @@
             return ApiCalls.get(url);
         }
 
-        function weeklyHours(local, services) {
+        function weeklyHours(date, local, services) {
             // i.e ?date=yyyy-mm-dd&local=1&serviceStaff=[{"service":serviceID,"provider": providerID}]
             var params = {},
-                today = new Date(),
                 servicesStaff = [];
 
-            params.date =  today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + (today.getDay() + 1);
+            if( angular.isDate(date) ) {
+                var fmtDate = "";
+                fmtDate += date.getFullYear() + "-";
+                fmtDate += date.getMonth() + 1 + "-";
+                fmtDate += ("0" + date.getDate()).slice(-2);
+                date = fmtDate;
+            }
+
+            params.date =  date;
             params.local = local;
 
             for (var i = 0; i < services.length; i++) {
@@ -59,9 +67,14 @@
 
             params.serviceStaff = JSON.stringify(servicesStaff);
 
-            // var url = '/service_providers/available_hours?'.concat($.param(params));
-            var url = '/service_providers/available_hours?date=2015-11-26&local=1&serviceStaff=[{"service":"1","provider":"1"}]';
+            var url = '/service_providers/available_hours?'.concat($.param(params));
+            //var url = '/service_providers/available_hours?date=2015-11-26&local=1&serviceStaff=[{"service":"1","provider":"1"}]';
 
+            return ApiCalls.get(url);
+        }
+
+        function defaultLocation() {
+            var url = '/default_location';
             return ApiCalls.get(url);
         }
 

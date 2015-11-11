@@ -1,4 +1,11 @@
-<div id="show" class="container">
+<div ng-hide="sc.companyLoaded">
+  <div class="clear"></div>
+  <div class="loading"></div>
+  <div class="clear"></div>
+</div>
+
+
+<div id="show" class="container" ng-show="sc.companyLoaded">
 
   <div class="row">
     <div class="col-lg-12 title">
@@ -37,7 +44,7 @@
          <span ng-show="sc.showComments"><a href="#">Comentarios</a></span>
       </div>
 
-      <button class="btn btn-down hidden-md hidden-lg btn-lg btn-hora-chic">Reservar</button>
+      <button class="btn btn-down btn-lg btn-hora-chic hidden-md hidden-lg" ng-disabled="sc.servicesList.length === 0" ng-click="sc.schedule();">Agendar</button>
 
       <div class="services">
         <div>Categorías</div>
@@ -72,14 +79,14 @@
       <div id="map">
 
         <ui-gmap-google-map center="sc.map.center" zoom="sc.map.zoom" options="options">
-          <ui-gmap-marker idkey="sc.map.marker.id" coords="sc.map.marker.coords"/>
+          <ui-gmap-marker idkey="sc.map.marker.id" coords="sc.map.marker.coords" options="{ icon: 'assets/hora_chic/maps/pin.png' }"/>
         </ui-gmap-google-map>
 
       </div>
 
       <div id="summary-md">
 
-        <button class="btn btn-down btn-lg btn-hora-chic" ng-click="sc.schedule();">
+        <button class="btn btn-down btn-lg btn-hora-chic" ng-disabled="sc.servicesList.length === 0" ng-click="sc.schedule();">
           Agendar
         </button>
 
@@ -139,7 +146,7 @@
     text-align: center;
     padding-top: 20px;
     clear: both;
-    transition: margin-bottom 0.6s ease;
+    border: 1px solid #D94449;
   }
 
   #summary-button:active {
@@ -157,7 +164,6 @@
     bottom: 0;
     clear: both;
     float: left;
-    transition: all 0.4s ease;
   }
 
   .active {

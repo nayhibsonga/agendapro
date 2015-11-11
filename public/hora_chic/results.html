@@ -18,60 +18,13 @@
   </section>
   <!-- END CHANGE LOCATION -->
 
+  <div class="loading" ng-show="rc.searchResults.length === 0 && rc.error === ''"></div>
 
-  <!-- STATIC SERVICES LIST -->
-  <div class="places row">
-    <!-- IMAGE -->
-    <div class="col-md-4 img-container">
-      <figure>
-        <img src="http://www.todohabitat.es/img/empresas/3097_centro-de-estetica-form-studio.jpg" alt="">
-      </figure>
-    </div>
-    <!-- END IMAGE -->
-
-    <!-- DESCRIPTION -->
-    <div class="col-md-4 description-container">
-      <h3>
-        <a ng-href="{{ rc.showUrl + 'delicatta-hands' + rc.params + '1' }}">Delicatta Hands
-        </a>
-      </h3>
-      <p class="address"><span><i class="icon ion-ios-location"></i></span> Cerro El Plomo 5680, Local 002, Las Condes</p>
-      <p>&#9734; &#9734; &#9734; &#9734; &#9734;</p>
-      <p class="detail">Multiespacio, Peluqueria, Manicure, Tratamientos Estéticos y capilaresm ropa y accesorios, Asesoria de imagen personal, Maquillaje y mas.</p>
-    </div>
-    <!-- END DESCRIPTION -->
-
-    <!-- SERVICES -->
-    <div class="col-md-4 services-container">
-      <div class="service">
-        <span>Corte de Pelo Mujer</span>
-        <span class="time"><i class="icon ion-ios-clock-outline"></i>  1hr</span>
-        <span class="pull-right price">$15.990</span>
-      </div>
-      <div class="service">
-        <span>Corte de Pelo mas teñido</span>
-        <span class="time"><i class="icon ion-ios-clock-outline"></i>  1hr 30 min</span>
-        <span class="pull-right price">$35.990</span>
-      </div>
-      <div class="service">
-        <span>Corte de puntas</span>
-        <span class="time"><i class="icon ion-ios-clock-outline"></i>  30 min</span>
-        <span class="pull-right price">$9.990</span>
-      </div>
-      <div class="service">
-        <span>Corte de Pelo Hombre</span>
-        <span class="time"><i class="icon ion-ios-clock-outline"></i>  20 min</span>
-        <span class="pull-right price">$6.990</span>
-      </div>
-      <div class="pull-right view-more">
-        <a class="btn btn-down" ng-href="{{ rc.showUrl + 'delicatta-hands' + rc.params + '1' }}">Ver más servicios
-        </a>
-      </div>
-    </div>
-    <!-- END SERVICES -->
+  <div class="error" ng-show="rc.error !== ''" style="width: 100%; text-align: center;">
+    <div class="clear"></div>
+    <span style="color: #F26062; font-style: italic;">{{ rc.error }}</span>
+    <div class="clear"></div>
   </div>
-  <!-- END STATIC SERVICES LIST -->
-
 
   <!-- SERVICES LIST -->
   <div id="company-{{ company.id }}" class="places row" ng-repeat="company in rc.searchResults">
@@ -125,7 +78,6 @@
     <!-- END SERVICES -->
   </div>
   <!-- END SERVICES LIST -->
-
 
 </div>
 
