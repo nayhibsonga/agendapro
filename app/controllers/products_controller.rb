@@ -2,6 +2,7 @@ class ProductsController < ApplicationController
   before_action :set_product, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :quick_add
+  before_action :verify_free_plan
   layout "admin"
   load_and_authorize_resource
 
@@ -165,6 +166,10 @@ class ProductsController < ApplicationController
     respond_to do |format|
       format.html { render :partial => 'product_features' }
     end
+  end
+
+  def free_plan_landing
+
   end
 
   private

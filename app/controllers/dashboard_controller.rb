@@ -60,4 +60,8 @@ class DashboardController < ApplicationController
     end
   end
 
+  def free_plan_landing
+
+  end
+
 end

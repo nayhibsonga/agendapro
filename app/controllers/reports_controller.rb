@@ -3,6 +3,7 @@ class ReportsController < ApplicationController
 	before_action :authenticate_user!
 	before_action :verify_is_admin
 	before_action :quick_add
+	before_action :verify_free_plan
 	before_action :set_params
 	layout "admin"
 

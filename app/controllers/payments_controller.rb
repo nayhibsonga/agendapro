@@ -1,6 +1,7 @@
 class PaymentsController < ApplicationController
   before_action :set_payment, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
+  before_action :verify_free_plan, except: [:load_payment, :client_bookings, :create_new_payment, :update_payment, :receipt_pdf, :payment_pdf, :send_receipts_email, :get_receipts, :get_intro_info, :save_intro_info, :check_booking_payment, :get_formatted_booking, :delete_payment, :commissions, :service_commissions, :provider_commissions, :set_default_commission, :set_provider_default_commissions, :set_commissions, :summary]
   layout "admin"
   load_and_authorize_resource
 

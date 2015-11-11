@@ -468,6 +468,9 @@
     get '/get_treatment_price', :to => 'bookings#get_treatment_price'
     get '/payment_summary', :to => 'payments#summary'
 
+    #Free plan
+    get '/free_plan', :to => 'dashboard#free_plan_landing'
+
   end
 
   namespace :api, defaults: {format: 'json'} do

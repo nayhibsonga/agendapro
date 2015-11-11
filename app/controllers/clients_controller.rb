@@ -2,6 +2,7 @@ class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:client_loader]
   before_action :quick_add
+  before_action :verify_free_plan, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :new, :edit, :create, :update]
   load_and_authorize_resource
   layout "admin"
 
