@@ -853,8 +853,8 @@ class PaymentsController < ApplicationController
           if new_booking[:provider_id] != -1 && new_booking[:provider_id] != "-1"
             mock_booking.service_provider_id = new_booking[:provider_id]
           end
-          mock_booking.price = new_booking[:price]
-          mock_booking.discount = new_booking[:discount]
+          mock_booking.list_price = new_booking[:price].to_f
+          mock_booking.discount = new_booking[:discount].to_f
           mock_booking.price = (mock_booking.list_price * (100 - mock_booking.discount) / 100).round(1)
 
           non_discount_total += mock_booking.list_price
