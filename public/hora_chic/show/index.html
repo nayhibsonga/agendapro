@@ -101,25 +101,27 @@
     </div>
     <!-- END SIDE CONTENT -->
 
-    <div id="summary-xs" class="hidden-md hidden-lg" style="height: auto; width: 100%; position: fixed; bottom: 0; right: 0; color: white;">
+    <div id="summary-xs" class="hidden-md hidden-lg" style="height: auto; width: 11%; position: fixed; bottom: 0; right: 0; color: white; z-index: 2; max-height: 40%;">
       <div id="summary-button" class="small-button" ng-click="sc.mobileSummary()" >
         <span style="font-size: 18px;">{{ sc.servicesList.length }} <i class="fa fa-calendar"></i></span>
       </div>
       <div id="summary-detail-xs">
-        <div ng-repeat="selected in sc.servicesList track by $index">
-          <div style="display: inline-block; width: 65%; text-align: right;">
-            <div class="detail-name">
-              {{ selected.name }}
+        <div style="height: 100%;">
+          <div ng-repeat="selected in sc.servicesList track by $index">
+            <div style="display: inline-block; width: 65%; text-align: right;">
+              <div class="detail-name">
+                {{ selected.name }}
+              </div>
+              <div class="detail-time-price">
+                <span>{{ selected.duration | inHours }}</span>
+                <span>{{ selected.price | currency | clp }} </span>
+              </div>
             </div>
-            <div class="detail-time-price">
-              <span>{{ selected.duration | inHours }}</span>
-              <span>{{ selected.price | currency | clp }} </span>
-            </div>
-          </div>
 
-          <div style="display: inline-block; line-height: 40px; height: 40px; vertical-align: top; padding: 0 10px;">
-            <i class="fa fa-pencil" style="font-size: 25px; padding: 0 15px; cursor: pointer;"></i>
-            <i class="fa fa-trash-o" ng-click="sc.removeService($index);" style="font-size: 25px; padding: 0 15px; cursor: pointer;"></i>
+            <div style="display: inline-block; line-height: 40px; height: 40px; vertical-align: top; padding: 0 10px;">
+              <i class="fa fa-pencil" style="font-size: 25px; padding: 0 15px; cursor: pointer;"></i>
+              <i class="fa fa-trash-o" ng-click="sc.removeService($index);" style="font-size: 25px; padding: 0 15px; cursor: pointer;"></i>
+            </div>
           </div>
         </div>
       </div>

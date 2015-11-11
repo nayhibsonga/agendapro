@@ -272,11 +272,15 @@
         function mobileSummary() {
             var btn = $('#summary-button'),
                 content = $('#summary-detail-xs'),
+                container = $('#summary-xs'),
                 contentHeight = content.height(),
-                contentAutoHeight = content.css('height', 'auto').height();
+                contentAutoHeight = 0,
+                defaultWidth = '11%',
+                maxWidth = '100%';
 
-            if( btn.hasClass('pressed') ) {
-                contentAutoHeight = 0;
+            if( !btn.hasClass('pressed') ) {
+                container.css('width', maxWidth);
+                contentAutoHeight = content.css('height', 'auto').height();
             }
 
             btn.toggleClass('pressed');
@@ -286,6 +290,8 @@
             }, 400, function() {
                 if( btn.hasClass('pressed') ) {
                     content.css('height', 'auto');
+                } else {
+                    container.css('width', defaultWidth);
                 }
             });
         }

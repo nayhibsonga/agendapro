@@ -13,6 +13,7 @@ html, body {
 #wrapper {
   min-height: 100%;
   position: relative;
+  padding-bottom: 125px; // Footer size
 }
 
 // Removes Bootstrap default styles
@@ -295,7 +296,7 @@ footer {
   position: absolute;
   height: 125px;
   width: 100%;
-  z-index: -1;
+  z-index: 1;
   .container {
     @include logo;
     height: 100%;
