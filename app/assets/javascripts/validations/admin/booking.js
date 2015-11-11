@@ -46,6 +46,8 @@ $(function() {
 				required: true
 			},
 			'booking[price]': {
+				required: true,
+				number: true,
 				min: 0
 			},
 
