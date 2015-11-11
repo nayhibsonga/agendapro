@@ -140,6 +140,10 @@ class BookingsController < ApplicationController
 
       @booking = Booking.new(new_booking_params)
 
+      if @booking.price.nil?
+        @booking.price = 0
+      end
+
       should_create_sessions = false
       if buffer_params[:session_booking_id]
         if buffer_params[:session_booking_id] != "0" && buffer_params[:session_booking_id] != 0
@@ -557,6 +561,10 @@ class BookingsController < ApplicationController
       staff_code = nil
       new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code)
       @booking = Booking.new(new_booking_params)
+
+      if @booking.price.nil?
+        @booking.price = 0
+      end
 
       should_create_sessions = false
       if buffer_params[:session_booking_id]
@@ -1219,6 +1227,10 @@ class BookingsController < ApplicationController
 
     if ServiceProvider.where(:id => booking_params[:service_provider_id])
       new_booking_params[:location_id] = ServiceProvider.find(booking_params[:service_provider_id]).location.id
+    end
+
+    if @booking.price.nil?
+      @booking.price = 0
     end
 
     session_booking_index = 0

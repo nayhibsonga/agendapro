@@ -1420,7 +1420,7 @@ function loadPaymentServices(){
   $("#payment_not_booked_provider").append('<option value="-1">Ninguno</option>');
   $.getJSON('/location_services/', {location: parseInt($('#payment_location').val()) }, function (services) {
     $.each(services, function (key, service) {
-      $("#payment_not_booked_service").append('<option value="' + service.id + '">' + service.name + '</option>');
+      $("#payment_not_booked_service").append('<option value="' + service.id + '">' + service.name + " (" + service.service_category_name + ")" + '</option>');
     });
   });
 }
