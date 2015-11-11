@@ -11,19 +11,21 @@
     </div>
 
     <div id="hours" class="col-md-5">
-      <div class="row" ng-repeat="section in sc.sections">
-        <div class="col-xs-12 text-center">
-          {{ tc.lang.step1.section[section] }}
-        </div>
-
-        <div class="col-md-4 hour-container" ng-repeat="date in sc.availableHours[section] track by $index">
-          <div class="available">
-            {{ date.start_block }} - {{ date.end_block }}
+      <div class="row">
+        <div class="col-xs-6" ng-repeat="section in sc.sections" style="height: 345px; overflow: auto;">
+          <div class="col-xs-12 text-center">
+            {{ tc.lang.step1.section[section] }}
           </div>
-        </div>
 
-        <div class="col-xs-12 text-center empty-hours" ng-show="sc.availableHours[section].length === 0">
-          <span>{{ tc.lang.step1.legend.section.empty_hours }}</span>
+          <div class="col-xs-12 hour-container" ng-repeat="date in sc.availableHours[section] track by $index" style="margin-bottom: 5px;">
+            <div class="available">
+              {{ date.start_block }} - {{ date.end_block }}
+            </div>
+          </div>
+
+          <div class="col-xs-12 text-center empty-hours" ng-show="sc.availableHours[section].length === 0">
+            <span>{{ tc.lang.step1.legend.section.empty_hours }}</span>
+          </div>
         </div>
 
       </div>

@@ -20,18 +20,14 @@
       </div>
 
       <div class="modal-body" ng-switch="sc.currentStep">
-
-
         <!-- STEP 1 -->
-        <div id="step-1" ng-switch-when="1" class="wrapper" >
-
+        <div ng-switch-when="1" class="wrapper" >
           <ng-include src="tc.templates.show.step1"></ng-include>
-
         </div>
         <!-- END STEP 1 -->
 
         <!-- STEP 2 -->
-        <div id="step-2" ng-switch-when="2" class="row wrapper" ng-controller="FormController as fc">
+        <div id="step2" ng-switch-when="2" class="row wrapper" ng-controller="FormController as fc">
           <div class="col-md-7">
             <h3>Datos de Reserva</h3>
             <form action="#">
