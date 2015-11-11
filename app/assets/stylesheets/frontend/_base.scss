@@ -495,14 +495,12 @@ footer {
         .price { color: $light-pink; }
       }
       .view-more{
-        button {
+        a {
           @include border-radius(0);
           background-color: $light-pink;
           padding: 10px 20px;
-          a {
-            color: $white;
-            &:hover { color: $white; }
-          }
+          color: $white;
+          &:hover { color: $white; }
         }
       }
     }

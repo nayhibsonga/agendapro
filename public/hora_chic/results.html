@@ -64,8 +64,8 @@
         <span class="pull-right price">$6.990</span>
       </div>
       <div class="pull-right view-more">
-        <button class="btn btn-down"><a ng-href="{{ rc.showUrl + 'delicatta-hands' + rc.params + '1' }}">Ver más servicios
-        </a></button>
+        <a class="btn btn-down" ng-href="{{ rc.showUrl + 'delicatta-hands' + rc.params + '1' }}">Ver más servicios
+        </a>
       </div>
     </div>
     <!-- END SERVICES -->
@@ -86,7 +86,7 @@
     <!-- DESCRIPTION -->
     <div class="col-md-4 description-container">
       <h3>
-        <a ng-href="{{ rc.showUrl + 'delicatta-hands' + rc.params + '1' }}">{{ company.name }}
+        <a ng-href="{{ rc.showUrl + company.id }}">{{ company.name }}
         </a>
       </h3>
       <p class="address"><span><i class="icon ion-ios-location"></i></span> {{ company.address }}, {{ company.district }}</p>
@@ -118,8 +118,8 @@
         <span class="pull-right price">$6.990</span>
       </div>
       <div class="pull-right view-more">
-        <button class="btn btn-down"><a ng-href="{{ rc.showUrl + company.id }}">Ver más servicios
-        </a></button>
+        <a class="btn btn-down" ng-href="{{ rc.showUrl + company.id }}">Ver más servicios
+        </a>
       </div>
     </div>
     <!-- END SERVICES -->
