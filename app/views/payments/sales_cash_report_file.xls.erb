@@ -37,6 +37,21 @@
             <ss:Column ss:Width="100"/>
 
             <Row>
+              <Cell><Data ss:Type="String">Resumen de caja</Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Apertura</Data></Cell>
+              <Cell><Data ss:Type="String"><%= @sales_cash_log.start_date.strftime('%d/%m/%Y %R') %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Cierre</Data></Cell>
+              <Cell><Data ss:Type="String"><%= @sales_cash_log.end_date.strftime('%d/%m/%Y %R') %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
               <Cell><Data ss:Type="String">Productos</Data></Cell>
             </Row>
 
@@ -81,7 +96,7 @@
               %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= payment_product.payment.payment_date.to_s %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_product.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_product.product.sku %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_product.product.product_category.name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_product.product.product_brand.name %></Data></Cell>
@@ -136,26 +151,30 @@
                   payment_methods = payment_methods_arr.join(", ")
                 end
 
+                provider_name = ""
+
+                if mock_booking.service_provider_id.nil?
+                  provider_name = "Sin información"
+                else
+                  provider_name = mock_booking.service_provider.public_name
+                end
+
+                service_name = ""
+
+                if mock_booking.service_id.nil?
+                  service_name = "Sin información"
+                else
+                  service_name = mock_booking.service.name
+                end
+
               %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= mock_booking.payment.payment_date.to_s %></Data></Cell>
-                <Cell><Data ss:Type="String">
-                  <% if mock_booking.service_id.nil? %>
-                    Sin información
-                  <% else %>
-                    <%= mock_booking.service.name %>
-                  <% end %>
-                </Data></Cell>
+                <Cell><Data ss:Type="String"><%= mock_booking.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= mock_booking.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= mock_booking.get_commission %></Data></Cell>
-                <Cell><Data ss:Type="String">
-                  <% if mock_booking.service_provider_id.nil? %>
-                    Sin información
-                  <% else %>
-                    <%= mock_booking.service_provider.public_name %>
-                  <% end %>
-                </Data></Cell>
+                <Cell><Data ss:Type="String"><%= provider_name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= mock_booking.receipt.notes %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= mock_booking.receipt.number %></Data></Cell>
@@ -205,8 +224,8 @@
               %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= booking.payment.payment_date.to_s %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= booking.start.to_s %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= booking.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= booking.start.strftime('%d/%m/%Y %R') %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= booking.service.name %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= booking.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= booking.get_commission %></Data></Cell>
@@ -264,19 +283,21 @@
 
                   payment.payment_products.each do |payment_product| 
                     payment_products_num += payment_product.quantity
-                  end 
+                  end
+
+                  client_name = ""
+
+                  if payment.client_id.nil? || payment.client.nil?
+                    client_name = "Sin cliente"
+                  else
+                    client_name = payment.client.first_name + " " + payment.client.last_name
+                  end
 
                 %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= payment.payment_date.to_s %></Data></Cell>
-                <Cell><Data ss:Type="String">
-                  <% if payment.client_id.nil? || payment.client.nil? %>
-                    Sin cliente
-                  <% else %>
-                    <%= payment.client.first_name + " " + payment.client.last_name %>
-                  <% end %>
-                </Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment.cashier.name %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= payment_products_num %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= payment.mock_bookings.count %></Data></Cell>
@@ -318,7 +339,7 @@
               %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= internal_sale.date.to_s %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.date.strftime('%d/%m/%Y %R') %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= internal_sale.product.sku %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= internal_sale.product.product_category.name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= internal_sale.product.product_brand.name %></Data></Cell>
@@ -349,7 +370,7 @@
             <% @sales_cash_incomes.each do |sales_cash_income| %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= sales_cash_income.date.to_s %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= sales_cash_income.date.strftime('%d/%m/%Y %R') %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= sales_cash_income.amount %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= sales_cash_income.user.first_name + " " + sales_cash_income.user.last_name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= sales_cash_income.notes %></Data></Cell>
@@ -376,15 +397,18 @@
 
             <% @sales_cash_transactions.each do |sales_cash_transaction| %>
 
+              <% 
+                transaction_destiny = ""
+                if sales_cash_transaction.is_internal_transaction
+                  transaction_destiny = "A caja chica"
+                else
+                  transaction_destiny = "Externo"
+                end 
+              %>
+
               <Row>
-                <Cell><Data ss:Type="String"><%= sales_cash_transaction.date.to_s %></Data></Cell>
-                <Cell><Data ss:Type="String">
-                  <% if sales_cash_transaction.is_internal_transaction %>
-                    A caja chica
-                  <% else %>
-                    Externo
-                  <% end %>
-                </Data></Cell>
+                <Cell><Data ss:Type="String"><%= sales_cash_transaction.date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= transaction_destiny %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= sales_cash_transaction.amount %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= sales_cash_transaction.user.first_name + ' ' + sales_cash_transaction.user.last_name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= sales_cash_transaction.receipt_number %></Data></Cell>
