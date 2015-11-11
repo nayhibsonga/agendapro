@@ -19,13 +19,13 @@
   </div>
   <div class="col-xs-6" style="text-align: right">
     <% if !@sales_cash_log.nil? %>
-      <div style="font-size: 18px; color: #505050; margin: 4px; display: inline;">
-        Descargar reportes pasados:
+      <div style="font-size: 20px; color: #22c488; margin: 4px; display: inline;">
+        Descargar reportes pasados
       </div>
-      <div style="margin-bottom: 5px; display: block; text-align: right;">
-        <select id="sales_cash_log_select" class="form-control pull-right" style="width: 95% !important; text-align: right !important;">
+      <div style="margin-bottom: 5px; margin-top: 4px; display: block; text-align: right;">
+        <select id="sales_cash_log_select" class="form-control pull-right" style="width: 65% !important; text-align: right !important;">
           <% @sales_cash.sales_cash_logs.order('end_date desc').each do |sales_cash_log| %>
-            <option value="<%= sales_cash_log.id %>"><%= "Del  " + I18n.l(sales_cash_log.start_date - eval(ENV["TIME_ZONE_OFFSET"])) + "  al  " + I18n.l(sales_cash_log.end_date - eval(ENV["TIME_ZONE_OFFSET"])) %></option>
+            <option value="<%= sales_cash_log.id %>"><%= "Del  " + (sales_cash_log.start_date - eval(ENV["TIME_ZONE_OFFSET"])).strftime('%d/%m/%Y %R') + "  al  " + (sales_cash_log.end_date - eval(ENV["TIME_ZONE_OFFSET"])).strftime('%d/%m/%Y %R') %></option>
           <% end %>
         </select>
         <br />
@@ -91,7 +91,7 @@
         <tbody>
           <% @payments.each do |payment| %>
           <tr>
-            <td><%= payment.payment_date.strftime('%d-%m-%Y') %></td>
+            <td><%= payment.payment_date.strftime('%d/%m/%Y %R') %></td>
             <td><%= payment.location ? payment.location.name : '' %></td>
             <td>
               <% if !payment.client.nil? %>
@@ -192,7 +192,7 @@
         <tbody>
           <% @internal_sales.each do |internal_sale| %>
             <tr>
-              <td><%= internal_sale.date.strftime('%d-%m-%Y') %></td>
+              <td><%= internal_sale.date.strftime('%d/%m/%Y %R') %></td>
               <td><%= internal_sale.location ? internal_sale.location.name : '' %></td>
               <td>
                 <%= internal_sale.service_provider.public_name %>
@@ -238,7 +238,7 @@
         <tbody>
           <% @sales_cash_transactions.each do |sales_cash_transaction| %>
             <tr>
-              <td><%= sales_cash_transaction.date.strftime('%d-%m-%Y') %></td>
+              <td><%= sales_cash_transaction.date.strftime('%d/%m/%Y %R') %></td>
               <td>
                 <% if sales_cash_transaction.is_internal_transaction %>
                   A caja chica
@@ -293,7 +293,7 @@
         <tbody>
           <% @sales_cash_incomes.each do |sales_cash_income| %>
             <tr>
-              <td><%= sales_cash_income.date.strftime('%d-%m-%Y') %></td>
+              <td><%= sales_cash_income.date.strftime('%d/%m/%Y %R') %></td>
               <td>
                 <%= number_to_currency(sales_cash_income.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
               </td>

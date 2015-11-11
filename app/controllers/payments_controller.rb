@@ -1983,8 +1983,6 @@ class PaymentsController < ApplicationController
 
     @sales_cash = @sales_cash_log.sales_cash
 
-    @sales_cash_log = SalesCashLog.where(sales_cash_id: @sales_cash.id, start_date: start_date, end_date: end_date)
-
     @sales_cash_transactions = SalesCashTransaction.where(sales_cash_id: @sales_cash.id, open: false, date: start_date..end_date)
 
     @sales_cash_incomes = SalesCashIncome.where(sales_cash_id: @sales_cash.id, open: false, date: start_date..end_date)
@@ -1999,7 +1997,7 @@ class PaymentsController < ApplicationController
 
     @internal_sales = InternalSale.where(location_id: @sales_cash.location.id, date: start_date..end_date)
 
-    respond_with(@sales_cash)
+    respond_with(@sales_cash_log)
 
   end
 
