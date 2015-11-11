@@ -17,10 +17,16 @@
   </head>
 
   <body ng-controller="TemplateController as tc">
-    <ng-include src="tc.templates.header"></ng-include>
-    <div id="mainContent" ng-view class="view-animate"></div>
-    <ng-include src="tc.templates.footer"></ng-include>
-    <ng-include src="tc.templates.login"></ng-include>
+    <div id="wrapper">
+      <ng-include src="tc.templates.header"></ng-include>
+
+      <div id="main" class="content">
+        <div ng-view></div>
+      </div>
+
+      <ng-include src="tc.templates.footer"></ng-include>
+      <ng-include src="tc.templates.login"></ng-include>
+    </div>
   </body>
 
 </html>

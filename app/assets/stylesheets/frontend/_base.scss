@@ -4,6 +4,15 @@ html, body, header, footer {
   @include font-smoothing;
 }
 
+html, body {
+  height: 100%;
+}
+
+#wrapper {
+  min-height: 100%;
+  position: relative;
+}
+
 // Removes Bootstrap default styles
 *:focus{ outline: none !important; }
 
@@ -34,7 +43,7 @@ a{
 .btn-hora-chic {
   background-color: $light-pink;
   color: $white;
-  padding: 10px;
+  padding: 20px;
   @include border-radius(0);
   &:hover{
     color: $white;
@@ -52,7 +61,7 @@ a{
 }
 
 .hightlight {
-  background-color: $light-pink;
+  background-color: #FCD5D7;
 }
 
 .logo-sm {
@@ -65,6 +74,15 @@ a{
 
 .no-select {
   @include no-select;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 35% 0;
+}
+
+.loading {
+  @include loading(sm);
 }
 
 #login {
@@ -91,9 +109,15 @@ header {
       @include logo {
         height: inherit;
         width: auto;
+        cursor: pointer;
       }
     }
   }
+}
+
+#main {
+  position: relative;
+  padding-bottom: 155px;
 }
 
 .menu {
@@ -241,9 +265,11 @@ header {
 footer {
   background-color: $lighterx-gray;
   left: 0;
+  bottom: 0;
+  position: absolute;
   height: 125px;
   width: 100%;
-  margin-top: 30px;
+  z-index: -1;
   .container {
     @include logo;
     height: 100%;
@@ -546,6 +572,116 @@ footer {
 
 }
 
+
+#schedule {
+  .modal-dialog {
+    width: 100%;
+    margin: 0;
+    max-width: 1150px;
+  }
+  .modal-content {
+    @include border-radius(0);
+  }
+  .modal-header {
+    padding: 0;
+    border-bottom: none;
+    background-color: #C2C0BC;
+    height: 40px;
+    color: white;
+    %step-number {
+      background-color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      color: #C2C0BC;
+    }
+
+    div.step-container {
+      width: 50%;
+      padding: 10px 20px;
+      left: 0;
+      position: absolute;
+      text-align: center;
+
+      &.last {
+        left: 50%;
+      }
+
+      span.hora{
+        margin-right: 30px;
+        &::before{
+          content: '1';
+          @extend %step-number;
+        }
+      }
+
+      span.datos{
+        @extend span.hora;
+        &::before {
+          content: '2';
+        }
+      }
+
+    }
+
+    .slider {
+      background-color: $light-pink;
+      position: absolute;
+      width: 31.4%;
+      height: 40px;
+      z-index: 0;
+      left: 0;
+      .start {
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        left: -14px;
+        top: 6px;
+        background-color: #C2C0BC;
+        transform: rotate(45deg);
+      }
+      .end {
+        @extend .start;
+        right: -14px;
+        left: initial;
+        background-color: $light-pink;
+      }
+    }
+  }
+  .modal-body {
+    clear: both;
+    padding: 30px;
+    #step2{
+      form{
+        .form-control{
+          border-radius: 0;
+          margin-bottom: 10px;
+        }
+      }
+      #final-summary{
+        >div {
+          border: 1px solid black;
+          padding:10px 20px;
+          line-height: 25px;
+          p{
+            border-bottom: 1px solid black;
+            padding-bottom: 10px;
+            &.last{
+              border-bottom: none;
+              padding-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  .modal-footer {
+    padding: 10px 30px;
+    border-top: none;
+  }
+}
+
 #step1 {
 
   #datepicker {
@@ -561,6 +697,11 @@ footer {
       }
       td {
         padding: 3px;
+      }
+      .ui-datepicker-current-day > a {
+        background-color: $light-pink;
+        color: $white;
+        border: 1px solid $light-pink;
       }
     }
 
@@ -583,18 +724,26 @@ footer {
         height: 37px;
         text-align: center;
         line-height: 35px;
+        &:hover {
+          color: white;
+          background-color: $light-pink;
+        }
     }
 
     .ui-datepicker-unselectable {
-      color: #ccc;
+      color: $gray;
       >.ui-state-default {
-        border: 1px solid #ccc;
+        border: 1px solid $gray;
+        &:hover{
+          color: $gray;
+          background-color: $white;
+        }
       }
     }
 
     %default-arrow {
       font-size: 25px;
-      color: #ccc;
+      color: $gray;
       cursor: pointer;
       &::before {
         font-family: 'FontAwesome';
@@ -618,25 +767,17 @@ footer {
     }
 
     .deal-day {
-      &::before {
-        content: '';
-        width: 8px;
-        height: 8px;
-        background-color: $light-pink;
-        position: absolute;
-        margin-left: 6px;
-        margin-top: 1px;
-      }
-
-      &::after {
-        content: '';
-        width: 11px;
-        height: 6px;
-        background-color: white;
-        position: absolute;
-        margin-top: -33px;
-        margin-left: 2px;
-        transform: rotate(45deg);
+      a {
+        position: relative;
+        &:after {
+          content: '';
+          background: url('hora_chic/deal.png') no-repeat center;
+          width: 20px;
+          height: 20px;
+          top: 0;
+          right: 0;
+          position: absolute;
+        }
       }
     }
   }
@@ -653,6 +794,9 @@ footer {
           cursor: pointer;
           background-color: $light-pink;
           color: white;
+          &:after {
+            color: white;
+          }
         }
 
         &::after {
@@ -660,7 +804,7 @@ footer {
           font-family: 'FontAwesome';
           float: right;
           font-size: 25px;
-          color: #ccc;
+          color: $gray;
           cursor: pointer;
           line-height: 20px;
         }
@@ -748,4 +892,8 @@ footer {
       transform: rotate(45deg);
     }
   }
+}
+
+#step2 {
+
 }

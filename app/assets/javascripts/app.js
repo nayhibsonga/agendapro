@@ -58,6 +58,7 @@
     $rootScope.baseUrl = '/hora_chic';
     $rootScope.country = 'cl';
     $rootScope.lang = Translator.init($rootScope.country);
+    $rootScope.defaultLatLng = { latitude: -33.448890, longitude: -70.669265 };
   }
 
 })();

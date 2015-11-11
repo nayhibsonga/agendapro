@@ -44,8 +44,6 @@
                 geocoder.geocode({'latLng': latlng}, function(results, status) {
                     vm.addressName = results[0].formatted_address;
                     $cookies.put('formatted_address', vm.addressName);
-                    console.log(results[0]);
-                    vm.$apply();
                 });
             });
         }

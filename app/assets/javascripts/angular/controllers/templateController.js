@@ -5,9 +5,9 @@
         .module('HoraChic')
         .controller('TemplateController', TemplateController);
 
-    TemplateController.$inject = ['$rootScope', '$scope', 'AuthenticationFactory'];
+    TemplateController.$inject = ['$rootScope', '$scope', 'AuthenticationFactory', '$location'];
 
-    function TemplateController($rootScope, $scope, Auth) {
+    function TemplateController($rootScope, $scope, Auth, $location) {
         var vm = this;
         var baseUrl = $rootScope.baseUrl;
         vm.lang = $rootScope.lang;
@@ -17,6 +17,7 @@
         vm.user = {};
         vm.loggedIn = false;
         vm.logout = logout;
+        vm.goHome = goHome;
 
         // Templates are used when no Redirect to new
         // page is required, this will store every
@@ -34,7 +35,8 @@
                 comments: baseUrl + '/show/_comments',
                 schedule: baseUrl + '/show/_schedule',
                 summary: baseUrl + '/show/_summary',
-                step1: baseUrl + '/show/_step1'
+                step1: baseUrl + '/show/_step1',
+                step2: baseUrl + '/show/_step2'
             }
         };
         // To render a new element in the main content
@@ -90,6 +92,10 @@
             }
 
             return logged;
+        }
+
+        function goHome() {
+            $location.path('/');
         }
 
     }

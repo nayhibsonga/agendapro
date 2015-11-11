@@ -10,20 +10,38 @@
     function FormController($scope) {
         var vm = this;
         vm.title = 'FormController';
-        vm.user = {
-          name: '',
-          email: '',
-          phone: '',
-          comment: '',
-          promotions: false,
-          reservation: {}
+        vm.user = {};
+
+        setUserInfo();
+
+        function setUserInfo() {
+            console.log(vm.title, ">> ADD LOGGED USER LOGIC HERE !!!");
+            var userExist = (Object.keys($scope.sc.user).length > 0);
+
+            if( userExist ) {
+                vm.user = $scope.sc.user;
+            } else {
+                 vm.user = newUser();
+            }
+
+            function newUser() {
+                var user = {};
+
+                user.name = '';
+                user.email = '';
+                user.phone = '';
+                user.notes = '';
+                user.promotions = false;
+
+                return user;
+            }
         }
 
-        activate();
+        $scope.$watch(function(){
+          return vm.user;
+        }, function(){
+          $scope.sc.user = vm.user;
+        });
 
-        ////////////////
-
-        function activate() {
-        }
     }
 })();

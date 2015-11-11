@@ -326,7 +326,7 @@
         >button {
           width: 100%;
           margin-bottom: 10px;
-          height: 70px;
+          // height: 70px;
         }
         .added-service {
           border: 1px solid $light-gray;
@@ -387,108 +387,19 @@
     #schedule {
       .modal-dialog {
         width: 90%;
-      }
-      .modal-content {
-        @include border-radius(0);
+        margin: 30px auto;
       }
       .modal-header {
-        padding: 0;
-        border-bottom: none;
-        background-color: #C2C0BC;
-        height: 40px;
-        color: white;
-        %step-number {
-          background-color: white;
-          border-radius: 50%;
-          width: 20px;
-          height: 20px;
-          position: absolute;
-          color: #C2C0BC;
-        }
-
-        div.step-container {
-          width: 50%;
-          padding: 10px 20px;
-          left: 0;
-          position: absolute;
-          text-align: center;
-
-          &.last {
-            left: 50%;
-          }
-
-          span.hora{
-            margin-right: 50px;
-            &::before{
-              content: '1';
-              @extend %step-number;
-            }
-          }
-
-          span.datos{
-            @extend span.hora;
-            &::before {
-              content: '2';
-            }
-          }
-
-        }
-
-        .slider {
-          background-color: $light-pink;
-          position: absolute;
-          width: 31.4%;
-          height: 40px;
-          z-index: 0;
-          left: 0;
-          .start {
-            position: absolute;
-            width: 28px;
-            height: 28px;
-            left: -14px;
-            top: 6px;
-            background-color: #C2C0BC;
-            transform: rotate(45deg);
-          }
-          .end {
-            @extend .start;
-            right: -14px;
-            left: initial;
-            background-color: $light-pink;
-          }
-        }
-      }
-      .modal-body {
-        clear: both;
-        padding: 30px;
-        #step2{
-          form{
-            .form-control{
-              border-radius: 0;
-              margin-bottom: 10px;
-            }
-          }
-          #final-summary{
-            >div {
-              border: 1px solid black;
-              padding:10px 20px;
-              line-height: 25px;
-              p{
-                border-bottom: 1px solid black;
-                padding-bottom: 10px;
-                &.last{
-                  border-bottom: none;
-                  padding-bottom: 0;
-                }
-              }
-            }
-          }
+        span.hora{
+          margin-right: 50px;
         }
       }
       .modal-footer {
-        border-top: none;
+        padding: 15px;
       }
     }
+
+
   }
 }
 
