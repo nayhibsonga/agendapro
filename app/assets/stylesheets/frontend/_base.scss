@@ -629,6 +629,19 @@ footer {
   }
 
   .categories {
+    margin-bottom: 5px;
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    .panel-heading {
+      color: $black;
+      background-color: $lighterx-gray;
+      text-align: left;
+      @include border-radius(0);
+    }
+    .panel-body {
+      border-top: none;
+    }
     .currency-symbol {
       @include currency-symbol(sm);
     }
