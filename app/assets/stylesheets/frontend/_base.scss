@@ -269,7 +269,6 @@ header {
 footer {
   background-color: $lighterx-gray;
   left: 0;
-  height: 125px;
   width: 100%;
   margin-top: 30px;
   .container {
@@ -279,16 +278,25 @@ footer {
       height: 100%;
     }
     .wrapper {
-      display: inline-block;
-      width: 50%;
-      height: 100%;
-      .social {
-        height: 100%;
-        padding-top: 34px;
-        padding-bottom: 34px;
-        a {
-          color: $dark-gray;
-        }
+      height: 125px;
+      font-size: 0;
+    }
+    a.social {
+      color: $dark-gray;
+      margin-bottom: 5px;
+      margin-top: 5px;
+      display: inherit;
+      padding-top: 34px;
+      i {
+        color: $lighter-pink;
+        vertical-align: middle;
+      }
+    }
+    p.direction{
+      i {
+        font-size: 3em;
+        color: $lighter-pink;
+        vertical-align: middle;
       }
     }
   }
