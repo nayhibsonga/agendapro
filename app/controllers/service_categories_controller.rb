@@ -116,6 +116,27 @@ class ServiceCategoriesController < ApplicationController
     render :json => array_result
   end
 
+  def location_categories
+
+    location = Location.find(params[:location_id])
+
+    service_categories = ServiceCategory.where(id: Service.where(active: true).where(id: ServiceStaff.where(service_provider_id: ServiceProvider.where(active: true, location_id: location.id).pluck(:id)).pluck(:service_id)).pluck(:service_category_id))
+
+    render :json => service_categories
+
+  end
+
+  def category_services
+
+    location = Location.find(params[:location_id])
+    service_category = ServiceCategory.find(params[:service_category_id])
+
+    services = Service.where(service_category_id: service_category.id, active: true, id: ServiceStaff.where(service_provider_id: ServiceProvider.where(active: true, location_id: location.id).pluck(:id)).pluck(:service_id))
+
+    render :json => services
+
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_service_category
