@@ -201,6 +201,7 @@
             <li>Usar las plantillas con los productos existentes como base para la importación. Todos los campos son obligatorios.</li>
             <li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li>
             <li><strong>No cambies el orden del stock de los locales</strong> de las plantillas bases.</li>
+            <li><strong>Las extensiones de archivo permitidas son .xls y .csv.</strong>No trates de importar otros formatos.</li>
             <li>
               El identificador único para los productos es el <strong>SKU</strong>:
               <ul>
@@ -217,7 +218,7 @@
             <%= link_to '<i class="fa fa-download"></i> Plantilla CSV'.html_safe, '/products.csv', :target => :blank, class: "btn btn-white" %>
           </p>
           <div class="form-group" id="file-group">
-            <label for="file" class="control-label col-md-3">Seleccionar Archivo</label>
+            <label for="file" accept=".xls, .csv" class="control-label col-md-3">Seleccionar Archivo</label>
             <div class="col-md-9">
               <%= file_field_tag :file, :class => 'form-control'  %>
             </div>
