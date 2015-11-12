@@ -72,13 +72,13 @@
 						<% @service_providers.each do |provider| %>
 
 							<%
-									bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: provider.id, start: @from.beginning_of_day..@to.end_of_day, service_id: service.id)
+									bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: provider.id, service_id: service.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
 
 						    		bookings_count = bookings.count
 
 						    		bookings_prices = bookings.sum(:price)
 
-						    		mock_bookings = MockBooking.where(service_provider_id: provider.id, service_id: service.id, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+						    		mock_bookings = MockBooking.where(service_provider_id: provider.id, service_id: service.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
 
 						    		bookings_count += mock_bookings.count
 
@@ -88,7 +88,7 @@
 
 						    		commission = ""
 
-						    		if !service_commission.nil?
+						    		if !service_commission.nil? && !service_commission.amount.nil?
 						    			if service_commission.is_percent
 						    				commission = service_commission.amount.to_s + " %"
 						    			else

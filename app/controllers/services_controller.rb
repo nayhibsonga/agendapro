@@ -164,7 +164,16 @@ class ServicesController < ApplicationController
   def location_services
     categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(:order, :name)
     services = Service.where(:active => true).order(:order, :name).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(:order, :name)
-    render :json => services
+
+    services_hash = []
+
+    services.each do |service|
+      service_hash = service.attributes.to_options
+      service_hash['service_category_name'] = service.service_category.name
+      services_hash << service_hash
+    end
+
+    render :json => services_hash
   end
 
   def location_categorized_services

@@ -26,11 +26,11 @@
             <ss:Column ss:Width="100"/>
 
             <%
-              payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+              payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
 
-              mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+              mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
 
-              bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from..@to).pluck(:id))
+              bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
 
               internal_sales = InternalSale.where(service_provider_id: service_provider.id, date: @from.beginning_of_day..@to.end_of_day)
 
@@ -89,7 +89,7 @@
               %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= payment_product.payment.payment_date.to_s %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_product.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_product.product.sku %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_product.product.product_category.name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_product.product.product_brand.name %></Data></Cell>
@@ -142,17 +142,19 @@
                   payment_methods = payment_methods_arr.join(", ")
                 end
 
+                service_name = ""
+
+                if mock_booking.service_id.nil?
+                  service_name = "Sin información"
+                else
+                  service_name = mock_booking.service.name
+                end
+
               %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= mock_booking.payment.payment_date.to_s %></Data></Cell>
-                <Cell><Data ss:Type="String">
-                  <% if mock_booking.service_id.nil? %>
-                    Sin información
-                  <% else %>
-                    <%= mock_booking.service.name %>
-                  <% end %>
-                </Data></Cell>
+                <Cell><Data ss:Type="String"><%= mock_booking.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= mock_booking.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= mock_booking.get_commission %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
@@ -203,7 +205,7 @@
               %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= booking.payment.payment_date.to_s %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= booking.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= booking.start.to_s %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= booking.service.name %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= booking.price %></Data></Cell>
@@ -242,7 +244,7 @@
               %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= internal_sale.date.to_s %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.date.strftime('%d/%m/%Y %R') %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= internal_sale.product.sku %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= internal_sale.product.product_category.name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= internal_sale.product.product_brand.name %></Data></Cell>
@@ -250,7 +252,7 @@
                 <Cell><Data ss:Type="String"><%= internal_sale.product.product_display.name %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.discount %>%</Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.discount.to_s + "%" %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= internal_sale.quantity * (internal_sale.price * (100 - internal_sale.discount) / 100) %></Data></Cell>
               </Row>
             <% end %>

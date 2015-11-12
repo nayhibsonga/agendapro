@@ -468,6 +468,10 @@
     get '/get_treatment_price', :to => 'bookings#get_treatment_price'
     get '/payment_summary', :to => 'payments#summary'
 
+    #Service and categories for location (payments)
+    get '/location_categories', :to => 'service_categories#location_categories'
+    get '/category_services', :to => 'service_categories#category_services'
+
   end
 
   namespace :api, defaults: {format: 'json'} do

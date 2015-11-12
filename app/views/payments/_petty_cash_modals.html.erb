@@ -120,8 +120,7 @@
             <div class="payment-form-div form-group has-feedback pettyCashActions">
               
               <%
-                now_date = DateTime.now.to_date.to_s.split("-")
-                now_date = now_date[2] + "/" + now_date[1] + "/" + now_date[0]
+                now_date = DateTime.now.strftime('%d/%m/%Y')
               %>
 
               <label for="petty_cash_start_date" class="col-xs-3 control-label">Desde</label>
