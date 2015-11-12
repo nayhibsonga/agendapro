@@ -186,7 +186,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_free_plan
-    if current_user.company.plan_id = Plan.find_by_name("Gratis").id
+    if current_user.company.plan_id == Plan.find_by_name("Gratis").id
       redirect_to free_plan_path
     end
   end
