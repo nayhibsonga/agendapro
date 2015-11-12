@@ -169,7 +169,7 @@ $(function() {
       loadClientPastBookings();
       $("#paymentClientPastBookings").show();
     }
-    loadPaymentServices();
+    loadPaymentServiceCategories();
     $("#paymentModalBookingForm").show();
 
   });
@@ -250,6 +250,11 @@ $(function() {
 
   $("body").on('click', '.removePaymentItem', function(e){
     removePaymentItem($(this).attr("item_id"));
+  });
+
+  $("#payment_not_booked_category").on('change', function(e){
+    console.log("Change");
+    loadPaymentServices();
   });
 
   $("#payment_not_booked_service").on('change', function(e){
@@ -1413,14 +1418,39 @@ function loadProductSellers()
 * Methods for new service loading.
 */
 
-function loadPaymentServices(){
+function loadPaymentServiceCategories(){
+  $("#payment_not_booked_category").empty();
+  $("#payment_not_booked_category").append('<option value="-1">Ninguna</option>');
   $("#payment_not_booked_service").empty();
   $("#payment_not_booked_service").append('<option value="-1">Ninguno</option>');
   $("#payment_not_booked_provider").empty();
   $("#payment_not_booked_provider").append('<option value="-1">Ninguno</option>');
-  $.getJSON('/location_services/', {location: parseInt($('#payment_location').val()) }, function (services) {
+  $.getJSON('/location_categories/', {location_id: parseInt($('#payment_location').val())}, function (service_categories) {
+    $.each(service_categories, function (key, service_category) {
+      $("#payment_not_booked_category").append('<option value="' + service_category.id + '">' + service_category.name + '</option>');
+    });
+  });
+}
+
+function loadPaymentServices(){
+  if($("#payment_not_booked_category").val() == "" || $("#payment_not_booked_category").val() == "-1")
+  {
+    console.log ("There's your problem.");
+    $("#payment_not_booked_service").empty();
+    $("#payment_not_booked_service").append('<option value="-1">Ninguno</option>');
+    $("#payment_not_booked_provider").empty();
+    $("#payment_not_booked_provider").append('<option value="-1">Ninguno</option>');
+    $("#payment_not_booked_price").val("0");
+    $("#payment_not_booked_discount").val("0");
+    return false;
+  }
+  $("#payment_not_booked_service").empty();
+  $("#payment_not_booked_service").append('<option value="-1">Ninguno</option>');
+  $("#payment_not_booked_provider").empty();
+  $("#payment_not_booked_provider").append('<option value="-1">Ninguno</option>');
+  $.getJSON('/category_services/', {location_id: parseInt($('#payment_location').val()), service_category_id: $("#payment_not_booked_category").val() }, function (services) {
     $.each(services, function (key, service) {
-      $("#payment_not_booked_service").append('<option value="' + service.id + '">' + service.name + " (" + service.service_category_name + ")" + '</option>');
+      $("#payment_not_booked_service").append('<option value="' + service.id + '">' + service.name + '</option>');
     });
   });
 }
@@ -1577,7 +1607,7 @@ function addNotBooked(){
   $("#paymentItemsList").show();
   $("#paymentSumDiv").show();
 
-  loadPaymentServices();
+  loadPaymentServiceCategories();
   $("#payment_not_booked_price").val("0");
   $("#payment_not_booked_discount").val("0");
 
@@ -2474,6 +2504,7 @@ function resetPaymentStep1()
   $("#paymentClientPastBookings").hide();
   $("#paymentModalProductForm").hide();
 
+  $("#payment_not_booked_category").empty();
   $("#payment_not_booked_service").empty();
   $("#payment_not_booked_provider").empty();
   $("#payment_not_booked_price").val("0");

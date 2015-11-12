@@ -63,6 +63,8 @@ class Ability
     can :provider_booking, Booking
     can :book_service, Booking
     can :location_services, Service
+    can :location_categories, ServiceCategory
+    can :category_services, ServiceCategory
     can :location_categorized_services, Service
     can :location_providers, ServiceProvider
     can :provider_time, ServiceProvider
