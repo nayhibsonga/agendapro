@@ -2,7 +2,7 @@ class ProductsController < ApplicationController
   before_action :set_product, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :quick_add
-  before_action :verify_free_plan
+  before_action -> (source = "products") { verify_free_plan source }
   layout "admin"
   load_and_authorize_resource
 
@@ -157,7 +157,16 @@ class ProductsController < ApplicationController
   end
 
   def import
-    message = Product.import(params[:file], current_user.company_id, current_user)
+    message = "No se seleccionó archivo."
+    filename_arr = params[:file].original_filename.split(".")
+    if filename_arr.length > 0
+      extension = filename_arr[filename_arr.length - 1]
+      if extension == "csv" || extension == "xls"
+        message = Product.import(params[:file], current_user.company_id, current_user)
+      else
+        message = "La extensión del archivo no es correcta. Sólo se pueden importar archivos xls y csv."
+      end
+    end
     redirect_to products_path, notice: message
   end
 

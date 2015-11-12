@@ -61,7 +61,7 @@ class DashboardController < ApplicationController
   end
 
   def free_plan_landing
-
+    @page = params[:page]
   end
 
 end

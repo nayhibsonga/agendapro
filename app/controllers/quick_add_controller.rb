@@ -45,6 +45,8 @@ class QuickAddController < ApplicationController
 		@company_setting = @company.company_setting
 		@company_setting.build_online_cancelation_policy
 		@company_setting.save
+
+		@notification_email = NotificationEmail.new
 	end
 
 	def load_location

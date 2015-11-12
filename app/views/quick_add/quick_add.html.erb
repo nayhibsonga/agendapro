@@ -48,13 +48,14 @@
 <%= render 'new_local' %>
 <%= render 'services' %>
 <%= render 'providers' %>
+<%= render 'configurations' %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "validations/validate" %>
   <%= javascript_include_tag "validations/admin/quick-add" %>
 <% end %>
 
-<div id="quick_add_step5" class="container-fluid background-start content-fill below-1 below-2 below-3 below-4"  <%= 'style="display: none;" disabled'.html_safe if @company.service_providers.where(active: true).count < 1 %>>
+<div id="quick_add_step6" class="container-fluid background-start content-fill below-1 below-2 below-3 below-4"  <%= 'style="display: none;" disabled'.html_safe if @company.service_providers.where(active: true).count < 1 %>>
   <div class="row">
     <div class="col-md-12 content-top">
       <div class="pull-center">

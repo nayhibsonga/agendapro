@@ -2,7 +2,7 @@ class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:client_loader]
   before_action :quick_add
-  before_action :verify_free_plan, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :new, :edit, :create, :update]
+  before_action -> (source = "clients") { verify_free_plan source }, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :new, :edit, :create, :update]
   load_and_authorize_resource
   layout "admin"
 
@@ -390,7 +390,16 @@ class ClientsController < ApplicationController
   end
 
   def import
-    message = Client.import(params[:file], current_user.company_id)
+    message = "No se seleccionó archivo."
+    filename_arr = params[:file].original_filename.split(".")
+    if filename_arr.length > 0
+      extension = filename_arr[filename_arr.length - 1]
+      if extension == "csv" || extension == "xls"
+        message = Client.import(params[:file], current_user.company_id)
+      else
+        message = "La extensión del archivo no es correcta. Sólo se pueden importar archivos xls y csv."
+      end
+    end
     redirect_to clients_path, notice: message
   end
 

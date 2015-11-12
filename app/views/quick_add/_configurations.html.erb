@@ -1,0 +1,195 @@
+<fieldset class="content-fill" id="fieldset_step5">
+  <%= form_for @company_setting, html: {multipart: true} do |f| %>
+    <section class="green-background">
+      <div class="container">
+        <div class="row">
+          Ingresa tus configuraciones básicas.
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= f.label :booking_confirmation_time, 'Recordatorios' %>
+              <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
+              <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
+            </div>
+            <div class="form-group has-feedback">
+              <%= f.label :before_booking, 'Tiempo Mínimo de Reserva' %>
+              <span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
+              <div class="input-group">
+                <%= f.number_field :before_booking, :in => 1...169, :required => true, :class => 'form-control' %>
+                <span class="input-group-addon">Horas</span>
+              </div>
+              <span class="help-block"></span>
+            </div>
+            <div class="form-group">
+              <%= f.label :after_booking, 'Tiempo Máximo a Futuro' %>
+              <span class="help-block">Tiempo máximo que una persona puede reservar a futuro. No se permiten reservas para más de X meses a futuro.</span>
+              <div class="input-group">
+                <%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
+                <span class="input-group-addon">Meses</span>
+              </div>
+              <span class="help-block"></span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <%= form_for @notification_email do |f| %>
+              <%= f.hidden_field :company_id, value: @company.id %>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <%= f.label :email, "E-mail de Notificación", class: 'text-green' %>
+                    <%= f.email_field :email, class: "form-control", required: true %>
+                    <span class="help-block">En que dirección desea recibir la notificación.</span>
+                  </div>
+                  <div class="form-group">
+                    <%= f.label :receptor_type, "Tipo de Notificación", class: 'text-green' %>
+                    <%= f.select :receptor_type, [['Compañía', 0], ['Local', 1], ['Prestador de Servicio', 2]], {}, {class: 'form-control'} %>
+                    <span class="help-block">Recibir notificaciones sobre eventos de la compañía, locales o prestadores de servicios.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 hidden" id="local-notification">
+                  <div class="form-group">
+                    <%= f.label :location_ids, @company.name %>
+                    <%= f.collection_check_boxes :location_ids, @company.locations.where(active: true), :id, :name, {}, {class: "check_boxes"} do |b|%>
+                      <div class="checkbox">
+                        <label>
+                          <%= b.check_box %> <%= b.text %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+                <div class="col-md-12 hidden" id="provider-notification">
+                  <div class="row">
+                    <% for local in @company.locations.where(active: true) %>
+                    <div class="col-sm-4">
+                      <div class="form-group">
+                        <%= f.label :service_provider_ids, local.name %>
+                        <%= f.collection_check_boxes :service_provider_ids, local.service_providers.where(active: true), :id, :public_name, {}, {class: "check_boxes"} do |b|%>
+                          <div class="checkbox">
+                            <label>
+                              <%= b.check_box %> <%= b.text %>
+                            </label>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group background-green">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <label style="margin: 0;">Cuando recibir la Notificación</label>
+                        <span class="help-block" style="margin: 0;">Sobre cual evento desea recibir la notificación.</span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-4">
+                        <div class="checkbox">
+                          <label>
+                            <%= f.check_box :summary %> Resumen diario
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <div class="checkbox">
+                          <label>
+                            <%= f.check_box :new %> Nueva reserva manual
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <div class="checkbox">
+                          <label>
+                            <%= f.check_box :modified %> Reserva manual modificada
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-4">
+                        <div class="checkbox">
+                          <label>
+                            <%= f.check_box :confirmed %> Reserva manual confirmada
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <div class="checkbox">
+                          <label>
+                            <%= f.check_box :canceled %> Reserva manual cancelada
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <div class="checkbox">
+                          <label>
+                            <%= f.check_box :new_web %> Nueva reserva online
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-4">
+                        <div class="checkbox">
+                          <label>
+                            <%= f.check_box :modified_web %> Reserva online modificada
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <div class="checkbox">
+                          <label>
+                            <%= f.check_box :confirmed_web %> Reserva online confirmada
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <div class="checkbox">
+                          <label>
+                            <%= f.check_box :canceled_web %> Reserva online cancelada
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                    <%= link_to 'Cancelar', edit_company_setting_path(User.find(current_user.id).company.company_setting), :class => "btn btn-default" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <div class="text-center">
+                <a id="update_company_button" class="btn btn-orange btn-lg next-button" data-loading-text="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class='fa fa-spinner fa-spin'></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>">Siguiente Paso</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>\
+    </section>
+  <% end %>
+</fieldset>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/quick_add/configurations" %>
+<% end %>

@@ -471,6 +471,11 @@
     #Free plan
     get '/free_plan', :to => 'dashboard#free_plan_landing'
 
+    #Service and categories for location (payments)
+    get '/location_categories', :to => 'service_categories#location_categories'
+    get '/category_services', :to => 'service_categories#category_services'
+
+
   end
 
   namespace :api, defaults: {format: 'json'} do
