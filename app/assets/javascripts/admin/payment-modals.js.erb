@@ -1230,6 +1230,15 @@ function getPayment(payment_id)
 
       }
 
+      if(response.payment.client_id)
+      {
+        $("#set_client").val("0");
+      }
+      else
+      {
+        $("#set_client").val("1");
+      }
+
 
       $("#paymentItemsTable").show();
 
@@ -1239,7 +1248,7 @@ function getPayment(payment_id)
       $("#paymentSumDiv").show();
 
     }
-  })
+  });
 }
 
 
@@ -2187,6 +2196,12 @@ function createAndServePayment(option)
     $("#set_client").val("1");
   }
 
+  if($("#client_required").val() == "1" && ($("#payment_client_id").val() == "" || $("#payment_client_name") == ""))
+  {
+    alert("Tienes configurado que se requiera cliente en un pago, por lo que no puedes guardar sin ingresar un cliente.");
+    return;
+  }
+
   var location_id = parseInt($('#payment_location').val());
   var cashier_code = $("#payment_cashier_code").val();
   var cashier_name = $("#payment_cashier_name").val();
@@ -2303,7 +2318,13 @@ function createAndServePayment(option)
         }
         else
         {
-          alert("Ocurrió un error al guardar el pago.");
+          var errors = "";
+          for(i=0; i<response[1].length; i++)
+          {
+            errors = errors + response[1][i] + "\n";
+          }
+          console.log(errors);
+          alert("Ocurrió un error al guardar el pago:\n" + errors);
           $(".payment-btn-close").trigger("click");
         }
       }
@@ -2355,7 +2376,13 @@ function createAndServePayment(option)
         }
         else
         {
-          alert("Ocurrió un error al guardar el pago.");
+          var errors = "";
+          for(i=0; i<response[1].length; i++)
+          {
+            errors = errors + response[1][i] + "\n";
+          }
+          console.log(errors);
+          alert("Ocurrió un error al guardar el pago:\n" + errors);
           $(".payment-btn-close").trigger("click");
         }
       }

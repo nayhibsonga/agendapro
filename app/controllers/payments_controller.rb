@@ -411,6 +411,10 @@ class PaymentsController < ApplicationController
         payment.client_id = client.id
       else
         @errors << "No se pudo guardar al cliente"
+        @json_response[0] = "error"
+        @json_response << @errors
+        render :json => @json_response
+        return
       end   
 
     else
@@ -620,6 +624,21 @@ class PaymentsController < ApplicationController
         @errors << payment.errors
       end
     else
+      payment.receipts.each do |receipt|
+        receipt.delete
+      end
+      payment.mock_bookings.each do |mock_booking|
+        mock_booking.delete
+      end
+      payment.payment_products.each do |payment_product|
+        payment_product.delete
+      end
+      payment.bookings.each do |booking|
+        booking.payment_id = nil
+        booking.receipt_id = nil
+        booking.save
+      end
+      payment.delete
       @json_response[0] = "error"
     end
 
