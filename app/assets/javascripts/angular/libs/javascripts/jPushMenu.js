@@ -73,7 +73,7 @@
              $(document).click(function() {
                 jPushMenu.close(o);
              });
-             $('#wrapper').bind('touchstart click', function() {
+             $('#main').bind('touchstart click', function() {
                 jPushMenu.close(o);
              });
          }
