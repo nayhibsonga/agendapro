@@ -1572,6 +1572,20 @@ function loadClientPastBookings(){
 
 function addNotBooked(){
 
+  if($("#mandatory_mock_booking_info").val() == "1")
+  {
+    if($("#payment_not_booked_service").val() == "-1")
+    {
+      alert("Debes elegir un servicio antes de agregarlo.");
+      return; 
+    }
+    if($("#payment_not_booked_provider").val() == "-1")
+    {
+      alert("Debes elegir un prestador antes de agregarlo.");
+      return; 
+    }
+  }
+
   var new_booking = new Object();
   new_booking['service_id'] = $("#payment_not_booked_service").val();
   new_booking['service_name'] = $('#payment_not_booked_service option:selected').text();

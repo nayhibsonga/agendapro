@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151110145725) do
+ActiveRecord::Schema.define(version: 20151113122207) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 20151110145725) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes"
-    t.text     "company_comment"
+    t.text     "notes",               default: ""
+    t.text     "company_comment",     default: ""
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -108,22 +108,22 @@ ActiveRecord::Schema.define(version: 20151110145725) do
     t.integer  "client_id"
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
-    t.integer  "max_changes",            default: 2
     t.boolean  "payed",                  default: false
     t.string   "trx_id",                 default: ""
+    t.integer  "max_changes",            default: 2
     t.string   "token",                  default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
-    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
-    t.integer  "reminder_group"
+    t.integer  "payment_id"
+    t.float    "discount",               default: 0.0
     t.boolean  "is_booked",              default: true
+    t.integer  "reminder_group"
     t.float    "list_price",             default: 0.0
     t.integer  "receipt_id"
     t.boolean  "payed_state",            default: false
@@ -268,59 +268,60 @@ ActiveRecord::Schema.define(version: 20151110145725) do
 
   create_table "company_settings", force: true do |t|
     t.text     "signature"
-    t.boolean  "email",                      default: false
-    t.boolean  "sms",                        default: false
-    t.integer  "company_id",                                                 null: false
+    t.boolean  "email",                       default: false
+    t.boolean  "sms",                         default: false
+    t.integer  "company_id",                                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "before_booking",             default: 3,                     null: false
-    t.integer  "after_booking",              default: 3,                     null: false
-    t.integer  "before_edit_booking",        default: 3
-    t.boolean  "activate_search",            default: false
-    t.boolean  "activate_workflow",          default: true
-    t.boolean  "client_exclusive",           default: false
+    t.integer  "before_booking",              default: 3,                     null: false
+    t.integer  "after_booking",               default: 3,                     null: false
+    t.integer  "before_edit_booking",         default: 3
+    t.boolean  "activate_search",             default: false
+    t.boolean  "activate_workflow",           default: true
+    t.boolean  "client_exclusive",            default: false
     t.integer  "provider_preference"
-    t.integer  "calendar_duration",          default: 15
-    t.boolean  "extended_schedule_bool",     default: false,                 null: false
-    t.time     "extended_min_hour",          default: '2000-01-01 09:00:00', null: false
-    t.time     "extended_max_hour",          default: '2000-01-01 20:00:00', null: false
-    t.boolean  "schedule_overcapacity",      default: true,                  null: false
-    t.boolean  "provider_overcapacity",      default: true,                  null: false
-    t.boolean  "resource_overcapacity",      default: true,                  null: false
-    t.integer  "booking_confirmation_time",  default: 1,                     null: false
-    t.integer  "max_changes",                default: 2
-    t.boolean  "booking_history",            default: true
-    t.boolean  "staff_code",                 default: false
-    t.integer  "monthly_mails",              default: 0,                     null: false
-    t.boolean  "deal_activate",              default: false
-    t.string   "deal_name",                  default: ""
-    t.boolean  "deal_overcharge",            default: true
-    t.boolean  "allows_online_payment",      default: false
-    t.string   "account_number",             default: ""
-    t.string   "company_rut",                default: ""
-    t.string   "account_name",               default: ""
-    t.integer  "account_type",               default: 3
+    t.integer  "calendar_duration",           default: 15
+    t.boolean  "extended_schedule_bool",      default: false,                 null: false
+    t.time     "extended_min_hour",           default: '2000-01-01 09:00:00', null: false
+    t.time     "extended_max_hour",           default: '2000-01-01 20:00:00', null: false
+    t.boolean  "schedule_overcapacity",       default: true,                  null: false
+    t.boolean  "provider_overcapacity",       default: true,                  null: false
+    t.boolean  "resource_overcapacity",       default: true,                  null: false
+    t.integer  "booking_confirmation_time",   default: 1,                     null: false
+    t.integer  "max_changes",                 default: 2
+    t.boolean  "booking_history",             default: true
+    t.boolean  "staff_code",                  default: false
+    t.integer  "monthly_mails",               default: 0,                     null: false
+    t.boolean  "allows_online_payment",       default: false
+    t.string   "account_number",              default: ""
+    t.string   "company_rut",                 default: ""
+    t.string   "account_name",                default: ""
+    t.integer  "account_type",                default: 3
     t.integer  "bank_id"
-    t.boolean  "deal_exclusive",             default: true
-    t.integer  "deal_quantity",              default: 0
-    t.integer  "deal_constraint_option",     default: 0
-    t.integer  "deal_constraint_quantity",   default: 0
-    t.boolean  "deal_identification_number", default: false
-    t.boolean  "deal_required",              default: false,                 null: false
-    t.boolean  "online_payment_capable",     default: false
-    t.boolean  "allows_optimization",        default: true
-    t.boolean  "activate_notes",             default: true,                  null: false
-    t.boolean  "receipt_required",           default: true
-    t.float    "online_payment_commission",  default: 5.0
-    t.float    "promo_commission",           default: 10.0
-    t.boolean  "promo_offerer_capable",      default: false
-    t.boolean  "can_edit",                   default: true
-    t.boolean  "can_cancel",                 default: true
-    t.boolean  "use_identification_number",  default: false
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name",                   default: ""
+    t.boolean  "deal_overcharge",             default: true
+    t.boolean  "deal_exclusive",              default: false
+    t.integer  "deal_quantity",               default: 0
+    t.integer  "deal_constraint_option",      default: 0
+    t.integer  "deal_constraint_quantity",    default: 0
+    t.boolean  "deal_identification_number",  default: false
+    t.boolean  "deal_required",               default: false,                 null: false
+    t.boolean  "online_payment_capable",      default: false
+    t.boolean  "allows_optimization",         default: true
+    t.boolean  "activate_notes",              default: true,                  null: false
+    t.boolean  "receipt_required",            default: true
+    t.float    "online_payment_commission",   default: 5.0
+    t.float    "promo_commission",            default: 10.0
+    t.boolean  "promo_offerer_capable",       default: false
+    t.boolean  "can_edit",                    default: true
+    t.boolean  "can_cancel",                  default: true
+    t.boolean  "use_identification_number",   default: false
+    t.boolean  "payment_client_required",     default: true
+    t.boolean  "show_cashes",                 default: false
     t.string   "preset_notes"
-    t.boolean  "payment_client_required",    default: true
-    t.boolean  "show_cashes",                default: false
-    t.boolean  "editable_payment_prices",    default: true
+    t.boolean  "editable_payment_prices",     default: true
+    t.boolean  "mandatory_mock_booking_info", default: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -469,7 +470,7 @@ ActiveRecord::Schema.define(version: 20151110145725) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "date",                default: '2015-10-30 21:54:55'
+    t.datetime "date",                default: '2015-10-27 17:17:43'
   end
 
   create_table "last_minute_promos", force: true do |t|
@@ -493,8 +494,8 @@ ActiveRecord::Schema.define(version: 20151110145725) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-    t.integer  "location_id"
-    t.integer  "stock"
+    t.integer  "location_id",                null: false
+    t.integer  "stock",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "stock_limit"
@@ -828,8 +829,8 @@ ActiveRecord::Schema.define(version: 20151110145725) do
     t.integer  "quantity",    default: 1,   null: false
     t.integer  "seller_id"
     t.integer  "seller_type"
-    t.float    "list_price",  default: 0.0
     t.integer  "receipt_id"
+    t.float    "list_price",  default: 0.0
   end
 
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
@@ -859,7 +860,7 @@ ActiveRecord::Schema.define(version: 20151110145725) do
     t.integer  "company_id"
     t.float    "amount",        default: 0.0
     t.boolean  "payed",         default: false
-    t.datetime "payment_date",  default: '2015-11-12 13:16:44'
+    t.datetime "payment_date",  default: '2015-11-10 14:59:37'
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "discount",      default: 0.0
@@ -1184,7 +1185,7 @@ ActiveRecord::Schema.define(version: 20151110145725) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
-    t.datetime "date",          default: '2015-10-30 21:54:55'
+    t.datetime "date",          default: '2015-10-23 15:05:22'
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1204,7 +1205,7 @@ ActiveRecord::Schema.define(version: 20151110145725) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
-    t.datetime "date",                    default: '2015-10-30 21:54:55'
+    t.datetime "date",                    default: '2015-10-23 13:42:39'
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false
@@ -1345,7 +1346,7 @@ ActiveRecord::Schema.define(version: 20151110145725) do
     t.boolean  "has_time_discount",        default: false
     t.boolean  "has_last_minute_discount", default: false
     t.boolean  "time_promo_active",        default: false
-    t.string   "time_promo_photo",         default: ""
+    t.string   "time_promo_photo"
     t.integer  "active_service_promo_id"
     t.boolean  "must_be_paid_online",      default: false
     t.text     "promo_description",        default: ""
@@ -1501,7 +1502,6 @@ ActiveRecord::Schema.define(version: 20151110145725) do
     t.string   "uid"
     t.boolean  "receives_offers",        default: true
     t.string   "mobile_token"
-    t.string   "api_token"
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree
