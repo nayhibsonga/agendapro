@@ -98,6 +98,10 @@
     delete '/quick_add/service_provider/:id', :to => 'quick_add#delete_service_provider'
     patch '/quick_add/update_company', :to => 'quick_add#update_company'
 
+    post '/create_notification_email', :to => 'quick_add#create_notification_email'
+    post '/delete_notification_email', :to => 'quick_add#delete_notification_email'
+    patch '/save_configurations', :to => 'quick_add#save_configurations'
+
     # Reporting
     get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
     get '/reports', :to => 'reports#index', :as => 'reports'

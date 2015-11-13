@@ -32,6 +32,9 @@ class QuickAddController < ApplicationController
     		@company_country = CompanyCountry.new(company_id: current_user.company_id, country_id: current_user.company.country_id, web_address: current_user.company.web_address)
     		@company_country.save
     	end
+
+    	@referer = params[:referer]
+
 		@location = Location.new
 		@service_category = ServiceCategory.new
 		@service = Service.new
@@ -44,9 +47,17 @@ class QuickAddController < ApplicationController
 		@company = current_user.company
 		@company_setting = @company.company_setting
 		@company_setting.build_online_cancelation_policy
+
+		if @referer == "horachic"
+			@company_setting.before_booking = 2
+			@company_setting.after_booking = 2
+		end
+
 		@company_setting.save
 
 		@notification_email = NotificationEmail.new
+		@notifications = NotificationEmail.where(company: @company).order(:receptor_type)
+
 	end
 
 	def load_location
@@ -259,6 +270,44 @@ class QuickAddController < ApplicationController
 	    end
   	end
 
+  	def create_notification_email
+
+  		@notification_email = NotificationEmail.new(notification_email_params)
+  		respond_to do |format|
+		    if @notification_email.save
+		    	@notification_email_hash = @notification_email.attributes.to_options
+		    	@notification_email_hash[:receptor_type_text] = @notification_email.receptor_type_text
+		    	@notification_email_hash[:notification_text] = @notification_email.notification_text
+		      format.json { render :layout => false, :json => { :notification_email => @notification_email_hash } }
+		    else
+		      format.json { render :layout => false, :json => { :errors => @notification_email.errors.full_messages }, :status => 422 }
+		    end
+		end
+
+  	end
+
+  	def delete_notification_email
+  		@notification_email = NotificationEmail.find(params[:id])
+	    respond_to do |format|
+	      if @notification_email.destroy
+	        format.json { render :layout => false, :json => { :status => "ok" } }
+	      else
+	        format.json { render :layout => false, :json => { :status => "error", :errors => @notification_email.errors.full_messages }, :status => 422 }
+	      end
+	    end
+  	end
+
+  	def save_configurations
+  		@company_setting = CompanySetting.find(params[:id])
+  		respond_to do |format|
+	  		if @company_setting.update(company_setting_params)
+	  			format.json { render :layout => false, :json => { :status => "ok" } }
+	  		else
+	  			format.json { render :layout => false, :json => { :status => "error", :errors => @company_setting.errors.full_messages }, :status => 422 }
+	  		end
+	  	end
+  	end
+
   # 	def update_settings
   # 		respond_to do |format|
   # 			@company_setting = @company.company_setting
@@ -288,6 +337,14 @@ class QuickAddController < ApplicationController
 
     def company_params
     	params.require(:company).permit(:logo, :description, :allows_online_payment, :bank, :account_number, :company_rut, economic_sector_ids: [])
+    end
+
+    def notification_email_params
+      	params.require(:notification_email).permit(:company_id, :email, :notification_type, :receptor_type, :summary, :new, :modified, :confirmed, :canceled, :new_web, :modified_web, :confirmed_web, :canceled_web, location_ids: [], service_provider_ids: [])
+    end
+
+    def company_setting_params
+      params.require(:company_setting).permit(:before_booking, :after_booking, :booking_confirmation_time, :can_edit, :can_cancel)
     end
 
     # def company_setting_params
