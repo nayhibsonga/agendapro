@@ -342,17 +342,18 @@ footer {
       margin-top: 10px;
     }
   }
+  .wrapper{
+    @include flexbox-center;
+  }
   .deal {
     margin-top: 20px;
     height: 350px;
     width: 100%;
     max-width: 370px;
     font-weight: bold;
-    margin-right: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
     position: relative;
-    &:first-child {
-      margin-left: 0;
-    }
     figure { height: 55%; }
     figcaption {
       height: 15%;
