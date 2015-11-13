@@ -1,6 +1,7 @@
 json.array!(@results) do |location|
   json.extract! location, :id, :address, :second_address, :phone, :latitude, :longitude, :email, :company_id
   json.name location.company.name
+  json.description location.company.description
   json.district location.district.name
   json.city location.district.city.name
   json.region location.district.city.region.name

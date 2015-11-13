@@ -546,6 +546,7 @@
 
         get 'promotions', to: 'promotions#index'
         get 'promotions/index/preview', to: 'promotions#preview'
+        get 'promotions/:id', to: 'promotions#show'
 
         get 'locations', to: 'locations#search'
         get 'locations/:id', to: 'locations#show'
@@ -563,7 +564,8 @@
         get 'users/oauth_login_link', to: 'users#oauth_login_link'
 
         post 'bookings', to: 'bookings#book_service'
-        get 'bookings/:id', to: 'bookings#show'
+        get 'bookings', to: 'bookings#show'
+        get 'bookings_group', to: 'bookings#show_group'
         put 'bookings/:id', to: 'bookings#edit_booking'
         delete 'bookings/:id', to: 'bookings#destroy'
 

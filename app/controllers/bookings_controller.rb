@@ -5937,6 +5937,12 @@ class BookingsController < ApplicationController
 
   end
 
+  def booking_rating
+    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+    ids = crypt.decrypt_and_verify(params[:encrypted_ids])
+    @bookings_group = Booking.where(id: ids)
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

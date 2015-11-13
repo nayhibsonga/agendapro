@@ -230,8 +230,9 @@ module ApiViews
 		          client_id: client.id,
 		          user_id: current_user.id,
 		          web_origin: true,
+		          marketplace_origin: true,
 		          provider_lock: buffer_params[:provider_lock]
-		        )
+		      )
 		      else
 		        if User.find_by_email(params[:email])
 		          @user = User.find_by_email(params[:email])
@@ -246,8 +247,9 @@ module ApiViews
 		            client_id: client.id,
 		            user_id: @user.id,
 		            web_origin: true,
+		          	marketplace_origin: true,
 		            provider_lock: buffer_params[:provider_lock]
-		          )
+		        )
 		        else
 		          @booking = Booking.new(
 		            start: buffer_params[:start],
@@ -259,8 +261,9 @@ module ApiViews
 		            status_id: Status.find_by(name: 'Reservado').id,
 		            client_id: client.id,
 		            web_origin: true,
+		          	marketplace_origin: true,
 		            provider_lock: buffer_params[:provider_lock]
-		          )
+		        )
 		        end
 		      end
 
@@ -1015,7 +1018,29 @@ module ApiViews
 		end
 
 		def show
-		  @booking = Booking.find(params[:id])
+			if params[:id]
+		  		@booking = Booking.find(params[:id])
+		  	elsif params[:encrypted_id]
+		  		crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+				id = crypt.decrypt_and_verify(params[:encrypted_id])
+				@booking = Booking.find(id)
+			else
+				render json: { errors: "Parámetros mal ingresados." }, status: 422
+		        return
+		    end
+		end
+
+		def show_group
+			if params[:ids]
+		  		@bookings = Booking.where(id: params[:ids])
+		  	elsif params[:encrypted_ids]
+		  		crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+				ids = crypt.decrypt_and_verify(params[:encrypted_ids])
+				@bookings = Booking.where(id: ids)
+			else
+				render json: { errors: "Parámetros mal ingresados." }, status: 422
+		        return
+		    end
 		end
 
 		private

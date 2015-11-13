@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151110145725) do
+ActiveRecord::Schema.define(version: 20151113163546) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(version: 20151110145725) do
     t.float    "list_price",             default: 0.0
     t.integer  "receipt_id"
     t.boolean  "payed_state",            default: false
+    t.boolean  "marketplace_origin",     default: false
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -1098,6 +1099,29 @@ ActiveRecord::Schema.define(version: 20151110145725) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "ratings", force: true do |t|
+    t.integer  "company_id",                       null: false
+    t.integer  "location_id",                      null: false
+    t.integer  "service_id",                       null: false
+    t.integer  "service_provider_id",              null: false
+    t.integer  "client_id",                        null: false
+    t.integer  "user_id",                          null: false
+    t.float    "quality",                          null: false
+    t.float    "style",                            null: false
+    t.float    "price",                            null: false
+    t.float    "overall",                          null: false
+    t.text     "comments",            default: "", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ratings", ["client_id"], name: "index_ratings_on_client_id", using: :btree
+  add_index "ratings", ["company_id"], name: "index_ratings_on_company_id", using: :btree
+  add_index "ratings", ["location_id"], name: "index_ratings_on_location_id", using: :btree
+  add_index "ratings", ["service_id"], name: "index_ratings_on_service_id", using: :btree
+  add_index "ratings", ["service_provider_id"], name: "index_ratings_on_service_provider_id", using: :btree
+  add_index "ratings", ["user_id"], name: "index_ratings_on_user_id", using: :btree
 
   create_table "receipt_products", force: true do |t|
     t.integer  "receipt_id"
