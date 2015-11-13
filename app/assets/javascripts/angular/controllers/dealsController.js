@@ -10,9 +10,25 @@
     function DealsController(AgendaProApi) {
         var vm = this;
         vm.deals = [];
-        // Resolve Deals Preview
-        AgendaProApi.deals_preview().then(function(data){
-          vm.deals = data;
-        });
+        vm.showTitle = true;
+        vm.fetchDeals = fetchDeals;
+        vm.fetchPreview = fetchPreview;
+
+        function fetchDeals() {
+            console.log("ALL");
+            // Resolve Deals
+            AgendaProApi.deals().then(function(data){
+              vm.deals = data;
+            });
+        }
+
+        function fetchPreview() {
+            console.log("PREVIEW");
+            // Resolve Deals Preview
+            AgendaProApi.deals_preview().then(function(data){
+              vm.deals = data;
+            });
+        }
+
     }
 })();

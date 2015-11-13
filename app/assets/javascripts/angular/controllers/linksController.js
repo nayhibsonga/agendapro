@@ -20,7 +20,7 @@
             { name: 'spa', url: searchUrl + 'spa'},
             { name: 'tratamientos', url: searchUrl + 'tratamientos'},
             { name: 'manos_y_pies', url: searchUrl + 'manos-y-pies'},
-            { name: 'deals', url: baseUrl + '/promociones'},
+            { name: 'deals', url: baseUrl + '/deals'},
             { name: 'blog', url: baseUrl + '/blog'},
         ];
 

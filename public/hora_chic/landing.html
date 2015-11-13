@@ -11,7 +11,7 @@
   </div>
 </div>
 
-<section ng-include="tc.templates.deals"></section>
+<section ng-include="tc.templates.deals.list" ng-controller="DealsController as dc" onload="dc.fetchPreview();"></section>
 
 <div id="newsletter" class="container-fluid text-center">
   <div class="row">

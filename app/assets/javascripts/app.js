@@ -43,6 +43,16 @@
           controllerAs: 'sc',
           cache: false
       })
+      .when($namespace + '/booking/success/:id/:access_code', {
+          templateUrl: $namespace + '/booking/success',
+          controller: 'BookingController',
+          controllerAs: 'bc',
+          cache: false
+      })
+      .when($namespace + '/deals', {
+          templateUrl: $namespace + '/deals/index',
+          cache: false
+      })
       .otherwise({
           redirectTo: $namespace + '/'
       });

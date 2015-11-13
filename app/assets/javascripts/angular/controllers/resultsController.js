@@ -17,18 +17,28 @@
 
         checkLocation();
 
+        $scope.$watch(function(){
+            return $rootScope;
+        },function(n, o){
+            console.log("ROOTSCOPE MODIFIED: ", o, n);
+        });
 
         function checkLocation(){
             var criteria = $routeParams;
+
+            console.log("RootScope: ", $rootScope);
+
             if ( !criteria.latitude || !criteria.longitude ) {
+                console.log($rootScope.defaultLatLng);
                 angular.merge( criteria, $rootScope.defaultLatLng );
+                console.log($rootScope.defaultLatLng);
             }
 
             getResults(criteria);
         }
 
-
         function getResults( criteria ) {
+            console.log(criteria);
             AgendaProApi.search(criteria).then(function(data){
                 if( angular.isObject(data) && data.length == 0 ) {
                     vm.error = "No se encontraron coincidencias, Intente Nuevamente.";

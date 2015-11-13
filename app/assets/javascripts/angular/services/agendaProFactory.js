@@ -8,17 +8,20 @@
     AgendaProApi.$inject = ['$http', '$rootScope'];
 
     function AgendaProApi($http, $rootScope) {
-        var baseUrl = 'http://www.bambucalendar.cl:83/api_views/marketplace/v1';
-        var countryId = getCountryId($rootScope.country);
+        var host = 'http://www.bambucalendar.cl:83',
+            baseUrl = host + '/api_views/marketplace/v1',
+            countryId = getCountryId($rootScope.country);
 
         // AgendaProApi public methods
 
         var service = {
+            deals: deals,
             deals_preview: deals_preview,
             search: search,
             show: show,
             weeklyHours: weeklyHours,
-            defaultLocation: defaultLocation
+            defaultLocation: defaultLocation,
+            sendBooking: sendBooking
         }
 
         var ApiCalls = { get: get, post: post }
@@ -26,6 +29,11 @@
         return service;
 
         // Private methods
+
+        function deals(country) {
+            var url = '/promotions?country_id='.concat(countryId);
+            return ApiCalls.get(url);
+        }
 
         function deals_preview(country) {
             var url = '/promotions/index/preview?country_id='.concat(countryId);
@@ -78,6 +86,11 @@
             return ApiCalls.get(url);
         }
 
+        function sendBooking(data) {
+            var url = '/bookings';
+            return ApiCalls.post(url, data);
+        }
+
         // Requests Method
 
         function get(url) {
@@ -93,8 +106,10 @@
             }, AgendaProApiError);
         }
 
-        function post(url) {
-            return true;
+        function post(url, data) {
+            return $http.post(baseUrl + url, data).then(function(response) {
+                return response;
+            }, AgendaProApiError);
         }
 
         // Custom functions

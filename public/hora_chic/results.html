@@ -41,36 +41,23 @@
     <!-- DESCRIPTION -->
     <div class="col-md-4 description-container">
       <h3>
-        <a ng-href="{{ rc.showUrl + company.id }}">{{ company.name }}
+        <a ng-href="{{ rc.showUrl + company.id }}">
+          <img src="" ng-src="{{ company.logo }}" alt="" style="width: 65px; height: 65px;">
+          {{ company.name }}
         </a>
       </h3>
       <p class="address"><span></span> {{ company.address }}, {{ company.district }}</p>
-      <p>&#9734; &#9734; &#9734; &#9734; &#9734;</p>
-      <p class="detail">Multiespacio, Peluqueria, Manicure, Tratamientos Estéticos y capilaresm ropa y accesorios, Asesoria de imagen personal, Maquillaje y mas.</p>
+      <!-- <p>&#9734; &#9734; &#9734; &#9734; &#9734;</p> -->
+      <p class="detail">{{ company.description || 'Sin descripción' }}</p>
     </div>
     <!-- END DESCRIPTION -->
 
     <!-- SERVICES -->
     <div class="col-md-4 services-container">
-      <div class="service">
-        <span>Corte de Pelo Mujer</span>
-        <span class="time">©  1hr</span>
-        <span class="pull-right price">$15.990</span>
-      </div>
-      <div class="service">
-        <span>Corte de Pelo mas teñido</span>
-        <span class="time">©  1hr 30 min</span>
-        <span class="pull-right price">$35.990</span>
-      </div>
-      <div class="service">
-        <span>Corte de puntas</span>
-        <span class="time">©  30 min</span>
-        <span class="pull-right price">$9.990</span>
-      </div>
-      <div class="service">
-        <span>Corte de Pelo Hombre</span>
-        <span class="time">©  20 min</span>
-        <span class="pull-right price">$6.990</span>
+      <div class="service" ng-repeat="service in company.featured_services">
+        <span>{{ service.name }}</span>
+        <span class="time">©  {{ service.duration | inHours }}</span>
+        <span class="pull-right price">{{ service.price | currency | clp }}</span>
       </div>
       <div class="pull-right view-more">
         <button class="btn btn-down"><a ng-href="{{ rc.showUrl + company.id }}">Ver más servicios

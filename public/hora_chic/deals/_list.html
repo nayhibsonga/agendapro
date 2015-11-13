@@ -1,16 +1,17 @@
-<div class="container-fluid deals-container" ng-controller="DealsController as dc">
-  <div class="row title">
+<div class="container-fluid deals-container">
+  <div class="row title" ng-if="dc.showTitle">
     <div class="col-xs-12 text-center">
       <h1>{{ tc.lang.landing.deals.title }}</h1>
       <p>{{ tc.lang.landing.deals.sub_title }}</p>
     </div>
   </div>
+
   <div class="row">
     <div class="wrapper col-xs-12">
       <div class="deal pull-left" ng-repeat="deal in dc.deals">
         <div class="bg">
           <div class="deal-text">
-            <img src="/assets/hora_chic/dcto.png" alt="">
+            <img src="/assets/hora_chic/dcto.png" alt="Discount">
           </div>
         </div>
         <figure>
@@ -29,4 +30,5 @@
       </div>
     </div>
   </div>
+
 </div>

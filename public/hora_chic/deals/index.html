@@ -1,0 +1,7 @@
+<div id="deals-list">
+  <ng-include
+      src="tc.templates.deals.list"
+      ng-controller="DealsController as dc"
+      onload="dc.fetchDeals();">
+  </ng-include>
+</div>

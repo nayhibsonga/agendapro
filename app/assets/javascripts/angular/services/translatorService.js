@@ -99,6 +99,15 @@
             detail: {
               appointment: 'Detalle de Reserva'
             }
+          },
+          booking: {
+            success: ', tu reserva fue recibida exitosamente',
+            service: 'Servicio',
+            where: '¿Dónde?',
+            day: 'Día y Hora',
+            name: 'Nombre',
+            email: 'Email',
+            phone: 'Teléfono'
           }
         }
       }

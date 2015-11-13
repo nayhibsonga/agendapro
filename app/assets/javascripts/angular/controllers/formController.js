@@ -31,7 +31,7 @@
                 user.email = '';
                 user.phone = '';
                 user.notes = '';
-                user.promotions = false;
+                user.mailing_option = false;
 
                 return user;
             }

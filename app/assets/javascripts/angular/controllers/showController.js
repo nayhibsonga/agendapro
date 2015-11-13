@@ -5,9 +5,9 @@
         .module('HoraChic')
         .controller('ShowController', ShowController);
 
-    ShowController.$inject = ['$rootScope', '$scope', 'AgendaProApi', '$routeParams'];
+    ShowController.$inject = ['$rootScope', '$scope', 'AgendaProApi', '$routeParams', '$location'];
 
-    function ShowController($rootScope, $scope, AgendaProApi, $routeParams) {
+    function ShowController($rootScope, $scope, AgendaProApi, $routeParams, $location) {
         var vm = this;
         vm.title = 'ShowController';
         vm.tmpl = $scope.tc.templates.show;
@@ -189,13 +189,20 @@
               bookings.push(vm.servicesList[i].appointment);
             };
 
-            console.log(vm.user);
+            data.location_id = $routeParams.id;
+            data.payment = '0';
+            data.max_discount = '0';
+            data.has_sessions = '0';
+            data.mp = '';
 
-            data.bookings = bookings;
+            data.bookings = {bookings: bookings};
             data.client = vm.user;
 
-            console.log("THIS IS WHAT I'LL SEND TO THE SERVER");
-            console.log(data);
+            AgendaProApi.sendBooking(data).then(function(response, status) {
+                if ( status === 200 ) {
+                    $location.path('/booking/success/1/1234567');
+                }
+            });
         }
 
         function getCompanyMap() {
@@ -300,7 +307,7 @@
             for (var i = 0; i < vm.servicesList.length; i++) {
                 vm.servicesList[i].appointment = {
                     service_id: bookings[i].service,
-                    service_provider_id: bookings[i].provider_id,
+                    provider_id: bookings[i].provider_id,
                     start: bookings[i].start,
                     end: bookings[i].end,
                     provider_lock: bookings[i].provider_lock,

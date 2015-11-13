@@ -26,7 +26,9 @@
         vm.templates = {
             header: baseUrl + '/header',
             footer: baseUrl + '/footer',
-            deals: baseUrl + '/deals',
+            deals: {
+                list: baseUrl + '/deals/_list'
+            },
             search: baseUrl + '/search',
             map: baseUrl + '/map',
             login: baseUrl + '/login',
@@ -36,7 +38,8 @@
                 schedule: baseUrl + '/show/_schedule',
                 summary: baseUrl + '/show/_summary',
                 step1: baseUrl + '/show/_step1',
-                step2: baseUrl + '/show/_step2'
+                step2: baseUrl + '/show/_step2',
+                success: baseUrl + '/show/success'
             }
         };
         // To render a new element in the main content

@@ -8,10 +8,6 @@
     backAnimation.$inject = ['$browser', '$location'];
 
     function backAnimation($browser, $location) {
-        // Usage:
-        //
-        // Creates:
-        //
         var directive = { link: link };
 
         return directive;
