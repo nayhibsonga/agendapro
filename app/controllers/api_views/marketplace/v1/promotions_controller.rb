@@ -150,6 +150,11 @@ module ApiViews
 	  	@service = Service.find(params[:id])
 	    @location = Location.find(params[:location_id])
 
+	    @service_providers_array = []
+	    @service.service_providers.where(active: true, online_booking: true, location_id: @location.id).each do |service_provider|
+			@service_providers_array.push({id: service_provider.id, public_name: service_provider.public_name})
+		end
+
 	    #Check existance of promo
 	    if !@service.has_time_discount || @service.service_promos.nil? || @service.active_service_promo_id.nil?
 	      render json: { errors: "No existen promociones para el servicio buscado." }, status: 422
@@ -167,13 +172,8 @@ module ApiViews
 	      render json: { errors: "La promoción buscada ya expiró." }, status: 422
 	      return
 	    end
-
-	    service_providers_array = []
-	    @service.service_providers.where(active: true, online_booking: true, location_id: @location.id).each do |service_provider|
-			service_providers_array.push({id: service_provider.id, public_name: service_provider.public_name})
-		end
 	  end
-		end
+	  end
 	end
   end
 end
