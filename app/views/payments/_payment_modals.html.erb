@@ -3,6 +3,11 @@
 <% else %>
   <input type="hidden" id="editable_payment_prices" value="0" />
 <% end %>
+<% if current_user.company.company_setting.mandatory_mock_booking_info %>
+  <input type="hidden" id="mandatory_mock_booking_info" value="1" />
+<% else %>
+  <input type="hidden" id="mandatory_mock_booking_info" value="0" />
+<% end %>
 <div class="modal fade paymentModal" id="paymentModalIntro" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
