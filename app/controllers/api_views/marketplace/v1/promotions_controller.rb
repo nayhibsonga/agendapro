@@ -167,6 +167,11 @@ module ApiViews
 	      render json: { errors: "La promoción buscada ya expiró." }, status: 422
 	      return
 	    end
+
+	    service_providers_array = []
+	    @service.service_providers.where(active: true, online_booking: true, location_id: @location.id).each do |service_provider|
+			service_providers_array.push({id: service_provider.id, public_name: service_provider.public_name})
+		end
 	  end
 		end
 	end

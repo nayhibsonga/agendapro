@@ -1018,12 +1018,12 @@ module ApiViews
 		end
 
 		def show
-			if params[:id]
+			if params[:id] && params[:access_token]
 		  		@booking = Booking.find(params[:id])
-		  	elsif params[:encrypted_id]
-		  		crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
-				id = crypt.decrypt_and_verify(params[:encrypted_id])
-				@booking = Booking.find(id)
+		  		unless @booking.confirmation_code[5..15] == params[:access_token]
+		  			render json: { errors: "Parámetros mal ingresados." }, status: 422
+		        	return
+		  		end
 			else
 				render json: { errors: "Parámetros mal ingresados." }, status: 422
 		        return
@@ -1031,13 +1031,10 @@ module ApiViews
 		end
 
 		def show_group
-			if params[:ids]
+			if params[:bookings]
+
 		  		@bookings = Booking.where(id: params[:ids])
-		  	elsif params[:encrypted_ids]
-		  		crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
-				ids = crypt.decrypt_and_verify(params[:encrypted_ids])
-				@bookings = Booking.where(id: ids)
-			else
+		  	else
 				render json: { errors: "Parámetros mal ingresados." }, status: 422
 		        return
 		    end
