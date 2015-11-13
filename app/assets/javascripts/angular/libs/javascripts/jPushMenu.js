@@ -13,6 +13,17 @@
 
         $('body').addClass(o.pushBodyClass);
 
+        // Menu with scroll
+        $(window).on('resize',function(){
+            $('.cbp-spmenu-left').height($(window).height()+'px');
+        });
+        // Block page to continiu scrolling
+        $('.cbp-spmenu-left').bind('mousewheel', function(e){
+            $(this).scrollTop($(this).scrollTop()-e.originalEvent.wheelDeltaY);
+            //prevent page fom scrolling
+            return false;
+        });
+
         // Add class to toggler
         $(this).addClass('jPushMenuBtn');
 
@@ -47,8 +58,10 @@
 
             if ($(this).is('.' + o.pushBodyClass) && push_direction != '') {
                 $('body').toggleClass(o.pushBodyClass + '-' + push_direction);
+                // $('body>#wrapper').toggleClass('stop-scrolling');
                 toggleOpacity();
                 active = true;
+                $(window).trigger('resize');
             }
 
             // Disable all other buttons
@@ -64,6 +77,7 @@
                         .removeClass('disabled ' + o.activeClass + ' ' + o.menuOpenClass + ' ' + o.pushBodyClass + '-toleft ' + o.pushBodyClass + '-toright');
                     toggleOpacity();
                     active = false;
+                    // $('body>#wrapper').toggleClass('stop-scrolling');
                 }
             }
         }
@@ -73,7 +87,7 @@
              $(document).click(function() {
                 jPushMenu.close(o);
              });
-             $('#wrapper').bind('touchstart click', function() {
+             $('#main').bind('touchstart click', function() {
                 jPushMenu.close(o);
              });
          }

@@ -1,3 +1,5 @@
+@include font-face('FontAwesome', 'FontAwesome-webfont', 'FontAwesome', 'serif');
+
 // Initialized from hora_chic_base.css.scss
 html, body, header, footer {
   @include roboto-font(14px, normal);
@@ -11,10 +13,16 @@ html, body {
 #wrapper {
   min-height: 100%;
   position: relative;
+  padding-bottom: 125px; // Footer size
 }
 
 // Removes Bootstrap default styles
 *:focus{ outline: none !important; }
+
+// Remove IonIcons display block
+.icon:before{
+  display: inline !important;
+}
 
 .clear {
   width: 100%;
@@ -76,6 +84,10 @@ a{
   @include no-select;
 }
 
+.currency-symbol {
+  @include currency-symbol;
+}
+
 .loading-container {
   text-align: center;
   padding: 35% 0;
@@ -85,6 +97,7 @@ a{
   @include loading(sm);
 }
 
+// Base Styles made for XS Breakpoint to Up
 #login {
   @include roboto-font(14px, normal);
   @include font-smoothing;
@@ -94,8 +107,6 @@ a{
     @include breakpoint(0, 470px) { width: 100%; }
   }
 }
-
-// Base Styles made for XS Breakpoint to Up
 
 header {
   $header-height: 75px;
@@ -200,6 +211,9 @@ header {
         text-transform: uppercase;
         font-size: 33px;
         width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
         @include breakpoint(460px) { font-size: 37px; }
         @include breakpoint(555px) { font-size: 41px; }
         @include breakpoint(615px) { font-size: 45px; }
@@ -208,6 +222,19 @@ header {
         #typed {
           color: $light-pink;
           font-weight: 600;
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          vertical-align: bottom;
+          @include breakpoint(460px) { max-width: 240px; }
+          @include breakpoint(555px) { max-width: 305px; }
+          @include breakpoint(615px) { max-width: 345px; }
+          @include breakpoint(690px) { max-width: 400px; }
+          @include breakpoint("sm") { max-width: 360px; }
+          @include breakpoint("md") { max-width: 415px; }
+          @include breakpoint("lg") { max-width: 570px; }
+          @include breakpoint(1500px) { max-width: 580px; }
         }
         .typed-cursor{ @extend #typed; }
       }
@@ -269,12 +296,34 @@ footer {
   position: absolute;
   height: 125px;
   width: 100%;
-  z-index: -1;
+  z-index: 1;
   .container {
     @include logo;
     height: 100%;
     .logo {
       height: 100%;
+    }
+    .wrapper {
+      height: 125px;
+      font-size: 0;
+    }
+    a.social {
+      color: $dark-gray;
+      margin-bottom: 5px;
+      margin-top: 5px;
+      display: inherit;
+      padding-top: 34px;
+      i {
+        color: $lighter-pink;
+        vertical-align: middle;
+      }
+    }
+    p.direction{
+      i {
+        font-size: 3em;
+        color: $lighter-pink;
+        vertical-align: middle;
+      }
     }
   }
 }
@@ -293,17 +342,18 @@ footer {
       margin-top: 10px;
     }
   }
+  .wrapper{
+    @include flexbox-center;
+  }
   .deal {
     margin-top: 20px;
     height: 350px;
     width: 100%;
     max-width: 370px;
     font-weight: bold;
-    margin-right: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
     position: relative;
-    &:first-child {
-      margin-left: 0;
-    }
     figure { height: 55%; }
     figcaption {
       height: 15%;
@@ -472,14 +522,12 @@ footer {
         .price { color: $light-pink; }
       }
       .view-more{
-        button {
+        a {
           @include border-radius(0);
           background-color: $light-pink;
           padding: 10px 20px;
-          a {
-            color: $white;
-            &:hover { color: $white; }
-          }
+          color: $white;
+          &:hover { color: $white; }
         }
       }
     }
@@ -511,11 +559,22 @@ footer {
         text-align: left;
         padding-left: 7%;
         &.time::before {
-          content: '®';
+          content: "\f402";
           position: absolute;
           margin-left: -20px;
           margin-top: 5px;
           font-size: 20px;
+          // ionicons
+          font-family: "Ionicons";
+          speak: none;
+          font-style: normal;
+          font-weight: normal;
+          font-variant: normal;
+          text-transform: none;
+          text-rendering: auto;
+          line-height: 1;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale
         }
       }
     }
@@ -570,6 +629,24 @@ footer {
     }
   }
 
+  .categories {
+    margin-bottom: 5px;
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    .panel-heading {
+      color: $black;
+      background-color: $lighterx-gray;
+      text-align: left;
+      @include border-radius(0);
+    }
+    .panel-body {
+      border-top: none;
+    }
+    .currency-symbol {
+      @include currency-symbol(sm);
+    }
+  }
 }
 
 

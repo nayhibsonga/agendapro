@@ -2,8 +2,8 @@
   // DESKTOP STYLES
   header {
     $header-height: 75px;
-    font-size: 14px; // IE Fallback
-    font-size: 1vw;
+    font-size: 14px;
+    @include breakpoint(1500px) { font-size: 15px; }
     %links-desktop {
       line-height: $header-height;
       color: $light-gray;

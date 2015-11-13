@@ -18,7 +18,6 @@
   </section>
   <!-- END CHANGE LOCATION -->
 
-
   <div class="loading" ng-show="rc.searchResults.length === 0 && rc.error === ''"></div>
 
   <div class="error" ng-show="rc.error !== ''" style="width: 100%; text-align: center;">
@@ -26,7 +25,6 @@
     <span style="color: #F26062; font-style: italic;">{{ rc.error }}</span>
     <div class="clear"></div>
   </div>
-
 
   <!-- SERVICES LIST -->
   <div id="company-{{ company.id }}" class="places row" ng-repeat="company in rc.searchResults">
@@ -46,7 +44,7 @@
           {{ company.name }}
         </a>
       </h3>
-      <p class="address"><span></span> {{ company.address }}, {{ company.district }}</p>
+      <p class="address"><span><i class="icon ion-ios-location"></i></span> {{ company.address }}, {{ company.district }}</p>
       <!-- <p>&#9734; &#9734; &#9734; &#9734; &#9734;</p> -->
       <p class="detail">{{ company.description || 'Sin descripción' }}</p>
     </div>
@@ -54,20 +52,20 @@
 
     <!-- SERVICES -->
     <div class="col-md-4 services-container">
+
       <div class="service" ng-repeat="service in company.featured_services">
         <span>{{ service.name }}</span>
-        <span class="time">©  {{ service.duration | inHours }}</span>
+        <span class="time"><i class="icon ion-ios-clock-outline"></i>  {{ service.duration | inHours }}</span>
         <span class="pull-right price">{{ service.price | currency | clp }}</span>
       </div>
       <div class="pull-right view-more">
-        <button class="btn btn-down"><a ng-href="{{ rc.showUrl + company.id }}">Ver más servicios
-        </a></button>
+        <a class="btn btn-down" ng-href="{{ rc.showUrl + company.id }}">Ver más servicios
+        </a>
       </div>
     </div>
     <!-- END SERVICES -->
   </div>
   <!-- END SERVICES LIST -->
-
 
 </div>
 

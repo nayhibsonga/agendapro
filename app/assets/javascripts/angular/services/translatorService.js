@@ -41,7 +41,7 @@
             }
           },
           landing: {
-            typed: ["Corte de Pelo", "Tratamientos Faciales", "SPA", "Maquillaje", "Centros de Estética", "Peluquerías", "Masajes", "Manicure", "Pedicure", "Tratamientos Corporales", "Bronceados", "Medicina Alternativa"],
+            typed: ["SPA", "Masajes", "Manicure", "Pedicure", "Maquillaje", "Bronceados", "Peluquerías", "Corte de Pelo", "Centros de Estética", "Medicina Alternativa", "Tratamientos Faciales", "Tratamientos Corporales"],
             deals: {
               title: "Promociones Destacadas",
               sub_title: "¡Promociones destacadas de este mes!"

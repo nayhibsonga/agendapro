@@ -4,8 +4,7 @@
     display: block;
     $header-height: 75px;
     border-bottom: 1px solid $light-gray;
-    font-size: 11px; // IE Fallback
-    font-size: 1vw;
+    font-size: 11px;
     %links-tablet {
       line-height: $header-height;
       color: $light-gray;
@@ -202,10 +201,6 @@
     }
   }
 
-  .deals-container {
-    .deal:first-child{ margin-left: 4%; }
-  }
-
   #results {
     #map {
       .angular-google-map-container {
@@ -233,13 +228,24 @@
             padding: 0;
             border: none;
             &::before {
-              content: '®';
+              content: "\f402";
               position: relative;
               margin-left: 0;
               margin-top: 0;
               font-size: 20px;
               vertical-align: middle;
               margin-right: 8px;
+              // ionicons
+              font-family: "Ionicons";
+              speak: none;
+              font-style: normal;
+              font-weight: normal;
+              font-variant: normal;
+              text-transform: none;
+              text-rendering: auto;
+              line-height: 1;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale
             }
           }
         }

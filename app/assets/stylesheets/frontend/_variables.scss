@@ -26,13 +26,13 @@ $dark-yellow:   #e6ba55;
 $darkest-gray:  #525252; //FIXME!
 
 // Main Images ref
-$base-route:        'hora_chic/';
 $geo-icon:          'search/pin-overlay.png';
 $landing-image:     'hora_chic/landing/bg_2015.jpg';
 $landing-image-xs:  'hora_chic/landing/bg_2015_xs.jpg';
 $logo-route:        'hora_chic/logo/';
+$image-base:        'hora_chic/';
+$base-route:        'hora_chic/';
 $loading:           'hora_chic/loading.gif';
-
 
 // Routes to be modified on app separation
 $fonts-route:   '/lib/assets/fonts/';

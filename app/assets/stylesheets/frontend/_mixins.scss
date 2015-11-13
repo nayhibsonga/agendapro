@@ -3,7 +3,7 @@
 // Ex: @include font-face('Ashbury', 'AshburyLig-webfont', 'Ashbury', 'serif');
 
 @mixin font-face($style-name, $file, $family, $category:"") {
-  $filepath: "fonts/" + $family + "/" + $file;
+  $filepath: $fonts-route + $family + "/" + $file;
   @font-face {
     font-family: "#{$style-name}";
     src: url($filepath + ".eot");
@@ -119,10 +119,55 @@
   }
 }
 
+@mixin currency-symbol($size: default) {
+  background: url('#{$image-base}/currency-symbol.png') no-repeat center;
+  display: inline-block;
+  @if $size == default {
+    height: 47px;
+    width: 47px;
+  }
+  @else if $size == sm {
+    height: 18px;
+    width: 18px;
+    background-size: 18px;
+    vertical-align: bottom;
+  }
+  @else if $size == md {
+    height: 118px;
+    width: 410px;
+  }
+  @else if $size == lg {
+    height: 189px;
+    width: 627px;
+  }
+  @content;
+}
+
 @mixin border-radius($radius) {
   -webkit-border-radius: $radius;
   border-radius: $radius;
   background-clip: padding-box;  /* stops bg color from leaking outside the border: */
+}
+
+@mixin centerer($horizontal: true, $vertical: true) {
+  position: absolute;
+  @if ($horizontal and $vertical) {
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+  } @else if ($horizontal) {
+    left: 50%;
+    -webkit-transform: translate(-50%, 0);
+        -ms-transform: translate(-50%, 0);
+            transform: translate(-50%, 0);
+  } @else if ($vertical) {
+    top: 50%;
+    -webkit-transform: translate(0, -50%);
+        -ms-transform: translate(0, -50%);
+            transform: translate(0, -50%);
+  }
 }
 
 @mixin no-select {
@@ -147,4 +192,27 @@
     width: 30px;
     background-size: 30px;
   }
+}
+
+@mixin flexbox-center() {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
 }
