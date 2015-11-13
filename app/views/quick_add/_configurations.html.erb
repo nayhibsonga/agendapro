@@ -3,8 +3,13 @@
     <section class="green-background">
       <div class="container">
         <div class="row">
-          Ingresa tus configuraciones básicas.
+          <h2 class="text-center">Ingresa tus configuraciones básicas.</h2>
+          <p class="text-center text-dark-green">Determina los tiempos de recordatorios y reservas</p>
         </div>
+      </div>
+    </section>
+    <section>
+      <div class="container">
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
@@ -32,144 +37,22 @@
             </div>
           </div>
           <div class="col-md-6">
-            <%= form_for @notification_email do |f| %>
-              <%= f.hidden_field :company_id, value: @company.id %>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <%= f.label :email, "E-mail de Notificación", class: 'text-green' %>
-                    <%= f.email_field :email, class: "form-control", required: true %>
-                    <span class="help-block">En que dirección desea recibir la notificación.</span>
-                  </div>
-                  <div class="form-group">
-                    <%= f.label :receptor_type, "Tipo de Notificación", class: 'text-green' %>
-                    <%= f.select :receptor_type, [['Compañía', 0], ['Local', 1], ['Prestador de Servicio', 2]], {}, {class: 'form-control'} %>
-                    <span class="help-block">Recibir notificaciones sobre eventos de la compañía, locales o prestadores de servicios.</span>
-                  </div>
-                </div>
+            <div class="form-group">
+              <div class="checkbox">
+                <label>
+                  <%= f.check_box :can_edit %> Reservas Editables
+                </label>
+                <span class="help-block">Habilita esta opción para que tu cliente pueda modificar las reservas que realiza.</span>
               </div>
-              <div class="row">
-                <div class="col-md-12 hidden" id="local-notification">
-                  <div class="form-group">
-                    <%= f.label :location_ids, @company.name %>
-                    <%= f.collection_check_boxes :location_ids, @company.locations.where(active: true), :id, :name, {}, {class: "check_boxes"} do |b|%>
-                      <div class="checkbox">
-                        <label>
-                          <%= b.check_box %> <%= b.text %>
-                        </label>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-                <div class="col-md-12 hidden" id="provider-notification">
-                  <div class="row">
-                    <% for local in @company.locations.where(active: true) %>
-                    <div class="col-sm-4">
-                      <div class="form-group">
-                        <%= f.label :service_provider_ids, local.name %>
-                        <%= f.collection_check_boxes :service_provider_ids, local.service_providers.where(active: true), :id, :public_name, {}, {class: "check_boxes"} do |b|%>
-                          <div class="checkbox">
-                            <label>
-                              <%= b.check_box %> <%= b.text %>
-                            </label>
-                          </div>
-                        <% end %>
-                      </div>
-                    </div>
-                    <% end %>
-                  </div>
-                </div>
+            </div>
+            <div class="form-group">
+              <div class="checkbox">
+                <label>
+                  <%= f.check_box :can_cancel %> Reservas Cancelables
+                </label>
+                <span class="help-block">Habilita esta opción para que tu cliente pueda cancelar las reservas que realiza.</span>
               </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group background-green">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <label style="margin: 0;">Cuando recibir la Notificación</label>
-                        <span class="help-block" style="margin: 0;">Sobre cual evento desea recibir la notificación.</span>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-sm-4">
-                        <div class="checkbox">
-                          <label>
-                            <%= f.check_box :summary %> Resumen diario
-                          </label>
-                        </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="checkbox">
-                          <label>
-                            <%= f.check_box :new %> Nueva reserva manual
-                          </label>
-                        </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="checkbox">
-                          <label>
-                            <%= f.check_box :modified %> Reserva manual modificada
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-sm-4">
-                        <div class="checkbox">
-                          <label>
-                            <%= f.check_box :confirmed %> Reserva manual confirmada
-                          </label>
-                        </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="checkbox">
-                          <label>
-                            <%= f.check_box :canceled %> Reserva manual cancelada
-                          </label>
-                        </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="checkbox">
-                          <label>
-                            <%= f.check_box :new_web %> Nueva reserva online
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-sm-4">
-                        <div class="checkbox">
-                          <label>
-                            <%= f.check_box :modified_web %> Reserva online modificada
-                          </label>
-                        </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="checkbox">
-                          <label>
-                            <%= f.check_box :confirmed_web %> Reserva online confirmada
-                          </label>
-                        </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="checkbox">
-                          <label>
-                            <%= f.check_box :canceled_web %> Reserva online cancelada
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-                    <%= link_to 'Cancelar', edit_company_setting_path(User.find(current_user.id).company.company_setting), :class => "btn btn-default" %>
-                  </div>
-                </div>
-              </div>
-            <% end %>
+            </div>
           </div>
         </div>
       </div>
