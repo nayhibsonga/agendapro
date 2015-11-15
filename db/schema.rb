@@ -9,6 +9,7 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
+# It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 20151113163546) do
 
@@ -118,11 +119,11 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.integer  "service_promo_id"
     t.integer  "payment_id"
     t.float    "discount",               default: 0.0
-    t.boolean  "is_booked",              default: true
+    t.integer  "service_promo_id"
     t.integer  "reminder_group"
+    t.boolean  "is_booked",              default: true
     t.float    "list_price",             default: 0.0
     t.integer  "receipt_id"
     t.boolean  "payed_state",            default: false
@@ -280,44 +281,46 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.boolean  "activate_workflow",           default: true
     t.boolean  "client_exclusive",            default: false
     t.integer  "provider_preference"
-    t.integer  "calendar_duration",          default: 15
-    t.boolean  "extended_schedule_bool",     default: false,                 null: false
-    t.time     "extended_min_hour",          default: '2000-01-01 09:00:00', null: false
-    t.time     "extended_max_hour",          default: '2000-01-01 20:00:00', null: false
-    t.boolean  "schedule_overcapacity",      default: true,                  null: false
-    t.boolean  "provider_overcapacity",      default: true,                  null: false
-    t.boolean  "resource_overcapacity",      default: true,                  null: false
-    t.integer  "booking_confirmation_time",  default: 1,                     null: false
-    t.integer  "max_changes",                default: 2
-    t.boolean  "booking_history",            default: true
-    t.boolean  "staff_code",                 default: false
-    t.integer  "monthly_mails",              default: 0,                     null: false
-    t.boolean  "deal_activate",              default: false
-    t.string   "deal_name",                  default: ""
-    t.boolean  "deal_overcharge",            default: true
-    t.boolean  "deal_exclusive",             default: false
-    t.integer  "deal_quantity",              default: 0
-    t.integer  "deal_constraint_option",     default: 0
-    t.integer  "deal_constraint_quantity",   default: 0
-    t.boolean  "deal_identification_number", default: false
-    t.boolean  "allows_online_payment",      default: false
-    t.string   "account_number",             default: ""
-    t.string   "company_rut",                default: ""
-    t.string   "account_name",               default: ""
-    t.integer  "account_type",               default: 3
+    t.integer  "calendar_duration",           default: 15
+    t.boolean  "extended_schedule_bool",      default: false,                 null: false
+    t.time     "extended_min_hour",           default: '2000-01-01 09:00:00', null: false
+    t.time     "extended_max_hour",           default: '2000-01-01 20:00:00', null: false
+    t.boolean  "schedule_overcapacity",       default: true,                  null: false
+    t.boolean  "provider_overcapacity",       default: true,                  null: false
+    t.boolean  "resource_overcapacity",       default: true,                  null: false
+    t.integer  "booking_confirmation_time",   default: 1,                     null: false
+    t.integer  "max_changes",                 default: 2
+    t.boolean  "booking_history",             default: true
+    t.boolean  "staff_code",                  default: false
+    t.integer  "monthly_mails",               default: 0,                     null: false
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name",                   default: ""
+    t.boolean  "deal_overcharge",             default: true
+    t.boolean  "deal_exclusive",              default: false
+    t.integer  "deal_quantity",               default: 0
+    t.integer  "deal_constraint_option",      default: 0
+    t.integer  "deal_constraint_quantity",    default: 0
+    t.boolean  "deal_identification_number",  default: false
+    t.boolean  "allows_online_payment",       default: false
+    t.string   "account_number",              default: ""
+    t.string   "company_rut",                 default: ""
+    t.string   "account_name",                default: ""
+    t.integer  "account_type",                default: 3
     t.integer  "bank_id"
-    t.boolean  "deal_required",              default: false,                 null: false
-    t.boolean  "online_payment_capable",     default: false
-    t.boolean  "allows_optimization",        default: true
-    t.boolean  "activate_notes",             default: true,                  null: false
-    t.boolean  "receipt_required",           default: true
-    t.float    "online_payment_commission",  default: 5.0
-    t.float    "promo_commission",           default: 10.0
-    t.boolean  "promo_offerer_capable",      default: false
-    t.boolean  "can_edit",                   default: true
-    t.boolean  "can_cancel",                 default: true
-    t.boolean  "use_identification_number",  default: false
+    t.boolean  "deal_required",               default: false,                 null: false
+    t.boolean  "online_payment_capable",      default: false
+    t.boolean  "allows_optimization",         default: true
+    t.boolean  "activate_notes",              default: true,                  null: false
+    t.boolean  "receipt_required",            default: true
+    t.float    "online_payment_commission",   default: 5.0
+    t.float    "promo_commission",            default: 10.0
+    t.boolean  "promo_offerer_capable",       default: false
+    t.boolean  "can_edit",                    default: true
+    t.boolean  "can_cancel",                  default: true
+    t.boolean  "use_identification_number",   default: false
     t.string   "preset_notes"
+    t.boolean  "payment_client_required",     default: true
+    t.boolean  "show_cashes",                 default: false
     t.boolean  "editable_payment_prices",     default: true
     t.boolean  "mandatory_mock_booking_info", default: false
   end
@@ -468,7 +471,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "date",                default: '2015-10-27 17:17:43'
+    t.datetime "date",                default: '2015-11-15 22:20:48'
   end
 
   create_table "last_minute_promos", force: true do |t|
@@ -492,7 +495,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-    t.integer  "location_id",             null: false
+    t.integer  "location_id",                null: false
     t.integer  "stock",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -621,6 +624,136 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "company_setting_id"
   end
 
+  create_table "pay_u_creations", force: true do |t|
+    t.string   "trx_id",         null: false
+    t.string   "payment_method", null: false
+    t.float    "amount",         null: false
+    t.text     "details"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "pay_u_notifications", force: true do |t|
+    t.string   "merchant_id"
+    t.string   "state_pol"
+    t.string   "risk"
+    t.string   "response_code_pol"
+    t.string   "reference_sale"
+    t.string   "reference_pol"
+    t.string   "sign"
+    t.string   "extra1"
+    t.string   "extra2"
+    t.string   "payment_method"
+    t.string   "payment_method_type"
+    t.string   "installments_number"
+    t.string   "value"
+    t.string   "tax"
+    t.string   "additional_value"
+    t.string   "transaction_date"
+    t.string   "currency"
+    t.string   "email_buyer"
+    t.string   "cus"
+    t.string   "pse_bank"
+    t.string   "test"
+    t.string   "description"
+    t.string   "billing_address"
+    t.string   "shipping_address"
+    t.string   "phone"
+    t.string   "office_phone"
+    t.string   "account_number_ach"
+    t.string   "account_type_ach"
+    t.string   "administrative_fee"
+    t.string   "administrative_fee_base"
+    t.string   "administrative_fee_tax"
+    t.string   "airline_code"
+    t.string   "attempts"
+    t.string   "authorization_code"
+    t.string   "bank_id"
+    t.string   "billing_city"
+    t.string   "billing_country"
+    t.string   "commision_pol"
+    t.string   "commision_pol_currency"
+    t.string   "customer_number"
+    t.string   "date"
+    t.string   "error_code_bank"
+    t.string   "error_message_bank"
+    t.string   "exchange_rate"
+    t.string   "ip"
+    t.string   "nickname_buyer"
+    t.string   "nickname_seller"
+    t.string   "payment_method_id"
+    t.string   "payment_request_state"
+    t.string   "pseReference1"
+    t.string   "pseReference2"
+    t.string   "pseReference3"
+    t.string   "response_message_pol"
+    t.string   "shipping_city"
+    t.string   "shipping_country"
+    t.string   "transaction_bank_id"
+    t.string   "transaction_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "cc_number"
+    t.string   "cc_holder"
+    t.string   "bank_referenced_name"
+    t.string   "payment_method_name"
+    t.string   "antifraudMerchantId"
+  end
+
+  create_table "pay_u_responses", force: true do |t|
+    t.string   "merchantId"
+    t.string   "transactionState"
+    t.string   "risk"
+    t.string   "polResponseCode"
+    t.string   "referenceCode"
+    t.string   "reference_pol"
+    t.string   "signature"
+    t.string   "polPaymentMethod"
+    t.string   "polPaymentMethodType"
+    t.string   "installmentsNumber"
+    t.string   "TX_VALUE"
+    t.string   "TX_TAX"
+    t.string   "buyerEmail"
+    t.string   "processingDate"
+    t.string   "currency"
+    t.string   "cus"
+    t.string   "pseBank"
+    t.string   "lng"
+    t.string   "description"
+    t.string   "lapResponseCode"
+    t.string   "lapPaymentMethod"
+    t.string   "lapPaymentMethodType"
+    t.string   "lapTransactionState"
+    t.string   "message"
+    t.string   "extra1"
+    t.string   "extra2"
+    t.string   "extra3"
+    t.string   "authorizationCode"
+    t.string   "merchant_address"
+    t.string   "merchant_name"
+    t.string   "merchant_url"
+    t.string   "orderLanguage"
+    t.string   "pseCycle"
+    t.string   "pseReference1"
+    t.string   "pseReference2"
+    t.string   "pseReference3"
+    t.string   "telephone"
+    t.string   "transactionId"
+    t.string   "trazabilityCode"
+    t.string   "TX_ADMINISTRATIVE_FEE"
+    t.string   "TX_TAX_"
+    t.string   "ADMINISTRATIVE_FEE"
+    t.string   "TX_TAX_ADMINISTRATIVE"
+    t.string   "_FEE_RETURN_BASE"
+    t.string   "action_code_description"
+    t.string   "cc_holder"
+    t.string   "cc_number"
+    t.string   "processing_date_time"
+    t.string   "request_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "payed_bookings", force: true do |t|
     t.integer  "punto_pagos_confirmation_id"
     t.datetime "created_at"
@@ -697,8 +830,8 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "quantity",    default: 1,   null: false
     t.integer  "seller_id"
     t.integer  "seller_type"
-    t.integer  "receipt_id"
     t.float    "list_price",  default: 0.0
+    t.integer  "receipt_id"
   end
 
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
@@ -728,7 +861,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "company_id"
     t.float    "amount",        default: 0.0
     t.boolean  "payed",         default: false
-    t.datetime "payment_date",  default: '2015-11-10 14:59:37'
+    t.datetime "payment_date",  default: '2015-11-15 22:20:48'
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "discount",      default: 0.0
@@ -1076,7 +1209,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
-    t.datetime "date",          default: '2015-10-23 15:05:22'
+    t.datetime "date",          default: '2015-11-15 22:20:48'
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1096,7 +1229,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
-    t.datetime "date",                    default: '2015-10-23 13:42:39'
+    t.datetime "date",                    default: '2015-11-15 22:20:48'
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false
@@ -1237,7 +1370,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.boolean  "has_time_discount",        default: false
     t.boolean  "has_last_minute_discount", default: false
     t.boolean  "time_promo_active",        default: false
-    t.string   "time_promo_photo"
+    t.string   "time_promo_photo",         default: ""
     t.integer  "active_service_promo_id"
     t.boolean  "must_be_paid_online",      default: false
     t.text     "promo_description",        default: ""
@@ -1393,6 +1526,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.string   "uid"
     t.boolean  "receives_offers",        default: true
     t.string   "mobile_token"
+    t.string   "api_token"
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree
