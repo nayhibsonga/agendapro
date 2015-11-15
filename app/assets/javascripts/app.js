@@ -10,14 +10,15 @@
         'ngAnimate',
         'ui.bootstrap',
         'ui.sortable',
-        'ngAutocomplete'
+        'ngAutocomplete',
+        'satellizer'
       ])
     .config(config)
     .run(globalVariables);
 
-  config.$inject = ['$routeProvider', 'uiGmapGoogleMapApiProvider','$locationProvider'];
+  config.$inject = ['$routeProvider', 'uiGmapGoogleMapApiProvider','$locationProvider', '$authProvider'];
 
-  function config($routeProvider, GoogleMapApiProvider, $locationProvider) {
+  function config($routeProvider, GoogleMapApiProvider, $locationProvider, $authProvider) {
     var $namespace = '/hora_chic';
 
     $locationProvider.html5Mode(true);
@@ -32,13 +33,13 @@
           templateUrl: $namespace + '/footer'
       })
       .when($namespace + '/browse', {
-          templateUrl: $namespace + '/results',
+          templateUrl: $namespace + '/_results',
           controller: 'ResultsController',
           controllerAs: 'rc',
           cache: false
       })
       .when($namespace + '/show/:id', {
-          templateUrl: $namespace + '/show/index',
+          templateUrl: $namespace + '/show/indexx',
           controller: 'ShowController',
           controllerAs: 'sc',
           cache: false
@@ -50,7 +51,19 @@
           cache: false
       })
       .when($namespace + '/deals', {
-          templateUrl: $namespace + '/deals/index',
+          templateUrl: $namespace + '/deals/indexx',
+          cache: false
+      })
+      .when($namespace + '/deals/:id', {
+          templateUrl: $namespace + '/deals/_show',
+          controller: 'DealsController',
+          controllerAs: 'dc',
+          cache: false
+      })
+      .when($namespace + '/company', {
+          templateUrl: $namespace + '/_company',
+          controller: 'CompanyController',
+          controllerAs: 'cc',
           cache: false
       })
       .otherwise({
@@ -61,6 +74,17 @@
       key: 'AIzaSyDo3-SMZv9iaJs-cCs59Vz-B89jKQb_rkw',
       v: '3.20', //defaults to latest 3.X anyhow
       libraries: 'weather,geometry,visualization'
+    });
+
+    $authProvider.baseUrl = $namespace;
+
+    $authProvider.facebook({
+      clientId: '773355642790397',
+      redirectUri: window.location.origin + $namespace + '/'
+    });
+
+    $authProvider.google({
+      clientId: 'Google Client ID'
     });
   }
 

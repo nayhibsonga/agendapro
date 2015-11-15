@@ -17,8 +17,6 @@
         vm.maxSteps = 2;
         vm.selectedCategory = 0;
         vm.selectedService = 0;
-        vm.selectedProvider = -1;
-        vm.scheduled = {};
         vm.serviceDetail = {};
         vm.servicesList = []; // Reservation serviced added here
         vm.showComments = false; // API TOGGLING

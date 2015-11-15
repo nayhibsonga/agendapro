@@ -13,7 +13,7 @@ html, body {
 #wrapper {
   min-height: 100%;
   position: relative;
-  padding-bottom: 125px; // Footer size
+  padding-bottom: 135px; // Footer size + 10px
 }
 
 // Removes Bootstrap default styles
@@ -80,6 +80,19 @@ a{
   background-size: 120px;
 }
 
+.logo-md {
+  background: url("hora_chic/logo/md.png") no-repeat center;
+  height: 118px;
+  width: 410px;
+  // background-size: 120px;
+}
+
+.logo-agendapro {
+  background: url("hora_chic/logo/agendapro.png") no-repeat center;
+  height: 118px;
+  width: 410px;
+}
+
 .no-select {
   @include no-select;
 }
@@ -128,7 +141,6 @@ header {
 
 #main {
   position: relative;
-  padding-bottom: 155px;
 }
 
 .menu {

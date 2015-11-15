@@ -5,9 +5,9 @@
         .module('HoraChic')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['$scope','$rootScope', 'AuthenticationFactory'];
+    LoginController.$inject = ['$scope','$rootScope', 'AuthenticationFactory', '$auth'];
 
-    function LoginController($scope, $rootScope, Auth) {
+    function LoginController($scope, $rootScope, Auth, $auth) {
         var vm = this;
         vm.title = 'LoginController';
         vm.option = $scope.tc.option;
@@ -16,6 +16,7 @@
         vm.newUser = newUser;
         vm.submit = submit;
         vm.error = "";
+        vm.authenticate = authenticate;
 
         bindModalCleanUp();
 
@@ -24,6 +25,13 @@
         },function(){
             vm.option = $scope.tc.option;
         });
+
+        function authenticate(provider) {
+            console.log("AUTH");
+            $auth.authenticate(provider).then(function(response) {
+                console.log("THIS IS IT: ", response);
+            });
+        }
 
         function toggleAccount() {
             resetForm();

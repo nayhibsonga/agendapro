@@ -8,20 +8,21 @@
 
   <div class="row">
     <div class="col-xs-12">
+      <div class="loading" ng-show="dc.deals.length === 0 && dc.error === ''"></div>
       <div class="wrapper">
-        <div class="deal pull-left" ng-repeat="deal in dc.deals">
+        <div class="deal pull-left" ng-repeat="deal in dc.deals" ng-click="dc.showDeal(deal)">
           <div class="bg">
             <div class="deal-text">
               <img src="/assets/hora_chic/dcto.png" alt="">
             </div>
           </div>
           <figure>
-            <img ng-src="{{deal.promo_photo}}" alt="{{deal.company_name + deal.service_name}}" title="{{deal.company_name + deal.service_name}}">
+            <img ng-src="{{ deal.promo_photo }}" alt="{{ deal.company_name + deal.service_name }}" title="{{ deal.company_name + deal.service_name }}">
           </figure>
           <figcaption>{{ deal.company_name }}</figcaption>
           <div class="service-info">
             <div class="service-detail">
-              {{deal.service_name}}
+              {{ deal.service_name }}
             </div>
             <div class="service-price">
               <p class="normal-price">{{ deal.normal_price | dealsCurrency }}</p>

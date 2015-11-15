@@ -6,23 +6,31 @@
 
     <%= javascript_include_tag 'angular' %>
 
+    <!--[if lte IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Base64/0.3.0/base64.min.js"></script>
+    <![endif]-->
+    <script src="//cdn.jsdelivr.net/satellizer/0.13.0/satellizer.min.js"></script>
+
+
     <%= stylesheet_link_tag 'bootstrap.min' %>
     <%= stylesheet_link_tag 'font-awesome.min' %>
     <%= stylesheet_link_tag 'ionicons.min' %>
     <%= stylesheet_link_tag 'frontend/jPushMenu.css' %>
     <%= stylesheet_link_tag 'hora_chic_base' %>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
+
 
     <title>HoraChic - By AgendaPro</title>
 
-    <%= favicon_link_tag "hora_chic/favicon.png", :rel => "shortcut icon", type: 'image/png' %>
+    <%= favicon_link_tag "hora_chic/favicon.png", rel: "shortcut icon", type: 'image/png' %>
   </head>
 
   <body ng-controller="TemplateController as tc">
     <div id="wrapper">
       <ng-include src="tc.templates.header"></ng-include>
 
-      <div id="main" class="content" ng-view></div>
+      <div id="main" class="content" ng-view autoscroll="true"></div>
 
       <ng-include src="tc.templates.footer"></ng-include>
       <ng-include src="tc.templates.login"></ng-include>

@@ -389,24 +389,23 @@
         }
       }
     }
+  }
 
-    #schedule {
-      .modal-dialog {
-        width: 90%;
-        margin: 30px auto;
-      }
-      .modal-header {
-        span.hora{
-          margin-right: 50px;
-        }
-      }
-      .modal-footer {
-        padding: 15px;
+  #schedule {
+    .modal-dialog {
+      width: 90%;
+      margin: 30px auto;
+    }
+    .modal-header {
+      span.hora{
+        margin-right: 50px;
       }
     }
-
-
+    .modal-footer {
+      padding: 15px;
+    }
   }
+
 }
 
 

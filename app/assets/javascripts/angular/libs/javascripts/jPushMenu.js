@@ -14,15 +14,15 @@
         $('body').addClass(o.pushBodyClass);
 
         // Menu with scroll
-        $(window).on('resize',function(){
-            $('.cbp-spmenu-left').height($(window).height()+'px');
-        });
-        // Block page to continiu scrolling
-        $('.cbp-spmenu-left').bind('mousewheel', function(e){
-            $(this).scrollTop($(this).scrollTop()-e.originalEvent.wheelDeltaY);
-            //prevent page fom scrolling
-            return false;
-        });
+        // $(window).on('resize',function(){
+        //     $('.cbp-spmenu-left').height($(window).height()+'px');
+        // });
+        // // Block page to continiu scrolling
+        // $('.cbp-spmenu-left').bind('mousewheel', function(e){
+        //     $(this).scrollTop($(this).scrollTop()-e.originalEvent.wheelDeltaY);
+        //     //prevent page fom scrolling
+        //     return false;
+        // });
 
         // Add class to toggler
         $(this).addClass('jPushMenuBtn');

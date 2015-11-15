@@ -10,13 +10,13 @@
     function FormController($scope) {
         var vm = this;
         vm.title = 'FormController';
+        vm.ctrlSource = '';
         vm.user = {};
 
-        setUserInfo();
-
-        function setUserInfo() {
+        function setUserInfo(ctrl) {
             console.log(vm.title, ">> ADD LOGGED USER LOGIC HERE !!!");
-            var userExist = (Object.keys($scope.sc.user).length > 0);
+            vm.ctrlSource = ctrl;
+            var userExist = (Object.keys($scope[vm.ctrlSource].user).length > 0);
 
             if( userExist ) {
                 vm.user = $scope.sc.user;
@@ -35,13 +35,13 @@
 
                 return user;
             }
-        }
 
-        $scope.$watch(function(){
-          return vm.user;
-        }, function(){
-          $scope.sc.user = vm.user;
-        });
+            $scope.$watch(function(){
+              return vm.user;
+            }, function(){
+              $scope[vm.ctrlSource].user = vm.user;
+            });
+        }
 
     }
 })();

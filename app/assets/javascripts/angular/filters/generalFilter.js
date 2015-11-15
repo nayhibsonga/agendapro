@@ -7,7 +7,9 @@
         .filter('startFrom', startFrom)
         .filter('clp', clp)
         .filter('inHours', inHours)
-        .filter('appointmentDates', appointmentDates);
+        .filter('appointmentDates', appointmentDates)
+        .filter('sanitize', sanitize)
+        .filter('discountFormat', discountFormat);
 
     function dealsCurrency() {
         return dealsCurrencyFilter;
@@ -73,6 +75,22 @@
             }
 
             return dateRange;
+        }
+    }
+
+    function sanitize($sce) {
+        return sanitizeFilter;
+
+        function sanitizeFilter(html) {
+            return $sce.trustAsHtml(html);
+        }
+    }
+
+    function discountFormat() {
+        return discountFormatFilter;
+
+        function discountFormatFilter(str) {
+            return str.slice(1);
         }
     }
 

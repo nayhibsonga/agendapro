@@ -27,7 +27,10 @@
             header: baseUrl + '/header',
             footer: baseUrl + '/footer',
             deals: {
-                list: baseUrl + '/deals/_list'
+                list: baseUrl + '/deals/_list',
+                schedule: baseUrl + '/deals/_schedule',
+                step1: baseUrl + '/deals/_step1',
+                step2: baseUrl + '/deals/_step2'
             },
             search: baseUrl + '/search',
             map: baseUrl + '/map',
@@ -40,6 +43,9 @@
                 step1: baseUrl + '/show/_step1',
                 step2: baseUrl + '/show/_step2',
                 success: baseUrl + '/show/success'
+            },
+            company: {
+                carousel: baseUrl + '/_company_carousel'
             }
         };
         // To render a new element in the main content
