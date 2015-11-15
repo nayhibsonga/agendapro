@@ -996,9 +996,41 @@
                 <div class="form-group">
                   <div class="checkbox">
                     <label>
+                      <%= f.check_box :show_cashes %> Habilitar caja avanzada
+                    </label>
+                    <span class="help-block">Habilita esta opción para que puedas llevar un balance completo de tus ventas y tu caja chica, incluyendo traspasos, ingresos por pagos de servicios y productos, movimientos varios y cierres de caja configurables.</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :payment_client_required %> Requerir cliente en pago
+                    </label>
+                    <span class="help-block">Habilita esta opción para que al registrar un pago sea obligatorio ingresar un cliente existente o nuevo.</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
                       <%= f.check_box :receipt_required %> Requerir número de comprobante de pago
                     </label>
-                    <span class="help-block">Habilita esta opción para registrar un pago sea obligatorio ingresar el número de comprobante de pago (número de boleta, factura, etc.).</span>
+                    <span class="help-block">Habilita esta opción para que al registrar un pago sea obligatorio ingresar el número de comprobante de pago (número de boleta, factura, etc.).</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :editable_payment_prices %> Permitir edición de precios en pago
+                    </label>
+                    <span class="help-block">Habilita esta opción para que al registrar un pago los precios de los productos y servicios sean editables.</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :mandatory_mock_booking_info %> Requerir información de servicios en pagos
+                    </label>
+                    <span class="help-block">Habilita esta opción para que al añadir un servicio sin reserva a un pago, sea obligatorio ingresar el servicio y el rpestador asociado.</span>
                   </div>
                 </div>
                 <br />
@@ -1071,9 +1103,9 @@
                         <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, company_payment_method, method: :delete, data: { confirm: '¿Estás seguro de eliminar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
                       <% else %>
                         <% if company_payment_method.active %>
-                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, activate_company_payment_method_path(id: company_payment_method.id), data: { confirm: '¿Estás seguro de desactivar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
+                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_company_payment_method_path(id: company_payment_method.id), data: { confirm: '¿Estás seguro de desactivar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
                         <% else %>
-                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, deactivate_company_payment_method_path(id: company_payment_method.id), data: { confirm: '¿Estás seguro de activar el medio de pago seleccionado?' }, class: 'btn btn-green' %>
+                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_company_payment_method_path(id: company_payment_method.id), data: { confirm: '¿Estás seguro de activar el medio de pago seleccionado?' }, class: 'btn btn-green' %>
                         <% end %>
                       <% end %>
                       </td>
@@ -1084,6 +1116,52 @@
               <p><strong>Nota:</strong> Si el medio de pago está asociado a algúna reserva, este ya no podrá ser eliminado y sólo podrá ser desactivado.</p>
             </div>
           </div>
+
+          <!-- Cashiers -->
+
+          <div class="row" style="margin-top: 40px;">
+            <div class="col-md-12">
+              <div class="background-grey">
+                <h3 class="text-green">
+                  Listado de cajeros
+                  <button class="btn btn-green pull-right" id="new_cashier_button"><i class="fa fa-plus"></i> Agregar cajero</button>
+                </h3>
+              </div>
+              <table class="table table-hover table-green">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Activo</th>
+                    <th>Código</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @cashiers.each do |cashier| %>
+                    <tr>
+                      <td><%= cashier.name %></td>
+                      <td><%= cashier.active ? "Activo" : "Inactivo" %></td>
+                      <td><%= cashier.code %></td>
+                      <td><button class="btn btn-orange edit_cashier_button" data-name="<%= cashier.name %>" data-active="<%= cashier.active %>" data-code="<%= cashier.code %>" data-id="<%= cashier.id %>"><i class="fa fa-pencil"></i> Editar</button>
+                      
+                        <!-- link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, cashier, method: :delete, data: { confirm: '¿Estás seguro de eliminar el cajero seleccionado?' }, class: 'btn btn-red' -->
+                      
+                        <% if cashier.active %>
+                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_cashier_path(id: cashier.id), data: { confirm: '¿Estás seguro de desactivar el cajero seleccionado?' }, class: 'btn btn-red' %>
+                        <% else %>
+                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_cashier_path(id: cashier.id), data: { confirm: '¿Estás seguro de activar el cajero seleccionado?' }, class: 'btn btn-green' %>
+                        <% end %>
+                      
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- End cashiers -->
+
         </div>
         <!-- Notifications -->
         <div class="tab-pane" id="notifications">
@@ -1338,7 +1416,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title" id="dealLabel">Medio de Pago</h4>
+          <h4 class="modal-title" id="dealLabel">Convenio</h4>
         </div>
         <%= form_for @deal, :html => {:class => 'form-horizontal'} do |f| %>
           <div class="modal-body">
@@ -1390,7 +1468,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title" id="paymentMethodLabel">Agregar Convenio</h4>
+          <h4 class="modal-title" id="paymentMethodLabel">Medio de pago</h4>
         </div>
         <%= form_for @company_payment_method, :html => {:class => 'form-horizontal company_payment_method_form'} do |f| %>
           <div class="modal-body">
@@ -1426,6 +1504,50 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="cashierModal" tabindex="-1" role="dialog" aria-labelledby="cashierModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="cashierModalLabel">Cajero</h4>
+        </div>
+        <%= form_for @cashier, :html => {:class => 'form-horizontal cashier_form', :id => 'cashier_form'} do |f| %>
+          <div class="modal-body">
+            <%= f.hidden_field :company_id, :value => current_user.company.id %>
+            <div class="form-group has-feedback">
+              <%= f.label :name, 'Nombre', :class => 'control-label col-xs-4' %>
+              <div class="col-xs-8">
+                <%= f.text_field :name, :class => 'form-control' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-offset-4 col-xs-8">
+                <label>
+                  <%= f.check_box :active %> Activar cajero
+                </label>
+              </div>
+            </div>
+            <div class="form-group has-feedback">
+              <%= f.label :code, 'Código', :class => 'control-label col-xs-4' %>
+              <div class="col-xs-8">
+                <%= f.text_field :code, :class => 'form-control' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
 <% end %>
 
 <% content_for :scripts do %>

@@ -1,0 +1,56 @@
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-bordered table-green">
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Marca</th>
+          <th>Cantidad</th>
+          <% @company.locations.where(:active => true).order(:name).each do |location| %>
+            <th><%= location.name %></th>
+          <% end %>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @products.each do |product| %>
+          <tr class="inventoryProductRow" product_id="<%= product.id %>">
+            <td><%= product.sku %></td>
+            <td><%= product.name %></td>
+            <td><%= product.product_category.name %></td>
+            <td><%= product.product_brand.name %></td>
+            <td><%= product.product_display.name %></td>
+            <% @company.locations.where(:active => true).order(:name).each do |location| %>
+              <% location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first %>
+              <% if location_product.stock_limit != nil %>
+                <% if location_product.stock <= location_product.stock_limit %>
+                  <td class="lowStock">
+                <% else %>
+                  <% if location_product.stock <= location_product.stock_limit*1.5 %>
+                    <td class="mediumStock">
+                  <% else %>
+                    <td>
+                  <% end %>
+                <% end %>
+              <% else %> 
+                <td>
+              <% end %>
+                <%= location_product.stock.to_s %>
+              </td>
+            <% end %>
+            <td>
+              <% if current_user.role_id == Role.find_by_name("Administrador General").id ||  current_user.role_id == Role.find_by_name("Administrador Local").id %>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_product_path(product), :class => "btn btn-sm btn-orange" %>
+              <% end %>
+              <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, product, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Producto seleccionado?' } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

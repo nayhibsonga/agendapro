@@ -42,12 +42,54 @@
 .completed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
   content:"\f046";
 }
+
+
+/*
+.origin-web-lock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f155   \f00c      \f0ac   \f023";
+}
+.origin-web-unlock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f155   \f00c      \f0ac   \f09c";
+}
+.origin-manual-lock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f155   \f00c      \f007   \f023";
+}
+.origin-manual-unlock-payed > .fc-event-inner > .fc-event-head > .fc-event-time:before {
+  content:"\f155   \f00c      \f007   \f09c";
+}
+
+
+.confirmed-payed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
+  content:"\f155   \f00c      \f00c";
+}
+.completed-payed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
+  content:"\f155   \f00c      \f046";
+}*/
+
 .noshow > .fc-event-inner > .fc-event-head > .fc-event-time:after {
   content:"\f00d";
 }
+
 .payed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
-  content:"\f155";
+  content:"\f155 \f00c";
+  position: absolute;
+  top: 3px;
+  right: 0px;
 }
+
+.confirmed.payed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
+  content:"\f00c \f155 \f00c";
+  position: absolute;
+  top: 3px;
+  right: 0px;
+}
+.completed.payed > .fc-event-inner > .fc-event-head > .fc-event-time:after {
+  content:"\f046 \f155 \f00c";
+  position: absolute;
+  top: 3px;
+  right: 0px;
+}
+
 .fc-event {
   border-radius: 4px;
 }

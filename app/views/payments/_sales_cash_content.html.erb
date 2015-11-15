@@ -1,0 +1,322 @@
+<input type="hidden" id="sales_cash_id" value="<%= @sales_cash.id %>" />
+<div class="row" style="margin-bottom: 5px;">
+  <div class="col-xs-6">
+    <div id="sales-cash-title">Caja de ventas de <%= @location.name %></div>
+    <div id="sales-cash-last-reset-date">
+      Último cierre de caja: <%= I18n.l(@sales_cash.last_reset_date - eval(ENV["TIME_ZONE_OFFSET"])).capitalize %>.
+    </div>
+    <div id="sales-cash-schedule">Cierre programado:
+      <% if @sales_cash.scheduled_reset %>
+        <% if @sales_cash.scheduled_reset_monthly %>
+          el día <%= @sales_cash.scheduled_reset_day %> de cada mes.
+        <% else %>
+          el <%= number_to_day(@sales_cash.scheduled_reset_day) %> de cada semana.
+        <% end %>
+      <% else %>
+        no se ha programado un cierre automático.
+      <% end %>
+    </div>
+  </div>
+  <div class="col-xs-6" style="text-align: right">
+    <% if !@sales_cash_log.nil? %>
+      <div style="font-size: 20px; color: #22c488; margin: 4px; display: inline;">
+        Descargar reportes pasados
+      </div>
+      <div style="margin-bottom: 5px; margin-top: 4px; display: block; text-align: right;">
+        <select id="sales_cash_log_select" class="form-control pull-right" style="width: 65% !important; text-align: right !important;">
+          <% @sales_cash.sales_cash_logs.order('end_date desc').each do |sales_cash_log| %>
+            <option value="<%= sales_cash_log.id %>"><%= "Del  " + (sales_cash_log.start_date - eval(ENV["TIME_ZONE_OFFSET"])).strftime('%d/%m/%Y %R') + "  al  " + (sales_cash_log.end_date - eval(ENV["TIME_ZONE_OFFSET"])).strftime('%d/%m/%Y %R') %></option>
+          <% end %>
+        </select>
+        <br />
+      </div>
+      <div style="clear:both;">
+      </div>
+      <div style="text-align: right; padding-top: 5px; padding-bottom: 5px;">
+        <a id="sales_cash_log_link" href="/sales_cash_report_file.xls?sales_cash_log_id=<%= @sales_cash_log.id %>"><button type="button" class="btn btn-green" class="getExcel">Descargar a Excel</button></a>
+      </div>
+    <% end %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-4">
+    <div class="well revenue1">
+      <h4>Monto total:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@sales_cash.cash, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="well revenue">
+      <h4>Servicios:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(MockBooking.where(payment_id: @payments).sum(:price) + Booking.where(payment_id: @payments).sum(:price), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="well revenue">
+      <h4>Productos:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@products_sum, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="well revenue">
+      <h4>Ingresos:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@sales_cash_incomes.sum(:amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="well revenue">
+      <h4>Egresos:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@sales_cash_transactions.sum(:amount), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+
+    <div class="table-div">
+      <div class="content_header">Pagos</div>
+      <table class="table sales_cash_table">
+        <thead>
+          <tr>
+            <th>Fecha de Pago</th>
+            <th>Local</th>
+            <th>Cliente</th>
+            <th>Detalle</th>
+            <th>Monto</th>
+            <th>Descuento</th>
+            <th>&nbsp;</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @payments.each do |payment| %>
+          <tr>
+            <td><%= payment.payment_date.strftime('%d/%m/%Y %R') %></td>
+            <td><%= payment.location ? payment.location.name : '' %></td>
+            <td>
+              <% if !payment.client.nil? %>
+                <%= payment.client.first_name %> <%= payment.client.last_name %>
+              <% else %>
+                Sin información
+              <% end %>
+            </td>
+            <td><button class="btn btn-green btn-xs" id="payment_details_button_<%= payment.id %>">Vista Rápida</button></td>
+            <td><%= number_to_currency(payment.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+            <td><%= payment.discount.round(2) %> %</td>
+            <td>&nbsp;</td>
+            <td>
+              <button class="btn btn-default btn-xs" onclick="openPaymentSummary(<%= payment.id %>);"><i class="fa fa-search-plus"></i></button>
+              <button class="btn btn-dark-green btn-xs" onclick="openPaymentPdfs(<%= payment.id %>);"><i class="fa fa-file-pdf-o"></i></button>
+              <button class="btn btn-orange btn-xs" onclick="openPaymentMailer(<%= payment.id %>);"><i class="fa fa-envelope"></i></button>
+              <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
+                <button class="btn btn-warning btn-xs" onclick="editPayment(<%= payment.id %>);"><i class="fa fa-pencil"></i></button> 
+                <button class="btn btn-red btn-xs" onclick="deletePayment(<%= payment.id %>);"><i class="fa fa-trash-o"></i></button>
+              <% end %>
+            </td>
+          </tr>
+          <% bookings_text = ''
+            products_text = ''
+            mock_bookings_text = ''
+           %>
+          <% payment.bookings.each do |booking|
+            bookings_text += '* ' + booking.service.name + ' con ' + booking.service_provider.public_name + ' (' + booking.start.strftime('%R %d-%m-%Y') + ') ' + number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + booking.discount.to_s + '% de descuento<br/>'
+          end %>
+          <% payment.payment_products.each do |payment_product|
+            if payment_product.quantity == 1
+              products_text += '* ' + payment_product.product.name + ' ' + number_to_currency(payment_product.price * payment_product.quantity, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' (1 unidad con ' + payment_product.discount.to_s + '% de descuento)<br/>'
+            else
+              products_text += '* ' + payment_product.product.name + ' ' + number_to_currency(payment_product.price * payment_product.quantity, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' (' + payment_product.quantity.to_s + ' unidades con ' + payment_product.discount.to_s + '% de descuento)<br/>'
+            end
+          end %>
+          <% payment.mock_bookings.each do |mock_booking|
+            if mock_booking.service_id.nil? && mock_booking.service_provider_id.nil?
+              mock_bookings_text += '* ' + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + mock_booking.discount.to_s + '% de descuento<br/>'
+            elsif !mock_booking.service_id.nil? && mock_booking.service_provider_id.nil?
+              mock_bookings_text += '* ' + mock_booking.service.name + " sin prestador " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + mock_booking.discount.to_s + '% de descuento<br/>'
+            elsif mock_booking.service_id.nil? && !mock_booking.service_provider_id.nil?
+              mock_bookings_text += '* ' + " servicio por definir con " + mock_booking.service_provider.public_name + " " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + mock_booking.discount.to_s + '% de descuento<br/>'
+            else
+              mock_bookings_text += '* ' + mock_booking.service.name + " con " + mock_booking.service_provider.public_name + " " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + mock_booking.discount.to_s + '% de descuento<br/>'
+            end
+              
+          end %>
+          <% qtip_text = ''
+          if bookings_text != '' then qtip_text += '<strong>Reservas:</strong><br/>' + bookings_text + '<br/>' end
+          if mock_bookings_text != '' then qtip_text += '<strong>Servicios:</strong><br/>' + mock_bookings_text + '<br/>' end
+          if products_text != '' then qtip_text += '<strong>Productos:</strong><br/>' + products_text + '<br/>' end %>
+          <script type="text/javascript">
+            $('#payment_details_button_<%= payment.id %>').qtip({
+               show: {
+                  event: 'click mouseover focus'
+                },
+               content: {
+                button: true,
+                text: '<%= qtip_text.html_safe %>',
+                title: 'Detalles del Pago'
+               },
+               position: {
+                my: 'bottom center',  // el triángulo sale de abajo al medio
+                at: 'top center' // se ubica arriba del elemento en cuestión
+               },
+               style: {
+                classes: 'qtip-bootstrap'
+               },
+               hide: {
+                event: 'click mouseleave mouseout unfocus',
+                leave: true,
+                fixed: true
+              }
+            })
+          </script>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- VENTAS INTERNAS -->
+    <div class="table-div">
+      <div class="content_header">Ventas internas</div>
+      <table class="table sales_cash_table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Local</th>
+            <th>Prestador</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Monto</th>
+            <th>Descuento</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @internal_sales.each do |internal_sale| %>
+            <tr>
+              <td><%= internal_sale.date.strftime('%d/%m/%Y %R') %></td>
+              <td><%= internal_sale.location ? internal_sale.location.name : '' %></td>
+              <td>
+                <%= internal_sale.service_provider.public_name %>
+              </td>
+              <td>
+                <%= internal_sale.product.name %>
+              </td>
+              <td>
+                <%= internal_sale.quantity.to_s %>
+              </td>
+              <td><%= number_to_currency(internal_sale.price * internal_sale.quantity, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+              <td><%= internal_sale.discount.round(2) %> %</td>
+              <td>
+                <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
+                  <button class="btn btn-warning btn-xs" onclick="editInternalSale(<%= internal_sale.id %>);"><i class="fa fa-pencil"></i></button> 
+                  <button class="btn btn-red btn-xs" onclick="deleteInternalSale(<%= internal_sale.id %>);"><i class="fa fa-trash-o"></i></button>
+                <% else %>
+                  Sin opciones
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TRASPASOS E INGRESOS -->
+    <div class="table-div">
+      <div class="content_header">Traspasos</div>
+      <table class="table sales_cash_table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Monto</th>
+            <th>N° de comprobante</th>
+            <th>Notas</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @sales_cash_transactions.each do |sales_cash_transaction| %>
+            <tr>
+              <td><%= sales_cash_transaction.date.strftime('%d/%m/%Y %R') %></td>
+              <td>
+                <% if sales_cash_transaction.is_internal_transaction %>
+                  A caja chica
+                <% else %>
+                  Externo
+                <% end %>
+              </td>
+              <td>
+                <%= number_to_currency(sales_cash_transaction.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+              </td>
+              <td>
+                <% if sales_cash_transaction.receipt_number.nil? || sales_cash_transaction.receipt_number = "" %>
+                  No aplica
+                <% else %>
+                  <%= sales_cash_transaction.receipt_number %>
+                <% end %>
+              </td>
+              <td>
+                <%= sales_cash_transaction.notes %>
+              </td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>
+                <% if current_user.role_id == Role.find_by_name("Administrador General").id && sales_cash_transaction.open %>
+                  <button class="btn btn-warning btn-xs" onclick="editSalesCashTransaction(<%= sales_cash_transaction.id %>);"><i class="fa fa-pencil"></i></button> 
+                  <button class="btn btn-red btn-xs" onclick="deleteSalesCashTransaction(<%= sales_cash_transaction.id %>);"><i class="fa fa-trash-o"></i></button>
+                <% else %>
+                  Sin opciones
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-div">
+      <div class="content_header">Ingresos</div>
+      <table class="table sales_cash_table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Monto</th>
+            <th>Notas</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @sales_cash_incomes.each do |sales_cash_income| %>
+            <tr>
+              <td><%= sales_cash_income.date.strftime('%d/%m/%Y %R') %></td>
+              <td>
+                <%= number_to_currency(sales_cash_income.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+              </td>
+              <td>
+                <%= sales_cash_income.notes %>
+              </td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>
+                <% if current_user.role_id == Role.find_by_name("Administrador General").id && sales_cash_income.open %>
+                  <button class="btn btn-warning btn-xs" onclick="editSalesCashIncome(<%= sales_cash_income.id %>);"><i class="fa fa-pencil"></i></button> 
+                  <button class="btn btn-red btn-xs" onclick="deleteSalesCashIncome(<%= sales_cash_income.id %>);"><i class="fa fa-trash-o"></i></button>
+                <% else %>
+                  Sin opciones
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

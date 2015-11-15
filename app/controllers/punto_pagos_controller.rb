@@ -17,19 +17,19 @@ class PuntoPagosController < ApplicationController
 
   def generate_transaction
 
-  	trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0, 15]
+    trx_id = DateTime.now.to_s.gsub(/[-:T]/i, '')[0, 15]
 
-  	amount = '10000.00'
+    amount = '10000.00'
     payment_method = '03'
-  	req = PuntoPagos::Request.new()
-  	resp = req.create(trx_id, amount, payment_method)
+    req = PuntoPagos::Request.new()
+    resp = req.create(trx_id, amount, payment_method)
 
-  	if resp.success?
-  		redirect_to resp.payment_process_url
+    if resp.success?
+      redirect_to resp.payment_process_url
     else
       puts resp.get_error
       redirect_to punto_pagos_failure_path
-  	end
+    end
   end
 
   def generate_company_transaction
@@ -37,7 +37,7 @@ class PuntoPagosController < ApplicationController
     payment_method = params[:mp]
     company = Company.find(current_user.company_id)
     company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
-    sales_tax = NumericParameter.find_by_name("sales_tax").value
+    sales_tax = company.country.sales_tax
     day_number = Time.now.day
     month_number = Time.now.month
     month_days = Time.now.days_in_month
@@ -92,7 +92,7 @@ class PuntoPagosController < ApplicationController
     company = Company.find(current_user.company_id)
     company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
     new_plan = Plan.find(plan_id)
-    sales_tax = NumericParameter.find_by_name("sales_tax").value
+    sales_tax = company.country.sales_tax
     day_number = Time.now.day
     month_number = Time.now.month
     month_days = Time.now.days_in_month
@@ -127,7 +127,7 @@ class PuntoPagosController < ApplicationController
             company.months_active_left = new_active_months_left
             company.due_amount = (new_amount_due).round(0)
             if company.save
-              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."
             else
               redirect_to select_plan_path, notice: "El plan no pudo ser cambiado. Tienes más locales y/o prestadores activos que lo que permite el plan, o no tienes los permisos necesarios para hacer este cambio."
@@ -146,7 +146,7 @@ class PuntoPagosController < ApplicationController
               req = PuntoPagos::Request.new()
               resp = req.create(trx_id, due, payment_method)
               if resp.success?
-                PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+                PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
                 PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
                 redirect_to resp.payment_process_url
               else
@@ -171,7 +171,7 @@ class PuntoPagosController < ApplicationController
             req = PuntoPagos::Request.new()
             resp = req.create(trx_id, due, payment_method)
             if resp.success?
-              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id)
+              PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
               PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Creación de cambio de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
               redirect_to resp.payment_process_url
             else
@@ -370,7 +370,10 @@ class PuntoPagosController < ApplicationController
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
         end
-      elsif Booking.find_by_trx_id(params[:trx_id])
+      elsif Booking.where(:trx_id => params[:trx_id]).count > 0
+
+        #We are sure there is a booking. Get it.
+        first_booking = Booking.where(:trx_id => params[:trx_id]).first
 
         #Creamos el registro de la reserva pagada.
 
@@ -380,13 +383,118 @@ class PuntoPagosController < ApplicationController
         payed_booking.save
 
         bookings = Array.new
+        first_session = true
+
+        #Pending params:
+        # => amount
+
+
+        payment = Payment.new
+        payment.company_id = first_booking.service.company.id
+        payment.payed = true
+        payment.amount = params[:monto]
+        payment.paid_amount = params[:monto]
+        payment.change_amount = 0.0
+
+        cashier = first_booking.service.company.cashiers.first
+        if cashier.nil?
+          cashier = Cashier.create(company_id: first_booking.service.company.id, name: "Cajero por defecto", active: true, code: "12345678")
+        end
+
+        payment.cashier_id = cashier.id
+
+        payment_transaction = PaymentTransaction.new
+
+        payment_transaction.amount = params[:monto].to_f
+
+        if params[:medio_pago] == "3"
+          payment_transaction.payment_method_id = PaymentMethod.find_by_name("Online").id
+          payment_transaction.number = params[:codigo_autorizacion]
+          payment_transaction.payment_method_type_id = PaymentMethodType.find_by_name("Sin información").id
+          payment_transaction.installments = params[:num_cuotas]
+        else
+          payment_transaction.payment_method_id = PaymentMethod.find_by_name("Online").id
+          payment_transaction.number = params[:codigo_autorizacion]
+        end
+
+        payment_transaction.payment = payment
+        payment.payment_transactions << payment_transaction
+
+        payment.payment_date = DateTime.now.to_date
+        payment.location_id = first_booking.location_id
+        payment.client_id = first_booking.client_id
+
+        sum_normal_price = 0
+
+        receipt = Receipt.new
+        receipt.amount = params[:monto]
+        receipt.receipt_type_id = ReceiptType.find_by_name("Boleta").id
+        receipt.number = params[:numero_operacion]
+        receipt.payment = payment
+
         Booking.where(:trx_id => params[:trx_id]).each do |booking|
-          booking.status_id = Status.find_by(:name => "Pagado").id
+
+          #Instead of generating status "Pagado", mark it as "Reservado" and generate a Payment containing all bookings
+          #If they are sessions, assign the Payment to their SessionBooking once
+
+          if !booking.is_session
+            sum_normal_price = sum_normal_price + booking.service.price
+            #book_discount = ((booking.service.price - booking.price)/booking.service.price).round(0)
+          else
+
+            if first_session
+              #If it's the first sessions, generate the payment for it's SessionBooking
+              #If not, it's already been assigned
+              first_session = false
+
+            end
+          end
+
+          booking.status_id = Status.find_by(:name => "Reservado").id
           booking.payed = true
+          booking.payed_state = true
           booking.payed_booking = payed_booking
+          if booking.is_session
+            booking.discount = (1 - booking.service.sessions_amount*booking.price/booking.service.price).round(2)*100
+          else
+            booking.discount = (1 - booking.price/booking.service.price).round(2)*100
+          end
           booking.save
           bookings << booking
         end
+
+        # if first_booking.is_session
+        #   book_discount = (1 - payment.amount/first_booking.service.price).round(2)*100
+        #   payment.sessions_amount = payment.amount
+        #   payment.sessions_discount = book_discount
+        #   payment.sessions_quantity = bookings.count
+        #   payment.products_amount = 0.0
+        #   payment.products_discount = 0.0
+        #   payment.products_quantity = 0
+        #   payment.bookings_amount = 0.0
+        #   payment.bookings_discount = 0.0
+        #   payment.bookings_quantity = 0
+        # else
+        #   book_discount = (1 - payment.amount/sum_normal_price).round(2)*100
+        #   payment.bookings_amount = payment.amount
+        #   payment.bookings_quantity = bookings.count
+        #   payment.bookings_discount = book_discount
+        #   payment.sessions_amount = 0.0
+        #   payment.sessions_discount = 0.0
+        #   payment.sessions_quantity = 0
+        #   payment.products_amount = 0.0
+        #   payment.products_discount = 0.0
+        #   payment.products_quantity = 0
+        # end
+
+        # payment.quantity = bookings.count
+        # payment.discount = book_discount
+
+        payment.bookings = bookings
+        receipt.bookings = bookings
+
+        payment.save
+        receipt.save
 
         if bookings.count > 0
 
@@ -412,6 +520,9 @@ class PuntoPagosController < ApplicationController
         
       end
     end
+
+    render :layout => false
+
   end
 
 end

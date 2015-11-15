@@ -10,6 +10,8 @@ class Company < ActiveRecord::Base
 	has_many :company_countries
 	has_many :countries, :through => :company_countries
 
+	has_many :cashiers, dependent: :destroy
+
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
 
 	def reject_company_country(attributes)
@@ -35,8 +37,11 @@ class Company < ActiveRecord::Base
 	has_many :staff_codes, dependent: :destroy
 	has_many :deals, dependent: :destroy
 	has_many :company_payment_methods, dependent: :destroy
-
 	has_many :payment_accounts, dependent: :destroy
+	has_many :products, dependent: :destroy
+	has_many :product_brands, dependent: :destroy
+	has_many :product_displays, dependent: :destroy
+	has_many :product_categories, dependent: :destroy
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
@@ -50,9 +55,15 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
+	after_create :create_cashier
+
+	def create_cashier
+		cashier = Cashier.create(company_id: self.id, name: "Cajero 1", code: "12345678", active: true)
+	end
+
 	def plan_settings
 		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
-			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/proveedores activos que lo que permite el plan.")
+			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/prestadores activos que lo que permite el plan.")
 		end
 	end
 

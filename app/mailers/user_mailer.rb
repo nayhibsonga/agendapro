@@ -60,4 +60,5 @@ class UserMailer < ActionMailer::Base
     	puts "A mandrill error occurred: #{e.class} - #{e.message}"
     	raise
   end
+
 end

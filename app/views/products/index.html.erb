@@ -1,44 +1,392 @@
+<%
+  administrador_general_id = Role.find_by_name('Administrador General').id
+  administrador_local_id = Role.find_by_name('Administrador Local').id
+%>
 <div class="container-fluid background-grey">
   <div class="row">
     <div class="col-md-12">
-      <h2 class="text-green">Productos</h2>
-      <p>Estos son los productos que puedes vender junto a tus servicios. Acá puedes crear nuevos, editarlos y llevar stock de estos por local.</p>
+      <h2 class="text-green">Inventario</h2>
+      <p>Controla el inventario de productos para cada uno de tus locales.</p>
     </div>
   </div>
 </div>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-5">
+      <div class="form-group" style="margin-top: 10px;">
+        <div class="col-md-12">
+          <table>
+            <tr>
+              <td>
+                Local:&nbsp;&nbsp;
+              </td>
+              <td>
+                <select id="locationsSelect" class="form-control">
+                  <% if current_user.role_id == administrador_general_id %>
+                    <option value="0">Todos</option>
+                    <% current_user.company.locations.where(:active => true).order(name: :asc).each do |location| %>
+                      <option value="<%= location.id %>"><%= location.name %></option>
+                    <% end %>
+                  <% else %>
+                    <% current_user.locations.where(:active => true).order(name: :asc).each do |location| %>
+                      <option value="<%= location.id %>"><%= location.name %></option>
+                    <% end %>
+                  <% end %>
+                </select>
+              </td>
+              <td style="padding-left: 5px; ">
+                <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, '/products.xls', :target => :blank, class: "btn btn-white" %>
+                <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, '/products.csv', :target => :blank, class: "btn btn-white" %>
+                <% if current_user.role_id == administrador_general_id || current_user.role_id == administrador_local_id %>
+                  <a href="#" class="btn btn-red" id="openAlarmsBtn" style="display: none;"><i class="fa fa-exclamation-triangle"></i> Alarmas</a>
+                <% end %>
+              </td>
+            </tr>
+          </table>     
+        </div>
+      </div>
+    </div>
+    <div class="col-md-7">
       <div class="pull-right" style="margin: 10px 0;">
-        <%= link_to '<i class="fa fa-plus"></i> Nuevo Producto'.html_safe, new_product_path, :class => "btn btn-green" %>
+        <% if current_user.role_id == administrador_general_id || current_user.role_id == administrador_local_id %>
+          <%= link_to '<i class="fa fa-plus"></i> Nueva Categoría'.html_safe, "#", :class => "btn btn-green", :id => "openCategoriesBtn" %>
+          <%= link_to '<i class="fa fa-plus"></i> Nueva Marca'.html_safe, "#", :class => "btn btn-green", :id => "openBrandsBtn" %>
+          <%= link_to '<i class="fa fa-plus"></i> Nueva Cantidad'.html_safe, "#", :class => "btn btn-green", :id => "openDisplaysBtn" %>
+          &nbsp;&nbsp;
+          <%= link_to '<i class="fa fa-upload"></i> Importar productos'.html_safe, "#", :class => "btn btn-green", :id => "openImportBtn" %>
+          <%= link_to '<i class="fa fa-plus"></i> Nuevo Producto'.html_safe, new_product_path, :class => "btn btn-green" %>
+        <% end %>
       </div>
     </div>
   </div>
   <div class="row">
-    <div class="col-md-12">
-      <table class="table table-bordered table-green">
-        <thead>
+    <div class="col-md-3" style="margin: 5px 0;">
+      <p style="text-align: left; font-size: 20px; color: #22c488;">Inventario de <span id="selectedLocationInventory"></span></p>
+    </div>
+    <div class="col-md-9" style="margin: 5px 0;">
+      <div class="pull-right">
+        <table id="inventoryFiltersTable">
           <tr>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Opciones</th>
+            <td style="width: 22%;">
+              <div class="form-group">
+                <div class="col-md-12">
+                  <div class="input-group">
+                    <input class="form-control" id="productSearch" name="productSearch" placeholder="Buscar..."  type="search" value="">
+                    <span class="input-group-btn">
+                      <button id="product_search_btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                      <button class="btn btn-red" type="button" id="product_clear_btn"><i class="fa fa-times-circle"></i></button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td style="width: 26%;">
+              <div class="form-group">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                Categoría:
+                </div>
+                <div class="col-md-7">
+                  <select id="categoryFilterSelect" class="form-control filterSelect">
+                    <option value="0">Todas</option>
+                    <% current_user.company.product_categories.order(:name).each do |category| %>
+                      <option value="<%= category.id %>"><%= category.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </td>
+            <td style="width: 26%;">
+              <div class="form-group">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                  Marca:
+                </div>
+                <div class="col-md-7">
+                  <select id="brandFilterSelect" class="form-control filterSelect">
+                    <option value="0">Todas</option>
+                    <% current_user.company.product_brands.order(:name).each do |brand| %>
+                      <option value="<%= brand.id %>"><%= brand.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </td>
+            <td style="width: 26%;">
+              <div class="form-group">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                  Cantidad:
+                </div>
+                <div class="col-md-7">
+                  <select id="displayFilterSelect" class="form-control filterSelect">
+                    <option value="0">Todas</option>
+                    <% current_user.company.product_displays.order(:name).each do |display| %>
+                      <option value="<%= display.id %>"><%= display.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </td>
+            <!--<td>
+              <button id="filterBtn" class="btn btn-default btn-dark-green">Filtrar</button>
+            </td>-->
           </tr>
-        </thead>
-        <tbody>
-          <% @products.each do |product| %>
-            <tr>
-              <td><%= product.name %></td>
-              <td><%= product.product_category.name %></td>
-              <td>
-                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_product_path(product), :class => "btn btn-sm btn-orange" %>
-                <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
-                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, product, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Producto seleccionado?' } %>
-                <% end %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+        </table>
+      </div>
     </div>
   </div>
+  
+  <div id="locationInventory">
+
+  </div>
+
 </div>
+
+<% if current_user.role_id == administrador_general_id || current_user.role_id == administrador_local_id %>
+
+  <div class="modal fade" id="productAlarmModal" tabindex="-1" role="dialog" aria-labelledby="productAlarmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+          <h4 class="modal-title productAlarm-modal-title" id="productAlarmModalLabel">Alarma de stock</h4>
+        </div>
+        <div class="modal-body">
+
+          <form id="alarmForm" action="">
+
+            <input type="hidden" id="location_product_id" value="" />
+
+            <div class="form-group has-feedback">
+              <label for="location_product_stock_limit" class="col-md-4 control-label">Límite de stock</label>
+              <div class="col-md-8">
+                <input type="number" id="location_product_stock_limit" class="form-control" value="" />
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+
+            <div class="form-group has-feedback">
+              <label for="location_product_alarm_email" class="col-md-4 control-label">Emails para avisos</label>
+              <div class="col-md-8">
+                <input type="text" id="location_product_alarm_email" class="form-control" value="" />
+                <span class="help-block">Ingresa los correos a los que quieras enviar el aviso de stock bajo separados por coma: ejemplo1@agendapro.cl, ejemplo2@agendapro.cl, ejemplo3@agendapro.cl</span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+
+          </form>
+
+          <div style="clear: both;">
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-default btn-green" id="saveAlarmBtn">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="importModalLabel">Importar Productos</h4>
+        </div>
+        <%= form_tag import_products_path, multipart: true, class: 'form-horizontal' do %>
+        <div class="modal-body">
+          <h4>Instrucciones:</h4>
+          <ul class="list-separate">
+            <li>Usar las plantillas con los productos existentes como base para la importación. Todos los campos son obligatorios.</li>
+            <li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li>
+            <li><strong>No cambies el orden del stock de los locales</strong> de las plantillas bases.</li>
+            <li><strong>Las extensiones de archivo permitidas son .xls y .csv.</strong>No trates de importar otros formatos.</li>
+            <li>
+              El identificador único para los productos es el <strong>SKU</strong>:
+              <ul>
+                <li>Si se suben 2 o más productos con el mismo SKU, sólo se tomará en cuenta el último y los demás serán descartados.</li>
+                <li>Si no existe el SKU, se creará un nuevo producto.</li>
+                <li>Al generar productos nuevos con Categoría, Marca o Cantidad/Unidad existentes, asegúrate de escribirlos tal y como aparecen en registros existentes. Si los escribes de otra forma, se generará una nueva Categoría, Marca o Cantidad/Unidad según sea el caso.
+                <li>Evita editar los valores (sin contar el stock) de los productos ya creados. De preferencia, edítalos directamente en la página de inventario.</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            Plantillas para importación:
+            <%= link_to '<i class="fa fa-download"></i> Plantilla Excel'.html_safe, '/products.xls', :target => :blank, class: "btn btn-white" %>
+            <%= link_to '<i class="fa fa-download"></i> Plantilla CSV'.html_safe, '/products.csv', :target => :blank, class: "btn btn-white" %>
+          </p>
+          <div class="form-group" id="file-group">
+            <label for="file" accept=".xls, .csv" class="control-label col-md-3">Seleccionar Archivo</label>
+            <div class="col-md-9">
+              <%= file_field_tag :file, :class => 'form-control'  %>
+            </div>
+          </div>
+        </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <%= submit_tag "Importar", class: "btn btn-green", disabled: true, id: "import_button" %>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <% content_for :modals do %>
+    <div class="modal fade" id="productCategoryModal" tabindex="-1" role="dialog" aria-labelledby="productCategoryModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title productCategory-modal-title" id="productCategoryModalLabel">Crear o Borrar Categorías de Producto</h4>
+          </div>
+          <div class="modal-body">
+            <%= form_for @product_category, html: {class: "form-horizontal"} do |f| %>
+              <div class="form-group has-feedback">
+                <%= f.label :name, "Nueva Categoría", class: "col-md-3 control-label" %>
+                <div class="col-md-6">
+                  <%= f.text_field :name, :class => 'form-control', :placeholder => 'Categoría (requerido)' %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+                <div class="col-md-3">
+                  <input class="btn btn-green" id="saveProductCategoryButton" type="submit" value="Guardar">
+                </div>
+              </div>
+            <% end %>
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <h4>Otras Categorías:</h4>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <table class="table">
+                  <tbody id="productCategoriesTable">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="productBrandModal" tabindex="-1" role="dialog" aria-labelledby="productBrandModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title productBrand-modal-title" id="productBrandModalLabel">Crear o Borrar Marcas de Producto</h4>
+          </div>
+          <div class="modal-body">
+            <%= form_for @product_brand, html: {class: "form-horizontal"} do |f| %>
+              <div class="form-group has-feedback">
+                <%= f.label :name, "Nueva Marca", class: "col-md-3 control-label" %>
+                <div class="col-md-6">
+                  <%= f.text_field :name, :class => 'form-control', :placeholder => 'Marca (requerido)' %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+                <div class="col-md-3">
+                  <input class="btn btn-green" id="saveProductBrandButton" type="submit" value="Guardar">
+                </div>
+              </div>
+            <% end %>
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <h4>Otras Marcas:</h4>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <table class="table">
+                  <tbody id="productBrandsTable">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="productDisplayModal" tabindex="-1" role="dialog" aria-labelledby="productDisplayModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title productDisplay-modal-title" id="productDisplayModalLabel">Crear o Borrar Cantidad de Producto</h4>
+          </div>
+          <div class="modal-body">
+            <%= form_for @product_display, html: {class: "form-horizontal"} do |f| %>
+              <div class="form-group has-feedback">
+                <%= f.label :name, "Nueva Marca", class: "col-md-3 control-label" %>
+                <div class="col-md-6">
+                  <%= f.text_field :name, :class => 'form-control', :placeholder => '250 ml' %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+                <div class="col-md-3">
+                  <input class="btn btn-green" id="saveProductDisplayButton" type="submit" value="Guardar">
+                </div>
+              </div>
+            <% end %>
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <h4>Otras Cantidades:</h4>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <table class="table">
+                  <tbody id="productDisplaysTable">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="generalAlarmsModal" tabindex="-1" role="dialog" aria-labelledby="generalAlarmsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title generalAlarms-modal-title" id="generalAlarmsModalLabel">Configurar recordatorios de stock</h4>
+          </div>
+          <div class="modal-body">
+            <div id="AlarmsModalDiv">
+
+            </div>
+            <!--<form class="generalAlarmsForm" action="">
+
+            </form>-->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-green" id="saveGeneralAlarmsBtn">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <% end %>
+
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "products" %>
+<% end %>

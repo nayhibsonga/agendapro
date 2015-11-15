@@ -21,6 +21,10 @@ class Service < ActiveRecord::Base
 	has_many :economic_sectors, :through => :company
   	has_many :economic_sectors_dictionaries, :through => :economic_sectors
 
+  	has_many :mock_bookings
+
+  	has_many :service_commissions
+
 	mount_uploader :time_promo_photo, TimePromoPhotoUploader
 
 	scope :with_time_promotions, -> { where(has_time_discount: true, active: true, online_payable: true, online_booking: true, time_promo_active: true).where.not(:active_service_promo_id => nil) }

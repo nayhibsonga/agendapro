@@ -40,7 +40,7 @@ class ClientsController < ApplicationController
     @booked = @bookings.where(status: Status.find_by(name: 'Reservado')).count
     @confirmed = @bookings.where(status: Status.find_by(name: 'Confirmado')).count
     @attended = @bookings.where(status: Status.find_by(name: 'Asiste')).count
-    @payed = @bookings.where(status: Status.find_by(name: 'Pagado')).count
+    @payed = @bookings.where('payment_id is not null').count
     @cancelled = @bookings.where(status: Status.find_by(name: 'Cancelado')).count
     @notAttended = @bookings.where(status: Status.find_by(name: 'No Asiste')).count
   end
@@ -389,7 +389,16 @@ class ClientsController < ApplicationController
   end
 
   def import
-    message = Client.import(params[:file], current_user.company_id)
+    message = "No se seleccionó archivo."
+    filename_arr = params[:file].original_filename.split(".")
+    if filename_arr.length > 0
+      extension = filename_arr[filename_arr.length - 1]
+      if extension == "csv" || extension == "xls"
+        message = Client.import(params[:file], current_user.company_id)
+      else
+        message = "La extensión del archivo no es correcta. Sólo se pueden importar archivos xls y csv."
+      end
+    end
     redirect_to clients_path, notice: message
   end
 

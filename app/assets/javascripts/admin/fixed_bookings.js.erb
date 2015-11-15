@@ -22,9 +22,27 @@ function loadProviders () {
 	return false;
 }
 
+function getStatusColor(status_name) {
+	if (status_name == "Reservado") {
+		return '#77d0fa';
+	}
+	else if (status_name == "Confirmado") {
+		return '#fbe09f';
+	}
+	else if (status_name == "Asiste") {
+		return '#fab5fb';
+	}
+	else if (status_name == "No Asiste") {
+		return '#fbc1b3';
+	}
+	else  {
+		return '';
+	}
+}
+
 function loadTable() {
 	$('#provider-table-body').empty();
-	$('#provider-table-body').append('<tr><td colspan="4"><%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %></td></tr>');
+	$('#provider-table-body').append('<tr><td colspan="5"><%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %></td></tr>');
 	var months = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
 	var days = new Array ("Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado");
 	var f = $("#dp").datepicker("getDate");
@@ -34,7 +52,12 @@ function loadTable() {
 		$('#provider-table-body').empty();
 		if (rows.length > 0) {
 			$.each(rows, function (key, row) {
-				$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td></tr>');
+				if(row.length == 5) {
+					$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td><td style="background-color: ' + getStatusColor(row[4]) + ';">' + row[4] + '</td></tr>');
+				}
+				else {
+					$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td><td>' + row[4] + '</td><td style="background-color: ' + getStatusColor(row[5]) + ';">' + row[5] + '</td></tr>');
+				}
 			});
 		}
 		else {

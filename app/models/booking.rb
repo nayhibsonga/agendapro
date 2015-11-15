@@ -11,6 +11,7 @@ class Booking < ActiveRecord::Base
 	belongs_to :payment
 	belongs_to :session_booking
 	belongs_to :service_promo
+  belongs_to :receipt
 
   has_many :booking_histories, dependent: :destroy
 
@@ -31,6 +32,34 @@ class Booking < ActiveRecord::Base
 
   after_create :send_booking_mail, :wait_for_payment, :check_session
   after_update :send_update_mail, :check_session
+
+  def get_commission
+    service_commission = ServiceCommission.where(:service_id => self.service_id, :service_provider_id => self.service_provider_id).first
+    if !service_commission.nil? && !service_commission.amount.nil?
+      if service_commission.is_percent
+        return self.price * service_commission.amount/100
+      else
+        return service_commission.amount
+      end
+    else
+      if self.service.comission_option == 0
+        return self.price * self.service.comission_value/100
+      else
+        return self.service.comission_value
+      end
+    end
+  end
+
+  #Get booking price if it's a session
+  #to get it's provider commission
+  def get_session_price
+    if self.session_booking_id.nil?
+      return self.price
+    else
+      session_price = (self.price / self.session_booking.sessions_amount).round
+      return session_price
+    end
+  end
 
   #Check if booking hour is part of a promo
   def check_for_promo_payment
@@ -54,6 +83,30 @@ class Booking < ActiveRecord::Base
 			end
 			self.session_booking.sessions_taken = sessions_count
 			self.session_booking.save
+
+      if self.price.nil?
+        if self.list_price.nil?
+          self.price = self.list_price
+        else
+          self.list_price = self.service.price
+          self.price = self.service.price
+        end
+      end
+
+      #On creation, mark list_price as a proportion of the treatment's list_price.
+      if self.list_price == self.service.price
+        self.update_column(:list_price, self.list_price / self.session_booking.sessions_amount)
+      end
+
+      #Check for price and divide it by number of sessions if it's the original price or there is a discount.
+      if self.price == self.service.price
+        self.update_column(:price, self.price / self.session_booking.sessions_amount)
+      elsif self.discount > 0
+        if self.price.round == (self.service.price*(100-self.discount)/100).round
+          self.update_column(:price, self.price / self.session_booking.sessions_amount)
+        end
+      end
+
 		end
 	end
 
@@ -213,7 +266,6 @@ class Booking < ActiveRecord::Base
 
     end
 
-
   end
 
   def bookings_deal_warning
@@ -360,6 +412,7 @@ class Booking < ActiveRecord::Base
     unless self.location.company.company_setting.resource_overcapacity
       
       cancelled_id = Status.find_by(name: 'Cancelado').id
+
       unless self.status_id == cancelled_id
         if self.service.resources.count > 0
           self.service.resources.each do |resource|

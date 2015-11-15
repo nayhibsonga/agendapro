@@ -43,9 +43,15 @@ class Location < ActiveRecord::Base
   accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
   has_many :payments, dependent: :destroy
+  has_many :internal_sales, dependent: :destroy
 
   has_many :favorites, dependent: :destroy
   has_many :favorite_users, through: :favorites, source: :user
+
+  has_many :location_products, dependent: :destroy
+  has_many :products, through: :location_products
+  has_one :stock_alarm_setting, dependent: :destroy
+  has_one :sales_cash, dependent: :destroy
 
   mount_uploader :image1, LocationImagesUploader
   mount_uploader :image2, LocationImagesUploader
@@ -59,6 +65,7 @@ class Location < ActiveRecord::Base
   validate :new_plan_locations, :on => :create
 
   after_commit :extended_schedule
+  after_create :add_products
 
   pg_search_scope :search_company_name, :associated_against => {
     :company => :name
@@ -116,6 +123,14 @@ class Location < ActiveRecord::Base
   },
   :ignoring => :accents
 
+
+  	def add_products
+  		Product.where(:company_id => self.company.id).each do |product|
+  			if LocationProduct.where(:product_id => product.id, :location_id => self.id).count == 0
+  				location_product = LocationProduct.create(:product_id => product.id, :location_id => self.id, :stock => 0)
+  			end
+  		end
+  	end
 
 	def extended_schedule
 		company_setting = self.company.company_setting
@@ -225,8 +240,8 @@ class Location < ActiveRecord::Base
 	    location_resources = self.resource_locations.pluck(:resource_id)
 	    service_providers = self.service_providers.where(active: true, online_booking: true)
 
-	    categories = ServiceCategory.where(:company_id => self.company_id).order(order: :asc)
-	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+	    categories = ServiceCategory.where(:company_id => self.company_id).order(:order, :name)
+	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
 	    service_resources_unavailable = ServiceResource.where(service_id: services)
 	    if location_resources.any?
 	      if location_resources.length > 1
@@ -288,8 +303,8 @@ class Location < ActiveRecord::Base
 	    location_resources = self.resource_locations.pluck(:resource_id)
 	    service_providers = self.service_providers.where(active: true, online_booking: true)
 
-	    categories = ServiceCategory.where(:company_id => self.company_id).order(order: :asc)
-	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+	    categories = ServiceCategory.where(:company_id => self.company_id).order(:order, :name)
+	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
 	    service_resources_unavailable = ServiceResource.where(service_id: services)
 	    if location_resources.any?
 	      if location_resources.length > 1
@@ -312,7 +327,7 @@ class Location < ActiveRecord::Base
 	      services.each do |service|
 	        if service.service_category_id == category.id
 				service_providers_array = []
-				service.service_providers.where(active: true, online_booking: true).each do |service_provider|
+				service.service_providers.where(active: true, online_booking: true, location_id: self.id).each do |service_provider|
 					service_providers_array.push({id: service_provider.id, public_name: service_provider.public_name})
 				end
 	          service_info = {
@@ -471,6 +486,84 @@ class Location < ActiveRecord::Base
 			end
 		end
 		return closed_days
+	end
+
+	def self.stock_reminders
+
+		now = DateTime.now
+		week_locations = []
+		month_locations = []
+
+		#Check for locations that should be reminded today by week
+		week_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => false, :week_day => now.cwday).pluck(:location_id))
+
+		if (now + 1.days).mday == 1
+			month_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => true).where('month_day >= ?', now.mday).pluck(:location_id))
+		else
+			month_locations = Location.where(id: StockAlarmSetting.where(:periodic_send => true, :monthly => true, :month_day => now.mday).pluck(:location_id))
+		end
+
+		locations = week_locations + month_locations
+
+		locations.each do |location|
+			
+			location_products = []
+			
+			location.location_products.each do |location_product|
+				if location_product.check_stock_for_reminder
+					location_products << location_product
+				end
+			end
+
+			if location_products.count > 0
+				#Send reminder
+				location.send_stock_reminders(location_products)
+			end
+
+		end
+
+	end
+
+	def send_stock_reminders(location_products)
+
+		stocks = ''
+
+		emails = []
+		self.stock_alarm_setting.stock_setting_emails.each do |stock_email|
+			emails << stock_email.email
+		end
+
+		location_products.each do |location_product|
+
+			stock_limit = location_product.stock_limit
+			puts "LocationProduct: "
+			puts location_product.inspect
+		    if stock_limit.nil?
+		      stock_limit = location_product.location.stock_alarm_setting.default_stock_limit
+		  	else
+		  		puts "No era nulo. Stock limit: " + stock_limit.to_s
+		    end
+		    puts "Stock limit: " + stock_limit.to_s
+
+		    stocks = stocks + '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.product.full_name + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.stock.to_s + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + stock_limit.to_s + '</td>' +
+            '</tr>'
+
+		end
+
+		PaymentsSystemMailer.stock_reminder_email(self, stocks, emails)
+
+	end
+
+	def services_top4
+		services = Service.where(active: true, online_booking: true).joins(:bookings).where('bookings.location_id = ?', self.id).group("services.id").limit(4)
+		if services.to_a.count < 4
+			return Service.where(active: true, online_booking: true, id: ServiceStaff.where(service_provider_id: self.service_providers.pluck(:id)).pluck(:service_id)).select("services.id, services.name, services.duration, services.price").order(:order).limit(4)
+		else
+			return Service.where(active: true, online_booking: true).select("services.id, services.name, services.duration, services.price, count(bookings.id) AS bookings_count").joins(:bookings).where('bookings.location_id = ?', self.id).group("services.id").order("bookings_count DESC").limit(4)
+		end
 	end
 
 end

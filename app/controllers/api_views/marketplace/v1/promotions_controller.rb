@@ -118,10 +118,7 @@ module ApiViews::Marketplace
                   end
                 end
               end
-
             end
-
-
           end
         end
 

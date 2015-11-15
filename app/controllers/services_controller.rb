@@ -10,17 +10,17 @@ class ServicesController < ApplicationController
   # GET /services.json
   def index
     if current_user.role_id == Role.find_by_name('Super Admin').id
-      @services = Service.where(company_id: Company.where(owned: false).pluck(:id)).order(order: :asc, name: :asc)
+      @services = Service.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
       @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
     else
-      @services = Service.where(company_id: current_user.company_id, :active => true).order(order: :asc, name: :asc)
-      @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(order: :asc, name: :asc)
+      @services = Service.where(company_id: current_user.company_id, :active => true).order(:order, :name)
+      @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(:order, :name)
     end
   end
 
   def inactive_index
-    @services = Service.where(company_id: current_user.company_id, :active => false).order(order: :asc, name: :asc)
-    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(order: :asc, name: :asc)
+    @services = Service.where(company_id: current_user.company_id, :active => false).order(:order, :name)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(:order, :name)
   end
 
   def activate
@@ -154,32 +154,41 @@ class ServicesController < ApplicationController
 
   def get_providers
     service = Service.find(params[:id])
-    providers = service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', params[:local]).order(order: :asc)
+    providers = service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', params[:local]).order(:order, :public_name)
     if params[:admin_origin]
-      providers = service.service_providers.where(:active => true).where('location_id = ?', params[:local]).order(order: :asc)
+      providers = service.service_providers.where(:active => true).where('location_id = ?', params[:local]).order(:order, :public_name)
     end
     render :json => providers
   end
 
   def location_services
-    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
-    services = Service.where(:active => true).order(order: :asc).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(order: :asc)
-    render :json => services
+    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(:order, :name)
+    services = Service.where(:active => true).order(:order, :name).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(:order, :name)
+
+    services_hash = []
+
+    services.each do |service|
+      service_hash = service.attributes.to_options
+      service_hash['service_category_name'] = service.service_category.name
+      services_hash << service_hash
+    end
+
+    render :json => services_hash
   end
 
   def location_categorized_services
 
     location_resources = Location.find(params[:location]).resource_locations.pluck(:resource_id)
-    service_providers = ServiceProvider.where(location_id: params[:location]).where(:active => true, online_booking: true)
+    service_providers = ServiceProvider.where(location_id: params[:location]).where(:active => true, online_booking: true).order(:order, :public_name)
     if params[:admin_origin]
-      service_providers = ServiceProvider.where(location_id: params[:location]).where(:active => true)
+      service_providers = ServiceProvider.where(location_id: params[:location]).where(:active => true).order(:order, :public_name)
     end
 
-    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(order: :asc)
-    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+    categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(:order, :name)
+    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
 
     if params[:admin_origin]
-      services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(order: :asc)
+      services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
     end
 
     service_resources_unavailable = ServiceResource.where(service_id: services)
@@ -224,7 +233,7 @@ class ServicesController < ApplicationController
   end
 
   def services_data
-    services = Service.where(:company_id => current_user.company_id)
+    services = Service.where(:company_id => current_user.company_id).order(:order, :name)
     render :json => services
   end
 
@@ -635,8 +644,8 @@ class ServicesController < ApplicationController
 
   #For Super Admin
   def manage_promotions
-    @services = Service.where(:has_time_discount => true, :time_promo_active => false)
-    @approvedServices = Service.where(:has_time_discount => true, :time_promo_active => true)
+    @services = Service.where(:has_time_discount => true, :time_promo_active => false).order(:company_id, :name)
+    @approvedServices = Service.where(:has_time_discount => true, :time_promo_active => true).order(:company_id, :name)
   end
 
   def manage_service_promotion

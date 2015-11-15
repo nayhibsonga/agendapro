@@ -1,0 +1,97 @@
+<!-- Chartkick se usa antes de q se carge la pagina -->
+<script type="text/javascript">
+  var Chartkick = {"language": "es"};
+</script>
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+
+<div class="container-fluid">
+  <div class="row report-control-row" style="margin-top: 20px;">
+    <div class="col-sm-10">
+
+      <div class="form-group">
+        <label for="reports_start" class="col-sm-1 control-label">Desde:</label>
+        <div class="col-sm-5">
+          <input type="text" id="reports_start" name="reports_start" class="form-control payments_select" value="<%= (DateTime.now - 1.months).strftime("%d/%m/%Y") %>">
+        </div>
+        <label for="reports_end" class="col-sm-1 control-label">Hasta:</label>
+        <div class="col-sm-5">
+          <input type="text" id="reports_end" name="reports_end" class="form-control payments_select" value="<%= Time.now.strftime("%d/%m/%Y") %>">
+        </div>
+      </div>
+
+      <div class="form-group">
+        
+
+        <% if @service_providers.count > 0 %>
+          <div class="col-sm-4">
+            <input type="radio" id="person_type_provider" name="person_type" value="service_provider" checked />&nbsp;&nbsp;<label for="person_type_provider" class="control-label" style="margin-top: 5px; cursor:pointer;">Prestadores:</label><br />
+            <select id="serviceProvidersMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
+              <% @service_providers.each do |service_provider| %>
+                <option value="<%= service_provider.id %>">
+                  <%= service_provider.public_name %>
+                </option>
+              <% end %>
+            </select>
+
+          </div>
+        <% end %>
+        
+        
+        <% if @users.count > 0 %>
+          <div class="col-sm-4">
+            <input type="radio" id="person_type_user" name="person_type" value="user" />&nbsp;&nbsp;<label for="person_type_user" class="control-label" style="margin-top: 5px; cursor:pointer;">Usuarios:</label>
+            <select id="usersMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
+              <% @users.each do |user| %>
+                <option value="<%= user.id %>">
+                  <%= user.first_name + " " + user.last_name + " (" + user.role.name + ")" %>
+                </option>
+              <% end %>
+            </select>
+
+          </div>
+        <% end %>
+
+        <% if @cashiers.count > 0 %>
+          <div class="col-sm-4">
+            <input type="radio" id="person_type_cashier" name="person_type" value="cashier" />&nbsp;&nbsp;<label for="person_type_cashier" class="control-label" style="margin-top: 5px; cursor:pointer;">Cajeros:</label>
+            <select id="cashiersMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
+              <% @cashiers.each do |cashier| %>
+                <option value="<%= cashier.id %>">
+                  <%= cashier.name %>
+                </option>
+              <% end %>
+            </select>
+
+          </div>
+        <% end %>
+
+      </div>
+    </div>
+    <div class="col-sm-2">
+    </div>
+  </div>
+  <div class="row" style="border-top: 1px solid #e3e3e3; margin-top: 10px;">
+    <div class="col-sm-12">
+      <div id='render_content'>
+      </div>
+      <div id="loader-div" hidden>
+        <p style="text-align: center; margin-top: 50px;">
+          <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render :partial => 'payment_modals', :locals => {:company => current_user.company} %>
+
+<%= render :partial => 'petty_cash_modals', :locals => {:company => current_user.company} %>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "payments" %>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "sales_reports" %>
+<% end %>

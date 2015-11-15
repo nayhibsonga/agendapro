@@ -9,10 +9,6 @@
 
     devise_for :users, skip: [:omniauth_callbacks], controllers: {registrations: 'registrations'}
 
-    resources :product_categories
-
-    resources :products
-
     get "users/index"
     require 'subdomain'
 
@@ -67,7 +63,17 @@
     resources :company_payment_methods
     resources :payment_methods
 
+    resources :product_categories
+
+    resources :product_brands
+
+    resources :product_displays
+
+    resources :products
+
     resources :favorite_locations, only: [:index, :create, :destroy]
+
+    resources :cashiers
 
     namespace :admin do
       get '', :to => 'dashboard#index', :as => '/'
@@ -128,6 +134,7 @@
     get '/client_loader', :to => 'clients#client_loader'
 
     get '/check_staff_code', :to => 'staff_codes#check_staff_code'
+    get '/get_staff_by_code', :to => 'staff_codes#get_staff_by_code'
 
     get '/provider_services', :to => 'service_providers#provider_service'
 
@@ -163,14 +170,21 @@
 
     # Punto Pagos
     get "/punto_pagos/generate_transaction/:mp/:amount", :to => 'punto_pagos#generate_transaction', :as => 'punto_pagos_generate'
-    get "/punto_pagos/generate_company_transaction/:mp/:amount", :to => 'punto_pagos#generate_company_transaction', :as => 'generate_company_transaction'
-    get "/punto_pagos/generate_plan_transaction/:mp/:plan_id", :to => 'punto_pagos#generate_plan_transaction', :as => 'generate_plan_transaction'
+    get "/punto_pagos/generate_company_transaction/:mp/:amount", :to => 'punto_pagos#generate_company_transaction', :as => 'pp_generate_company_transaction'
+    get "/punto_pagos/generate_plan_transaction/:mp/:plan_id", :to => 'punto_pagos#generate_plan_transaction', :as => 'pp_generate_plan_transaction'
     post "/punto_pagos/notification", :to => 'punto_pagos#notification', :as => 'punto_pagos_notification'
     get "/punto_pagos/success", :to => 'punto_pagos#success', :as => 'punto_pagos_success'
     get "/punto_pagos/failure", :to => 'punto_pagos#failure', :as => 'punto_pagos_failure'
     post "/punto_pagos/notification/:trx", :to => 'punto_pagos#notification', :as => 'punto_pagos_notification_trx'
     get "/punto_pagos/success/:token", :to => 'punto_pagos#success', :as => 'punto_pagos_success_trx'
     get "/punto_pagos/failure/:token", :to => 'punto_pagos#failure', :as => 'punto_pagos_failure_trx'
+    get "/pay_u/generate_transaction", :to => 'pay_u#generate_transaction', :as => 'pay_u_generate'
+    get "/pay_u/generate_company_transaction/:amount", :to => 'pay_u#generate_company_transaction', :as => 'pu_generate_company_transaction'
+    get "/pay_u/generate_plan_transaction/:plan_id", :to => 'pay_u#generate_plan_transaction', :as => 'pu_generate_plan_transaction'
+    post "/pay_u/confirmation", :to => 'pay_u#confirmation', :as => 'pay_u_confirmation'
+    get "/pay_u/response", :to => 'pay_u#response_handler', :as => 'pay_u_response'
+    get "/pay_u/success", :to => 'pay_u#success', :as => 'pay_u_success'
+    get "/pay_u/failure", :to => 'pay_u#failure', :as => 'pay_u_failure'
     get "/companies/:id/edit_payment", :to => 'companies#edit_payment', :as => 'edit_payment_company'
     get "/logs/puntopagos_creations", :to => 'plans#puntopagos_creations', :as => 'puntopagos_creations'
     get "/logs/puntopagos_confirmations", :to => 'plans#puntopagos_confirmations', :as => 'puntopagos_confirmations'
@@ -223,6 +237,8 @@
     get '/location_time', :to => 'locations#location_time'
     get '/get_booking', :to => 'bookings#get_booking'
     get '/get_booking_info', :to => 'bookings#get_booking_info'
+    get '/get_booking_for_payment', :to => 'bookings#get_booking_for_payment'
+    get '/get_session_booking_for_payment', :to => 'bookings#get_session_booking_for_payment'
     get "/book", :to => 'bookings#book_service'
     post "/book", :to => 'bookings#book_service'
     get '/book_error', :to => 'bookings#book_error', :as => 'book_error'
@@ -329,6 +345,7 @@
     get 'payment_client_bookings', :to => 'payments#client_bookings'
     get 'payment_client_sessions', :to => 'payments#client_sessions'
     get '/payments_index_content', :to=> 'payments#index_content'
+    post '/create_new_payment', :to => 'payments#create_new_payment'
 
     # Payed Bookings
     get "/company_bookings", :to => 'payed_bookings#show'
@@ -366,6 +383,94 @@
     get "/transaccion/crear", :to => 'local_punto_pagos#create_transaction'
     get "/transaccion/procesar/:token", :to => 'local_punto_pagos#process_transaction'
     post "/transaccion/notificar", :to => 'local_punto_pagos#notify'
+
+    # Caja
+    get "/location_products", :to => 'locations#location_products'
+    get '/alarm_form', :to => 'products#alarm_form'
+    get '/inventory', :to => 'locations#inventory'
+    post '/set_alarm', :to => 'products#set_alarm'
+    post '/products/import', :to => 'products#import', :as => 'import_products'
+    get '/company_inventory', :to => 'companies#inventory'
+    get '/company_alarms', :to => 'companies#stock_alarm_form'
+    get '/location_alarms', :to => 'locations#stock_alarm_form'
+    post '/save_alarms', :to => 'locations#save_stock_alarm'
+    get '/location_sellers', :to => 'locations#sellers'
+
+    get '/cashiers/:id/activate', :to => 'cashiers#activate', :as => 'activate_cashier'
+    get '/cashiers/:id/deactivate', :to => 'cashiers#deactivate', :as => 'deactivate_cashier'
+    get '/get_cashier_by_code', :to => 'cashiers#get_by_code'
+
+    get '/receipt_pdf', :to => 'payments#receipt_pdf'
+    get '/payment_pdf', :to => 'payments#payment_pdf'
+
+    post '/receipts_email', :to => 'payments#send_receipts_email'
+    get '/payment_receipts', :to => 'payments#get_receipts'
+
+    get '/payment_intro', :to => 'payments#get_intro_info'
+    post '/save_payment_intro', :to => 'payments#save_intro_info'
+
+    post '/update_payment', :to => 'payments#update_payment'
+
+    get '/check_booking_payment', :to => 'payments#check_booking_payment'
+    get '/get_formatted_booking', :to => 'payments#get_formatted_booking'
+
+    post '/delete_payment', :to => 'payments#delete_payment'
+
+    #Internal Sale
+    post '/save_internal_sale', :to => 'payments#save_internal_sale'
+    post '/delete_internal_sale', :to => 'payments#delete_internal_sale'
+    get '/get_internal_sale', :to => 'payments#get_internal_sale'
+    get '/get_product_for_payment_or_sale', :to => 'payments#get_product_for_payment_or_sale'
+
+    #ServiceCommissions
+    get '/commissions', :to => 'payments#commissions'
+    get '/service_commissions', :to => 'payments#service_commissions'
+    get '/provider_commissions', :to => 'payments#provider_commissions'
+    post '/set_commissions', :to => 'payments#set_commissions'
+    post '/set_default_commission', :to => 'payments#set_default_commission'
+    post '/set_provider_default_commissions', :to => 'payments#set_provider_default_commissions'
+
+    #PettyCash
+    get '/petty_cash', :to => 'payments#petty_cash'
+    get '/petty_transactions', :to => 'payments#petty_transactions'
+    get '/petty_transaction', :to => 'payments#petty_transaction'
+    post '/add_petty_transaction', :to => 'payments#add_petty_transaction'
+    post '/open_close_petty_cash', :to => 'payments#open_close_petty_cash'
+    post '/delete_petty_transaction', :to => 'payments#delete_petty_transaction'
+    post '/set_petty_cash_close_schedule', :to => 'payments#set_petty_cash_close_schedule'
+
+    #SalesCash
+    get '/sales_cash', :to => 'payments#sales_cash'
+    get '/sales_cash_content', :to => 'payments#sales_cash_content'
+    get '/get_sales_cash', :to => 'payments#get_sales_cash'
+    post '/save_sales_cash', :to => 'payments#save_sales_cash'
+    post '/close_sales_cash', :to => 'payments#close_sales_cash'
+
+    #SalesCashTransactions
+    get '/get_sales_cash_transaction', :to => 'payments#get_sales_cash_transaction'
+    post '/save_sales_cash_transaction', :to => 'payments#save_sales_cash_transaction'
+    post '/delete_sales_cash_transaction', :to => 'payments#delete_sales_cash_transaction'
+
+    #SalesCashIncome
+    get '/get_sales_cash_income', :to => 'payments#get_sales_cash_income'
+    post '/save_sales_cash_income', :to => 'payments#save_sales_cash_income'
+    post '/delete_sales_cash_income', :to => 'payments#delete_sales_cash_income'
+
+    #Payment Reports
+    get '/sales_reports', :to => 'payments#sales_reports'
+    get '/service_providers_report', :to => 'payments#service_providers_report'
+    get '/users_report', :to => 'payments#users_report'
+    get '/cashiers_report', :to => 'payments#cashiers_report'
+    get '/service_providers_report_file', :to => 'payments#service_providers_report_file'
+
+    get '/sales_cash_report_file', :to => 'payments#sales_cash_report_file'
+
+    get '/get_treatment_price', :to => 'bookings#get_treatment_price'
+    get '/payment_summary', :to => 'payments#summary'
+
+    #Service and categories for location (payments)
+    get '/location_categories', :to => 'service_categories#location_categories'
+    get '/category_services', :to => 'service_categories#category_services'
 
   end
 
@@ -441,6 +546,7 @@
 
         get 'promotions', to: 'promotions#index'
         get 'promotions/index/preview', to: 'promotions#preview'
+        get 'promotions/:id', to: 'promotions#show'
 
         get 'locations', to: 'locations#search'
         get 'locations/:id', to: 'locations#show'
@@ -455,6 +561,13 @@
         get 'users/favorites', to: 'users#favorites'
         # get 'users/searches', to: 'users#searches'
         post 'users/oauth', to: 'users#oauth'
+        get 'users/oauth_login_link', to: 'users#oauth_login_link'
+
+        post 'bookings', to: 'bookings#book_service'
+        get 'bookings', to: 'bookings#show'
+        get 'bookings_group', to: 'bookings#show_group'
+        put 'bookings/:id', to: 'bookings#edit_booking'
+        delete 'bookings/:id', to: 'bookings#destroy'
 
       end
     end

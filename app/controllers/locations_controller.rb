@@ -1,7 +1,7 @@
 class LocationsController < ApplicationController
-  before_action :set_location, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
+  before_action :set_location, only: [:show, :edit, :update, :destroy, :activate, :deactivate, :sellers]
   before_action :authenticate_user!, except: [:location_data, :location_time, :get_available_time, :location_districts]
-  before_action :quick_add, except: [:location_data, :location_time, :get_available_time, :location_districts]
+  before_action :quick_add, except: [:location_data, :location_time, :get_available_time, :location_districts, :location_products]
   load_and_authorize_resource
   layout "admin", except: [:change_location_order]
 
@@ -192,7 +192,7 @@ class LocationsController < ApplicationController
 
         # Variable Data
         day = date.cwday
-        ordered_providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(date) }
+        ordered_providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(date) }
         location_times = local.location_times.where(day_id: day).order(:open)
 
         # time_offset = 0
@@ -546,6 +546,187 @@ class LocationsController < ApplicationController
       end
     end
     render :json => array_result
+  end
+
+  def location_products
+
+    @location = Location.find(params[:id])
+    products = Product.where(id: LocationProduct.where(:location_id => @location.id).pluck(:product_id))
+
+    @products = []
+
+    products.each do |product|
+      product_hash = product.attributes.to_options
+      product_hash[:full_name] = product.sku + " " + product.name + " " + product.product_brand.name + " " + product.product_display.name
+      @products << product_hash
+    end
+
+    render :json => @products
+
+  end
+
+  def inventory
+
+    @location = Location.find(params[:id])
+    @location_products = []
+
+    normalized_search = ""
+
+    if !params[:searchInput].blank?
+      search = params[:searchInput].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+      normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+    end
+
+    location_products = nil
+
+    if normalized_search != ""
+      location_products = @location.location_products.search(normalized_search)
+    else
+      location_products = @location.location_products
+    end
+
+    if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+    elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category]).pluck(:id)).order('stock asc')
+    elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+    elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    else
+      @location_products = location_products.order('stock asc')
+    end    
+
+    respond_to do |format|
+      format.html { render :partial => 'inventory' }
+      format.json { render :json => @location_products }
+    end
+
+  end
+
+  def stock_alarm_form
+
+    @location = Location.find(params[:id])
+
+    @stock_alarm_setting = @location.stock_alarm_setting
+
+    if @stock_alarm_setting.nil?
+
+      @stock_alarm_setting = StockAlarmSetting.create(location_id: @location.id)
+
+      stock_setting_email = StockSettingEmail.new
+      stock_setting_email.email = @location.email
+      stock_setting_email.stock_alarm_setting_id = @stock_alarm_setting.id
+      stock_setting_email.save
+      #stock_alarm_setting.save
+    end
+
+    respond_to do |format|
+        format.html { render :partial => 'stock_alarm_form' }
+        format.json { render :json => @locations }
+    end
+  end
+
+  def save_stock_alarm
+
+    @response_array = []
+
+    if params[:stock_alarm_setting_id].blank? || params[:stock_alarm_setting_id] == "0"
+      @response_array << "error"
+      @response_array << "El local que tratas de editar no existe o no tienes los permisos suficientes para hacerlo."
+    else
+      @stock_alarm_setting = StockAlarmSetting.find(params[:stock_alarm_setting_id])
+      if @stock_alarm_setting.nil?
+        @response_array << "error"
+        @response_array << "El local que tratas de editar no existe o no tienes los permisos suficientes para hacerlo."
+      else
+        @stock_alarm_setting.quick_send = params[:quick_send]
+        @stock_alarm_setting.periodic_send = params[:periodic_send]
+        @stock_alarm_setting.has_default_stock_limit = params[:has_default_stock_limit]
+        @stock_alarm_setting.default_stock_limit = params[:default_stock_limit]
+        @stock_alarm_setting.monthly = params[:monthly]
+        @stock_alarm_setting.month_day = params[:month_day]
+        @stock_alarm_setting.week_day = params[:week_day]
+        
+        emails = []
+        emails_arr = params[:email].split(",")
+        emails_arr.each do |email|
+          email_str = email.strip
+          if email_str != ""
+            new_stock_setting_email = StockSettingEmail.create(:stock_alarm_setting_id => @stock_alarm_setting.id, :email => email_str)
+            LocationProduct.where(:location_id => @stock_alarm_setting.location_id).each do |location_product|
+              if StockEmail.where(:location_product_id => location_product.id, :email => email_str).count == 0
+                new_stock_email = StockEmail.create(:location_product_id => location_product.id, :email => email_str)
+              end
+            end
+          end
+        end
+
+        if @stock_alarm_setting.save
+          @response_array << "ok"
+          @response_array << @stock_alarm_setting
+        else
+          @response_array << "error"
+          @response_array << "Ocurrió un error inesperado al guardar la configuración."
+        end
+
+      end
+    end
+
+    render :json => @response_array
+
+  end
+
+  def sellers
+
+    @response_array = []
+
+    @location.service_providers.where(active: true).each do |service_provider|
+
+      new_seller ={
+        :id => service_provider.id,
+        :seller_type => 0,
+        :full_name => service_provider.public_name,
+        :role_name => "Prestador"
+      }
+
+      @response_array << new_seller
+
+    end
+
+    @location.users.each do |user|
+
+      new_seller ={
+        :id => user.id,
+        :seller_type => 1,
+        :full_name => user.first_name + " " + user.last_name,
+        :role_name => user.role.name
+      }
+
+      @response_array << new_seller
+
+    end
+
+    @location.company.cashiers.where(active: true).each do |cashier|
+      new_seller ={
+        :id => cashier.id,
+        :seller_type => 2,
+        :full_name => cashier.name,
+        :role_name => "Cajero"
+      }
+
+      @response_array << new_seller
+    end
+
+    render :json => @response_array
+
   end
 
   private

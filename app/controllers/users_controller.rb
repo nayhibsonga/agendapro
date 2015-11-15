@@ -116,7 +116,7 @@ class UsersController < ApplicationController
 
     end
 
-    @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids, :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
+    @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids, :status_id => Status.find_by(:name => ['Reservado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
     @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids).order(updated_at: :desc).limit(10)
     render :layout => 'results'
   end

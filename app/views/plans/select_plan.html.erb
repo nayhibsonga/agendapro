@@ -84,28 +84,36 @@
         <option value="12">12 Meses - <%= number_to_currency(@plan_12 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_12 * 100, precision: 0) %>% dcto.)</option>
       </select>
       <p>Y, luego, selecciona el medio de pago haciendo click sobre su imagen:</p>
+      <% if @company.country_id == Country.find_by_name('Chile').id %>
       <div class="row mp_table">
-        <div class="col-md-4 hidden text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_company_transaction_path(mp: "01", amount: 0), alt: "Botón de Pago Banco Santander", class: "mp_link" %>
-        </div>
-        <div class="col-md-4 col-md-offset-2 text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), generate_company_transaction_path(mp: "04", amount: 0), alt: "Botón de Pago Banco de Chile", class: "mp_link" %>
-        </div>
-        <!-- <div class="col-md-4 text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), generate_company_transaction_path(mp: "05", amount: 0), alt: "Botón de Pago BCI", class: "mp_link" %>
-        </div> -->
-      </div>
-      <div class="row mp_table">
-        <!-- <div class="col-md-4 text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), generate_company_transaction_path(mp: "06", amount: 0), alt: "Botón de Pago TBanc", class: "mp_link" %>
-        </div> -->
         <div class="col-md-4 text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), generate_company_transaction_path(mp: "07", amount: 0), alt: "Botón de Pago Banco Estado", class: "mp_link" %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp16.gif"), pp_generate_company_transaction_path(mp: "16", amount: 0), alt: "Botón de Pago Banco BBVA", class: "mp_link" %>
         </div>
         <div class="col-md-4 text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), generate_company_transaction_path(mp: "03", amount: 0), alt: "Webpay Transbank", class: "mp_link" %>
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), pp_generate_company_transaction_path(mp: "04", amount: 0), alt: "Botón de Pago Banco de Chile", class: "mp_link" %>
+        </div>
+        <div class="col-md-4 text-center">
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), pp_generate_company_transaction_path(mp: "05", amount: 0), alt: "Botón de Pago BCI", class: "mp_link" %>
         </div>
       </div>
+      <div class="row mp_table">
+        <div class="col-md-4 text-center">
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), pp_generate_company_transaction_path(mp: "06", amount: 0), alt: "Botón de Pago TBanc", class: "mp_link" %>
+        </div>
+        <div class="col-md-4 text-center">
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), pp_generate_company_transaction_path(mp: "07", amount: 0), alt: "Botón de Pago Banco Estado", class: "mp_link" %>
+        </div>
+        <div class="col-md-4 text-center">
+          <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), pp_generate_company_transaction_path(mp: "03", amount: 0), alt: "Webpay Transbank", class: "mp_link" %>
+        </div>
+      </div>
+      <% else %>
+      <div class="row mp_table">
+        <div class="col-md-4 text-center">
+          <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_company_transaction_path(amount: 0), alt: "Botón de Pago Pay U", class: "mp_link" %>
+        </div>
+      </div>
+      <% end %>
     </div>
   </div>
   <div class="row">
@@ -296,36 +304,43 @@
         <div class="modal-body">
           <p class="text-justify">Estás cambiando tu cuenta AgendaPro a un nuevo plan mensual. Es importante que para cada cambio de plan se considera el tiempo de activación restante (o deuda actual de la cuenta en el caso correspondiente) y se ajusta para el nuevo plan. Es decir, se abonará o cobrará el proporcional correspondiente de acuerdo al nuevo plan elegido. Si tienes dudas, por favor <%= link_to 'comunícate con nosotros', contact_path, :target => "_blank" %>.</p>
           <p class="text-justify" id="plan_explanation"></p>
+          <% if @company.country_id == Country.find_by_name('Chile').id %>
           <div  id="plan_mp_table">
             <p>Medios de pago disponibles:</p>
             <div class="row">
-              <!-- <div class="col-md-4 hidden text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp1.gif"), generate_plan_transaction_path(mp: "01", plan_id: 0), alt: "Botón de Pago Banco Santander", class: "plan_mp_link" %>
-              </div> -->
-              <div class="col-md-4 col-md-offset-2 text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), generate_plan_transaction_path(mp: "04", plan_id: 0), alt: "Botón de Pago Banco de Chile", class: "plan_mp_link" %>
+              <div class="col-md-4 hidden text-center">
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp16.gif"), pp_generate_plan_transaction_path(mp: "16", plan_id: 0), alt: "Botón de Pago Banco BBVA", class: "plan_mp_link" %>
               </div>
-              <!-- <div class="col-md-4 text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), generate_plan_transaction_path(mp: "05", plan_id: 0), alt: "Botón de Pago BCI", class: "plan_mp_link" %>
-              </div> -->
+              <div class="col-md-4 col-md-offset-2 text-center">
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), pp_generate_plan_transaction_path(mp: "04", plan_id: 0), alt: "Botón de Pago Banco de Chile", class: "plan_mp_link" %>
+              </div>
+              <div class="col-md-4 text-center">
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), pp_generate_plan_transaction_path(mp: "05", plan_id: 0), alt: "Botón de Pago BCI", class: "plan_mp_link" %>
+              </div>
             </div>
             <div class="row">
-              <!-- <div class="col-md-4 text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), generate_plan_transaction_path(mp: "06", plan_id: 0), alt: "Botón de Pago TBanc", class: "plan_mp_link" %>
-              </div> -->
               <div class="col-md-4 text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), generate_plan_transaction_path(mp: "07", plan_id: 0), alt: "Botón de Pago Banco Estado", class: "plan_mp_link" %>
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), pp_generate_plan_transaction_path(mp: "06", plan_id: 0), alt: "Botón de Pago TBanc", class: "plan_mp_link" %>
               </div>
               <div class="col-md-4 text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), generate_plan_transaction_path(mp: "03", plan_id: 0), alt: "Webpay Transbank", class: "plan_mp_link" %>
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), pp_generate_plan_transaction_path(mp: "07", plan_id: 0), alt: "Botón de Pago Banco Estado", class: "plan_mp_link" %>
+              </div>
+              <div class="col-md-4 text-center">
+                <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), pp_generate_plan_transaction_path(mp: "03", plan_id: 0), alt: "Webpay Transbank", class: "plan_mp_link" %>
               </div>
             </div>
           </div>
+          <% else %>
+          <div class="row mp_table">
+            <div class="col-md-4 text-center">
+              <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_plan_transaction_path(plan_id: 0), alt: "Botón de Pago Pay U", class: "plan_mp_link" %>
+            </div>
+          </div>
+          <% end %>
         </div>
         <div class="modal-footer">
           <div  id="plan_mp_button">
             <button type="button" class="btn btn-default pull-right button-plan" data-dismiss="modal">Cerrar</button>
-            <%= link_to "Confirmar Cambio", generate_plan_transaction_path(mp: "00", plan_id: 0), class: "btn btn-green plan_mp_link pull-right" %>
           </div>
         </div>
       </div>
