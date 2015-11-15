@@ -1017,6 +1017,22 @@
                     <span class="help-block">Habilita esta opción para que al registrar un pago sea obligatorio ingresar el número de comprobante de pago (número de boleta, factura, etc.).</span>
                   </div>
                 </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :editable_payment_prices %> Permitir edición de precios en pago
+                    </label>
+                    <span class="help-block">Habilita esta opción para que al registrar un pago los precios de los productos y servicios sean editables.</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :mandatory_mock_booking_info %> Requerir información de servicios en pagos
+                    </label>
+                    <span class="help-block">Habilita esta opción para que al añadir un servicio sin reserva a un pago, sea obligatorio ingresar el servicio y el rpestador asociado.</span>
+                  </div>
+                </div>
                 <br />
                 <table class="table table-hover table-green">
                   <thead>

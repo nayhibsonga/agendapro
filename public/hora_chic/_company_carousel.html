@@ -1,0 +1,9 @@
+<div>
+  <carousel interval="3000">
+    <slide ng-repeat="company in cc.companies" active="company.active">
+      <a ng-href="/hora_chic/show/{{ company.id }}">
+        <img ng-src="{{ company.logo }}" alt="{{ company.name }}" title="{{ company.name }}">
+      </a>
+    </slide>
+  </carousel>
+</div>

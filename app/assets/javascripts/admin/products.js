@@ -300,6 +300,29 @@ function getInventory()
 	}
 }
 
+function checkFile()
+{
+	var file_array = $('#file').val().split(".");
+	if(file_array.length > 0)
+	{
+		var extension = file_array[file_array.length - 1];
+		if (extension != "csv" && extension != "xls")
+		{
+			alert("El archivo no tiene la extensión correcta. Por favor importa sólo archivos de tipo csv o xls.");
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	else
+	{
+		alert("No hay archivo seleccionado.");
+		return false;
+	}
+}
+
 var form;
 function initialize() {
 	if ($("#id_data").length > 0){
@@ -506,6 +529,13 @@ $(function() {
 		}
 		else {
 			$('#import_button').attr("disabled", "disabled");
+		}
+	});
+
+	$('#import_button').on('click', function(e){
+		if(!checkFile())
+		{
+			e.preventDefault();
 		}
 	});
 

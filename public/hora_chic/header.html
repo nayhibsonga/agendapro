@@ -1,0 +1,75 @@
+<header>
+  <div class="container">
+    <div class="row">
+
+      <div class="contact col-lg-4 col-md-4">
+        <div class="pull-left content">
+          <p>
+            <i class="fa fa-envelope"></i> {{ tc.lang.write_us }} <strong>{{ tc.lang.contact }}</strong>
+          </p>
+        </div>
+      </div>
+
+      <div class="logo-container col-xs-12 col-md-4 col-lg-4">
+        <div>
+          <div class="logo" ng-click="tc.goHome()">&nbsp;</div>
+        </div>
+      </div>
+
+      <div class="options col-lg-4 col-md-4">
+        <div class="pull-right content">
+          <div class="login" ng-hide="tc.loggedIn">
+            <a href="#" ng-click="tc.signIn()">{{ tc.lang.login }}</a>
+            <span class="separator"> | </span>
+            <a href="#" ng-click="tc.signUp()"> {{ tc.lang.register }}</a>
+          </div>
+          <div class="login" ng-show="tc.loggedIn">
+            <a href="#">{{ tc.user.first_name }}</a>
+            <a href="#" ng-click="tc.logout()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Logout</a>
+          </div>
+          <div class="add-company">
+            <a ng-href="/hora_chic/company"> {{ tc.lang.add_company }} </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<div class="container menu">
+
+  <div class="row wrapper">
+
+    <button type="button" class="toggle-menu menu-left push-body">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <nav id="services-list" class="content nav-links col-md-12 cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" ng-controller="LinksController as links">
+      <h3><div class="logo"></div></h3>
+
+      <span class="service-link" ng-repeat="service in links.services">
+        <a ng-href="{{ service.url }}" ng-class="{ deals: service.name === 'deals' }" title="{{ tc.lang.services[service.name] }}">
+          {{ tc.lang.services[service.name] }}
+        </a>
+        <span class="separator" ng-if="!$last">|</span>
+      </span>
+
+      <div class="nav-account">
+        <a href="#" ng-click="tc.signIn()">{{ tc.lang.login }}</a>
+        <a href="#" ng-click="tc.signUp()"> {{ tc.lang.register }}</a>
+        <a href="#" class="add-company"> {{ tc.lang.add_company }} </a>
+      </div>
+
+    </nav>
+
+  </div>
+
+
+</div>
+
+<script>
+  $(function (){
+    HoraChic.init();
+  });
+</script>

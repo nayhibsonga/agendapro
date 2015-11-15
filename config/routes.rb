@@ -468,6 +468,10 @@
     get '/get_treatment_price', :to => 'bookings#get_treatment_price'
     get '/payment_summary', :to => 'payments#summary'
 
+    #Service and categories for location (payments)
+    get '/location_categories', :to => 'service_categories#location_categories'
+    get '/category_services', :to => 'service_categories#category_services'
+
   end
 
   namespace :api, defaults: {format: 'json'} do
@@ -502,9 +506,82 @@
       get 'promotions', to: 'promotions#index'
       get 'promotions/:id', to: 'promotions#show'
     end
+    namespace :v2 do
+
+      resources :locations, only: [:index, :show]
+      get 'locations_search', to: 'locations#search'
+      post 'locations/:id/favorite', to: 'locations#favorite'
+
+      resources :services, only: [:show]
+      get 'services/:id/service_providers', to: 'services#service_providers'
+
+      get 'service_providers/:id/available_hours', to: 'service_providers#available_hours'
+      get 'service_providers/:id/available_days', to: 'service_providers#available_days'
+
+      post 'users/session', to: 'users#login'
+      post 'users/registration', to: 'users#create'
+      put 'users/me', to: 'users#edit'
+      get 'users/me', to: 'users#mobile_user'
+      get 'users/bookings', to: 'users#bookings'
+      get 'users/favorites', to: 'users#favorites'
+      get 'users/searches', to: 'users#searches'
+      post 'users/oauth', to: 'users#oauth'
+
+      resources :economic_sectors
+
+      post 'bookings', to: 'bookings#book_service'
+      get 'bookings/:id', to: 'bookings#show'
+      put 'bookings/:id', to: 'bookings#edit_booking'
+      delete 'bookings/:id', to: 'bookings#destroy'
+
+      get 'promotions', to: 'promotions#index'
+      get 'promotions/:id', to: 'promotions#show'
+    end
+  end
+
+  namespace :api_views, defaults: {format: 'json'} do
+    namespace :marketplace do
+      namespace :v1 do
+        get 'companies_preview', to: 'companies#preview'
+
+        get 'promotions', to: 'promotions#index'
+        get 'promotions/index/preview', to: 'promotions#preview'
+        get 'promotions/:id', to: 'promotions#show'
+
+        get 'locations', to: 'locations#search'
+        get 'locations/:id', to: 'locations#show'
+
+        get 'service_providers/available_hours', to: 'service_providers#available_hours'
+
+        post 'users/session', to: 'users#login'
+        post 'users/registration', to: 'users#create'
+        put 'users/me', to: 'users#edit'
+        get 'users/me', to: 'users#api_user'
+        get 'users/bookings', to: 'users#bookings'
+        get 'users/favorites', to: 'users#favorites'
+        # get 'users/searches', to: 'users#searches'
+        post 'users/oauth', to: 'users#oauth'
+        get 'users/oauth_login_link', to: 'users#oauth_login_link'
+
+        post 'bookings', to: 'bookings#book_service'
+        get 'bookings', to: 'bookings#show'
+        get 'bookings_group', to: 'bookings#show_group'
+        put 'bookings/:id', to: 'bookings#edit_booking'
+        delete 'bookings/:id', to: 'bookings#destroy'
+
+      end
+    end
   end
 
   root :to => 'searchs#index'
+
+  # Angular Root
+
+  namespace 'hora_chic', controller: 'angular' do
+    get '/(*path)', action: 'index'
+  end
+
+
 
 
   # The priority is based upon order of creation: first created -> highest priority.

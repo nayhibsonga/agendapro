@@ -38,7 +38,7 @@
         <tbody>
           <% @payments.each do |payment| %>
           <tr>
-            <td><%= payment.payment_date.strftime('%d-%m-%Y') %></td>
+            <td><%= payment.payment_date.strftime('%d/%m/%Y %R') %></td>
             <td><%= payment.location ? payment.location.name : '' %></td>
             <td>
               <% if !payment.client.nil? %>
@@ -149,7 +149,7 @@
         <tbody>
           <% @internal_sales.each do |internal_sale| %>
             <tr>
-              <td><%= internal_sale.date.strftime('%d-%m-%Y') %></td>
+              <td><%= internal_sale.date.strftime('%d/%m/%Y %R') %></td>
               <td><%= internal_sale.location ? internal_sale.location.name : '' %></td>
               <td>
                 <%= internal_sale.service_provider.public_name %>

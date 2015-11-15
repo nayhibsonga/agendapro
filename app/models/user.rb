@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
     devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable, :omniauthable, :omniauth_providers => [:facebook, :google_oauth2]
+         :recoverable, :rememberable, :trackable, :validatable, :omniauthable, :omniauth_providers => [:facebook, :facebook_marketplace, :google_oauth2, :google_oauth2_marketplace]
 	belongs_to :role
 	belongs_to :company
 
@@ -65,6 +65,12 @@ class User < ActiveRecord::Base
 	def request_mobile_token
 		while self.mobile_token.blank? || User.where(mobile_token: self.mobile_token).where.not(id: self.id).count > 0
 			self.mobile_token = SecureRandom.base64(32)
+		end
+	end
+
+	def request_api_token
+		while self.api_token.blank? || User.where(api_token: self.api_token).where.not(id: self.id).count > 0
+			self.api_token = SecureRandom.base64(32)
 		end
 	end
 

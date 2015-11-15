@@ -63,6 +63,8 @@ class Ability
     can :provider_booking, Booking
     can :book_service, Booking
     can :location_services, Service
+    can :location_categories, ServiceCategory
+    can :category_services, ServiceCategory
     can :location_categorized_services, Service
     can :location_providers, ServiceProvider
     can :provider_time, ServiceProvider
@@ -212,7 +214,7 @@ class Ability
         can :save_sales_cash_income, Payment, :company_id => user.company_id
         can :delete_sales_cash_income, Payment, :company_id => user.company_id
 
-        can :sales_cash_report_file, Payment, :company_id => user.company.id
+        can :sales_cash_report_file, Payment, :company_id => user.company_id
 
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id
@@ -470,7 +472,7 @@ class Ability
         can :save_sales_cash_income, Payment, :company_id => user.company_id
         can :delete_sales_cash_income, Payment, :company_id => user.company_id
 
-        can :sales_cash_report_file, Payment, :company_id => user.company.id
+        can :sales_cash_report_file, Payment, :company_id => user.company_id
 
         #Sales Reports
         can :sales_reports, Payment, :company_id => user.company_id

@@ -86,7 +86,7 @@ function loadSalesCash()
         }
       }
       $("#sales_cash_scheduled_reset_day").val(sales_cash.scheduled_reset_day);
-      $('#sales_cash_emails').val(sales_cash.emails);
+      //$('#sales_cash_emails').val(sales_cash.emails);
       $('#salesCashModal').modal('show');
     }
   });
@@ -409,7 +409,7 @@ function saveSalesCash()
   var scheduled_reset = $('#sales_cash_scheduled_reset').val();
   var scheduled_reset_monthly = $('#sales_cash_scheduled_reset_monthly').val();
   var scheduled_reset_day = $('#sales_cash_scheduled_reset_day').val();
-  var emails = $('#sales_cash_emails').val();
+  var emails = "";//$('#sales_cash_emails').val();
 
   $.ajax({
     url: '/save_sales_cash',
@@ -451,6 +451,7 @@ function closeSalesCash()
     error: function(response)
     {
       alert("Ocurrió un error al cerrar la caja.");
+      $('#salesCashCloseModal').modal('hide');
     },
     success: function(response)
     {
@@ -462,6 +463,7 @@ function closeSalesCash()
       {
         alert("Caja cerrada exitosamente.");
       }
+      $('#salesCashCloseModal').modal('hide');
       loadPayments();
     }
   });
@@ -544,5 +546,12 @@ $(function() {
   })
 
   loadPayments();
+
+  $('body').on('change', '#sales_cash_log_select', function(){
+    var old_href = $('#sales_cash_log_link').attr("href");
+    var new_href = old_href.split("=")[0];
+    new_href = new_href + "=" + $(this).val();
+    $("#sales_cash_log_link").attr("href", new_href);
+  });
 
 });

@@ -13,8 +13,7 @@
 				Fecha
 			</label>
 			<div class="col-md-7">
-				<% date_arr = @payment.payment_date.to_s.split("-") %>
-				<%= date_arr[2] + "/" + date_arr[1] + "/" + date_arr[0] %>
+				<%= @payment.payment_date.strftime('%d/%m/%Y %R') %>
 			</div>
 		</div>
 		<div class="row">

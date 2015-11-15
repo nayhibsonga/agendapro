@@ -1,3 +1,13 @@
+<% if current_user.company.company_setting.editable_payment_prices %>
+  <input type="hidden" id="editable_payment_prices" value="1" />
+<% else %>
+  <input type="hidden" id="editable_payment_prices" value="0" />
+<% end %>
+<% if current_user.company.company_setting.mandatory_mock_booking_info %>
+  <input type="hidden" id="mandatory_mock_booking_info" value="1" />
+<% else %>
+  <input type="hidden" id="mandatory_mock_booking_info" value="0" />
+<% end %>
 <div class="modal fade paymentModal" id="paymentModalIntro" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
   <div class="modal-dialog" style="width: auto;">
     <div class="modal-content">
@@ -28,12 +38,16 @@
               
               <div class="payment-form-div form-group">
                 <label for="payment_date" class="col-xs-3 control-label">Fecha</label>
-                <div class="col-xs-9">
-                  <input type="text" class="form-control" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                <div class="col-xs-5">
+                  <input type="text" class="form-control payment_date_ignore" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                </div>
+                <div class="col-xs-4">
+                <%= time_select 'payment_date', 'time', {minute_step: 1}, {:class => 'form-control date-select payment_date_ignore', required: true} %>
                 </div>
 
+              </div>
+
+              <div style="clear: both; margin-bottom: 8px;">
               </div>
 
               <div class="payment-form-div form-group has-feedback">
@@ -198,6 +212,16 @@
                   </div>
 
                   <div class="payment-form-div">
+                    <label for="service" class="col-xs-3 control-label">Categoría</label>
+                    <div class="col-xs-9">
+                      <select class="form-control" id="payment_not_booked_category" name="payment_not_booked_category">
+                        <option value=""></option>
+                      </select>
+                    </div>
+                    <div style="clear: both;"></div>
+                  </div>
+
+                  <div class="payment-form-div">
                     <label for="service" class="col-xs-3 control-label">Servicio</label>
                     <div class="col-xs-9">
                       <select class="form-control" id="payment_not_booked_service" name="payment_not_booked_service">
@@ -222,7 +246,11 @@
                     <div class="col-xs-9">
                       <div class="input-group">
                         <span class="input-group-addon">$</span>
-                        <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" />
+                        <% if current_user.company.company_setting.editable_payment_prices %>
+                          <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" />
+                        <% else %>
+                          <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" disabled />
+                        <% end %>
                       </div>
                     </div>
                     <div style="clear: both;"></div>
@@ -321,7 +349,11 @@
                     <div class="col-xs-9">
                       <div class="input-group">
                         <span class="input-group-addon">$</span>
-                        <input class="form-control" type="number" id="payment_product_price" name="payment_product_price" value="0" />
+                        <% if current_user.company.company_setting.editable_payment_prices %>
+                          <input class="form-control" type="number" id="payment_product_price" name="payment_product_price" value="0" />
+                        <% else %>
+                          <input class="form-control" type="number" id="payment_product_price" name="payment_product_price" value="0" disabled />
+                        <% end %>
                       </div>
                     </div>
                     <div style="clear: both;"></div>
@@ -958,7 +990,11 @@
                 <div class="col-xs-9">
                   <div class="input-group">
                     <span class="input-group-addon">$</span>
-                    <input class="form-control" type="number" id="internal_sale_price" name="internal_sale_price" value="0" />
+                    <% if current_user.company.company_setting.editable_payment_prices %>
+                      <input class="form-control" type="number" id="internal_sale_price" name="internal_sale_price" value="0" />
+                    <% else %>
+                      <input class="form-control" type="number" id="internal_sale_price" name="internal_sale_price" value="0" />
+                    <% end %>
                   </div>
                 </div>
                 <div style="clear: both;"></div>
