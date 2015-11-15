@@ -9,13 +9,14 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
+# It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 20151113163546) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -118,11 +119,11 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.integer  "service_promo_id"
     t.integer  "payment_id"
     t.float    "discount",               default: 0.0
-    t.boolean  "is_booked",              default: true
+    t.integer  "service_promo_id"
     t.integer  "reminder_group"
+    t.boolean  "is_booked",              default: true
     t.float    "list_price",             default: 0.0
     t.integer  "receipt_id"
     t.boolean  "payed_state",            default: false
@@ -292,12 +293,6 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.boolean  "booking_history",             default: true
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
-    t.boolean  "allows_online_payment",       default: false
-    t.string   "account_number",              default: ""
-    t.string   "company_rut",                 default: ""
-    t.string   "account_name",                default: ""
-    t.integer  "account_type",                default: 3
-    t.integer  "bank_id"
     t.boolean  "deal_activate",               default: false
     t.string   "deal_name",                   default: ""
     t.boolean  "deal_overcharge",             default: true
@@ -306,6 +301,12 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
+    t.boolean  "allows_online_payment",       default: false
+    t.string   "account_number",              default: ""
+    t.string   "company_rut",                 default: ""
+    t.string   "account_name",                default: ""
+    t.integer  "account_type",                default: 3
+    t.integer  "bank_id"
     t.boolean  "deal_required",               default: false,                 null: false
     t.boolean  "online_payment_capable",      default: false
     t.boolean  "allows_optimization",         default: true
@@ -317,9 +318,9 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.boolean  "can_edit",                    default: true
     t.boolean  "can_cancel",                  default: true
     t.boolean  "use_identification_number",   default: false
+    t.string   "preset_notes"
     t.boolean  "payment_client_required",     default: true
     t.boolean  "show_cashes",                 default: false
-    t.string   "preset_notes"
     t.boolean  "editable_payment_prices",     default: true
     t.boolean  "mandatory_mock_booking_info", default: false
   end
@@ -470,7 +471,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "date",                default: '2015-10-27 17:17:43'
+    t.datetime "date",                default: '2015-11-15 22:20:48'
   end
 
   create_table "last_minute_promos", force: true do |t|
@@ -829,8 +830,8 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "quantity",    default: 1,   null: false
     t.integer  "seller_id"
     t.integer  "seller_type"
-    t.integer  "receipt_id"
     t.float    "list_price",  default: 0.0
+    t.integer  "receipt_id"
   end
 
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
@@ -860,7 +861,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "company_id"
     t.float    "amount",        default: 0.0
     t.boolean  "payed",         default: false
-    t.datetime "payment_date",  default: '2015-11-10 14:59:37'
+    t.datetime "payment_date",  default: '2015-11-15 22:20:48'
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "discount",      default: 0.0
@@ -1208,7 +1209,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
-    t.datetime "date",          default: '2015-10-23 15:05:22'
+    t.datetime "date",          default: '2015-11-15 22:20:48'
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1228,7 +1229,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
-    t.datetime "date",                    default: '2015-10-23 13:42:39'
+    t.datetime "date",                    default: '2015-11-15 22:20:48'
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false
@@ -1369,7 +1370,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.boolean  "has_time_discount",        default: false
     t.boolean  "has_last_minute_discount", default: false
     t.boolean  "time_promo_active",        default: false
-    t.string   "time_promo_photo"
+    t.string   "time_promo_photo",         default: ""
     t.integer  "active_service_promo_id"
     t.boolean  "must_be_paid_online",      default: false
     t.text     "promo_description",        default: ""
@@ -1525,6 +1526,7 @@ ActiveRecord::Schema.define(version: 20151113163546) do
     t.string   "uid"
     t.boolean  "receives_offers",        default: true
     t.string   "mobile_token"
+    t.string   "api_token"
   end
 
   add_index "users", ["company_id"], name: "index_users_on_company_id", using: :btree

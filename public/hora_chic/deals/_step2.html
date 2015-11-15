@@ -1,0 +1,43 @@
+<div id="step2" class="row" ng-controller="FormController as fc" onload="fc.setUserInfo('dc')">
+  <div class="col-md-7">
+    <h3>Datos de Reserva</h3>
+    <form action="#">
+      <label for="name">Nombre</label>
+      <input type="text" id="name" class="form-control" ng-model="fc.user.name" required>
+      <div class="row">
+        <div class="col-md-6">
+          <label for="email">Email</label>
+          <input type="email" id="email" class="form-control" ng-model="fc.user.email" required>
+        </div>
+        <div class="col-md-6">
+          <label for="phone">Telefono</label>
+          <input type="tel" id="phone" class="form-control" ng-model="fc.user.phone" required>
+        </div>
+      </div>
+      <label for="notes">Comentarios</label>
+      <textarea name="notes" id="notes" ng-model="fc.user.notes" class="form-control" rows="6" required="required"></textarea>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" ng-value="fc.user.mailing_option">
+          Quiero recibir promociones a mi email
+        </label>
+      </div>
+    </form>
+  </div>
+
+  <div id="final-summary" class="col-md-5">
+    <h3>Resumen de tu Reserva</h3>
+    <div>
+      <strong>¿Qué estoy reservando?</strong>
+      <p>Alisado de keratina para pelo largo</p>
+      <strong>¿Dónde?</strong>
+      <p>Presidente Riesco 3160, Las Condes</p>
+      <strong>¿Cuándo?</strong>
+      <p>Viernes 11 de Septiembre a las 12:30 hrs</p>
+      <strong>Precios</strong>
+      <p>$20.000</p>
+      <strong>Precios en el local</strong>
+      <p class="last">$20.000</p>
+    </div>
+  </div>
+</div>

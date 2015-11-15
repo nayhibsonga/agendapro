@@ -1,0 +1,988 @@
+@include font-face('FontAwesome', 'FontAwesome-webfont', 'FontAwesome', 'serif');
+
+// Initialized from hora_chic_base.css.scss
+html, body, header, footer {
+  @include roboto-font(14px, normal);
+  @include font-smoothing;
+}
+
+html, body {
+  height: 100%;
+}
+
+#wrapper {
+  min-height: 100%;
+  position: relative;
+  padding-bottom: 135px; // Footer size + 10px
+}
+
+// Removes Bootstrap default styles
+*:focus{ outline: none !important; }
+
+// Remove IonIcons display block
+.icon:before{
+  display: inline !important;
+}
+
+.clear {
+  width: 100%;
+  margin: 15px 0;
+  display: inline-block;
+}
+
+a{
+  text-decoration: none;
+  color: $black;
+  &:hover { @extend a; }
+  &:focus { @extend a; }
+}
+
+.btn{
+  @include border-radius(0);
+}
+
+.btn-gray {
+  background-color: $light-gray;
+  color: white;
+  width: 140px;
+  padding: 10px 12px;
+}
+
+.btn-hora-chic {
+  background-color: $light-pink;
+  color: $white;
+  padding: 20px;
+  @include border-radius(0);
+  &:hover{
+    color: $white;
+    background-color: $lighter-pink;
+  }
+  &:focus{ color: $white; }
+  &.md{
+    padding: 10px 12px;
+    width: 140px;
+  }
+}
+
+.stop-scrolling {
+  overflow: hidden !important;
+}
+
+.hightlight {
+  background-color: #FCD5D7;
+}
+
+.logo-sm {
+  // @include logo;
+  background: url("hora_chic/logo/sm.png") no-repeat;
+  height: 26px;
+  width: 174px;
+  background-size: 120px;
+}
+
+.logo-md {
+  background: url("hora_chic/logo/md.png") no-repeat center;
+  height: 118px;
+  width: 410px;
+  // background-size: 120px;
+}
+
+.logo-agendapro {
+  background: url("hora_chic/logo/agendapro.png") no-repeat center;
+  height: 118px;
+  width: 410px;
+}
+
+.no-select {
+  @include no-select;
+}
+
+.currency-symbol {
+  @include currency-symbol;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 35% 0;
+}
+
+.loading {
+  @include loading(sm);
+}
+
+// Base Styles made for XS Breakpoint to Up
+#login {
+  @include roboto-font(14px, normal);
+  @include font-smoothing;
+  .modal-dialog {
+    width: 470px;
+    margin: 30px auto;
+    @include breakpoint(0, 470px) { width: 100%; }
+  }
+}
+
+header {
+  $header-height: 75px;
+  height: $header-height;
+  div { height: 100%; }
+  .contact, .options { display: none; }
+  .logo-container {
+    height: 100%;
+    div {
+      height: inherit;
+      @include logo {
+        height: inherit;
+        width: auto;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+#main {
+  position: relative;
+}
+
+.menu {
+  $menu-height: 75px;
+  position: absolute;
+  left: 10px;
+  top: 15px;
+  .wrapper {
+    height: $menu-height;
+    .content {
+      height: auto;
+      padding: 0;
+      z-index: 999;
+    }
+    button {
+      border: none;
+      background-color: transparent;
+      color: $light-pink;
+      font-size: 2em;
+    }
+  }
+
+  span.separator { margin: 0 10px; }
+
+  nav#services-list {
+    background-color: $white;
+    line-height: 30px;
+    border-right: 1px solid $black;
+    height: 100%;
+    span { display: none; }
+    h3 {
+      height: $menu-height;
+      background-color: $white;
+      padding: 11px;
+      @include logo {
+        width: auto;
+      }
+    }
+    a {
+      color: $dark-gray;
+      text-decoration: none;
+      display: inline-block;
+      height: 100%;
+      width: 100%;
+      padding: 8px 25px;
+      border-bottom: none;
+      &:hover {
+        background-color: $lighter-gray;
+      }
+    }
+    .deals {
+      color: $light-pink;
+      font-style: bold;
+    }
+    .service-link {
+      color: $black;
+      display: block;
+    }
+    .nav-account {
+      margin-top: 15%;
+      border-top: 1px solid black;
+      padding-top: 35px;
+      .add-company { color: $light-pink; }
+    }
+  }
+}
+
+.landing {
+  background: url($landing-image-xs) no-repeat;
+  background-size: cover;
+  background-position: 60%;
+  height: 525px;
+  .container {
+    height: 100%;
+    padding: 80px 0;
+    .title {
+      padding: 0;
+      h1 {
+        color: $white;
+        text-transform: uppercase;
+        font-size: 33px;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
+        @include breakpoint(460px) { font-size: 37px; }
+        @include breakpoint(555px) { font-size: 41px; }
+        @include breakpoint(615px) { font-size: 45px; }
+        @include breakpoint(690px) { font-size: 49px; }
+        @include font-smoothing(antialiased);
+        #typed {
+          color: $light-pink;
+          font-weight: 600;
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          vertical-align: bottom;
+          @include breakpoint(460px) { max-width: 240px; }
+          @include breakpoint(555px) { max-width: 305px; }
+          @include breakpoint(615px) { max-width: 345px; }
+          @include breakpoint(690px) { max-width: 400px; }
+          @include breakpoint("sm") { max-width: 360px; }
+          @include breakpoint("md") { max-width: 415px; }
+          @include breakpoint("lg") { max-width: 570px; }
+          @include breakpoint(1500px) { max-width: 580px; }
+        }
+        .typed-cursor{ @extend #typed; }
+      }
+    }
+
+  }
+}
+
+#search {
+  @extend .title;
+  @include font-smoothing(antialiased);
+  margin-top: 20px;
+  .geo-icon { display: none; }
+  .form-container {
+    padding: 30px 10px;
+  }
+  form {
+    $button-width: 70px;
+    $input-height: 55px;
+    .form-group { margin: 0 0 15px 0; }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    @include placeholder {
+      color: $lighter-gray;
+      font-weight: 300;
+    }
+    input {
+      @include border-radius(0px);
+      height: $input-height;
+      &[type='text']{
+        width: 100%;
+      }
+    }
+    button {
+      @include border-radius(0px);
+      height: $input-height;
+      border: 1px solid $light-pink;
+      background-color: $light-pink;
+      font-weight: 300;
+      width: $button-width;
+      color: $white;
+      vertical-align: top;
+      font-size: 35px;
+      .xs-size { display: inline; }
+      .md-size { display: none; }
+    }
+    #localization {
+      background: transparent;
+      color: $white;
+    }
+  }
+}
+
+footer {
+  background-color: $lighterx-gray;
+  left: 0;
+  bottom: 0;
+  position: absolute;
+  height: 125px;
+  width: 100%;
+  z-index: 1;
+  .container {
+    @include logo;
+    height: 100%;
+    .logo {
+      height: 100%;
+    }
+    .wrapper {
+      height: 125px;
+      font-size: 0;
+    }
+    a.social {
+      color: $dark-gray;
+      margin-bottom: 5px;
+      margin-top: 5px;
+      display: inherit;
+      padding-top: 34px;
+      i {
+        color: $lighter-pink;
+        vertical-align: middle;
+      }
+    }
+    p.direction{
+      i {
+        font-size: 3em;
+        color: $lighter-pink;
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+.deals-container {
+  %deal-padding {
+    padding: 0 10px;
+  }
+  .title {
+    h1::after{
+      content: ' ';
+      border-top: 6px solid $light-pink;
+      display: block;
+      width: 55px;
+      margin: 0 auto;
+      margin-top: 10px;
+    }
+  }
+  .wrapper{
+    @include flexbox-center;
+  }
+  .deal {
+    margin-top: 20px;
+    height: 350px;
+    width: 100%;
+    max-width: 370px;
+    font-weight: bold;
+    margin-right: 10px;
+    margin-left: 10px;
+    position: relative;
+    figure { height: 55%; }
+    figcaption {
+      height: 15%;
+      background-color: $darkest-gray;
+      color: $white;
+      line-height: 52px;
+      @extend %deal-padding;
+    }
+    .service-info {
+      height: 30%;
+      background-color: $lighterx-gray;
+      line-height: 104px;
+      .service-detail {
+        width: 70%;
+        float: left;
+        @extend %deal-padding;
+        &:after {
+          content: ' ';
+          border-right: 1px solid $dark-gray;
+          height: 80px;
+          float: right;
+          margin-top: 10px;
+        }
+      }
+      .service-price {
+        width: 30%;
+        float: right;
+        line-height: 30px;
+        text-align: center;
+        padding: 22px 12px 22px 0;
+        .normal-price {
+          text-decoration: line-through;
+          color: $light-gray;
+          font-size: 18px;
+          margin-bottom: 0;
+        }
+        .min-price {
+          color: $light-pink;
+          font-size: 24px;
+        }
+      }
+    }
+    .bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      transition: all 0.4s;
+      -webkit-transition: all 0.4s;
+      z-index: 1;
+      cursor: pointer;
+      &:hover {
+        opacity: 1;
+      }
+      .deal-text > img {
+        display: block;
+        margin: auto;
+        padding: 41% 0;
+      }
+    }
+
+  }
+  figure {
+    img{
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+}
+
+#newsletter {
+  background-color: $light-pink;
+  height: 200px;
+  margin-top: 30px;
+  form {
+    height: 100%;
+    line-height: 50px;
+    @include font-smoothing;
+    p {
+      color: $white;
+      font-size: 18px;
+    }
+    input {
+      background-color: transparent;
+      color: $white;
+    }
+    @include placeholder {
+      color: $white;
+      text-align: center;
+    }
+    button{
+      color: $light-pink;
+      width: 100%;
+    }
+  }
+}
+
+#results {
+  a{
+    text-decoration: none;
+    color: $black;
+    &:hover { color: $black; }
+  }
+
+  #search {
+    margin-top: 0;
+    .form-container { padding: 10px; }
+    .form-group { margin: 0; }
+    input {
+      height: 45px;
+      color: $black;
+    }
+    button {
+      height: 45px;
+      padding: 3px 16px;
+      width: 55px;
+    }
+  }
+
+  .change-location{
+    margin: 25px 0;
+    span { color: $light-pink; }
+  }
+
+  .places {
+    padding: 35px 0;
+    border-bottom: 1px solid $light-gray;
+    // margin-bottom: 25px;
+    .img-container {
+      margin-bottom: 20px;
+      img { width: 100%; }
+    }
+
+    .description-container {
+      margin-bottom: 20px;
+      h3 { margin-top: 0; }
+      p.address{
+        margin-bottom: 0;
+        span {
+          // Could be deleted upon
+          // geo icon set
+          color: $light-pink;
+          font-size: 20px;
+          vertical-align: middle;
+        }
+      }
+      p.detail{
+        border-top: 1px solid;
+        padding-top: 10px;
+      }
+    }
+
+    .services-container {
+      // margin-bottom: 20px;
+      .service {
+        padding: 10px;
+        border: 1px $light-gray solid;
+        margin-bottom: 5px;
+        overflow: hidden;
+        .time {
+          margin-left: 10px;
+          color: $lighter-gray;
+        }
+        .price { color: $light-pink; }
+      }
+      .view-more{
+        a {
+          @include border-radius(0);
+          background-color: $light-pink;
+          padding: 10px 20px;
+          color: $white;
+          &:hover { color: $white; }
+        }
+      }
+    }
+  }
+}
+
+#show {
+  .title {
+    h3 { margin-top: 0; }
+    p {
+      margin-bottom: 0;
+      span { color: $light-pink; }
+    }
+  }
+
+  #main-content {
+    .info {
+      border-bottom: 1px solid $black;
+      padding: 10px 0;
+      img {
+        width: 100%;
+        height: 120px;
+      }
+      .detail { margin: 15px 0; }
+      .time {
+        padding: 10px;
+        border: 1px solid black;
+        font-size: 13px;
+        text-align: left;
+        padding-left: 7%;
+        &.time::before {
+          content: "\f402";
+          position: absolute;
+          margin-left: -20px;
+          margin-top: 5px;
+          font-size: 20px;
+          // ionicons
+          font-family: "Ionicons";
+          speak: none;
+          font-style: normal;
+          font-weight: normal;
+          font-variant: normal;
+          text-transform: none;
+          text-rendering: auto;
+          line-height: 1;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale
+        }
+      }
+    }
+
+    .sub-menu {
+      padding: 10px;
+      border: 1px solid $black;
+      margin-top: 10px;
+      span {
+        width: 32%;
+        display: inline-block;
+        a{
+          text-decoration: none;
+          color: $black;
+          &.active {
+            color: $light-pink;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+
+    >button {
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .services {
+      margin-top: 10px;
+      >div {
+        padding: 10px;
+        background-color: $light-gray;
+        color: $white;
+        margin-bottom: 5px;
+      }
+      >a{
+        @extend div;
+        display: inline-block;
+        width: 100%;
+        color: $black;
+      }
+      .btn-service{
+        @extend div;
+        width: 100%;
+        color: $black;
+        padding: 10px;
+        margin-bottom: 5px;
+        background-color: $lighterx-gray;
+        text-align: left;
+        @include border-radius(0);
+      }
+    }
+  }
+
+  .categories {
+    margin-bottom: 5px;
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    .panel-heading {
+      color: $black;
+      background-color: $lighterx-gray;
+      text-align: left;
+      @include border-radius(0);
+    }
+    .panel-body {
+      border-top: none;
+    }
+    .currency-symbol {
+      @include currency-symbol(sm);
+    }
+  }
+}
+
+
+#schedule {
+  .modal-dialog {
+    width: 100%;
+    margin: 0;
+    max-width: 1150px;
+  }
+  .modal-content {
+    @include border-radius(0);
+  }
+  .modal-header {
+    padding: 0;
+    border-bottom: none;
+    background-color: #C2C0BC;
+    height: 40px;
+    color: white;
+    %step-number {
+      background-color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      color: #C2C0BC;
+    }
+
+    div.step-container {
+      width: 50%;
+      padding: 10px 20px;
+      left: 0;
+      position: absolute;
+      text-align: center;
+
+      &.last {
+        left: 50%;
+      }
+
+      span.hora{
+        margin-right: 30px;
+        &::before{
+          content: '1';
+          @extend %step-number;
+        }
+      }
+
+      span.datos{
+        @extend span.hora;
+        &::before {
+          content: '2';
+        }
+      }
+
+    }
+
+    .slider {
+      background-color: $light-pink;
+      position: absolute;
+      width: 31.4%;
+      height: 40px;
+      z-index: 0;
+      left: 0;
+      .start {
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        left: -14px;
+        top: 6px;
+        background-color: #C2C0BC;
+        transform: rotate(45deg);
+      }
+      .end {
+        @extend .start;
+        right: -14px;
+        left: initial;
+        background-color: $light-pink;
+      }
+    }
+  }
+  .modal-body {
+    clear: both;
+    padding: 30px;
+    #step2{
+      form{
+        .form-control{
+          border-radius: 0;
+          margin-bottom: 10px;
+        }
+      }
+      #final-summary{
+        >div {
+          border: 1px solid black;
+          padding:10px 20px;
+          line-height: 25px;
+          p{
+            border-bottom: 1px solid black;
+            padding-bottom: 10px;
+            &.last{
+              border-bottom: none;
+              padding-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  .modal-footer {
+    padding: 10px 30px;
+    border-top: none;
+  }
+}
+
+#step1 {
+
+  #datepicker {
+    width: 100%;
+    text-align: center;
+    margin: auto;
+
+    .ui-datepicker-calendar {
+      width: 100%;
+      th {
+        font-weight: 400;
+        padding: 5px;
+      }
+      td {
+        padding: 3px;
+      }
+      .ui-datepicker-current-day > a {
+        background-color: $light-pink;
+        color: $white;
+        border: 1px solid $light-pink;
+      }
+    }
+
+    .ui-datepicker-header {
+      padding: 0 5px;
+      margin-bottom: 10px;
+      width: 98%;
+      .ui-datepicker-title {
+        border-bottom: 1px solid black;
+        padding: 5px;
+        font-size: 1.2em;
+      }
+    }
+
+    .ui-state-default {
+        padding: 0;
+        border: 1px solid black;
+        width: 37px;
+        display: block;
+        height: 37px;
+        text-align: center;
+        line-height: 35px;
+        &:hover {
+          color: white;
+          background-color: $light-pink;
+        }
+    }
+
+    .ui-datepicker-unselectable {
+      color: $gray;
+      >.ui-state-default {
+        border: 1px solid $gray;
+        &:hover{
+          color: $gray;
+          background-color: $white;
+        }
+      }
+    }
+
+    %default-arrow {
+      font-size: 25px;
+      color: $gray;
+      cursor: pointer;
+      &::before {
+        font-family: 'FontAwesome';
+      }
+    }
+
+    .ui-datepicker-prev {
+      float: left;
+      @extend %default-arrow;
+      &::before {
+        content: "\f104";
+      }
+    }
+
+    .ui-datepicker-next {
+      float: right;
+      @extend %default-arrow;
+      &::before {
+        content: "\f105";
+      }
+    }
+
+    .deal-day {
+      a {
+        position: relative;
+        &:after {
+          content: '';
+          background: url('hora_chic/deal.png') no-repeat center;
+          width: 20px;
+          height: 20px;
+          top: 0;
+          right: 0;
+          position: absolute;
+        }
+      }
+    }
+  }
+
+  #hours .row {
+    margin-bottom: 10px;
+    > div { @extend .row; }
+    .hour-container {
+      padding: 0 3px;
+      .available {
+        padding: 7px 10px;
+        border: 1px solid black;
+        &:hover {
+          cursor: pointer;
+          background-color: $light-pink;
+          color: white;
+          &:after {
+            color: white;
+          }
+        }
+
+        &::after {
+          content: "\f105";
+          font-family: 'FontAwesome';
+          float: right;
+          font-size: 25px;
+          color: $gray;
+          cursor: pointer;
+          line-height: 20px;
+        }
+      }
+    }
+    .empty-hours {
+      padding: 10px;
+      margin-bottom: 10px;
+      > span {
+        color: gray;
+        font-style: italic;
+      }
+    }
+  }
+
+  #detail-summary {
+    .detail-container{
+      padding: 0 12px;
+      border: 1px solid;
+      > div:first-child {
+        padding: 8px 12px;
+        border-bottom: 1px solid
+      }
+
+      .reservation-detail {
+        .discount {
+          text-decoration: line-through;
+          margin-right: 5px;
+        }
+        .price {
+          color: $light-pink;
+        }
+      }
+    }
+  }
+
+
+
+  .reservation-detail {
+    line-height: 25px;
+    padding: 8px 12px;
+    border-bottom: 1px solid;
+    span {
+      font-weight: 300;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .legend {
+    margin-top: 10px;
+    padding: 15px 0;
+    border-top: 1px solid;
+    font-weight: 300;
+  }
+
+  .date-square {
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    vertical-align: bottom;
+    border: 1px solid;
+    margin-right: 5px;
+
+    &::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background-color: $light-pink;
+      position: absolute;
+      margin-left: 10px;
+      margin-top: 0px;
+    }
+
+    &::after {
+      content: '';
+      width: 11px;
+      height: 6px;
+      background-color: white;
+      position: absolute;
+      margin-top: 3px;
+      margin-left: 6px;
+      transform: rotate(45deg);
+    }
+  }
+}
+
+#step2 {
+
+}

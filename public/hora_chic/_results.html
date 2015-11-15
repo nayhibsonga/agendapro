@@ -1,0 +1,80 @@
+<div id="results" class="container">
+  <!-- SEARCH & MAP -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="hidden-md hidden-lg">
+        <div ng-include="tc.templates.search"></div>
+      </div>
+      <div id="map" class="hidden-xs hidden-sm">
+        <div ng-include="tc.templates.map"></div>
+      </div>
+    </div>
+  </div>
+  <!-- END SEARCH & MAP -->
+
+  <!-- CHANGE LOCATION -->
+  <section class="change-location text-center hidden-xs hidden-sm">
+    <p>Elige una ubicación nueva para encontrar las promociones más cercanas. <span>Cambiar Ubicación</span></p>
+  </section>
+  <!-- END CHANGE LOCATION -->
+
+  <div class="loading" ng-show="rc.searchResults.length === 0 && rc.error === ''"></div>
+
+  <div class="error" ng-show="rc.error !== ''" style="width: 100%; text-align: center;">
+    <div class="clear"></div>
+    <span style="color: #F26062; font-style: italic;">{{ rc.error }}</span>
+    <div class="clear"></div>
+  </div>
+
+  <!-- SERVICES LIST -->
+  <div id="company-{{ company.id }}" class="places row" ng-repeat="company in rc.searchResults">
+    <!-- IMAGE -->
+    <div class="col-md-4 img-container">
+      <figure>
+        <img ng-src="{{ company.photo }}" title="{{ company.name }}" alt="{{ company.name }}">
+      </figure>
+    </div>
+    <!-- END IMAGE -->
+
+    <!-- DESCRIPTION -->
+    <div class="col-md-4 description-container">
+      <h3>
+        <a ng-href="{{ rc.showUrl + company.id }}">
+          <img src="" ng-src="{{ company.logo }}" alt="" style="width: 65px; height: 65px;">
+          {{ company.name }}
+        </a>
+      </h3>
+      <p class="address"><span><i class="icon ion-ios-location"></i></span> {{ company.address }}, {{ company.district }}</p>
+      <!-- <p>&#9734; &#9734; &#9734; &#9734; &#9734;</p> -->
+      <p class="detail">{{ company.description || 'Sin descripción' }}</p>
+    </div>
+    <!-- END DESCRIPTION -->
+
+    <!-- SERVICES -->
+    <div class="col-md-4 services-container">
+
+      <div class="service" ng-repeat="service in company.featured_services">
+        <span>{{ service.name }}</span>
+        <span class="time"><i class="icon ion-ios-clock-outline"></i>  {{ service.duration | inHours }}</span>
+        <span class="pull-right price">{{ service.price | currency | clp }}</span>
+      </div>
+      <div class="pull-right view-more">
+        <a class="btn btn-down" ng-href="{{ rc.showUrl + company.id }}">Ver más servicios
+        </a>
+      </div>
+    </div>
+    <!-- END SERVICES -->
+  </div>
+  <!-- END SERVICES LIST -->
+
+</div>
+
+<style>
+  .stars-abs {
+    position: absolute;
+    top: -54px;
+    right: 20px;
+    font-size: 25px;
+    color: white;
+  }
+</style>

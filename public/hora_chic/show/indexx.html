@@ -1,0 +1,222 @@
+<div ng-hide="sc.companyLoaded">
+  <div class="clear"></div>
+  <div class="loading"></div>
+  <div class="clear"></div>
+</div>
+
+
+<div id="show" class="container" ng-show="sc.companyLoaded">
+
+  <div class="row">
+    <div class="col-lg-12 title">
+      <img src="" ng-src="{{ sc.company.logo }}" alt="" style="width: 65px; height: 65px; float: left;">
+      <div style="text-align: left; height: 65px; padding: 5px; 15px; float: left;">
+        <h3>{{ sc.company.name }}</h3>
+        <p><span><i class="icon ion-ios-location"></i></span> {{ sc.company.address }}, {{ sc.company.district }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content" class="col-xs-12 col-md-8 pull-left">
+      <div class="info">
+        <figure>
+          <img ng-src="{{ sc.company.photo }}" alt="{{ sc.company.name }}" title="{{ sc.company.name }}">
+        </figure>
+
+        <div class="description">
+          <section class="detail">
+            <p>{{ sc.company.description ||'Sin descripción' }}</p>
+          </section>
+
+          <section class="time">
+            <span ng-repeat="locTime in sc.company.location_times">
+              <strong>{{ locTime.short_day }}:</strong>
+              {{ locTime.open }} - {{ locTime.close }}
+            </span> &nbsp;&nbsp;
+          </section>
+        </div>
+
+      </div>
+
+      <div class="sub-menu text-center">
+         <span><a href="#" class="active">Resumen</a></span>
+         <span><a href="#">Servicios</a></span>
+         <span ng-show="sc.showComments"><a href="#">Comentarios</a></span>
+      </div>
+
+      <button class="btn btn-down btn-lg btn-hora-chic hidden-md hidden-lg" ng-disabled="sc.servicesList.length === 0" ng-click="sc.schedule();">Agendar</button>
+
+      <div class="services">
+        <div>Categorías</div>
+
+        <ng-include src="sc.tmpl.categories"></ng-include>
+
+      </div>
+
+      <div class="clear"></div>
+
+      <ng-include src="sc.tmpl.comments"></ng-include>
+
+    </div>
+    <!-- END MAIN CONTENT -->
+
+
+    <!-- SIDE CONTENT -->
+    <div id="side-content" class="hidden-xs hidden-sm col-md-4 pull-right">
+
+      <div id="evaluation" class="text-center" ng-show="sc.showComments">
+        <div class="calification">
+          <span class="number">5</span>
+          <span class="stars"><span>☆☆☆☆☆</span> <br> 150 opiniones</span>
+        </div>
+        <div class="detailed">
+          <span>Calidad <br> <span>☆☆☆☆☆</span></span>
+          <span>Estilo <br> <span>☆☆☆☆☆</span></span>
+          <span>Precio <br> <span>☆☆☆☆☆</span></span>
+        </div>
+      </div>
+
+      <div id="map">
+
+        <ui-gmap-google-map center="sc.map.center" zoom="sc.map.zoom" options="options">
+          <ui-gmap-marker idkey="sc.map.marker.id" coords="sc.map.marker.coords" options="{ icon: 'assets/hora_chic/maps/pin.png' }"/>
+        </ui-gmap-google-map>
+
+      </div>
+
+      <div id="summary-md">
+
+        <button class="btn btn-down btn-lg btn-hora-chic" ng-disabled="sc.servicesList.length === 0" ng-click="sc.schedule();">
+          Agendar
+        </button>
+
+        <ng-include src="sc.tmpl.summary"></ng-include>
+
+        <div class="clear" ng-hide="sc.total.price === 0"></div>
+
+        <div class="text-center total" ng-hide="sc.total.price === 0">
+          <p>Total: <span class="price">{{ sc.total.price | currency | clp }}</span> <span class="separator">|</span> <span>{{ sc.total.duration | inHours }}</span></p>
+        </div>
+      </div>
+    </div>
+    <!-- END SIDE CONTENT -->
+
+    <div id="summary-xs" class="hidden-md hidden-lg" style="height: auto; width: 11%; position: fixed; bottom: 0; right: 0; color: white; z-index: 2; max-height: 40%;">
+      <div id="summary-button" class="small-button" ng-click="sc.mobileSummary()" >
+        <span style="font-size: 18px;">{{ sc.servicesList.length }} <i class="fa fa-calendar"></i></span>
+      </div>
+      <div id="summary-detail-xs">
+        <div style="height: 100%;">
+          <div ng-repeat="selected in sc.servicesList track by $index">
+            <div style="display: inline-block; width: 65%; text-align: right;">
+              <div class="detail-name">
+                {{ selected.name }}
+              </div>
+              <div class="detail-time-price">
+                <span>{{ selected.duration | inHours }}</span>
+                <span>{{ selected.price | currency | clp }} </span>
+              </div>
+            </div>
+
+            <div style="display: inline-block; line-height: 40px; height: 40px; vertical-align: top; padding: 0 10px;">
+              <i class="fa fa-pencil" style="font-size: 25px; padding: 0 15px; cursor: pointer;"></i>
+              <i class="fa fa-trash-o" ng-click="sc.removeService($index);" style="font-size: 25px; padding: 0 15px; cursor: pointer;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <ng-include src="sc.tmpl.schedule"></ng-include>
+
+</div>
+
+
+<style>
+
+  #summary-button {
+    border-radius: 100%;
+    background-color: #F26062;
+    height: 65px;
+    width: 65px;
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    text-align: center;
+    padding-top: 20px;
+    clear: both;
+    border: 1px solid #D94449;
+  }
+
+  #summary-button:active {
+    background-color: #fa878b;
+  }
+
+  #summary-button.pressed {
+    margin-bottom: -5px;
+  }
+
+  #summary-detail-xs {
+    width: 100%;
+    height: 0;
+    background-color: rgb(242, 96, 98);
+    bottom: 0;
+    clear: both;
+    float: left;
+  }
+
+  .active {
+    height: auto !important;
+  }
+
+  #summary-detail-xs .detail-time-price{
+    padding: 0 10px;
+  }
+
+  #summary-detail-xs > div {
+    padding: 20px 10px;
+  }
+
+  .category .service-detail:hover{
+    border: 2px solid #F26062;
+    margin-bottom: 0 !important; /* Remove important in stylesheet */
+  }
+
+  .added-service.ng-enter,
+  .added-service.ng-leave,
+  .added-service.ng-move {
+    -webkit-transition: 0.4s linear all;
+    -moz-transition: 0.4s linear all;
+    -o-transition: 0.4s linear all;
+    transition: 0.4s linear all;
+    position:relative;
+  }
+
+  .added-service.ng-enter {
+    opacity:0;
+  }
+  .added-service.ng-enter.added-service.ng-enter-active {
+    opacity:1;
+  }
+
+  .added-service.ng-leave {
+    opacity:1;
+  }
+  .added-service.ng-leave.added-service.ng-leave-active {
+    opacity:0;
+  }
+
+  .added-service.ng-move {
+    opacity:0.5;
+  }
+  .added-service.ng-move.added-service.ng-move-active {
+    opacity:1;
+  }
+
+</style>
