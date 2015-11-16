@@ -319,7 +319,7 @@
           </div>
           <div class="modal-footer">
             <a class="btn btn-default" data-dismiss="modal">Cerrar</a>
-            <%= link_to "Imprimir Horario", service_providers_path, id: "printingButton", class: "btn btn-green", disabled: true %>
+            <%= link_to "Agregar datos", select_plan_path, id: "billingInfoBtn", class: "btn btn-green", disabled: true %>
           </div>
         </div>
       </div>
@@ -335,122 +335,11 @@
               <h4 class="modal-title" id="billingInfoLabel">Datos de facturación</h4>
             </div>
             <div class="modal-body">
-              
-              <div class="col-md-12">
-                <h3>Datos de Facturación</h3>
-                <%= form_for @billing_info, html: {class: "form-horizontal" } do |f| %>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group has-feedback">
-                        <div class="col-md-9 col-md-offset-3">
-                          <div class="checkbox">
-                            <label>
-                              <%= f.check_box :active %> Solicitar Factura
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-group has-feedback">
-                        <%= f.label :rut, "RUT Empresa:", class: "col-md-3 control-label" %>
-                        <div class="col-md-9">
-                          <%= f.text_field :rut, required: true, class: "form-control" %>
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
-                        </div>
-                      </div>
-                      <div class="form-group has-feedback">
-                        <%= f.label :name, "Razón Social:", class: "col-md-3 control-label" %>
-                        <div class="col-md-9">
-                          <%= f.text_field :name, required: true, class: "form-control" %>
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
-                        </div>
-                      </div>
-                      <div class="form-group has-feedback">
-                        <%= f.label :sector, "Giro:", class: "col-md-3 control-label" %>
-                        <div class="col-md-9">
-                          <%= f.text_field :sector, required: true, class: "form-control" %>
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
-                        </div>
-                      </div>
-                      <div class="form-group has-feedback">
-                        <%= f.label :contact, "Nombre Responsable:", class: "col-md-3 control-label" %>
-                        <div class="col-md-9">
-                          <%= f.text_field :contact, required: true, class: "form-control" %>
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
-                        </div>
-                      </div>
-                      <div class="form-group has-feedback">
-                        <%= f.label :address, "Dirección Completa:", class: "col-md-3 control-label" %>
-                        <div class="col-md-9">
-                          <%= f.text_field :address, required: true, class: "form-control" %>
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
-                        </div>
-                      </div>
-                      <div class="form-group has-feedback">
-                        <%= f.label :phone, "Teléfono:", class: "col-md-3 control-label" %>
-                        <div class="col-md-9">
-                          <%= f.text_field :phone, required: true, class: "form-control" %>
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
-                        </div>
-                      </div>
-                      <div class="form-group has-feedback">
-                        <%= f.label :email, "E-Mail:", class: "col-md-3 control-label" %>
-                        <div class="col-md-9">
-                          <%= f.text_field :email, required: true, class: "form-control" %>
-                          <span class="help-block"></span>
-                          <span class="form-control-feedback"></span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group has-feedback">
-                        <div class="col-md-12">
-                          <div class="checkbox">
-                            <label>
-                              <%= f.check_box :accept, required: true %> Autorización voluntaria de envío de DTEs por Email
-                            </label>
-                            <span class="help-block"></span>
-                            <span class="help-block">Acepto el envío electrónico de factura o boleta por mail a: <%= if @billing_info.email then @billing_info.email else "E-MAIL" end %></span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="well well-scrollable">
-                        <p class="text-justify">
-                          Yo, <mark class="text-uppercase"><%= if @billing_info.contact then @billing_info.contact else "NOMBRE RESPONSABLE" end %></mark>, con domicilio en <mark class="text-uppercase"><%= if @billing_info.address then @billing_info.address else "DIRECCIÓN" end %></mark>, <%= @company.country.name %>, en mi calidad de receptor manual de documentos electrónicos, de conformidad con la Resolución Exenta No. 11/ de fecha 14 de febrero de 2003 del Servicio de Impuestos Internos (agregar link a la información) , que estableció el procedimiento para que contribuyentes autorizados para emitir documentos electrónicos puedan también enviarlos por estos medios a receptores manuales, declaro lo siguiente:
-                        </p>
-                        <p class="text-justify">
-                          Por el presente instrumento autorizo a la empresa <mark class="text-uppercase">GUNEI INVESTMENT SPA</mark>, RUT 76.233.336-8, para que la factura correspondiente al uso de la plataforma web AgendaPro, me sea entregada solamente por un medio electrónico, mediante envío a la dirección de e-mail <mark class="text-uppercase"><%= if @billing_info.email then @billing_info.email else "E-MAIL" end %>.</mark>
-                        </p>
-                        <p class="text-justify">
-                          Me comprometo a cumplir las siguientes condiciones, en relación a los documentos tributarios, en caso de requerirlo para respaldar la información contable:
-                        </p>
-                        <ul>
-                          <li>Imprimir los documentos recibidos en forma electrónica, para cada período tributario, en forma inmediata a su recepción desde el emisor.</li>
-                          <li>Imprimir el documento en el tamaño y forma que fue generado.</li>
-                          <li>Utilizar papel blanco tipo original de tamaño mínimo 21,5 cms. x 14 cms. (1/2 carta) y de tamaño máximo 21,5 x 33 cms. (oficio).</li>
-                          <li>Imprimir en una calidad que asegure la permanencia de la legibilidad del documento durante un periodo mínimo de seis años, conforme lo establece la legislación vigente sobre la materia. Esta impresión se hará hecha usando impresión láser o de inyección de tinta, excepto que se establezca una autorización o norma distinta al respecto.</li>
-                        </ul>
-                        <p class="text-justify">Nota: La factura se generará automáticamente al confirmarse el pago y los datos de facturación. Si no ingresas información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</p>
-                      </div>
-                      <div class="form-group">
-                        <div class="col-md-12">
-                          <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-
+              <p class="justified">¡No has ingresado tus datos de facturación en AgendaPro! Si no eres el(la) administrador(a), ponte en contacto con él(ella) para que lo haga a la brevedad.</p>
+              <p class="justified">Haz click en el botón abajo para ir a la página donde podrás ingresar los datos. Si tienes alguna duda respecto a los datos o a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un e-mail a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir.</p>
             </div>
             <div class="modal-footer">
               <a class="btn btn-default" data-dismiss="modal">Cerrar</a>
-              <%= link_to "Imprimir Horario", service_providers_path, id: "printingButton", class: "btn btn-green", disabled: true %>
             </div>
           </div>
         </div>

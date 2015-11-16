@@ -134,6 +134,7 @@ class Ability
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
         can :select_plan, Plan
+        can :billing_wire_transfer_form
 
         can :add_company, Company
 

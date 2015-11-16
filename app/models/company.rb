@@ -42,6 +42,7 @@ class Company < ActiveRecord::Base
 	has_many :product_brands, dependent: :destroy
 	has_many :product_displays, dependent: :destroy
 	has_many :product_categories, dependent: :destroy
+	has_many :billing_wire_transfers
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 

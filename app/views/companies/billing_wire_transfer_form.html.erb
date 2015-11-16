@@ -1,0 +1,14 @@
+<%= form_for @billing_wire_transfer, :html => {:class => 'company-form', :id => 'billing-wire-transfer-form'} do |f| %>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="form-group has-feedback">
+                <%= f.label :name, 'Nombre' %>
+                <%= f.text_field :name, :autofocus => true, :class => 'form-control', :placeholder => 'Nombre Compañía (requerido)' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+            </div>
+		</div>
+	</div>
+	
+<% end %>

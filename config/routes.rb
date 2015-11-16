@@ -212,6 +212,7 @@
     post '/companies/update_company', :to => 'companies#update_company'
     post '/companies/deactivate_company', :to => 'companies#deactivate_company'
     post '/companies/get_monthly_bookings', :to => 'companies#get_monthly_bookings'
+    get '/billing_wire_transfer', :to => 'companies#billing_wire_transfer_form'
 
     # Search
     get "searchs/index"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151113122207) do
+ActiveRecord::Schema.define(version: 20151116150720) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,19 @@ ActiveRecord::Schema.define(version: 20151113122207) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "transaction_type_id"
+  end
+
+  create_table "billing_wire_transfers", force: true do |t|
+    t.datetime "payment_date",   default: '2015-11-16 15:12:16'
+    t.float    "amount",         default: 0.0
+    t.string   "receipt_number", default: ""
+    t.string   "account_name",   default: ""
+    t.string   "account_bank",   default: ""
+    t.string   "account_number", default: ""
+    t.boolean  "approved",       default: false
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "booking_histories", force: true do |t|
