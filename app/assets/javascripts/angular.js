@@ -1,5 +1,5 @@
 //= require ./angular/libs/javascripts/jquery-1.11.3.min
-//= require ./angular/libs/javascripts/angular.min
+//= require ./angular/libs/javascripts/angular
 //= require ./angular/libs/javascripts/angular-resource.min
 //= require ./angular/libs/javascripts/angular-route.min
 //= require ./angular/libs/javascripts/angular-cookies.min

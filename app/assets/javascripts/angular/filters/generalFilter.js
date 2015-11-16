@@ -85,6 +85,7 @@
             return $sce.trustAsHtml(html);
         }
     }
+    sanitize.$inject = ["$sce"];
 
     function discountFormat() {
         return discountFormatFilter;
