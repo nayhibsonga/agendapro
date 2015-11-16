@@ -10,7 +10,7 @@
 //= require angular/libs/javascripts/google-maps/ngAutocomplete
 //= require angular/libs/javascripts/jquery-ui.min
 //= require app
-//= require_tree angular
+//= require_tree ./angular
 
 // Re organize Tmpls on complete App separation
 
