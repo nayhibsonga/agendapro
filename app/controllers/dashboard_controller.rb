@@ -18,6 +18,17 @@ class DashboardController < ApplicationController
       end
 
       # Datos estaticos
+      @billing_info_missing = false
+      if current_user.company.payment_status != PaymentStatus.find_by_name("Trial") && current_user.role_id != Role.find_by_name("Super Admin").id
+        @billing_info_missing = true if BillingInfo.where(company_id: current_user.company_id).count == 0
+        if !@billing_info_missing
+          @billing_info = BillingInfo.find_by(company_id: current_user.company_id)
+          if @billing_info.name.blank? || @billing_info.rut.blank? || @billing_info.address.blank? || @billing_info.sector.blank? || @billing_info.email.blank? || @billing_info.phone.blank?
+            @billing_info_missing = true
+          end
+        end
+      end
+
       @due_payment = true if Company.find(current_user.company_id).payment_status == PaymentStatus.find_by_name("Emitido") unless current_user.role_id == Role.find_by_name("Super Admin").id
 
       @locations = Location.where(company_id: current_user.company_id).accessible_by(current_ability).order(:order, :name)

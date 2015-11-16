@@ -7,6 +7,7 @@ class QuickAddController < ApplicationController
 	def quick_add_filter
 		if current_user && (current_user.role_id != Role.find_by_name("Super Admin").id) && current_user.company_id
 			@company = Company.find(current_user.company_id)
+
 			if @company.economic_sectors.count == 0
 				return
 			elsif @company.locations.count == 0
@@ -51,6 +52,9 @@ class QuickAddController < ApplicationController
 		if @referer == "horachic"
 			@company_setting.before_booking = 2
 			@company_setting.after_booking = 2
+			if @company.description.nil? || @company.description == "" || @company.logo.nil?
+				params[:step] = 0
+			end
 		end
 
 		@company_setting.save

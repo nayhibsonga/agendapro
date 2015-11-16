@@ -331,7 +331,7 @@
     <div class="main">
       <%= yield %>
       <%= yield :calendar %>
-      <%= content_tag "div", id: "payment_data", data: { due_payment: @due_payment } do %>
+      <%= content_tag "div", id: "payment_data", data: { due_payment: @due_payment, billing_info_missing: @billing_info_missing } do %>
       <% end %>
     </div>
     <!-- end: Content -->
@@ -346,8 +346,18 @@
     <%= yield :scripts %>
     <script type="text/javascript">
       $(document).ready(function(){
+
+        /*
+        * Check for due first, then for billing_info.
+        */
         if ($('#payment_data').data('due-payment') == true) {
           $('#paymentModal').modal('show');
+        }
+        else if($('#payment_data').data('billing-info-missing') == true)
+        {
+          /*
+          * Launch billing_info reminder.
+          */
         }
 
         $('#provider_date').datepicker({

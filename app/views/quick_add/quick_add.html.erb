@@ -56,7 +56,7 @@
   <%= javascript_include_tag "validations/admin/quick-add" %>
 <% end %>
 
-<div id="quick_add_step7" class="container-fluid background-start content-fill below-1 below-2 below-3 below-4"  <%= 'style="display: none;" disabled'.html_safe if @company.service_providers.where(active: true).count < 1 %>>
+<div id="quick_add_step7" class="container-fluid background-start content-fill below-1 below-2 below-3 below-4"  <%= 'style="display: none;" disabled'.html_safe if @company.service_providers.where(active: true).count < 1 || params[:step].nil? || params[:step] < 7 %>>
   <div class="row">
     <div class="col-md-12 content-top">
       <div class="pull-center">
