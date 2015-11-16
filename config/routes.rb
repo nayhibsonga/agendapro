@@ -544,6 +544,8 @@
       namespace :v1 do
         get 'companies_preview', to: 'companies#preview'
 
+        get 'countries/:id', to: 'countries#show'
+
         get 'promotions', to: 'promotions#index'
         get 'promotions/index/preview', to: 'promotions#preview'
         get 'promotions/:id', to: 'promotions#show'
