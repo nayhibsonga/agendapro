@@ -1,3 +1,7 @@
+@import 'frontend/variables';
+@import 'frontend/mixins';
+@import 'frontend/transitions';
+
 @include font-face('FontAwesome', 'FontAwesome-webfont', 'FontAwesome', 'serif');
 
 // Initialized from hora_chic_base.css.scss
