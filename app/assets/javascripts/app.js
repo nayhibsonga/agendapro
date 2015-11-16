@@ -17,6 +17,7 @@
     .run(globalVariables);
 
   config.$inject = ['$routeProvider', 'uiGmapGoogleMapApiProvider','$locationProvider', '$authProvider'];
+  globalVariables.$inject = ['$rootScope', 'Translator'];
 
   function config($routeProvider, GoogleMapApiProvider, $locationProvider, $authProvider) {
     var $namespace = '/hora_chic';
