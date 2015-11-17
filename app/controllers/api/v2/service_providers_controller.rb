@@ -363,7 +363,7 @@ module Api
 				# Variable Data
 				day = wdate.cwday
 				@available_days[day - 1] = { date: wdate, available: false }
-				ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
+				ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(wdate) }
 				location_times = @location.location_times.where(day_id: day).order(:open)
 
 				if location_times.length > 0
@@ -392,8 +392,8 @@ module Api
 						end_block = (next_open_hour < 10 ? '0' : '') + next_open_hour.to_s + ':' + (next_open_min < 10 ? '0' : '') + next_open_min.to_s
 
 
-						start_time_block = DateTime.new(@date.year, @date.mon, @date.mday, open_hour, open_min)
-						end_time_block = DateTime.new(@date.year, @date.mon, @date.mday, next_open_hour, next_open_min)
+						start_time_block = DateTime.new(wdate.year, wdate.mon, wdate.mday, open_hour, open_min)
+						end_time_block = DateTime.new(wdate.year, wdate.mon, wdate.mday, next_open_hour, next_open_min)
 						now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 						before_now = start_time_block - company_setting.before_booking / 24.0
 						after_now = now + company_setting.after_booking * 30
@@ -417,7 +417,7 @@ module Api
 						      status = 'past'
 						    else
 						      status = 'occupied'
-						      Booking.where(:service_provider_id => provider.id, :start => @date.to_time.beginning_of_day..@date.to_time.end_of_day).each do |provider_booking|
+						      Booking.where(:service_provider_id => provider.id, :start => wdate.to_time.beginning_of_day..wdate.to_time.end_of_day).each do |provider_booking|
 						        unless provider_booking.status_id == cancelled_id
 						          if (provider_booking.start.to_datetime - end_time_block) * (start_time_block - provider_booking.end.to_datetime) > 0
 						            if !@service.group_service || @service.id != provider_booking.service_id
@@ -438,7 +438,7 @@ module Api
 						          end
 						          used_resource = 0
 						          group_services = []
-						          @location.bookings.where(:start => @date.to_time.beginning_of_day..@date.to_time.end_of_day).each do |location_booking|
+						          @location.bookings.where(:start => wdate.to_time.beginning_of_day..wdate.to_time.end_of_day).each do |location_booking|
 						            if location_booking.status_id != cancelled_id && (location_booking.start.to_datetime - end_time_block) * (start_time_block - location_booking.end.to_datetime) > 0
 						              if location_booking.service.resources.include?(resource)
 						                if !location_booking.service.group_service
@@ -481,7 +481,7 @@ module Api
 
 						block_hour = Hash.new
 
-						block_hour[:date] = @date
+						block_hour[:date] = wdate
 						block_hour[:hour] = hour
 						block_hour[:service_provider_id] = available_provider
 
@@ -574,8 +574,8 @@ module Api
 						end_block = (next_open_hour < 10 ? '0' : '') + next_open_hour.to_s + ':' + (next_open_min < 10 ? '0' : '') + next_open_min.to_s
 
 
-						start_time_block = DateTime.new(@date.year, @date.mon, @date.mday, open_hour, open_min)
-						end_time_block = DateTime.new(@date.year, @date.mon, @date.mday, next_open_hour, next_open_min)
+						start_time_block = DateTime.new(wdate.year, wdate.mon, wdate.mday, open_hour, open_min)
+						end_time_block = DateTime.new(wdate.year, wdate.mon, wdate.mday, next_open_hour, next_open_min)
 						now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 						before_now = start_time_block - company_setting.before_booking / 24.0
 						after_now = now + company_setting.after_booking * 30
@@ -587,7 +587,7 @@ module Api
 						    status = 'past'
 						  else
 						    status = 'occupied'
-						    Booking.where(:service_provider_id => provider.id, :start => @date.to_time.beginning_of_day..@date.to_time.end_of_day).each do |provider_booking|
+						    Booking.where(:service_provider_id => provider.id, :start => wdate.to_time.beginning_of_day..wdate.to_time.end_of_day).each do |provider_booking|
 						      unless provider_booking.status_id == cancelled_id
 						        if (provider_booking.start.to_datetime - end_time_block) * (start_time_block - provider_booking.end.to_datetime) > 0
 						          if !@service.group_service || @service.id != provider_booking.service_id
@@ -608,7 +608,7 @@ module Api
 						        end
 						        used_resource = 0
 						        group_services = []
-						        @location.bookings.where(:start => @date.to_time.beginning_of_day..@date.to_time.end_of_day).each do |location_booking|
+						        @location.bookings.where(:start => wdate.to_time.beginning_of_day..wdate.to_time.end_of_day).each do |location_booking|
 						          if location_booking.status_id != cancelled_id && (location_booking.start.to_datetime - end_time_block) * (start_time_block - location_booking.end.to_datetime) > 0
 						            if location_booking.service.resources.include?(resource)
 						              if !location_booking.service.group_service
@@ -650,7 +650,7 @@ module Api
 
 						block_hour = Hash.new
 
-						block_hour[:date] = @date
+						block_hour[:date] = wdate
 						block_hour[:hour] = hour
 						block_hour[:service_provider_id] = available_provider
 
