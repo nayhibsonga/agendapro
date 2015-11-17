@@ -149,6 +149,8 @@ class Company < ActiveRecord::Base
 		end
 	end
 
+
+	#Change
 	def self.end_trial
 		month_days = Time.now.days_in_month
 		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where('created_at <= ?', 1.months.ago).each do |company|

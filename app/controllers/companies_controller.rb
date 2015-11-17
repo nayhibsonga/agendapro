@@ -1001,6 +1001,29 @@ class CompaniesController < ApplicationController
 		render :json => @cashier
 	end
 
+	def billing_wire_transfer_form
+		
+		@billing_wire_transfer = BillingWireTransfer.new
+
+		#Check for latest billing_wire_transfer to prefill some data
+
+		if BillingWireTransfer.where(company_id: current_user.company_id).count > 0
+			last_billing_wire_transfer = BillingWireTransfer.where(company_id: current_user.company_id).order('updated_at desc').first.dup
+			@billing_wire_transfer.account_name = last_billing_wire_transfer.account_name
+			@billing_wire_transfer.account_number = last_billing_wire_transfer.account_number
+			@billing_wire_transfer.account_bank = last_billing_wire_transfer.account_bank
+		end
+
+	end
+
+	def save_billing_wire_transfer
+		
+	end
+
+	def update_billing_wire_transfer
+
+	end
+
 	private
 
 		#Common method to obtain available hours
