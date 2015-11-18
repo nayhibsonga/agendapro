@@ -8,7 +8,7 @@ var hourTitle = "Resultado de la busqueda<br><small>Selecciona una fecha y hora<
 var hourButton = "Ver mas resultados";
 var userTitle = "Datos del cliente";
 var resultsLength = 6;
-var bookings = []
+var bookings = [];
 
 // Functions
 function loadServiceModal () {
@@ -154,7 +154,7 @@ function loadHours () {
 
   var start_date = $("#optimizerDateSelector").val();
 
-  bookings = []
+  bookings = [];
 
   $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, start_date: start_date, admin: true }, function (hours_array) {
     $('#selectHour > p').remove();
