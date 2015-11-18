@@ -472,6 +472,9 @@
     get '/location_categories', :to => 'service_categories#location_categories'
     get '/category_services', :to => 'service_categories#category_services'
 
+
+    get '/location_users', :to => 'users#location_users'
+
   end
 
   namespace :api, defaults: {format: 'json'} do
