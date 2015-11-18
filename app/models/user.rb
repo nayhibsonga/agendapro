@@ -20,6 +20,8 @@ class User < ActiveRecord::Base
 	has_many :favorites, dependent: :destroy
 	has_many :favorite_locations, through: :favorites, source: :location
 
+	has_many :internal_sales, dependent: :nullify
+
 	accepts_nested_attributes_for :company
 
 	validates :email, :role, :presence => true

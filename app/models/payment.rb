@@ -9,7 +9,7 @@ class Payment < ActiveRecord::Base
   has_many :payment_products, dependent: :destroy
   has_many :products, through: :payment_products
 
-  has_many :mock_bookings
+  has_many :mock_bookings, dependent: :destroy
 
   belongs_to :cashier
 
