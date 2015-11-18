@@ -732,7 +732,8 @@ function loadInternalSaleProduct(internal_sale)
 
 function loadInternalSaleProviders(internal_sale)
 {
-  $("#internal_sale_service_providers").empty();
+  console.log("Va.");
+  $("#internal_sale_service_provider").empty();
   $.getJSON('/local_providers/', {location: parseInt($('#internal_sale_location').val()) }, function (service_providers) {
     $.each(service_providers, function (key, service_provider) {
       $("#internal_sale_service_provider").append('<option value="' + service_provider.id + '">' + service_provider.public_name + '</option>');
