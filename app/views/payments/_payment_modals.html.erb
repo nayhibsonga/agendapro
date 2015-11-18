@@ -919,12 +919,12 @@
               <div class="payment-form-div form-group">
                 <label for="internal_sale_date" class="col-xs-3 control-label">Fecha</label>
                 <div class="col-xs-5">
-                  <input type="text" class="form-control" id="internal_sale_date" name="internal_sale_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                  <input type="text" class="form-control payment_date_ignore" id="internal_sale_date" name="internal_sale_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
                 <div class="col-xs-4">
-                  <%= time_select 'internal_sale', 'time', {minute_step: 1}, {:class => 'form-control date-select', required: true} %>
+                  <%= time_select 'internal_sale', 'time', {minute_step: 1}, {:class => 'form-control date-select payment_date_ignore', required: true} %>
                 </div>
                 <div style="clear: both;">
 
