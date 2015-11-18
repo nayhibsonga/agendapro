@@ -2196,7 +2196,7 @@ function createAndServePayment(option)
     $("#set_client").val("1");
   }
 
-  if($("#client_required").val() == "1" && ($("#payment_client_id").val() == "" || $("#payment_client_name") == ""))
+  if($("#client_required").val() == "1" && ($("#payment_client_name") == ""))
   {
     alert("Tienes configurado que se requiera cliente en un pago, por lo que no puedes guardar sin ingresar un cliente.");
     return;
