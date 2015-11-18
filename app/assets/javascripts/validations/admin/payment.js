@@ -167,6 +167,7 @@ $(function() {
 	});
 
 	$('#internalSaleForm').validate({
+		ignore: '.payment_date_ignore',
 		errorPlacement: function(error, element) {
 			error.appendTo(element.next());
 		},
