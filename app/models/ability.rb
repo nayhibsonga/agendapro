@@ -230,6 +230,9 @@ class Ability
         can :delete_internal_sale, Payment, :company_id => user.company_id
         can :get_internal_sale, Payment, :company_id => user.company_id
         can :get_product_for_payment_or_sale, Payment, :company_id => user.company_id
+        can :get_products_for_payment_or_sale, Payment, :company_id => user.company_id
+        can :get_product_brands_for_payment_or_sale, Payment, :company_id => user.company_id
+        can :get_product_categories_for_payment_or_sale, Payment, :company_id => user.company_id
 
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
@@ -488,6 +491,9 @@ class Ability
         #Internal Sale
         can :save_internal_sale, Payment, :company_id => user.company_id
         can :get_product_for_payment_or_sale, Payment, :company_id => user.company_id
+        can :get_products_for_payment_or_sale, Payment, :company_id => user.company_id
+        can :get_product_brands_for_payment_or_sale, Payment, :company_id => user.company_id
+        can :get_product_categories_for_payment_or_sale, Payment, :company_id => user.company_id
 
         can :read, ProductCategory, :company_id => user.company_id
         can :destroy, ProductCategory, :company_id => user.company_id
@@ -666,6 +672,11 @@ class Ability
         #Internal Sale
         can :save_internal_sale, Payment, :company_id => user.company_id
         can :get_product_for_payment_or_sale, Payment, :company_id => user.company_id
+
+        can :get_products_for_payment_or_sale, Payment, :company_id => user.company_id
+        can :get_product_brands_for_payment_or_sale, Payment, :company_id => user.company_id
+        can :get_product_categories_for_payment_or_sale, Payment, :company_id => user.company_id
+
 
         can :petty_cash, Payment, :company_id => user.company_id
         can :petty_transactions, Payment, :company_id => user.company_id
