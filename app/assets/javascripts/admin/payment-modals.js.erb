@@ -735,9 +735,22 @@ function loadInternalSaleProviders(internal_sale)
   $("#internal_sale_service_provider").empty();
   $.getJSON('/local_providers/', {location: parseInt($('#internal_sale_location').val()) }, function (service_providers) {
     $.each(service_providers, function (key, service_provider) {
-      $("#internal_sale_service_provider").append('<option value="' + service_provider.id + '">' + service_provider.public_name + '</option>');
+      $("#internal_sale_service_provider").append('<option value="' + service_provider.id + '">' + service_provider.public_name + ' (Prestador)</option>');
     });
-    if(internal_sale)
+    if(internal_sale && internal_sale.service_provider_id)
+    {
+      $('#internal_sale_service_provider').val(internal_sale.service_provider_id)
+    }
+  });
+}
+
+function loadInternalSaleUsers(internal_sale)
+{
+  $.getJSON('/location_users/', {location: parseInt($('#internal_sale_location').val()) }, function (users) {
+    $.each(users, function (key, user) {
+      $("#internal_sale_service_provider").append('<option value="' + user.id + '">' + user.first_name + ' ' + user.last_name + ' (Usuario)</option>');
+    });
+    if(internal_sale && internal_sale.user_id)
     {
       $('#internal_sale_service_provider').val(internal_sale.service_provider_id)
     }

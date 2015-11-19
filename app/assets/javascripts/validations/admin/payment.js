@@ -23,12 +23,10 @@ $(function() {
 			}
 		},
 		highlight: function(element) {
-			console.log(element);
 			$(element).closest('.payment-form-div').removeClass('has-success').addClass('has-error');
 			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
 		},
 		success: function(element) {
-			console.log(element);
 			$(element).closest('.payment-form-div').removeClass('has-error').addClass('has-success');
 			$(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
 			$(element).parent().empty()
@@ -190,12 +188,10 @@ $(function() {
 			}
 		},
 		highlight: function(element) {
-			console.log(element);
 			$(element).closest('.payment-form-div').removeClass('has-success').addClass('has-error');
 			$(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
 		},
 		success: function(element) {
-			console.log(element);
 			$(element).closest('.payment-form-div').removeClass('has-error').addClass('has-success');
 			$(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
 			$(element).parent().empty()

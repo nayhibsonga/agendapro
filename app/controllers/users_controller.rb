@@ -162,6 +162,12 @@ class UsersController < ApplicationController
     render :json => @result
   end
 
+  def location_users
+    location = Location.find(params[:location_id])
+    @users = User.where(id: UserLocation.where(location_id: location.id).pluck(:user_id)) + location.company.users.where.not(id: UserLocation.where(location_id: location.company.locations.pluck(:id)))
+    render :json => @users
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
