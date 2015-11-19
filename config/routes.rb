@@ -475,6 +475,10 @@
 
     get '/location_users', :to => 'users#location_users'
 
+    get '/get_products_for_payment_or_sale', :to => 'payments#get_products_for_payment_or_sale'
+    get '/get_product_categories_for_payment_or_sale', :to => 'payments#get_product_categories_for_payment_or_sale'
+    get '/get_product_brands_for_payment_or_sale', :to => 'payments#get_product_brands_for_payment_or_sale'
+
   end
 
   namespace :api, defaults: {format: 'json'} do

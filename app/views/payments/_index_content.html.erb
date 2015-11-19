@@ -138,7 +138,7 @@
           <tr>
             <th>Fecha</th>
             <th>Local</th>
-            <th>Prestador</th>
+            <th>Comprador</th>
             <th>Producto</th>
             <th>Cantidad</th>
             <th>Monto</th>
@@ -152,7 +152,13 @@
               <td><%= internal_sale.date.strftime('%d/%m/%Y %R') %></td>
               <td><%= internal_sale.location ? internal_sale.location.name : '' %></td>
               <td>
-                <%= internal_sale.service_provider.public_name %>
+                <% if !internal_sale.service_provider.nil? %>
+                  <%= internal_sale.service_provider.public_name %> (Prestador)
+                <% elsif !internal_sale.user.nil? %>
+                  <%= internal_sale.user.first_name + " " + internal_sale.user.last_name %> (Usuario)
+                <% else %>
+                  Sin información
+                <% end %>
               </td>
               <td>
                 <%= internal_sale.product.name %>

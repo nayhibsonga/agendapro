@@ -1439,6 +1439,79 @@ class PaymentsController < ApplicationController
 
   end
 
+  def get_product_categories_for_payment_or_sale
+
+    json_response = []
+    errors = []
+
+    if params[:location_id].blank?
+      json_response << "error"
+      errors << "No se puede encontrar un resultado sin un id de local."
+      render :json => json_response
+      return
+    end
+
+    location = Location.find(params[:location_id])
+
+    product_categories = ProductCategory.where(company_id: location.company.id)
+
+    json_response << "ok"
+    json_response << product_categories
+
+    render :json => json_response
+
+  end
+
+  def get_product_brands_for_payment_or_sale
+
+    json_response = []
+    errors = []
+
+    if params[:location_id].blank?
+      json_response << "error"
+      errors << "No se puede encontrar un resultado sin un id de local."
+      render :json => json_response
+      return
+    end
+
+    location = Location.find(params[:location_id])
+
+    product_brands = ProductBrand.where(company_id: location.company.id)
+
+    json_response << "ok"
+    json_response << product_brands
+
+    render :json => json_response
+
+  end
+
+  #Return p
+  def get_products_for_payment_or_sale
+
+    @location = Location.find(params[:location_id])
+    pre_products = Product.where(id: LocationProduct.where(:location_id => @location.id).pluck(:product_id))
+
+    @products = []
+
+    if params[:product_category_id] != "0" && params[:product_brand_id] != "0"
+      products = pre_products.where(:product_category_id => params[:product_category_id], :product_brand_id => params[:product_brand_id])
+    elsif params[:product_category_id] != "0" && params[:product_brand_id] == "0"
+      products = pre_products.where(:product_category_id => params[:product_category_id])
+    elsif params[:product_category_id] == "0" && params[:product_brand_id] != "0"
+      products = pre_products.where(:product_brand_id => params[:product_brand_id])
+    else
+      products = pre_products
+    end
+
+    products.each do |product|
+      product_hash = product.attributes.to_options
+      product_hash[:full_name] = product.sku + " " + product.name + " " + product.product_brand.name + " " + product.product_display.name
+      @products << product_hash
+    end
+
+    render :json => @products
+  end
+
   def get_product_for_payment_or_sale
     
     json_response = []
@@ -1482,7 +1555,7 @@ class PaymentsController < ApplicationController
     @json_response = []
     @errors = []
 
-    if params[:location_id].blank? || params[:cashier_id].blank? || params[:service_provider_id].blank? || params[:product_id].blank? || params[:date].blank? || params[:price].blank? || params[:discount].blank? || params[:quantity].blank?
+    if params[:location_id].blank? || params[:cashier_id].blank? || params[:buyer_id].blank? || params[:buyer_type].blank? || params[:product_id].blank? || params[:date].blank? || params[:price].blank? || params[:discount].blank? || params[:quantity].blank?
       @json_response[0] = "error"
       @json_response[1] = "No se ingresaron correctamente los datos."
       render :json => @json_response
@@ -1517,10 +1590,23 @@ class PaymentsController < ApplicationController
       @errors << "No existe el cajero ingresado."
     end
 
-    if ServiceProvider.where(id: params[:service_provider_id]).count > 0
-      internal_sale.service_provider_id = params[:service_provider_id]
+    if params[:buyer_id].blank? || params[:buyer_type].blank?
+      @errors << "No se eligió un comprador."
     else
-      @errors << "No existe el prestador ingresado."
+      if params[:buyer_type] == "service_provider"
+        if ServiceProvider.where(id: params[:buyer_id]).count > 0
+          internal_sale.service_provider_id = params[:buyer_id]
+        else
+          @errors << "No existe el prestador ingresado."
+        end
+      else
+        if User.where(id: params[:buyer_id]).count > 0
+          internal_sale.user_id = params[:buyer_id]
+        else
+          @errors << "No existe el usuario ingresado."
+        end
+      end
+
     end
 
     if Product.where(id: params[:product_id]).count > 0
@@ -1614,7 +1700,12 @@ class PaymentsController < ApplicationController
 
   def get_internal_sale
     internal_sale = InternalSale.find(params[:internal_sale_id])
-    render :json => internal_sale
+    internal_sale_hash = internal_sale.attributes.to_options
+
+    internal_sale_hash[:product_brand_id] = internal_sale.product.product_brand_id
+    internal_sale_hash[:product_category_id] = internal_sale.product.product_category_id
+
+    render :json => internal_sale_hash
   end
 
   ##############
@@ -2524,6 +2615,14 @@ class PaymentsController < ApplicationController
     end
 
     @total_amount = @products_amount
+
+    @internal_sales = InternalSale.where(user_id: user_ids, date: @from.beginning_of_day..@to.end_of_day)
+
+    @internal_sales_amount = 0.0
+
+    @internal_sales.each do |internal_sale|
+      @internal_sales_amount += internal_sale.quantity*(internal_sale.price * (100 - internal_sale.discount) / 100)
+    end
 
     respond_to do |format|
       format.html { render :partial => 'users_report' }
