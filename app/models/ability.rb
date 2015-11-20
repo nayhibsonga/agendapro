@@ -189,6 +189,7 @@ class Ability
         can :set_commissions, Payment, :company_id => user.company_id
         can :set_default_commission, Payment, :company_id => user.company_id
         can :set_provider_default_commissions, Payment, :company_id => user.company_id
+        can :commissions_content, Payment, :company_id => user.company_id
 
         #Petty Cash
 
@@ -454,6 +455,7 @@ class Ability
         can :set_commissions, Payment, :company_id => user.company_id
         can :set_default_commission, Payment, :company_id => user.company_id
         can :set_provider_default_commissions, Payment, :company_id => user.company_id
+        can :commissions_content, Payment, :company_id => user.company_id
 
         can :petty_cash, Payment, :company_id => user.company_id
         can :petty_transactions, Payment, :company_id => user.company_id

@@ -1221,6 +1221,14 @@ class PaymentsController < ApplicationController
 
   def commissions
 
+    respond_to do |format|
+      format.html
+    end
+
+  end
+
+  def commissions_content
+
     @locations = []
     @service_providers = []
     @service_commissions = []
@@ -1238,8 +1246,12 @@ class PaymentsController < ApplicationController
       @service_commissions = ServiceCommission.where(service_provider_id: @service_providers.pluck(:id))
     end
 
+    @viewOption = params[:viewOption]
+    @filterOption = params[:filterOption]
+
     respond_to do |format|
-      format.html
+      format.html { render :partial => 'commissions_content' }
+      format.json { render json: @service_providers }
     end
 
   end
@@ -1252,9 +1264,22 @@ class PaymentsController < ApplicationController
     providers = []
 
     if current_user.role_id == Role.find_by_name("Administrador Local").id
-      providers = service.service_providers.where(location_id: current_user.locations.pluck(:id))
+      if params[:filter_option] == "all"
+        providers = service.service_providers.where(location_id: current_user.locations.pluck(:id))
+      elsif params[:filter_option] == "active"
+        providers = service.service_providers.where(location_id: current_user.locations.pluck(:id)).where(active: true)
+      elsif params[:filter_option] == "inactive"
+        providers = service.service_providers.where(location_id: current_user.locations.pluck(:id)).where(active: false)
+      end
     else
       providers = service.service_providers
+      if params[:filter_option] == "all"
+        providers = service.service_providers
+      elsif params[:filter_option] == "active"
+        providers = service.service_providers.where(active: true)
+      elsif params[:filter_option] == "inactive"
+        providers = service.service_providers.where(active: false)
+      end
     end
 
     service_commissions = []
@@ -1288,7 +1313,14 @@ class PaymentsController < ApplicationController
 
     services = []
 
-    services = provider.services
+    if params[:filter_option] == "all"
+      services = provider.services
+    elsif params[:filter_option] == "active"
+      services = provider.services.where(active: true)
+    elsif params[:filter_option] == "inactive"
+      services = provider.services.where(active: false)
+    end
+      
 
     service_commissions = []
 

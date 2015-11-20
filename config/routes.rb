@@ -429,6 +429,7 @@
     post '/set_commissions', :to => 'payments#set_commissions'
     post '/set_default_commission', :to => 'payments#set_default_commission'
     post '/set_provider_default_commissions', :to => 'payments#set_provider_default_commissions'
+    get '/commissions_content', :to => 'payments#commissions_content'
 
     #PettyCash
     get '/petty_cash', :to => 'payments#petty_cash'
