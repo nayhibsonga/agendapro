@@ -1825,13 +1825,12 @@ function addPastBooked(booking_id){
     $("#paymentItemsTable").show();
 
     calculatePaymentTotal();
+    loadClientPastBookings();
 
   });
 
   $("#paymentItemsList").show();
   $("#paymentSumDiv").show();
-  
-  loadClientPastBookings();
 
   //$('.pastBookingRow[booking_id="' + booking_id + '"]').remove();
 }
@@ -1874,12 +1873,12 @@ function addPastBookedTreatment(session_booking_id){
 
     calculatePaymentTotal();
 
+    loadClientPastBookings();
+
   });
 
   $("#paymentItemsList").show();
   $("#paymentSumDiv").show();
-  
-  loadClientPastBookings();
 
   //$('.pastBookingRow[booking_id="' + booking_id + '"]').remove();
 }
