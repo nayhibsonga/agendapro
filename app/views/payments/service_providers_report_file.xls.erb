@@ -7,7 +7,7 @@
 
     <% @service_providers.each do |service_provider| %>
 
-      <Worksheet ss:Name="Reporte de <%= service_provider.public_name %>">
+      <Worksheet ss:Name="<%= service_provider.public_name %> (<%= service_provider.id.to_s %>)">
 
         <Table>
 
