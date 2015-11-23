@@ -1,9 +1,9 @@
-function loadServiceCommissions(service_id, location_id)
+function loadServiceCommissions(service_id, filterOption)
 {
 
 	$("#serviceCommissionsModalDiv").empty();
 
-	$.getJSON('/service_commissions', {service_id: service_id}, function (service_commissions) {
+	$.getJSON('/service_commissions', {service_id: service_id, filter_option: filterOption}, function (service_commissions) {
 	    $.each(service_commissions, function (key, service_commission) {
 
 	    	$("#serviceCommissionsModalTitle").text("Comisiones de " + service_commission.service_name);
@@ -35,11 +35,13 @@ function loadServiceCommissions(service_id, location_id)
 
 }
 
-function loadProviderCommissions(provider_id)
+function loadProviderCommissions(provider_id, filterOption)
 {
+
+	//Test
 	$("#serviceCommissionsModalDiv").empty();
 
-	$.getJSON('/provider_commissions', {provider_id: provider_id}, function (service_commissions) {
+	$.getJSON('/provider_commissions', {provider_id: provider_id, filter_option: filterOption}, function (service_commissions) {
 	    $.each(service_commissions, function (key, service_commission) {
 
 	    	$("#serviceCommissionsModalTitle").text("Comisiones de " + service_commission.provider_name);
@@ -107,23 +109,41 @@ function loadProviderDefaultCommissions(provider_id)
 
 }
 
+function loadCommissionsContent()
+{
+	var viewOption = $('#viewOptionsSelect').val();
+	var filterOption = $('#filterOptionsSelect').val();
+	$.ajax({
+		url: '/commissions_content',
+		method: 'get',
+		data: {viewOption: viewOption, filterOption: filterOption},
+		error: function(response){
+
+		},
+		success: function(response)
+		{
+			$('#commissions_content_div').empty();
+			$('#commissions_content_div').append(response);
+		}
+	});
+}
+
 
 $(document).ready(function(){
 
-	$("#viewOptionsSelect").on('change', function(){
-		if($(this).val() == "services")
-		{
-			$("#serviceProvidersCommissionsDiv").hide();
-			$("#servicesCommissionsDiv").show();
-		}
-		else
-		{
-			$("#servicesCommissionsDiv").hide();
-			$("#serviceProvidersCommissionsDiv").show();
-		}
+	loadCommissionsContent();
+
+
+
+	$('body').on('change', '#viewOptionsSelect', function(){
+		loadCommissionsContent();
 	});
 
-	$("#saveServiceCommissionsBtn").click(function(e){
+	$('body').on('change', '#filterOptionsSelect', function(){
+		loadCommissionsContent();
+	});
+
+	$("body").on('click', '#saveServiceCommissionsBtn', function(e){
 		service_commissions = []
 
 		$(".service-commission-div").each(function(){
@@ -167,7 +187,7 @@ $(document).ready(function(){
 
 	});
 
-	$("#saveDefaultCommissionsBtn").on('click', function(){
+	$("body").on('click', '#saveDefaultCommissionsBtn', function(){
 
 		var service_id = $("#defaultCommissionServiceId").val();
 		var comission_value = $("#defaultComissionValue").val();
@@ -214,7 +234,7 @@ $(document).ready(function(){
 	});
 
 
-	$("#saveProviderDefaultCommissionsBtn").on('click', function(){
+	$("body").on('click', '#saveProviderDefaultCommissionsBtn', function(){
 
 		var provider_id = $("#defaultCommissionProviderId").val();
 		var amount = $("#providerDefaultAmount").val();

@@ -429,6 +429,7 @@
     post '/set_commissions', :to => 'payments#set_commissions'
     post '/set_default_commission', :to => 'payments#set_default_commission'
     post '/set_provider_default_commissions', :to => 'payments#set_provider_default_commissions'
+    get '/commissions_content', :to => 'payments#commissions_content'
 
     #PettyCash
     get '/petty_cash', :to => 'payments#petty_cash'
@@ -471,6 +472,13 @@
     #Service and categories for location (payments)
     get '/location_categories', :to => 'service_categories#location_categories'
     get '/category_services', :to => 'service_categories#category_services'
+
+
+    get '/location_users', :to => 'users#location_users'
+
+    get '/get_products_for_payment_or_sale', :to => 'payments#get_products_for_payment_or_sale'
+    get '/get_product_categories_for_payment_or_sale', :to => 'payments#get_product_categories_for_payment_or_sale'
+    get '/get_product_brands_for_payment_or_sale', :to => 'payments#get_product_brands_for_payment_or_sale'
 
   end
 

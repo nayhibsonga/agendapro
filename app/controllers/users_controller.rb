@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   #before_action :set_user, only: [:show, :edit, :update, :destroy]
   #before_action :set_user, only: [:agenda]
   before_action :authenticate_user!, except: [:check_user_email]
-  before_action :verify_is_super_admin, except: [:new, :agenda, :add_company, :check_user_email, :get_session_bookings, :get_session_summary]
+  before_action :verify_is_super_admin, except: [:new, :agenda, :add_company, :check_user_email, :get_session_bookings, :get_session_summary, :location_users]
   layout "admin", except: [:agenda, :add_company, :get_session_bookings, :get_session_summary]
   load_and_authorize_resource
 
@@ -160,6 +160,12 @@ class UsersController < ApplicationController
     end
 
     render :json => @result
+  end
+
+  def location_users
+    location = Location.find(params[:location])
+    @users = User.where(id: UserLocation.where(location_id: location.id).pluck(:user_id)) + location.company.users.where.not(id: UserLocation.where(location_id: location.company.locations.pluck(:id)).pluck(:user_id))
+    render :json => @users
   end
 
   private
