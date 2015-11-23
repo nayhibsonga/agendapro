@@ -37,6 +37,30 @@ class PaymentsController < ApplicationController
       end
     end
 
+    # @paymentItems = []
+    # if !params[:payment_items].blank?
+    #   @paymentItems = params[:payment_items].split(",")
+    # end
+
+    # @payments = []
+
+    # if @paymentItems.count > 0
+    #   @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).order('payment_date desc')
+
+    #   if !@paymentItems.include?("bookings")
+    #     @payments = @payments.where.not(id: Booking.where('payment_id is not null'))
+    #   end
+
+    #   if !@paymentItems.include?("mock_bookings")
+    #     @payments = @payments.where.not(id: MockBooking.where('payment_id is not null'))
+    #   end
+
+    #   if !@paymentItems.include?("products")
+    #     @payments = @payments.where.not(id: PaymentProduct.where('payment_id is not null'))
+    #   end      
+
+    # end
+
     @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).order('payment_date desc')
 
     @products_sum = 0.0
@@ -98,9 +122,18 @@ class PaymentsController < ApplicationController
 
     logger.debug "Descuento: " + @products_actual_discount.to_s + "%"
 
-    @payments_sum = @payments.sum(:amount) + @internal_sales_sum
-    @payments_discount = @payments.sum(:discount) + @internal_sales_discount
-    @payments_total = @payments.count + @internal_sales_total
+    @payments_sum = 0
+    @payments_discount = 0
+    @payments_total = 0
+
+    if @payments.count > 0
+
+      @payments_sum = @payments.sum(:amount) + @internal_sales_sum
+      @payments_discount = @payments.sum(:discount) + @internal_sales_discount
+      @payments_total = @payments.count + @internal_sales_total
+
+    end
+
     @payments_average_discount = 0
     if @payments_total > 0
       @payments_average_discount = (@payments_discount/@payments_total).round(2)
