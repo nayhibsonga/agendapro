@@ -22,6 +22,14 @@ var disabledPrice = '';
 
 $(function() {
 
+  $('#paymentAlertDiv .close').on('click', function(){
+    $('#paymentAlertDiv').hide();
+  });
+
+  $('#paymentSuccessDiv .close').on('click', function(){
+    $('#paymentSuccessDiv').hide();
+  });
+
   $('#internal_sale_location').on('change', function(){
     loadInternalSaleProduct();
     loadInternalSaleProviders();
@@ -191,7 +199,8 @@ $(function() {
       }
       else
       {
-        alert("El código de cajero ingresado es incorrecto.");
+        //alert("El código de cajero ingresado es incorrecto.");
+        triggerAlert("El código de cajero ingresado es incorrecto.");
         $("#payment_cashier_name").val("");
         $("#payment_cashier_id").val("");
       }
@@ -211,7 +220,8 @@ $(function() {
       }
       else
       {
-        alert("El código de cajero ingresado es incorrecto.");
+        //alert("El código de cajero ingresado es incorrecto.");
+        triggerAlert("El código de cajero ingresado es incorrecto.");
         $("#internal_sale_cashier_name").val("");
         $("#internal_sale_cashier_id").val("");
       }
@@ -412,19 +422,21 @@ $(function() {
       dataType: 'json',
       type: 'post',
       error: function(response){
-        alert("Ocurrió un error inesperado.");
+        //alert("Ocurrió un error inesperado.");
+        triggerAlert("Ocurrió un error inesperado.");
       },
       success: function(response){
         if (response[0] == "ok")
         {
-          alert("Se enviaron mails de resumen a las direcciones ingresadas.");
+          //alert("Se enviaron mails de resumen a las direcciones ingresadas.");
+          triggerSuccess("Se enviaron mails de resumen a las direcciones ingresadas.");
           $("#sendEmailsModal").modal('hide');
           $("#payment_emails").val("");
           $("#sendEmailsPaymentId").val("");
         }
         else
         {
-          alert("Ocurrió un error inesperado al enviar los correos. Ponte en contacto con nosotros en contacto@agendapro.cl para darte una solución.");
+          triggerAlert("Ocurrió un error inesperado al enviar los correos. Ponte en contacto con nosotros en contacto@agendapro.cl para darte una solución.");
         }
         $("#sendEmailsModal").modal('hide');
         $("#payment_emails").val("");
@@ -484,7 +496,7 @@ $(function() {
     {
       if($("#set_client").val() == "1" && $("#payment_client_name").val() == "")
       {
-        alert("Debes ingresar un nombre de cliente.");
+        triggerAlert("Debes ingresar un nombre de cliente.");
         return;
       }
       if($("#fakePaymentIntroForm").valid())
@@ -501,7 +513,7 @@ $(function() {
           }
           else
           {
-            alert("El código de cajero ingresado es incorrecto.");
+            triggerAlert("El código de cajero ingresado es incorrecto.");
             $("#payment_cashier_name").val("");
           }
         });
@@ -512,7 +524,7 @@ $(function() {
     {
       if(paymentItems.length == 0)
       {
-        alert("Agrega un servicio o poducto antes de continuar.");
+        triggerAlert("Agrega un servicio o poducto antes de continuar.");
         return;
       }
       else
@@ -529,7 +541,7 @@ $(function() {
 
         if(all_null)
         {
-          alert("Agrega un servicio o producto antes de continuar.");
+          triggerAlert("Agrega un servicio o producto antes de continuar.");
           return;
         }
       }
@@ -556,7 +568,7 @@ $(function() {
       }
       else
       {
-        alert("El valor pagado no puede ser menor que el costo total.");
+        triggerAlert("El valor pagado no puede ser menor que el costo total.");
         return;
       }
     }
@@ -784,7 +796,7 @@ function loadInternalSaleProduct(internal_sale)
     $("#internal_sale_product_category").append('<option value="0">Todas</option>');
     if(response[0] != "ok")
     {
-      alert("Ocurrió un error al buscar los productos:\n" + response[1]);
+      triggerAlert("Ocurrió un error al buscar los productos:\n" + response[1]);
     }
     product_categories = response[1];
     $.each(product_categories, function (key, product_category) {
@@ -800,7 +812,7 @@ function loadInternalSaleProduct(internal_sale)
 
         if(response[0] != "ok")
         {
-          alert("Ocurrió un error al buscar los productos:\n" + response[1]);
+          triggerAlert("Ocurrió un error al buscar los productos:\n" + response[1]);
         }
         product_brands = response[1];
 
@@ -878,7 +890,7 @@ function loadInternalSaleProductPrice(internal_sale)
     data: {product_id: $("#internal_sale_product").val(), location_id: parseInt($('#internal_sale_location').val())},
     dataType: 'json',
     error: function(response){
-      alert("Ocurrió un error al obtener el precio del producto.");
+      triggerAlert("Ocurrió un error al obtener el precio del producto.");
     },
     success: function(response){
       if(response[0] == "ok")
@@ -900,7 +912,7 @@ function loadInternalSaleProductPrice(internal_sale)
         $('#internal_sale_product_stock').val(0);
         $('#internal_sale_product_stock_span').text("");
         var error = response[1];
-        alert(error);
+        triggerAlert(error);
       }
     }
   });
@@ -943,18 +955,18 @@ function saveInternalSale()
           data: {location_id: location_id, cashier_id: cashier_id, product_id: product_id, buyer_id: buyer_id, buyer_type: buyer_type, price: price, quantity: quantity, discount: discount, date: date, internal_sale_id: internal_sale_id},
           dataType: 'json',
           error: function(response){
-            alert("Ocurrió un error al guardar la venta.");
+            triggerAlert("Ocurrió un error al guardar la venta.");
             $('#internalSaleModal').modal('hide');
           },
           success: function(response){
             if(response[0] == "ok")
             {
-              alert("Venta ingresada exitosamente.");
+              triggerSuccess("Venta ingresada exitosamente.");
               $('#internalSaleModal').modal('hide');
             }
             else
             {
-              alert("Ocurrió un error al guardar la venta.");
+              triggerAlert("Ocurrió un error al guardar la venta.");
               $('#internalSaleModal').modal('hide');
             }
           }
@@ -963,14 +975,14 @@ function saveInternalSale()
       }
       else
       {
-        alert("Hay camposque no has llenado correctamente.");
+        triggerAlert("Hay campos que no has llenado correctamente.");
         return;
       }
 
     }
     else
     {
-      alert("El código de cajero ingresado es incorrecto.");
+      triggerAlert("El código de cajero ingresado es incorrecto.");
       return;
     }
 
@@ -987,16 +999,16 @@ function deleteInternalSale(internal_sale_id)
     data: {internal_sale_id: internal_sale_id},
     dataType: 'json',
     error: function(resonse){
-      alert("Ocurrió un error al eliminar la venta.");
+      triggerAlert("Ocurrió un error al eliminar la venta.");
     },
     success: function(response){
       if(response[0] == "ok")
       {
-        alert("Venta eliminada correctamente.");
+        triggerSuccess("Venta eliminada correctamente.");
       }
       else
       {
-        alert("Ocurrió un error al eliminar la venta.");
+        triggerAlert("Ocurrió un error al eliminar la venta.");
       }
       loadPayments();
     }
@@ -1012,7 +1024,7 @@ function editInternalSale(internal_sale_id)
     method: 'get',
     dataType: 'json',
     error: function(){
-      alert("No se pudo cargar la venta.");
+      triggerAlert("No se pudo cargar la venta.");
     },
     success: function(internal_sale){
       loadInternalSale(internal_sale);
@@ -1149,7 +1161,7 @@ function getPaymentIntro(payment_id)
 
     },
     error: function(response){
-      alert("Ocurrió un error inesperado al tratar de editar el pago.");
+      triggerAlert("Ocurrió un error inesperado al tratar de editar el pago.");
     }
   });
 }
@@ -1212,14 +1224,14 @@ function savePaymentIntro()
     data: payment_data,
     error: function(response)
     {
-      alert("Ocurrió un error inesperado al tratar de editar el pago.");
+      triggerAlert("Ocurrió un error inesperado al tratar de editar el pago.");
       $(".payment-btn-close").trigger("click");
     },
     success: function(response)
     {
       if(response[0] == "ok")
       {
-        alert("Los datos se han guardado correctamente.");
+        triggerSuccess("Los datos se han guardado correctamente.");
       }
       else
       {
@@ -1228,7 +1240,7 @@ function savePaymentIntro()
         {
           errors_str = errors_str + response[1][x] + " - ";
         }
-        alert("Ocurrieron errores al tratar de guardar los datos: " + errors_str);
+        triggerAlert("Ocurrieron errores al tratar de guardar los datos: " + errors_str);
       }
       
       $(".payment-btn-close").trigger("click");
@@ -1267,7 +1279,7 @@ function getPayment(payment_id)
     dataType: 'json',
     data: {payment_id: payment_id},
     error: function(response){
-      alert("Ocurrió un error inesperado al tratar de editar el pago.");
+      triggerAlert("Ocurrió un error inesperado al tratar de editar el pago.");
     },
     success: function(response){
       //Loop through bookings, mock_bookings and products.
@@ -1498,7 +1510,7 @@ function loadLocationProducts()
     $("#payment_product_category").append('<option value="0">Todas</option>');
     if(response[0] != "ok")
     {
-      alert("Ocurrió un error al buscar los productos:\n" + response[1]);
+      triggerAlert("Ocurrió un error al buscar los productos:\n" + response[1]);
     }
     product_categories = response[1];
     $.each(product_categories, function (key, product_category) {
@@ -1510,7 +1522,7 @@ function loadLocationProducts()
 
         if(response[0] != "ok")
         {
-          alert("Ocurrió un error al buscar los productos:\n" + response[1]);
+          triggerAlert("Ocurrió un error al buscar los productos:\n" + response[1]);
         }
         product_brands = response[1];
 
@@ -1553,7 +1565,7 @@ function loadProductPrice()
     data: {product_id: $("#payment_product").val(), location_id: parseInt($('#payment_location').val())},
     dataType: 'json',
     error: function(response){
-      alert("Ocurrió un error al obtener el precio del producto.");
+      triggerAlert("Ocurrió un error al obtener el precio del producto.");
     },
     success: function(response){
       if(response[0] == "ok")
@@ -1566,7 +1578,7 @@ function loadProductPrice()
       else
       {
         var error = response[1];
-        alert("Error: " + error);
+        triggerAlert("Error: " + error);
       }
     }
   });
@@ -1746,12 +1758,12 @@ function addNotBooked(){
   {
     if($("#payment_not_booked_service").val() == "-1")
     {
-      alert("Debes elegir un servicio antes de agregarlo.");
+      triggerAlert("Debes elegir un servicio antes de agregarlo.");
       return; 
     }
     if($("#payment_not_booked_provider").val() == "-1")
     {
-      alert("Debes elegir un prestador antes de agregarlo.");
+      triggerAlert("Debes elegir un prestador antes de agregarlo.");
       return; 
     }
   }
@@ -1825,13 +1837,12 @@ function addPastBooked(booking_id){
     $("#paymentItemsTable").show();
 
     calculatePaymentTotal();
+    loadClientPastBookings();
 
   });
 
   $("#paymentItemsList").show();
   $("#paymentSumDiv").show();
-  
-  loadClientPastBookings();
 
   //$('.pastBookingRow[booking_id="' + booking_id + '"]').remove();
 }
@@ -1874,12 +1885,12 @@ function addPastBookedTreatment(session_booking_id){
 
     calculatePaymentTotal();
 
+    loadClientPastBookings();
+
   });
 
   $("#paymentItemsList").show();
   $("#paymentSumDiv").show();
-  
-  loadClientPastBookings();
 
   //$('.pastBookingRow[booking_id="' + booking_id + '"]').remove();
 }
@@ -1889,7 +1900,7 @@ function addProduct()
 
   if($("#payment_product").val() == "-1")
   {
-    alert("Debes elegir un producto antes de agregarlo.");
+    triggerAlert("Debes elegir un producto antes de agregarlo.");
     return; 
   }
 
@@ -2055,7 +2066,7 @@ function removeReceipt(receipt_id)
 
   if(receipt == null)
   {
-    alert("Error al eliminar el comprobante.");
+    triggerAlert("Error al eliminar el comprobante.");
     return;
   }
 
@@ -2121,7 +2132,7 @@ function addReceipt()
   }
   if(!itemsCheckboxesSelected())
   {
-    alert("Elige los ítemes a incluir en el comprobante de pago.");
+    triggerAlert("Elige los ítemes a incluir en el comprobante de pago.");
     return;
   }
 
@@ -2359,7 +2370,7 @@ function createAndServePayment(option)
 
   if($("#client_required").val() == "1" && ($("#payment_client_name") == ""))
   {
-    alert("Tienes configurado que se requiera cliente en un pago, por lo que no puedes guardar sin ingresar un cliente.");
+    triggerAlert("Tienes configurado que se requiera cliente en un pago, por lo que no puedes guardar sin ingresar un cliente.");
     return;
   }
 
@@ -2448,7 +2459,7 @@ function createAndServePayment(option)
         $("#paymentEmails").val("");
         if(response[0] == "ok")
         {
-          alert("Pago guardado con éxito.");
+          triggerSuccess("Pago guardado con éxito.");
           $(".payment-btn-close").trigger("click");
           if (callback_option_str == "print")
           {
@@ -2485,7 +2496,7 @@ function createAndServePayment(option)
             errors = errors + response[1][i] + "\n";
           }
           //console.log(errors);
-          alert("Ocurrió un error al guardar el pago:\n" + errors);
+          triggerAlert("Ocurrió un error al guardar el pago:\n" + errors);
           $(".payment-btn-close").trigger("click");
         }
       }
@@ -2509,7 +2520,7 @@ function createAndServePayment(option)
         $("#paymentEmails").val("");
         if(response[0] == "ok")
         {
-          alert("Pago guardado con éxito.");
+          triggerSuccess("Pago guardado con éxito.");
           $(".payment-btn-close").trigger("click");
           if (callback_option_str == "print")
           {
@@ -2543,7 +2554,7 @@ function createAndServePayment(option)
             errors = errors + response[1][i] + "\n";
           }
           //console.log(errors);
-          alert("Ocurrió un error al guardar el pago:\n" + errors);
+          triggerAlert("Ocurrió un error al guardar el pago:\n" + errors);
           $(".payment-btn-close").trigger("click");
         }
       }
@@ -2676,10 +2687,21 @@ function resetPaymentIntro()
   $("#payment_client_first_name").val("");
   $("#payment_client_last_name").val("");
   $("#payment_client_name").val("");
-  $("#set_client").val("0");
+
+  if($('#client_required').val() == "0")
+  {
+    $("#set_client").val("0");
+  }
+  else
+  {
+    $("#set_client").val("1");
+  }
 
   $("#payment_client_email").val("");
   $("#payment_date").val($("#today_date").val());
+
+  clearValidations('#payment_client_phone');
+  clearValidations('#payment_client_gender');
 
   $("#closeClientIcon").hide();
   $("#openClientIcon").show();
@@ -2816,16 +2838,16 @@ function deletePayment(payment_id)
       data: {payment_id: payment_id},
       dataType: 'json',
       error: function(resonse){
-        alert("Ocurrió un error al eliminar el pago.");
+        triggerAlert("Ocurrió un error al eliminar el pago.");
       },
       success: function(response){
         if(response[0] == "ok")
         {
-          alert("Pago eliminado correctamente.");
+          triggerSuccess("Pago eliminado correctamente.");
         }
         else
         {
-          alert("Ocurrió un error al eliminar el pago.");
+          triggerAlert("Ocurrió un error al eliminar el pago.");
         }
         loadPayments();
       }
@@ -2855,6 +2877,24 @@ function openPaymentSummary(payment_id)
 * New payment methods end
 */
 
+
+function triggerAlert(message)
+{
+  $('#paymentAlertContent').text(message);
+  $('#paymentAlertDiv').show();
+  setTimeout(function () {
+    $('#paymentAlertDiv').hide();
+  }, 3000);
+}
+
+function triggerSuccess(message)
+{
+  $('#paymentSuccessContent').text(message);
+  $('#paymentSuccessDiv').show();
+  setTimeout(function () {
+    $('#paymentSuccessDiv').hide();
+  }, 3000);
+}
 
 
 /*

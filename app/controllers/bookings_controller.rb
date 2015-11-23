@@ -159,7 +159,14 @@ class BookingsController < ApplicationController
 
           #Set list_price to it's service price
           if @booking.service.price != 0
-            @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+            if !session_booking.sessions_amount.nil? && session_booking.sessions_amount != 0
+              @booking.list_price = @booking.service.price / session_booking.sessions_amount
+            elsif !@booking.service.sessions_amount.nil? && @booking.service.sessions_amount != 0
+              @booking.list_price = @booking.service.price / @booking.service.sessions_amount
+            else
+              @booking.list_price = @booking.service.price
+            end
+              
             logger.debug "Debug 1"
           else
             @booking.list_price = 0

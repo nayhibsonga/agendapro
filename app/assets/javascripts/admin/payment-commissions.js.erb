@@ -37,6 +37,8 @@ function loadServiceCommissions(service_id, filterOption)
 
 function loadProviderCommissions(provider_id, filterOption)
 {
+
+	//Test
 	$("#serviceCommissionsModalDiv").empty();
 
 	$.getJSON('/provider_commissions', {provider_id: provider_id, filter_option: filterOption}, function (service_commissions) {

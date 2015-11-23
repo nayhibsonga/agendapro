@@ -6,15 +6,11 @@ $(function() {
 			error.appendTo(element.next());
 		},
 		rules: {
-			'payment_client_email': {
-				required: {
-					depends: function () { return ($("#set_client").val() == "1"); }
-				}
-			},
 			'payment_client_phone': {
 				required: {
 					depends: function () { return ($("#set_client").val() == "1"); }
-				}
+				},
+				rangelength: [7, 15]
 			},
 			'payment_client_gender': {
 				required: {
