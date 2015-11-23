@@ -394,14 +394,22 @@ class PaymentsController < ApplicationController
         full_name = split_name(client_name)
         first_name = full_name[:first_name]
         last_name = full_name[:last_name]
+        if last_name.blank?
+          last_name = ""
+        end
       else
         first_name = params[:client_first_name]
         last_name = params[:client_last_name]
       end
 
+      client_email = ""
+      if !params[:client_email].blank?
+        client_email = params[:client_email]
+      end
+
       client.first_name = first_name
       client.last_name = last_name
-      client.email = params[:client_email]
+      client.email = client_email
       client.phone = params[:client_phone]
       client.gender = params[:client_gender]
       client.company_id = location.company_id
@@ -409,7 +417,8 @@ class PaymentsController < ApplicationController
       if client.save
         payment.client_id = client.id
       else
-        @errors << "No se pudo guardar al cliente"
+        @errors << "No se pudo guardar al cliente."
+        @errors << client.errors
         @json_response[0] = "error"
         @json_response << @errors
         render :json => @json_response
@@ -685,10 +694,31 @@ class PaymentsController < ApplicationController
       if params[:client_id] && !params[:client_id].blank?
         client = Client.find(params[:client_id])
       end
+
+      first_name = ""
+      last_name = ""
+      client_name = params[:client_name]
+
+      if params[:client_first_name].blank? || params[:client_last_name].blank?
+        full_name = split_name(client_name)
+        first_name = full_name[:first_name]
+        last_name = full_name[:last_name]
+        if last_name.blank?
+          last_name = ""
+        end
+      else
+        first_name = params[:client_first_name]
+        last_name = params[:client_last_name]
+      end
+
+      client_email = ""
+      if !params[:client_email].blank?
+        client_email = params[:client_email]
+      end
         
-      client.first_name = params[:client_first_name]
-      client.last_name = params[:client_last_name]
-      client.email = params[:client_email]
+      client.first_name = first_name
+      client.last_name = last_name
+      client.email = client_email
       client.phone = params[:client_phone]
       client.gender = params[:client_gender]
       client.company_id = location.company_id
@@ -696,7 +726,8 @@ class PaymentsController < ApplicationController
       if client.save
         payment.client_id = client.id
       else
-        @errors << "No se pudo guardar al cliente"
+        @errors << "No se pudo guardar al cliente."
+        @errors << client.errors
         @json_response[0] = "error"
         @json_response << @errors
         render :json => @json_response

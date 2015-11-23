@@ -2675,10 +2675,21 @@ function resetPaymentIntro()
   $("#payment_client_first_name").val("");
   $("#payment_client_last_name").val("");
   $("#payment_client_name").val("");
-  $("#set_client").val("0");
+
+  if($('#client_required').val() == "0")
+  {
+    $("#set_client").val("0");
+  }
+  else
+  {
+    $("#set_client").val("1");
+  }
 
   $("#payment_client_email").val("");
   $("#payment_date").val($("#today_date").val());
+
+  clearValidations('#payment_client_phone');
+  clearValidations('#payment_client_gender');
 
   $("#closeClientIcon").hide();
   $("#openClientIcon").show();
