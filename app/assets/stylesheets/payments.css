@@ -304,3 +304,103 @@ table.servicesTable td{
 	top: 10px;
 	right: 15px;
 }
+
+.alert-payment {
+	padding: 15px;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+.alert-payment h4 {
+	margin-top: 0;
+	color: inherit;
+}
+.alert-payment .alert-link {
+	font-weight: bold;
+}
+.alert-payment > p,
+.alert-payment > ul {
+	margin-bottom: 0;
+}
+.alert-payment > p + p {
+	margin-top: 5px;
+}
+.alert-dismissable {
+	padding-right: 35px;
+}
+.alert-dismissable .close {
+	position: relative;
+	top: -2px;
+	right: -21px;
+	color: #330000;
+	padding-right: 25px;
+}
+
+.alert-payment {
+	color: #a94442;
+	background-color: #ff8888;
+	border-color: #ebccd1;
+	position: fixed !important;
+	top: 0% !important;
+	left: 30% !important;
+	width: 40% !important;
+	z-index: 99999;
+	margin: 35px auto 10px;
+  	padding: 10px 15px;
+  	margin-bottom: 0px;
+  	-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+  	-moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+  	box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+}
+.alert-payment hr {
+	border-top-color: #e4b9c0;
+}
+.alert-payment .alert-link {
+	color: #843534;
+}
+
+
+
+.success-payment {
+	padding: 15px;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+.success-payment h4 {
+	margin-top: 0;
+	color: inherit;
+}
+.success-payment .alert-link {
+	font-weight: bold;
+}
+.success-payment > p,
+.success-payment > ul {
+	margin-bottom: 0;
+}
+.success-payment > p + p {
+	margin-top: 5px;
+}
+
+.success-payment {
+	color: #3c763d;
+	background-color: #a4d491;
+	border-color: #ebccd1;
+	position: fixed !important;
+	top: 0% !important;
+	left: 30% !important;
+	width: 40% !important;
+	z-index: 99999;
+	margin: 35px auto 10px;
+  	padding: 10px 15px;
+  	margin-bottom: 0px;
+  	-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+  	-moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+  	box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+}
+.success-payment hr {
+	border-top-color: #e4b9c0;
+}
+.success-payment .alert-link {
+	color: #843534;
+}

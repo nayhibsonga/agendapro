@@ -417,8 +417,10 @@ class PaymentsController < ApplicationController
       if client.save
         payment.client_id = client.id
       else
+        logger.info "No se pudo guardar al cliente."
+        logger.info client.errors.inspect
         @errors << "No se pudo guardar al cliente."
-        @errors << client.errors
+        @errors << client.errors.full_messages
         @json_response[0] = "error"
         @json_response << @errors
         render :json => @json_response

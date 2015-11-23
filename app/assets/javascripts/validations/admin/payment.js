@@ -10,7 +10,7 @@ $(function() {
 				required: {
 					depends: function () { return ($("#set_client").val() == "1"); }
 				},
-				rangelength: [8, 15]
+				rangelength: [7, 15]
 			},
 			'payment_client_gender': {
 				required: {
