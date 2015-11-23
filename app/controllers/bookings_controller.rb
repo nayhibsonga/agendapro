@@ -2285,6 +2285,10 @@ class BookingsController < ApplicationController
 
           else
 
+            #
+            # CHANGE HERE, SELECT HIGHER DISCOUNT
+            #
+
             # If discount is for online_payment, it's always equal.
             if current_service.has_discount && current_service.discount > 0
               @bookings.each do |booking|

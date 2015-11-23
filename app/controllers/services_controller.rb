@@ -624,9 +624,9 @@ class ServicesController < ApplicationController
     @service_promo = ServicePromo.where(:id => @service.active_service_promo_id)
     @location = Location.find(params[:location_id])
     @promos = []
-    if !(@service.has_discount && @service.discount > 0)
+    #if !(@service.has_discount && @service.discount > 0)
       @promos = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id).order("day_id asc")
-    end
+    #end
     respond_to do |format|
       format.html { render :partial => 'get_promotions_popover' }
       format.json { render json: @promos }

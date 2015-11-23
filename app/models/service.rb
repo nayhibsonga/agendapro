@@ -485,12 +485,12 @@ class Service < ActiveRecord::Base
 			self.must_be_paid_online = false
 			self.has_time_discount = false
 			self.has_discount = false
-		else
-			if self.has_discount
-				self.has_time_discount = false
-			elsif self.has_time_discount
-				self.has_discount = false
-			end
+		#else
+			#if self.has_discount
+				#self.has_time_discount = false
+			#elsif self.has_time_discount
+				#self.has_discount = false
+			#end
 			#self.must_be_paid_online = true
 		end
 		self.save
