@@ -128,6 +128,22 @@ module ApiViews::Marketplace
       def show
         @service = Service.find(params[:id])
         @location = Location.find(params[:location_id])
+        @company = @location.company
+        @booking_conditions = ''
+        if @service.active_service_promo.limit_booking
+          @booking_conditions += 'Quedan ' + @service.active_promo_left_bookings + ' reservas disponibles para esta promoción.'
+          if @service.active_promo_left_bookings <= 20
+            @booking_conditions += '¡Apúrate y reserva antes que se acaben!'
+          end
+        else
+          @booking_conditions += 'Esta promoción no tiene límite de stock.'
+        end
+        @booking_dates = 'Esta promoción acaba el ' + I18n.l(@service.active_service_promo.finish_date.to_date) + ', y permite reservar horas hasta el ' + I18n.l(@service.active_service_promo.book_limit_date.to_date)
+        @discounts = @service.get_time_promos(@location.id)
+        @service_providers_array = []
+        @service.service_providers.where(active: true, online_booking: true, location_id: @location.id).each do |service_provider|
+          @service_providers_array.push({id: service_provider.id, public_name: service_provider.public_name})
+        end
 
         #Check existance of promo
         if !@service.has_time_discount || @service.service_promos.nil? || @service.active_service_promo_id.nil?

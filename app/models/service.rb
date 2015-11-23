@@ -508,6 +508,67 @@ class Service < ActiveRecord::Base
 		end
 	end
 
+	def get_time_promos(location_id)
+		promo_time = self.company.company_setting.promo_time
+        promos = Promo.where(:service_promo_id => self.active_service_promo_id, :location_id => location_id)
+        service_promo = ServicePromo.find(self.active_service_promo_id)
+        morning_discounts = []
+        for i in 1..7
+          promo = Promo.where(:service_promo_id => self.active_service_promo_id, :location_id => location_id, :day_id => i).first
+          if promo.morning_discount > 0
+            if self.discount < promo.morning_discount || !self.has_discount
+              discount = promo.morning_discount.to_s + '%'
+            else
+              discount = self.discount.round.to_s + '%'
+            end
+          else
+            if self.has_discount && self.discount > 0
+              discount = self.discount.round.to_s + '%'
+            else
+              discount = '-'
+            end
+          end
+          morning_discounts.push({day_id: i, discount: discount})
+        end
+        afternoon_discounts = []
+        for i in 1..7
+          promo = Promo.where(:service_promo_id => self.active_service_promo_id, :location_id => location_id, :day_id => i).first
+          if promo.afternoon_discount > 0
+            if self.discount < promo.morning_discount || !self.has_discount
+              discount = promo.afternoon_discount.to_s + '%'
+            else
+              discount = self.discount.round.to_s + '%'
+            end
+          else
+            if self.has_discount && self.discount > 0
+              discount = self.discount.round.to_s + '%'
+            else
+              discount = '-'
+            end
+          end
+          afternoon_discounts.push({day_id: i, discount: discount})
+        end
+        night_discounts = []
+        for i in 1..7
+          promo = Promo.where(:service_promo_id => self.active_service_promo_id, :location_id => location_id, :day_id => i).first
+          if promo.night_discount > 0
+            if self.discount < promo.night_discount || !self.has_discount
+              discount = promo.night_discount.to_s + '%'
+            else
+              discount = self.discount.round.to_s + '%'
+            end
+          else
+            if self.has_discount && self.discount > 0
+              discount = self.discount.round.to_s + '%'
+            else
+              discount = '-'
+            end
+          end
+          night_discounts.push({day_id: i, discount: discount})
+        end
+        return { morning_discounts: {start_time: service_promo.morning_start.strftime("%H:%M"), end_time: service_promo.morning_end.strftime("%H:%M"), discounts: morning_discounts }, afternoon_discounts: {start_time: service_promo.afternoon_start.strftime("%H:%M"), end_time: service_promo.afternoon_end.strftime("%H:%M"), discounts: afternoon_discounts }, night_discounts: {start_time: service_promo.night_start.strftime("%H:%M"), end_time: service_promo.night_end.strftime("%H:%M"), discounts: night_discounts }}
+    end
+
 	#Check if all provider times in a day start at the same time
 	#True if they start at the same time
 	def check_providers_day_times(date)

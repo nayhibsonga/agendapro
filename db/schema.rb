@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151116191831) do
+ActiveRecord::Schema.define(version: 20151118233045) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,23 +66,6 @@ ActiveRecord::Schema.define(version: 20151116191831) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "transaction_type_id"
-  end
-
-  create_table "billing_wire_transfers", force: true do |t|
-    t.datetime "payment_date",       default: '2015-11-16 15:12:16'
-    t.float    "amount",             default: 0.0
-    t.string   "receipt_number",     default: ""
-    t.string   "account_name",       default: ""
-    t.string   "account_bank",       default: ""
-    t.string   "account_number",     default: ""
-    t.boolean  "approved",           default: false
-    t.integer  "company_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "change_plan",        default: false
-    t.integer  "new_plan"
-    t.float    "change_plan_amount", default: 0.0
-    t.float    "new_plan_amount",    default: 0.0
   end
 
   create_table "booking_histories", force: true do |t|
@@ -228,7 +211,6 @@ ActiveRecord::Schema.define(version: 20151116191831) do
     t.integer  "country_id"
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
-    t.integer  "trial_months_left",   default: 0
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
@@ -489,7 +471,7 @@ ActiveRecord::Schema.define(version: 20151116191831) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "date",                default: '2015-10-27 17:17:43'
+    t.datetime "date",                default: '2015-10-30 21:54:55'
     t.integer  "user_id"
   end
 

@@ -93,11 +93,11 @@ module ApiViews
 	              @user.last_name = fb_user.raw_attributes[:last_name]
 	              @user.uid = fb_user.raw_attributes[:id]
 	              @user.provider = 'facebook'
-	              @user.request_mobile_token
+	              @user.request_api_token
 	              render :json => { errors_html: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
 	            else
 	              @user = User.new(email: fb_user.raw_attributes[:email], first_name: fb_user.raw_attributes[:first_name], last_name: fb_user.raw_attributes[:last_name], role_id: Role.find_by_name('Usuario Registrado').id, uid: fb_user.raw_attributes[:id], provider: 'facebook', password: SecureRandom.base64(16))
-	              @user.request_mobile_token
+	              @user.request_api_token
 	              render :json => { errors_html: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
 	            end
 	          end
@@ -112,11 +112,11 @@ module ApiViews
 	              @user.last_name = g_user["family_name"]
 	              @user.uid = g_user["id"]
 	              @user.provider = 'google_oauth2'
-	              @user.request_mobile_token
+	              @user.request_api_token
 	              render :json => { errors_html: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
 	            else
 	              @user = User.new(email: g_user["email"], first_name: g_user["given_name"], last_name: g_user["last_name"], role_id: Role.find_by_name('Usuario Registrado').id, uid: g_user["id"], provider: 'facebook', password: SecureRandom.base64(16))
-	              @user.request_mobile_token
+	              @user.request_api_token
 	              render :json => { errors_html: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
 	            end
 	          end

@@ -563,6 +563,7 @@
         get 'users/favorites', to: 'users#favorites'
         # get 'users/searches', to: 'users#searches'
         post 'users/oauth', to: 'users#oauth'
+        # options 'users/oauth', to: 'users#oauth'
         get 'users/oauth_login_link', to: 'users#oauth_login_link'
 
         post 'bookings', to: 'bookings#book_service'
@@ -576,12 +577,6 @@
   end
 
   root :to => 'searchs#index'
-
-  # Angular Root
-
-  namespace 'hora_chic', controller: 'angular' do
-    get '/(*path)', action: 'index'
-  end
 
 
 

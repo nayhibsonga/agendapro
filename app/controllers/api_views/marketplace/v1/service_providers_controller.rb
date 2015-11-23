@@ -1109,6 +1109,14 @@ module ApiViews
         end
 
         def available_days
+
+
+          serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
+          
+
+          @connection = ActiveRecord::Base.connection
+          sql = "SELECT * FROM check_days(1, ARRAY[1], ARRAY[1], '2015-11-01', )"
+          @connection.execute(sql)
         end
       end
     end

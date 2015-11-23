@@ -1,5 +1,13 @@
 json.id @service.id
 json.location_id @location.id
+json.latitude @location.latitude
+json.longitude @location.longitude
+json.address @location.get_full_address
+json.phone @location.phone
+json.logo @location.company.logo && @location.company.logo.page && @location.company.logo.page.url ? request.protocol + request.host_with_port + @location.company.logo.page.url : ""
+json.booking_conditions @booking_conditions
+json.booking_dates @booking_dates
+json.discounts @discounts
 json.company_name @service.company.name
 json.service_name @service.name
 json.promo_description @service.promo_description.html_safe
