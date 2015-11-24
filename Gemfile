@@ -38,7 +38,7 @@ gem 'whenever', :require => false
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
 
-group :development do
+group :development, :pagos do
   #mejores errores
   gem 'better_errors'
   #esconde mensajes innecesarios del log

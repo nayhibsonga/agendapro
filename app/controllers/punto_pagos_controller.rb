@@ -205,6 +205,10 @@ class PuntoPagosController < ApplicationController
         elsif Booking.find_by_trx_id(trx_id)
           #Mostrar página similar a la de reserva hecha, confirmando que se pagó
           @bookings = Booking.where(:trx_id => trx_id)
+          if @bookings.count > 0 && @bookings.first.marketplace_origin
+            redirect_to 'http://' + ENV['MARKETPLACE_URL'] + '/booking/success/' + @bookings.first.id.to_s + '/' + @bookings.first.confirmation_code[5..15]
+            return
+          end
           @has_session_booking = false
           @session_booking = nil
           if @bookings.first.is_session
@@ -214,7 +218,10 @@ class PuntoPagosController < ApplicationController
           @token = params[:token]
           @success_page = "booking"
           host = request.host_with_port
-          @url = @bookings.first.location.get_web_address + '.' + host[host.index(request.domain)..host.length]
+
+          @url = @bookings.first.location.get_web_address + '.' + request.host_with_port
+
+          # @url = @bookings.first.location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
           if !@bookings.first.booking_group.nil?
             not_payed_bookings = Booking.where(:booking_group => @bookings.first.booking_group, :payed => false)

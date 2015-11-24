@@ -115,7 +115,7 @@ module ApiViews
 	              @user.request_api_token
 	              render :json => { errors_html: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
 	            else
-	              @user = User.new(email: g_user["email"], first_name: g_user["given_name"], last_name: g_user["last_name"], role_id: Role.find_by_name('Usuario Registrado').id, uid: g_user["id"], provider: 'facebook', password: SecureRandom.base64(16))
+	              @user = User.new(email: g_user["email"], first_name: g_user["given_name"], last_name: g_user["family_name"], role_id: Role.find_by_name('Usuario Registrado').id, uid: g_user["id"], provider: 'google_oauth2', password: SecureRandom.base64(16))
 	              @user.request_api_token
 	              render :json => { errors_html: @user.errors.full_messages.inspect }, :status=>422 unless @user.save
 	            end
@@ -131,7 +131,7 @@ module ApiViews
 	      def oauth_login_link
 	      	if params[:device] == 'facebook'
 	      		render json: {link: social_login_url('facebook_marketplace') }
-	      	elsif params[:device] == 'google'
+	      	elsif params[:device] == 'google_oauth2'
 	      		render json: {link: social_login_url('google_oauth2_marketplace') }
 	      	end
 	      end

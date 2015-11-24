@@ -228,7 +228,7 @@ module ApiViews
 		          location_id: @selectedLocation.id,
 		          status_id: Status.find_by(name: 'Reservado').id,
 		          client_id: client.id,
-		          user_id: current_user.id,
+		          user_id: @api_user.id,
 		          web_origin: true,
 		          marketplace_origin: true,
 		          provider_lock: buffer_params[:provider_lock]
@@ -336,7 +336,7 @@ module ApiViews
 		              #final_price = num_amount
 		            #end
 
-		            num_amount = (service.price - buffer_params[:discount]*service.price/100).round
+		            num_amount = (service.price - buffer_params[:discount].to_f * service.price / 100).round
 
 		            if buffer_params[:is_time_discount]
 		              @booking.service_promo_id = buffer_params[:service_promo_id]
@@ -1023,6 +1023,13 @@ module ApiViews
 		def show
 			if params[:id] && params[:access_token]
 		  		@booking = Booking.find(params[:id])
+		  		@bookings_group = Booking.where(id: @booking.id)
+		  		if @booking.trx_id.present?
+		  			@bookings_group = Booking.where(trx_id: @booking.trx_id)
+		  		elsif @booking.booking_group.present?
+		  			@bookings_group = Bookin.where(booking_group: @booking.booking_group)
+		  		end
+		  			
 		  		unless @booking.confirmation_code[5..15] == params[:access_token]
 		  			render json: { errors: "Parámetros mal ingresados." }, status: 422
 		        	return
