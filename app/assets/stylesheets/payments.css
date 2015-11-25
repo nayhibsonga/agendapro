@@ -43,6 +43,10 @@ table.servicesTable td{
 	width: 40% !important;
 }
 
+.summaryModal .modal-dialog{
+	width: 50% !important;
+}
+
 .internalSaleModal .modal-dialog{
 	width: 40% !important;
 }

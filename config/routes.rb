@@ -465,9 +465,16 @@
     get '/service_providers_report_file', :to => 'payments#service_providers_report_file'
 
     get '/sales_cash_report_file', :to => 'payments#sales_cash_report_file'
+    get '/current_sales_cash_report_file', :to => 'payments#current_sales_cash_report_file'
 
     get '/get_treatment_price', :to => 'bookings#get_treatment_price'
     get '/payment_summary', :to => 'payments#summary'
+
+    get '/sales_cash_transaction_summary', :to => 'payments#sales_cash_transaction_summary'
+    get '/internal_sale_summary', :to => 'payments#internal_sale_summary'
+    get '/sales_cash_income_summary', :to => 'payments#sales_cash_income_summary'
+
+    get '/petty_cash_report', :to => 'payments#petty_cash_report'
 
     #Service and categories for location (payments)
     get '/location_categories', :to => 'service_categories#location_categories'
