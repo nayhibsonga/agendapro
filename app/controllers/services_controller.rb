@@ -996,7 +996,9 @@ class ServicesController < ApplicationController
   def last_minute_hours
     @service = Service.find(params[:id])
     @location = Location.find(params[:location_id])
-    @available_hours = @service.get_last_minute_available_hours(params[:service_provider_id], params[:location_id])
+    @serviceStaff = []
+    @serviceStaff[0] = {:service => @service.id, :provider => params[:service_provider_id]}
+    @available_hours = Service.get_last_minute_available_hours(params[:location_id], @serviceStaff, (DateTime.now).strftime('%d/%m/%Y'))
     respond_to do |format|
       format.html { render :partial => 'last_minute_hours' }
       format.json { render :json => @available_hours }

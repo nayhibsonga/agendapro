@@ -1,11 +1,11 @@
 <% if @available_hours.nil? || @available_hours.count == 0 %>
 	<p>Lo sentimos, no hay bloques disponibles durante las próximas <%= @service.get_last_minute_hours(@location.id).to_s %> horas.</p>
 <% else %>
-	<% @available_hours.each do |hour| %>
+	<% @available_hours.each do |block| %>
 		<div class="available-hour">
-			<%= hour[:start].to_s %><br />
-			<%= hour[:end].to_s %><br />
-			<%= hour[:provider_name].to_s %>
+			<%= block[:hour][:start].to_s %><br />
+			<%= block[:hour][:end].to_s %><br />
+			<%= block[:available_provider].to_s %>
 		</div>
 	<% end %>
 <% end %>

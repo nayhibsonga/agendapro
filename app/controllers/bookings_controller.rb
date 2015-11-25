@@ -4639,9 +4639,6 @@ class BookingsController < ApplicationController
             #First, check if there's a gap. If so, back dateTimePointer to (blocking_start - total_duration)
             #This way, you can give two options when there are gaps.
 
-            #logger.debug "DTP starting not valid: " + dateTimePointer.to_s
-            #logger.debug "Last Check: " + last_check.to_s
-
             #Assume there is no gap
             time_gap = 0
 
@@ -4663,8 +4660,6 @@ class BookingsController < ApplicationController
 
                     if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
                       gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
-                      #logger.debug "Enters provider_close and gap is " + gap_diff.to_s
-                      #logger.debug "Provider close: " + provider_close.to_s
                       if gap_diff > time_gap
                         time_gap = gap_diff
                       end
@@ -4674,8 +4669,6 @@ class BookingsController < ApplicationController
 
                   if book_gaps.count > 0
                     gap_diff = (book_gaps.first.start - dateTimePointer)/60
-                    #logger.debug "Enters bookings and gap is " + gap_diff.to_s
-                    #logger.debug "Book start: " + book_gaps.first.start.to_s
                     if gap_diff != 0
                       if gap_diff > time_gap
                         time_gap = gap_diff
@@ -4685,8 +4678,6 @@ class BookingsController < ApplicationController
 
                   if break_gaps.count > 0
                     gap_diff = (break_gaps.first.start - dateTimePointer)/60
-                    #logger.debug "Enters breaks and gap is " + gap_diff.to_s
-                    #logger.debug "Break start: " + break_gaps.first.start.to_s
                     if gap_diff != 0
                       if gap_diff > time_gap
                         time_gap = gap_diff
@@ -4715,8 +4706,6 @@ class BookingsController < ApplicationController
 
                   if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
                     gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
-                    #logger.debug "Enters provider_close and gap is " + gap_diff.to_s
-                    #logger.debug "Provider close: " + provider_close.to_s
                     if gap_diff > time_gap
                       time_gap = gap_diff
                     end
@@ -4726,8 +4715,6 @@ class BookingsController < ApplicationController
 
                 if book_gaps.count > 0
                   gap_diff = (book_gaps.first.start - dateTimePointer)/60
-                  #logger.debug "Enters bookings and gap is " + gap_diff.to_s
-                  #logger.debug "Book start: " + book_gaps.first.start.to_s
                   if gap_diff != 0
                     if gap_diff > time_gap
                       time_gap = gap_diff
@@ -4737,8 +4724,6 @@ class BookingsController < ApplicationController
 
                 if break_gaps.count > 0
                   gap_diff = (break_gaps.first.start - dateTimePointer)/60
-                  #logger.debug "Enters breaks and gap is " + gap_diff.to_s
-                  #logger.debug "Break start: " + break_gaps.first.start.to_s
                   if gap_diff != 0
                     if gap_diff > time_gap
                       time_gap = gap_diff
@@ -4771,39 +4756,22 @@ class BookingsController < ApplicationController
 
                 first_providers.each do |first_provider|
 
-                  #book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes)
 
                   book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "DTP: " + dateTimePointer.to_s
-                  # logger.debug "Multi book_blockings: " + book_blockings.count.to_s
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "***"
+
                   if book_blockings.count > 0
 
                     book_diff = (book_blockings.first.end - dateTimePointer)/60
                     if book_diff < smallest_diff
                       smallest_diff = book_diff
-                      #logger.debug "smallest_diff1: " + smallest_diff.to_s
                     end
                   else
                     break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "DTP: " + dateTimePointer.to_s
-                    # logger.debug "Multi break_blockings: " + book_blockings.count.to_s
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "***"
+
                     if break_blockings.count > 0
                       break_diff = (break_blockings.first.end - dateTimePointer)/60
                       if break_diff < smallest_diff
                         smallest_diff = break_diff
-                        #logger.debug "smallest_diff2: " + smallest_diff.to_s
                       end
                     end
                   end
@@ -4815,35 +4783,19 @@ class BookingsController < ApplicationController
                 first_provider = first_providers.first
 
                 book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
-                # logger.debug "***"
-                # logger.debug "***"
-                # logger.debug "***"
-                # logger.debug "DTP: " + dateTimePointer.to_s
-                # logger.debug "Single book_blockings: " + book_blockings.count.to_s
-                # logger.debug "***"
-                # logger.debug "***"
-                # logger.debug "***"
+
                 if book_blockings.count > 0
                   book_diff = (book_blockings.first.end - dateTimePointer)/60
                   if book_diff < smallest_diff
                     smallest_diff = book_diff
-                    #logger.debug "smallest_diff3: " + smallest_diff.to_s
                   end
                 else
                   break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "DTP: " + dateTimePointer.to_s
-                    # logger.debug "Single break_blockings: " + book_blockings.count.to_s
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "***"
+
                   if break_blockings.count > 0
                     break_diff = (break_blockings.first.end - dateTimePointer)/60
                     if break_diff < smallest_diff
                       smallest_diff = break_diff
-                      #logger.debug "smallest_diff4: " + smallest_diff.to_s
                     end
                   end
                 end
@@ -4860,13 +4812,6 @@ class BookingsController < ApplicationController
 
             end
 
-            # logger.debug "####"
-            # logger.debug "####"
-            # logger.debug "####"
-            # logger.debug "####"
-            # logger.debug "OLD DTP: " + dateTimePointer.to_s
-            # logger.debug "Current smallest_diff: " + smallest_diff.to_s
-
             if first_service.company.company_setting.allows_optimization && time_gap > 0
               dateTimePointer = (dateTimePointer + time_gap.minutes) - total_services_duration.minutes
               is_gap_hour = true
@@ -4876,13 +4821,6 @@ class BookingsController < ApplicationController
               dateTimePointer += smallest_diff.minutes
             end
 
-            # logger.debug "NEW DTP: " + dateTimePointer.to_s
-            # logger.debug "####"
-            # logger.debug "####"
-            # logger.debug "####"
-            # logger.debug "####"
-
-            #dateTimePointer += service.duration.minutes
             serviceStaffPos = 0
             bookings = []
 
