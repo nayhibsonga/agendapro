@@ -953,21 +953,21 @@ class CompaniesController < ApplicationController
 	    end
 
 		if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
-			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).joins(:product_categories).order(name: :asc).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
-			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
-			@products = products.where(:product_category_id => params[:category], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category], :product_display_id => params[:display]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
-			@products = products.where(:product_category_id => params[:category]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
-			@products = products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
-			@products = products.where(:product_brand_id => params[:brand]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_brand_id => params[:brand]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
-			@products = products.where(:product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_display_id => params[:display]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		else
-			@products = products.order(:product_category_id, :product_brand_id)
+			@products = products.joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		end
 
 		logger.info @products.inspect
