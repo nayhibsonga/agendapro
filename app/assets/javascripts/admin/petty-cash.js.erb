@@ -53,6 +53,10 @@ function getPettyCash()
         $(".pettyCashActions").hide();
       }
       $("#petty_cash_id").val(petty_cash.id);
+
+      report_url = "/petty_cash_report.xls?petty_cash_id=" + petty_cash.id + "&start_date=" + $('#petty_cash_start_date').val() + "&end_date=" + $('#petty_cash_end_date').val();
+
+      $('#petty_cash_report_link').attr("href", report_url);
     }
     else
     {
@@ -430,6 +434,18 @@ $(function() {
         dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
         today: 'Hoy',
         clear: ''
+  });
+
+  $('#petty_cash_start_date').on('change', function(){
+    report_url = "/petty_cash_report.xls?petty_cash_id=" + $('#petty_cash_id').val() + "&start_date=" + $('#petty_cash_start_date').val() + "&end_date=" + $('#petty_cash_end_date').val();
+
+    $('#petty_cash_report_link').attr("href", report_url);
+  });
+
+  $('#petty_cash_end_date').on('change', function(){
+    report_url = "/petty_cash_report.xls?petty_cash_id=" + $('#petty_cash_id').val() + "&start_date=" + $('#petty_cash_start_date').val() + "&end_date=" + $('#petty_cash_end_date').val();
+
+    $('#petty_cash_report_link').attr("href", report_url);
   });
 
   /*
