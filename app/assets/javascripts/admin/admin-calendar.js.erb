@@ -803,6 +803,10 @@ function createBookingModal(date, provider_id) {
 	$('#booking_service_id').empty();
 	$("#treatment_price_div").hide();
 	$("#treatment_price").text("");
+	$('#payed_state_fixed_div').hide();
+	$('#payed_state_select_div').show();
+	$('#booking_payed_state').val("0");
+	$('#is_prepayed').text("No");
 
 	$.getJSON('/local_providers', {location: localId}, function (providersArray) {
 		if (providersArray.length > 0) {
