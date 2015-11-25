@@ -87,7 +87,7 @@
 							                        </label>
 							                        <span>Permitir</span>
 						                        	<select name="last_minute_discount" id="last_minute_discount" class="promotions-input">
-						                        		<% for i in 0..19 %>
+						                        		<% for i in 0..99 %>
 						                        			<%
 						                        				last_minute_discount = 0
 						                        				last_minute_hours = 0
@@ -96,24 +96,16 @@
 						                        					last_minute_hours = @service.last_minute_promos.first.hours
 						                        				end
 						                        			%>
-						                        			<% if last_minute_discount == (i*5) %>
-						                        				<option value="<%= (i*5).to_s %>" selected><%= (i*5).to_s %> %</option>
+						                        			<% if last_minute_discount == i %>
+						                        				<option value="<%= i.to_s %>" selected><%= i.to_s %> %</option>
 						                        			<% else %>
-						                        				<option value="<%= (i*5).to_s %>"><%= (i*5).to_s %> %</option>
+						                        				<option value="<%= i.to_s %>"><%= i.to_s %> %</option>
 						                        			<% end %>
 						                        		<% end %>
 						                        	</select>
 						                        	<span>de descuento en reservas de último minuto hechas hasta</span>
-						                        	<select name="last_minute_hours" id="last_minute_hours" class="promotions-input">
-						                        		<% for i in 1..48 %>
-						                        			<% if last_minute_hours == i %>
-						                        				<option value="<%= i.to_s %>" selected><%= i.to_s %> horas</option>
-						                        			<% else %>
-						                        				<option value="<%= i.to_s %>"><%= i.to_s %> horas</option>
-						                        			<% end %>
-						                        		<% end %>
-						                        	</select>
-						                        	<span>antes de la realización del servicio.</span>
+						                        	<input type="number" name="last_minute_hours" id="last_minute_hours" class="promo-input" value="<%= last_minute_hours %>" style="width: 100px;" />
+						                        	<span>horas antes de la realización del servicio.</span>
 							                    </div>
 											</div>
 										<% else %>

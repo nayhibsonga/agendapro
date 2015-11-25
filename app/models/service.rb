@@ -206,7 +206,7 @@ class Service < ActiveRecord::Base
 		open = DateTime.new(now.year, now.mon, now.mday, open_time.hour, open_time.min)
 		close = DateTime.new(now.year, now.mon, now.mday, close_time.hour, close_time.min)
 
-		
+		cancelled_id = Status.find_by_name('Cancelado').id
 
 		limit = DateTime.now + last_minute_hours.hours
 		limit = DateTime.new(limit.year, limit.mon, limit.mday, limit.hour, limit.min)
@@ -231,7 +231,7 @@ class Service < ActiveRecord::Base
 			
 			puts "Sin preferencia"
 
-			while dateTimePointer < limit && dateTimePointer < close
+			while dateTimePointer < limit
 				
 				service_valid = false
 
@@ -243,7 +243,7 @@ class Service < ActiveRecord::Base
 					service_valid = true
 				end
 
-				self.service_providers.each do |service_provider|
+				self.service_providers.where(active: true).each do |service_provider|
 
 					provider_time = service_provider.provider_times.where(day_id: day).first
 
@@ -260,68 +260,68 @@ class Service < ActiveRecord::Base
 
 	              	#Check provider breaks
 		            if service_valid
-		              	service_provider.provider_breaks.each do |provider_break|
-		                	if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + self.duration.minutes) <= provider_break.start.to_datetime)
-		                  		service_valid = false
-		                  		break
-		                	end
-		              	end
+		              	#service_provider.provider_breaks.each do |provider_break|
+		                #	if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + self.duration.minutes) <= provider_break.start.to_datetime)
+		                #  		service_valid = false
+		                #  		break
+		                #	end
+		              	#end
+		              	if service_provider.provider_breaks.where.not('(provider_breaks.end <= ? or ? <= provider_breaks.start)', dateTimePointer, dateTimePointer + self.duration.minutes).count > 0
+                  			service_valid = false
+                  			break
+                		end
 		            end
 
 		            # Cross Booking
 		            if service_valid
-		              Booking.where(service_provider_id: service_provider.id, start: dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |provider_booking|
-		                unless provider_booking.status_id == cancelled_id
-		                  pointerEnd = dateTimePointer + self.duration.minutes
-		                  if (pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
-		                    if !self.group_service || self.id != provider_booking.service_id
-		                      if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-		                        service_valid = false
-		                        break
-		                      end
-		                    elsif self.group_service && self.id == provider_booking.service_id && provider.bookings.where(service_id: self.id, start: dateTimePointer).where.not(status_id: Status.find_by_name('Cancelado')).count >= self.capacity
-		                      if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-		                        service_valid = false
-		                        break
-		                      end
-		                    end
-		                  else
-		                    if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-		                      service_valid = false
-		                    end
+		              
+		            	if !self.group_service
+		                  if Booking.where(service_provider_id: service_provider.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + self.duration.minutes).count > 0
+		                    service_valid = false
+		                    break
 		                  end
+		                else
+		                	if Booking.where(service_provider_id: service_provider.id).where.not(service_id: self.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + self.duration.minutes).count > 0
+		                    	service_valid = false
+		                    	break
+		                  	end
+		                  	if Booking.where(service_provider_id: service_provider.id, service_id: self.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + self.duration.minutes).count >= self.capacity
+		                    	service_valid = false
+		                    	break
+		                  	end
 		                end
-		              end
+
 		            end
 
 
 		            # Recursos
 		            if service_valid and self.resources.count > 0
-		              self.resources.each do |resource|
-		                if !location.resource_locations.pluck(:resource_id).include?(resource.id)
-		                  service_valid = false
-		                  break
-		                end
-		                used_resource = 0
-		                group_services = []
-		                location.bookings.where(:start => dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |location_booking|
-		                  if location_booking.status_id != cancelled_id && (location_booking.end.to_datetime <= dateTimePointer || (dateTimePointer + self.duration.minutes) <= location_booking.start.to_datetime)
-		                    if location_booking.service.resources.include?(resource)
-		                      if !location_booking.service.group_service
-		                        used_resource += 1
-		                      else
-		                        if location_booking.service != self || location_booking.service_provider != provider
-		                          group_services.push(location_booking.service_provider.id)
+		              	service.resources.each do |resource|
+		                  if !location.resource_locations.pluck(:resource_id).include?(resource.id)
+		                    service_valid = false
+		                    break
+		                  end
+		                  used_resource = 0
+		                  group_services = []
+		                  pointerEnd = dateTimePointer+service.duration.minutes
+		                  location.bookings.where(:start => dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |location_booking|
+		                    if location_booking.status_id != cancelled_id && !(pointerEnd <= location_booking.start.to_datetime || location_booking.end.to_datetime <= dateTimePointer)
+		                      if location_booking.service.resources.include?(resource)
+		                        if !location_booking.service.group_service
+		                          used_resource += 1
+		                        else
+		                          if location_booking.service != service || location_booking.service_provider != service_provider
+		                            group_services.push(location_booking.service_provider.id)
+		                          end
 		                        end
 		                      end
 		                    end
 		                  end
+		                  if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: location.id).first.quantity
+		                    service_valid = false
+		                    break
+		                  end
 		                end
-		                if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: location.id).first.quantity
-		                  service_valid = false
-		                  break
-		                end
-		              end
 		            end
 
 		            if service_valid
@@ -386,12 +386,10 @@ class Service < ActiveRecord::Base
 
               	#Check provider breaks
 	            if service_valid
-	              	service_provider.provider_breaks.each do |provider_break|
-	                	if !(provider_break.end.to_datetime <= dateTimePointer || (dateTimePointer + self.duration.minutes) <= provider_break.start.to_datetime)
-	                  		service_valid = false
-	                  		break
-	                	end
-	              	end
+	              	if service_provider.provider_breaks.where.not('(provider_breaks.end <= ? or ? <= provider_breaks.start)', dateTimePointer, dateTimePointer + self.duration.minutes).count > 0
+                  		service_valid = false
+                  		break
+                	end
 	            end
 
               	puts "Service valid 3"
@@ -399,28 +397,23 @@ class Service < ActiveRecord::Base
 
 	            # Cross Booking
 	            if service_valid
-	              Booking.where(service_provider_id: service_provider.id, start: dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |provider_booking|
-	                unless provider_booking.status_id == cancelled_id
-	                  pointerEnd = dateTimePointer + self.duration.minutes
-	                  if (pointerEnd <= provider_booking.start.to_datetime || provider_booking.end.to_datetime <= dateTimePointer)
-	                    if !self.group_service || self.id != provider_booking.service_id
-	                      if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-	                        service_valid = false
-	                        break
-	                      end
-	                    elsif self.group_service && self.id == provider_booking.service_id && provider.bookings.where(service_id: self.id, start: dateTimePointer).where.not(status_id: Status.find_by_name('Cancelado')).count >= self.capacity
-	                      if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-	                        service_valid = false
-	                        break
-	                      end
-	                    end
-	                  else
-	                    if !provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked)
-	                      service_valid = false
-	                    end
-	                  end
-	                end
-	              end
+	              	if !self.group_service
+		                if Booking.where(service_provider_id: service_provider.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + self.duration.minutes).count > 0
+		                   	service_valid = false
+		                    break
+		                end
+		            else
+
+		            	if Booking.where(service_provider_id: service_provider.id).where.not(service_id: self.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + self.duration.minutes).count > 0
+		                   	service_valid = false
+		                    break
+		                end
+
+		                if Booking.where(service_provider_id: service_provider.id, service_id: self.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + self.duration.minutes).count >= self.capacity
+		                    service_valid = false
+		                    break
+		                end
+		            end
 	            end
 
 	            puts "Service valid 4"
@@ -428,31 +421,32 @@ class Service < ActiveRecord::Base
 
 	            # Recursos
 	            if service_valid and self.resources.count > 0
-	              self.resources.each do |resource|
-	                if !location.resource_locations.pluck(:resource_id).include?(resource.id)
-	                  service_valid = false
-	                  break
-	                end
-	                used_resource = 0
-	                group_services = []
-	                location.bookings.where(:start => dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |location_booking|
-	                  if location_booking.status_id != cancelled_id && (location_booking.end.to_datetime <= dateTimePointer || (dateTimePointer + self.duration.minutes) <= location_booking.start.to_datetime)
-	                    if location_booking.service.resources.include?(resource)
-	                      if !location_booking.service.group_service
-	                        used_resource += 1
-	                      else
-	                        if location_booking.service != self || location_booking.service_provider != provider
-	                          group_services.push(location_booking.service_provider.id)
+	              	self.resources.each do |resource|
+	                  if !location.resource_locations.pluck(:resource_id).include?(resource.id)
+	                    service_valid = false
+	                    break
+	                  end
+	                  used_resource = 0
+	                  group_services = []
+	                  pointerEnd = dateTimePointer+service.duration.minutes
+	                  location.bookings.where(:start => dateTimePointer.to_time.beginning_of_day..dateTimePointer.to_time.end_of_day).each do |location_booking|
+	                    if location_booking.status_id != cancelled_id && !(pointerEnd <= location_booking.start.to_datetime || location_booking.end.to_datetime <= dateTimePointer)
+	                      if location_booking.service.resources.include?(resource)
+	                        if !location_booking.service.group_service
+	                          used_resource += 1
+	                        else
+	                          if location_booking.service != service || location_booking.service_provider != service_provider
+	                            group_services.push(location_booking.service_provider.id)
+	                          end
 	                        end
 	                      end
 	                    end
 	                  end
-	                end
-	                if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: location.id).first.quantity
-	                  service_valid = false
-	                  break
-	                end
-	              end
+	                  if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: location.id).first.quantity
+	                    service_valid = false
+	                    break
+	                  end
+	               	end
 	            end
 
 	            puts "Service valid 5"

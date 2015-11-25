@@ -2143,6 +2143,7 @@ class BookingsController < ApplicationController
 
       @booking.price = service.price
       @booking.list_price = service.price
+      @booking.discount = service.discount
       @booking.max_changes = @company.company_setting.max_changes
       @booking.booking_group = booking_group
 
@@ -2273,6 +2274,10 @@ class BookingsController < ApplicationController
       if @has_session_booking
 
         sessions_max_discount = 0
+
+        #Reset final price
+        final_price = 0
+
         if @bookings.count > 0
 
           current_service = @bookings.first.service
@@ -2286,22 +2291,29 @@ class BookingsController < ApplicationController
           else
 
             #
-            # CHANGE HERE, SELECT HIGHER DISCOUNT
+            # Assign prices in case there is no discount
             #
+            @bookings.each do |booking|
+              booking.price = current_service.price
+              booking.list_price = current_service.price
+              booking.discount = 0
+            end
 
             # If discount is for online_payment, it's always equal.
             if current_service.has_discount && current_service.discount > 0
               @bookings.each do |booking|
                 new_price = (current_service.price - current_service.discount*current_service.price/100).round
                 booking.price = new_price
-                final_price = new_price
+                #final_price = new_price
                 if(booking.list_price > 0)
                   booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
                 else
                   booking.discount = 0
                 end
               end
-            elsif current_service.has_time_discount
+            end
+
+            if current_service.has_time_discount
 
               #Look for the highest discount
               @bookings.each do |booking|
@@ -2361,21 +2373,34 @@ class BookingsController < ApplicationController
               @session_booking.max_discount = sessions_max_discount
               # End of get discount
               @bookings.each do |booking|
-                new_price = (booking.service.price - sessions_max_discount*booking.service.price/100).round
-                booking.price = new_price
-                final_price = new_price
-                if(booking.list_price > 0)
-                  booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
-                else
-                  booking.discount = 0
+
+                #If online discount is lower than promo discount or doesn't exist, then go for the latter.
+                if booking.discount.nil? || booking.discount == 0 || booking.discount < sessions_max_discount
+
+                  new_price = (booking.service.price - sessions_max_discount*booking.service.price/100).round
+                  booking.price = new_price
+                  #final_price = new_price
+                  if(booking.list_price > 0)
+                    booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+                  else
+                    booking.discount = 0
+                  end
+
                 end
+
               end
 
             end
 
           end
 
+          #Prices were set, now sum them
+          @bookings.each do |booking|
+            final_price += booking.price
+          end
+
         end
+
       else
 
         #Reset final_price
@@ -2399,42 +2424,48 @@ class BookingsController < ApplicationController
 
           else
 
+            #Assume there is no discount at first
+            booking.price = booking.service.price
+            booking.list_price = booking.service.price
+            booking.discount = 0
+
+            #Check for online payment discount
             if booking.service.has_discount && booking.service.discount > 0
 
               new_book_price = (booking.service.price - booking.service.discount*booking.service.price/100).round
               booking.price = new_book_price
-              final_price = final_price + new_book_price
+              booking.discount = booking.service.discount
+              #final_price = final_price + new_book_price
 
-            else
+            end
 
-              promo = Promo.where(:day_id => booking.start.to_datetime.cwday, :service_promo_id => booking.service.active_service_promo_id, :location_id => @selectedLocation.id).first
+            #Now check for promos
+            promo = Promo.where(:day_id => booking.start.to_datetime.cwday, :service_promo_id => booking.service.active_service_promo_id, :location_id => @selectedLocation.id).first
 
-              new_book_discount = 0
+            new_book_discount = 0
 
-              if !promo.nil?
+            if !promo.nil?
 
-                service_promo = ServicePromo.find(booking.service.active_service_promo_id)
+              service_promo = ServicePromo.find(booking.service.active_service_promo_id)
 
-                #Check if there is a limit for bookings, and if there are any left
-                if service_promo.max_bookings > 0 || !service_promo.limit_booking
+              #Check if there is a limit for bookings, and if there are any left
+              if service_promo.max_bookings > 0 || !service_promo.limit_booking
 
-                  #Check if the promo is still active, and if the booking ends before the limit date
+                #Check if the promo is still active, and if the booking ends before the limit date
 
-                  if booking.end.to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
+                if booking.end.to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
 
-                    if !(service_promo.morning_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
+                  if !(service_promo.morning_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
 
-                      new_book_discount = promo.morning_discount
+                    new_book_discount = promo.morning_discount
 
-                    elsif !(service_promo.afternoon_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
+                  elsif !(service_promo.afternoon_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
 
-                      new_book_discount = promo.afternoon_discount
+                    new_book_discount = promo.afternoon_discount
 
-                    elsif !(service_promo.night_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
+                  elsif !(service_promo.night_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
 
-                      new_book_discount = promo.night_discount
-
-                    end
+                    new_book_discount = promo.night_discount
 
                   end
 
@@ -2442,20 +2473,31 @@ class BookingsController < ApplicationController
 
               end
 
+            end
+
+            if booking.discount.nil? || booking.discount == 0 || booking.discount < new_book_discount
+
               new_book_price = (booking.service.price - new_book_discount*booking.service.price/100).round
               booking.price = new_book_price
-              final_price = final_price + new_book_price
+              #final_price = final_price + new_book_price
               if(booking.list_price > 0)
                 booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
               else
                 booking.discount = 0
               end
-
-            end
+            end        
 
           end
 
         end
+
+        #Prices wee set, now sum them
+        if @bookings.count > 0
+          @bookings.each do |booking|
+            final_price += booking.price
+          end
+        end
+
       end
 
       #####
@@ -4416,9 +4458,16 @@ class BookingsController < ApplicationController
                     service_valid = false
                   end
                 else
+
+                  #Check for services that aren't the searched one, then check for capacity of this one
+                  if Booking.where(service_provider_id: provider.id).where.not(service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count > 0
+                    service_valid = false
+                  end
+
                   if Booking.where(service_provider_id: provider.id, service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count >= service.capacity
                     service_valid = false
                   end
+                  
                 end
 
 
