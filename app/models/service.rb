@@ -496,9 +496,15 @@ class Service < ActiveRecord::Base
 
 	# end
 
-	def self.get_last_minute_available_hours(location, serviceStaffArr, datepicker)
+	def self.get_last_minute_available_hours(location, serviceStaffArr, datepicker, last_minute_promo)
 
 		require 'date'
+
+		available_hours = []
+
+		if last_minute_promo.nil? || location.nil? || serviceStaffArr.nil? || datepicker.blank?
+			return available_hours
+		end
 
 	    local = Location.find(location)
 	    company_setting = local.company.company_setting
@@ -507,23 +513,13 @@ class Service < ActiveRecord::Base
 	    now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 	    session_booking = nil
 
-	    #if params[:session_booking_id] && params[:session_booking_id] != ""
-	    #  session_booking = SessionBooking.find(params[:session_booking_id])
-	    #end
-
-	    if @is_session_booking
-	    	session_booking = @booking.session_booking
-	    end
-
-
 	    if datepicker and datepicker != ""
 	      if datepicker.to_datetime > now
 	        now = datepicker.to_datetime
 	      end
 	    end
 
-	    date = now
-	    @date = Date.parse(datepicker)
+	    date = Date.parse(datepicker)
 
 	    #logger.debug "now: " + now.to_s
 
@@ -588,25 +584,8 @@ class Service < ActiveRecord::Base
 	    day = now.cwday
 		dtp = local.location_times.where(day_id: day).order(:open).first
 
-		logger.debug "Reaches 1"
-
 		if dtp.nil?
-			if serviceStaff[0][:provider] == "0"
-		    	@lock = false
-		    else
-		    	@lock = true
-		    end
-
-		    @lock
-		    @company = local.company
-		    @location = local
-		    @serviceStaff = serviceStaff
-		    @date = Date.parse(datepicker)
-		    @service = Service.find(serviceStaff[0][:service])
-
-		    @available_time = hours_array
-		    @bookSummaries = book_summaries
-			return
+			return hours_array
 		end
 
 		logger.debug "Reaches 2"
@@ -620,29 +599,16 @@ class Service < ActiveRecord::Base
 
 
 		if now > after_date
-			if serviceStaff[0][:provider] == "0"
-		    	@lock = false
-		    else
-		    	@lock = true
-		    end
-
-		    @lock
-		    @company = local.company
-		    @location = local
-		    @serviceStaff = serviceStaff
-		    @date = Date.parse(datepicker)
-		    @service = Service.find(serviceStaff[0][:service])
-
-		    @available_time = hours_array
-		    @bookSummaries = book_summaries
-			return
+			return hours_array
 		end
 
 
 		day_close = local.location_times.where(day_id: day).order(:close).first.close
 		limit_date = DateTime.new(now.year, now.mon, now.mday, day_close.hour, day_close.min)
 
-		while (dateTimePointer < limit_date)
+		last_minute_limit = DateTime.now + last_minute_promo.hours.hours
+
+		while (dateTimePointer < limit_date && dateTimePointer < last_minute_limit)
 
 			logger.debug "***"
 			logger.debug "***"
@@ -653,7 +619,7 @@ class Service < ActiveRecord::Base
 			serviceStaffPos = 0
 			bookings = []
 
-			while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date)
+			while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date && dateTimePointer < last_minute_limit)
 
 				logger.debug "***"
 				logger.debug "***"
@@ -817,6 +783,11 @@ class Service < ActiveRecord::Base
 					        service_valid = false
 					      end
 					    else
+
+					    	if Booking.where(service_provider_id: provider.id).where.not(service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count > 0
+					        	service_valid = false
+					      	end
+
 					      if Booking.where(service_provider_id: provider.id, service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count >= service.capacity
 					        service_valid = false
 					      end
@@ -884,79 +855,20 @@ class Service < ActiveRecord::Base
 							:provider_id => provider.id,
 							:price => service.price,
 							:online_payable => service.online_payable,
-							:has_discount => service.has_discount,
-							:discount => service.discount,
+							:has_discount => false,
+							:discount => last_minute_promo.discount,
 							:show_price => service.show_price,
-							:has_time_discount => service.has_time_discount,
+							:has_time_discount => false,
 							:has_sessions => service.has_sessions,
 							:sessions_amount => book_sessions_amount,
 							:must_be_paid_online => service.must_be_paid_online
 			            }
 
-					    if !service.online_payable || !service.company.company_setting.online_payment_capable
-					    	bookings.last[:has_discount] = false
-							bookings.last[:has_time_discount] = false
-							bookings.last[:discount] = 0
-							bookings.last[:time_discount] = 0
-					    elsif !service.company.company_setting.promo_offerer_capable
-							bookings.last[:has_time_discount] = false
-							bookings.last[:time_discount] = 0
-					    end
+					    bookings.last[:has_discount] = false
+						bookings.last[:has_time_discount] = false
+						bookings.last[:discount] = last_minute_promo.discount
+						bookings.last[:time_discount] = 0
 
-					    if service.has_time_discount && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable && service.time_promo_active
-
-					      promo = Promo.where(:day_id => now.cwday, :service_promo_id => service.active_service_promo_id, :location_id => local.id).first
-
-					      if !session_booking.nil? && !session_booking.service_promo_id.nil?
-					        promo = Promo.where(:day_id => now.cwday, :service_promo_id => session_booking.service_promo_id, :location_id => local.id).first
-					      end
-
-					      if !promo.nil?
-
-					        service_promo = ServicePromo.find(service.active_service_promo_id)
-
-					        #Check if there is a limit for bookings, and if there are any left
-					        if service_promo.max_bookings > 0 || !service_promo.limit_booking
-
-					          #Check if the promo is still active, and if the booking ends before the limit date
-
-					          if bookings.last[:end].to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
-
-					            if !(service_promo.morning_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
-
-					              bookings.last[:time_discount] = promo.morning_discount
-
-					            elsif !(service_promo.afternoon_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
-
-					              bookings.last[:time_discount] = promo.afternoon_discount
-
-					            elsif !(service_promo.night_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
-
-					              bookings.last[:time_discount] = promo.night_discount
-
-					            else
-
-					              bookings.last[:time_discount] = 0
-
-					            end
-					          else
-					            bookings.last[:time_discount] = 0
-					          end
-					        else
-					          bookings.last[:time_discount] = 0
-					        end
-
-					      else
-
-					        bookings.last[:time_discount] = 0
-
-					      end
-
-					    else
-
-					      bookings.last[:time_discount] = 0
-
-					    end
 
 					    if service.active_service_promo_id.nil?
 					      bookings.last[:service_promo_id] = "0"
@@ -1204,36 +1116,15 @@ class Service < ActiveRecord::Base
 			  bookings_group_computed_price = 0
 
 			  bookings.each do |b|
-			    bookings_group_total_price = bookings_group_total_price + b[:price]
-			    if (b[:has_time_discount] && b[:time_discount] > 0) || (b[:has_discount] && b[:discount] > 0)
-			      has_time_discount = true
-			      if b[:has_discount] && !b[:has_time_discount]
-			        bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:discount]) / 100)
-			      elsif !b[:has_discount] && b[:has_time_discount]
-			        bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:time_discount]) / 100)
-			      else
-			        if b[:discount] > b[:time_discount]
-			          bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:discount]) / 100)
-			        else
-			          bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:time_discount]) / 100)
-			        end
-			      end
-			    else
-			      bookings_group_computed_price = bookings_group_computed_price + b[:price]
-			    end
-			  end
 
-			  if (bookings_group_total_price != 0)
-			    bookings_group_discount = (100 - (bookings_group_computed_price/bookings_group_total_price)*100).round(1)
+			  	b[:has_time_discount] = false
+			  	b[:has_discount] = false
+			  	b[:time_discount] = 0
+			  	b[:discount] = last_minute_promo.discount
+
 			  end
 
 			  status = "available"
-
-			  if has_time_discount
-			    if session_booking.nil?
-			      status = "discount"
-			    end
-			  end
 
 			  hour_time_diff = ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f
 
@@ -1247,51 +1138,7 @@ class Service < ActiveRecord::Base
 			    curr_promo_discount = bookings[0][:time_discount]
 			  end
 
-			  if @mandatory_discount
-
-			    if has_time_discount
-
-			    	hour = {
-				  		:start => bookings[0][:start].strftime("%H:%M"),
-				  		:end => bookings[bookings.length-1][:end].strftime("%H:%M")
-					}
-
-			      	new_hour = {
-		                index: book_index,
-		                date: @date,
-		                full_date: I18n.l(bookings[0][:start].to_date, format: :day),
-		                hour: hour,
-		                bookings: bookings,
-		                status: status,
-		                start_block: bookings[0][:start].strftime("%H:%M"),
-		                end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
-		                available_provider: bookings[0][:provider_name],
-		                provider: bookings[0][:provider_id],
-		                promo_discount: curr_promo_discount.to_s,
-		                has_time_discount: bookings[0][:has_time_discount],
-		                has_discount: bookings[0][:has_discount],
-		                time_discount: bookings[0][:time_discount],
-		                discount: bookings[0][:discount],
-		                time_diff: hour_time_diff,
-		                has_sessions: bookings[0][:has_sessions],
-		                sessions_amount: bookings[0][:sessions_amount],
-		                group_discount: bookings_group_discount.to_s,
-		                service_promo_id: bookings[0][:service_promo_id]
-		            }
-
-			      	book_index = book_index + 1
-			      	book_summaries << new_hour
-
-			      	if !hours_array.include?(new_hour)
-
-				        hours_array << new_hour
-				        total_hours_array << new_hour
-
-				    end
-
-			    end
-
-			  else
+			  if true
 
 			  	hour = {
 			  		:start => bookings[0][:start].strftime("%H:%M"),
@@ -1302,7 +1149,7 @@ class Service < ActiveRecord::Base
 
 			    new_hour = {
 					index: book_index,
-					date: @date,
+					date: date,
 					full_date: I18n.l(bookings[0][:start].to_date, format: :day),
 					hour: hour,
 					bookings: bookings,
@@ -1311,7 +1158,7 @@ class Service < ActiveRecord::Base
 					end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
 					available_provider: bookings[0][:provider_name],
 					provider: bookings[0][:provider_id],
-	                promo_discount: curr_promo_discount.to_s,
+	                promo_discount: 0,
 	                has_time_discount: bookings[0][:has_time_discount],
 	                has_discount: bookings[0][:has_discount],
 	                time_discount: bookings[0][:time_discount],
@@ -1319,28 +1166,14 @@ class Service < ActiveRecord::Base
 	                time_diff: hour_time_diff,
 	                has_sessions: bookings[0][:has_sessions],
 	                sessions_amount: bookings[0][:sessions_amount],
-	                group_discount: bookings_group_discount.to_s,
-	                service_promo_id: bookings[0][:service_promo_id]
+	                group_discount: last_minute_promo.discount,
+	                service_promo_id: 0
 	            }
 
 			    book_index = book_index + 1
 			    book_summaries << new_hour
 
 			    should_add = true
-
-			    if !session_booking.nil?
-
-			      if !session_booking.service_promo_id.nil? && session_booking.max_discount != 0
-			        if new_hour[:group_discount].to_f < session_booking.max_discount.to_f
-			          should_add = false
-			        end
-			      end
-
-			    end
-
-			    #if params[:edit] && status == 'discount'
-			      #should_add = false
-			    #end
 
 			    if should_add
 			      if !hours_array.include?(new_hour)
@@ -1357,25 +1190,9 @@ class Service < ActiveRecord::Base
 
 		end
 
-		if serviceStaff[0][:provider] == "0"
-	    	@lock = false
-	    else
-	    	@lock = true
-	    end
+	    available_time = hours_array
 
-	    @lock
-	    @company = local.company
-	    @location = local
-	    @serviceStaff = serviceStaff
-	    @date = Date.parse(datepicker)
-	    @service = Service.find(serviceStaff[0][:service])
-
-	    @available_time = hours_array
-	    @bookSummaries = book_summaries
-
-	    logger.debug @available_time.inspect
-
-	    return @available_time
+	    return available_time
 
 	end
 

@@ -89,7 +89,7 @@
               <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
 
-                    <p style="color: #949292;">Reserva hasta <%= @service.get_last_minute_hours(@location.id) %> antes y obtén un <%= @service.get_last_minute_discount(@location.id) %>% de descuento.</p>
+                    <p style="color: #949292;">Reserva hasta <%= @service.get_last_minute_hours(@location.id) %> horas antes y obtén un <%= @service.get_last_minute_discount(@location.id) %>% de descuento.</p>
 
 
                 </div>
@@ -161,16 +161,36 @@
                 <div class="col-xs-9">
                   <select class="form-control" name="providerOptimizerSelector" id="providerOptimizerSelector">
                     <% if @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).count > 1 %>
-                        <% if @location.company.company_setting.provider_preference != 0 %>
+                        <% if @location.company.company_setting.provider_preference != 1 %>
                             <option value="0">Sin Preferencia</option>
                         <% end %>
                     <% end %>
-                    <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(:order, :public_name).each do |provider| %>
+                    <% if @location.company.company_setting.provider_preference != 2 %>
+                      <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(:order, :public_name).each do |provider| %>
 
-                      <option value="<%= provider.id %>">
-                          <%= provider.public_name %>
-                      </option>
+                        <option value="<%= provider.id %>">
+                            <%= provider.public_name %>
+                        </option>
 
+                      <% end %>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="available_dates_select" class="col-xs-3 control-label">Fecha</label>
+                <div class="col-xs-9">
+                  <select id="available_dates_select" name="available_dates_select" class="form-control">
+                    <% @available_dates.each do |available_date| %>
+                      <% if available_date == @selected_date %>
+                        <option value="<%= available_date.strftime('%d/%m/%Y') %>" selected>
+                          <%= available_date.strftime('%d/%m/%Y') %>
+                        </option>
+                      <% else %>
+                        <option value="<%= available_date.strftime('%d/%m/%Y') %>">
+                          <%= available_date.strftime('%d/%m/%Y') %>
+                        </option>
+                      <% end %>
                     <% end %>
                   </select>
                 </div>
@@ -194,7 +214,7 @@
       </div>
 
       <div class="modal-footer">
-          <a type="button" class="btn open-calendar-btn" id="openHoursBtn"><i class="fa fa-calendar-o"></i>&nbsp;Elegir hora</a>
+          <a type="button" class="btn btn-green" id="nextBtn">&nbsp;Siguiente</a>
           <a type="button" class="btn hour-selected-btn" id="openPayFormBtn" style="display: none;" disabled="true"><i class="fa fa-usd"></i>&nbsp;Pagar</a>
           <!--<button type="button" class="btn session-btn" id="openOptimizerBtn"><i class="fa fa-calendar-o"></i>&nbsp;Sugerir hora</button>-->
           <a href="#" class="btn btn-white" class="closeBookModal" data-dismiss="modal">Cerrar</a>
@@ -205,6 +225,14 @@
 
 <input type="hidden" id="locationId" value="<%= @location.id %>" />
 <input type="hidden" id="serviceId" value="<%= @service.id %>" />
+<input type="hidden" id="serviceName" value="<%= @service.name %>" />
+<input type="hidden" id="servicePrice" value="<%= @service.price %>" />
+<input type="hidden" id="currentDate" value="<%= DateTime.now.strftime('%d/%m/%Y') %>" />
+<% if @service.has_sessions %>
+  <input type="hidden" id="hasSessions" value="1" />
+<% else %>
+  <input type="hidden" id="hasSessions" value="0" />
+<% end %>
 
 <% if user_signed_in? %>
   <input type="hidden" id="user_id" value="<%= current_user.id %>" />
@@ -218,142 +246,6 @@
 <% content_for :scripts do %>
 
   <%= javascript_include_tag 'workflow/promotions-calendar' %>
-
-  <script type="text/javascript">
-
-
-    var currMarker;
-
-    //====== Google Map ======//
-    function initializeMap(lat, lng, mapDiv) {
-        var properties = {
-            center: new google.maps.LatLng(lat, lng),
-            zoom:   15,
-            panControl: false,
-            zoomControl: true,
-            zoomControlOptions: {
-                style: google.maps.ZoomControlStyle.SMALL
-            },
-            mapTypeControl: true,
-            mapTypeControlOptions: {
-                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-            },
-            scaleControl: false,
-            streetViewControl: false,
-            overviewMapControl: false,
-            mapTypeId:  google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map(document.getElementById(mapDiv), properties);
-    }
-
-    function setMarker(latlng, local) {
-
-      if(currMarker!=null)
-      {
-        currMarker.setMap(null);
-      }
-
-      var image = '<%= asset_path("pin_googlemap.png") %>';
-
-      var marker = new google.maps.Marker({
-                    position: latlng,
-                    icon: image
-                    /*new google.maps.MarkerImage(
-                "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld=|01e19d|FFFFFF",
-                null, null, new google.maps.Point(0, 42))*/
-                  });
-      currMarker = marker;
-      marker.setMap(map);
-
-      var infowindow = new google.maps.InfoWindow({
-          content: local
-        });
-      google.maps.event.addListener(marker, 'click', function() {
-          infowindow.open(map,marker);
-      });
-    }
-
-    function localMap(id) {
-      $.getJSON('/local', {id: id}, function (local) {
-        var latLng = new google.maps.LatLng(local.latitude, local.longitude);
-        map.setCenter(latLng);
-        setMarker(latLng, local.name);
-      });
-    }
-
-
-    $(document).ready(function(){
-      var map;
-      initializeMap(-33.413084, -70.592161, 'map');
-
-      if ($("#locationId").val() != "") {
-        var localId = $("#locationId").val();
-
-        //loadSchedule(localId);
-        localMap(localId);
-      }
-    });
-
-    $(".promo-service-box").click(function(){
-      console.log($(this).attr("service_id"));
-      $('.show-promo-link[service_id="' + $(this).attr("service_id") + '"][location_id="' + $(this).attr("location_id") + '"]')[0].click();
-    });
-
-
-
-    var promoCalendar;
-
-    function simple_currency(price)
-    {
-      var amount = Math.round(price).toString();
-      //console.log(amount);
-      //console.log(amount.length);
-      var j = 0;
-      var stack = new Array();
-      for(i = amount.length-1; i>=0; i--)
-      {
-        j = j+1;
-        stack.push(amount[i]);
-        if(j == 3 && i>0)
-        {
-          stack.push('.');
-          j = 0;
-        }
-      }
-      var formatted_amount = "$";
-      for(i = stack.length-1; i >=0 ; i--)
-      {
-        formatted_amount = formatted_amount + stack[i];
-      }
-
-      return formatted_amount;
-    }
-
-    $("#selectProviderModal").on('show.bs.modal', function(e){
-      $("#hours-selection-div").empty();
-    });
-
-    $("#openHoursBtn").click(function(){
-
-      var service_id = $("#serviceId").val();
-      var location_id = $("#locationId").val();
-      var service_provider_id = $("#providerOptimizerSelector").val();
-
-      $.ajax({
-        url: '/last_minute_hours?id=' + service_id + "&location_id=" + location_id + "&service_provider_id=" + service_provider_id,
-        type: 'GET',
-        success: function(response){
-          $("#hours-selection-div").empty();
-          $("#hours-selection-div").append(response);
-        },
-        error: function(response){
-          $("#hours-selection-div").empty();
-          alert("Ocurrió un error.");
-        }
-      });
-
-    });
-
-  </script>
+  <%= javascript_include_tag 'promo/last-minute-promo' %>
 
 <% end %>

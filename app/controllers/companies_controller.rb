@@ -1267,6 +1267,11 @@ class CompaniesController < ApplicationController
 						        service_valid = false
 						      end
 						    else
+
+						    	if Booking.where(service_provider_id: provider.id).where.not(service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count > 0
+					        		service_valid = false
+					      		end
+
 						      if Booking.where(service_provider_id: provider.id, service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count >= service.capacity
 						        service_valid = false
 						      end
