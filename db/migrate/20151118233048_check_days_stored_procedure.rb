@@ -20,7 +20,7 @@ class CheckDaysStoredProcedure < ActiveRecord::Migration
 		    RETURN;
 		  END IF;
 
-		  available_promotions := exists (select id from services where services.id IN serv_ids AND services.has_time_discount = TRUE AND services.online_payable = TRUE AND services.time_promo_active = TRUE AND (select exists (select id from company_settings where company_id = services.company_id AND company_settings.online_payment_capable = TRUE AND company_settings.promo_offerer_capable = TRUE)));
+		  available_promotions := exists (select id from services where services.id = ANY(serv_ids) AND services.has_time_discount = TRUE AND services.online_payable = TRUE AND services.time_promo_active = TRUE AND (select exists (select id from company_settings where company_id = services.company_id AND company_settings.online_payment_capable = TRUE AND company_settings.promo_offerer_capable = TRUE)));
 
 		  now_date := start_date;
 		  before_time := localtimestamp + ((select before_booking from company_settings where company_settings.company_id = (select company_id from locations where locations.id = local_id)) * interval '1 hour');
