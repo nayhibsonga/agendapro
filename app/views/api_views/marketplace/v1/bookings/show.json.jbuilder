@@ -8,6 +8,7 @@ json.client_email @booking.client.email
 json.client_phone @booking.client.phone
 json.bookings_group @bookings_group.each do |booking|
 	json.id booking.id
-	json.access_token booking.confirmation_code[5..15]
+	json.access_token booking.access_token
 	json.service_name booking.service.name
-json.payment_info 
+end
+json.payment_info @payment_info

@@ -589,7 +589,7 @@ module ApiViews
 		      amount = sprintf('%.2f', final_price)
 		      payment_method = params[:mp]
 		      req = PuntoPagos::Request.new()
-		      resp = req.create(trx_id, amount, payment_method)
+		      resp = req.create(trx_id, amount, '03')
 		      if resp.success?
 		        proceed_with_payment = true
 		        @bookings.each do |booking|
@@ -1023,17 +1023,32 @@ module ApiViews
 		def show
 			if params[:id] && params[:access_token]
 		  		@booking = Booking.find(params[:id])
+		  		unless @booking.access_token == params[:access_token]
+		  			render json: { errors: "Parámetros mal ingresados." }, status: 422
+		        	return
+		  		end
+
 		  		@bookings_group = Booking.where(id: @booking.id)
 		  		if @booking.trx_id.present?
 		  			@bookings_group = Booking.where(trx_id: @booking.trx_id)
 		  		elsif @booking.booking_group.present?
 		  			@bookings_group = Bookin.where(booking_group: @booking.booking_group)
 		  		end
-		  			
-		  		unless @booking.confirmation_code[5..15] == params[:access_token]
-		  			render json: { errors: "Parámetros mal ingresados." }, status: 422
-		        	return
+
+		  		@payment_info = ''
+		  		if @booking.trx_id.present?
+		  			@bookings_group = Booking.where(trx_id: @booking.trx_id)
+		  			if PuntoPagosConfirmation.find_by(trx_id: @booking.trx_id)
+		  				@punto_pagos = PuntoPagosConfirmation.find_by(trx_id: @booking.trx_id)
+		  				@payment_info = {company_name: @booking.location.company.name, amount: @punto_pagos.amount, reference: @punto_pagos.trx_id, payment_date: @punto_pagos.approvement_date}
+		  			elsif PayUNotification.find_by(reference_sale: @booking.trx_id)
+		  				@pay_u = PayUNotification.find_by(trx_id: @booking.trx_id)
+		  				@payment_info = {company_name: @booking.location.company.name, amount: @pay_u.value, reference: @pay_u.reference_sake, payment_date: @pay_u.transaction_date.strftime('%d-%m-%Y')}
+		  			end
+		  		elsif @booking.booking_group.present?
+		  			@bookings_group = Bookin.where(booking_group: @booking.booking_group)
 		  		end
+		  			
 			else
 				render json: { errors: "Parámetros mal ingresados." }, status: 422
 		        return

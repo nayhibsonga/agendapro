@@ -1,27 +1,19 @@
-json.active_bookings do
-	@activeBookings.each do |date, bookings|
-		json.set! date do
-			json.array!(bookings) do |booking|
-				json.extract! booking, :id, :start, :end, :service_provider_id, :service_id, :location_id, :price
-				json.service booking.service.name
-				json.service_provider booking.service_provider.public_name
-				json.location booking.location.name
-			end
-		end
-	end
+json.active_bookings @activeBookings.each do |booking|
+	json.extract! booking, :id, :start, :end, :service_provider_id, :service_id, :location_id, :price
+	json.service booking.service.name
+	json.service_provider booking.service_provider.public_name
+	json.location booking.location.name
+	json.company booking.location.company.name
+	json.access_token booking.access_token
 end
 
-json.past_bookings do
-	@lastBookings.each do |date, bookings|
-		json.set! date do
-			json.array!(bookings) do |booking|
-				json.extract! booking, :id, :start, :end, :service_provider_id, :service_id, :location_id, :price
-				json.service booking.service.name
-				json.service_provider booking.service_provider.public_name
-				json.location booking.location.name
-			end
-		end
-	end
+json.past_bookings @lastBookings.each do |booking|
+	json.extract! booking, :id, :start, :end, :service_provider_id, :service_id, :location_id, :price
+	json.service booking.service.name
+	json.service_provider booking.service_provider.public_name
+	json.location booking.location.name
+	json.company booking.location.company.name
+	json.access_token booking.access_token
 end
 
 json.session_bookings do

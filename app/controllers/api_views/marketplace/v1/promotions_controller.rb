@@ -131,7 +131,7 @@ module ApiViews::Marketplace
         @company = @location.company
         @booking_conditions = ''
         if @service.active_service_promo.limit_booking
-          @booking_conditions += 'Quedan ' + @service.active_promo_left_bookings + ' reservas disponibles para esta promoción.'
+          @booking_conditions += 'Quedan ' + @service.active_promo_left_bookings.to_s + ' reservas disponibles para esta promoción.'
           if @service.active_promo_left_bookings <= 20
             @booking_conditions += '¡Apúrate y reserva antes que se acaben!'
           end

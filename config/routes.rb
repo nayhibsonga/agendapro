@@ -575,7 +575,7 @@
         get 'users/oauth_login_link', to: 'users#oauth_login_link'
 
         post 'bookings', to: 'bookings#book_service'
-        get 'bookings', to: 'bookings#show'
+        get 'bookings/:id', to: 'bookings#show'
         get 'bookings_group', to: 'bookings#show_group'
         put 'bookings/:id', to: 'bookings#edit_booking'
         delete 'bookings/:id', to: 'bookings#destroy'

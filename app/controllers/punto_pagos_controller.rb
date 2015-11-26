@@ -206,7 +206,7 @@ class PuntoPagosController < ApplicationController
           #Mostrar página similar a la de reserva hecha, confirmando que se pagó
           @bookings = Booking.where(:trx_id => trx_id)
           if @bookings.count > 0 && @bookings.first.marketplace_origin
-            redirect_to 'http://' + ENV['MARKETPLACE_URL'] + '/booking/success/' + @bookings.first.id.to_s + '/' + @bookings.first.confirmation_code[5..15]
+            redirect_to 'http://' + ENV['MARKETPLACE_URL'] + '/booking/success/' + @bookings.first.id.to_s + '/' + @bookings.first.access_token
             return
           end
           @has_session_booking = false
