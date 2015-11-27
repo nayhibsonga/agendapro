@@ -5,6 +5,7 @@ class CompaniesController < ApplicationController
 	before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address, :select_hour, :user_data, :select_promo_hour, :mobile_hours]
 	before_action :quick_add, except: [:new, :overview, :workflow, :add_company, :check_company_web_address, :select_hour, :user_data, :select_promo_hour, :mobile_hours]
 	before_action :verify_is_super_admin, only: [:index, :edit_payment, :new, :edit, :manage, :manage_company, :new_payment, :add_payment, :update_company, :get_year_incomes, :incomes, :locations, :monthly_locations, :deactivate_company]
+	before_action :verify_workflow_free_plan, only: [:overview, :workflow]
 
 	layout "admin", except: [:show, :overview, :workflow, :add_company, :select_hour, :user_data, :select_session_hour, :select_promo_hour]
 	load_and_authorize_resource
@@ -998,6 +999,29 @@ class CompaniesController < ApplicationController
 	def get_cashiers_by_code
 		@cashier = Cashier.find_by_code(params[:cashier_code])
 		render :json => @cashier
+	end
+
+	def billing_wire_transfer_form
+		
+		@billing_wire_transfer = BillingWireTransfer.new
+
+		#Check for latest billing_wire_transfer to prefill some data
+
+		if BillingWireTransfer.where(company_id: current_user.company_id).count > 0
+			last_billing_wire_transfer = BillingWireTransfer.where(company_id: current_user.company_id).order('updated_at desc').first.dup
+			@billing_wire_transfer.account_name = last_billing_wire_transfer.account_name
+			@billing_wire_transfer.account_number = last_billing_wire_transfer.account_number
+			@billing_wire_transfer.account_bank = last_billing_wire_transfer.account_bank
+		end
+
+	end
+
+	def save_billing_wire_transfer
+		
+	end
+
+	def update_billing_wire_transfer
+
 	end
 
 	private

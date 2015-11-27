@@ -90,6 +90,19 @@ class PlansController < ApplicationController
     @plan_6 = ((@plan_1 + @price*5)*(1-@month_discount_6)).round(0)
     @plan_9 = ((@plan_1 + @price*8)*(1-@month_discount_9)).round(0)
     @plan_12 = ((@plan_1 + @price*11)*(1-@month_discount_12)).round(0)
+
+    @billing_wire_transfer = BillingWireTransfer.new
+    @billing_wire_transfer.payment_date = DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])
+
+    #Check for latest billing_wire_transfer to prefill some data
+
+    #if BillingWireTransfer.where(company_id: current_user.company_id).count > 0
+    #  last_billing_wire_transfer = BillingWireTransfer.where(company_id: current_user.company_id).order('updated_at desc').first.dup
+    #  @billing_wire_transfer.account_name = last_billing_wire_transfer.account_name
+    #  @billing_wire_transfer.account_number = last_billing_wire_transfer.account_number
+    #  @billing_wire_transfer.account_bank = last_billing_wire_transfer.account_bank
+    #end
+
   end
 
   def view_plans
