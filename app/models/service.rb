@@ -38,6 +38,8 @@ class Service < ActiveRecord::Base
 
 	validate :group_service_capacity, :outcall_providers
 
+	after_save :check_treatment_promo
+
 	pg_search_scope :search, 
 	:against => :name,
 	:associated_against => {
@@ -57,6 +59,16 @@ class Service < ActiveRecord::Base
                 }
     },
     :ignoring => :accents
+
+    def check_treatment_promo
+    	if self.has_sessions
+    		#Update promo values to be false/inactive
+    		self.update_column(:has_time_discount, false)
+    		self.update_column(:has_last_minute_discount, false)
+    		self.update_column(:time_promo_active, false)
+    		self.update_column(:active_service_promo_id, nil)
+    	end
+    end
 
     def active_service_promo
     	if self.active_service_promo_id.nil?
@@ -606,7 +618,7 @@ class Service < ActiveRecord::Base
 		day_close = local.location_times.where(day_id: day).order(:close).first.close
 		limit_date = DateTime.new(now.year, now.mon, now.mday, day_close.hour, day_close.min)
 
-		last_minute_limit = DateTime.now + last_minute_promo.hours.hours
+		last_minute_limit = DateTime.now + last_minute_promo.hours.hours -  eval(ENV["TIME_ZONE_OFFSET"])
 
 		while (dateTimePointer < limit_date && dateTimePointer < last_minute_limit)
 

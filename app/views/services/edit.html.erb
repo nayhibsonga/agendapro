@@ -69,7 +69,7 @@
 
 							<input type="hidden" id="promo_service_id" value="<%= @service.id %>" />
 							
-							<% if @service.online_payable && @service.check_company_promos %>
+							<% if @service.online_payable && @service.check_company_promos && !@service.has_sessions %>
 								<div class="row">
 									<div class="col-md-12">
 										<label>Descuento en reservas de último minuto</label>
@@ -153,7 +153,7 @@
 								<% end %>
 							<% end %>
 
-							<% if @service.online_payable && @service.check_company_promos %>
+							<% if @service.online_payable && @service.check_company_promos && !@service.has_sessions %>
 						
 								<div class="row">
 									<div class="col-md-12">
@@ -635,11 +635,15 @@
 								<div class="row">
 									<div class="col-md-8">
 										<div class="form-group">
-											<% if !@service.online_payable %>
-												Este servicio no se puede pagar en línea, por lo que no puedes ofrecerlo en promoción.
-											<% else %>
-												Aún no has configurado las promociones. Entra a Configuraciones, a la sección de Promociones, para configurar el horario y activar las promociones. Si la opción no te aparece, ponte en contacto con nosotros para habilitar las promociones. 
-											<% end %>
+											<p style="text-aling: justify;">
+												<% if !@service.online_payable %>
+													Este servicio no se puede pagar en línea, por lo que no puedes ofrecerlo en promoción.
+												<% elsif !@service.check_company_promos %>
+													Aún no has configurado las promociones. Entra a Configuraciones, a la sección de Promociones, para configurar el horario y activar las promociones. Si la opción no te aparece, ponte en contacto con nosotros para habilitar las promociones.
+												<% else %>
+													Este servicio corresponde a un tratamiento por sesiones, por lo que no puedes ofrecerlo en promoción por horario o de último minuto. Como alternativa, puedes ofrecerlo con descuento si es prepagado en línea. Para hacerlo, vuelve a la pantalla de edición del servicio, elige una opción de pago en línea, marca la opción de descuento or pago en línea e ingresa el porcentaje de descuento.
+												<% end %>
+											</p>
 										</div>
 									</div>
 								</div>

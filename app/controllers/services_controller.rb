@@ -938,7 +938,7 @@ class ServicesController < ApplicationController
     @available_dates = []
 
     first_day = DateTime.now
-    total_days = (@last_minute_promo.hours.to_f/24.to_f).ceil
+    total_days = (@last_minute_promo.hours.to_f/24.to_f).round
 
     for i in 0..total_days
       @available_dates[i] = first_day + i.days
