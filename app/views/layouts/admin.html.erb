@@ -339,6 +339,7 @@
               <p class="justified">Haz click en el botón abajo para ir a la página donde podrás ingresar los datos. Si tienes alguna duda respecto a los datos o a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un e-mail a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir.</p>
             </div>
             <div class="modal-footer">
+              <%= link_to "Agregar datos", select_plan_path, id: "billingInfoBtn2", class: "btn btn-green" %>
               <a class="btn btn-default" data-dismiss="modal">Cerrar</a>
             </div>
           </div>
