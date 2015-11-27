@@ -948,13 +948,13 @@ class ServicesController < ApplicationController
     if @available_dates.count > 0
 
       should_delete = false
-      location_open = @location.location_times.where(day_id: @available_dates.last.cwday).first.open
-      if location_open.nil? || location_open.strftime('%H:%M') > @available_dates.last.strftime('%H:%M')
+      location_open = @location.location_times.where(day_id: @available_dates.last.cwday).first
+      if location_open.nil? || location_open.open.strftime('%H:%M') > @available_dates.last.strftime('%H:%M')
         should_delete = true
       end
       @service.service_providers.each do |provider|
-        provider_open = provider.provider_times.where(day_id: @available_dates.last.cwday).first.open
-        if provider_open.nil? || provider_open.strftime('%H:%M') > @available_dates.last.strftime('%H:%M')
+        provider_open = provider.provider_times.where(day_id: @available_dates.last.cwday).first
+        if provider_open.nil? || provider_open.open.strftime('%H:%M') > @available_dates.last.strftime('%H:%M')
           should_delete = true
         end
       end
