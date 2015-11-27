@@ -1,0 +1,20 @@
+<div ui-sortable="sc.sortableOptions" ng-model="sc.servicesList">
+  <div class="added-service" ng-repeat="selected in sc.servicesList track by $index">
+    <section>
+      <span class="delete" ng-click="sc.removeService($index);">x</span>
+      <span class="service-title">{{ selected.name }}</span>
+      <span class="pull-right handle">
+        <i class="fa fa-bars"></i>
+      </span>
+    </section>
+    <section>
+      <span class="provider-name">
+        <select style="border: 1px solid rgb(221, 221, 221); height: 35px; padding: 0px 12px; border-radius: 0px; color: rgb(102, 102, 102); /* -webkit-appearance: none; */ background-color: white;" ng-options="provider.public_name for provider in selected.service_providers track by provider.id" ng-model="selected.providerAssigned">
+          <option value="">Primero Disponible</option>
+        </select>
+      </span>
+      <span class="time-detail"><i class="icon ion-ios-clock-outline"></i> {{ selected.duration | inHours }}</span>
+      <span class="pull-right" style="line-height: 35px; /* select height */">{{ selected.price | currency | clp }}</span>
+    </section>
+  </div>
+</div>

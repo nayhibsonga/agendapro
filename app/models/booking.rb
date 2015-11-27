@@ -538,6 +538,10 @@ class Booking < ActiveRecord::Base
     return encrypted_data
   end
 
+  def access_token
+    return (self.id * 123456).to_s(30)
+  end
+
   def send_booking_mail
     if self.is_session
       return

@@ -65,14 +65,14 @@ class LocalPuntoPagosController < ApplicationController
 		if params[:decision] == "accept"
 
 			respParams[:respuesta] = "00"
-			resp = RestClient.post 'http://lvh.me:3000/punto_pagos/notification', respParams
+			resp = RestClient.post 'http://192.168.1.111:3000/punto_pagos/notification', respParams
 
 			redirect_to punto_pagos_success_trx_url(:token => respParams[:token])
 			return
 		else
 
 			respParams[:respuesta] = "01"
-			resp = RestClient.post 'http://lvh.me:3000/punto_pagos/notification', respParams
+			resp = RestClient.post 'http://192.168.1.111:3000/punto_pagos/notification', respParams
 
 			redirect_to punto_pagos_failure_trx_url(:token => respParams[:token])
 			return

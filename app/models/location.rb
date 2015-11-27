@@ -326,14 +326,19 @@ class Location < ActiveRecord::Base
 	      services_array = Array.new
 	      services.each do |service|
 	        if service.service_category_id == category.id
+				service_providers_array = []
+				service.service_providers.where(active: true, online_booking: true, location_id: self.id).each do |service_provider|
+					service_providers_array.push({id: service_provider.id, public_name: service_provider.public_name})
+				end
 	          service_info = {
 	          	id: service.id,
 	          	name: service.name,
-	          	price: service.show_price ? service.price : "",
+	          	price: service.show_price && service.price > 0 ? service.price : "",
 	          	duration: service.duration,
 	          	service_category_id: service.service_category_id,
 	          	order: service.order,
-	          	description: service.description
+	          	description: service.description,
+	          	service_providers: service_providers_array
 	          }
 	          services_array.push(service_info)
 	        end
@@ -550,6 +555,15 @@ class Location < ActiveRecord::Base
 
 		PaymentsSystemMailer.stock_reminder_email(self, stocks, emails)
 
+	end
+
+	def services_top4
+		services = Service.where(active: true, online_booking: true).joins(:bookings).where('bookings.location_id = ?', self.id).group("services.id").limit(4)
+		if services.to_a.count < 4
+			return Service.where(active: true, online_booking: true, id: ServiceStaff.where(service_provider_id: self.service_providers.pluck(:id)).pluck(:service_id)).select("services.id, services.name, services.duration, services.price").order(:order).limit(4)
+		else
+			return Service.where(active: true, online_booking: true).select("services.id, services.name, services.duration, services.price, count(bookings.id) AS bookings_count").joins(:bookings).where('bookings.location_id = ?', self.id).group("services.id").order("bookings_count DESC").limit(4)
+		end
 	end
 
 end

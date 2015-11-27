@@ -1,0 +1,415 @@
+@import 'frontend/variables';
+@import 'frontend/mixins';
+@import 'frontend/transitions';
+
+@include breakpoint(md) {
+  // TABLET STYLES
+  header {
+    display: block;
+    $header-height: 75px;
+    border-bottom: 1px solid $light-gray;
+    font-size: 11px;
+    %links-tablet {
+      line-height: $header-height;
+      color: $light-gray;
+      margin: 0;
+    }
+    .container > .row {
+      height: $header-height;
+      padding-left: 15px;
+      padding-right: 15px;
+      div { height: 100%; }
+      .contact {
+        display: inline;
+        p { @extend %links-tablet; }
+      }
+      .options {
+        display: inline;
+        a {
+          @extend %links-tablet;
+          text-decoration: none;
+        }
+        .login {
+          display: inline;
+          a { color: $black; }
+        }
+        .add-company {
+          display: inline;
+          a {
+            border: 1px solid $light-pink;
+            border-radius: 7px;
+            color: $light-pink;
+            margin-left: 25px;
+            padding: 8px 20px;
+            &:hover {
+              border: 1px solid $dark-pink;
+              color: $dark-pink;
+            }
+          }
+        }
+      }
+    }
+
+    .logo-container {
+      height: 100%;
+      div {
+        height: inherit;
+        @include logo {
+          height: inherit;
+          width: auto;
+        }
+      }
+    }
+  }
+
+  .menu {
+    $menu-height: 50px;
+    $content-padding: 8px;
+    position: relative;
+    left: initial;
+    top: initial;
+    .wrapper {
+      height: $menu-height;
+      .content {
+        height: 100%;
+        padding: $content-padding 15px;
+        z-index: initial;
+      }
+      button { display: none; }
+    }
+
+    nav#services-list {
+      display: inline;
+      line-height: calc(#{$menu-height} - (#{$content-padding} * 2));
+      position: relative;
+      right: 0;
+      text-align: center;
+      top: 0;
+      border: none;
+      width: 100%;
+      h3 { display: none; }
+      .service-link { display: inline; }
+      span { display: inline-block; }
+      a {
+        color: $dark-gray;
+        text-decoration: none;
+        display: initial;
+        padding: 0;
+        &:hover {
+          background-color: inherit;
+        }
+      }
+      .nav-account {
+        display: none;
+      }
+    }
+  }
+
+  .landing {
+    background: url($landing-image) no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 475px;
+    .container {
+      height: 100%;
+      padding: 80px 0;
+      .title {
+        padding: 0 70px;
+        h1 {
+          font-size: 50px;
+          width: 70%;
+          color: $white;
+          text-transform: uppercase;
+          @include font-smoothing(antialiased);
+          .typed {
+            color: $light-pink;
+            font-weight: 600;
+          }
+        }
+      }
+      #search {
+        @include font-smoothing(antialiased);
+        padding: 0 70px;
+        margin-top: 20px;
+        .geo-icon {
+          display: inline-block;
+          background: url($geo-icon);
+          height: 135px;
+          width: 100px;
+        }
+        .form-container {
+          padding: 30px 0;
+        }
+        form {
+          $button-width: 158px;
+          %md-input-defaults {
+            height: 45px;
+            font-size: 16px;
+          }
+          .form-group { margin: 0 -15px 15px -15px; }
+          .input-group {
+            margin-bottom: 20px;
+            &:first-child::before {
+              content: '1';
+              @extend %step;
+            }
+            &:last-child::before {
+              content: '2';
+              @extend %step;
+            }
+          }
+          @include placeholder {
+            color: $lighter-gray;
+            font-weight: 300;
+          }
+          input {
+            @extend %md-input-defaults;
+            &[type='text'] {
+              width: 90%;
+            }
+          }
+          button {
+            @extend %md-input-defaults;
+            .xs-size { display: none; }
+            .md-size { display: inline; }
+          }
+          #localization {
+            background: transparent;
+            color: $white;
+          }
+          span.input-group-btn {
+            vertical-align: top;
+            #geo-locate.btn {
+              background: transparent;
+              border: 1px solid $white;
+              color: $white;
+              font-weight: 300;
+              width: $button-width;
+            }
+          }
+          #find-service.btn {
+            background-color: $light-pink;
+            color: $white;
+            width: $button-width;
+          }
+          %step {
+            color: $white;
+            display: inline-block;
+            float:left;
+            @include roboto-font(3em);
+            line-height: 46px; //Default Bootstrap Input Height
+            width: 10%;
+          }
+        }
+      }
+    }
+  }
+
+  #results {
+    #map {
+      .angular-google-map-container {
+        height: 200px;
+      }
+    }
+  }
+
+  #show {
+
+    #main-content {
+      .info {
+        border-bottom: none;
+        img {
+          height: 250px;
+        }
+        .description {
+          margin-top: 10px;
+          padding: 15px;
+          border: 1px solid $black;
+          .detail {
+            margin: 0;
+          }
+          .time {
+            padding: 0;
+            border: none;
+            &::before {
+              content: "\f402";
+              position: relative;
+              margin-left: 0;
+              margin-top: 0;
+              font-size: 20px;
+              vertical-align: middle;
+              margin-right: 8px;
+              // ionicons
+              font-family: "Ionicons";
+              speak: none;
+              font-style: normal;
+              font-weight: normal;
+              font-variant: normal;
+              text-transform: none;
+              text-rendering: auto;
+              line-height: 1;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale
+            }
+          }
+        }
+      }
+
+      .sub-menu {
+        margin-top: 0;
+        border: none;
+        text-align: left;
+        padding: 15px 0;
+        >span {
+          width: initial;
+          margin-right: 5px;
+          a{
+            padding: 10px 15px;
+            text-decoration: none;
+            color: $black;
+            &.active {
+              border: 1px solid $light-pink;
+            }
+          }
+        }
+      }
+
+      .services {
+        >div:first-child {
+          background-color: $light-pink;
+          color: $white;
+        }
+      }
+    }
+
+    #side-content {
+      padding: 10px 0;
+      #evaluation {
+        background-color: $lighterx-gray;
+        height: 190px;
+        padding: 10px;
+        margin-bottom: 15px;
+        .calification {
+          height: 58%;
+          border-bottom: 1px solid black;
+          .number {
+            color: $light-pink;
+            font-size: 6.5em;
+            display: inline-block;
+            height: 100%;
+            font-weight: 100;
+            line-height: 100%;
+          }
+          .stars {
+            display: inline-block;
+            vertical-align: top;
+            margin-top: 5%;
+            span{ font-size: 20px; }
+          }
+        }
+        .detailed {
+          height: 42%;
+          padding: 10px;
+          line-height: 25px;
+          >span {
+            display: inline-block;
+            width: 30%;
+            margin: 0 4px;
+            span { font-size: 20px; }
+          }
+        }
+      }
+
+      #map {
+        height: 220px;
+        width: 100%;
+        margin-bottom: 15px;
+        .angular-google-map, .angular-google-map-container {
+          height: 100%;
+        }
+      }
+
+      #summary-md {
+        padding: 15px;
+        border: 1px solid black;
+        margin-bottom: 15px;
+        >button {
+          width: 100%;
+          margin-bottom: 10px;
+          // height: 70px;
+        }
+        .added-service {
+          border: 1px solid $light-gray;
+          margin-bottom: 10px;
+          section {
+            padding: 15px;
+            background-color: $white;
+            &:first-child {
+              background-color: $light-gray;
+              color: white;
+              padding: 10px;
+            }
+            span {
+              &.delete {
+                cursor: pointer;
+                font-weight: bold;
+                &:hover{
+                  color: $light-pink;
+                }
+              }
+              &.provider-name {
+                display: inline-block;
+                width: 55%;
+              }
+              &.time-detail{
+                color: $lighter-gray;
+                font-size: 12px;
+              }
+              &.handle{
+                cursor: move;
+                &:hover{ color: $light-pink; }
+              }
+              &.service-title{
+                text-overflow: ellipsis;
+                max-width: 300px;
+                display: inline-block;
+                overflow: hidden;
+                white-space: nowrap;
+                vertical-align: bottom;
+              }
+            }
+          }
+        }
+        .total {
+          padding: 10px 10px 0;
+          border-top: 1px solid black;
+          font-size: 21px;
+          font-weight: 100;
+          p{
+            margin-bottom: 0;
+            .price { color: $light-pink; }
+            .separator { margin: 0 10px; }
+          }
+        }
+      }
+    }
+  }
+
+  #schedule {
+    .modal-dialog {
+      width: 90%;
+      margin: 30px auto;
+    }
+    .modal-header {
+      span.hora{
+        margin-right: 50px;
+      }
+    }
+    .modal-footer {
+      padding: 15px;
+    }
+  }
+
+}
+
+

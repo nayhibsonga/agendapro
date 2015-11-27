@@ -1,0 +1,38 @@
+@import 'frontend/variables';
+@import 'frontend/mixins';
+@import 'frontend/transitions';
+
+@include breakpoint(sm) {
+  // Small - Medium size devices
+
+  .menu {
+    button.navbar-toggle {
+      display: block;
+    }
+  }
+
+  #mainContent > div > div > div.title > h1 {
+    font-size: 50px;
+    width: 80%;
+  }
+
+  .landing {
+    .container {
+      .title {
+        h1 {
+          font-size: 50px;
+          width: 80%;
+        }
+      }
+    }
+  }
+
+  footer {
+    height: 125px;
+    .container {
+      p.direction{
+        padding-top: 34px;
+      }
+    }
+  }
+}

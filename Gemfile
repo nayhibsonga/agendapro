@@ -38,7 +38,7 @@ gem 'whenever', :require => false
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
 
-group :development do
+group :development, :pagos do
   #mejores errores
   gem 'better_errors'
   #esconde mensajes innecesarios del log
@@ -178,6 +178,10 @@ gem 'rack-cors'
 
 #Oink para revisión de memoria
 gem "oink"
+
+# CSS Preprocessor
+gem 'sass-rails'
+#gem 'compass-rails'
 
 #Squirm-rails for stored procedures
 #gem "squirm_rails", require: "squirm/rails"
