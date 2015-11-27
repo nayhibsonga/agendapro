@@ -1,0 +1,5 @@
+<div id="map" ng-controller="MapsController as mc">
+  <ui-gmap-google-map center="mc.map.center" zoom="mc.map.zoom" options="options">
+    <ui-gmap-markers models="mc.markers" click="mc.markerClick" coords="'self'" options="{ icon: 'assets/hora_chic/maps/pin.png' }"></ui-gmap-markers>
+  </ui-gmap-google-map>
+</div>
