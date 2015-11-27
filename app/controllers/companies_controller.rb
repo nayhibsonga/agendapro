@@ -5,6 +5,7 @@ class CompaniesController < ApplicationController
 	before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address, :select_hour, :user_data, :select_promo_hour, :mobile_hours]
 	before_action :quick_add, except: [:new, :overview, :workflow, :add_company, :check_company_web_address, :select_hour, :user_data, :select_promo_hour, :mobile_hours]
 	before_action :verify_is_super_admin, only: [:index, :edit_payment, :new, :edit, :manage, :manage_company, :new_payment, :add_payment, :update_company, :get_year_incomes, :incomes, :locations, :monthly_locations, :deactivate_company]
+	before_action :verify_workflow_free_plan, only: [:overview, :workflow]
 
 	layout "admin", except: [:show, :overview, :workflow, :add_company, :select_hour, :user_data, :select_session_hour, :select_promo_hour]
 	load_and_authorize_resource
@@ -953,21 +954,21 @@ class CompaniesController < ApplicationController
 	    end
 
 		if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
-			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).joins(:product_categories).order(name: :asc).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
-			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
-			@products = products.where(:product_category_id => params[:category], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category], :product_display_id => params[:display]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
-			@products = products.where(:product_category_id => params[:category]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
-			@products = products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
-			@products = products.where(:product_brand_id => params[:brand]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_brand_id => params[:brand]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
-			@products = products.where(:product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_display_id => params[:display]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		else
-			@products = products.order(:product_category_id, :product_brand_id)
+			@products = products.joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		end
 
 		logger.info @products.inspect
@@ -998,6 +999,29 @@ class CompaniesController < ApplicationController
 	def get_cashiers_by_code
 		@cashier = Cashier.find_by_code(params[:cashier_code])
 		render :json => @cashier
+	end
+
+	def billing_wire_transfer_form
+		
+		@billing_wire_transfer = BillingWireTransfer.new
+
+		#Check for latest billing_wire_transfer to prefill some data
+
+		if BillingWireTransfer.where(company_id: current_user.company_id).count > 0
+			last_billing_wire_transfer = BillingWireTransfer.where(company_id: current_user.company_id).order('updated_at desc').first.dup
+			@billing_wire_transfer.account_name = last_billing_wire_transfer.account_name
+			@billing_wire_transfer.account_number = last_billing_wire_transfer.account_number
+			@billing_wire_transfer.account_bank = last_billing_wire_transfer.account_bank
+		end
+
+	end
+
+	def save_billing_wire_transfer
+		
+	end
+
+	def update_billing_wire_transfer
+
 	end
 
 	private
@@ -1267,6 +1291,11 @@ class CompaniesController < ApplicationController
 						        service_valid = false
 						      end
 						    else
+
+						    	if Booking.where(service_provider_id: provider.id).where.not(service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count > 0
+					        		service_valid = false
+					      		end
+
 						      if Booking.where(service_provider_id: provider.id, service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count >= service.capacity
 						        service_valid = false
 						      end

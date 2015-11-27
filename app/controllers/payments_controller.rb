@@ -1,6 +1,7 @@
 class PaymentsController < ApplicationController
   before_action :set_payment, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
+  before_action -> (source = "payments") { verify_free_plan source }, except: [:load_payment, :client_bookings, :create_new_payment, :update_payment, :receipt_pdf, :payment_pdf, :send_receipts_email, :get_receipts, :get_intro_info, :save_intro_info, :check_booking_payment, :get_formatted_booking, :delete_payment, :commissions, :service_commissions, :provider_commissions, :set_default_commission, :set_provider_default_commissions, :set_commissions, :summary]
   layout "admin"
   load_and_authorize_resource
 
@@ -36,6 +37,30 @@ class PaymentsController < ApplicationController
         end
       end
     end
+
+    # @paymentItems = []
+    # if !params[:payment_items].blank?
+    #   @paymentItems = params[:payment_items].split(",")
+    # end
+
+    # @payments = []
+
+    # if @paymentItems.count > 0
+    #   @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).order('payment_date desc')
+
+    #   if !@paymentItems.include?("bookings")
+    #     @payments = @payments.where.not(id: Booking.where('payment_id is not null'))
+    #   end
+
+    #   if !@paymentItems.include?("mock_bookings")
+    #     @payments = @payments.where.not(id: MockBooking.where('payment_id is not null'))
+    #   end
+
+    #   if !@paymentItems.include?("products")
+    #     @payments = @payments.where.not(id: PaymentProduct.where('payment_id is not null'))
+    #   end      
+
+    # end
 
     @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).order('payment_date desc')
 
@@ -98,9 +123,18 @@ class PaymentsController < ApplicationController
 
     logger.debug "Descuento: " + @products_actual_discount.to_s + "%"
 
-    @payments_sum = @payments.sum(:amount) + @internal_sales_sum
-    @payments_discount = @payments.sum(:discount) + @internal_sales_discount
-    @payments_total = @payments.count + @internal_sales_total
+    @payments_sum = 0
+    @payments_discount = 0
+    @payments_total = 0
+
+    if @payments.count > 0
+
+      @payments_sum = @payments.sum(:amount) + @internal_sales_sum
+      @payments_discount = @payments.sum(:discount) + @internal_sales_discount
+      @payments_total = @payments.count + @internal_sales_total
+
+    end
+
     @payments_average_discount = 0
     if @payments_total > 0
       @payments_average_discount = (@payments_discount/@payments_total).round(2)
@@ -1661,12 +1695,14 @@ class PaymentsController < ApplicationController
       if params[:buyer_type] == "service_provider"
         if ServiceProvider.where(id: params[:buyer_id]).count > 0
           internal_sale.service_provider_id = params[:buyer_id]
+          internal_sale.user_id = nil
         else
           @errors << "No existe el prestador ingresado."
         end
       else
         if User.where(id: params[:buyer_id]).count > 0
           internal_sale.user_id = params[:buyer_id]
+          internal_sale.service_provider_id = nil
         else
           @errors << "No existe el usuario ingresado."
         end
@@ -2032,6 +2068,18 @@ class PaymentsController < ApplicationController
     end
   end
 
+  def petty_cash_report
+    
+    @petty_cash = PettyCash.find(params[:petty_cash_id])
+    @start_date = params[:start_date].to_datetime
+    @end_date = params[:end_date].to_datetime
+    @petty_incomes = PettyTransaction.where(:petty_cash_id => @petty_cash.id, :is_income => true, date: @start_date.beginning_of_day..@end_date.end_of_day).order('date asc')
+    @petty_outcomes = PettyTransaction.where(:petty_cash_id => @petty_cash.id, :is_income => false, date: @start_date.beginning_of_day..@end_date.end_of_day).order('date asc')
+
+    respond_with(@petty_cash)
+
+  end
+
   ##############
   # Sales Cash #
   ##############
@@ -2173,6 +2221,31 @@ class PaymentsController < ApplicationController
     @internal_sales = InternalSale.where(location_id: @sales_cash.location.id, date: start_date..end_date)
 
     respond_with(@sales_cash_log)
+
+  end
+
+  def current_sales_cash_report_file
+
+    @sales_cash = SalesCash.find(params[:sales_cash_id])
+
+    start_date = @sales_cash.last_reset_date - eval(ENV["TIME_ZONE_OFFSET"])
+    end_date = DateTime.now
+
+    @sales_cash_transactions = SalesCashTransaction.where(sales_cash_id: @sales_cash.id, open: true, date: start_date..end_date)
+
+    @sales_cash_incomes = SalesCashIncome.where(sales_cash_id: @sales_cash.id, open: true, date: start_date..end_date)
+
+    @payments = Payment.where(payment_date: start_date..end_date, location_id: @sales_cash.location.id).order(:payment_date)
+
+    @payment_products = PaymentProduct.where(payment_id: Payment.where(payment_date: start_date..end_date, location_id: @sales_cash.location.id).pluck(:id))
+
+    @bookings = Booking.where(payment_id: Payment.where(payment_date: start_date..end_date, location_id: @sales_cash.location.id).pluck(:id))
+
+    @mock_bookings = MockBooking.where(payment_id: Payment.where(payment_date: start_date..end_date, location_id: @sales_cash.location.id).pluck(:id))
+
+    @internal_sales = InternalSale.where(location_id: @sales_cash.location.id, date: start_date..end_date)
+
+    respond_with(@sales_cash)
 
   end
 
@@ -2758,6 +2831,30 @@ class PaymentsController < ApplicationController
     respond_to do |format|
       format.html { render :partial => 'summary' }
       format.json { render :json => @payment }
+    end
+  end
+
+  def internal_sale_summary
+    @internal_sale = InternalSale.find(params[:internal_sale_id])
+    respond_to do |format|
+      format.html { render :partial => 'internal_sale_summary' }
+      format.json { render :json => @internal_sale }
+    end
+  end
+
+  def sales_cash_transaction_summary
+    @sales_cash_transaction = SalesCashTransaction.find(params[:sales_cash_transaction_id])
+    respond_to do |format|
+      format.html { render :partial => 'sales_cash_transaction_summary' }
+      format.json { render :json => @sales_cash_transaction }
+    end
+  end
+
+  def sales_cash_income_summary
+    @sales_cash_income = SalesCashIncome.find(params[:sales_cash_income_id])
+    respond_to do |format|
+      format.html { render :partial => 'sales_cash_income_summary' }
+      format.json { render :json => @sales_cash_income }
     end
   end
 

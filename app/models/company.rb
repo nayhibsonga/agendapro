@@ -42,6 +42,7 @@ class Company < ActiveRecord::Base
 	has_many :product_brands, dependent: :destroy
 	has_many :product_displays, dependent: :destroy
 	has_many :product_categories, dependent: :destroy
+	has_many :billing_wire_transfers
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
@@ -148,9 +149,11 @@ class Company < ActiveRecord::Base
 		end
 	end
 
+
+	#Change
 	def self.end_trial
 		month_days = Time.now.days_in_month
-		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where('created_at <= ?', 1.months.ago).each do |company|
+		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
 			plan_id = Plan.where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
 			company.plan_id = plan_id
 			company.due_date = Time.now

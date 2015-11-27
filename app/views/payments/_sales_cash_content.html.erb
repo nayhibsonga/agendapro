@@ -16,6 +16,10 @@
         no se ha programado un cierre automático.
       <% end %>
     </div>
+    <div id="sales-cash-title">Descargar estado actual</div>
+    <div style="padding-top: 5px; padding-bottom: 5px;">
+      <a id="sales_cash_report_link" href="/current_sales_cash_report_file.xls?sales_cash_id=<%= @sales_cash.id %>"><button type="button" class="btn btn-green" class="getExcel">Descargar a Excel</button></a>
+    </div>
   </div>
   <div class="col-xs-6" style="text-align: right">
     <% if !@sales_cash_log.nil? %>
@@ -213,6 +217,7 @@
               <td><%= internal_sale.discount.round(2) %> %</td>
               <td>
                 <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
+                  <button class="btn btn-default btn-xs" onclick="openInternalSaleSummary(<%= internal_sale.id %>);"><i class="fa fa-search-plus"></i></button>
                   <button class="btn btn-warning btn-xs" onclick="editInternalSale(<%= internal_sale.id %>);"><i class="fa fa-pencil"></i></button> 
                   <button class="btn btn-red btn-xs" onclick="deleteInternalSale(<%= internal_sale.id %>);"><i class="fa fa-trash-o"></i></button>
                 <% else %>
@@ -269,6 +274,7 @@
               <td>&nbsp;</td>
               <td>
                 <% if current_user.role_id == Role.find_by_name("Administrador General").id && sales_cash_transaction.open %>
+                  <button class="btn btn-default btn-xs" onclick="openSalesCashTransactionSummary(<%= sales_cash_transaction.id %>);"><i class="fa fa-search-plus"></i></button>
                   <button class="btn btn-warning btn-xs" onclick="editSalesCashTransaction(<%= sales_cash_transaction.id %>);"><i class="fa fa-pencil"></i></button> 
                   <button class="btn btn-red btn-xs" onclick="deleteSalesCashTransaction(<%= sales_cash_transaction.id %>);"><i class="fa fa-trash-o"></i></button>
                 <% else %>
@@ -312,6 +318,7 @@
               <td>&nbsp;</td>
               <td>
                 <% if current_user.role_id == Role.find_by_name("Administrador General").id && sales_cash_income.open %>
+                  <button class="btn btn-default btn-xs" onclick="openSalesCashIncomeSummary(<%= sales_cash_income.id %>);"><i class="fa fa-search-plus"></i></button>
                   <button class="btn btn-warning btn-xs" onclick="editSalesCashIncome(<%= sales_cash_income.id %>);"><i class="fa fa-pencil"></i></button> 
                   <button class="btn btn-red btn-xs" onclick="deleteSalesCashIncome(<%= sales_cash_income.id %>);"><i class="fa fa-trash-o"></i></button>
                 <% else %>

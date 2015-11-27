@@ -624,9 +624,9 @@ class ServicesController < ApplicationController
     @service_promo = ServicePromo.where(:id => @service.active_service_promo_id)
     @location = Location.find(params[:location_id])
     @promos = []
-    if !(@service.has_discount && @service.discount > 0)
+    #if !(@service.has_discount && @service.discount > 0)
       @promos = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id).order("day_id asc")
-    end
+    #end
     respond_to do |format|
       format.html { render :partial => 'get_promotions_popover' }
       format.json { render json: @promos }
@@ -919,11 +919,51 @@ class ServicesController < ApplicationController
 
     @service = Service.find(params[:id])
     @location = Location.find(params[:location_id])
-    if !@service.has_time_discount || @service.service_promos.nil? || @service.active_service_promo_id.nil?
-      flash[:alert] = "No existen promociones para el servicio buscado."
+
+    if @service.nil? || @location.nil?
+      flash[:alert] = "No existen promociones para el servicio o local buscados."
       redirect_to root_path
+      return
+    end
+
+    @last_minute_promo = LastMinutePromo.where(:service_id => @service.id, :location_id => @location.id).first
+
+    if @last_minute_promo.nil?
+      flash[:alert] = "No existen promociones para el servicio o local buscados."
+      redirect_to root_path
+      return
     end
     @company = @service.company
+
+    @available_dates = []
+
+    first_day = DateTime.now
+    total_days = (@last_minute_promo.hours.to_f/24.to_f).round
+
+    for i in 0..total_days
+      @available_dates[i] = first_day + i.days
+    end
+
+    #Check that last day lies within location/providers times
+    if @available_dates.count > 0
+
+      should_delete = false
+      location_open = @location.location_times.where(day_id: @available_dates.last.cwday).first.open
+      if location_open.nil? || location_open.strftime('%H:%M') > @available_dates.last.strftime('%H:%M')
+        should_delete = true
+      end
+      @service.service_providers.each do |provider|
+        provider_open = provider.provider_times.where(day_id: @available_dates.last.cwday).first.open
+        if provider_open.nil? || provider_open.strftime('%H:%M') > @available_dates.last.strftime('%H:%M')
+          should_delete = true
+        end
+      end
+
+      if should_delete
+        @available_dates = @available_dates[0, @available_dates.length - 1]
+      end
+
+    end
 
     str_name = @service.name.gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
     normalized_search = str_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
@@ -995,12 +1035,28 @@ class ServicesController < ApplicationController
 
   def last_minute_hours
     @service = Service.find(params[:id])
+    
     @location = Location.find(params[:location_id])
-    @available_hours = @service.get_last_minute_available_hours(params[:service_provider_id], params[:location_id])
+    
+    @serviceStaff = []
+    
+    @serviceStaff[0] = {:service => @service.id, :provider => params[:service_provider_id]}
+    
+    @last_minute_promo = LastMinutePromo.where(:location_id => @location.id, :service_id => @service.id).first
+
+    @selected_date = params[:date]
+
+    @available_hours = Service.get_last_minute_available_hours(params[:location_id], @serviceStaff, @selected_date, @last_minute_promo)
+
     respond_to do |format|
       format.html { render :partial => 'last_minute_hours' }
       format.json { render :json => @available_hours }
     end
+
+  end
+
+  def last_minute_available_hours
+
   end
 
   def admin_update_promo

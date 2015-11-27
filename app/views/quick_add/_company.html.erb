@@ -1,5 +1,6 @@
 <fieldset class="content-fill" id="fieldset_step1">
   <%= form_for @company, html: {multipart: true} do |f| %>
+    <input type="hidden" id="referer" value="<%= @referer %>" />
     <section class="green-background">
       <div class="container">
         <div class="row">

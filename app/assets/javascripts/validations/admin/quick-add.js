@@ -177,7 +177,15 @@ $(function() {
 		},
 		rules: {
 			'company[logo]': {
-				filesize: 3145728
+				filesize: 3145728,
+				required: {
+					depends: function () { return ($("#referer").val() == "horachic"); }
+				}
+			},
+			'company[description]': {
+				required: {
+					depends: function () { return ($("#refrer").val() == "horachic"); }
+				}
 			}
 		},
 		messages: {

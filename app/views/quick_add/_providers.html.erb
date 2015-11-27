@@ -1,4 +1,4 @@
-<fieldset class="content-fill below-1 below-2 below-3" id="fieldset_step4" <%= 'style="display: none;" disabled'.html_safe if @company.services.where(active: true).count < 1 %>>
+<fieldset class="content-fill below-1 below-2 below-3" id="fieldset_step4" <%= 'style="display: none;" disabled'.html_safe if @company.services.where(active: true).count < 1 || params[:step].nil? || params[:step] < 4 %>>
   <section class="green-background">
     <div class="container">
       <div class="row">
