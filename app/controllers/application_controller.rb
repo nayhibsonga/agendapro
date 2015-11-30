@@ -191,10 +191,5 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def verify_workflow_free_plan
-    if current_user.company.plan_id == Plan.find_by_name("Gratis").id
-      redirect_to localized_root_path, alert: "Esta compañía no tiene minisitio."
-    end
-  end
 
 end
