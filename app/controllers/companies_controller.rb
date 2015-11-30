@@ -5,7 +5,6 @@ class CompaniesController < ApplicationController
 	before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address, :select_hour, :user_data, :select_promo_hour, :mobile_hours]
 	before_action :quick_add, except: [:new, :overview, :workflow, :add_company, :check_company_web_address, :select_hour, :user_data, :select_promo_hour, :mobile_hours]
 	before_action :verify_is_super_admin, only: [:index, :edit_payment, :new, :edit, :manage, :manage_company, :new_payment, :add_payment, :update_company, :get_year_incomes, :incomes, :locations, :monthly_locations, :deactivate_company]
-	before_action :verify_workflow_free_plan, only: [:overview, :workflow]
 
 	layout "admin", except: [:show, :overview, :workflow, :add_company, :select_hour, :user_data, :select_session_hour, :select_promo_hour]
 	load_and_authorize_resource
@@ -657,6 +656,10 @@ class CompaniesController < ApplicationController
 			end
 		end
 
+		if @company.plan_id == Plan.find_by_name("Gratis").id
+      		redirect_to localized_root_path, alert: "Esta compañía no tiene minisitio."
+    	end
+
 		@locations = Location.where(:active => true, online_booking: true, district_id: District.where(city_id: City.where(region_id: Region.where(country_id: Country.find_by(locale: I18n.locale.to_s))))).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(:order, :name)
 
 		unless @company.company_setting.activate_workflow && @company.active && @locations.count > 0
@@ -721,6 +724,10 @@ class CompaniesController < ApplicationController
 				return
 			end
 		end
+
+		if @company.plan_id == Plan.find_by_name("Gratis").id
+      		redirect_to localized_root_path, alert: "Esta compañía no tiene minisitio."
+    	end
 
 		unless @company.company_setting.activate_workflow && @company.active
 			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
