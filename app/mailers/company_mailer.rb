@@ -10,7 +10,7 @@ class CompanyMailer < ActionMailer::Base
 		day_number = Time.now.day
 	    month_days = Time.now.days_in_month
 		company = Company.find(company_id)
-	    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+	    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where.not(plan_id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 		unless company.users.where(role_id: Role.find_by_name('Administrador General')).count > 0
 			return
 		end
