@@ -1,0 +1,116 @@
+<section id="mensaje-principal">
+  <div class="container">
+    <div class="row below-navbar">
+      <div class="col-xs-12">
+
+        <div style="text-align: center;">
+          <% if @page == "clients" %>
+            <div class="free-title">
+               Maneja tu base de datos de clientes libremente, accediendo a sus reservas y sus pagos, o enviando correos masivos usando nuestros filtros inteligentes.
+            </div>
+          <% elsif @page == "products" %>
+            <div class="free-title">
+              ¿Vendes productos? Maneja tu inventario de manera fácil, llevando el control de stock, alertas de stock bajo y pagos por ventas de productos en forma rápida y sencilla.
+            </div>
+          <% elsif @page == "payments" %>
+            <div class="free-title">
+              Lleva el control total de tus ventas y balances. Ingresa pagos por reservas, servicios y productos, utilizando diferentes medios de pagos y generando comprobantes para ordenar tus ventas. Obtén reportes periódicos de las ventas de tus proveedores y sus comisiones. Maneja tus ingresos y egresos externos y genera balances de caja. Lleva el control del día a día con el sistema de Caja Chica. Y mucho más... Con AgendaPro, ¡nunca pierdes el rastro de tu dinero!
+            </div>
+          <% elsif @page == "reports" %>
+            <div class="free-title">
+              ¿Quieres saber qué está sucediendo en tu local? Obtén reportes de servicios y prestadores más demandados, reservas, tasas de ocupación y mucho más, de manera ordenada y periódica. Con nuestros reportes tendrás siempre claro el estado de tu negocio.
+            </div>
+          <% end %>
+          <div class="free-link">
+            <%= link_to "¡Mejora tu plan!", select_plan_path, :class => "btn btn-lg btn-orange btn-free-link" %>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="row">
+
+      <div class="col-md-8">
+        <div>
+          <div class="col-xs-12 col-md-6">
+            <div class="col-md-2 free-circle-col">
+              <div class="free-circle">
+                <%= image_tag("admin/circulo_verde.png", class:"free-circle-img img-responsive", size: "57x57") %>
+                <i class="fa fa-users free-circle-icon"></i>
+              </div>
+            </div>
+            <div class="col-md-10">
+              <div class="free-subtitle">Clientes</div>
+              <p class="free-description">
+                Maneja tu base de datos de clientes libremente, accediendo a sus reservas y sus pagos, o enviando correos masivos usando nuestros filtros inteligentes.
+              </p>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            
+            <div class="col-md-2 free-circle-col">
+              <div class="free-circle">
+                <%= image_tag("admin/circulo_verde.png", class:"free-circle-img img-responsive", size: "57x57") %>
+                <i class="fa fa-archive free-circle-icon"></i>
+              </div>
+            </div>
+            <div class="col-md-10">
+              <div class="free-subtitle">Sistema de inventario</div>
+              <p class="free-description">
+                ¿Vendes productos? Maneja tu inventario de manera fácil, llevando el control de stock, alertas de stock bajo y pagos por ventas de productos en forma rápida y sencilla.
+              </p>
+            </div>
+
+          </div>
+        </div>
+        <div style="margin-top: 10px;">
+          <div class="col-xs-12 col-md-6">
+            <div class="col-md-2 free-circle-col">
+              <div class="free-circle">
+                <%= image_tag("admin/circulo_verde.png", class:"free-circle-img img-responsive", size: "57x57") %>
+                <i class="fa fa-book free-circle-icon"></i>
+              </div>
+            </div>
+            <div class="col-md-10">
+              <div class="free-subtitle">Reportes</div>
+              <p class="free-description">
+                ¿Quieres saber qué está sucediendo en tu local? Obtén reportes de servicios y prestadores más demandados, reservas, tasas de ocupación y mucho más, de manera ordenada y periódica. Con nuestros reportes tendrás siempre claro el estado de tu negocio.
+              </p>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            
+            <div class="col-md-2 free-circle-col">
+              <div class="free-circle">
+                <%= image_tag("admin/circulo_verde.png", class:"free-circle-img img-responsive", size: "57x57") %>
+                <i class="fa fa-facebook-square free-circle-icon"></i>
+              </div>
+            </div>
+            <div class="col-md-10">
+              <div class="free-subtitle">Facebook/Web</div>
+              <p class="free-description">
+                ¿Quieres expandir tu visión? Habilita nuevas formas de reservar directamente desde tu página web o tu fanpage de Facebook, para que no te pierdas ningún cliente.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-4">
+        
+        <div class="col-md-2 free-circle-col">
+          <div class="free-circle">
+            <%= image_tag("admin/circulo_verde.png", class:"free-circle-img img-responsive", size: "57x57") %>
+            <i class="fa fa-money free-circle-icon"></i>
+          </div>
+        </div>
+        <div class="col-md-10">
+          <div class="free-subtitle">Sistema de caja</div>
+          <p class="free-description">
+            Lleva el control total de tus ventas y balances. Ingresa pagos por reservas, servicios y productos, utilizando diferentes medios de pagos y generando comprobantes para ordenar tus ventas. Obtén reportes periódicos de las ventas de tus proveedores y sus comisiones. Maneja tus ingresos y egresos externos y genera balances de caja. Lleva el control del día a día con el sistema de Caja Chica. Y mucho más... Con AgendaPro, ¡nunca pierdes el rastro de tu dinero!
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

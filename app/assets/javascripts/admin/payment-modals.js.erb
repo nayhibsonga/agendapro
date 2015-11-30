@@ -2872,6 +2872,22 @@ function openPaymentSummary(payment_id)
   });
 }
 
+function openInternalSaleSummary(internal_sale_id)
+{
+  $.ajax({
+    url: '/internal_sale_summary',
+    method: 'get',
+    data: {internal_sale_id: internal_sale_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#internalSaleSummaryModalBody').empty();
+      $('#internalSaleSummaryModalBody').append(response);
+      $('#internalSaleSummaryModal').modal('show');
+    }
+  });
+}
 
 /*
 * New payment methods end

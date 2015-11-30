@@ -1,4 +1,4 @@
-<fieldset class="content-fill below-1 below-2" id="fieldset_step3" <%= 'style="display: none;" disabled'.html_safe if @company.locations.where(active: true).count < 1 %>>
+<fieldset class="content-fill below-1 below-2" id="fieldset_step3" <%= 'style="display: none;" disabled'.html_safe if @company.locations.where(active: true).count < 1 || params[:step].nil? || params[:step] < 3 %>>
   <section class="green-background">
     <div class="container">
       <div class="row">
@@ -42,6 +42,7 @@
               <th>Precio</th>
               <th>Duración</th>
               <th>Categoría</th>
+              <th>Descripción</th>
               <th></th>
             </tr>
             <% @company.services.where(active: true).each do |service| %>
@@ -50,6 +51,7 @@
               <td><%= number_to_currency(service.price, currency: '$ ', separator: ',', delimeter: '.', precision: 0) %></td>
               <td><%= service.duration %> min.</td>
               <td><%= service.service_category.name %></td>
+              <td><%= service.description %></td>
               <td><button id="service_delete_<%= service.id %>" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td>
             </tr>
             <% end %>
@@ -73,6 +75,10 @@
             <div class="form-group" style="margin-bottom: 15px;">
               <%= f.label :service_category_id, "Categoría: ", class: "control-label" %>
               <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id), :id, :name, {}, { class: "form-control" }%>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+              <%= f.label :description, "Descripción: ", class: "control-label" %>
+              <%= f.text_area :description, class: "form-control" %>
             </div>
             <div class="form-group" style="margin-bottom: 15px;">
               <div class="checkbox">

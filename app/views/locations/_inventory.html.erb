@@ -15,7 +15,29 @@
       <tbody>
         <% @location_products.each do |location_product| %>
           <% if !location_product.product.nil? %>
-            <% if location_product.stock_limit != nil %>
+            <% if !location_product.stock_limit.nil? && (!@location.stock_alarm_setting.nil? && @location.stock_alarm_setting.has_default_stock_limit && !@location.stock_alarm_setting.default_stock_limit.nil?) %>
+              <% if location_product.stock <= location_product.stock_limit || location_product.stock <=@location.stock_alarm_setting.default_stock_limit %>
+                <tr class="lowStock inventoryRow" product_id="<%= location_product.product_id %>">
+              <% else %>
+                <% if location_product.stock <= location_product.stock_limit*1.5 || location_product.stock <=@location.stock_alarm_setting.default_stock_limit*1.5 %>
+                  <tr class="mediumStock inventoryRow" product_id="<%= location_product.product_id %>">
+                <% else %>
+                  <tr class="inventoryRow" product_id="<%= location_product.product_id %>">
+                <% end %>
+              <% end %>
+
+            <% elsif location_product.stock_limit.nil? && (!@location.stock_alarm_setting.nil? && @location.stock_alarm_setting.has_default_stock_limit && !@location.stock_alarm_setting.default_stock_limit.nil?) %>
+              <% if location_product.stock <=@location.stock_alarm_setting.default_stock_limit %>
+                <tr class="lowStock inventoryRow" product_id="<%= location_product.product_id %>">
+              <% else %>
+                <% if location_product.stock <= @location.stock_alarm_setting.default_stock_limit*1.5 %>
+                  <tr class="mediumStock inventoryRow" product_id="<%= location_product.product_id %>">
+                <% else %>
+                  <tr class="inventoryRow" product_id="<%= location_product.product_id %>">
+                <% end %>
+              <% end %>
+
+            <% elsif !location_product.stock_limit.nil? && (@location.stock_alarm_setting.nil? || !@location.stock_alarm_setting.has_default_stock_limit || @location.stock_alarm_setting.default_stock_limit.nil?) %>
               <% if location_product.stock <= location_product.stock_limit %>
                 <tr class="lowStock inventoryRow" product_id="<%= location_product.product_id %>">
               <% else %>
@@ -25,6 +47,7 @@
                   <tr class="inventoryRow" product_id="<%= location_product.product_id %>">
                 <% end %>
               <% end %>
+
             <% else %> 
               <tr class="inventoryRow" product_id="<%= location_product.product_id %>">
             <% end %>

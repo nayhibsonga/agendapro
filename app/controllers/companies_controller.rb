@@ -54,7 +54,7 @@ class CompaniesController < ApplicationController
 				@bookings << booking
 			end
 		end
-		@company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
+		@company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
 		@sales_tax = @company.country.sales_tax
 	    @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
 	    @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
@@ -656,6 +656,11 @@ class CompaniesController < ApplicationController
 			end
 		end
 
+		if @company.plan_id == Plan.find_by_name("Gratis").id
+      		redirect_to localized_root_path, alert: "Esta compañía no tiene minisitio."
+      		return
+    	end
+
 		@locations = Location.where(:active => true, online_booking: true, district_id: District.where(city_id: City.where(region_id: Region.where(country_id: Country.find_by(locale: I18n.locale.to_s))))).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(:order, :name)
 
 		unless @company.company_setting.activate_workflow && @company.active && @locations.count > 0
@@ -720,6 +725,11 @@ class CompaniesController < ApplicationController
 				return
 			end
 		end
+
+		if @company.plan_id == Plan.find_by_name("Gratis").id
+      		redirect_to localized_root_path, alert: "Esta compañía no tiene minisitio."
+      		return
+    	end
 
 		unless @company.company_setting.activate_workflow && @company.active
 			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
@@ -953,24 +963,22 @@ class CompaniesController < ApplicationController
 	    end
 
 		if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
-			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).joins(:product_categories).order(name: :asc).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
-			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
-			@products = products.where(:product_category_id => params[:category], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category], :product_display_id => params[:display]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
-			@products = products.where(:product_category_id => params[:category]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_category_id => params[:category]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
-			@products = products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
-			@products = products.where(:product_brand_id => params[:brand]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_brand_id => params[:brand]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
-			@products = products.where(:product_display_id => params[:display]).order(:product_category_id, :product_brand_id)
+			@products = products.where(:product_display_id => params[:display]).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		else
-			@products = products.order(:product_category_id, :product_brand_id)
+			@products = products.joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		end
-
-		logger.info @products.inspect
 
 	    respond_to do |format|
 	      format.html { render :partial => 'inventory' }
@@ -998,6 +1006,29 @@ class CompaniesController < ApplicationController
 	def get_cashiers_by_code
 		@cashier = Cashier.find_by_code(params[:cashier_code])
 		render :json => @cashier
+	end
+
+	def billing_wire_transfer_form
+		
+		@billing_wire_transfer = BillingWireTransfer.new
+
+		#Check for latest billing_wire_transfer to prefill some data
+
+		if BillingWireTransfer.where(company_id: current_user.company_id).count > 0
+			last_billing_wire_transfer = BillingWireTransfer.where(company_id: current_user.company_id).order('updated_at desc').first.dup
+			@billing_wire_transfer.account_name = last_billing_wire_transfer.account_name
+			@billing_wire_transfer.account_number = last_billing_wire_transfer.account_number
+			@billing_wire_transfer.account_bank = last_billing_wire_transfer.account_bank
+		end
+
+	end
+
+	def save_billing_wire_transfer
+		
+	end
+
+	def update_billing_wire_transfer
+
 	end
 
 	private
@@ -1267,6 +1298,11 @@ class CompaniesController < ApplicationController
 						        service_valid = false
 						      end
 						    else
+
+						    	if Booking.where(service_provider_id: provider.id).where.not(service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count > 0
+					        		service_valid = false
+					      		end
+
 						      if Booking.where(service_provider_id: provider.id, service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count >= service.capacity
 						        service_valid = false
 						      end

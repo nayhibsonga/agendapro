@@ -1,6 +1,40 @@
 var numbered_days = {1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo"};
 myAlert = new Alert();
 
+function openSalesCashTransactionSummary(sales_cash_transaction_id)
+{
+  $.ajax({
+    url: '/sales_cash_transaction_summary',
+    method: 'get',
+    data: {sales_cash_transaction_id: sales_cash_transaction_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#salesCashTransactionSummaryModalBody').empty();
+      $('#salesCashTransactionSummaryModalBody').append(response);
+      $('#salesCashTransactionSummaryModal').modal('show');
+    }
+  });
+}
+
+function openSalesCashIncomeSummary(sales_cash_income_id)
+{
+  $.ajax({
+    url: '/sales_cash_income_summary',
+    method: 'get',
+    data: {sales_cash_income_id: sales_cash_income_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#salesCashIncomeSummaryModalBody').empty();
+      $('#salesCashIncomeSummaryModalBody').append(response);
+      $('#salesCashIncomeSummaryModal').modal('show');
+    }
+  });
+}
+
 function destroyPayment(payment_id) {
   $.ajax({
     type: 'DELETE',

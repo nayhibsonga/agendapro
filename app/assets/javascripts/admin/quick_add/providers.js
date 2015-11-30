@@ -81,9 +81,9 @@ function deleteServiceProvider (id) {
 
 $(function() {
 	$('#next_provider_button').click(function(){
-		$('#quick_add_step5').show();
-		$('#quick_add_step5').attr('disabled', false);
-		scrollToAnchor('quick_add_step5');
+		$('#fieldset_step5').show();
+		$('#fieldset_step5').attr('disabled', false);
+		scrollToAnchor('fieldset_step5');
 	});
 
 	$('.service-provider-delete-btn').click(function(event) {

@@ -98,6 +98,10 @@
     delete '/quick_add/service_provider/:id', :to => 'quick_add#delete_service_provider'
     patch '/quick_add/update_company', :to => 'quick_add#update_company'
 
+    post '/create_notification_email', :to => 'quick_add#create_notification_email'
+    post '/delete_notification_email', :to => 'quick_add#delete_notification_email'
+    patch '/save_configurations', :to => 'quick_add#save_configurations'
+
     # Reporting
     get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
     get '/reports', :to => 'reports#index', :as => 'reports'
@@ -208,6 +212,9 @@
     post '/companies/update_company', :to => 'companies#update_company'
     post '/companies/deactivate_company', :to => 'companies#deactivate_company'
     post '/companies/get_monthly_bookings', :to => 'companies#get_monthly_bookings'
+    get '/billing_wire_transfer', :to => 'companies#billing_wire_transfer_form'
+    post '/billing_wire_transfers/', :to => 'companies#save_billing_wire_transfer'
+    post '/billing_wire_transfers/:id', :to => 'companies#update_billing_wire_transfer'
 
     # Search
     get "searchs/index"
@@ -465,13 +472,24 @@
     get '/service_providers_report_file', :to => 'payments#service_providers_report_file'
 
     get '/sales_cash_report_file', :to => 'payments#sales_cash_report_file'
+    get '/current_sales_cash_report_file', :to => 'payments#current_sales_cash_report_file'
 
     get '/get_treatment_price', :to => 'bookings#get_treatment_price'
     get '/payment_summary', :to => 'payments#summary'
 
+
+    get '/sales_cash_transaction_summary', :to => 'payments#sales_cash_transaction_summary'
+    get '/internal_sale_summary', :to => 'payments#internal_sale_summary'
+    get '/sales_cash_income_summary', :to => 'payments#sales_cash_income_summary'
+
+    get '/petty_cash_report', :to => 'payments#petty_cash_report'
+    #Free plan
+    get '/free_plan', :to => 'dashboard#free_plan_landing'
+
     #Service and categories for location (payments)
     get '/location_categories', :to => 'service_categories#location_categories'
     get '/category_services', :to => 'service_categories#category_services'
+
 
 
     get '/location_users', :to => 'users#location_users'
@@ -479,6 +497,7 @@
     get '/get_products_for_payment_or_sale', :to => 'payments#get_products_for_payment_or_sale'
     get '/get_product_categories_for_payment_or_sale', :to => 'payments#get_product_categories_for_payment_or_sale'
     get '/get_product_brands_for_payment_or_sale', :to => 'payments#get_product_brands_for_payment_or_sale'
+
 
   end
 

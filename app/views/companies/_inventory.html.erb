@@ -23,8 +23,36 @@
             <td><%= product.product_brand.name %></td>
             <td><%= product.product_display.name %></td>
             <% @company.locations.where(:active => true).order(:name).each do |location| %>
-              <% location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first %>
-              <% if location_product.stock_limit != nil %>
+              <% 
+                location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first 
+                stock_alarm_setting = location.stock_alarm_setting
+              %>
+              <% if !location_product.stock_limit.nil? && (!location.stock_alarm_setting.nil? && location.stock_alarm_setting.has_default_stock_limit && !location.stock_alarm_setting.default_stock_limit.nil?)  %>
+
+                <% if location_product.stock <= location_product.stock_limit || location_product.stock <= location.stock_alarm_setting.default_stock_limit %>
+                  <td class="lowStock">
+                <% else %>
+                  <% if location_product.stock <= location_product.stock_limit*1.5 || location_product.stock <= location.stock_alarm_setting.default_stock_limit*1.5 %>
+                    <td class="mediumStock">
+                  <% else %>
+                    <td>
+                  <% end %>
+                <% end %>
+
+              <% elsif location_product.stock_limit.nil? && (!location.stock_alarm_setting.nil? && location.stock_alarm_setting.has_default_stock_limit && !location.stock_alarm_setting.default_stock_limit.nil?) %>
+
+                <% if location_product.stock <= location.stock_alarm_setting.default_stock_limit %>
+                  <td class="lowStock">
+                <% else %>
+                  <% if location_product.stock <= location.stock_alarm_setting.default_stock_limit*1.5 %>
+                    <td class="mediumStock">
+                  <% else %>
+                    <td>
+                  <% end %>
+                <% end %>
+
+              <% elsif !location_product.stock_limit.nil? && (location.stock_alarm_setting.nil? || !location.stock_alarm_setting.has_default_stock_limit || location.stock_alarm_setting.default_stock_limit.nil?) %>
+
                 <% if location_product.stock <= location_product.stock_limit %>
                   <td class="lowStock">
                 <% else %>
@@ -34,6 +62,7 @@
                     <td>
                   <% end %>
                 <% end %>
+
               <% else %> 
                 <td>
               <% end %>

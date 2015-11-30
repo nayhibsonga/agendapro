@@ -76,12 +76,13 @@ function saveService () {
 	    		"duration": $('#service_duration').val(),
 	    		"service_category_id": $('#service_service_category_id').val(),
 	    		"has_sessions": $('#service_has_sessions').is(':checked'),
-	    		"sessions_amount": $('#service_sessions_amount').val()
+	    		"sessions_amount": $('#service_sessions_amount').val(),
+	    		"description": $('#service_description').val()
 	    	}
 	    },
 	    dataType: 'json',
 	    success: function (result){
-	    	$('#services').append('<tr id="service_'+ result.service.id +'"><td>'+ result.service.name +'</td><td>$ '+ result.service.price.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +'</td><td>'+ result.service.duration +' min.</td><td>'+ result.service_category +'</td><td><button id="service_delete_'+ result.service.id +'" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td></tr>');
+	    	$('#services').append('<tr id="service_'+ result.service.id +'"><td>'+ result.service.name +'</td><td>$ '+ result.service.price.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +'</td><td>'+ result.service.duration +' min.</td><td>'+ result.service_category +'</td><td>' + result.service.description + '</td><td><button id="service_delete_'+ result.service.id +'" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td></tr>');
 
 	    	$('#service_name').val('');
 	    	$('#service_price').val('');
