@@ -1050,11 +1050,19 @@
                       <td>
                         <%= a.hidden_field :company_setting_id, :value => @company_setting.id %>
                         <%= a.hidden_field :payment_method_id, :value => payment_method.id %>
-                        <%= a.check_box :active %>
+                        <% if payment_method.name != "Online" %>
+                          <%= a.check_box :active %>
+                        <% else %>
+                          <%= a.check_box :active, checked: true, disabled: true %>
+                        <% end %>
                       </td>
                       <td>
                       <% if payment_method.name != "Efectivo" && payment_method.name != "Otro" %>
-                        <%= a.check_box :number_required %>
+                        <% if payment_method.name != "Online" %> 
+                          <%= a.check_box :number_required %>
+                        <% else %>
+                          <%= a.check_box :number_required, checked: true, disabled: true %>
+                        <% end %>
                       <% else %>
                         <%= a.check_box :number_required, checked: false, class: "hidden" %>
                       <% end %>
