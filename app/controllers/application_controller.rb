@@ -188,6 +188,7 @@ class ApplicationController < ActionController::Base
   def verify_free_plan(source)
     if current_user.company.plan_id == Plan.find_by_name("Gratis").id
       redirect_to free_plan_path(page: source)
+      return
     end
   end
 

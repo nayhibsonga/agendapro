@@ -54,7 +54,7 @@ class CompaniesController < ApplicationController
 				@bookings << booking
 			end
 		end
-		@company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
+		@company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where.not(plan_id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
 		@sales_tax = @company.country.sales_tax
 	    @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
 	    @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
@@ -658,6 +658,7 @@ class CompaniesController < ApplicationController
 
 		if @company.plan_id == Plan.find_by_name("Gratis").id
       		redirect_to localized_root_path, alert: "Esta compañía no tiene minisitio."
+      		return
     	end
 
 		@locations = Location.where(:active => true, online_booking: true, district_id: District.where(city_id: City.where(region_id: Region.where(country_id: Country.find_by(locale: I18n.locale.to_s))))).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(:order, :name)
@@ -727,6 +728,7 @@ class CompaniesController < ApplicationController
 
 		if @company.plan_id == Plan.find_by_name("Gratis").id
       		redirect_to localized_root_path, alert: "Esta compañía no tiene minisitio."
+      		return
     	end
 
 		unless @company.company_setting.activate_workflow && @company.active
