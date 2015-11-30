@@ -980,8 +980,6 @@ class CompaniesController < ApplicationController
 			@products = products.joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
 		end
 
-		logger.info @products.inspect
-
 	    respond_to do |format|
 	      format.html { render :partial => 'inventory' }
 	      format.json { render :json => @products }
