@@ -542,6 +542,10 @@ class Booking < ActiveRecord::Base
     return (self.id * 123456).to_s(30)
   end
 
+  def marketplace_url
+    return 'http://' + ENV['MARKETPLACE_URL'] + '/booking/success/' + @bookings.first.id.to_s + '/' + @bookings.first.access_token
+  end
+
   def send_booking_mail
     if self.is_session
       return

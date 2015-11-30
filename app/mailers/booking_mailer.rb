@@ -7,6 +7,7 @@ class BookingMailer < ActionMailer::Base
 	def book_service_mail (book_info)
 		# => Template
 		template_name = 'Booking'
+		client_template_name = 'Booking'
 		template_content = []
 
 		sessions_ratio = ""
@@ -143,8 +144,12 @@ class BookingMailer < ActionMailer::Base
 				}
 			end
 
+			if book_info.marketplace_origin
+				client_template_name = 'Booking - Marketplace'
+			end
+
 			# => Send mail
-			send_mail(template_name, template_content, message)
+			send_mail(client_template_name, template_content, message)
 		end
 
 		# Notificacion service provider

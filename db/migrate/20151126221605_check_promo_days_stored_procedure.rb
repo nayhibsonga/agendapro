@@ -1,8 +1,8 @@
-class CheckDaysStoredProcedure < ActiveRecord::Migration
+class CheckPromoDaysStoredProcedure < ActiveRecord::Migration
   def self.up
 	 execute <<-__EOI
-	  CREATE OR REPLACE FUNCTION check_days(local_id int, provider_ids int[], serv_ids int[], start_date date, end_date date)
-		returns TABLE(day_date date, available_day boolean)
+	  CREATE OR REPLACE FUNCTION check_promo_days(local_id int, provider_ids int[], serv_ids int[], start_date date, end_date date)
+		returns TABLE(day_date date, available_day boolean, available_promotion boolean)
 		AS 
 		$$
 		DECLARE
@@ -13,11 +13,14 @@ class CheckDaysStoredProcedure < ActiveRecord::Migration
 		  after_time timestamp;
 		  before_time timestamp;
 		  available_block boolean;
+		  available_promotions boolean;
 		BEGIN
 
 		  IF (select array_length(provider_ids, 1)) != (select array_length(serv_ids, 1)) OR array_length(provider_ids, 1) <= 0 THEN
 		    RETURN;
 		  END IF;
+
+		  available_promotions := exists (select id from services where services.id = ANY(serv_ids) AND services.has_time_discount = TRUE AND services.online_payable = TRUE AND services.time_promo_active = TRUE AND (select exists (select id from company_settings where company_id = services.company_id AND company_settings.online_payment_capable = TRUE AND company_settings.promo_offerer_capable = TRUE)));
 
 		  now_date := start_date;
 		  before_time := localtimestamp + ((select before_booking from company_settings where company_settings.company_id = (select company_id from locations where locations.id = local_id)) * interval '1 hour');
@@ -26,6 +29,7 @@ class CheckDaysStoredProcedure < ActiveRecord::Migration
 		  <<month_loop>>
 		  LOOP
 		    available_day := FALSE;
+		    available_promotion := FALSE;
 		    now_start := now_date + (select open from location_times where location_times.location_id = local_id and location_times.day_id = extract(dow from now_date) order by open);
 			  IF now_start > before_time AND now_start < after_time THEN
 			    IF exists (select id from location_times where location_times.location_id = local_id and location_times.day_id = extract(dow from now_date)) THEN
@@ -34,16 +38,27 @@ class CheckDaysStoredProcedure < ActiveRecord::Migration
 		    	  now_start_next := now_start;
 		          -- RAISE NOTICE 'now_start_first: %', to_char(now_start, 'YYYY-MM-DD HH24:MI:SS');
 		          available_block := TRUE;
+		          available_promotion := FALSE;
 		          <<providers_services_loop>>
 		          FOR i IN 1 .. ( select array_length(provider_ids, 1)) LOOP
 		            now_end_next := now_start_next + ((select duration from services where services.id = serv_ids[i]) * interval '1 minute');
 		            IF (select provider_ids[i]) = 0 THEN
-		              IF not exists (select id from (select id, provider_occupation(id, now_date, now_date) from service_providers where check_hour(local_id, service_providers.id, serv_ids[i], now_start_next, now_end_next) = TRUE AND active = true AND online_booking = true AND id IN (select service_provider_id from service_staffs where service_id = serv_ids[i]) AND id IN (select service_provider_id from provider_times where day_id = extract(dow from now_date)) ORDER BY provider_occupation(id, now_date, now_date)) AS elegible_providers) THEN
+		              IF not exists (select id from (select id, provider_occupation(id, now_date, now_date) from service_providers where (check_promo_hour(local_id, service_providers.id, serv_ids[i], now_start_next, now_end_next))[1] = TRUE AND active = true AND online_booking = true AND id IN (select service_provider_id from service_staffs where service_id = serv_ids[i]) AND id IN (select service_provider_id from provider_times where day_id = extract(dow from now_date)) ORDER BY provider_occupation(id, now_date, now_date)) AS elegible_providers) THEN
 		                available_block := FALSE;
+		              	available_promotion := FALSE;
+		              ELSE
+		              	IF exists (select id from (select id, provider_occupation(id, now_date, now_date) from service_providers where (check_promo_hour(local_id, service_providers.id, serv_ids[i], now_start_next, now_end_next))[2] = TRUE AND active = true AND online_booking = true AND id IN (select service_provider_id from service_staffs where service_id = serv_ids[i]) AND id IN (select service_provider_id from provider_times where day_id = extract(dow from now_date)) ORDER BY provider_occupation(id, now_date, now_date)) AS elegible_providers) THEN
+		              		available_promotion := TRUE;
+		              	END IF;
 		              END IF;
 		            ELSE
-		              IF NOT check_hour(local_id, provider_ids[i], serv_ids[i], now_start_next, now_end_next) THEN
+		              IF NOT (check_promo_hour(local_id, provider_ids[i], serv_ids[i], now_start_next, now_end_next))[1] THEN
 		                available_block := FALSE;
+		              	available_promotion := FALSE;
+		              ELSE
+		              	IF (check_promo_hour(local_id, provider_ids[i], serv_ids[i], now_start_next, now_end_next))[2] THEN
+		              		available_promotion := TRUE;
+		              	END IF;
 		              END IF;
 		            END IF;
 		            EXIT providers_services_loop WHEN available_block = FALSE;
@@ -53,7 +68,7 @@ class CheckDaysStoredProcedure < ActiveRecord::Migration
 		          IF available_block THEN
 		            available_day := available_block;
 		          END IF;
-		          EXIT day_loop WHEN available_day = TRUE;
+		          EXIT day_loop WHEN available_day = TRUE AND available_promotion = TRUE;
 		          EXIT day_loop WHEN now_end_next > (now_date + (select close from location_times where location_times.location_id = local_id and location_times.day_id = extract(dow from now_date) order by close desc));
 		        END LOOP day_loop;
 			    END IF;

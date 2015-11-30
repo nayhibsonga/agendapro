@@ -788,6 +788,14 @@ module ApiViews
 		        @session_booking.send_sessions_booking_mail
 		      end
 		    end
+		    if @bookings.count < 1
+		    	render json: { errors: 'No se agendaron servicios.' }, status: 422
+				return
+		    else
+			    render json: { redirect_to: @bookings.first.marketplace_url }, status: 200
+				return
+			end
+
 		end
 
 		def edit_booking
