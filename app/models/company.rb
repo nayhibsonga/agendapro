@@ -154,7 +154,7 @@ class Company < ActiveRecord::Base
 	def self.end_trial
 		month_days = Time.now.days_in_month
 		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
-			plan_id = Plan.where.not(plan_id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
+			plan_id = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
 			company.plan_id = plan_id
 			company.due_date = Time.now
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
