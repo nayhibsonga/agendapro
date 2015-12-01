@@ -128,8 +128,8 @@ class Product < ActiveRecord::Base
           display.save
         end
 
-        if !Product.find_by_sku(sku).nil?
-          product = Product.find_by_sku(sku)
+        if Product.where(sku: sku, company_id: company_id).count > 0
+          product = Product.where(sku: sku, company_id: company_id).first
         end
 
         product.sku = sku

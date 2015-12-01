@@ -57,6 +57,7 @@
 
             <Row>
               <Cell><Data ss:Type="String">Fecha de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Cliente</Data></Cell>
               <Cell><Data ss:Type="String">Sku</Data></Cell>
               <Cell><Data ss:Type="String">Categoría</Data></Cell>
               <Cell><Data ss:Type="String">Marca</Data></Cell>
@@ -93,10 +94,17 @@
                   payment_methods = payment_methods_arr.join(", ")
                 end
 
+                client_name = "Sin información"
+
+                if !payment_product.payment.client.nil?
+                  client_name = payment_product.payment.client.full_name
+                end
+
               %>
 
               <Row>
                 <Cell><Data ss:Type="String"><%= payment_product.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_product.product.sku %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_product.product.product_category.name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_product.product.product_brand.name %></Data></Cell>
@@ -122,6 +130,7 @@
 
             <Row>
               <Cell><Data ss:Type="String">Fecha de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Cliente</Data></Cell>
               <Cell><Data ss:Type="String">Servicio</Data></Cell>
               <Cell><Data ss:Type="String">Precio</Data></Cell>
               <Cell><Data ss:Type="String">Comisión</Data></Cell>
@@ -167,10 +176,17 @@
                   service_name = mock_booking.service.name
                 end
 
+                client_name = "Sin información"
+
+                if !mock_booking.payment.client.nil?
+                  client_name = mock_booking.payment.client.full_name
+                end
+
               %>
 
               <Row>
                 <Cell><Data ss:Type="String"><%= mock_booking.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= mock_booking.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= mock_booking.get_commission %></Data></Cell>
@@ -192,6 +208,7 @@
             <Row>
               <Cell><Data ss:Type="String">Fecha de pago</Data></Cell>
               <Cell><Data ss:Type="String">Fecha de reserva</Data></Cell>
+              <Cell><Data ss:Type="String">Cliente</Data></Cell>
               <Cell><Data ss:Type="String">Servicio</Data></Cell>
               <Cell><Data ss:Type="String">Precio</Data></Cell>
               <Cell><Data ss:Type="String">Comisión</Data></Cell>
@@ -221,11 +238,18 @@
                   payment_methods = payment_methods_arr.join(", ")
                 end
 
+                client_name = "Sin información"
+
+                if !booking.client.nil?
+                  client_name = booking.client.full_name
+                end
+
               %>
 
               <Row>
                 <Cell><Data ss:Type="String"><%= booking.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= booking.start.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= booking.service.name %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= booking.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= booking.get_commission %></Data></Cell>
@@ -290,7 +314,7 @@
                   if payment.client_id.nil? || payment.client.nil?
                     client_name = "Sin cliente"
                   else
-                    client_name = payment.client.first_name + " " + payment.client.last_name
+                    client_name = payment.client.full_name
                   end
 
                 %>
