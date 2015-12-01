@@ -772,12 +772,20 @@ class ServicesController < ApplicationController
   def manage_promotions
     @services = Service.where(:has_time_discount => true, :time_promo_active => false).order(:company_id, :name)
     @approvedServices = Service.where(:has_time_discount => true, :time_promo_active => true).order(:company_id, :name)
+    @treatments = Service.where(:has_treatment_promo => true, :time_promo_active => false).order(:company_id, :name)
+    @approvedTreatments = Service.where(:has_treatment_promo => true, :time_promo_active => true).order(:company_id, :name)
   end
 
   def manage_service_promotion
     @service = Service.find(params[:id])
     service_promo = ServicePromo.find(@service.active_service_promo_id)
     @location = service_promo.promos.first.location
+    @last_minute_promos = @service.last_minute_promos
+  end
+
+  def manage_treatment_promotion
+    @service = Service.find(params[:id])
+    @treatment_promos = @service.treatment_promos
   end
 
   def show_time_promo
