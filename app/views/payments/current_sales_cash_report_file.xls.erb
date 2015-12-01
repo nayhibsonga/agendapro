@@ -94,6 +94,8 @@
                   payment_methods = payment_methods_arr.join(", ")
                 end
 
+                client_name = "Sin información"
+
                 if !payment_product.payment.client.nil?
                   client_name = payment_product.payment.client.full_name
                 end
