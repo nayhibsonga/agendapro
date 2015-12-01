@@ -136,6 +136,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "triweekly"
               start_date = first_start_date + (i*3).weeks
               end_date = first_end_date + (i*3).weeks
+            elsif params[:provider_break][:repeat] == "fourthweekly"
+              start_date = first_start_date + (i*4).weeks
+              end_date = first_end_date + (i*4).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -207,6 +210,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "triweekly"
               start_date = first_start_date + (i*3).weeks
               end_date = first_end_date + (i*3).weeks
+            elsif params[:provider_break][:repeat] == "fourthweekly"
+              start_date = first_start_date + (i*4).weeks
+              end_date = first_end_date + (i*4).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -327,6 +333,9 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "triweekly"
                 start_date = first_start_date + (i*3).weeks
                 end_date = first_end_date + (i*3).weeks
+              elsif params[:provider_break][:repeat] == "fourthweekly"
+                start_date = first_start_date + (i*4).weeks
+                end_date = first_end_date + (i*4).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -396,6 +405,9 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "triweekly"
                 start_date = first_start_date + (i*3).weeks
                 end_date = first_end_date + (i*3).weeks
+              elsif params[:provider_break][:repeat] == "fourthweekly"
+                start_date = first_start_date + (i*4).weeks
+                end_date = first_end_date + (i*4).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -833,6 +845,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "triweekly"
               start_date = first_start_date + (i*3).weeks
               end_date = first_end_date + (i*3).weeks
+            elsif params[:provider_break][:repeat] == "fourthweekly"
+              start_date = first_start_date + (i*4).weeks
+              end_date = first_end_date + (i*4).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -902,6 +917,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "triweekly"
               start_date = first_start_date + (i*3).weeks
               end_date = first_end_date + (i*3).weeks
+            elsif params[:provider_break][:repeat] == "fourthweekly"
+              start_date = first_start_date + (i*4).weeks
+              end_date = first_end_date + (i*4).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -1028,6 +1046,9 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "triweekly"
                 start_date = first_start_date + (i*3).weeks
                 end_date = first_end_date + (i*3).weeks
+              elsif params[:provider_break][:repeat] == "fourthweekly"
+                start_date = first_start_date + (i*4).weeks
+                end_date = first_end_date + (i*4).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -1097,6 +1118,9 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "triweekly"
                 start_date = first_start_date + (i*3).weeks
                 end_date = first_end_date + (i*3).weeks
+              elsif params[:provider_break][:repeat] == "fourthweekly"
+                start_date = first_start_date + (i*4).weeks
+                end_date = first_end_date + (i*4).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -1208,6 +1232,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "triweekly"
               start_date = first_start_date + (i*3).weeks
               end_date = first_end_date + (i*3).weeks
+            elsif params[:provider_break][:repeat] == "fourthweekly"
+              start_date = first_start_date + (i*4).weeks
+              end_date = first_end_date + (i*4).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -1277,6 +1304,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "triweekly"
               start_date = first_start_date + (i*3).weeks
               end_date = first_end_date + (i*3).weeks
+            elsif params[:provider_break][:repeat] == "fourthweekly"
+              start_date = first_start_date + (i*4).weeks
+              end_date = first_end_date + (i*4).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
