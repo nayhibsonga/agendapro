@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151125221538) do
+ActiveRecord::Schema.define(version: 20151130162908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1393,6 +1393,8 @@ ActiveRecord::Schema.define(version: 20151125221538) do
     t.integer  "active_service_promo_id"
     t.boolean  "must_be_paid_online",      default: false
     t.text     "promo_description",        default: ""
+    t.boolean  "has_treatment_promo",      default: false
+    t.integer  "treatment_promo_id"
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
@@ -1490,6 +1492,17 @@ ActiveRecord::Schema.define(version: 20151125221538) do
   create_table "transaction_types", force: true do |t|
     t.string   "name",        null: false
     t.text     "description", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "treatment_promos", force: true do |t|
+    t.integer  "location_id"
+    t.float    "discount",        default: 0.0
+    t.datetime "finish_date"
+    t.datetime "book_limit_date"
+    t.integer  "max_bookings",    default: 0
+    t.boolean  "limit_booking",   default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

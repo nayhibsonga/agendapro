@@ -17,6 +17,7 @@ class Service < ActiveRecord::Base
 
 	has_many :service_promos
 	has_many :last_minute_promos
+	has_many :treatment_promos
 
 	has_many :economic_sectors, :through => :company
   	has_many :economic_sectors_dictionaries, :through => :economic_sectors
@@ -75,6 +76,14 @@ class Service < ActiveRecord::Base
     		return nil
     	else
     		return ServicePromo.find(self.active_service_promo_id)
+    	end
+    end
+
+    def active_treatment_promo
+    	if self.treatment_promo_id.nil?
+    		return nil
+    	else
+    		return TreatmentPromo.find(self.treatment_promo_id)
     	end
     end
 
@@ -162,6 +171,28 @@ class Service < ActiveRecord::Base
 			end
 
 			return service_promo.max_bookings
+
+		end
+
+	end
+
+	def treatment_promo_left_bookings
+
+		if self.treatment_promo_id.nil?
+
+			return 0
+
+		else
+
+			treatment_promo = TreatmentPromo.find(self.treatment_promo_id)
+
+			if treatment_promo.max_bookings.nil?
+				treatment_promo.max_bookings = 0
+				treatment_promo.save
+				return 0
+			end
+
+			return treatment_promo.max_bookings
 
 		end
 
