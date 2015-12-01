@@ -4,7 +4,7 @@ module ApiViews
 	  class UsersController < V1Controller
 	  	skip_before_filter :permitted_params, only: [:oauth]
 		before_action :check_login_params, only: [:login]
-		before_action :parse_registration_params, only: [:create]
+		before_action :parse_registration_params, only: [:create, :edit]
 
 		  def create
 		    @user = User.new(user_params)
