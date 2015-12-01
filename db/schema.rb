@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151130162908) do
+ActiveRecord::Schema.define(version: 20151201124113) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1498,11 +1498,10 @@ ActiveRecord::Schema.define(version: 20151130162908) do
 
   create_table "treatment_promos", force: true do |t|
     t.integer  "location_id"
-    t.float    "discount",        default: 0.0
+    t.float    "discount",      default: 0.0
     t.datetime "finish_date"
-    t.datetime "book_limit_date"
-    t.integer  "max_bookings",    default: 0
-    t.boolean  "limit_booking",   default: false
+    t.integer  "max_bookings",  default: 0
+    t.boolean  "limit_booking", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -771,7 +771,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<label>Fechas</label>
-											<span class="help-block">Selecciona la duración y la fecha límite para reservar.</span>
+											<span class="help-block">Selecciona la duración de la promoción.</span>
 
 											<div class="form-group">
 												<div class="row">
@@ -787,25 +787,6 @@
 															<input type="text" id="treatment_finish_date" name="treatment_finish_date" class="form-control" value="<%= treatment_finish_date %>" />
 														<% else %>
 															<input type="text" id="treatment_finish_date" name="treatment_finish_date" class="form-control" />
-														<% end %>
-													</div>
-												</div>
-											</div>
-											<br />
-											<div class="form-group">
-												<div class="row">
-													<div class="col-md-2">
-														Admite reservas hasta:
-													</div>
-													<div class="col-md-3">
-														<% if !@service.active_treatment_promo.nil? %>
-															<% 
-																treatment_book_limit_date_arr = @service.active_treatment_promo.book_limit_date.to_s.split(' ')[0].split('-')
-																treatment_book_limit_date = treatment_book_limit_date_arr[2] + '/' + treatment_book_limit_date_arr[1] + '/' + treatment_book_limit_date_arr[0]
-															%>
-															<input type="text" id="treatment_book_limit_date" name="treatment_book_limit_date" class="form-control" value="<%= treatment_book_limit_date %>" />
-														<% else %>
-															<input type="text" id="treatment_book_limit_date" name="treatment_book_limit_date" class="form-control" />
 														<% end %>
 													</div>
 												</div>

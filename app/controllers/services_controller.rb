@@ -333,229 +333,197 @@ class ServicesController < ApplicationController
 
     @service = Service.find(params[:service_id])
 
-    @promo_time = @service.company.company_setting.promo_time
+    if !@service.has_sessions
 
-    @locations = Location.where(id: params[:locations])
+      @locations = Location.where(id: params[:locations])
 
-    @missingLocations = Location.where(id: ServiceProvider.where(id: @service.service_providers).pluck(:location_id)) - @locations
+      @missingLocations = Location.where(id: ServiceProvider.where(id: @service.service_providers).pluck(:location_id)) - @locations
 
-    @last_minute_locations = Location.where(id: params[:last_minute_locations])
+      @promo_time = @service.company.company_setting.promo_time
 
-    @missingLastMinuteLocations = Location.where(id: ServiceProvider.where(id: @service.service_providers).pluck(:location_id)) - @last_minute_locations
+      @last_minute_locations = Location.where(id: params[:last_minute_locations])
 
-    array_result = []
-    @promos = []
-    @last_minute_promos = []
-    @errors = []
+      @missingLastMinuteLocations = Location.where(id: ServiceProvider.where(id: @service.service_providers).pluck(:location_id)) - @last_minute_locations
 
-    first_time_promo = true
+      array_result = []
+      @promos = []
+      @last_minute_promos = []
+      @errors = []
 
-    def_finish_date = DateTime.now + 2.years
-    def_book_limit_date = DateTime.now + 2.years
+      first_time_promo = true
 
-    if params[:finish_date] && params[:finish_date] != ""
-      def_finish_date = params[:finish_date].to_datetime
-    end
-    if params[:book_limit_date] && params[:book_limit_date] != ""
-      def_book_limit_date = params[:book_limit_date].to_datetime
-    end
+      def_finish_date = DateTime.now + 2.years
+      def_book_limit_date = DateTime.now + 2.years
 
-    if @service.has_time_discount || !@service.active_service_promo_id.nil? || @service.time_promo_active
-      first_time_promo = false
-    else
-      if !@service.active_service_promo_id.nil?
-        if ServicePromo.find(@service.active_service_promo_id)
-          first_time_promo = false
+      if params[:finish_date] && params[:finish_date] != ""
+        def_finish_date = params[:finish_date].to_datetime
+      end
+      if params[:book_limit_date] && params[:book_limit_date] != ""
+        def_book_limit_date = params[:book_limit_date].to_datetime
+      end
+
+      if @service.has_time_discount || !@service.active_service_promo_id.nil? || @service.time_promo_active
+        first_time_promo = false
+      else
+        if !@service.active_service_promo_id.nil?
+          if ServicePromo.find(@service.active_service_promo_id)
+            first_time_promo = false
+          end
         end
       end
-    end
 
-    if @service.update(:has_last_minute_discount => params[:has_last_minute_discount], :has_time_discount => params[:has_time_discount])
+      if @service.update(:has_last_minute_discount => params[:has_last_minute_discount], :has_time_discount => params[:has_time_discount], :has_treatment_promo => false)
 
-      ###################
-      # TIME PROMOTIONS #
-      ###################
+        ###################
+        # TIME PROMOTIONS #
+        ###################
 
-      #Create new ServicePromo with all it's promos and update active_service_promo
+        #Create new ServicePromo with all it's promos and update active_service_promo
 
-      if params[:has_time_discount]
+        if params[:has_time_discount]
 
-        last_service_promo = nil
-        if !@service.active_service_promo_id.nil?
-          last_service_promo = ServicePromo.find(@service.active_service_promo_id)
-        elsif !@service.service_promos.nil? && @service.service_promos.count > 0
-          last_service_promo = @service.service_promos.order('created_at desc').first
-        end
+          last_service_promo = nil
+          if !@service.active_service_promo_id.nil?
+            last_service_promo = ServicePromo.find(@service.active_service_promo_id)
+          elsif !@service.service_promos.nil? && @service.service_promos.count > 0
+            last_service_promo = @service.service_promos.order('created_at desc').first
+          end
 
-        promos_changed = false
+          promos_changed = false
 
-        if !last_service_promo.nil?
+          if !last_service_promo.nil?
 
-          old_locations = last_service_promo.promos.order('location_id asc').pluck(:location_id).uniq
-          new_locations = @locations.order('id asc').pluck(:id).uniq
+            old_locations = last_service_promo.promos.order('location_id asc').pluck(:location_id).uniq
+            new_locations = @locations.order('id asc').pluck(:id).uniq
 
-          if !old_locations.eql?(new_locations)
-            promos_changed = true
+            if !old_locations.eql?(new_locations)
+              promos_changed = true
+            else
+              @locations.each do |location|
+                for i in 1..7
+
+                  promo_count = Promo.where(:service_promo_id => last_service_promo.id, :day_id => i, :location_id => location.id, :morning_discount => params[:morning_discounts][i], :afternoon_discount => params[:afternoon_discounts][i], :night_discount => params[:night_discounts][i]).count
+
+                  if promo_count < 1
+                    promos_changed = true
+                    break
+                  end
+
+                end
+              end
+            end
+
+            #Alter promo if limit date is changed, but don't worry about finish date and stock limiting.
+            if def_book_limit_date != last_service_promo.book_limit_date.to_datetime
+              promos_changed = true
+            end
+
+            #Alter promo if times changed
+            if ServicePromo.where(:id => last_service_promo.id, :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end]).count < 1
+
+              promos_changed = true
+
+            end
+
+            #if params[:limit_booking] != last_service_promo.limit_booking
+            #  promos_changed = true
+            #end
+
           else
+            promos_changed = true
+          end
+
+          if promos_changed
+
+            if params[:reset_on_max_change]
+              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end], :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
+            else
+              if last_service_promo != nil
+                service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => @service.active_promo_left_bookings, :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end], :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
+              else
+                service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end], :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
+              end
+            end
+
             @locations.each do |location|
               for i in 1..7
 
-                promo_count = Promo.where(:service_promo_id => last_service_promo.id, :day_id => i, :location_id => location.id, :morning_discount => params[:morning_discounts][i], :afternoon_discount => params[:afternoon_discounts][i], :night_discount => params[:night_discounts][i]).count
+                promo = Promo.new
+                promo.service_promo_id = service_promo.id
+                promo.day_id = i
+                promo.morning_discount = params[:morning_discounts][i]
+                promo.afternoon_discount = params[:afternoon_discounts][i]
+                promo.night_discount = params[:night_discounts][i]
+                promo.location_id = location.id
 
-                if promo_count < 1
-                  promos_changed = true
-                  break
+                if promo.save
+                  @promos << promo
+                else
+                  @errors << promo.errors
                 end
 
               end
             end
-          end
 
-          #Alter promo if limit date is changed, but don't worry about finish date and stock limiting.
-          if def_book_limit_date != last_service_promo.book_limit_date.to_datetime
-            promos_changed = true
-          end
+            @service.active_service_promo_id = service_promo.id
+            if @service.save
 
-          #Alter promo if times changed
-          if ServicePromo.where(:id => last_service_promo.id, :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end]).count < 1
-
-            promos_changed = true
-
-          end
-
-          #if params[:limit_booking] != last_service_promo.limit_booking
-          #  promos_changed = true
-          #end
-
-        else
-          promos_changed = true
-        end
-
-        if promos_changed
-
-          if params[:reset_on_max_change]
-            service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end], :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
-          else
-            if last_service_promo != nil
-              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => @service.active_promo_left_bookings, :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end], :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
             else
-              service_promo = ServicePromo.create(:service_id => @service.id, :max_bookings => params[:max_bookings], :morning_start => params[:morning_start], :morning_end => params[:morning_end], :afternoon_start => params[:afternoon_start], :afternoon_end => params[:afternoon_end], :night_start => params[:night_start], :night_end => params[:night_end], :finish_date => def_finish_date, :book_limit_date => def_book_limit_date, :limit_booking => params[:limit_booking])
+              @errors << @service.errors
             end
+
+          else
+
+            @service.active_service_promo_id = last_service_promo.id
+
+            if params[:reset_on_max_change]
+              service_promo = ServicePromo.find(@service.active_service_promo_id)
+              service_promo.max_bookings = params[:max_bookings]
+            end
+
+            service_promo.finish_date = def_finish_date
+            service_promo.book_limit_date = def_book_limit_date
+            service_promo.limit_booking = params[:limit_booking]
+
+
+            if service_promo.save
+
+            else
+              @errors << service_promo.errors
+            end
+
+            if @service.save
+
+            else
+              @errors << @service.errors
+            end
+
           end
 
-          @locations.each do |location|
-            for i in 1..7
 
-              promo = Promo.new
-              promo.service_promo_id = service_promo.id
-              promo.day_id = i
-              promo.morning_discount = params[:morning_discounts][i]
-              promo.afternoon_discount = params[:afternoon_discounts][i]
-              promo.night_discount = params[:night_discounts][i]
-              promo.location_id = location.id
+        else
 
-              if promo.save
-                @promos << promo
-              else
-                @errors << promo.errors
-              end
-
-            end
-          end
-
-          @service.active_service_promo_id = service_promo.id
+          @service.active_service_promo_id = nil
           if @service.save
 
           else
             @errors << @service.errors
           end
-
-        else
-
-          @service.active_service_promo_id = last_service_promo.id
-
-          if params[:reset_on_max_change]
-            service_promo = ServicePromo.find(@service.active_service_promo_id)
-            service_promo.max_bookings = params[:max_bookings]
-          end
-
-          service_promo.finish_date = def_finish_date
-          service_promo.book_limit_date = def_book_limit_date
-          service_promo.limit_booking = params[:limit_booking]
-
-
-          if service_promo.save
-
-          else
-            @errors << service_promo.errors
-          end
-
-          if @service.save
-
-          else
-            @errors << @service.errors
-          end
-
         end
 
 
-      else
+        ##########################
+        # LAST MINUTE PROMOTIONS #
+        ##########################
+        #If it has no promotions, create them.
+        #Else, update each one.
 
-        @service.active_service_promo_id = nil
-        if @service.save
+        if params[:has_last_minute_discount]
+          if !@service.has_sessions
 
-        else
-          @errors << @service.errors
-        end
-      end
+            if @service.last_minute_promos.nil? || @service.last_minute_promos.count == 0
 
-
-      ##########################
-      # LAST MINUTE PROMOTIONS #
-      ##########################
-      #If it has no promotions, create them.
-      #Else, update each one.
-
-      if params[:has_last_minute_discount]
-        if !@service.has_sessions
-
-          if @service.last_minute_promos.nil? || @service.last_minute_promos.count == 0
-
-            @last_minute_locations.each do |last_minute_location|
-
-                last_minute_promo = LastMinutePromo.new
-                last_minute_promo.service_id = @service.id
-                last_minute_promo.location_id = last_minute_location.id
-                last_minute_promo.discount = params[:last_minute_discount]
-                last_minute_promo.hours = params[:last_minute_hours]
-
-                if last_minute_promo.save
-                  @last_minute_promos << last_minute_promo
-                else
-                  @errors << last_minute_promo.errors
-                end
-
-            end
-
-          else
-
-            @last_minute_locations.each do |last_minute_location|
-
-
-                last_minute_promo = LastMinutePromo.where(:service_id => @service.id, :location_id => last_minute_location.id).first
-
-                if !last_minute_promo.nil?
-
-                  last_minute_promo.discount = params[:last_minute_discount]
-                  last_minute_promo.hours = params[:last_minute_hours]
-
-                  if last_minute_promo.save
-                    @last_minute_promos << last_minute_promo
-                  else
-                    @errors << last_minute_promo.errors
-                  end
-
-                else
+              @last_minute_locations.each do |last_minute_location|
 
                   last_minute_promo = LastMinutePromo.new
                   last_minute_promo.service_id = @service.id
@@ -569,52 +537,210 @@ class ServicesController < ApplicationController
                     @errors << last_minute_promo.errors
                   end
 
-                end
+              end
 
+            else
+
+              @last_minute_locations.each do |last_minute_location|
+
+
+                  last_minute_promo = LastMinutePromo.where(:service_id => @service.id, :location_id => last_minute_location.id).first
+
+                  if !last_minute_promo.nil?
+
+                    last_minute_promo.discount = params[:last_minute_discount]
+                    last_minute_promo.hours = params[:last_minute_hours]
+
+                    if last_minute_promo.save
+                      @last_minute_promos << last_minute_promo
+                    else
+                      @errors << last_minute_promo.errors
+                    end
+
+                  else
+
+                    last_minute_promo = LastMinutePromo.new
+                    last_minute_promo.service_id = @service.id
+                    last_minute_promo.location_id = last_minute_location.id
+                    last_minute_promo.discount = params[:last_minute_discount]
+                    last_minute_promo.hours = params[:last_minute_hours]
+
+                    if last_minute_promo.save
+                      @last_minute_promos << last_minute_promo
+                    else
+                      @errors << last_minute_promo.errors
+                    end
+
+                  end
+
+
+              end
+
+              @missingLastMinuteLocations.each do |last_minute_location|
+                last_minute_promos = LastMinutePromo.where(:service_id => @service.id, :location_id => last_minute_location.id)
+                if !last_minute_promos.nil?
+                  last_minute_promos.delete_all
+                end
+              end
 
             end
 
-            @missingLastMinuteLocations.each do |last_minute_location|
-              last_minute_promos = LastMinutePromo.where(:service_id => @service.id, :location_id => last_minute_location.id)
-              if !last_minute_promos.nil?
-                last_minute_promos.delete_all
+          end
+        end
+
+
+        if @errors.length == 0
+          array_result[0] = "ok"
+          array_result[1] = @service
+          array_result[2] = @promos
+          array_result[3] = @last_minute_promos
+
+          if first_time_promo
+            #Send notification for promo_activation.
+            AdminMailer.notify_promo_creation(@service)
+          end
+
+        else
+          array_result[0] = "error"
+          array_result[1] = @service
+          array_result[2] = @errors
+        end
+
+      else
+
+        @errors << @service.errors
+        array_result[0] = "error"
+        array_result[1] = @service
+        array_result[2] = @errors
+
+      end
+
+      render :json => array_result
+
+    else
+
+      @service.has_last_minute_discount = false
+      @service.has_time_discount = false
+
+      @treatment_locations = Location.where(id: params[:treatment_locations])
+
+      @missingTreatmentLocations = Location.where(id: ServiceProvider.where(id: @service.service_providers).pluck(:location_id)) - @treatment_locations
+
+      array_result = []
+      @treatment_promos = []
+
+      @errors = []
+
+      def_finish_date = DateTime.now + 2.years
+
+      treatment_max_bookings = 0
+
+      if !params[:treatment_max_bookings].blank?
+        treatment_max_bookings = params[:treatment_max_bookings].to_i
+      end
+
+      if !params[:treatment_finish_date].blank?
+        def_finish_date = params[:treatment_finish_date].to_datetime
+      end
+
+      if @service.update(:has_last_minute_discount => false, :has_time_discount => false, :has_treatment_promo => params[:has_treatment_promo])
+
+        if @service.treatment_promos.nil? || @service.treatment_promos.count == 0
+
+          @treatment_locations.each do |treatment_location|
+
+            treatment_promo = TreatmentPromo.new
+            treatment_promo.service_id = @service.id
+            treatment_promo.location_id = treatment_location.id
+            treatment_promo.discount = params[:treatment_discount].to_f
+            treatment_promo.finish_date = def_finish_date
+            treatment_promo.max_bookings = treatment_max_bookings
+            treatment_promo.limit_booking = params[:treatment_limit_booking]
+
+            if treatment_promo.save
+              @treatment_promos << treatment_promo
+            else
+              @errors << treatment_promo.errors
+            end
+
+          end
+
+        else
+
+          @treatment_locations.each do |treatment_location|
+
+            treatment_promo = TreatmentPromo.where(:service_id => @service.id, :locattion_id => treatment_location.id).first
+
+            if !treatment_promo.nil?
+
+              treatment_promo.discount = params[:treatment_discount].to_f
+              treatment_promo.finish_date = def_finish_date
+              treatment_promo.max_bookings = treatment_max_bookings
+              treatment_promo.limit_booking = params[:treatment_limit_booking]
+
+              if treatment_promo.save
+                @treatment_promos << treatment_promo
+              else
+                @errors << treatment_promo.errors
               end
+
+            else
+
+              treatment_promo = TreatmentPromo.new
+              treatment_promo.service_id = @service.id
+              treatment_promo.location_id = treatment_location.id
+              treatment_promo.discount = params[:treatment_discount].to_f
+              treatment_promo.finish_date = def_finish_date
+              treatment_promo.max_bookings = treatment_max_bookings
+              treatment_promo.limit_booking = params[:treatment_limit_booking]
+
+              if treatment_promo.save
+                @treatment_promos << treatment_promo
+              else
+                @errors << treatment_promo.errors
+              end
+
+            end
+
+          end
+
+          @missingTreatmentLocations.each do |treatment_location|
+
+            treatment_promos = TreatmentPromo.where(:service_id => @service.id, :location_id => treatment_location.id)
+            if !treatment_promos.nil?
+              treatment_promos.delete_all
             end
 
           end
 
         end
-      end
 
+        if @errors.length == 0
+          array_result[0] = "ok"
+          array_result[1] = @service
+          array_result[2] = @treatment_promos
 
+          #AdminMailer.notify_promo_creation(@service)
 
-      if @errors.length == 0
-        array_result[0] = "ok"
-        array_result[1] = @service
-        array_result[2] = @promos
-        array_result[3] = @last_minute_promos
-
-        if first_time_promo
-          #Send notification for promo_activation.
-          AdminMailer.notify_promo_creation(@service)
+        else
+          array_result[0] = "error"
+          array_result[1] = @service
+          array_result[2] = @errors
         end
 
+
       else
+
+        @errors << @service.errors
         array_result[0] = "error"
         array_result[1] = @service
         array_result[2] = @errors
+
       end
 
-    else
-
-      @errors << @service.errors
-      array_result[0] = "error"
-      array_result[1] = @service
-      array_result[2] = @errors
+      render :json => array_result
 
     end
-
-    render :json => array_result
 
   end
 
