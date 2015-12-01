@@ -270,6 +270,8 @@ function getInventory()
 	var display = $("#displayFilterSelect").val();
 	var searchInput = $('#productSearch').val();
 
+	$("#locationInventory").html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+
 	if(location_id == "0")
 	{
 		$.ajax({
