@@ -669,7 +669,7 @@ class ServicesController < ApplicationController
 
           @treatment_locations.each do |treatment_location|
 
-            treatment_promo = TreatmentPromo.where(:service_id => @service.id, :locattion_id => treatment_location.id).first
+            treatment_promo = TreatmentPromo.where(:service_id => @service.id, :location_id => treatment_location.id).first
 
             if !treatment_promo.nil?
 

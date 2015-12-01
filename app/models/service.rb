@@ -79,14 +79,6 @@ class Service < ActiveRecord::Base
     	end
     end
 
-    def active_treatment_promo
-    	if self.treatment_promo_id.nil?
-    		return nil
-    	else
-    		return TreatmentPromo.find(self.treatment_promo_id)
-    	end
-    end
-
 	def group_service_capacity
 		if self.group_service
 			if !self.capacity || self.capacity < 1
@@ -176,27 +168,6 @@ class Service < ActiveRecord::Base
 
 	end
 
-	def treatment_promo_left_bookings
-
-		if self.treatment_promo_id.nil?
-
-			return 0
-
-		else
-
-			treatment_promo = TreatmentPromo.find(self.treatment_promo_id)
-
-			if treatment_promo.max_bookings.nil?
-				treatment_promo.max_bookings = 0
-				treatment_promo.save
-				return 0
-			end
-
-			return treatment_promo.max_bookings
-
-		end
-
-	end
 
 	def get_last_minute_hours(location_id)
 		if !self.has_last_minute_discount
