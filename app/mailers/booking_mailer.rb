@@ -7,7 +7,6 @@ class BookingMailer < ActionMailer::Base
 	def book_service_mail (book_info)
 		# => Template
 		template_name = 'Booking'
-		client_template_name = 'Booking'
 		template_content = []
 
 		sessions_ratio = ""
@@ -144,6 +143,8 @@ class BookingMailer < ActionMailer::Base
 				}
 			end
 
+
+			client_template_name = template_name
 			if book_info.marketplace_origin
 				client_template_name = 'Booking - Marketplace'
 			end
@@ -363,8 +364,13 @@ class BookingMailer < ActionMailer::Base
 				}
 			end
 
+			client_template_name = template_name
+			if book_info.marketplace_origin
+				client_template_name = 'Update Booking - Marketplace'
+			end
+
 			# => Send mail
-			send_mail(template_name, template_content, message)
+			send_mail(client_template_name, template_content, message)
 		end
 
 		# Notificacion service provider
@@ -727,8 +733,13 @@ class BookingMailer < ActionMailer::Base
 			end
 			message[:merge_vars] = [mergeVars]
 
+			client_template_name = template_name
+			if book_info.marketplace_origin
+				client_template_name = 'Cancel Booking - Marketplace'
+			end
+
 			# => Send mail
-			send_mail(template_name, template_content, message)
+			send_mail(client_template_name, template_content, message)
 		end
 
 		# Notificacion service provider
@@ -940,8 +951,13 @@ class BookingMailer < ActionMailer::Base
 				}
 			end
 
+			client_template_name = template_name
+			if book_info.marketplace_origin
+				client_template_name = 'Booking Reminder - Marketplace'
+			end
+
 			# => Send mail
-			send_mail(template_name, template_content, message)
+			send_mail(client_template_name, template_content, message)
 		end
 
 		# New subject
