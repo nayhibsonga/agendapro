@@ -1040,7 +1040,7 @@ module ApiViews
 		  		if @booking.trx_id.present?
 		  			@bookings_group = Booking.where(trx_id: @booking.trx_id)
 		  		elsif @booking.booking_group.present?
-		  			@bookings_group = Bookin.where(booking_group: @booking.booking_group)
+		  			@bookings_group = Booking.where(booking_group: @booking.booking_group)
 		  		end
 
 		  		@payment_info = ''
