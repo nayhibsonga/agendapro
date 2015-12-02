@@ -542,7 +542,7 @@ class Booking < ActiveRecord::Base
     return (self.id * 123456).to_s(30)
   end
 
-  def marketplace_url(id, access_token)
+  def marketplace_url
     return 'http://' + ENV['MARKETPLACE_URL'] + '/booking/success/#{self.id}/#{self.access_token}'
   end
 
