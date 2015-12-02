@@ -78,7 +78,7 @@
 
                 payment_products_total += payment_product.quantity * payment_product.price
 
-                payment_products_commissions = payment_product.quantity * payment_product.product.get_commission
+                payment_products_commissions += payment_product.quantity * payment_product.product.get_commission
 
                 payment_methods_arr = []
                 payment_methods = ""
@@ -372,7 +372,7 @@
                 <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= internal_sale.discount %>%</Data></Cell>
-                <Cell><Data ss:Type="Number"><%= internal_sale.quantity * (internal_sale.price * (100 - internal_sale.discount) / 100) %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= internal_sale.quantity * internal_sale.price %></Data></Cell>
               </Row>
             <% end %>
 
