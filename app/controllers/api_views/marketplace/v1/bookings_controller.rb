@@ -915,7 +915,7 @@ module ApiViews
 
 
 		    if @booking.update(booking_params)
-	          @mobile_user ? user = @mobile_user.id : user = 0
+	          @api_user ? user = @api_user.id : user = 0
 	          BookingHistory.create(booking_id: @booking.id, action: "Editada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
 	        else
 	        	render json: { errors: @booking.errors.full_messages.inspect }, status: 422
@@ -1020,7 +1020,7 @@ module ApiViews
 				end
 				#flash[:notice] = "Reserva cancelada exitosamente."
 				# BookingMailer.cancel_booking(@booking)
-				@mobile_user ? user = @mobile_user.id : user = 0
+				@api_user ? user = @api_user.id : user = 0
 				BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
 			else
 				render json: { errors: "Hubo un error cancelando tu reserva. Inténtalo nuevamente." }, status: 422
