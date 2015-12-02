@@ -89,13 +89,13 @@ class ApplicationController < ActionController::Base
           redirect_to dashboard_path, notice: "¡Activa tu cuenta AgendaPro! No te pierdas un segundo más el acceso a las oportunidades que te da tu cuenta AgendaPro. Si no eres el administrador, ponte en contacto con él para activar la cuenta."
         end
       elsif company.economic_sectors.count == 0
-        redirect_to(quick_add_path)
+        redirect_to(quick_add_path(:referer => "agendapro"))
       elsif company.locations.count == 0
-        redirect_to(quick_add_path(:step => 1))
+        redirect_to(quick_add_path(:referer => "agendapro", :step => 1))
       elsif company.services.count == 0
-        redirect_to(quick_add_path(:step => 2))
+        redirect_to(quick_add_path(:referer => "agendapro", :step => 2))
       elsif company.service_providers.count == 0
-        redirect_to(quick_add_path(:step => 3))
+        redirect_to(quick_add_path(:referer => "agendapro", :step => 3))
       elsif company.payment_status == PaymentStatus.find_by_name("Vencido")
         @due_payment = true
       end
@@ -184,5 +184,13 @@ class ApplicationController < ActionController::Base
       localized_root_path
     end
   end
+
+  def verify_free_plan(source)
+    if current_user.company.plan_id == Plan.find_by_name("Gratis").id
+      redirect_to free_plan_path(page: source)
+      return
+    end
+  end
+
 
 end

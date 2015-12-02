@@ -452,8 +452,8 @@ class PayUController < ApplicationController
         BookingMailer.book_payment_agendapro_mail(payed_booking)
         
       end
-    elsif pay_u_notification
-      CompanyCronLog.create(company_id: nil, action_ref: 7, details: "ERROR notification_billing "+pay_u_notification.id)
+    elsif pay_u_notification && pay_u_notification.id
+      CompanyCronLog.create(company_id: nil, action_ref: 7, details: "ERROR notification_billing "+pay_u_notification.id.to_s)
     else
       CompanyCronLog.create(company_id: nil, action_ref: 7, details: "ERROR notification_billing")
     end

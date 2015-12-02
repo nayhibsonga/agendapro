@@ -1,9 +1,7 @@
-<div class="last-minute-promo-service-box row panel-row" service_id="<%= service.id %>" location_id="<%= location.id %>" style="padding-left: 5px; padding-right: 5px;">
+<div class="promo-service-box row panel-row" service_id="<%= service.id %>" location_id="<%= location.id %>" style="padding-left: 5px; padding-right: 5px;">
 	<div class="col-sm-12">
 		<div style="background-color: #f0f0f0 !important;">
-			<p style="margin: auto;">
-				<%= image_tag service.time_promo_photo.url.to_s, :alt => "Loader", :class => "img-responsive" %>
-			</p>
+			<%= image_tag service.time_promo_photo.url.to_s, :alt => "Loader", :class => "img-responsive" %>
 		</div>
 		<div style="padding-left: 7px; padding-top: 7px; padding-bottom: 4px; background-color: #B5B5B5; color: #fff; display: block; width: 100%;">
 			<%= image_tag "search/pin_map" + i.to_s + ".png", :alt => "Loader", :size => "18x28" %>&nbsp;&nbsp;
@@ -23,7 +21,7 @@
 	</div>
 </div>
 
-<a href="show_last_minute_promo?id=<%= service.id %>&location_id=<%= location.id %>" service_id="<%= service.id %>" location_id="<%= location.id %>" class="last-minute-link" hidden>Click</a>
+<a href="show_last_minute_promo?id=<%= service.id %>&location_id=<%= location.id %>" service_id="<%= service.id %>" location_id="<%= location.id %>" class="show-promo-link" hidden>Click</a>
 
 
 <script type="text/javascript">
