@@ -217,7 +217,7 @@ module ApiViews
 					results = ActiveRecord::Base.connection.execute(query)
 
 					results.each do |result|
-						if Location.find(result['location_id']) && Location.find(result['location_id']).owned
+						if Location.find(result['location_id']) && Location.find(result['location_id']).company.owned
 							@results << Location.find(result['location_id'])
 						end
 					end
