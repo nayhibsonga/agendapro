@@ -36,84 +36,78 @@
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<div style="width: 100%; max-height: 400px; overflow:auto; margin-top: 20px;">
-			<table class="providers_report_table">
-				<tr>
-					<th class="excel_th">
-						
-					</th>
-					<% @service_providers.each do |provider| %>
-						<th colspan="3" class="provider_name_th">
-							<%= provider.public_name %>
-						</th>
-					<% end %>
-				</tr>
-				<tr class="first_row">
-					<td>
-						Servicio
+		<table class="providers_report_table">
+			<tr>
+				<th class="provider_name_th">
+					Prestador
+				</th>
+				<th class="provider_name_th">
+					Recaudaciones
+				</th>
+				<th class="provider_name_th">
+					Comisiones
+				</th>
+				<th class="provider_name_th">
+					Ventas
+				</th>
+			</tr>
+			<% @service_providers.each do |service_provider| %>
+
+
+				<%
+
+					bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
+
+				    mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
+
+				    payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
+
+				    services_amount = bookings.sum(:price) + mock_bookings.sum(:price)
+				    products_amount = 0.0
+
+				    commissions_amount = 0.0
+
+				    bookings.each do |booking|
+				      commissions_amount += booking.get_commission
+				    end
+
+				    mock_bookings.where('service_id is not null').each do |mock_booking|
+				      commissions_amount += mock_booking.get_commission
+				    end
+
+				    payment_products.each do |payment_product|
+				      commissions_amount += payment_product.quantity * payment_product.product.get_commission
+				      products_amount += payment_product.quantity * payment_product.price
+				    end
+
+				    total_amount = products_amount + services_amount
+
+				    internal_sales = InternalSale.where(service_provider_id: service_provider.id, date: @from.beginning_of_day..@to.end_of_day)
+
+				    internal_sales_amount = 0.0
+
+				    internal_sales.each do |internal_sale|
+				      internal_sales_amount += internal_sale.quantity * internal_sale.price
+				    end
+
+			    %>
+
+				<tr class="standard_row">
+					<td class="right_td">
+						<%= service_provider.public_name %>
 					</td>
-					<% @service_providers.each do |provider| %>
-						<td class="left_header_td">
-							Cantidad
-						</td>
-						<td>
-							Recaudación
-						</td>
-						<td class="right_header_td">
-							Comisión
-						</td>
-					<% end %>
+					<td class="right_td">
+						<%= number_to_currency(total_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+					</td>
+					<td class="right_td">
+						<%= number_to_currency(commissions_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+					</td>
+					<td>
+						<%= number_to_currency(internal_sales_amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+					</td>
 				</tr>
-				<% @services.each do |service| %>
-					<tr class="standard_row">
-						<td>
-							<%= service.name %>
-						</td>
-						<% @service_providers.each do |provider| %>
-
-							<%
-									bookings = Booking.where.not(status_id: @status_cancelled_id).where('payment_id is not null').where(service_provider_id: provider.id, service_id: service.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
-
-						    		bookings_count = bookings.count
-
-						    		bookings_prices = bookings.sum(:price)
-
-						    		mock_bookings = MockBooking.where(service_provider_id: provider.id, service_id: service.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day).pluck(:id))
-
-						    		bookings_count += mock_bookings.count
-
-						    		bookings_prices += mock_bookings.sum(:price)
-
-						    		service_commission = ServiceCommission.where(service_provider_id: provider.id, service_id: service.id).first
-
-						    		commission = ""
-
-						    		if !service_commission.nil? && !service_commission.amount.nil?
-						    			if service_commission.is_percent
-						    				commission = service_commission.amount.to_s + " %"
-						    			else
-						    				commission = "$ " + number_to_currency(service_commission.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0)
-						    			end
-						    		else
-						    			if service.comission_option == 0
-						    				commission = service.comission_value.to_s + " %"
-						    			else
-						    				commission = "$ " + number_to_currency(service.commission, currency: ' $', separator: ',', delimeter: '.', precision: 0)
-						    			end
-						    		end
-
-					    	%>
-					    	<td class="left_td"><%= bookings_count %></td>
-					    	<td>
-					    		<%= number_to_currency(bookings_prices, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
-					    	</td>
-					    	<td class="right_td"><%= commission %></td>
-
-				    	<% end %>
-			    	</tr>
-			    <% end %>
-		    </table>
-	    </div>
+			<% end %>
+		</table>
 	</div>
 </div>
 <div class="row" style="margin-top: 10px;">
