@@ -23,7 +23,6 @@
             <td><%= product.product_brand.name %></td>
             <td><%= product.product_display.name %></td>
             <% @company.locations.where(:active => true).order(:name).each do |location| %>
-              
               <% 
                 location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first 
                 stock_alarm_setting = location.stock_alarm_setting
@@ -62,6 +61,7 @@
                     <td>
                   <% end %>
                 <% end %>
+
               <% else %> 
                 <td>
               <% end %>

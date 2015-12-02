@@ -4,7 +4,7 @@ module ApiViews
 	  class UsersController < V1Controller
 	  	skip_before_filter :permitted_params, only: [:oauth]
 		before_action :check_login_params, only: [:login]
-		before_action :parse_registration_params, only: [:create]
+		before_action :parse_registration_params, only: [:create, :edit]
 
 		  def create
 		    @user = User.new(user_params)
@@ -37,7 +37,7 @@ module ApiViews
 
 		    @preSessionBookings.each do |sb|
 		      if sb.user_id.nil?
-		        sb.user_id = current_user.id
+		        sb.user_id = @api_user.id
 		        sb.save
 		      end
 		      if sb.bookings.count == 0

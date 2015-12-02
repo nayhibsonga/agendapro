@@ -2143,6 +2143,7 @@ class BookingsController < ApplicationController
 
       @booking.price = service.price
       @booking.list_price = service.price
+      @booking.discount = service.discount
       @booking.max_changes = @company.company_setting.max_changes
       @booking.booking_group = booking_group
 
@@ -2273,6 +2274,10 @@ class BookingsController < ApplicationController
       if @has_session_booking
 
         sessions_max_discount = 0
+
+        #Reset final price
+        final_price = 0
+
         if @bookings.count > 0
 
           current_service = @bookings.first.service
@@ -2285,93 +2290,42 @@ class BookingsController < ApplicationController
 
           else
 
+            #
+            # Assign prices in case there is no discount
+            #
+            @bookings.each do |booking|
+              booking.price = current_service.price / current_service.sessions_amount
+              booking.list_price = current_service.price / current_service.sessions_amount
+              booking.discount = 0
+            end
+
             # If discount is for online_payment, it's always equal.
             if current_service.has_discount && current_service.discount > 0
               @bookings.each do |booking|
-                new_price = (current_service.price - current_service.discount*current_service.price/100).round
+                new_price = (booking.price - current_service.discount*booking.price/100).round
                 booking.price = new_price
-                final_price = new_price
+                #final_price = new_price
                 if(booking.list_price > 0)
                   booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
                 else
                   booking.discount = 0
                 end
               end
-            elsif current_service.has_time_discount
-
-              #Look for the highest discount
-              @bookings.each do |booking|
-
-                promo = Promo.where(:day_id => booking.start.to_datetime.cwday, :service_promo_id => @session_booking.service_promo_id, :location_id => @selectedLocation.id).first
-
-                if !promo.nil?
-
-                  service_promo = ServicePromo.find(current_service.active_service_promo_id)
-
-                  #Check if there is a limit for bookings, and if there are any left
-                  if service_promo.max_bookings > 0 || !service_promo.limit_booking
-
-                    #Check if the promo is still active, and if the booking ends before the limit date
-
-                    if booking.end.to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
-
-                      if !(service_promo.morning_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-                        if sessions_max_discount == 0
-                          sessions_max_discount = promo.morning_discount
-                        else
-                          if sessions_max_discount > promo.morning_discount
-                            sessions_max_discount = promo.morning_discount
-                          end
-                        end
-
-                      elsif !(service_promo.afternoon_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-                        if sessions_max_discount == 0
-                          sessions_max_discount = promo.afternoon_discount
-                        else
-                          if sessions_max_discount > promo.afternoon_discount
-                            sessions_max_discount = promo.afternoon_discount
-                          end
-                        end
-
-                      elsif !(service_promo.night_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-                        if sessions_max_discount == 0
-                          sessions_max_discount = promo.night_discount
-                        else
-                          if sessions_max_discount > promo.night_discount
-                            sessions_max_discount = promo.night_discount
-                          end
-                        end
-                      end
-
-                    end
-
-                  end
-
-                end
-
-              end
-
-              @session_booking.max_discount = sessions_max_discount
-              # End of get discount
-              @bookings.each do |booking|
-                new_price = (booking.service.price - sessions_max_discount*booking.service.price/100).round
-                booking.price = new_price
-                final_price = new_price
-                if(booking.list_price > 0)
-                  booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
-                else
-                  booking.discount = 0
-                end
-              end
-
             end
+
+            #No need to check for promotions.
 
           end
 
+          #It's a treatment, final_price is the service price with discount
+          final_price = current_service.price * ((100.0 - current_service.discount.to_f)/100.0)
+
+          logger.debug "***"
+          logger.debug "Treatment price: " + final_price.to_s
+          logger.debug "***"
+
         end
+
       else
 
         #Reset final_price
@@ -2395,14 +2349,46 @@ class BookingsController < ApplicationController
 
           else
 
-            if booking.service.has_discount && booking.service.discount > 0
+            #Assume there is no discount at first
+            booking.price = booking.service.price
+            booking.list_price = booking.service.price
+            booking.discount = 0
 
-              new_book_price = (booking.service.price - booking.service.discount*booking.service.price/100).round
-              booking.price = new_book_price
-              final_price = final_price + new_book_price
+            #First, check if it is last_minute_promo
+            if params[:is_last_minute_promo]
+
+              last_minute_promo = LastMinutePromo.where(location_id: @selectedLocation.id, service_id: booking.service.id).first
+
+              if last_minute_promo.nil? 
+
+                @errors << "La promoción de último minuto ya no existe."
+
+                redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: "payment", blocked_bookings: @blocked_bookings)
+                return
+
+              end
+
+              new_price = (booking.service.price - last_minute_promo.discount*booking.service.price/100).round
+              booking.price = new_price
+              #final_price = new_price
+              if(booking.list_price > 0)
+                booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+              else
+                booking.discount = 0
+              end
 
             else
+              #Check for online payment discount
+              if booking.service.has_discount && booking.service.discount > 0
 
+                new_book_price = (booking.service.price - booking.service.discount*booking.service.price/100).round
+                booking.price = new_book_price
+                booking.discount = booking.service.discount
+                #final_price = final_price + new_book_price
+
+              end
+
+              #Now check for promos
               promo = Promo.where(:day_id => booking.start.to_datetime.cwday, :service_promo_id => booking.service.active_service_promo_id, :location_id => @selectedLocation.id).first
 
               new_book_discount = 0
@@ -2438,20 +2424,31 @@ class BookingsController < ApplicationController
 
               end
 
-              new_book_price = (booking.service.price - new_book_discount*booking.service.price/100).round
-              booking.price = new_book_price
-              final_price = final_price + new_book_price
-              if(booking.list_price > 0)
-                booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
-              else
-                booking.discount = 0
-              end
+              if booking.discount.nil? || booking.discount == 0 || booking.discount < new_book_discount
+
+                new_book_price = (booking.service.price - new_book_discount*booking.service.price/100).round
+                booking.price = new_book_price
+                #final_price = final_price + new_book_price
+                if(booking.list_price > 0)
+                  booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+                else
+                  booking.discount = 0
+                end
+              end        
 
             end
 
           end
 
         end
+
+        #Prices were set, now sum them
+        if @bookings.count > 0
+          @bookings.each do |booking|
+            final_price += booking.price
+          end
+        end
+
       end
 
       #####
@@ -4412,9 +4409,16 @@ class BookingsController < ApplicationController
                     service_valid = false
                   end
                 else
+
+                  #Check for services that aren't the searched one, then check for capacity of this one
+                  if Booking.where(service_provider_id: provider.id).where.not(service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count > 0
+                    service_valid = false
+                  end
+
                   if Booking.where(service_provider_id: provider.id, service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count >= service.capacity
                     service_valid = false
                   end
+                  
                 end
 
 
@@ -4586,9 +4590,6 @@ class BookingsController < ApplicationController
             #First, check if there's a gap. If so, back dateTimePointer to (blocking_start - total_duration)
             #This way, you can give two options when there are gaps.
 
-            #logger.debug "DTP starting not valid: " + dateTimePointer.to_s
-            #logger.debug "Last Check: " + last_check.to_s
-
             #Assume there is no gap
             time_gap = 0
 
@@ -4610,8 +4611,6 @@ class BookingsController < ApplicationController
 
                     if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
                       gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
-                      #logger.debug "Enters provider_close and gap is " + gap_diff.to_s
-                      #logger.debug "Provider close: " + provider_close.to_s
                       if gap_diff > time_gap
                         time_gap = gap_diff
                       end
@@ -4621,8 +4620,6 @@ class BookingsController < ApplicationController
 
                   if book_gaps.count > 0
                     gap_diff = (book_gaps.first.start - dateTimePointer)/60
-                    #logger.debug "Enters bookings and gap is " + gap_diff.to_s
-                    #logger.debug "Book start: " + book_gaps.first.start.to_s
                     if gap_diff != 0
                       if gap_diff > time_gap
                         time_gap = gap_diff
@@ -4632,8 +4629,6 @@ class BookingsController < ApplicationController
 
                   if break_gaps.count > 0
                     gap_diff = (break_gaps.first.start - dateTimePointer)/60
-                    #logger.debug "Enters breaks and gap is " + gap_diff.to_s
-                    #logger.debug "Break start: " + break_gaps.first.start.to_s
                     if gap_diff != 0
                       if gap_diff > time_gap
                         time_gap = gap_diff
@@ -4662,8 +4657,6 @@ class BookingsController < ApplicationController
 
                   if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
                     gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
-                    #logger.debug "Enters provider_close and gap is " + gap_diff.to_s
-                    #logger.debug "Provider close: " + provider_close.to_s
                     if gap_diff > time_gap
                       time_gap = gap_diff
                     end
@@ -4673,8 +4666,6 @@ class BookingsController < ApplicationController
 
                 if book_gaps.count > 0
                   gap_diff = (book_gaps.first.start - dateTimePointer)/60
-                  #logger.debug "Enters bookings and gap is " + gap_diff.to_s
-                  #logger.debug "Book start: " + book_gaps.first.start.to_s
                   if gap_diff != 0
                     if gap_diff > time_gap
                       time_gap = gap_diff
@@ -4684,8 +4675,6 @@ class BookingsController < ApplicationController
 
                 if break_gaps.count > 0
                   gap_diff = (break_gaps.first.start - dateTimePointer)/60
-                  #logger.debug "Enters breaks and gap is " + gap_diff.to_s
-                  #logger.debug "Break start: " + break_gaps.first.start.to_s
                   if gap_diff != 0
                     if gap_diff > time_gap
                       time_gap = gap_diff
@@ -4718,39 +4707,22 @@ class BookingsController < ApplicationController
 
                 first_providers.each do |first_provider|
 
-                  #book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes)
 
                   book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "DTP: " + dateTimePointer.to_s
-                  # logger.debug "Multi book_blockings: " + book_blockings.count.to_s
-                  # logger.debug "***"
-                  # logger.debug "***"
-                  # logger.debug "***"
+
                   if book_blockings.count > 0
 
                     book_diff = (book_blockings.first.end - dateTimePointer)/60
                     if book_diff < smallest_diff
                       smallest_diff = book_diff
-                      #logger.debug "smallest_diff1: " + smallest_diff.to_s
                     end
                   else
                     break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "DTP: " + dateTimePointer.to_s
-                    # logger.debug "Multi break_blockings: " + book_blockings.count.to_s
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "***"
+
                     if break_blockings.count > 0
                       break_diff = (break_blockings.first.end - dateTimePointer)/60
                       if break_diff < smallest_diff
                         smallest_diff = break_diff
-                        #logger.debug "smallest_diff2: " + smallest_diff.to_s
                       end
                     end
                   end
@@ -4762,35 +4734,19 @@ class BookingsController < ApplicationController
                 first_provider = first_providers.first
 
                 book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
-                # logger.debug "***"
-                # logger.debug "***"
-                # logger.debug "***"
-                # logger.debug "DTP: " + dateTimePointer.to_s
-                # logger.debug "Single book_blockings: " + book_blockings.count.to_s
-                # logger.debug "***"
-                # logger.debug "***"
-                # logger.debug "***"
+
                 if book_blockings.count > 0
                   book_diff = (book_blockings.first.end - dateTimePointer)/60
                   if book_diff < smallest_diff
                     smallest_diff = book_diff
-                    #logger.debug "smallest_diff3: " + smallest_diff.to_s
                   end
                 else
                   break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "DTP: " + dateTimePointer.to_s
-                    # logger.debug "Single break_blockings: " + book_blockings.count.to_s
-                    # logger.debug "***"
-                    # logger.debug "***"
-                    # logger.debug "***"
+
                   if break_blockings.count > 0
                     break_diff = (break_blockings.first.end - dateTimePointer)/60
                     if break_diff < smallest_diff
                       smallest_diff = break_diff
-                      #logger.debug "smallest_diff4: " + smallest_diff.to_s
                     end
                   end
                 end
@@ -4807,13 +4763,6 @@ class BookingsController < ApplicationController
 
             end
 
-            # logger.debug "####"
-            # logger.debug "####"
-            # logger.debug "####"
-            # logger.debug "####"
-            # logger.debug "OLD DTP: " + dateTimePointer.to_s
-            # logger.debug "Current smallest_diff: " + smallest_diff.to_s
-
             if first_service.company.company_setting.allows_optimization && time_gap > 0
               dateTimePointer = (dateTimePointer + time_gap.minutes) - total_services_duration.minutes
               is_gap_hour = true
@@ -4823,13 +4772,6 @@ class BookingsController < ApplicationController
               dateTimePointer += smallest_diff.minutes
             end
 
-            # logger.debug "NEW DTP: " + dateTimePointer.to_s
-            # logger.debug "####"
-            # logger.debug "####"
-            # logger.debug "####"
-            # logger.debug "####"
-
-            #dateTimePointer += service.duration.minutes
             serviceStaffPos = 0
             bookings = []
 
