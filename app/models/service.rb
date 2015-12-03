@@ -29,7 +29,8 @@ class Service < ActiveRecord::Base
 	mount_uploader :time_promo_photo, TimePromoPhotoUploader
 
 	scope :with_time_promotions, -> { where(has_time_discount: true, active: true, online_payable: true, online_booking: true, time_promo_active: true).where.not(:active_service_promo_id => nil) }
-	scope :with_last_minute_promotions, -> { where(has_last_minute_discount: true, active: true, online_payable: true, online_booking: true)}
+	scope :with_last_minute_promotions, -> { where(has_last_minute_discount: true, active: true, online_payable: true, online_booking: true).where.not(:active_last_minute_promo_id => nil) }
+	scope :with_treatment_promotions, -> { where(has_treatment_promo: true, active: true, online_payable: true, online_booking: true).where.not(:active_treatment_promo_id => nil) }
 
 	accepts_nested_attributes_for :service_category, :reject_if => :all_blank, :allow_destroy => true
 
@@ -67,7 +68,8 @@ class Service < ActiveRecord::Base
     		self.update_column(:has_time_discount, false)
     		self.update_column(:has_last_minute_discount, false)
     		self.update_column(:time_promo_active, false)
-    		self.update_column(:active_service_promo_id, nil)
+    	else
+    		self.update_column(:has_treatment_promo, false)
     	end
     end
 
@@ -76,6 +78,22 @@ class Service < ActiveRecord::Base
     		return nil
     	else
     		return ServicePromo.find(self.active_service_promo_id)
+    	end
+    end
+
+    def active_last_minute_promo
+    	if self.active_last_minute_promo_id.nil?
+    		return nil
+    	else
+    		return LastMinutePromo.find(self.active_last_minute_promo_id)
+    	end
+    end
+
+    def active_treatment_promo
+    	if self.active_treatment_promo_id.nil?
+    		return nil
+    	else
+    		return TreatmentPromo.find(self.active_treatment_promo_id)
     	end
     end
 

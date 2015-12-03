@@ -1,4 +1,5 @@
 class TreatmentPromo < ActiveRecord::Base
 	belongs_to :service
-	belongs_to :location
+	has_many :treatment_promo_locations
+	has_many :locations, :through => :treatment_promo_locations
 end
