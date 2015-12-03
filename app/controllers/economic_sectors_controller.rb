@@ -73,6 +73,6 @@ class EconomicSectorsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def economic_sector_params
-      params.require(:economic_sector).permit(:name, :show_in_home, :show_in_company, :mobile_preview, economic_sectors_dictionaries_attributes: [:id, :name, :_destroy])
+      params.require(:economic_sector).permit(:name, :show_in_home, :show_in_company, :mobile_preview, :marketplace, economic_sectors_dictionaries_attributes: [:id, :name, :_destroy])
     end
 end
