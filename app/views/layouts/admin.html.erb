@@ -130,7 +130,7 @@
                 <% end %>
               <% end %>
               <!-- Clientes -->
-              <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") and current_user.role != Role.find_by(name: "Super Admin") %>
+              <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") and current_user.role != Role.find_by(name: "Super Admin") and current_user.role != Role.find_by(name: "Ventas") %>
                 <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
                   <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, clients_path, :class => "locked-section" %></li>
                 <% else %>
@@ -319,7 +319,7 @@
           </div>
           <div class="modal-footer">
             <a class="btn btn-default" data-dismiss="modal">Cerrar</a>
-            <%= link_to "Agregar datos", select_plan_path, id: "billingInfoBtn", class: "btn btn-green", disabled: true %>
+            <%= link_to "Imprimir Horario", service_providers_path, id: "printingButton", class: "btn btn-green", disabled: true %>
           </div>
         </div>
       </div>
