@@ -2717,7 +2717,7 @@ class PaymentsController < ApplicationController
     @internal_sales_amount = 0.0
 
     @internal_sales.each do |internal_sale|
-      @internal_sales_amount += internal_sale.quantity*(internal_sale.price * (100 - internal_sale.discount) / 100)
+      @internal_sales_amount += internal_sale.quantity * internal_sale.price
     end
 
     respond_to do |format|

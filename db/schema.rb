@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151201152835) do
+ActiveRecord::Schema.define(version: 20151202203837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -411,12 +411,13 @@ ActiveRecord::Schema.define(version: 20151201152835) do
   add_index "districts", ["city_id"], name: "index_districts_on_city_id", using: :btree
 
   create_table "economic_sectors", force: true do |t|
-    t.string   "name",                           null: false
+    t.string   "name",                            null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "show_in_home",    default: true
     t.boolean  "show_in_company", default: true
     t.string   "mobile_preview",  default: ""
+    t.boolean  "marketplace",     default: false
   end
 
   create_table "economic_sectors_dictionaries", force: true do |t|
@@ -1172,7 +1173,7 @@ ActiveRecord::Schema.define(version: 20151201152835) do
 
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
-    t.integer  "country_id", null: false
+    t.integer  "country_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

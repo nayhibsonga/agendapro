@@ -43,6 +43,12 @@
     </div>
   </div>
   <div class="form-group">
+    <%= f.label :marketplace, 'Mostrar en Marketplace: ', :class => 'col-md-2 control-label' %>
+    <div class="col-md-4">
+       <%= f.check_box :marketplace, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
     <%= f.label :show_in_company, 'Mostrar en Configuraciones: ', :class => 'col-md-2 control-label' %>
     <div class="col-md-4">
       <%= f.check_box :show_in_company, :class => 'form-control' %>

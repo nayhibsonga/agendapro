@@ -36,7 +36,7 @@ module Api
 
         @preSessionBookings.each do |sb|
           if sb.user_id.nil?
-            sb.user_id = current_user.id
+            sb.user_id = @mobile_user.id
             sb.save
           end
           if sb.bookings.count == 0
