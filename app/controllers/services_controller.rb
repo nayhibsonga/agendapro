@@ -1208,6 +1208,94 @@ class ServicesController < ApplicationController
 
   end
 
+  def show_last_treatment_promo
+
+    @service = Service.find(params[:id])
+    @location = Location.find(params[:location_id])
+
+    if @service.nil? || @location.nil?
+      flash[:alert] = "No existen promociones para el servicio o local buscados."
+      redirect_to root_path
+      return
+    end
+
+    @treatment_promo = @service.active_treatment_promo
+
+    if @treatment.nil?
+      flash[:alert] = "No existen promociones para el servicio o local buscados."
+      redirect_to root_path
+      return
+    end
+    @company = @service.company
+
+    str_name = @service.name.gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+    normalized_search = str_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
+    @relatedServices = Service.search(normalized_search).where(:has_time_discount => true, :company_id => CompanyEconomicSector.where(economic_sector_id: @company.economic_sectors).pluck(:company_id))
+
+    @relatedPromos = []
+
+    @relatedServices.each do |service|
+
+      service_promo = ServicePromo.find(service.active_service_promo_id)
+      locations = service_promo.promos.pluck(:location_id).uniq
+
+      locations.each do |locationId|
+        if service.id != @service.id || locationId != @location.id
+          promo = [service, Location.find(locationId)]
+          @relatedPromos << promo
+        end
+      end
+    end
+
+    if @relatedPromos.count < 6
+      if @relatedServices.count > 0
+
+        @plusRelatedServices = Service.where(:has_time_discount => true, :company_id => CompanyEconomicSector.where(economic_sector_id: @company.economic_sectors).pluck(:company_id)).limit(6 - @relatedPromos.count)
+
+        @plusRelatedServices.each do |service|
+
+          service_promo = ServicePromo.find(service.active_service_promo_id)
+          locations = service_promo.promos.pluck(:location_id).uniq
+
+          locations.each do |locationId|
+            if service.id != @service.id || locationId != @location.id
+              promo = [service, Location.find(locationId)]
+              if !@relatedPromos.include?(promo)
+                @relatedPromos << promo
+              end
+            end
+          end
+        end
+
+      else
+
+        @plusRelatedServices = Service.where(:has_time_discount => true, :company_id => CompanyEconomicSector.where(economic_sector_id: @company.economic_sectors).pluck(:company_id))
+
+        @plusRelatedServices.each do |service|
+          service_promo = ServicePromo.find(service.active_service_promo_id)
+          locations = service_promo.promos.pluck(:location_id).uniq
+          locations.each do |locationId|
+            if service.id != @service.id || locationId != @location.id
+              promo = [service, Location.find(locationId)]
+              if !@relatedPromos.include?(promo)
+                @relatedPromos << promo
+              end
+            end
+          end
+        end
+
+      end
+    end
+
+    if @relatedPromos.count > 6
+      @relatedPromos = @relatedPromos[0, 6]
+    end
+
+    render layout: "results"
+
+  end
+
   def last_minute_hours
     @service = Service.find(params[:id])
     
