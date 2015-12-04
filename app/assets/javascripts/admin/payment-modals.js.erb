@@ -89,7 +89,7 @@ $(function() {
       });
   });  
 
-  if($('#editable_payment_prices').val() == "0")
+  if($('#editable_payment_prices').val() == "0" && $('#is_admin_role').val() == "0")
   {
     disabledPrice = 'disabled';
   }
