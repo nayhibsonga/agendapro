@@ -11,15 +11,15 @@
 			</div>
 			<div class="col-md-6">
 				<div class="promotions-results-title">
-					Promociones por horarios
+					Promociones de tratamientos
 				</div>
 			</div>
 			<div class="col-md-3">
 				<div class="promotions-results-subtitle">
-					<%= link_to "Ver promociones de último minuto", get_last_minute_promotions_path %>
+					<%= link_to "Ver promociones por horario", get_promotions_path %>
 				</div>
 				<div class="promotions-results-subtitle">
-					<%= link_to "Ver promociones de tratamientos", get_treatment_promotions_path %>
+					<%= link_to "Ver promociones de último minuto", get_last_minute_promotions_path %>
 				</div>
 			</div>
 		</div>
@@ -42,7 +42,7 @@
 				<div class="row">
 				<% @results.each do |promo_detail| %>
 					<div class="col-md-4 promo-box-col">
-						<%= render :partial => 'service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
+						<%= render :partial => 'treatment_service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
 					</div>
 					<% if i%3 == 0 %>
 						</div>

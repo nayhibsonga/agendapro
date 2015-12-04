@@ -64,7 +64,7 @@ $(document).ready(function(){
       }
 	});
 
-  if ($('#is_treatment').val("") == "0")
+  if ($('#is_treatment').val() == "0")
   {
   	for(pi_index = 1; pi_index < 8; pi_index++)
   	{
@@ -514,7 +514,7 @@ function saveTreatmentPromotions()
 }
 
 $(".promotions-submit").click(function(e){
-  console.log($('#is_treatment').val());
+
   if($('#is_treatment').val() == "0")
   {
     saveRegularPromotions();
@@ -523,4 +523,5 @@ $(".promotions-submit").click(function(e){
   {
     saveTreatmentPromotions();
   }
+  
 });

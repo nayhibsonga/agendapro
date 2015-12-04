@@ -7,9 +7,22 @@
 
 
 		<div class="row">
-			<p style="text-align: center;">
-			<%= link_to "Ir a Promociones por horario", get_promotions_path %>
-			</p>
+			<div class="col-md-3">
+
+			</div>
+			<div class="col-md-6">
+				<div class="promotions-results-title">
+					Promociones de último minuto
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="promotions-results-subtitle">
+					<%= link_to "Ver promociones por horario", get_promotions_path %>
+				</div>
+				<div class="promotions-results-subtitle">
+					<%= link_to "Ver promociones de tratamientos", get_treatment_promotions_path %>
+				</div>
+			</div>
 		</div>
 
 		<% if @results.count >0 %>

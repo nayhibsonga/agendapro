@@ -256,18 +256,7 @@
             Locales:
           </label>
           <div class="col-md-10" style="padding-top: 7px;">
-            <%
-
-              locations = []
-
-              location_ids = @last_minute_promos.pluck(:location_id).uniq
-
-              location_ids.each do |l_id|
-                location = Location.find(l_id)
-                locations << location
-              end
-            %>
-            <% locations.each do |loc| %>
+            <% @last_minute_promo.locations.each do |loc| %>
               <%= loc.name %><br />
             <% end %>
           </div>
@@ -278,7 +267,7 @@
             Descuento:
           </label>
           <div class="col-md-10" style="padding-top: 7px;">
-            <%= @last_minute_promos.first.discount.to_s %> %
+            <%= @last_minute_promo.discount.to_s %> %
           </div>
         </div>
 
@@ -287,7 +276,7 @@
             Horas:
           </label>
           <div class="col-md-10" style="padding-top: 7px;">
-            <%= @last_minute_promos.first.hours.to_s %>
+            <%= @last_minute_promo.hours.to_s %>
           </div>
         </div>
 

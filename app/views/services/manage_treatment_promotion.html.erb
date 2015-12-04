@@ -80,18 +80,8 @@
             Locales:
           </label>
           <div class="col-md-10" style="padding-top: 7px;">
-            <%
 
-              locations = []
-
-              location_ids = @treatment_promos.pluck(:location_id).uniq
-
-              location_ids.each do |l_id|
-                location = Location.find(l_id)
-                locations << location
-              end
-            %>
-            <% locations.each do |loc| %>
+            <% @treatment_promo.locations.each do |loc| %>
               <%= loc.name %><br />
             <% end %>
           </div>
@@ -102,7 +92,7 @@
             Descuento:
           </label>
           <div class="col-md-10" style="padding-top: 7px;">
-            <%= @treatment_promos.first.discount %> %
+            <%= @treatment_promo.discount %> %
           </div>
         </div>
 
@@ -111,8 +101,8 @@
             Stock:
           </label>
           <div class="col-md-10" style="padding-top: 7px;">
-            <% if @treatment_promos.first.limit_booking %>
-              <%= @treatment_promos.first.max_bookings %>
+            <% if @treatment_promo.limit_booking %>
+              <%= @treatment_promo.max_bookings %>
             <% else %>
               Sin límite
             <% end %>
@@ -124,7 +114,7 @@
             Fecha de término:
           </label>
           <div class="col-md-10" style="padding-top: 7px;">
-            <%= @treatment_promos.first.finish_date.strftime('%d/%m/%Y') %>
+            <%= @treatment_promo.finish_date.strftime('%d/%m/%Y') %>
           </div>
         </div>
 

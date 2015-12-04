@@ -678,13 +678,20 @@ class ServicesController < ApplicationController
             @treatment_locations.each do |treatment_location|      
               treatment_promo_location = TreatmentPromoLocation.create(:treatment_promo_id => treatment_promo.id, :location_id => treatment_location.id)
             end
+
+            @service.active_treatment_promo_id
+
+            if !@service.save
+              @errors << @service.errors
+            end
+
           else
             @errors << treatment_promo.errors
           end
 
         else
 
-          treatment_promo = TreatmentPromo.where(:service_id => @service_id).order('created_at desc').first
+          treatment_promo = TreatmentPromo.where(:service_id => @service.id).order('created_at desc').first
 
           #Check if something changed. If true, create a new treatment_promo (and locations) so that the last one is stored.
           #If not, just modify locations.
@@ -692,7 +699,6 @@ class ServicesController < ApplicationController
 
             treatment_promo = TreatmentPromo.new
             treatment_promo.service_id = @service.id
-            treatment_promo.location_id = treatment_location.id
             treatment_promo.discount = params[:treatment_discount].to_f
             treatment_promo.finish_date = def_finish_date
             treatment_promo.max_bookings = treatment_max_bookings
@@ -704,6 +710,13 @@ class ServicesController < ApplicationController
               @treatment_locations.each do |treatment_location|      
                 treatment_promo_location = TreatmentPromoLocation.create(:treatment_promo_id => treatment_promo.id, :location_id => treatment_location.id)
               end
+
+              @service.active_treatment_promo_id
+
+              if !@service.save
+                @errors << @service.errors
+              end
+
             else
               @errors << treatment_promo.errors
             end
@@ -742,6 +755,7 @@ class ServicesController < ApplicationController
         end
 
         if @errors.length == 0
+
           array_result[0] = "ok"
           array_result[1] = @service
           array_result[2] = @treatment_promos
@@ -776,9 +790,10 @@ class ServicesController < ApplicationController
     @service_promo = ServicePromo.where(:id => @service.active_service_promo_id)
     @location = Location.find(params[:location_id])
     @promos = []
-    #if !(@service.has_discount && @service.discount > 0)
-      @promos = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id).order("day_id asc")
-    #end
+    @promos = Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => @location.id).order("day_id asc")
+
+    @treatment_promo = @service.active_treatment_promo
+
     respond_to do |format|
       format.html { render :partial => 'get_promotions_popover' }
       format.json { render json: @promos }
@@ -806,12 +821,12 @@ class ServicesController < ApplicationController
     @service = Service.find(params[:id])
     service_promo = ServicePromo.find(@service.active_service_promo_id)
     @location = service_promo.promos.first.location
-    @last_minute_promos = @service.last_minute_promos
+    @last_minute_promo = @service.active_last_minute_promo
   end
 
   def manage_treatment_promotion
     @service = Service.find(params[:id])
-    @treatment_promos = @service.treatment_promos
+    @treatment_promo = @service.active_treatment_promo
   end
 
   def show_time_promo
@@ -1086,7 +1101,7 @@ class ServicesController < ApplicationController
       return
     end
 
-    @last_minute_promo = LastMinutePromo.where(:service_id => @service.id, :location_id => @location.id).first
+    @last_minute_promo = @service.active_last_minute_promo
 
     if @last_minute_promo.nil?
       flash[:alert] = "No existen promociones para el servicio o local buscados."
@@ -1202,7 +1217,7 @@ class ServicesController < ApplicationController
     
     @serviceStaff[0] = {:service => @service.id, :provider => params[:service_provider_id]}
     
-    @last_minute_promo = LastMinutePromo.where(:location_id => @location.id, :service_id => @service.id).first
+    @last_minute_promo = @service.active_last_minute_promo
 
     @selected_date = params[:date]
 

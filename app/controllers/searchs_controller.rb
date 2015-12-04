@@ -1513,27 +1513,6 @@ class SearchsController < ApplicationController
 				end
 			end
 
-			logger.debug "Results: "
-			logger.debug @results.inspect
-			logger.debug @locations.inspect
-
-			# ordered_locs.each do |arr|
-			# 	arr.each do |s|
-
-			# 		last_minute_promo_services = []
-
-			# 		ServiceProvider.where(:active => true, :location_id => s[0]).each do |service_provider|
-			# 			last_minute_promo_services = service_provider.services.with_last_minute_promotions
-			# 		end
-
-			# 		last_minute_promo_services.each do |service|
-			# 			if !@last_minute_results.include?(service)
-			# 				@last_minute_results << service
-			# 			end
-			# 		end
-			# 	end
-			# end
-
 			per_page = 9
 
 			@results = @results.paginate(:page => params[:page], :per_page => per_page)
@@ -1845,6 +1824,219 @@ class SearchsController < ApplicationController
 				end
 			end
 
+
+			respond_to do |format|
+				format.html
+			end
+
+	end
+
+
+	def treatment_promotions
+
+			@lat = "-33.4052419"
+			@lng = "-70.597557"
+			@formatted_address = "Santiago, Región Metropolitana, Chile"
+
+			if Country.find_by(locale: I18n.locale.to_s)
+				@country = Country.find_by(locale: I18n.locale.to_s)
+				@lat = @country.latitude
+				@lng = @country.longitude
+				@formatted_address = @country.formatted_address
+			end
+
+			if params[:latitude] &&  params[:latitude] != ""
+				@lat = params[:latitude]
+			end
+			if params[:longitude] && params[:longitude] != ""
+				@lng = params[:longitude]
+			end
+
+
+			if cookies[:formatted_address]
+				@formatted_address = cookies[:formatted_address].encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+			end
+			# => Domain parser
+			#host = request.host_with_port
+			#@domain = host[host.index(request.domain)..host.length]
+
+
+			lat = @lat
+			long = @lng
+
+			@latitude = @lat
+			@longitude = @lng
+
+			@results = Array.new
+			@empty_results = Array.new
+
+			@economic_sector_selected = 0
+
+			normalized_search = ""
+
+			if params[:inputSearch] && params[:inputSearch] != ""
+
+				search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+				normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
+			elsif params[:economicSector] && params[:economicSector] != "" && params[:economicSector] != "0" && params[:economicSector] != 0
+
+				economic_sector = EconomicSector.find(params[:economicSector])
+				search = economic_sector.name.gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+				normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
+				@economic_sector_selected = economic_sector.id
+
+			end
+
+			# First, search services with promotions based on time of book (morning, afternoon, night)
+
+			if normalized_search != ""
+
+				treatment_query = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true, id: PromoTime.where(:active => true).pluck(:company_setting_id)).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25')
+
+			else
+
+				treatment_query = Location.where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true, id: PromoTime.where(:active => true).pluck(:company_setting_id)).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25')
+
+
+			end
+
+			query = treatment_query
+
+			logger.debug "Query array"
+			logger.debug query.inspect
+
+			locs = Array.new
+			ordered_locs = Array.new
+
+			if normalized_search != ""
+				if query.count > 10
+
+					count = (query.count.to_f / 10).ceil
+					results = Array.new
+
+					current_rank = query[0].pg_search_rank
+					current_group = Array.new
+					query.each do |res|
+						if res.pg_search_rank <= current_rank && (res.pg_search_rank - current_rank).abs < 0.015
+							current_group << res
+						else
+							results << current_group
+							current_group = Array.new
+							current_group << res
+							current_rank = res.pg_search_rank
+						end
+					end
+					results << current_group
+
+					j = 0
+					results.each do |result|
+						locs[j] = Array.new
+						result.each do |location|
+							dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+							local = [location, dist_score]
+							locs[j].push(local)
+						end
+						j = j+1
+					end
+
+					for i in 0..j-1
+						ordered_locs[i] = locs[i].sort_by{ |loc| loc[1]}
+					end
+
+				else
+					query.each do |location|
+						dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+						local = [location, dist_score]
+						locs.push(local)
+					end
+					ordered_locs[0] = locs.sort_by{ |loc| loc[1]}
+				end
+			else
+				query.each do |location|
+					dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
+					local = [location, dist_score]
+					locs.push(local)
+				end
+				ordered_locs[0] = locs.sort_by{ |loc| loc[1]}
+			end
+
+			logger.debug "Ordered_locs"
+			logger.debug ordered_locs.inspect
+
+			@results = Array.new
+			@locations = Array.new
+			@last_minute_results = Array.new
+
+			ordered_locs.each do |arr|
+				arr.each do |s|
+
+					treatment_promo_services = []
+
+					ServiceProvider.where(:active => true, :location_id => s[0]).each do |service_provider|
+						logger.debug "Provider: " + service_provider.public_name
+						if normalized_search != ""
+							treatment_promo_services = service_provider.services.with_treatment_promotions.search(normalized_search)
+						else
+							treatment_promo_services = service_provider.services.with_treatment_promotions
+						end
+
+						treatment_promo_services.each do |service|
+							#Check it has stock
+							if service.active_treatment_promo.max_bookings > 0 || !service.active_treatment_promo.limit_booking
+								if DateTime.now < service.active_treatment_promo.finish_date
+									promo_detail = [service, s[0]]
+									if !@results.include?(promo_detail)
+										@results << promo_detail
+										#if !@locations.include?(s[0])
+										@locations << s[0]
+									end
+								end
+							end
+						end
+
+						logger.debug treatment_promo_services.inspect
+
+					end
+
+
+				end
+			end
+
+			per_page = 9
+
+			@results = @results.paginate(:page => params[:page], :per_page => per_page)
+
+			i = 1
+			for i in 1..per_page
+				if !File.exist?("app/assets/images/search/pin_map#{i}.png")
+					img = MiniMagick::Image.from_file("app/assets/images/search/pin_map.png")
+					if i<10
+						img.combine_options do |c|
+					    	c.draw "text 9,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					elsif i<100
+						img.combine_options do |c|
+					    	c.draw "text 4,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					else
+						img.combine_options do |c|
+					    	c.draw "text 1,22 '#{i.to_s}'"
+							c.fill("#FFFFFF")
+							c.pointsize "17"
+						end
+					end
+
+					img.write("app/assets/images/search/pin_map#{i}.png")
+				end
+			end
 
 			respond_to do |format|
 				format.html

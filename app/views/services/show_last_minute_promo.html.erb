@@ -48,8 +48,8 @@
                 </td>
                 <td style="text-align: right; width: 80%;">
                   <span style="color: #b5b5b5; font-size: 40px;"><strike><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></strike></span><br />
-                  <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "46x60", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 65px;"><%= number_to_currency(@service.price*(100-@service.get_last_minute_discount(@location.id))/100, unit: "", delimiter: ".") %></span><br />
-                  <span style="color: #22c488; font-size: 22px;"><%= @service.get_last_minute_discount(@location.id) %>% de descuento</span><br />
+                  <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "46x60", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 65px;"><%= number_to_currency(@service.price*(100-@service.get_last_minute_discount)/100, unit: "", delimiter: ".") %></span><br />
+                  <span style="color: #22c488; font-size: 22px;"><%= @service.get_last_minute_discount %>% de descuento</span><br />
                   <span>
                     <button class="btnBook" id="btnPayBook" data-toggle="modal" data-target="#selectProviderModal">Comprar y reservar</button>
                   </span>
@@ -63,7 +63,7 @@
         </div>
         <div class="social-links">
           <%
-            share_text = "Promoción de " + @service.name + " con " + @service.get_last_minute_discount(@location.id).to_s+ "% de descuento en AgendaPro"
+            share_text = "Promoción de " + @service.name + " con " + @service.get_last_minute_discount.to_s+ "% de descuento en AgendaPro"
             share_text = url_encode(share_text)
           %>
           <a href="http://twitter.com/intent/tweet?status=<%= share_text %>+<%= url_encode(request.original_url) %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/twitter_doble.png", :size => "32x32" %></a> &nbsp;&nbsp; <a href="http://www.facebook.com/sharer.php?u=<%= url_encode(request.original_url) %>
@@ -89,7 +89,7 @@
               <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
 
-                    <p style="color: #949292;">Reserva hasta <%= @service.get_last_minute_hours(@location.id) %> horas antes y obtén un <%= @service.get_last_minute_discount(@location.id) %>% de descuento.</p>
+                    <p style="color: #949292;">Reserva hasta <%= @service.get_last_minute_hours %> horas antes y obtén un <%= @service.get_last_minute_discount %>% de descuento.</p>
 
 
                 </div>
@@ -99,13 +99,21 @@
               <div class="panel-heading" role="tab" id="headingThree">
                 <h4 class="panel-title minus">
                   <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    <%= image_tag "promociones/agendapro_doble.png", :size => "30x30" %> &nbsp;&nbsp;Políticas de la empresa
+                    <%= image_tag "promociones/agendapro_doble.png", :size => "30x30" %> &nbsp;&nbsp;Políticas de la promoción
                   </a>
                 </h4>
               </div>
               <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
                 <div class="panel-body">
-                  Políticas
+                  <h3 style="color: #949292;">Modificación/Cancelación:</h3>
+
+                  <p style="color: #949292;">
+                    No se permite modificar ni cancelar reservas pagadas en promoción.
+                  </p>
+
+                  <p style="color: #949292;">
+                    Si la empresa cancela o modifica sus promociones, se respetarán el precio y horario en que efectuaste tu reserva.
+                  </p>
                 </div>
               </div>
             </div>
