@@ -1,0 +1,29 @@
+<h1>Listing marketplace_categories</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Show in marketplace</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @marketplace_categories.each do |marketplace_category| %>
+      <tr>
+        <td><%= marketplace_category.name %></td>
+        <td><%= marketplace_category.show_in_marketplace %></td>
+        <td><%= link_to 'Show', marketplace_category %></td>
+        <td><%= link_to 'Edit', edit_marketplace_category_path(marketplace_category) %></td>
+        <td><%= link_to 'Destroy', marketplace_category, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Marketplace category', new_marketplace_category_path %>
