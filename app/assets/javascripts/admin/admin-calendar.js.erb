@@ -787,6 +787,15 @@ function editBookingModal(eventId) {
 				$('#payed_state_fixed_div').hide();
 			}
 
+			if($('#editable_payment_prices').val() == "0")
+			{
+				$('#booking_price').attr("disabled", true);
+			}
+			else
+			{
+				$('#booking_price').attr("disabled", false);
+			}
+
 			checkBookingPayment(booking.id);
 
 		});
@@ -901,6 +910,16 @@ function createBookingModal(date, provider_id) {
 					checkClientSessions(true);
 				});
 			};
+
+			if($('#editable_payment_prices').val() == "0")
+			{
+				$('#booking_price').attr("disabled", true);
+			}
+			else
+			{
+				$('#booking_price').attr("disabled", false);
+			}
+			
 			$('#client-history-tbody').html('<tr><td colspan="6">El cliente no tiene historial...</td></tr>');
 			$('#bookingModal #myTab').show();
 			$('#bookingModal .booking-modal-footer').show();
