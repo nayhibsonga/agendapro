@@ -4,6 +4,7 @@ end
 
 if Rails.env.production?
   Agendapro::Application.config.api_key = ENV["MANDRILL_API_KEY_PROD"]
+  Excon.defaults[:write_timeout] = 600
 end
 
 if Rails.env.test?
