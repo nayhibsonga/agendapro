@@ -1,6 +1,7 @@
  Agendapro::Application.routes.draw do
 
 
+
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -24,6 +25,7 @@
 
     resources :tags
     resources :statuses
+    resources :marketplace_categories
     resources :economic_sectors
     resources :economic_sectors_dictionaries
     resources :company_settings
@@ -570,6 +572,8 @@
     namespace :marketplace do
       namespace :v1 do
         get 'companies_preview', to: 'companies#preview'
+
+        get 'categories', to: 'economic_sectors#categories'
 
         get 'countries/:id', to: 'countries#show'
 
