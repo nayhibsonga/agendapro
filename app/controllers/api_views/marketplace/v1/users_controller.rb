@@ -141,7 +141,7 @@ module ApiViews
 	      	if params[:email].present? && MailingList.find_by_email(params[:email]).nil?
 	      		MailingList.create(email: params[:email])
 	      	end
-	      	return json: {result: "Success"}, status: 200
+	      	render json: {result: "Success"}, status: 200
 	      end
 
 	      private
