@@ -771,6 +771,8 @@ module ApiViews
                 end
               end
 
+              puts status
+
               #logger.debug "Time diff: "
               #logger.debug bookings[bookings.length-1][:end].to_s
               #logger.debug bookings[0][:start].to_s
@@ -1112,10 +1114,11 @@ module ApiViews
 
 
           serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
-          
+          provider
+          ServiceStaff.each
 
           @connection = ActiveRecord::Base.connection
-          sql = "SELECT * FROM check_days(1, ARRAY[1], ARRAY[1], '2015-11-01', )"
+          sql = "SELECT * FROM check_days(1, ARRAY[1], ARRAY[1], , )"
           @connection.execute(sql)
         end
       end

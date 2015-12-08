@@ -565,9 +565,11 @@ class Location < ActiveRecord::Base
 			top4 = Service.where(active: true, online_booking: true).select("services.id, services.name, services.duration, services.price, services.show_price, count(bookings.id) AS bookings_count").joins(:bookings).where('bookings.location_id = ?', self.id).group("services.id").order("bookings_count DESC").limit(4)
 		end
 
+		top4 = top4.as_json
+
 		top4.each do |service|
-			if !service.show_price || service.price = 0
-				service.price = ''
+			if service["show_price"] == false || service["price"] == 0
+				service["price"] = ''
 			end
 		end
 
