@@ -593,6 +593,7 @@
         get 'users/bookings', to: 'users#bookings'
         get 'users/favorites', to: 'users#favorites'
         # get 'users/searches', to: 'users#searches'
+        post 'newsletter', to: 'users#newsletter'
         post 'users/oauth', to: 'users#oauth'
         # options 'users/oauth', to: 'users#oauth'
         get 'users/oauth_login_link', to: 'users#oauth_login_link'

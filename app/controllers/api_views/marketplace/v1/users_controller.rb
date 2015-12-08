@@ -137,6 +137,13 @@ module ApiViews
 	      	end
 	      end
 
+	      def newsletter
+	      	if params[:email].present? && MailingList.find_by_email(params[:email]).nil?
+	      		MailingList.create(email: params[:email])
+	      	end
+	      	render json: {result: "Success"}, status: 200
+	      end
+
 	      private
 	      
 	  	  def check_login_params
