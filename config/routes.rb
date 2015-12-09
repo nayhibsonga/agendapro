@@ -585,6 +585,7 @@
         get 'locations/:id', to: 'locations#show'
 
         get 'service_providers/available_hours', to: 'service_providers#available_hours'
+        get 'service_providers/available_days', to: 'service_providers#available_days'
 
         post 'users/session', to: 'users#login'
         post 'users/registration', to: 'users#create'
