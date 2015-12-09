@@ -836,7 +836,7 @@ module ApiViews
                 end
 
               else
-                
+
                 new_hour = {
                   index: book_index,
                   date: I18n.l(bookings[0][:start].to_date, format: :day_short),
@@ -1114,12 +1114,50 @@ module ApiViews
 
 
           serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
-          provider
-          ServiceStaff.each
+            
+          service_ids = []
+          provider_ids = []
+          puts ServiceStaff.inspect
+          serviceStaff.each do |service_staff|
+            if service_staff[:service].present? && service_staff[:provider].present?
+              service_ids.push(service_staff[:service].to_i)
+              provider_ids.push(service_staff[:provider].to_i)
+            end
+          end
 
-          @connection = ActiveRecord::Base.connection
-          sql = "SELECT * FROM check_days(1, ARRAY[1], ARRAY[1], , )"
-          @connection.execute(sql)
+          query = "SELECT * FROM check_days(#{params[:local]}, ARRAY#{provider_ids.inspect}, ARRAY#{service_ids.inspect}, '#{params[:start_date]}', '#{params[:end_date]}')"
+          @results = ActiveRecord::Base.connection.execute(query)
+
+          # # puts @results.inspect
+          # @results.each do |result|
+          #  puts result.inspect 
+          # end
+          # render json: {response: "Success"}, status: 200
+        end
+
+        def available_promo_days
+
+
+          serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
+            
+          service_ids = []
+          provider_ids = []
+          puts ServiceStaff.inspect
+          serviceStaff.each do |service_staff|
+            if service_staff[:service].present? && service_staff[:provider].present?
+              service_ids.push(service_staff[:service].to_i)
+              provider_ids.push(service_staff[:provider].to_i)
+            end
+          end
+
+          query = "SELECT * FROM check_promo_days(#{params[:local]}, ARRAY#{provider_ids.inspect}, ARRAY#{service_ids.inspect}, '#{params[:start_date]}', '#{params[:end_date]}')"
+          @results = ActiveRecord::Base.connection.execute(query)
+
+          # # puts @results.inspect
+          # @results.each do |result|
+          #  puts result.inspect 
+          # end
+          # render json: {response: "Success"}, status: 200
         end
       end
     end
