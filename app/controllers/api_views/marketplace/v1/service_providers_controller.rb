@@ -135,11 +135,6 @@ module ApiViews
             serviceStaffPos = 0
             bookings = []
 
-            Rails.logger.info "DTP: " + dateTimePointer.to_s
-            Rails.logger.info serviceStaffPos.to_s
-            Rails.logger.info serviceStaff.length.to_s
-            Rails.logger.info "DTP: " + limit_date.to_s
-            
             while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date)
 
               #if !first_service.company.company_setting.allows_optimization
@@ -737,8 +732,6 @@ module ApiViews
               end
             end
 
-            Rails.logger.info service_valid
-
             if bookings.length == serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
 
               has_time_discount = false
@@ -796,9 +789,8 @@ module ApiViews
                 curr_promo_discount = bookings[0][:time_discount]
               end
 
-              Rails.logger.info params[:mandatory_discount]
               if params[:mandatory_discount] == 'true' || params[:mandatory_discount] == true
-                Rails.logger.info "entra descuento"
+
                 if has_time_discount
 
 
@@ -844,7 +836,7 @@ module ApiViews
                 end
 
               else
-                Rails.logger.info "entra normal"
+                
                 new_hour = {
                   index: book_index,
                   date: I18n.l(bookings[0][:start].to_date, format: :day_short),
