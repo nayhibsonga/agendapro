@@ -26,8 +26,8 @@ module ApiViews
 
           weekDate = Date.strptime(current_date, '%Y-%m-%d')
 
-          #logger.debug "current_date: " + current_date.to_s
-          #logger.debug "weekDate: " + weekDate.to_s
+          # logger.debug "current_date: " + current_date.to_s
+          # logger.debug "weekDate: " + weekDate.to_s
 
           if params[:date] and params[:date] != ""
             if params[:date].to_datetime > now
@@ -132,7 +132,7 @@ module ApiViews
 
           while (dateTimePointer < limit_date)
 
-            logger.debug "DTP: " + dateTimePointer.to_s
+            logger.logger "DTP: " + dateTimePointer.to_s
 
             serviceStaffPos = 0
             bookings = []
@@ -734,6 +734,8 @@ module ApiViews
               end
             end
 
+            logger.info service_valid
+
             if bookings.length == serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
 
               has_time_discount = false
@@ -791,7 +793,9 @@ module ApiViews
                 curr_promo_discount = bookings[0][:time_discount]
               end
 
+              logger.info params[:mandatory_discount]
               if params[:mandatory_discount] == 'true' || params[:mandatory_discount] == true
+                logger.info "entra descuento"
                 if has_time_discount
 
 
@@ -820,7 +824,7 @@ module ApiViews
                   if !hours_array.include?(new_hour)
 
                     hours_array << new_hour
-                    # puts new_hour.inspect
+                    puts new_hour.inspect
 
                     if new_hour[:start_block] < company_setting.promo_time.afternoon_start.strftime("%H:%M")
                       @morning_hours << new_hour
@@ -837,7 +841,7 @@ module ApiViews
                 end
 
               else
-
+                logger.info "entra normal"
                 new_hour = {
                   index: book_index,
                   date: I18n.l(bookings[0][:start].to_date, format: :day_short),
@@ -878,7 +882,7 @@ module ApiViews
                   if !hours_array.include?(new_hour)
 
                     hours_array << new_hour
-                    # puts new_hour.inspect
+                    puts new_hour.inspect
 
                     if new_hour[:start_block] < company_setting.promo_time.afternoon_start.strftime("%H:%M")
                       @morning_hours << new_hour
