@@ -569,7 +569,7 @@ class Location < ActiveRecord::Base
 
 		top4.each do |service|
 			if service["show_price"] == false || service["price"] == 0
-				service["price"] = ''
+				service["price"] = nil
 			end
 		end
 
