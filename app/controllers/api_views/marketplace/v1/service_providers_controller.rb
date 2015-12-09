@@ -877,13 +877,8 @@ module ApiViews
                 if should_add
                   if !hours_array.include?(new_hour)
 
-<<<<<<< Updated upstream
-                    # hours_array << new_hour
-                    # puts new_hour.inspect
-=======
                     hours_array << new_hour
                     puts new_hour.inspect
->>>>>>> Stashed changes
 
                     if new_hour[:start_block] < company_setting.promo_time.afternoon_start.strftime("%H:%M")
                       @morning_hours << new_hour
