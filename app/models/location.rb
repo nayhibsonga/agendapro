@@ -509,9 +509,11 @@ class Location < ActiveRecord::Base
 			
 			location_products = []
 			
-			location.location_products.each do |location_product|
+			location.location_products.where('product_id is not null').where('product_id > 0').each do |location_product|
 				if location_product.check_stock_for_reminder
-					location_products << location_product
+					if !location_product.product.nil?
+						location_products << location_product
+					end
 				end
 			end
 

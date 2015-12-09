@@ -412,18 +412,16 @@ ActiveRecord::Schema.define(version: 20151203231207) do
   add_index "districts", ["city_id"], name: "index_districts_on_city_id", using: :btree
 
   create_table "economic_sectors", force: true do |t|
-    t.string   "name",                                      null: false
+    t.string   "name",                                    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "show_in_home",              default: true
-    t.boolean  "show_in_company",           default: true
-    t.string   "mobile_preview",            default: ""
-    t.boolean  "marketplace",               default: false
-    t.integer  "marketplace_categories_id"
+    t.boolean  "show_in_home",            default: true
+    t.boolean  "show_in_company",         default: true
+    t.string   "mobile_preview",          default: ""
+    t.boolean  "marketplace",             default: false
     t.integer  "marketplace_category_id"
   end
 
-  add_index "economic_sectors", ["marketplace_categories_id"], name: "index_economic_sectors_on_marketplace_categories_id", using: :btree
   add_index "economic_sectors", ["marketplace_category_id"], name: "index_economic_sectors_on_marketplace_category_id", using: :btree
 
   create_table "economic_sectors_dictionaries", force: true do |t|

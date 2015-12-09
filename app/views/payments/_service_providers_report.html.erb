@@ -34,6 +34,20 @@
 	<div class="col-md-1">
 	</div>
 </div>
+<div class="row" style="margin-top: 10px;">
+	<div class="col-md-6">
+
+	</div>
+	<div class="col-md-6" style="text-align: right; margin-bottom: 10px;">
+		<div style="color: #949292; font-size: 20px;">
+			Para ver el detalle de todas las operaciones, descarga el reporte:
+		</div>
+		<% 
+			sp_ids = @service_providers.pluck(:id).join(",")
+		%>
+		<a href="/service_providers_report_file.xls?from=<%= @from.to_s %>&to=<%= @to.to_s %>&service_provider_ids=<%= sp_ids %>" target="_blank"><button type="button" class="btn btn-green" class="getExcel" provider_ids="<%= @service_providers.pluck(:id).to_s %>">Descargar a Excel</button></a>
+	</div>
+</div>
 <div class="row">
 	<div class="col-md-12">
 		<table class="providers_report_table">
@@ -110,17 +124,7 @@
 		</table>
 	</div>
 </div>
-<div class="row" style="margin-top: 10px;">
-	<div class="col-md-9">
 
-	</div>
-	<div class="col-md-3" style="text-align: right;">
-		<% 
-			sp_ids = @service_providers.pluck(:id).join(",")
-		%>
-		<a href="/service_providers_report_file.xls?from=<%= @from.to_s %>&to=<%= @to.to_s %>&service_provider_ids=<%= sp_ids %>"><button type="button" class="btn btn-green" class="getExcel" provider_ids="<%= @service_providers.pluck(:id).to_s %>">Descargar a Excel</button></a>
-	</div>
-</div>
 <div class="row" style="margin-top: 35px;">
 	<div class="col-md-12">
 		<div class="content_header">Seguimiento de recaudación</div>

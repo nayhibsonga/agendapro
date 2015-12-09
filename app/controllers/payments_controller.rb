@@ -2816,6 +2816,7 @@ class PaymentsController < ApplicationController
     @service_providers = ServiceProvider.where(id: service_provider_ids)
     @from = params[:from].to_datetime
     @to = params[:to].to_datetime
+    @location_ids = current_user.company.locations.pluck(:id)
 
     respond_with(@service_providers)
 
