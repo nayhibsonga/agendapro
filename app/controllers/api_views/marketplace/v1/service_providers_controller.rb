@@ -132,11 +132,14 @@ module ApiViews
 
           while (dateTimePointer < limit_date)
 
-            Rails.logger.info "DTP: " + dateTimePointer.to_s
-
             serviceStaffPos = 0
             bookings = []
 
+            Rails.logger.info "DTP: " + dateTimePointer.to_s
+            Rails.logger.info serviceStaffPos.to_s
+            Rails.logger.info serviceStaff.length.to_s
+            Rails.logger.info "DTP: " + limit_date.to_s
+            
             while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date)
 
               #if !first_service.company.company_setting.allows_optimization
