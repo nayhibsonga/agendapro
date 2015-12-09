@@ -26,8 +26,8 @@ module ApiViews
 
           weekDate = Date.strptime(current_date, '%Y-%m-%d')
 
-          #logger.debug "current_date: " + current_date.to_s
-          #logger.debug "weekDate: " + weekDate.to_s
+          # logger.debug "current_date: " + current_date.to_s
+          # logger.debug "weekDate: " + weekDate.to_s
 
           if params[:date] and params[:date] != ""
             if params[:date].to_datetime > now
@@ -789,8 +789,9 @@ module ApiViews
                 curr_promo_discount = bookings[0][:time_discount]
               end
 
-              if params[:mandatory_discount]
-
+              logger.info params[:mandatory_discount]
+              if params[:mandatory_discount] == 'true' || params[:mandatory_discount] == true
+                logger.info "entra descuento"
                 if has_time_discount
 
 
@@ -818,8 +819,8 @@ module ApiViews
 
                   if !hours_array.include?(new_hour)
 
-                    # hours_array << new_hour
-                    # puts new_hour.inspect
+                    hours_array << new_hour
+                    puts new_hour.inspect
 
                     if new_hour[:start_block] < company_setting.promo_time.afternoon_start.strftime("%H:%M")
                       @morning_hours << new_hour
@@ -836,7 +837,7 @@ module ApiViews
                 end
 
               else
-
+                logger.info "entra normal"
                 new_hour = {
                   index: book_index,
                   date: I18n.l(bookings[0][:start].to_date, format: :day_short),
@@ -876,8 +877,13 @@ module ApiViews
                 if should_add
                   if !hours_array.include?(new_hour)
 
+<<<<<<< Updated upstream
                     # hours_array << new_hour
                     # puts new_hour.inspect
+=======
+                    hours_array << new_hour
+                    puts new_hour.inspect
+>>>>>>> Stashed changes
 
                     if new_hour[:start_block] < company_setting.promo_time.afternoon_start.strftime("%H:%M")
                       @morning_hours << new_hour
