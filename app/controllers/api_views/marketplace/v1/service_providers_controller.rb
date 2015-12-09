@@ -132,7 +132,7 @@ module ApiViews
 
           while (dateTimePointer < limit_date)
 
-            #logger.debug "DTP: " + dateTimePointer.to_s
+            logger.logger "DTP: " + dateTimePointer.to_s
 
             serviceStaffPos = 0
             bookings = []
@@ -179,15 +179,15 @@ module ApiViews
               service_sum = service.duration.minutes
 
               minHour = now
-              #logger.debug "min_hours: " + minHour.to_s
-              if !params[:admin] && minHour <= DateTime.now
+              # logger.debug "min_hours: " + minHour.to_s
+              if minHour <= DateTime.now
                 minHour += company_setting.before_booking.hours
               end
               if dateTimePointer >= minHour
                 service_valid = true
               end
 
-              #logger.debug "min_hours: " + minHour.to_s
+              # logger.debug "min_hours: " + minHour.to_s
 
               # Hora dentro del horario del local
 
@@ -471,6 +471,8 @@ module ApiViews
                 end
               end
 
+              # puts service_valid
+
               if !service_valid
 
 
@@ -732,6 +734,8 @@ module ApiViews
               end
             end
 
+            logger.info service_valid
+
             if bookings.length == serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
 
               has_time_discount = false
@@ -771,7 +775,7 @@ module ApiViews
                 end
               end
 
-              puts status
+              # puts status
 
               #logger.debug "Time diff: "
               #logger.debug bookings[bookings.length-1][:end].to_s
