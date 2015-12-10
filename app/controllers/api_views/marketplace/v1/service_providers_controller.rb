@@ -440,6 +440,8 @@ module ApiViews
                       bookings.last[:service_promo_id] = service.active_service_promo_id
                     end
 
+
+
                     serviceStaffPos += 1
 
                     if first_service.company.company_setting.allows_optimization
@@ -789,6 +791,27 @@ module ApiViews
                 curr_promo_discount = bookings[0][:time_discount]
               end
 
+              paying_price = 0
+              booking_price = 0
+              paying_total_price = 0
+              booking_total_price = 0
+              hidden_price = false
+              bookings.each do |booking_calcs|
+                if booking_calcs[:show_price]
+                  booking_price += booking_calcs[:price]
+                  booking_total_price += booking_calcs[:price]
+                else
+                  hidden_price = true
+                end
+                if booking_calcs[:online_payable]
+                  booking_calcs_discount = booking_calcs[:discount] > booking_calcs[:time_discount] ? booking_calcs[:discount] : booking_calcs[:time_discount]
+                  paying_price += booking_calcs[:price] * (100 - booking_calcs_discount) / 100
+                  paying_total_price += booking_calcs[:price] * (100 - booking_calcs_discount) / 100
+                else
+                  paying_total_price += booking_calcs[:price]
+                end
+              end
+
               if params[:mandatory_discount] == 'true' || params[:mandatory_discount] == true
 
                 if has_time_discount
@@ -810,7 +833,14 @@ module ApiViews
                     time_diff: hour_time_diff,
                     has_sessions: bookings[0][:has_sessions],
                     sessions_amount: bookings[0][:sessions_amount],
-                    group_discount: bookings_group_discount.to_s
+                    group_discount: bookings_group_discount.to_s,
+                    show_pay: bookings.any? { |booking| booking[:online_payable] == true },
+                    show_booking: !bookings.any? { |booking| booking[:must_be_paid_online] == true },
+                    paying_price: paying_price,
+                    booking_price: booking_price,
+                    paying_total_price: paying_total_price,
+                    booking_total_price: booking_total_price,
+                    hidden_price: hidden_price
                   }
 
                   book_index = book_index + 1
@@ -851,7 +881,14 @@ module ApiViews
                   promo_discount: curr_promo_discount.to_s,
                   has_time_discount: has_time_discount,
                   time_diff: hour_time_diff,
-                  group_discount: bookings_group_discount.to_s
+                  group_discount: bookings_group_discount.to_s,
+                  show_pay: bookings.any? { |booking| booking[:online_payable] == true },
+                  show_booking: !bookings.any? { |booking| booking[:must_be_paid_online] == true },
+                  paying_price: paying_price,
+                  booking_price: booking_price,
+                  paying_total_price: paying_total_price,
+                  booking_total_price: booking_total_price,
+                  hidden_price: hidden_price
                 }
 
                 book_index = book_index + 1
