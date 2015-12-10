@@ -808,7 +808,9 @@ module ApiViews
                   paying_price += booking_calcs[:price] * (100 - booking_calcs_discount) / 100
                   paying_total_price += booking_calcs[:price] * (100 - booking_calcs_discount) / 100
                 else
-                  paying_total_price += booking_calcs[:price]
+                  if booking_calcs[:show_price]
+                    paying_total_price += booking_calcs[:price]
+                  end
                 end
               end
 
