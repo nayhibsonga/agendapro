@@ -1686,6 +1686,8 @@ class SearchsController < ApplicationController
 		@results = Array.new
 		@empty_results = Array.new
 
+		@economic_sector_selected = 0
+
 		normalized_search = ""
 
 		if params[:inputSearch] && params[:inputSearch] != ""
@@ -1693,6 +1695,15 @@ class SearchsController < ApplicationController
 			search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
 
 			normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
+		elsif params[:economicSector] && params[:economicSector] != "" && params[:economicSector] != "0" && params[:economicSector] != 0
+
+			economic_sector = EconomicSector.find(params[:economicSector])
+			search = economic_sector.name.gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+			normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+
+			@economic_sector_selected = economic_sector.id
 
 		end
 
