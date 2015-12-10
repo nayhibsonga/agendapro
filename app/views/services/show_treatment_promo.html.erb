@@ -46,7 +46,7 @@
         </div>
         <div class="social-links">
           <%
-            share_text = "Promoción de " + @service.name + " con " + @service.active_treatment_promo.discount + "% de descuento en AgendaPro"
+            share_text = "Promoción de " + @service.name + " con " + @service.active_treatment_promo.discount.to_s + "% de descuento en AgendaPro"
             share_text = url_encode(share_text)
           %>
           <a href="http://twitter.com/intent/tweet?status=<%= share_text %>+<%= url_encode(request.original_url) %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/twitter_doble.png", :size => "32x32" %></a> &nbsp;&nbsp; <a href="<%= url_encode(request.original_url) %>" id="facebookShare"><%= image_tag "promociones/facebook_doble.png", :size => "32x32" %></a>

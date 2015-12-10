@@ -1204,11 +1204,15 @@ class ServicesController < ApplicationController
       @relatedPromos = @relatedPromos[0, 6]
     end
 
-    render layout: "results"
+    if mobile_request?
+      render layout: "promo"
+    else
+      render layout: "results"
+    end
 
   end
 
-  def show_last_treatment_promo
+  def show_treatment_promo
 
     @service = Service.find(params[:id])
     @location = Location.find(params[:location_id])
@@ -1221,7 +1225,7 @@ class ServicesController < ApplicationController
 
     @treatment_promo = @service.active_treatment_promo
 
-    if @treatment.nil?
+    if @treatment_promo.nil?
       flash[:alert] = "No existen promociones para el servicio o local buscados."
       redirect_to root_path
       return

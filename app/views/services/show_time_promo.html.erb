@@ -5,15 +5,26 @@
 <input type="hidden" id="service_price" value="<%= @service.price %>" />
 <input type="hidden" id="after_booking" value="<%= @service.company.company_setting.after_booking %>" />
 <input type="hidden" id="book_limit_date" value="<%= @service.active_service_promo.book_limit_date.to_s %>" />
+<input type="hidden" id="locationId" value="<%= @location.id %>" />
+<input type="hidden" id="serviceId" value="<%= @service.id %>" />
+<input type="hidden" id="locationAddress" value="<%= @location.address %>" />
+<input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
+
+<% if user_signed_in? %>
+  <input type="hidden" id="user_id" value="<%= current_user.id %>" />
+<% end %>
 
 <div class="main below-navbar">
   <div class="container">
 
     <div class="row">
-      <div class="col-sm-12">
+      <div class="col-sm-10">
         <div class="promo-title">
           <%= @service.name %> en <%= @location.name %> de <%= @location.company.name %>
         </div>
+      </div>
+      <div class="col-sm-2" style="text-align: right;">
+        <%= link_to "Volver a Promociones", get_promotions_path %>
       </div>
     </div>
 
@@ -787,16 +798,6 @@
     </div>
   </div>
 </div>
-
-<input type="hidden" id="locationId" value="<%= @location.id %>" />
-<input type="hidden" id="serviceId" value="<%= @service.id %>" />
-<input type="hidden" id="locationAddress" value="<%= @location.address %>" />
-<input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
-
-<% if user_signed_in? %>
-  <input type="hidden" id="user_id" value="<%= current_user.id %>" />
-<% end %>
-
 
 <%= content_tag "div", id: "clientExclusive", data: {client_exclusive: @location.company.company_setting.client_exclusive} do %>
 <% end %>

@@ -22,83 +22,17 @@ Date.prototype.addMonths = function (value) {
     return this;
 };
 
-var currMarker;
-
 var bookings = [];
 var currentBooking = null;
 var booking_buffer = [];
 
-//====== Google Map ======//
-function initializeMap(lat, lng, mapDiv) {
-    var properties = {
-        center: new google.maps.LatLng(lat, lng),
-        zoom:   15,
-        panControl: false,
-        zoomControl: true,
-        zoomControlOptions: {
-            style: google.maps.ZoomControlStyle.SMALL
-        },
-        mapTypeControl: true,
-        mapTypeControlOptions: {
-            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-        },
-        scaleControl: false,
-        streetViewControl: false,
-        overviewMapControl: false,
-        mapTypeId:  google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById(mapDiv), properties);
-}
-
-function setMarker(latlng, local) {
-
-  if(currMarker!=null)
-  {
-    currMarker.setMap(null);
-  }
-
-  var image = '<%= asset_path("pin_googlemap.png") %>';
-
-  var marker = new google.maps.Marker({
-                position: latlng,
-                icon: image
-                /*new google.maps.MarkerImage(
-            "http://chart.googleapis.com/chart?chst=d_map_pin_letter_withshadow&chld=|01e19d|FFFFFF",
-            null, null, new google.maps.Point(0, 42))*/
-              });
-  currMarker = marker;
-  marker.setMap(map);
-
-  var infowindow = new google.maps.InfoWindow({
-      content: local
-    });
-  google.maps.event.addListener(marker, 'click', function() {
-      infowindow.open(map,marker);
-  });
-}
-
-function localMap(id) {
-  $.getJSON('/local', {id: id}, function (local) {
-    var latLng = new google.maps.LatLng(local.latitude, local.longitude);
-    map.setCenter(latLng);
-    setMarker(latLng, local.name);
-  });
-}
-
 
 $(document).ready(function(){
 
-  var map;
-  initializeMap(-33.413084, -70.592161, 'time-promo-map');
 
-  if ($("#locationId").val() != "") {
-    var localId = $("#locationId").val();
-
-    //loadSchedule(localId);
-    localMap(localId);
-  }
-
-  $("#selectProviderModal").on('show.bs.modal', function(e){
+  $("#btnPayBook").on('click', function(e){
+      $('#last-minute-main-div').hide();
+      $('#last-minute-payment-div').show();
       $("#hours-selection-div").empty();
       loadAvailableHours($('#currentDate').val());
   });
@@ -115,7 +49,7 @@ $(document).ready(function(){
 
   $('#backBtn').on('click', function(){
     var date = $('#available_dates_select').val();
-    $('input[name="mp"]:checked').attr("checked", false);
+    $('input[name="mp"]:checked').attr("checked", false)
     loadAvailableHours(date);
   });
 
@@ -138,6 +72,19 @@ $(document).ready(function(){
 
     $("#bookingForm").submit();
     
+  });
+
+  $('#closeBookForm').on('click', function(){
+    $('#available_dates_select').val($('#currentDate').val());
+    $('#last-minute-payment-div').hide();
+    $("#hours-selection-div").empty();
+    $('#last-minute-main-div').show();
+    $('#payBtn').hide();
+    $('#backBtn').hide();
+    $('#openPayFormBtn').hide();
+    $('#payment-form-div').hide();
+    $("#hours-selection-div").empty();
+    $('input[name="mp"]:checked').attr("checked", false);
   });
 
   $('input[name="mp"]').on('change', function(){
@@ -223,6 +170,8 @@ function selectHour(target)
   //Generate currentBooking
   addBooking(target);
 
+  $("html, body").delay(500).animate({ scrollTop: $(document).height() }, 1000, "swing");
+
 }
 
 function addBooking(target)
@@ -274,7 +223,6 @@ function generateDate(time) {
 function loadPaymentForm()
 {
 
-  $('input[name="mp"]:checked').attr("checked", false);
   compose_name('#full_name', '#firstName', '#lastName');
   split_name('#full_name', '#firstName', '#lastName');
 
@@ -285,77 +233,7 @@ function loadPaymentForm()
   }
   else
   {
-    if(currentBooking.has_sessions)
-    {
-      $('#summary').empty();
 
-      sessions_buffer.push(currentBooking);
-
-      $('.bookings').val(JSON.stringify(sessions_buffer));
-
-      var times_str = "";
-      var price = currentBooking.price;
-      var min_discount = currentBooking.discount; 
-
-      for(i = 0; i < sessions_buffer.length; i++)
-      {
-        times_str = times_str + formattedTime(sessions_buffer[i].start) + ' con ' + sessions_buffer[i].provider_name + '.<br />';
-        if(sessions_buffer[i].discount < min_discount)
-        {
-          min_discount = sessions_buffer[i].discount;
-        }
-      }
-
-      $("#max_discount").val(min_discount);
-
-      var discount_price = Math.round(price*(100 - min_discount)/100);
-      sessions_str = "";
-
-      if(sessions_buffer.length == 1)
-      {
-        sessions_str = 'Agendaste 1 sesión de un total de ' + currentBooking.sessions_amount;
-      }
-      else
-      {
-        sessions_str = 'Agendaste ' + sessions_buffer.length + ' sesiones de un total de ' + currentBooking.sessions_amount;
-      }
-
-      $('#summary').append(
-        '<tr style="border-top: 0px !important;">' +
-          '<td style="border-top: 0px !important;" class="dark-gray">¿Qué estoy reservando?</td>' +
-          '<td style="border-top: 0px !important;" class="light-gray">' + currentBooking.service_name + '</td>' +
-        '</tr>' +
-        '<tr>' +
-          '<td class="dark-gray">¿Dónde?</td>' +
-          '<td class="light-gray">' + $('#locationAddress').val() + ', ' + $('#locationDistrict').val() + '</td>' +
-        '</tr>'
-      );
-
-      $('#summary').append(
-        '<tr>' +
-          '<td class="dark-gray">¿Cuándo?</td>' +
-          '<td class="light-gray">' + times_str + '</td>' +
-        '</tr>' +
-        '<tr>' +
-          '<td class="dark-gray">Sesiones</td>' +
-          '<td class="light-gray">' + sessions_str + '</td>' +
-        '</tr>'
-      );
-
-      $('#summary').append(
-        '<tr>' + 
-          '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
-        '</tr>' +
-        '<tr>' +
-          '<td class="dark-gray">Descuento</td><td class="light-gray">' + min_discount + '% </td>' +
-        '</tr>' +
-        '<tr>' +
-          '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
-        '</tr>'
-      );  
-    }
-    else
-    {
       $('#summary').empty();
 
       booking_buffer.push(currentBooking);
@@ -363,24 +241,6 @@ function loadPaymentForm()
       var discount_price = Math.round(currentBooking.price*(100 - currentBooking.discount)/100);
 
       $('.bookings').val(JSON.stringify(booking_buffer));
-
-      $('#summary').append(
-        '<tr style="border-top: 0px !important;">' +
-          '<td style="border-top: 0px !important;" class="dark-gray">¿Qué estoy reservando?</td>' +
-          '<td style="border-top: 0px !important;" class="light-gray">' + currentBooking.service_name + '</td>' +
-        '</tr>' +
-        '<tr>' +
-          '<td class="dark-gray">¿Dónde?</td>' +
-          '<td class="light-gray">' + $('#locationAddress').val() + ', ' + $('#locationDistrict').val() + '</td>' +
-        '</tr>'
-      );
-
-      $('#summary').append(
-        '<tr>' +
-          '<td class="dark-gray">¿Cuándo?</td>' +
-          '<td class="light-gray">' + formattedTime(currentBooking.start) + ' con ' + currentBooking.provider_name + '</td>' +
-        '</tr>'
-      );
 
       $('#summary').append(
         '<tr>' + 
@@ -393,8 +253,6 @@ function loadPaymentForm()
           '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
         '</tr>'
       );
-
-    }
   }
 
   $('#optimizerFirst').hide();

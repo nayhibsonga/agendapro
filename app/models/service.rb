@@ -661,22 +661,10 @@ class Service < ActiveRecord::Base
 
 		while (dateTimePointer < limit_date && dateTimePointer < last_minute_limit)
 
-			logger.debug "***"
-			logger.debug "***"
-			logger.debug "DTP is: " + dateTimePointer.to_s
-			logger.debug "***"
-			logger.debug "***"
-
 			serviceStaffPos = 0
 			bookings = []
 
 			while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date && dateTimePointer < last_minute_limit)
-
-				logger.debug "***"
-				logger.debug "***"
-				logger.debug "DTP is: " + dateTimePointer.to_s
-				logger.debug "***"
-				logger.debug "***"
 
 				serviceStaffPos = 0
 				bookings = []
@@ -691,6 +679,21 @@ class Service < ActiveRecord::Base
 			    dateTimePointer = min_pt.open
 			    dateTimePointer = DateTime.new(now.year, now.mon, now.mday, dateTimePointer.hour, dateTimePointer.min)
 			    day_open_time = dateTimePointer
+			  end
+
+			  now_comparer = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+
+			  now_comparer = now_comparer + 30.minutes
+
+			  logger.debug "++++++++"
+			  logger.debug "++++++++"
+			  logger.debug "DTP: " + dateTimePointer.to_s
+			  logger.debug "NOW: " + now_comparer.to_s
+			  logger.debug "++++++++"
+			  logger.debug "++++++++"
+
+			  if dateTimePointer < now_comparer
+			  	dateTimePointer = now_comparer
 			  end
 
 			  #To deattach continous services, just delete the serviceStaffPos condition
@@ -717,42 +720,12 @@ class Service < ActiveRecord::Base
 			      location_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
 			      location_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
 
-			      logger.debug "***"
-					logger.debug "***"
-					logger.debug "location open: " + location_open.to_s
-					logger.debug "***"
-					logger.debug "***"
-
-					logger.debug "***"
-					logger.debug "***"
-					logger.debug "location open: " + location_close.to_s
-					logger.debug "***"
-					logger.debug "***"
-
-					logger.debug "***"
-					logger.debug "***"
-					logger.debug "DTP is: " + dateTimePointer.to_s
-					logger.debug "***"
-					logger.debug "***"
-
 			      if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
 			        service_valid = true
 			        break
 			      end
 			    end
 			  end
-
-			  	logger.debug "***"
-				logger.debug "***"
-				logger.debug "Reaches before providers loop"
-				logger.debug "***"
-				logger.debug "***"
-
-				logger.debug "***"
-				logger.debug "***"
-				logger.debug "Service valid: " + service_valid.to_s
-				logger.debug "***"
-				logger.debug "***"
 
 			  # Horario dentro del horario del provider
 				if service_valid
@@ -789,12 +762,6 @@ class Service < ActiveRecord::Base
 
 					  #Check directly on query instead of looping through
 
-					  logger.debug "***"
-						logger.debug "***"
-						logger.debug "Reaches before provider times"
-						logger.debug "***"
-						logger.debug "***"
-
 					  provider.provider_times.where(day_id: dateTimePointer.cwday).each do |provider_time|
 					    provider_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.open.hour, provider_time.open.min)
 					    provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.close.hour, provider_time.close.min)
@@ -805,12 +772,6 @@ class Service < ActiveRecord::Base
 					    end
 					  end
 
-					  logger.debug "***"
-						logger.debug "***"
-						logger.debug "Reaches before provider breaks"
-						logger.debug "***"
-						logger.debug "***"
-
 					  # Provider breaks
 					  if service_valid
 
@@ -819,12 +780,6 @@ class Service < ActiveRecord::Base
 					    end
 
 					  end
-
-					  logger.debug "***"
-						logger.debug "***"
-						logger.debug "Reaches before cross bookings"
-						logger.debug "***"
-						logger.debug "***"
 
 					  # Cross Booking
 					  if service_valid
@@ -845,12 +800,6 @@ class Service < ActiveRecord::Base
 					    end
 
 					  end
-
-					  logger.debug "***"
-						logger.debug "***"
-						logger.debug "Reaches before resources"
-						logger.debug "***"
-						logger.debug "***"
 
 					  # Recursos
 					  if service_valid and service.resources.count > 0
@@ -881,12 +830,6 @@ class Service < ActiveRecord::Base
 					      end
 					    end
 					  end
-
-					  logger.debug "***"
-						logger.debug "***"
-						logger.debug "Reaches before validity check"
-						logger.debug "***"
-						logger.debug "***"
 
 					  if service_valid
 
@@ -954,12 +897,6 @@ class Service < ActiveRecord::Base
 					  end
 					end
 				end
-
-				logger.debug "***"
-				logger.debug "***"
-				logger.debug "Reaches before not valid"
-				logger.debug "***"
-				logger.debug "***"
 
 			  	if !service_valid
 

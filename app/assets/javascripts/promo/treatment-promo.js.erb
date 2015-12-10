@@ -84,7 +84,6 @@
             overviewMapControl: false,
             mapTypeId:  google.maps.MapTypeId.ROADMAP
         };
-        console.log(mapDiv);
         map = new google.maps.Map(document.getElementById(mapDiv), properties);
     }
 
@@ -385,7 +384,7 @@
 
       if($("#pickerSelected").val()!="")
       {
-        data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#pickerSelected").val(), mandatory_discount: true}
+        data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#pickerSelected").val(), treatment_promo: true}
       }
       else
       {

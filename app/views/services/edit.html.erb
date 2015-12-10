@@ -648,7 +648,10 @@
 
 							<% else %>
 
-								<% if @service.online_payable && @service.check_company_promos %>
+								<!--
+									For now, make a dummy check so treatment_promos are not shown.
+								-->
+								<% if @service.online_payable && @service.check_company_promos && false %>
 									
 									<div class="row">
 										<div class="col-md-12">

@@ -2195,10 +2195,16 @@ class BookingsController < ApplicationController
             @booking.price = num_amount
             final_price = num_amount
 
-            if buffer_params[:is_time_discount]
-              @session_booking.service_promo_id = buffer_params[:service_promo_id]
-              @booking.service_promo_id = buffer_params[:service_promo_id]
-            end
+            @booking.service_promo_id = nil
+            @booking.last_minute_promo_id = nil
+
+            #if buffer_params[:is_time_discount]
+            #  @session_booking.service_promo_id = buffer_params[:service_promo_id]
+            #  @booking.service_promo_id = buffer_params[:service_promo_id]
+            #elsif buffer_params[:is_last_minute_discount]
+            #  @session_booking.service_promo_id = buffer_params[:service_promo_id]
+            #  @booking.service_promo_id = buffer_params[:service_promo_id]
+            #end
           else
 
             #num_amount = service.price
@@ -2216,6 +2222,9 @@ class BookingsController < ApplicationController
               @booking.service_promo_id = buffer_params[:service_promo_id]
               service_promo = ServicePromo.find(buffer_params[:service_promo_id])
               #service_promo.max_bookings = service_promo.max_bookings - 1
+            elsif params[:is_last_minute_promo]
+              @booking.last_minute_promo_id = @booking.service.active_last_minute_promo_id
+              last_minute_promo = @booking.service.active_last_minute_promo
             end
 
             @booking.price = num_amount
@@ -2357,11 +2366,22 @@ class BookingsController < ApplicationController
             #First, check if it is last_minute_promo
             if params[:is_last_minute_promo]
 
-              last_minute_promo = LastMinutePromo.where(location_id: @selectedLocation.id, service_id: booking.service.id).first
+              last_minute_promo = booking.service.active_last_minute_promo
+
+              #LastMinutePromo.where(location_id: @selectedLocation.id, service_id: booking.service.id).first
 
               if last_minute_promo.nil? 
 
                 @errors << "La promoción de último minuto ya no existe."
+
+                redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: "payment", blocked_bookings: @blocked_bookings)
+                return
+
+              end
+
+              if LastMinutePromoLocation.where(last_minute_promo_id: last_minute_promo.id, location_id: @selectedLocation.id).count == 0
+
+                @errors << "La promoción de último minuto no existe para este local."
 
                 redirect_to book_error_path(bookings: @bookings.map{|b| b.id}, location: @selectedLocation.id, client: client.id, errors: @errors, payment: "payment", blocked_bookings: @blocked_bookings)
                 return
@@ -4491,66 +4511,121 @@ class BookingsController < ApplicationController
                   bookings.last[:time_discount] = 0
                 end
 
-                if service.has_time_discount && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable && service.time_promo_active
+                if !service.has_sessions
 
-                  promo = Promo.where(:day_id => date.cwday, :service_promo_id => service.active_service_promo_id, :location_id => local.id).first
+                  bookings.last[:has_treatment_discount] = false
+                  bookings.last[:treatment_discount] = 0
 
-                  if !session_booking.nil? && !session_booking.service_promo_id.nil?
-                    promo = Promo.where(:day_id => date.cwday, :service_promo_id => session_booking.service_promo_id, :location_id => local.id).first
-                  end
+                  if service.has_time_discount && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable && service.time_promo_active
 
-                  if !promo.nil?
+                    promo = Promo.where(:day_id => date.cwday, :service_promo_id => service.active_service_promo_id, :location_id => local.id).first
 
-                    service_promo = ServicePromo.find(service.active_service_promo_id)
+                    if !session_booking.nil? && !session_booking.service_promo_id.nil?
+                      promo = Promo.where(:day_id => date.cwday, :service_promo_id => session_booking.service_promo_id, :location_id => local.id).first
+                    end
 
-                    #Check if there is a limit for bookings, and if there are any left
-                    if service_promo.max_bookings > 0 || !service_promo.limit_booking
+                    if !promo.nil?
 
-                      #Check if the promo is still active, and if the booking ends before the limit date
+                      service_promo = ServicePromo.find(service.active_service_promo_id)
 
-                      if bookings.last[:end].to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
+                      #Check if there is a limit for bookings, and if there are any left
+                      if service_promo.max_bookings > 0 || !service_promo.limit_booking
 
-                        if !(service_promo.morning_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
+                        #Check if the promo is still active, and if the booking ends before the limit date
 
-                          bookings.last[:time_discount] = promo.morning_discount
+                        if bookings.last[:end].to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
 
-                        elsif !(service_promo.afternoon_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
+                          if !(service_promo.morning_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
 
-                          bookings.last[:time_discount] = promo.afternoon_discount
+                            bookings.last[:time_discount] = promo.morning_discount
 
-                        elsif !(service_promo.night_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
+                          elsif !(service_promo.afternoon_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
 
-                          bookings.last[:time_discount] = promo.night_discount
+                            bookings.last[:time_discount] = promo.afternoon_discount
 
+                          elsif !(service_promo.night_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
+
+                            bookings.last[:time_discount] = promo.night_discount
+
+                          else
+
+                            bookings.last[:time_discount] = 0
+
+                          end
                         else
-
                           bookings.last[:time_discount] = 0
-
                         end
                       else
                         bookings.last[:time_discount] = 0
                       end
+
                     else
+
                       bookings.last[:time_discount] = 0
+
                     end
 
                   else
 
+                    bookings.last[:has_time_discount] = false
                     bookings.last[:time_discount] = 0
 
                   end
-
                 else
 
+                  bookings.last[:has_time_discount] = false
                   bookings.last[:time_discount] = 0
 
+                  #Set treatment promo
+                  # if service.has_treatment_promo && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable && service.time_promo_active
+
+                  #   if !service.active_treatment_promo.nil?
+                  #     if TreatmentPromoLocation.where(treatment_promo_id: service.active_treatment_promo_id, location_id: local.id).count > 0
+
+                  #       if service.active_treatment_promo.max_bookings > 0
+
+                  #         if !service.active_treatment_promo.limit_booking || (service.active_treatment_promo.finis_date > bookings.last[:start])
+                  #           bookings.last[:has_treatment_discount] = true
+                  #           bookings.last[:treatment_discount] = service.active_treatment_promo.discount
+                  #         else
+                  #           bookings.last[:has_treatment_discount] = false
+                  #           bookings.last[:treatment_discount] = 0
+                  #         end
+
+                  #       else
+                  #         bookings.last[:has_treatment_discount] = false
+                  #         bookings.last[:treatment_discount] = 0
+                  #       end
+
+                  #     else
+                  #       bookings.last[:has_treatment_discount] = false
+                  #       bookings.last[:treatment_discount] = 0
+                  #     end
+                  #   else
+                  #     bookings.last[:has_treatment_discount] = false
+                  #     bookings.last[:treatment_discount] = 0
+                  #   end
+
+                  # else
+                  #   bookings.last[:has_treatment_discount] = false
+                  #   bookings.last[:treatment_discount] = 0
+                  # end
+
                 end
+
+                #Check for active promos (regular or treatment)
 
                 if service.active_service_promo_id.nil?
                   bookings.last[:service_promo_id] = "0"
                 else
                   bookings.last[:service_promo_id] = service.active_service_promo_id
                 end
+
+                # if service.active_treatment_promo_id.nil?
+                #   bookings.last[:treatment_promo_id] = "0"
+                # else
+                #   bookings.last[:treatment_promo_id] = service.active_treatment_promo_id
+                # end
 
                 serviceStaffPos += 1
 
@@ -4895,19 +4970,20 @@ class BookingsController < ApplicationController
 
             should_add = true
 
-            if !session_booking.nil?
+            #Legacy check
+            # if !session_booking.nil?
 
-              if !session_booking.service_promo_id.nil? && session_booking.max_discount != 0
-                if new_hour[:group_discount].to_f < session_booking.max_discount.to_f
-                  should_add = false
-                end
-              end
+            #   if !session_booking.service_promo_id.nil? && session_booking.max_discount != 0
+            #     if new_hour[:group_discount].to_f < session_booking.max_discount.to_f
+            #       should_add = false
+            #     end
+            #   end
 
-            end
+            # end
 
-            if params[:edit] && status == 'hora-promocion'
-              should_add = false
-            end
+            # if params[:edit] && status == 'hora-promocion'
+            #   should_add = false
+            # end
 
             if should_add
               if !hours_array.include?(new_hour)
