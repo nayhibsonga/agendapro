@@ -26,8 +26,8 @@ module ApiViews
 
           weekDate = Date.strptime(current_date, '%Y-%m-%d')
 
-          #logger.debug "current_date: " + current_date.to_s
-          #logger.debug "weekDate: " + weekDate.to_s
+          # logger.debug "current_date: " + current_date.to_s
+          # logger.debug "weekDate: " + weekDate.to_s
 
           if params[:date] and params[:date] != ""
             if params[:date].to_datetime > now
@@ -132,8 +132,6 @@ module ApiViews
 
           while (dateTimePointer < limit_date)
 
-            #logger.debug "DTP: " + dateTimePointer.to_s
-
             serviceStaffPos = 0
             bookings = []
 
@@ -179,15 +177,15 @@ module ApiViews
               service_sum = service.duration.minutes
 
               minHour = now
-              #logger.debug "min_hours: " + minHour.to_s
-              if !params[:admin] && minHour <= DateTime.now
+              # logger.debug "min_hours: " + minHour.to_s
+              if minHour <= DateTime.now
                 minHour += company_setting.before_booking.hours
               end
               if dateTimePointer >= minHour
                 service_valid = true
               end
 
-              #logger.debug "min_hours: " + minHour.to_s
+              # logger.debug "min_hours: " + minHour.to_s
 
               # Hora dentro del horario del local
 
@@ -470,6 +468,8 @@ module ApiViews
                   end
                 end
               end
+
+              # puts service_valid
 
               if !service_valid
 
@@ -771,6 +771,8 @@ module ApiViews
                 end
               end
 
+              # puts status
+
               #logger.debug "Time diff: "
               #logger.debug bookings[bookings.length-1][:end].to_s
               #logger.debug bookings[0][:start].to_s
@@ -787,7 +789,7 @@ module ApiViews
                 curr_promo_discount = bookings[0][:time_discount]
               end
 
-              if params[:mandatory_discount]
+              if params[:mandatory_discount] == 'true' || params[:mandatory_discount] == true
 
                 if has_time_discount
 
@@ -816,8 +818,8 @@ module ApiViews
 
                   if !hours_array.include?(new_hour)
 
-                    # hours_array << new_hour
-                    # puts new_hour.inspect
+                    hours_array << new_hour
+                    puts new_hour.inspect
 
                     if new_hour[:start_block] < company_setting.promo_time.afternoon_start.strftime("%H:%M")
                       @morning_hours << new_hour
@@ -874,8 +876,8 @@ module ApiViews
                 if should_add
                   if !hours_array.include?(new_hour)
 
-                    # hours_array << new_hour
-                    # puts new_hour.inspect
+                    hours_array << new_hour
+                    puts new_hour.inspect
 
                     if new_hour[:start_block] < company_setting.promo_time.afternoon_start.strftime("%H:%M")
                       @morning_hours << new_hour
@@ -1112,11 +1114,50 @@ module ApiViews
 
 
           serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
-          
+            
+          service_ids = []
+          provider_ids = []
+          puts ServiceStaff.inspect
+          serviceStaff.each do |service_staff|
+            if service_staff[:service].present? && service_staff[:provider].present?
+              service_ids.push(service_staff[:service].to_i)
+              provider_ids.push(service_staff[:provider].to_i)
+            end
+          end
 
-          @connection = ActiveRecord::Base.connection
-          sql = "SELECT * FROM check_days(1, ARRAY[1], ARRAY[1], '2015-11-01', )"
-          @connection.execute(sql)
+          query = "SELECT * FROM check_days(#{params[:local]}, ARRAY#{provider_ids.inspect}, ARRAY#{service_ids.inspect}, '#{params[:start_date]}', '#{params[:end_date]}')"
+          @results = ActiveRecord::Base.connection.execute(query)
+
+          # # puts @results.inspect
+          # @results.each do |result|
+          #  puts result.inspect 
+          # end
+          # render json: {response: "Success"}, status: 200
+        end
+
+        def available_promo_days
+
+
+          serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
+            
+          service_ids = []
+          provider_ids = []
+          puts ServiceStaff.inspect
+          serviceStaff.each do |service_staff|
+            if service_staff[:service].present? && service_staff[:provider].present?
+              service_ids.push(service_staff[:service].to_i)
+              provider_ids.push(service_staff[:provider].to_i)
+            end
+          end
+
+          query = "SELECT * FROM check_promo_days(#{params[:local]}, ARRAY#{provider_ids.inspect}, ARRAY#{service_ids.inspect}, '#{params[:start_date]}', '#{params[:end_date]}')"
+          @results = ActiveRecord::Base.connection.execute(query)
+
+          # # puts @results.inspect
+          # @results.each do |result|
+          #  puts result.inspect 
+          # end
+          # render json: {response: "Success"}, status: 200
         end
       end
     end

@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @marketplace_category.name %>
+</p>
+
+<p>
+  <strong>Show in marketplace:</strong>
+  <%= @marketplace_category.show_in_marketplace %>
+</p>
+
+<%= link_to 'Edit', edit_marketplace_category_path(@marketplace_category) %> |
+<%= link_to 'Back', marketplace_categories_path %>

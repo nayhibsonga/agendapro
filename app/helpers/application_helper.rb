@@ -9,7 +9,7 @@ module ApplicationHelper
 
         elsif nameArray.length == 1
           returnHash[:first_name] = nameArray[0] unless nameArray[0].blank?
-          returnHash[:last_name] = "Sin apellido"
+          returnHash[:last_name] = ""
         elsif nameArray.length == 2
           returnHash[:first_name] = nameArray[0] unless nameArray[0].blank?
           returnHash[:last_name] = nameArray[1] unless nameArray[1].blank?

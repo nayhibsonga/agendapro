@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151203155120) do
+ActiveRecord::Schema.define(version: 20151203231207) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -412,14 +412,17 @@ ActiveRecord::Schema.define(version: 20151203155120) do
   add_index "districts", ["city_id"], name: "index_districts_on_city_id", using: :btree
 
   create_table "economic_sectors", force: true do |t|
-    t.string   "name",                            null: false
+    t.string   "name",                                    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "show_in_home",    default: true
-    t.boolean  "show_in_company", default: true
-    t.string   "mobile_preview",  default: ""
-    t.boolean  "marketplace",     default: false
+    t.boolean  "show_in_home",            default: true
+    t.boolean  "show_in_company",         default: true
+    t.string   "mobile_preview",          default: ""
+    t.boolean  "marketplace",             default: false
+    t.integer  "marketplace_category_id"
   end
+
+  add_index "economic_sectors", ["marketplace_category_id"], name: "index_economic_sectors_on_marketplace_category_id", using: :btree
 
   create_table "economic_sectors_dictionaries", force: true do |t|
     t.string   "name"
@@ -575,6 +578,13 @@ ActiveRecord::Schema.define(version: 20151203155120) do
     t.string   "email",          default: ""
     t.string   "phone",          default: ""
     t.boolean  "mailing_option", default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "marketplace_categories", force: true do |t|
+    t.string   "name",                default: "",    null: false
+    t.boolean  "show_in_marketplace", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

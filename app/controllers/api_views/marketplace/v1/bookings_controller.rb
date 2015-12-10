@@ -2,7 +2,7 @@ module ApiViews
   module Marketplace
 	module V1
 	  class BookingsController < V1Controller
-	  	skip_before_filter :permitted_params, only: :book_service
+	  	skip_before_filter :permitted_params, only: [:book_service, :edit_booking]
 
 	  	include ApplicationHelper
 
@@ -804,7 +804,7 @@ module ApiViews
 		    @blocked_bookings = []
 
 		    @booking = Booking.find(params[:id])
-		    @service_provider = ServiceProvider.find(booking_params[:service_provider_id])
+		    @service_provider = ServiceProvider.find(editing_params[:service_provider_id])
 		    @selectedLocation = @booking.location
 		    @service = @booking.service
 		    @company = @selectedLocation.company
@@ -836,7 +836,7 @@ module ApiViews
 		            min_hours = min_hours.to_i.abs
 
 		            if min_hours >= ocp.min_hours.to_i
-		              render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + ocp.min_hours + " " + ocp.min_hours + " después." }, status: 422
+		              render json: { errors: "La empresa permite modificación de las reservas sólo hasta #{ocp.min_hours} #{ocp.min_hours} después." }, status: 422
 			          return
 		            end
 
@@ -855,22 +855,22 @@ module ApiViews
 		            num = ocp.modification_max.to_i
 		            if ocp.modification_unit == TimeUnit.find_by_unit("Minutos").id
 		              if minutes >= num
-		                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + ocp.modification_max + " " + ocp.modification_unit + " antes." }, status: 422
+		                render json: { errors: "La empresa permite modificación de las reservas sólo hasta #{ocp.modification_max} #{ocp.modification_unit} antes." }, status: 422
 			            return
 		              end
 		            elsif ocp.modification_unit == TimeUnit.find_by_unit("Horas").id
 		              if hours >= num
-		                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + ocp.modification_max + " " + ocp.modification_unit + " antes." }, status: 422
+		                render json: { errors: "La empresa permite modificación de las reservas sólo hasta #{ocp.modification_max} #{ocp.modification_unit} antes." }, status: 422
 			            return
 		              end
 		            elsif ocp.modification_unit == TimeUnit.find_by_unit("Semanas").id
 		              if weeks >= num
-		                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + ocp.modification_max + " " + ocp.modification_unit + " antes." }, status: 422
+		                render json: { errors: "La empresa permite modificación de las reservas sólo hasta #{ocp.modification_max} #{ocp.modification_unit} antes." }, status: 422
 			            return
 		              end
 		            elsif ocp.modification_unit == TimeUnit.find_by_unit("Meses").id
 		              if months >= num
-		                render json: { errors: "La empresa permite modificación de las reservas sólo hasta " + ocp.modification_max + " " + ocp.modification_unit + " antes." }, status: 422
+		                render json: { errors: "La empresa permite modificación de las reservas sólo hasta #{ocp.modification_max} #{ocp.modification_unit} antes." }, status: 422
 			            return
 		              end
 		            end
@@ -880,23 +880,23 @@ module ApiViews
 		      end
 		    end
 
-			service_provider = ServiceProvider.find(booking_params[:service_provider_id])
+			service_provider = ServiceProvider.find(editing_params[:service_provider_id])
 			service = @service
-			service_provider.provider_breaks.where("provider_breaks.start < ?", booking_params[:end].to_datetime).where("provider_breaks.end > ?", booking_params[:start].to_datetime).each do |provider_break|
-			if (provider_break.start.to_datetime - booking_params[:end].to_datetime) * (booking_params[:start].to_datetime - provider_break.end.to_datetime) > 0
+			service_provider.provider_breaks.where("provider_breaks.start < ?", editing_params[:end].to_datetime).where("provider_breaks.end > ?", editing_params[:start].to_datetime).each do |provider_break|
+			if (provider_break.start.to_datetime - editing_params[:end].to_datetime) * (editing_params[:start].to_datetime - provider_break.end.to_datetime) > 0
 			    render json: { errors: "El horario que estás tratando de reservas está bloqueado." }, status: 422
 			    return
 			end
 			end
-			service_provider.bookings.where("bookings.start < ?", booking_params[:end].to_datetime).where("bookings.end > ?", booking_params[:start].to_datetime).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').each do |provider_booking|
+			service_provider.bookings.where("bookings.start < ?", editing_params[:end].to_datetime).where("bookings.end > ?", editing_params[:start].to_datetime).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').each do |provider_booking|
 			unless provider_booking.status_id == cancelled_id
-			  if (provider_booking.start.to_datetime - booking_params[:end].to_datetime) * (booking_params[:start].to_datetime - provider_booking.end.to_datetime) > 0
+			  if (provider_booking.start.to_datetime - editing_params[:end].to_datetime) * (editing_params[:start].to_datetime - provider_booking.end.to_datetime) > 0
 			    if !service.group_service || service.id != provider_booking.service_id
 			      if !provider_booking.is_session || (provider_booking.is_session and provider_booking.is_session_booked)
 			        render json: { errors: "La hora que estás tratando de tomar no está disponible." }, status: 422
 			        return
 			      end
-			    elsif service.group_service && service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => booking_params[:start].to_datetime).where.not(status_id: cancelled_id).count >= service.capacity
+			    elsif service.group_service && service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => editing_params[:start].to_datetime).where.not(status_id: cancelled_id).count >= service.capacity
 			      if !provider_booking.is_session || (provider_booking.is_session and provider_booking.is_session_booked)
 			        render json: { errors: "El servicio grupal ya ha llegado a su capacidad máxima." }, status: 422
 			        return
@@ -914,7 +914,7 @@ module ApiViews
 			end
 
 
-		    if @booking.update(booking_params)
+		    if @booking.update(editing_params)
 	          @api_user ? user = @api_user.id : user = 0
 	          BookingHistory.create(booking_id: @booking.id, action: "Editada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
 	        else
@@ -1040,7 +1040,7 @@ module ApiViews
 		  		if @booking.trx_id.present?
 		  			@bookings_group = Booking.where(trx_id: @booking.trx_id)
 		  		elsif @booking.booking_group.present?
-		  			@bookings_group = Bookin.where(booking_group: @booking.booking_group)
+		  			@bookings_group = Booking.where(booking_group: @booking.booking_group)
 		  		end
 
 		  		@payment_info = ''
@@ -1051,10 +1051,10 @@ module ApiViews
 		  				@payment_info = {company_name: @booking.location.company.name, amount: @punto_pagos.amount, reference: @punto_pagos.trx_id, payment_date: @punto_pagos.approvement_date}
 		  			elsif PayUNotification.find_by(reference_sale: @booking.trx_id)
 		  				@pay_u = PayUNotification.find_by(trx_id: @booking.trx_id)
-		  				@payment_info = {company_name: @booking.location.company.name, amount: @pay_u.value, reference: @pay_u.reference_sake, payment_date: @pay_u.transaction_date.strftime('%d-%m-%Y')}
+		  				@payment_info = {company_name: @booking.location.company.name, amount: @pay_u.value, reference: @pay_u.reference_sale, payment_date: @pay_u.transaction_date.strftime('%d-%m-%Y')}
 		  			end
 		  		elsif @booking.booking_group.present?
-		  			@bookings_group = Bookin.where(booking_group: @booking.booking_group)
+		  			@bookings_group = Booking.where(booking_group: @booking.booking_group)
 		  		end
 		  			
 			else
@@ -1077,6 +1077,10 @@ module ApiViews
 
 		def booking_params
 		  params.require(:bookings).permit(bookings: [:service_id, :provider_id, :start, :end, :provider_lock, :price, :is_time_discount, :service_promo_id])
+		end
+
+		def editing_params
+		  params.require(:booking).permit(:id, :service_provider_id, :start, :end)
 		end
 
 		def client_params

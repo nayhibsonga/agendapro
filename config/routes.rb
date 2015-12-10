@@ -1,6 +1,7 @@
  Agendapro::Application.routes.draw do
 
 
+
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -24,6 +25,7 @@
 
     resources :tags
     resources :statuses
+    resources :marketplace_categories
     resources :economic_sectors
     resources :economic_sectors_dictionaries
     resources :company_settings
@@ -574,6 +576,8 @@
       namespace :v1 do
         get 'companies_preview', to: 'companies#preview'
 
+        get 'categories', to: 'economic_sectors#categories'
+
         get 'countries/:id', to: 'countries#show'
 
         get 'promotions', to: 'promotions#index'
@@ -584,6 +588,8 @@
         get 'locations/:id', to: 'locations#show'
 
         get 'service_providers/available_hours', to: 'service_providers#available_hours'
+        get 'service_providers/available_days', to: 'service_providers#available_days'
+        get 'service_providers/available_promo_days', to: 'service_providers#available_promo_days'
 
         post 'users/session', to: 'users#login'
         post 'users/registration', to: 'users#create'
@@ -592,6 +598,7 @@
         get 'users/bookings', to: 'users#bookings'
         get 'users/favorites', to: 'users#favorites'
         # get 'users/searches', to: 'users#searches'
+        post 'newsletter', to: 'users#newsletter'
         post 'users/oauth', to: 'users#oauth'
         # options 'users/oauth', to: 'users#oauth'
         get 'users/oauth_login_link', to: 'users#oauth_login_link'

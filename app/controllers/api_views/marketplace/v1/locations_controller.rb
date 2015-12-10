@@ -3,7 +3,7 @@ module ApiViews
 	module V1
 	  class LocationsController < V1Controller
 	  	def search
-	  		if (params[:search_text].present? || params[:economic_sector_id].present?) && params[:latitude].present? && params[:longitude].present?
+	  		if (params[:search_text].present? || params[:economic_sector_id].present? || params[:category].present?) && params[:latitude].present? && params[:longitude].present?
 
 	      		# if params[:search_text].present?
 		      	# 	UserSearch.create(user_id: @mobile_user.id, search_text: params[:search_text])
@@ -217,13 +217,16 @@ module ApiViews
 					results = ActiveRecord::Base.connection.execute(query)
 
 					results.each do |result|
-						if Location.find(result['location_id']) && Location.find(result['location_id']).company.owned
+						if Location.find(result['location_id']) && Location.find(result['location_id']).company.owned && Location.where(company_id: Company.where(id: CompanyEconomicSector.where(economic_sector_id: EconomicSector.where(marketplace: true)).pluck(:company_id))).pluck(:id).include?(result['location_id'].to_i)
 							@results << Location.find(result['location_id'])
 						end
 					end
 
 				elsif params[:economic_sector_id].present?
 					@results = Location.where(company_id: CompanyEconomicSector.where(economic_sector_id: params[:economic_sector_id]).pluck(:company_id)).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true, id: ServiceStaff.where(service_id: Service.where(online_booking: true, active: true)).pluck(:service_provider_id)).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25').select('locations.*, sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)').order('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)')
+				elsif params[:category].present? && MarketplaceCategory.find_by_name(params[:category])
+					puts params[:category]
+					@results = Location.where(company_id: CompanyEconomicSector.where(economic_sector_id: MarketplaceCategory.find_by_name(params[:category]).economic_sectors).pluck(:company_id)).where(online_booking: true, id: ServiceProvider.where(active: true, online_booking: true, id: ServiceStaff.where(service_id: Service.where(online_booking: true, active: true)).pluck(:service_provider_id)).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2) < 0.25').select('locations.*, sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)').order('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)')
 				else
 					render json: { error: 'Invalid Request. Missing Param(s)' }, status: 500
 				end

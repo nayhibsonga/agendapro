@@ -543,7 +543,7 @@ class Booking < ActiveRecord::Base
   end
 
   def marketplace_url
-    return 'http://' + ENV['MARKETPLACE_URL'] + '/booking/success/' + @bookings.first.id.to_s + '/' + @bookings.first.access_token
+    return 'http://' + ENV['MARKETPLACE_URL'] + '/booking/success/' + self.id.to_s + '/' + self.access_token.to_s
   end
 
   def send_booking_mail
