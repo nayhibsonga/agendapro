@@ -37,6 +37,10 @@ class UserMailer < ActionMailer::Base
         {
           :name => 'PASSWORD',
           :content => user.password
+        },
+        {
+          :name => 'NAME',
+          :content => @user_name
         }
       ],
       :tags => ['user', 'new_user'],
