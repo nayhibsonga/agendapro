@@ -1569,58 +1569,7 @@ class SearchsController < ApplicationController
 			last_minute_locs = Array.new
 			last_minute_ordered_locs = Array.new
 
-			# if normalized_search != ""
-			# 	if last_minute_query.count > 10
-
-			# 		count = (last_minute_query.count.to_f / 10).ceil
-			# 		last_minute_results = Array.new
-
-			# 		current_rank = last_minute_query[0].pg_search_rank
-			# 		current_group = Array.new
-			# 		last_minute_query.each do |res|
-			# 			if res.pg_search_rank <= current_rank && (res.pg_search_rank - current_rank).abs < 0.015
-			# 				current_group << res
-			# 			else
-			# 				last_minute_results << current_group
-			# 				current_group = Array.new
-			# 				current_group << res
-			# 				current_rank = res.pg_search_rank
-			# 			end
-			# 		end
-			# 		last_minute_results << current_group
-
-			# 		j = 0
-			# 		last_minute_results.each do |last_minute_result|
-			# 			locs[j] = Array.new
-			# 			last_minute_result.each do |location|
-			# 				dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
-			# 				local = [location, dist_score]
-			# 				last_minute_locs[j].push(local)
-			# 			end
-			# 			j = j+1
-			# 		end
-
-			# 		for i in 0..j-1
-			# 			last_minute_ordered_locs[i] = last_minute_locs[i].sort_by{ |loc| loc[1]}
-			# 		end
-
-			# 	else
-			# 		last_minute_query.each do |location|
-			# 			dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
-			# 			local = [location, dist_score]
-			# 			last_minute_locs.push(local)
-			# 		end
-			# 		last_minute_ordered_locs[0] = last_minute_locs.sort_by{ |loc| loc[1]}
-			# 	end
-			# else
-			# 	last_minute_query.each do |location|
-			# 		dist_score = Math.sqrt((location.latitude - lat.to_f)**2 + (location.longitude - long.to_f)**2)
-			# 		local = [location, dist_score]
-			# 		last_minute_locs.push(local)
-			# 	end
-			# 	last_minute_ordered_locs[0] = last_minute_locs.sort_by{ |loc| loc[1]}
-			# end
-
+			
 			@last_minute_results = Array.new
 			@last_minute_locations = Array.new
 

@@ -410,10 +410,20 @@ function saveRegularPromotions()
       success: function(response){
         if(response[0] == "ok")
         {
+          var is_active = response[1].time_promo_active
+          var response_str = 'Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente';
+
+          if(!is_active)
+          {
+            response_str = response_str + ' y se encontrarán activas una vez que sean revisadas';
+          }
+
+          response_str = response_str + '.';
+
           myAlert.showAlert(
           '<h3>Promociones guardadas</h3>' +
-          '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente y se encontrarán activas una vez que sean revisadas.</p>'
-        , function(){
+          '<p>' + response_str + '</p>'
+          , function(){
           location.reload();
         });
           

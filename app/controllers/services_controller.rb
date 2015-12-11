@@ -350,6 +350,7 @@ class ServicesController < ApplicationController
       @last_minute_promos = []
       @errors = []
 
+      promos_changed = false
       discounts_changed = false
       first_time_promo = true
 
@@ -559,7 +560,7 @@ class ServicesController < ApplicationController
 
               last_minute_promo = LastMinutePromo.where(:service_id => @service.id).order('created_at desc').first
 
-              if last_minute_promo.discount != params[:last_minute_discount] || last_minute_promo.hours != params[:last_minute_hours]
+              if last_minute_promo.discount.to_f != params[:last_minute_discount].to_f || last_minute_promo.hours.to_i != params[:last_minute_hours].to_i
 
                 discounts_changed = true
 
