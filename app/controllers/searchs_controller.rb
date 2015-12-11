@@ -7,7 +7,7 @@ class SearchsController < ApplicationController
 	include Amatch
 
 
-  	before_action :constraint_locale, only: [:promotions]
+  	before_action :constraint_locale, only: [:promotions, :last_minute_promotions]
 
 	def landing
 		if params[:redirect_params].present?
@@ -1379,6 +1379,8 @@ class SearchsController < ApplicationController
 
 			normalized_search = ""
 
+			@inputSearch = params[:inputSearch]
+
 			if params[:inputSearch] && params[:inputSearch] != ""
 
 				search = params[:inputSearch].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
@@ -1689,6 +1691,8 @@ class SearchsController < ApplicationController
 		@economic_sector_selected = 0
 
 		normalized_search = ""
+
+		@inputSearch = params[:inputSearch]
 
 		if params[:inputSearch] && params[:inputSearch] != ""
 

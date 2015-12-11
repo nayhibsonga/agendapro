@@ -23,13 +23,21 @@
   <div class="container">
 
     <div class="row">
-      <div class="col-sm-10">
+      <div class="col-sm-9">
         <div class="promo-title">
           <%= @service.name %> en <%= @location.name %> de <%= @location.company.name %>
         </div>
       </div>
-      <div class="col-sm-2" style="text-align: right;">
-        <%= link_to "Volver a Promociones de último minuto", get_last_minute_promotions_path %>
+      <div class="col-sm-3" style="text-align: right;">
+        <div class="promotions-results-subtitle">
+          <%= form_tag({controller: "searchs", action: "last_minute_promotions"}, method: "GET", class: "navbar-form", id: "last-minute-promotions-side-form") do %>
+            <%= hidden_field_tag :latitude, params[:latitude] %>
+            <%= hidden_field_tag :longitude, params[:longitude] %>
+            <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+            <%= hidden_field_tag :inputSearch, params[:inputSearch] %>
+            <button class="promotions-search-btn btn btn-default" type="submit">Volver a promociones de último minuto&nbsp;<i class="fa fa-search"></i></button>
+        <% end %>
+        </div>
       </div>
     </div>
 
@@ -155,7 +163,7 @@
           <div class="row">
           <% @relatedPromos.each do |promo_detail| %>
             <div class="col-md-4">
-              <%= render :partial => 'searchs/service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
+              <%= render :partial => 'searchs/last_minute_service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
             </div>
             <% if i%3 == 0 %>
               </div>

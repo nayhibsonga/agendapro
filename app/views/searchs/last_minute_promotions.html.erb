@@ -17,10 +17,13 @@
 			</div>
 			<div class="col-md-3">
 				<div class="promotions-results-subtitle">
-					<%= link_to "Ver promociones por horario", get_promotions_path %>
-				</div>
-				<div class="promotions-results-subtitle">
-					<%= link_to "Ver promociones de tratamientos", get_treatment_promotions_path %>
+					<%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "navbar-form promo-input-search", id: "promotions-form") do %>
+                        <%= hidden_field_tag :latitude, params[:latitude] %>
+                        <%= hidden_field_tag :longitude, params[:longitude] %>
+                        <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+                        <%= hidden_field_tag :inputSearch, params[:inputSearch] %>
+						<button class="promotions-search-btn btn btn-default" type="submit">Ver promociones por horario&nbsp;<i class="fa fa-search"></i></button>
+                    <% end %>
 				</div>
 			</div>
 		</div>

@@ -400,7 +400,9 @@ function saveRegularPromotions()
 
   if(timeCheck(morning_start, morning_end, afternoon_start, afternoon_end, night_start, night_end))
   {
-
+    myAlert.showAlert(
+      '<p class="text-center">Guardando las promociones...<br /><i class="fa fa-spinner fa-spin fa-2x"></i></p>'
+    );
     $.ajax({
       url: "/set_service_promotions",
       type: "post",
@@ -410,7 +412,7 @@ function saveRegularPromotions()
         {
           myAlert.showAlert(
           '<h3>Promociones guardadas</h3>' +
-          '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente.</p>'
+          '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente y se encontrarán activas una vez que sean revisadas.</p>'
         , function(){
           location.reload();
         });
@@ -469,7 +471,9 @@ function saveTreatmentPromotions()
     return false;
   }
 
-  console.log("Reaches 5");
+  myAlert.showAlert(
+    '<p class="text-center">Guardando las promociones...<br /><i class="fa fa-spinner fa-spin fa-2x"></i></p>'
+  );
 
   $.ajax({
     url: "/set_service_promotions",
@@ -484,7 +488,7 @@ function saveTreatmentPromotions()
       {
         myAlert.showAlert(
         '<h3>Promociones guardadas</h3>' +
-        '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente.</p>'
+        '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente y se encontrarán activas una vez que sean revisadas.</p>'
       , function(){
         location.reload();
       });
