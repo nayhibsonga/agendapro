@@ -12,6 +12,6 @@ json.location_times @location.location_times do |location_time|
 end
 json.categorized_services @location.api_categorized_services
 json.favorite @api_user.favorite_locations.include?(@location)
-json.logo @location.company.logo && @location.company.logo.page && @location.company.logo.page.url ? request.protocol + request.host_with_port + @location.company.logo.page.url : ""
+json.logo @location.company.logo && @location.company.logo.page && @location.company.logo.page.url && @location.company.logo.page.url != "/assets/logo_vacio.png" ? request.protocol + request.host_with_port + @location.company.logo.page.url : request.protocol + request.host_with_port + "/assets/logo_vacio.png"
 json.photo @location.image2 && @location.image2.mobile && @location.image2.mobile.url ? request.protocol + request.host_with_port + @location.image2.mobile.url : ""
 json.show_comments false
