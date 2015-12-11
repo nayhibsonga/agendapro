@@ -5,7 +5,7 @@ class UserMailer < ActionMailer::Base
   	mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
     # => Template
-    template_name = 'User'
+    template_name = user.api_key.present? ? 'User - Marketplace' : 'User'
     template_content = []
 
     @user_name = user.email
