@@ -5,6 +5,7 @@ json.region @location.district.city.region.name
 json.country @location.district.city.region.country.name
 json.description @location.company.description
 json.location_times @location.location_times do |location_time|
+	json.day_id location_time.day_id
 	json.open location_time.open.strftime('%H:%M')
 	json.close location_time.close.strftime('%H:%M')
 	json.short_day @short_days[location_time.day_id - 1]

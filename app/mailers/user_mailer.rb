@@ -5,7 +5,7 @@ class UserMailer < ActionMailer::Base
   	mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
     # => Template
-    template_name = 'User'
+    template_name = user.api_token.present? ? 'User - Marketplace' : 'User'
     template_content = []
 
     @user_name = user.email
@@ -37,6 +37,10 @@ class UserMailer < ActionMailer::Base
         {
           :name => 'PASSWORD',
           :content => user.password
+        },
+        {
+          :name => 'NAME',
+          :content => @user_name
         }
       ],
       :tags => ['user', 'new_user'],
