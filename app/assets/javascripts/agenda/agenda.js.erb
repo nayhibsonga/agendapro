@@ -188,7 +188,7 @@ $('.session-btn-edit').click(function(e){
       $("#after_booking").val(booking.after_booking);
       $("#past_date_label").empty();
       $("#past_date_label").append("Lo sentimos, no se permite agendar después del " + booking.after_date + ".");
-      loadServiceStaff(booking.service_id, booking.location_id, booking.provider_preference, booking.service_provider_id);
+      loadServiceStaff(booking.service_id, booking.location_id, booking.provider_preference, booking.service_provider_id, booking.payed);
     }
   });
 
@@ -213,7 +213,7 @@ $('.session-btn-book').click(function(e){
       $("#after_booking").val(booking.after_booking);
       $("#past_date_label").empty();
       $("#past_date_label").append("Lo sentimos, no se permite agendar después del " + booking.after_date + ".");
-      loadServiceStaff(booking.service_id, booking.location_id, booking.provider_preference, -1);
+      loadServiceStaff(booking.service_id, booking.location_id, booking.provider_preference, -1, booking.payed);
     }
   });
 
@@ -224,7 +224,7 @@ $('.closeBookModal').click(function(){
   $('#bookModal').modal('hide');
 });
 
-function loadServiceStaff (service_id, location_id, provider_preference, service_provider_id) {
+function loadServiceStaff (service_id, location_id, provider_preference, service_provider_id, payed) {
 
   var serviceId = service_id;
   var localId = location_id;
@@ -238,8 +238,10 @@ function loadServiceStaff (service_id, location_id, provider_preference, service
     providerSelector.empty();
     $('.changeStaff').empty();
 
-    if (providerPreference != 1) {
-      if (providers.length > 1) {
+    if(providers.length == 0)
+    {
+      if(payed)
+      {
         providerSelector.append(
           '<option value="0">Sin Preferencia</option>'
         );
@@ -250,33 +252,65 @@ function loadServiceStaff (service_id, location_id, provider_preference, service
               '</label>' +
             '</div>'
         );
+        $("#bookModal").modal('show');
+      }
+      else
+      {
+        myAlert.showAlert(
+          '<h3>Lo sentimos</h3>' +
+          '<p>No hay prestadores que permitan reservas en línea para el servicio buscado. Por favor ponte en contacto con la empresa que ofrece el servicio para poder agendar tus sesiones faltantes.</p>',
+          function(){
+            location.reload();
+          }
+        );
       }
     }
-    if (providerPreference != 2) {
-      $.each(providers, function (key, provider) {
-        providerSelector.append(
-          '<option value="' + provider.id + '">' + provider.public_name + '</option>'
-        );
-        $('.changeStaff').append(
-          '<div class="radio">' +
-            '<label>' +
-              '<p>' +
-                '<input type="radio" name="changeProvider" value="' + provider.id + '" style="cursor: pointer;" />' +
-              provider.public_name +
-              '</p>' +
-            '</label>' +
-          '</div>' 
-        );
-      });
-    }
-
-    if(service_provider_id != -1)
+    else
     {
-      providerSelector.children('option[value="' + service_provider_id + '"]').attr("selected", true);
+
+      console.log(providerPreference);
+      console.log(service_provider_id);
+      console.log(providers.length);
+      if (providerPreference != 1) {
+          providerSelector.append(
+            '<option value="0">Sin Preferencia</option>'
+          );
+          $('.changeStaff').append(
+            '<div class="radio">' +
+                '<label>' +
+                  '<p><input type="radio" name="changeProvider" value="0" style="cursor: pointer;" />Sin preferencia</p>' +
+                '</label>' +
+              '</div>'
+          );
+      }
+      if (providerPreference != 2) {
+        $.each(providers, function (key, provider) {
+          providerSelector.append(
+            '<option value="' + provider.id + '">' + provider.public_name + '</option>'
+          );
+          $('.changeStaff').append(
+            '<div class="radio">' +
+              '<label>' +
+                '<p>' +
+                  '<input type="radio" name="changeProvider" value="' + provider.id + '" style="cursor: pointer;" />' +
+                provider.public_name +
+                '</p>' +
+              '</label>' +
+            '</div>' 
+          );
+        });
+      }
+
+      if(service_provider_id != -1)
+      {
+        providerSelector.children('option[value="' + service_provider_id + '"]').attr("selected", true);
+      }
+
+      $("#bookModal").modal('show');
+
     }
 
     //providerSelector.attr('disabled', false);
-    $("#bookModal").modal('show');
   });
 }
 

@@ -4176,7 +4176,13 @@ class BookingsController < ApplicationController
     if serviceStaff[0][:provider] != "0"
       first_providers << ServiceProvider.find(serviceStaff[0][:provider])
     else
+
       first_providers = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(:order, :public_name)
+
+      if first_providers.count == 0
+        first_providers = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true).order(:order, :public_name)
+      end
+
     end
 
     #Look for services and providers and save them for later use.
@@ -4205,6 +4211,9 @@ class BookingsController < ApplicationController
         providers_arr[i] << ServiceProvider.find(serviceStaff[i][:provider])
       else
         providers_arr[i] = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true)
+        if providers_arr[i].count == 0
+          providers_arr[i] = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true)
+        end
       end
     end
 
@@ -4264,8 +4273,14 @@ class BookingsController < ApplicationController
           #service = Service.find(serviceStaff[serviceStaffPos][:service])
           service = services_arr[serviceStaffPos]
 
+          current_service_providers = ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id))
+
+          if current_service_providers.count == 0
+            current_service_providers = ServiceProvider.where(active: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id))
+          end
+
           #Get providers min
-          min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
+          min_pt = ProviderTime.where(:service_provider_id => current_service_providers.pluck(:id)).where(day_id: day).order(:open).first
 
           # logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
           # logger.debug "DATE TIME POINTER: " + dateTimePointer.strftime("%H:%M")
@@ -4344,11 +4359,19 @@ class BookingsController < ApplicationController
                 
                 providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
 
+                if providers.count == 0
+                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+                end
+
                 #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
 
               else
                 
                 providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+
+                if providers.count == 0
+                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                end
 
                 #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
               end
