@@ -1040,7 +1040,7 @@ module ApiViews
 		  		if @booking.trx_id.present?
 		  			@bookings_group = Booking.where(trx_id: @booking.trx_id)
 		  		elsif @booking.booking_group.present?
-		  			@bookings_group = Booking.where(booking_group: @booking.booking_group)
+		  			@bookings_group = Booking.where(booking_group: @booking.booking_group, location_id: @booking.location_id)
 		  		end
 
 		  		@payment_info = ''
@@ -1054,7 +1054,7 @@ module ApiViews
 		  				@payment_info = {company_name: @booking.location.company.name, amount: @pay_u.value, reference: @pay_u.reference_sale, payment_date: @pay_u.transaction_date.strftime('%d-%m-%Y')}
 		  			end
 		  		elsif @booking.booking_group.present?
-		  			@bookings_group = Booking.where(booking_group: @booking.booking_group)
+		  			@bookings_group = Booking.where(booking_group: @booking.booking_group, location_id: @booking.location_id)
 		  		end
 		  			
 			else
