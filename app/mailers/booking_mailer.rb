@@ -1040,7 +1040,7 @@ class BookingMailer < ActionMailer::Base
 
 	def multiple_booking_reminder (data)
 		# => Template
-		template_name = 'Multiple Booking Reminder'
+		template_name = data[:marketplace] ? 'Confirm Multiple - Marketplace' : 'Multiple Booking Reminder'
 		template_content = []
 
 		# => Message
@@ -1183,7 +1183,7 @@ class BookingMailer < ActionMailer::Base
 
 	def multiple_booking_mail (data)
 		# => Template
-		template_name = 'Multiple Booking'
+		template_name = data[:marketplace] ? 'Multiple Bookings - Marketplace' : 'Multiple Booking'
 		template_content = []
 
 		# => Message
