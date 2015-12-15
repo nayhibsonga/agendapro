@@ -338,7 +338,10 @@ class Location < ActiveRecord::Base
 	          	service_category_id: service.service_category_id,
 	          	order: service.order,
 	          	description: service.description,
-	          	service_providers: service_providers_array
+	          	service_providers: service_providers_array,
+	          	promo_active: service.has_time_discount && service.online_payable && service.time_promo_active,
+	          	promo_hours: service.active_service_promo_id && ServicePromo.find(service.active_service_promo_id) ? ServicePromo.select(:id, :morning_start, :morning_end, :afternoon_start, :afternoon_end, :night_start, :night_end).find(service.active_service_promo_id) : "",
+	          	promo_days: service.active_service_promo_id ? Promo.select(:id, :day_id, :morning_discount, :afternoon_discount, :night_discount).where(:service_promo_id => service.active_service_promo_id, :location_id => self.id): ""
 	          }
 	          services_array.push(service_info)
 	        end

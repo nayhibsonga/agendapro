@@ -307,6 +307,7 @@
 	          	<Cell><Data ss:Type="String">Prestador</Data></Cell>
 	          	<Cell><Data ss:Type="String">Cliente</Data></Cell>
 	          	<Cell><Data ss:Type="String">Tipo</Data></Cell>
+	          	<Cell><Data ss:Type="String">Categoría</Data></Cell>
 	          	<Cell><Data ss:Type="String">Nombre</Data></Cell>
 	          	<Cell><Data ss:Type="String">Monto</Data></Cell>
 	          	<Cell><Data ss:Type="String">Comisión</Data></Cell>
@@ -347,8 +348,9 @@
 
 		        		payment.bookings.order('service_provider_id asc').each do |booking|
 		        			service_name = booking.service.name
+		        			service_category = "Sin información"
 		        			if !booking.service.service_category.nil?
-				                service_name += " (" + booking.service.service_category.name + ")"
+				                service_category = booking.service.service_category.name
 				            end
 
 		        		%>
@@ -358,6 +360,7 @@
 					          	<Cell><Data ss:Type="String"><%= booking.service_provider.public_name %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
 					          	<Cell><Data ss:Type="String">Servicio (con reserva)</Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= service_category %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= booking.price %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= booking.get_commission %></Data></Cell>
@@ -372,13 +375,15 @@
 		        		payment.mock_bookings.order('service_provider_id asc').each do |mock_booking|
 
 		        			service_name = ""
+		        			service_category = ""
 
 			                if mock_booking.service_id.nil?
 			                  service_name = "Sin información"
+			                  service_category = "Sin información"
 			                else
 			                  service_name = mock_booking.service.name
 			                  if !mock_booking.service.service_category.nil?
-			                  	service_name += " (" + mock_booking.service.service_category.name + ")"
+			                  	service_category = mock_booking.service.service_category.name
 			                  end
 			                end
 
@@ -397,6 +402,7 @@
 					          	<Cell><Data ss:Type="String"><%= provider_name %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
 					          	<Cell><Data ss:Type="String">Servicio (sin reserva)</Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= service_category %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= mock_booking.price %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= mock_booking.get_commission %></Data></Cell>
@@ -410,13 +416,20 @@
 
 		        		payment.payment_products.where(seller_type: 0).order('seller_id asc').each do |payment_product|
 
+		        			product_category = ""
 		        			product_name = ""
 		        			provider_name = ""
 
 		        			if payment_product.product_id.nil?
 			                  	product_name = "Sin información"
+			                  	product_category = "Sin información"
 			                else
 			                  	product_name = payment_product.product.full_name
+			                  	if !payment_product.product.product_category.nil?
+			                  		product_category = payment_product.product.product_category.name
+			                  	else
+			                  		product_category = "Sin información"
+			                  	end
 			                end
 
 			                provider_name = ""
@@ -438,6 +451,7 @@
 					          	<Cell><Data ss:Type="String"><%= provider_name %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
 					          	<Cell><Data ss:Type="String">Producto</Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= product_category %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= product_name %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= payment_product.price * payment_product.quantity %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= payment_product.product.get_commission * payment_product.quantity %></Data></Cell>
