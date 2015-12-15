@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151210134726) do
+ActiveRecord::Schema.define(version: 20151215163418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1191,7 +1191,7 @@ ActiveRecord::Schema.define(version: 20151210134726) do
 
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
-    t.integer  "country_id"
+    t.integer  "country_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1427,9 +1427,9 @@ ActiveRecord::Schema.define(version: 20151210134726) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "client_id"
-    t.integer  "sessions_amount",  default: 0
-    t.integer  "service_promo_id"
-    t.float    "max_discount",     default: 0.0
+    t.integer  "sessions_amount",    default: 0
+    t.float    "max_discount",       default: 0.0
+    t.integer  "treatment_promo_id"
   end
 
   create_table "staff_codes", force: true do |t|

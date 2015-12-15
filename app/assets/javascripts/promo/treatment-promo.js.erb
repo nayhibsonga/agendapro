@@ -30,7 +30,7 @@
     
     myAlert = new Alert();
 
-    var book_limit_date = $("#book_limit_date").val().split(" ")[0].split("-");
+    var book_limit_date = $("#finish_date").val().split(" ")[0].split("-");
     var limit_date = new Date(parseInt(book_limit_date[0]), parseInt(book_limit_date[1])-1, book_limit_date[2], 0, 0, 0, 0);
 
     var now_date = new Date();
@@ -417,9 +417,9 @@
           bookDetailsDiscountPrice = Math.round(bookDetails.price);
 
           
-          if(bookDetails.has_discount && bookDetails.has_time_discount)
+          if(bookDetails.has_discount && bookDetails.has_treatment_discount)
           {
-            if(bookDetails.discount > bookDetails.time_discount)
+            if(bookDetails.discount > bookDetails.treatment_discount)
             {
               book_discount = bookDetails.discount;
               bookDetailsDiscountPrice = Math.round(bookDetails.price * (100 - bookDetails.discount) / 100);
@@ -431,16 +431,16 @@
             }
             else
             {
-              book_discount = bookDetails.time_discount;
-              bookDetailsDiscountPrice = Math.round(bookDetails.price * (100 - bookDetails.time_discount) / 100);
+              book_discount = bookDetails.treatment_discount;
+              bookDetailsDiscountPrice = Math.round(bookDetails.price * (100 - bookDetails.treatment_discount) / 100);
               $("#selected-hour-body").append(
                 '<b>' + bookDetails.service_name + '</b><br />' +
                 '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "16x16") %>' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
-                '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike>  <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span>' + ' (' + bookDetails.time_discount + ' % off) <br /></div>'
+                '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike>  <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span>' + ' (' + bookDetails.treatment_discount + ' % off) <br /></div>'
               );
             }
           }
-          else if(bookDetails.has_discount && !bookDetails.has_time_discount)
+          else if(bookDetails.has_discount && !bookDetails.has_treatment_discount)
           {
             book_discount = bookDetails.discount;
             bookDetailsDiscountPrice = Math.round(bookDetails.price * (100 - bookDetails.discount) / 100);
@@ -450,14 +450,14 @@
                 '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
               );
           }
-          else if(!bookDetails.has_discount && bookDetails.has_time_discount)
+          else if(!bookDetails.has_discount && bookDetails.has_treatment_discount)
           {
-            book_discount = bookDetails.time_discount
-            bookDetailsDiscountPrice = Math.round(bookDetails.price * (100 - bookDetails.time_discount) / 100);
+            book_discount = bookDetails.treatment_discount
+            bookDetailsDiscountPrice = Math.round(bookDetails.price * (100 - bookDetails.treatment_discount) / 100);
             $("#selected-hour-body").append(
                 '<b>' + bookDetails.service_name + '</b><br />' +
                 '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "16x16") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
-                '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.time_discount + ' % off) <br /></div>'
+                '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.treatment_discount + ' % off) <br /></div>'
               );
           }
           else
@@ -564,13 +564,15 @@
           service_name: $("#service_name").val(),
           online_payable: true,
           has_discount: true,
-          discount: discount,
+          discount: bookSummary.promo_discount,
           price: $("#service_price").val(),
           show_price: true,
           has_sessions: true,
           sessions_amount: parseInt($("#sessions_amount").val()),
-          is_time_discount: true,
-          service_promo_id: bookDetails.service_promo_id
+          is_time_discount: false,
+          is_treatment_discount: true,
+          service_promo_id: bookDetails.service_promo_id,
+          treatment_promo_id: bookDetails.treatment_promo_id
         };
 
         checkUserCrossBookings();
@@ -1042,7 +1044,7 @@
 
       blockBookingBufferHour();
 
-        if (e.date < limit_date && e.date < after_date)
+        if (e.date < after_date)
         {
 
           
@@ -1051,7 +1053,7 @@
           {
             var resulting_date = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate() + 7)
 
-            if(resulting_date < limit_date && resulting_date < after_date)
+            if(resulting_date < after_date)
             {
               $("#next").trigger("click");
               reload_times++;
@@ -1071,11 +1073,7 @@
 
           var localId = $("#locationId").val();
       
-          var start_date = limit_date;
-          if (after_date < limit_date)
-          {
-            start_date = after_date;
-          }
+          var start_date = after_date;
 
           $("#loader-div").show();
 

@@ -24,6 +24,15 @@
                         <button class="promotions-search-btn btn btn-default" type="submit">Ver promociones de último minuto&nbsp;<i class="fa fa-search"></i></button>
                     <% end %>
 				</div>
+				<div class="promotions-results-subtitle">
+					<%= form_tag({controller: "searchs", action: "treatment_promotions"}, method: "GET", class: "navbar-form", id: "treatment-promotions-form") do %>
+                        <%= hidden_field_tag :latitude, params[:latitude] %>
+                        <%= hidden_field_tag :longitude, params[:longitude] %>
+                        <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+                        <%= hidden_field_tag :inputSearch, params[:inputSearch] %>
+                        <button class="promotions-search-btn btn btn-default" type="submit">Ver promociones de tratamientos&nbsp;<i class="fa fa-search"></i></button>
+                    <% end %>
+				</div>
 			</div>
 		</div>
 

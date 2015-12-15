@@ -1045,7 +1045,7 @@ class ServicesController < ApplicationController
 
     query.each do |location|
 
-      time_promo_services = []
+      last_minute_promo_services = []
 
       ServiceProvider.where(:active => true, :location_id => location.id).each do |service_provider|
 
@@ -1147,61 +1147,80 @@ class ServicesController < ApplicationController
     str_name = @service.name.gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
     normalized_search = str_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
 
-    @relatedServices = Service.search(normalized_search).where(:has_time_discount => true, :company_id => CompanyEconomicSector.where(economic_sector_id: @company.economic_sectors).pluck(:company_id))
+    #@relatedServices = Service.search(normalized_search).where(:time_promo_active => true, :has_time_discount => true, :company_id => CompanyEconomicSector.where(economic_sector_id: @company.economic_sectors).pluck(:company_id))
 
     @relatedPromos = []
 
-    @relatedServices.each do |service|
+    #Find services with similar name.
 
-      service_promo = ServicePromo.find(service.active_service_promo_id)
-      locations = service_promo.promos.pluck(:location_id).uniq
+    query = Location.search_services(normalized_search).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true, id: PromoTime.where(:active => true).pluck(:company_setting_id)).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @location.latitude.to_s + ')^2 + (longitude - ' + @location.longitude.to_s + ')^2) < 0.25')
 
-      locations.each do |locationId|
-        if service.id != @service.id || locationId != @location.id
-          promo = [service, Location.find(locationId)]
-          @relatedPromos << promo
+
+    query.each do |location|
+
+      treatment_promo_services = []
+
+      ServiceProvider.where(:active => true, :location_id => location.id).each do |service_provider|
+
+        treatment_promo_services = service_provider.services.with_treatment_promotions
+
+        treatment_promo_services.each do |service|
+
+          if service.id != @service.id || location.id != @location.id
+
+            promo_detail = [service, location]
+
+            if !@relatedPromos.include?(promo_detail)
+              @relatedPromos << promo_detail
+            end
+
+          end
         end
+
+        logger.debug treatment_promo_services.inspect
+
       end
+
     end
 
+
+    #If there aren't enough services, find those with similar economic_sectors
+
     if @relatedPromos.count < 6
-      if @relatedServices.count > 0
 
-        @plusRelatedServices = Service.where(:has_time_discount => true, :company_id => CompanyEconomicSector.where(economic_sector_id: @company.economic_sectors).pluck(:company_id)).limit(6 - @relatedPromos.count)
+      #str_name = .gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
 
-        @plusRelatedServices.each do |service|
+      #normalized_search = str_name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
 
-          service_promo = ServicePromo.find(service.active_service_promo_id)
-          locations = service_promo.promos.pluck(:location_id).uniq
+      query = Location.where(company_id: Company.where(:active => true, :owned => true).where(:id => CompanyEconomicSector.where(economic_sector_id: @company.economic_sectors).pluck(:company_id)).where(id: CompanySetting.where(:activate_search => true, :activate_workflow => true, id: PromoTime.where(:active => true).pluck(:company_setting_id)).pluck('company_id'))).where(:active => true).where('sqrt((latitude - ' + @location.latitude.to_s + ')^2 + (longitude - ' + @location.longitude.to_s + ')^2) < 0.25')
 
-          locations.each do |locationId|
-            if service.id != @service.id || locationId != @location.id
-              promo = [service, Location.find(locationId)]
-              if !@relatedPromos.include?(promo)
-                @relatedPromos << promo
+
+      query.each do |location|
+
+        treatment_promo_services = []
+
+        ServiceProvider.where(:active => true, :location_id => location.id).each do |service_provider|
+
+          treatment_promo_services = service_provider.services.with_treatment_promotions
+
+          treatment_promo_services.each do |service|
+
+            if service.id != @service.id || location.id != @location.id
+
+              promo_detail = [service, location]
+              if !@relatedPromos.include?(promo_detail)
+                @relatedPromos << promo_detail
               end
+
             end
           end
-        end
 
-      else
+          logger.debug treatment_promo_services.inspect
 
-        @plusRelatedServices = Service.where(:has_time_discount => true, :company_id => CompanyEconomicSector.where(economic_sector_id: @company.economic_sectors).pluck(:company_id))
-
-        @plusRelatedServices.each do |service|
-          service_promo = ServicePromo.find(service.active_service_promo_id)
-          locations = service_promo.promos.pluck(:location_id).uniq
-          locations.each do |locationId|
-            if service.id != @service.id || locationId != @location.id
-              promo = [service, Location.find(locationId)]
-              if !@relatedPromos.include?(promo)
-                @relatedPromos << promo
-              end
-            end
-          end
         end
 
       end
+
     end
 
     if @relatedPromos.count > 6

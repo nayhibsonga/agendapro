@@ -16,10 +16,22 @@
 			</div>
 			<div class="col-md-3">
 				<div class="promotions-results-subtitle">
-					<%= link_to "Ver promociones por horario", get_promotions_path %>
+					<%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "navbar-form", id: "promotions-form") do %>
+                        <%= hidden_field_tag :latitude, params[:latitude] %>
+                        <%= hidden_field_tag :longitude, params[:longitude] %>
+                        <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+                        <%= hidden_field_tag :inputSearch, params[:inputSearch] %>
+                        <button class="promotions-search-btn btn btn-default" type="submit">Ver promociones por horario&nbsp;<i class="fa fa-search"></i></button>
+                    <% end %>
 				</div>
 				<div class="promotions-results-subtitle">
-					<%= link_to "Ver promociones de último minuto", get_last_minute_promotions_path %>
+					<%= form_tag({controller: "searchs", action: "last_minute_promotions"}, method: "GET", class: "navbar-form", id: "last-minute-promotions-form") do %>
+                        <%= hidden_field_tag :latitude, params[:latitude] %>
+                        <%= hidden_field_tag :longitude, params[:longitude] %>
+                        <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+                        <%= hidden_field_tag :inputSearch, params[:inputSearch] %>
+                        <button class="promotions-search-btn btn btn-default" type="submit">Ver promociones de último minuto&nbsp;<i class="fa fa-search"></i></button>
+                    <% end %>
 				</div>
 			</div>
 		</div>
@@ -273,7 +285,7 @@
 	        geolocate();
 	    });
 	    $('#modal_search').click(function() {
-	        $('#promotions-form').submit();
+	        $('#treatment-promotions-form').submit();
 	    });
 
 	    $(".number-pin").click(function(){

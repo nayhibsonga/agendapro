@@ -4,15 +4,25 @@
 <input type="hidden" id="service_discount" value="<%= @service.discount %>" />
 <input type="hidden" id="service_price" value="<%= @service.price %>" />
 <input type="hidden" id="after_booking" value="<%= @service.company.company_setting.after_booking %>" />
+<input type="hidden" id="finish_date" value="<%= @service.active_treatment_promo.finish_date %>" />
 
 <div class="main below-navbar">
   <div class="container">
 
     <div class="row">
-      <div class="col-sm-12">
+      <div class="col-sm-9">
         <div class="promo-title">
           <%= @service.name %> en <%= @location.name %> de <%= @location.company.name %>
         </div>
+      </div>
+      <div class="col-sm-3" style="text-align: right;">
+        <%= form_tag({controller: "searchs", action: "treatment_promotions"}, method: "GET", class: "navbar-form", id: "treatment-promotions-side-form") do %>
+            <%= hidden_field_tag :latitude, params[:latitude] %>
+            <%= hidden_field_tag :longitude, params[:longitude] %>
+            <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+            <%= hidden_field_tag :inputSearch, params[:inputSearch] %>
+            <button class="promotions-search-btn btn btn-default" type="submit">Volver a promociones de tratamientos&nbsp;<i class="fa fa-search"></i></button>
+        <% end %>
       </div>
     </div>
 
@@ -660,7 +670,7 @@
   <%= javascript_include_tag 'validations/validate' %>
   <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag 'validations/home/promo' %>
-  <%= javascript_include_tag 'promo/promo' %>
+  <%= javascript_include_tag 'promo/treatment-promo' %>
   <%= javascript_include_tag 'split-name' %>
 
     <script type="text/javascript">
@@ -684,7 +694,7 @@
       document.getElementById('facebookShare').onclick = function(e) {
         e.preventDefault();
         var share_url = document.getElementById('facebookShare').href;
-        var share_text = "Promoción de <%= @service.name %> con <%= @service.get_max_time_discount.to_s %> % de descuento en <%= @service.company.name %>.";
+        var share_text = "Promoción de <%= @service.name %> con <%= @service.active_treatment_promo.discount.to_s %> % de descuento en <%= @service.company.name %>.";
         var picture_href = $("#promo_photo").get(0).src;
         console.log(picture_href);
         FB.ui({
