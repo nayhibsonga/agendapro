@@ -224,6 +224,35 @@ class Service < ActiveRecord::Base
 		end
 	end
 
+	def get_max_discount
+		discount = 0
+		if self.has_sessions
+			treatment_promo = TreatmentPromo.find(self.active_treatment_promo_id)
+			if treatment_promo
+				discount = treatment_promo.discount
+			end
+		else
+			if self.has_time_discount && !self.active_service_promo_id.nil?
+				
+				service_promo = ServicePromo.find(self.active_service_promo_id)
+				service_promo.promos.each do |promo|
+					if promo.morning_discount > discount
+						discount = promo.morning_discount
+					end
+					if promo.afternoon_discount > discount
+						discount = promo.afternoon_discount
+					end
+					if promo.night_discount > discount
+						discount = promo.night_discount
+					end
+				end
+
+			end
+		end
+
+		return discount
+	end
+
 	# def get_last_minute_available_hours(provider_id, location_id, day_id)
 
 	# 	available_hours = []
