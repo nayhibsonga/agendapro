@@ -8,6 +8,8 @@ json.logo @location.company.logo && @location.company.logo.page && @location.com
 json.booking_conditions @booking_conditions
 json.booking_dates @booking_dates
 json.discounts @discounts
+json.discount @discount
+json.promo_type @promo_type
 json.company_name @service.company.name
 json.service_name @service.name
 json.promo_description @service.promo_description.html_safe

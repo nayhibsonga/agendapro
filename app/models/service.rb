@@ -227,9 +227,11 @@ class Service < ActiveRecord::Base
 	def get_max_discount
 		discount = 0
 		if self.has_sessions
-			treatment_promo = TreatmentPromo.find(self.active_treatment_promo_id)
-			if treatment_promo
-				discount = treatment_promo.discount
+			if self.has_treatment_promo && !self.active_treatment_promo_id.nil?
+				treatment_promo = TreatmentPromo.find(self.active_treatment_promo_id)
+				if treatment_promo
+					discount = treatment_promo.discount
+				end
 			end
 		else
 			if self.has_time_discount && !self.active_service_promo_id.nil?

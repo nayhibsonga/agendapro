@@ -219,7 +219,9 @@ module ApiViews::Marketplace
             @booking_conditions += 'Esta promoción no tiene límite de stock.'
           end
           @booking_dates = 'Esta promoción acaba el ' + I18n.l(@service.active_treatment_promo.finish_date.to_date) + '.'
-          @discounts = @service.active_treatment_promo.discount
+          @discount = @service.active_treatment_promo.discount.to_s + '%'
+          @discounts = ''
+          @promo_type = 'treatment_promo'
           #Check existance of promo
           if !@service.has_treatment_promo || @service.treatment_promos.nil? || @service.active_treatment_promo_id.nil?
             render json: { errors: "No existen promociones para el servicio buscado." }, status: 422
@@ -248,6 +250,8 @@ module ApiViews::Marketplace
           end
           @booking_dates = 'Esta promoción acaba el ' + I18n.l(@service.active_service_promo.finish_date.to_date) + ', y permite reservar horas hasta el ' + I18n.l(@service.active_service_promo.book_limit_date.to_date)
           @discounts = @service.get_time_promos(@location.id)
+          @discount = ''
+          @promo_type = 'service_promo'
           #Check existance of promo
           if !@service.has_time_discount || @service.service_promos.nil? || @service.active_service_promo_id.nil?
             render json: { errors: "No existen promociones para el servicio buscado." }, status: 422
