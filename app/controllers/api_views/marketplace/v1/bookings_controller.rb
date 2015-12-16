@@ -504,14 +504,14 @@ module ApiViews
 
 									#LastMinutePromo.where(location_id: @selectedLocation.id, service_id: booking.service.id).first
 
-									 if last_minute_promo.nil? 
+									if last_minute_promo.nil? 
 
-									   @errors << "La promoción de último minuto ya no existe."
+									 @errors << "La promoción de último minuto ya no existe."
 
-									   render json: { errors: @errors.inspect }, status: 422
-										 return
+									 render json: { errors: @errors.inspect }, status: 422
+									 return
 
-									 end
+									end
 
 									if LastMinutePromoLocation.where(last_minute_promo_id: last_minute_promo.id, location_id: @selectedLocation.id).count == 0
 
@@ -531,62 +531,65 @@ module ApiViews
 									 booking.discount = 0
 									end
 								else
-								#Check for online payment discount
+		              #Check for online payment discount
+		              if booking.service.has_discount && booking.service.discount > 0
 
-		            if booking.service.has_discount && booking.service.discount > 0
+		                new_book_price = (booking.service.price - booking.service.discount*booking.service.price/100).round
+		                booking.price = new_book_price
+		                booking.discount = booking.service.discount
+		                #final_price = final_price + new_book_price
 
-		              new_book_price = (booking.service.price - booking.service.discount*booking.service.price/100).round
-									booking.price = new_book_price
-									booking.discount = booking.service.discount
-                	#final_price = final_price + new_book_price
+		              end
+
+		              #Now check for promos
+		              promo = Promo.where(:day_id => booking.start.to_datetime.cwday, :service_promo_id => booking.service.active_service_promo_id, :location_id => @selectedLocation.id).first
+
+		              new_book_discount = 0
+
+		              if !promo.nil?
+
+		                service_promo = ServicePromo.find(booking.service.active_service_promo_id)
+
+		                #Check if there is a limit for bookings, and if there are any left
+		                if service_promo.max_bookings > 0 || !service_promo.limit_booking
+
+		                  #Check if the promo is still active, and if the booking ends before the limit date
+
+		                  if booking.end.to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
+
+		                    if !(service_promo.morning_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
+
+		                      new_book_discount = promo.morning_discount
+
+		                    elsif !(service_promo.afternoon_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
+
+		                      new_book_discount = promo.afternoon_discount
+
+		                    elsif !(service_promo.night_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
+
+		                      new_book_discount = promo.night_discount
+
+		                    end
+
+		                  end
+
+		                end
+
+		              end
+
+		              if booking.discount.nil? || booking.discount == 0 || booking.discount < new_book_discount
+
+		                new_book_price = (booking.service.price - new_book_discount*booking.service.price/100).round
+		                booking.price = new_book_price
+		                #final_price = final_price + new_book_price
+		                if(booking.list_price > 0)
+		                  booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+		                else
+		                  booking.discount = 0
+		                end
+		              end        
 
 		            end
-
-	              promo = Promo.where(:day_id => booking.start.to_datetime.cwday, :service_promo_id => booking.service.active_service_promo_id, :location_id => @selectedLocation.id).first
-
-	              new_book_discount = 0
-
-	              if !promo.nil?
-
-	                service_promo = ServicePromo.find(booking.service.active_service_promo_id)
-
-	                #Check if there is a limit for bookings, and if there are any left
-	                if service_promo.max_bookings > 0 || !service_promo.limit_booking
-
-	                  #Check if the promo is still active, and if the booking ends before the limit date
-
-	                  if booking.end.to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
-
-	                    if !(service_promo.morning_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-	                      new_book_discount = promo.morning_discount
-
-	                    elsif !(service_promo.afternoon_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-	                      new_book_discount = promo.afternoon_discount
-
-	                    elsif !(service_promo.night_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-	                      new_book_discount = promo.night_discount
-
-	                    end
-
-	                  end
-
-	                end
-
-	              end
-
-	              if booking.discount.nil? || booking.discount == 0 || booking.discount < new_book_discount
-									new_book_price = (booking.service.price - new_book_discount*booking.service.price/100).round
-									booking.price = new_book_price
-									#final_price = final_price + new_book_price
-									if(booking.list_price > 0)
-									 booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
-									else
-									 booking.discount = 0
-									end
-              	end
 
 		          end
 
