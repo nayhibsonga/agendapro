@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151203231207) do
+ActiveRecord::Schema.define(version: 20151216135454) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -146,6 +146,7 @@ ActiveRecord::Schema.define(version: 20151203231207) do
     t.boolean  "payed_state",            default: false
     t.boolean  "marketplace_origin",     default: false
     t.integer  "treatment_promo_id"
+    t.integer  "last_minute_promo_id"
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -285,6 +286,17 @@ ActiveRecord::Schema.define(version: 20151203231207) do
   end
 
   add_index "company_payment_methods", ["company_id"], name: "index_company_payment_methods_on_company_id", using: :btree
+
+  create_table "company_plan_settings", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "locations",         default: 1
+    t.integer  "service_providers", default: 1
+    t.integer  "monthly_mails",     default: 0
+    t.boolean  "has_custom_price",  default: false
+    t.float    "custom_price"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "company_settings", force: true do |t|
     t.text     "signature"
@@ -1190,7 +1202,7 @@ ActiveRecord::Schema.define(version: 20151203231207) do
 
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
-    t.integer  "country_id"
+    t.integer  "country_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1426,9 +1438,9 @@ ActiveRecord::Schema.define(version: 20151203231207) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "client_id"
-    t.integer  "sessions_amount",  default: 0
-    t.integer  "service_promo_id"
-    t.float    "max_discount",     default: 0.0
+    t.integer  "sessions_amount",    default: 0
+    t.float    "max_discount",       default: 0.0
+    t.integer  "treatment_promo_id"
   end
 
   create_table "staff_codes", force: true do |t|

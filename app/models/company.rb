@@ -44,6 +44,10 @@ class Company < ActiveRecord::Base
 	has_many :product_categories, dependent: :destroy
 	has_many :billing_wire_transfers
 
+	has_one :company_plan_setting
+
+	scope :collectables, -> { where(months_active_left <= 1).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentSatus.where(name: ["Inactivo", "Bloqueado", "Admin"]).pluck(:id)) }
+
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
 	validates_uniqueness_of :web_address, scope: :country_id
@@ -151,27 +155,27 @@ class Company < ActiveRecord::Base
 
 
 	#Change
-	def self.end_trial
-		month_days = Time.now.days_in_month
-		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
-			plan_id = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
-			company.plan_id = plan_id
-			company.due_date = Time.now
-			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
-			if company.save
-				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "OK end_trial")
-				if company.country_id == 1
-					CompanyMailer.invoice_email(company.id)
-				end
-			else
-				errors = ""
-				company.errors.full_messages.each do |error|
-					errors += error
-				end
-				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "ERROR end_trial "+errors)
-			end
-		end
-	end
+	# def self.end_trial
+	# 	month_days = Time.now.days_in_month
+	# 	where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
+	# 		plan_id = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
+	# 		company.plan_id = plan_id
+	# 		company.due_date = Time.now
+	# 		company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
+	# 		if company.save
+	# 			CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "OK end_trial")
+	# 			if company.country_id == 1
+	# 				CompanyMailer.invoice_email(company.id)
+	# 			end
+	# 		else
+	# 			errors = ""
+	# 			company.errors.full_messages.each do |error|
+	# 				errors += error
+	# 			end
+	# 			CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "ERROR end_trial "+errors)
+	# 		end
+	# 	end
+	# end
 
 	def self.add_due_amount
 		month_days = Time.now.days_in_month
@@ -287,6 +291,181 @@ class Company < ActiveRecord::Base
 		debt = self.plan.plan_countries.find_by(country_id: self.country.id).price.to_f * debt_proportion
 
 		return debt
+
+	end
+
+	def calculate_plan_change(new_plan_id)
+
+		current_date = Date.today
+		month_end = current_date.end_of_month
+		debt_proportion = (month_end.day.to_f - current_date.day.to_f)/month_end.day.to_f
+
+		new_plan = Plan.find(new_plan_id)
+		new_price = new_plan.plan_countries.find_by(country_id: self.country.id).price.to_f
+
+		old_price = self.plan.plan_countries.find_by(country_id: self.country.id).price.to_f
+
+		#If it's negative, it means that we owe the company for changing to a cheaper plan.
+		#It's like a deposit (un abono)
+
+		price_diff = new_price - old_price
+
+		new_debt = price_diff * debt_proportion
+
+		return new_debt
+
+	end
+
+	def self.end_trial
+
+		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
+
+			plan_id = Plan.where.not(id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
+
+			company.plan_id = plan_id
+			company.due_date = Time.now
+			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
+
+			if company.save
+				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "OK end_trial")
+
+				#Check if account was used.
+				if company.account_used
+					CompanyMailer.trial_invoice(company.id)
+				else
+
+					#Send client recovery mail
+
+				end
+
+				#if company.country_id == 1
+				#	CompanyMailer.invoice_email(company.id)
+				#end
+			else
+				errors = ""
+				company.errors.full_messages.each do |error|
+					errors += error
+				end
+				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "ERROR end_trial "+errors)
+			end				
+
+		end
+	end
+
+	#
+	# 1st of month:
+	# Collect active companies that don't have months payed in advance and leave them in issued state
+	# Collect companies that haven't payed last month, add to their due amount and leave them in expired state
+	#
+	def self.collect
+
+		status_activo = PaymentStatus.find_by_name("Activo")
+		status_emitido = PaymentStatus.find_by_name("Emitido")
+		status_vencido = PaymentStatus.find_by_name("Vencido")
+		plan_gratis = Plan.find_by_name("Gratis")
+
+		collectables.where.not(payment_status_id: status_vencido.id).each do |company|
+
+			if company.payment_status_id == status_activo.id
+
+				#If it was active, just substract a month and charge for current's month price
+				#Change it's status to issued
+
+				company.months_active_left -= 1
+				company.payment_status_id = status_emitido.id
+				company.due_date = DateTime.now
+
+				#Send charge mail
+
+			elsif company.payment_status_id == status_emitido.id
+
+				#If it was issued, the company is late 1 month in their payments
+				#Change their status to expired, add to their due and charge them for next month
+
+				company.months_active_left -= 1
+				company.payment_status_id = status_vencido.id
+				if company.due_amount.nil?
+					company.due_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
+				else
+					company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
+				end
+				company.due_date = DateTime.now
+
+				#Send charge mail
+
+			end
+
+		end
+	end
+
+	#
+	# 5th of month:
+	# Remind companies that were issued and haven't payed yet
+	# "Block" companies that expired (move them to free plan)
+	#
+	def self.collect_reminder	
+
+		status_activo = PaymentStatus.find_by_name("Activo")
+		status_emitido = PaymentStatus.find_by_name("Emitido")
+		status_vencido = PaymentStatus.find_by_name("Vencido")
+		plan_gratis = Plan.find_by_name("Gratis")
+
+		collectables.where.not(payment_status_id: status_activo).id.each do |company|
+
+			if company.payment_status_id == status_emitido.id
+
+				#Send first reminder
+
+			elsif company.payment_status_id == status_vencido.id
+
+				#Block them by changing their plan to free plan
+				#Add their due amount for possible reactivation in the future
+
+				company.payment_status_id = status_vencido.id
+				company.plan_id = plan_gratis
+				if company.due_amount.nil?
+					company.due_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
+				else
+					company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
+				end
+				company.due_date = DateTime.now
+				company.save
+
+				#Send mail alerting their plan change
+
+			end
+
+		end
+
+	end
+
+	def self.collect_insistence
+
+		status_activo = PaymentStatus.find_by_name("Activo")
+		status_emitido = PaymentStatus.find_by_name("Emitido")
+		status_vencido = PaymentStatus.find_by_name("Vencido")
+		plan_gratis = Plan.find_by_name("Gratis")
+
+		collectables.where(payment_status_id: status_emitido).each do |company|
+
+			#Send second reminder (insistence)
+
+		end
+
+	end
+
+	def self.collect_ultimatum
+
+		status_activo = PaymentStatus.find_by_name("Activo")
+		status_emitido = PaymentStatus.find_by_name("Emitido")
+		status_vencido = PaymentStatus.find_by_name("Vencido")
+		plan_gratis = Plan.find_by_name("Gratis")
+
+		collectables.where(payment_status_id: status_emitido).each do |company|
+
+			#Send ultimatum saying they will be downgraded on failure to pay
+
+		end
 
 	end
 

@@ -6,25 +6,38 @@ end
 
 every '0 0 1 * *' do
   runner "CompanySetting.monthly_mails"
+  runner "Company.collect"
 end
 
-every 1.days, :at => '0 am' do
-  runner "Company.payment_expiry"
-  runner "Company.payment_shut"
-  runner "Company.payment_inactive"
+every '0 0 5 * *' do
+  runner "Company.collect_reminder"
 end
 
-every 1.days, :at => '0:30 am' do
-  runner "Company.add_due_amount"
+every '0 0 15 * *' do
+  runner "Company.collect_insistence"
 end
+
+every '0 0 25 * *' do
+  runner "Company.collect_ultimatum"
+end
+
+#every 1.days, :at => '0 am' do
+#  runner "Company.payment_expiry"
+#  runner "Company.payment_shut"
+#  runner "Company.payment_inactive"
+#end
+
+#every 1.days, :at => '0:30 am' do
+#  runner "Company.add_due_amount"
+#end
 
 every 1.days, :at => '1:30 am' do
   runner "Company.end_trial"
 end
 
-every '0 1 1 * *' do
-  runner "Company.substract_month"
-end
+#every '0 1 1 * *' do
+#  runner "Company.substract_month"
+#end
 
 every 1.days, :at => '6:30 am' do
 	runner "NotificationEmail.booking_summary"
