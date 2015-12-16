@@ -229,7 +229,7 @@ module ApiViews::Marketplace
           end
 
           #Check promo has stock
-          if @service.active_treatment_promo.max_bookings < 1 && @service.active_treamtent_promo.limit_booking
+          if @service.active_treatment_promo.max_bookings < 1 && @service.active_treatment_promo.limit_booking
             render json: { errors: "No queda stock para la promoción buscada." }, status: 422
             return
           end
