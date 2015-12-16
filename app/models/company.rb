@@ -261,4 +261,33 @@ class Company < ActiveRecord::Base
 		stats.save
 	end
 
+	########################
+	## Collection methods ##
+	########################
+
+	#Check if account has been used in the past week for status change purposes.
+	def account_used
+
+		if Booking.where(location_id: Location.where(company_id: self.id).pluck(:id)).where('created_at > ?', DateTime.now - 1.weeks).count > 0
+			return true
+		end
+
+		return false
+
+	end
+
+	#Calculate debt amount for former trial companies.
+	#Get days count till end of month, divide by month length and multiply by company's plan price.
+	def calculate_trial_debt
+
+		current_date = Date.today
+		month_end = current_date.end_of_month
+		debt_proportion = (month_end.day.to_f - current_date.day.to_f)/month_end.day.to_f
+
+		debt = self.plan.plan_countries.find_by(country_id: self.country.id).price.to_f * debt_proportion
+
+		return debt
+
+	end
+
 end
