@@ -321,9 +321,12 @@ module ApiViews
 		            @booking.price = num_amount
 		            final_price = num_amount
 
-		            if buffer_params[:is_time_discount]
-		              @session_booking.service_promo_id = buffer_params[:service_promo_id]
-		              @booking.service_promo_id = buffer_params[:service_promo_id]
+		            @booking.service_promo_id = nil
+		            @booking.last_minute_promo_id = nil
+
+		            if buffer_params[:is_treatment_discount]
+		              @session_booking.treatment_promo_id = buffer_params[:treatment_promo_id]
+		              @booking.treatment_promo_id = buffer_params[:treatment_promo_id]
 		            end
 		          else
 
@@ -342,6 +345,9 @@ module ApiViews
 		              @booking.service_promo_id = buffer_params[:service_promo_id]
 		              service_promo = ServicePromo.find(buffer_params[:service_promo_id])
 		              #service_promo.max_bookings = service_promo.max_bookings - 1
+		            elsif buffer_params[:is_last_minute_promo]
+		              @booking.last_minute_promo_id = @booking.service.active_last_minute_promo_id
+		              last_minute_promo = @booking.service.active_last_minute_promo
 		            end
 
 		            @booking.price = num_amount
@@ -408,95 +414,59 @@ module ApiViews
 		            @errors << "El servicio " + current_service.name + " no puede ser pagado en línea."
 
 		            render json: { errors: @errors.inspect }, status: 422
-			  	    return
+			  	    	return
 
 		          else
+
+		          	treatment_discount = 0
+
+		          	#
+								# Assign prices in case there is no discount
+								#
+								@bookings.each do |booking|
+								 booking.price = current_service.price / current_service.sessions_amount
+								 booking.list_price = current_service.price / current_service.sessions_amount
+								 booking.discount = 0
+								end
 
 		            # If discount is for online_payment, it's always equal.
 		            if current_service.has_discount && current_service.discount > 0
 		              @bookings.each do |booking|
-		                new_price = (current_service.price - current_service.discount*current_service.price/100).round
+		                new_price = booking.price.to_f*((100.0 - current_service.discount.to_f)/100.0)
 		                booking.price = new_price
 		                final_price = new_price
 		                if(booking.list_price > 0)
-		                  booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+		                  booking.discount = current_service.discount.to_f
+                  		treatment_discount = booking.discount
 		                else
 		                  booking.discount = 0
 		                end
 		              end
-		            elsif current_service.has_time_discount
-
-		              #Look for the highest discount
-		              @bookings.each do |booking|
-
-		                promo = Promo.where(:day_id => booking.start.to_datetime.cwday, :service_promo_id => @session_booking.service_promo_id, :location_id => @selectedLocation.id).first
-
-		                if !promo.nil?
-
-		                  service_promo = ServicePromo.find(current_service.active_service_promo_id)
-
-		                  #Check if there is a limit for bookings, and if there are any left
-		                  if service_promo.max_bookings > 0 || !service_promo.limit_booking
-
-		                    #Check if the promo is still active, and if the booking ends before the limit date
-
-		                    if booking.end.to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
-
-		                      if !(service_promo.morning_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-		                        if sessions_max_discount == 0
-		                          sessions_max_discount = promo.morning_discount
-		                        else
-		                          if sessions_max_discount > promo.morning_discount
-		                            sessions_max_discount = promo.morning_discount
-		                          end
-		                        end
-
-		                      elsif !(service_promo.afternoon_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-		                        if sessions_max_discount == 0
-		                          sessions_max_discount = promo.afternoon_discount
-		                        else
-		                          if sessions_max_discount > promo.afternoon_discount
-		                            sessions_max_discount = promo.afternoon_discount
-		                          end
-		                        end
-
-		                      elsif !(service_promo.night_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-		                        if sessions_max_discount == 0
-		                          sessions_max_discount = promo.night_discount
-		                        else
-		                          if sessions_max_discount > promo.night_discount
-		                            sessions_max_discount = promo.night_discount
-		                          end
-		                        end
-		                      end
-
-		                    end
-
-		                  end
-
-		                end
-
-		              end
-
-		              @session_booking.max_discount = sessions_max_discount
-		              # End of get discount
-		              @bookings.each do |booking|
-		                new_price = (booking.service.price - sessions_max_discount*booking.service.price/100).round
-		                booking.price = new_price
-		                final_price = new_price
-		                if(booking.list_price > 0)
-		                  booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
-		                else
-		                  booking.discount = 0
-		                end
-		              end
-
 		            end
+		            #Check for promotions
+								if current_service.time_promo_active && current_service.has_treatment_promo && !current_service.active_treatment_promo.nil?
+								  if current_service.active_treatment_promo.max_bookings > 0 && current_service.active_treatment_promo.finish_date.end_of_day > DateTime.now
 
+								    @bookings.each do |booking|
+								      if current_service.active_treatment_promo.discount > booking.discount
+								        new_price = booking.price.to_f*((100.0 - booking.service.active_treatment_promo.discount.to_f/100.0))
+								        booking.price = new_price
+								        #final_price = new_price
+								        if(booking.list_price > 0)
+								          booking.discount = booking.service.active_treatment_promo.discount.to_f
+								          treatment_discount = booking.discount
+								        else
+								          booking.discount = 0
+								        end
+								      end
+								    end
+
+								  end
+								end
 		          end
+		          #Sum all booking prices (it could have service discount or treatment_promo)
+
+          		final_price = current_service.price * ((100.0 - treatment_discount.to_f)/100.0)
 
 		        end
 		      else
@@ -522,63 +492,111 @@ module ApiViews
 
 		          else
 
+		          	#Assume there is no discount at first
+								booking.price = booking.service.price
+								booking.list_price = booking.service.price
+								booking.discount = 0
+
+								#First, check if it is last_minute_promo
+								if params[:is_last_minute_promo]
+
+									last_minute_promo = booking.service.active_last_minute_promo
+
+									#LastMinutePromo.where(location_id: @selectedLocation.id, service_id: booking.service.id).first
+
+									 if last_minute_promo.nil? 
+
+									   @errors << "La promoción de último minuto ya no existe."
+
+									   render json: { errors: @errors.inspect }, status: 422
+										 return
+
+									 end
+
+									if LastMinutePromoLocation.where(last_minute_promo_id: last_minute_promo.id, location_id: @selectedLocation.id).count == 0
+
+									  @errors << "La promoción de último minuto no existe para este local."
+
+									  render json: { errors: @errors.inspect }, status: 422
+										return
+
+									end
+
+									new_price = (booking.service.price - last_minute_promo.discount*booking.service.price/100).round
+									booking.price = new_price
+									#final_price = new_price
+									if(booking.list_price > 0)
+									 booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+									else
+									 booking.discount = 0
+									end
+								else
+								#Check for online payment discount
+
 		            if booking.service.has_discount && booking.service.discount > 0
 
 		              new_book_price = (booking.service.price - booking.service.discount*booking.service.price/100).round
-		              booking.price = new_book_price
-		              final_price = final_price + new_book_price
-
-		            else
-
-		              promo = Promo.where(:day_id => booking.start.to_datetime.cwday, :service_promo_id => booking.service.active_service_promo_id, :location_id => @selectedLocation.id).first
-
-		              new_book_discount = 0
-
-		              if !promo.nil?
-
-		                service_promo = ServicePromo.find(booking.service.active_service_promo_id)
-
-		                #Check if there is a limit for bookings, and if there are any left
-		                if service_promo.max_bookings > 0 || !service_promo.limit_booking
-
-		                  #Check if the promo is still active, and if the booking ends before the limit date
-
-		                  if booking.end.to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
-
-		                    if !(service_promo.morning_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-		                      new_book_discount = promo.morning_discount
-
-		                    elsif !(service_promo.afternoon_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-		                      new_book_discount = promo.afternoon_discount
-
-		                    elsif !(service_promo.night_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
-
-		                      new_book_discount = promo.night_discount
-
-		                    end
-
-		                  end
-
-		                end
-
-		              end
-
-		              new_book_price = (booking.service.price - new_book_discount*booking.service.price/100).round
-		              booking.price = new_book_price
-		              final_price = final_price + new_book_price
-		              if(booking.list_price > 0)
-		                booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
-		              else
-		                booking.discount = 0
-		              end
+									booking.price = new_book_price
+									booking.discount = booking.service.discount
+                	#final_price = final_price + new_book_price
 
 		            end
+
+	              promo = Promo.where(:day_id => booking.start.to_datetime.cwday, :service_promo_id => booking.service.active_service_promo_id, :location_id => @selectedLocation.id).first
+
+	              new_book_discount = 0
+
+	              if !promo.nil?
+
+	                service_promo = ServicePromo.find(booking.service.active_service_promo_id)
+
+	                #Check if there is a limit for bookings, and if there are any left
+	                if service_promo.max_bookings > 0 || !service_promo.limit_booking
+
+	                  #Check if the promo is still active, and if the booking ends before the limit date
+
+	                  if booking.end.to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
+
+	                    if !(service_promo.morning_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
+
+	                      new_book_discount = promo.morning_discount
+
+	                    elsif !(service_promo.afternoon_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
+
+	                      new_book_discount = promo.afternoon_discount
+
+	                    elsif !(service_promo.night_start.strftime("%H:%M") >= booking.end.strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= booking.start.strftime("%H:%M"))
+
+	                      new_book_discount = promo.night_discount
+
+	                    end
+
+	                  end
+
+	                end
+
+	              end
+
+	              if booking.discount.nil? || booking.discount == 0 || booking.discount < new_book_discount
+									new_book_price = (booking.service.price - new_book_discount*booking.service.price/100).round
+									booking.price = new_book_price
+									#final_price = final_price + new_book_price
+									if(booking.list_price > 0)
+									 booking.discount = (100*(booking.list_price - booking.price)/booking.list_price).round
+									else
+									 booking.discount = 0
+									end
+              	end
 
 		          end
 
 		        end
+		        #Prices were set, now sum them
+						if @bookings.count > 0
+							@bookings.each do |booking|
+						  	final_price += booking.price
+							end
+						end
 		      end
 
 		      #####
@@ -682,25 +700,26 @@ module ApiViews
 		            end
 		          end
 		          render json: { errors: @errors.inspect }, status: 422
-			  	  return
+			  	  	return
 		        end
 
 		        if proceed_with_payment
-		          if !@bookings.first.service.active_service_promo_id.nil?
-		            if @has_session_booking
-		              service_promo = ServicePromo.find(@bookings.first.service.active_service_promo_id)
-		              service_promo.max_bookings = service_promo.max_bookings - 1
-		              service_promo.save
-		            else
-		              @bookings.each do |booking|
-		                if !booking.service_promo_id.nil?
-		                  service_promo = ServicePromo.find(booking.service_promo_id)
-		                  service_promo.max_bookings = service_promo.max_bookings - 1
-		                  service_promo.save
-		                end
-		              end
-		            end
-		          end
+		          if @has_session_booking
+								if !@bookings.first.service.active_treatment_promo_id.nil?
+									treatment_promo = TreatmentPromo.find(@bookings.first.service.active_treatment_promo_id)
+									treatment_promo.max_bookings = treatment_promo.max_bookings - 1
+									treatment_promo.save
+								end
+							else
+
+							@bookings.each do |booking|
+								if !booking.service_promo_id.nil?
+									service_promo = ServicePromo.find(booking.service_promo_id)
+									service_promo.max_bookings = service_promo.max_bookings - 1
+									service_promo.save
+								end
+							end
+          	end
 
 		          PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: amount, details: "Pago de varios servicios a la empresa " +@company.name+" (" + @company.id.to_s + "). trx_id: "+trx_id+" - mp: "+@company.id.to_s+". Resultado: Se procesa")
 		          render json: {redirect_to: resp.payment_process_url}
