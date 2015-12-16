@@ -712,11 +712,12 @@ module ApiViews
 								end
 							else
 
-							@bookings.each do |booking|
-								if !booking.service_promo_id.nil?
-									service_promo = ServicePromo.find(booking.service_promo_id)
-									service_promo.max_bookings = service_promo.max_bookings - 1
-									service_promo.save
+								@bookings.each do |booking|
+									if !booking.service_promo_id.nil?
+										service_promo = ServicePromo.find(booking.service_promo_id)
+										service_promo.max_bookings = service_promo.max_bookings - 1
+										service_promo.save
+									end
 								end
 							end
           	end
@@ -1108,5 +1109,4 @@ module ApiViews
 	  end
 	end
   end
-end
 end
