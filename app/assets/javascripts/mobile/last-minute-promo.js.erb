@@ -1,16 +1,16 @@
-Date.isLeapYear = function (year) { 
-    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+Date.isLeapYear = function (year) {
+    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
 };
 
 Date.getDaysInMonth = function (year, month) {
     return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
 };
 
-Date.prototype.isLeapYear = function () { 
-    return Date.isLeapYear(this.getFullYear()); 
+Date.prototype.isLeapYear = function () {
+    return Date.isLeapYear(this.getFullYear());
 };
 
-Date.prototype.getDaysInMonth = function () { 
+Date.prototype.getDaysInMonth = function () {
     return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
 };
 
@@ -71,7 +71,7 @@ $(document).ready(function(){
   $("#payBtn").click(function(){
 
     $("#bookingForm").submit();
-    
+
   });
 
   $('#closeBookForm').on('click', function(){
@@ -159,7 +159,7 @@ function loadAvailableHours(date)
     error: function(response){
       $("#loader-div").hide();
       $("#hours-selection-div").empty();
-      alert("Ocurrió un error.");
+      swal("Ocurrió un error.");
     }
   });
 }
@@ -243,7 +243,7 @@ function loadPaymentForm()
       $('.bookings').val(JSON.stringify(booking_buffer));
 
       $('#summary').append(
-        '<tr>' + 
+        '<tr>' +
           '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(currentBooking.price) + '</td>' +
         '</tr>' +
         '<tr>' +

@@ -75,19 +75,21 @@ function decode (position) {
             }
           }
           else {
-            myAlert.showAlert(
-              '<h3>Hubo un error en el proceso de localización.</h3>' +
-              '<p>No te pudimos ubicar. Revisa que tengas señal GPS o que hayas dado permiso en el navegador.</p>'
-            );
+            swal({
+              title: "Hubo un error en el proceso de localización",
+              text: "No te pudimos ubicar. Revisa que tengas señal GPS o que hayas dado permiso en el navegador.",
+              type: "error"
+            });
           }
         });
       }
     }
     else {
-      myAlert.showAlert(
-        '<h3>Hubo un error en el proceso de localización.</h3>' +
-        '<p>No te pudimos ubicar. Revisa que tengas señal GPS o que hayas dado permiso en el navegador.</p>'
-      );
+      swal({
+        title: "Hubo un error en el proceso de localización",
+        text: "No te pudimos ubicar. Revisa que tengas señal GPS o que hayas dado permiso en el navegador.",
+        type: "error"
+      });
     }
     $('#search-bar').removeAttr('disabled');
   });
@@ -96,22 +98,23 @@ function decode (position) {
 function locationError (error) {
   if (typeof(Storage) !== "undefined") {
     changeLocation(sessionStorage.district)
-    myAlert.showAlert(
-      '<h3>Hubo un error en el proceso de localización.</h3>' +
-      '<p>Se utilizará la última ubicación disponible.</p>'
-    );
+    swal({
+      title: "Hubo un error en el proceso de localización",
+      text: "Se utilizará la última ubicación disponible.",
+      type: "error"
+    });
   }
   else {
-    myAlert.showAlert(
-      '<h3>Hubo un error en la localización.</h3>' +
-      '<p>Se utilizará la comuna de Las Condes para realizar las búsquedas.</p>'
-    );
+    swal({
+      title: "Hubo un error en el proceso de localización",
+      text: "Se utilizará la comuna de las Condes para realizar las búsquedas.",
+      type: "error"
+    });
     changeLocation(1);
   }
 }
 
 //====== Load ======//
-var myAlert;
 $(function() {
   $('.title-local').each(function () {
     var characters = $(this).text().length;
@@ -121,8 +124,6 @@ $(function() {
       $(this).css('font-size', (size < 14.0 ? 14 : size));
     };
   });
-
-  myAlert = new Alert('.main');
 
   $('#save').on('click', function () {
     var district = $('#location_autocomplete').val();
@@ -156,10 +157,11 @@ $(function() {
       navigator.geolocation.getCurrentPosition(decode, locationError);
     }
     else {
-      myAlert.showAlert(
-        '<h3>Hubo un error en el proceso de localización.</h3>' +
-        '<p>Tu navegador no soporta geo-localización. Por favor actualízalo e intenta nuevamente.</p>'
-      );
+      swal({
+        title: "Hubo un error en el proceso de localización",
+        text: "Tu navegador no soporta geo-localización. Por favor actualízalo e intenta nuevamente.",
+        type: "error"
+      });
     }
 
     //====== Session Storage
@@ -183,7 +185,7 @@ $(function() {
 			$(this).children(":first").addClass("number-pin-green");
 		}
 	});
-	
+
 	$('a.center-link').click(function(){
 		var tab_id = $(this).attr("tab_id");
 		$('.number-pin[tab_id='+tab_id+']').removeClass("number-pin-green");

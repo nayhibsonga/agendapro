@@ -1,5 +1,4 @@
 var numbered_days = {1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo"};
-myAlert = new Alert();
 
 function openSalesCashTransactionSummary(sales_cash_transaction_id)
 {
@@ -42,7 +41,7 @@ function destroyPayment(payment_id) {
     dataType: 'json',
     success: function(payment){
       // window.console.log(payment);
-      alert('Pago eliminado exitosamente.');
+      swal('Pago eliminado exitosamente.');
       $("#save_payment_button").html('Guardar Pago');
       $('#save_payment_button').attr('disabled', false);
       $('#delete_payment_button').attr('disabled', false);
@@ -56,7 +55,7 @@ function destroyPayment(payment_id) {
       for (i in errors) {
         errores += '*' + errors[i] + '\n';
       }
-      alert(errores);
+      swal(errores);
       $("#save_payment_button").html('Guardar Pago');
       $('#save_payment_button').attr('disabled', false);
       $('#delete_payment_button').attr('disabled', false);
@@ -94,12 +93,12 @@ function loadSalesCash()
     method: 'get',
     dataType: 'json',
     error: function(response){
-      alert("Error al cargarla información.")
+      swal("Error al cargarla información.")
     },
     success: function(sales_cash){
       if(sales_cash.error)
       {
-        alert("Error al cargarla información.")
+        swal("Error al cargarla información.")
         return;
       }
       $("#sales_cash_scheduled_reset").val(sales_cash.scheduled_reset);
@@ -156,7 +155,7 @@ function editSalesCashTransaction(sales_cash_transaction_id)
     data: {sales_cash_transaction_id: sales_cash_transaction_id},
     dataType: 'json',
     error: function(response){
-      alert("Error al cargar el traspaso.");
+      swal("Error al cargar el traspaso.");
     },
     success: function(response)
     {
@@ -259,17 +258,17 @@ function saveSalesCashTransaction()
       data: {sales_cash_id: sales_cash_id, is_internal: is_internal, amount: amount, date: date, notes: notes, receipt_number: receipt_number, sales_cash_transaction_id: sales_cash_transaction_id},
       dataType: 'json',
       error: function(response){
-        alert('Ocurrió un error al guardar la transacción.');
+        swal('Ocurrió un error al guardar la transacción.');
         $('#salesCashTransactionModal').modal('hide');
       },
       success: function(response){
         if(response[0] == "ok")
         {
-          alert('Transacción guardada correctamente.');
+          swal('Transacción guardada correctamente.');
         }
         else
         {
-          alert('Ocurrió un error al guardar la transacción.');
+          swal('Ocurrió un error al guardar la transacción.');
         }
         $('#salesCashTransactionModal').modal('hide');
         loadPayments();
@@ -288,17 +287,17 @@ function deleteSalesCashTransaction(sales_cash_transaction_id)
       data: {sales_cash_transaction_id: sales_cash_transaction_id},
       dataType: 'json',
       error: function(response){
-        alert('Ocurrió un error al eliminar el traspaso.');
+        swal('Ocurrió un error al eliminar el traspaso.');
         loadPayments();
       },
       success: function(response){
         if(response[0] == "error")
         {
-          alert('Ocurrió un error al eliminar el traspaso.');
+          swal('Ocurrió un error al eliminar el traspaso.');
         }
         else
         {
-          alert('Traspaso eliminado correctamente.');
+          swal('Traspaso eliminado correctamente.');
         }
         loadPayments();
       }
@@ -366,7 +365,7 @@ function editSalesCashIncome(sales_cash_income_id)
     data: {sales_cash_income_id: sales_cash_income_id},
     dataType: 'json',
     error: function(response){
-      alert("Error al cargar el ingreso.");
+      swal("Error al cargar el ingreso.");
     },
     success: function(response)
     {
@@ -391,17 +390,17 @@ function saveSalesCashIncome()
     data: {sales_cash_id: sales_cash_id, amount: amount, date: date, notes: notes, sales_cash_income_id: sales_cash_income_id},
     dataType: 'json',
     error: function(response){
-      alert('Ocurrió un error al guardar el ingreso.');
+      swal('Ocurrió un error al guardar el ingreso.');
       $('#salesCashIncomeModal').modal('hide');
     },
     success: function(response){
       if(response[0] == "ok")
       {
-        alert('Transacción guardada correctamente.');
+        swal('Transacción guardada correctamente.');
       }
       else
       {
-        alert('Ocurrió un error al guardar el ingreso.');
+        swal('Ocurrió un error al guardar el ingreso.');
       }
       $('#salesCashIncomeModal').modal('hide');
       loadPayments();
@@ -419,17 +418,17 @@ function deleteSalesCashIncome(sales_cash_income_id)
       data: {sales_cash_income_id: sales_cash_income_id},
       dataType: 'json',
       error: function(response){
-        alert('Ocurrió un error al eliminar el ingreso.');
+        swal('Ocurrió un error al eliminar el ingreso.');
         loadPayments();
       },
       success: function(response){
         if(response[0] == "error")
         {
-          alert('Ocurrió un error al eliminar el ingreso.');
+          swal('Ocurrió un error al eliminar el ingreso.');
         }
         else
         {
-          alert('Ingreso eliminado correctamente.');
+          swal('Ingreso eliminado correctamente.');
         }
         loadPayments();
       }
@@ -451,16 +450,16 @@ function saveSalesCash()
     method: 'post',
     dataType: 'json',
     error: function(response){
-      alert("Ocurrió un error al guardar las opciones.");
+      swal("Ocurrió un error al guardar las opciones.");
     },
     success: function(response){
       if(response[0] == "error")
       {
-        alert("Ocurrió un error al guardar las opciones.");
+        swal("Ocurrió un error al guardar las opciones.");
       }
       else
       {
-        alert("Opciones guardadas correctamente.");
+        swal("Opciones guardadas correctamente.");
       }
       $('#salesCashModal').modal('hide');
       loadPayments();
@@ -484,18 +483,18 @@ function closeSalesCash()
     dataType: 'json',
     error: function(response)
     {
-      alert("Ocurrió un error al cerrar la caja.");
+      swal("Ocurrió un error al cerrar la caja.");
       $('#salesCashCloseModal').modal('hide');
     },
     success: function(response)
     {
       if(response[0] == "error")
       {
-        alert("Ocurrió un error al cerrar la caja.");
+        swal("Ocurrió un error al cerrar la caja.");
       }
       else
       {
-        alert("Caja cerrada exitosamente.");
+        swal("Caja cerrada exitosamente.");
       }
       $('#salesCashCloseModal').modal('hide');
       loadPayments();

@@ -167,18 +167,18 @@ $(document).ready(function(){
 			success: function(response){
 				if(response[0] == "ok")
 				{
-					alert("Comisiones guardadas exitosamente.");
+					swal("Comisiones guardadas exitosamente.");
 				}
 				else
 				{
-					alert("Ocurrió un error al editar las comisiones.");
+					swal("Ocurrió un error al editar las comisiones.");
 				}
 				$("#serviceCommissionsModalDiv").empty();
 				$("#serviceCommissionsModal").modal('hide');
 			},
 			error: function(){
 
-				alert("Ocurrió un error al editar las comisiones.");
+				swal("Ocurrió un error al editar las comisiones.");
 				$("#serviceCommissionsModalDiv").empty();
 				$("#serviceCommissionsModal").modal('hide');
 
@@ -211,11 +211,11 @@ $(document).ready(function(){
 					{
 						$('.service_comission_value[service_id="' + response[1].id + '"]').text("$ " + comission_value);
 					}
-					alert("Comisiones actualizadas correctamente.");
+					swal("Comisiones actualizadas correctamente.");
 				}
 				else
 				{
-					alert("Ocurrió un error al actualizar las comisiones.");
+					swal("Ocurrió un error al actualizar las comisiones.");
 				}
 				$("#defaultCommissionServiceId").val("");
 				$("#defaultComissionValue").val("");
@@ -224,7 +224,7 @@ $(document).ready(function(){
 
 			},
 			error: function(response){
-				alert("Ocurrió un error al actualizar las comisiones.");
+				swal("Ocurrió un error al actualizar las comisiones.");
 				$("#defaultCommissionServiceId").val("");
 				$("#defaultComissionValue").val("");
 				$("#defaultComissionOption").val("");
@@ -249,11 +249,11 @@ $(document).ready(function(){
 
 				if(response[0] == "ok")
 				{
-					alert("Comisiones actualizadas correctamente.");
+					swal("Comisiones actualizadas correctamente.");
 				}
 				else
 				{
-					alert("Ocurrió un error al actualizar las comisiones.");
+					swal("Ocurrió un error al actualizar las comisiones.");
 				}
 				$("#defaultCommissionProviderId").val("");
 				$("#providerDefaultAmount").val("");
@@ -262,7 +262,7 @@ $(document).ready(function(){
 
 			},
 			error: function(response){
-				alert("Ocurrió un error al actualizar las comisiones.");
+				swal("Ocurrió un error al actualizar las comisiones.");
 				$("#defaultCommissionProviderId").val("");
 				$("#providerDefaultAmount").val("");
 				$("#providerDefaultIsPercent").val("");

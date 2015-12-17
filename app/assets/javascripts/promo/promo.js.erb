@@ -1,17 +1,17 @@
-  
-    Date.isLeapYear = function (year) { 
-        return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+
+    Date.isLeapYear = function (year) {
+        return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
     };
 
     Date.getDaysInMonth = function (year, month) {
         return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
     };
 
-    Date.prototype.isLeapYear = function () { 
-        return Date.isLeapYear(this.getFullYear()); 
+    Date.prototype.isLeapYear = function () {
+        return Date.isLeapYear(this.getFullYear());
     };
 
-    Date.prototype.getDaysInMonth = function () { 
+    Date.prototype.getDaysInMonth = function () {
         return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
     };
 
@@ -27,8 +27,6 @@
 
     var currMarker;
     var reload_times = 0;
-    
-    myAlert = new Alert();
 
     var book_limit_date = $("#book_limit_date").val().split(" ")[0].split("-");
     var limit_date = new Date(parseInt(book_limit_date[0]), parseInt(book_limit_date[1])-1, book_limit_date[2], 0, 0, 0, 0);
@@ -64,7 +62,7 @@
       });
     });
 
-    
+
     //====== Google Map ======//
     function initializeMap(lat, lng, mapDiv) {
         var properties = {
@@ -127,7 +125,7 @@
     $(document).ready(function(){
       var map;
       initializeMap(-33.413084, -70.592161, 'time-promo-map');
-      
+
       if ($("#locationId").val() != "") {
         var localId = $("#locationId").val();
 
@@ -205,10 +203,11 @@
     function addNewSession() {
 
         if(!selected) {
-          myAlert.showAlert(
-            '<h3>Selecciona un Horario</h3>' +
-            '<p>Debes elegir un horario antes de agregar otra sesión.</p>'
-          );
+          swal({
+            title: "Selecciona un Horario",
+            text: "Debes elegir un horario antes de agregar otra sesión.",
+            type: "error"
+          });
         }
         else {
 
@@ -251,13 +250,13 @@
           {
             $(".btn-add-session").attr("disabled", false);
           }
-          
+
           loadSessionsSummary();
 
         }
 
         selected = false;
-      
+
     }
 
 
@@ -311,7 +310,7 @@
         }
       }
       sessions_buffer = sessions_aux;
-      
+
       var date = removed_session.start.split(' ')[0];
       var start_time = removed_session.start.split(" ")[1];
       var start_str = start_time.split(":")[0] + ":" + start_time.split(":")[1];
@@ -361,7 +360,7 @@
     function loadCalendar() {
 
       var localId = $("#locationId").val();
-      
+
       var start_date = $("#optimizerDateSelector").val();
 
       $("#optimizerFirst").hide();
@@ -400,7 +399,7 @@
       }
 
       $(document).on('hourClick', function (e) {
-        
+
         bookSummary = bookSummaries[e.index];
         selected = true;
 
@@ -417,7 +416,7 @@
 
           bookDetailsDiscountPrice = Math.round(bookDetails.price);
 
-          
+
           if(bookDetails.has_discount && bookDetails.has_time_discount)
           {
             if(bookDetails.discount > bookDetails.time_discount)
@@ -486,7 +485,7 @@
         $("#openPayFormBtn").attr("disabled", false);
 
       });
-  
+
       $("#selectProviderModal .modal-dialog").addClass("calendar-modal");
 
       $("#openPayFormBtn").show();
@@ -514,9 +513,9 @@
       }
       var hourBlocks = $('.columna-dia').children('.bloque-hora');
       $.each(hourBlocks, function (key, hourBlock) {
-        
+
         var index = $(hourBlock).data('index');
-        
+
         bookSummary = bookSummaries[index].bookings[0];
 
         bookDiscount = bookSummary.discount;
@@ -653,7 +652,7 @@
 
           var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
           var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
-          
+
           //Check for no overlap and negate it.
           if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
           {
@@ -663,7 +662,7 @@
             $(hourBlock).addClass('hora-ocupada');
           }
 
-        });    
+        });
       }
 
     }
@@ -727,7 +726,7 @@
 
             var times_str = "";
             var price = actual_booking.price;
-            var min_discount = actual_booking.discount; 
+            var min_discount = actual_booking.discount;
 
             for(i = 0; i < sessions_buffer.length; i++)
             {
@@ -775,7 +774,7 @@
             );
 
             $('#summary').append(
-              '<tr>' + 
+              '<tr>' +
                 '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
               '</tr>' +
               '<tr>' +
@@ -784,7 +783,7 @@
               '<tr>' +
                 '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
               '</tr>'
-            );  
+            );
           }
           else
           {
@@ -815,7 +814,7 @@
             );
 
             $('#summary').append(
-              '<tr>' + 
+              '<tr>' +
                 '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(actual_booking.price) + '</td>' +
               '</tr>' +
               '<tr>' +
@@ -841,7 +840,7 @@
 
           var times_str = "";
           var price = actual_booking.price;
-          var min_discount = actual_booking.discount; 
+          var min_discount = actual_booking.discount;
 
           for(i = 0; i < sessions_buffer.length; i++)
           {
@@ -888,7 +887,7 @@
           );
 
           $('#summary').append(
-            '<tr>' + 
+            '<tr>' +
               '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
             '</tr>' +
             '<tr>' +
@@ -897,7 +896,7 @@
             '<tr>' +
               '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
             '</tr>'
-          );  
+          );
 
 
       }
@@ -931,7 +930,7 @@
 
 
       $("#bookingForm").submit();
-      
+
     });
 
     $("#backBtn1").click(function(){
@@ -945,7 +944,7 @@
     $('[name="changeProvider"]').on('change', function(event){
 
       var localId = $("#locationId").val();
-      
+
       var start_date = $("#optimizerDateSelector").val();
 
 
@@ -1004,7 +1003,7 @@
         onSelect: function(newDate){
 
             var localId = $("#locationId").val();
-      
+
             var start_date = $("#optimizerDateSelector").val();
 
             $("#loader-div").show();
@@ -1019,7 +1018,7 @@
             var data;
 
             data = {local: localId, serviceStaff: JSON.stringify(selects), date: newDate, mandatory_discount: true}
-            
+
 
             if (promoCalendar) {
               promoCalendar.rebuild('/promotion_hours', data);
@@ -1046,7 +1045,7 @@
         if (e.date < limit_date && e.date < after_date)
         {
 
-          
+
 
           if($(".bloque-hora").size() == 0)
           {
@@ -1064,14 +1063,14 @@
               window.setTimeout(function(){ $("#past_date_alert").hide(); }, 3000);
             }
           }
-          
+
 
         }
         else
         {
 
           var localId = $("#locationId").val();
-      
+
           var start_date = limit_date;
           if (after_date < limit_date)
           {
@@ -1092,7 +1091,7 @@
           day_str = start_date.getFullYear() + "-" + (parseInt(start_date.getMonth())+1) + "-" + start_date.getDate();
 
           data = {local: localId, serviceStaff: JSON.stringify(selects), date: day_str, mandatory_discount: true}
-          
+
 
           if (promoCalendar) {
             promoCalendar.rebuild('/promotion_hours', data);
@@ -1115,7 +1114,7 @@
             '<p>Lo sentimos, no hay más horarios disponibles después del ' + start_date.toLocaleDateString() + '.</p>'
           );*/
         }
-  
+
     });
 
     function resetModal()
@@ -1191,11 +1190,11 @@
       $("#sessions-summary-tr").empty();
       $("#sessions-left").html($("#sessions_amount").val());
       $("#selected-hour-body").empty();
-      
+
       loadCalendar();
       blockBookingBufferHour();
       blockDiscounts();
-      
+
     }
 
     $("#staffCollapse").on("shown.bs.collapse", function(){

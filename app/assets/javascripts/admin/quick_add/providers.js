@@ -37,12 +37,12 @@ function saveServiceProvider () {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+      swal({
+        title: "Error",
+        text: "Se producieron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        type: "error",
+        html: true
+      });
 			$('#update_service_provider_button').attr('disabled', false);
 			$('#update_service_provider_spinner').hide();
 		}
@@ -68,12 +68,12 @@ function deleteServiceProvider (id) {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+      swal({
+        title: "Error",
+        text: "Se producieron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        type: "error",
+        html: true
+      });
 			$('#update_service_provider_spinner').hide();
 		}
 	});

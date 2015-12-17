@@ -45,11 +45,15 @@ function saveCategory (typeURL, extraURL) {
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = 'Error\n';
+			var errores = '';
 			for (i in errors) {
 				errores += '*' + errors[i] + '\n';
 			}
-			alert(errores);
+			swal({
+				title: "Error",
+				text: "Se producieron los siguientes errores:\n" + errores,
+				type: "error"
+			});
 			$('#saveResourceCategryButton').attr('disabled', false);
 		}
 	});
@@ -94,12 +98,12 @@ function saveResource (typeURL, extraURL) {
 			for (i in errores) {
 				errorList += '<li>' + errores[i] + '</li>'
 			}
-			alertId.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+				title: "Error",
+				text: "Se producieron los siguientes errores:\n<ul>" + errorList + "</ul>",
+				type: "error",
+				html: true
+			});
 		}
 	});
 }
@@ -134,7 +138,6 @@ function initialize() {
 	}
 }
 
-var alertId;
 $(function() {
 
 	$('form input, form select').bind('keypress keydown keyup', function(e){
@@ -143,7 +146,6 @@ $(function() {
        	}
     });
 
-	alertId = new Alert();
 	$('#newResourceCategoryButton').click(function() {
 		getResourceCategories();
 	});

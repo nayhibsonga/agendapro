@@ -91,11 +91,15 @@ $(function () {
         $('#client_can_book'+event.target.value).prop('checked', !$('#client_can_book'+event.target.value).prop('checked'));
         $(event.target.id).show();
         var errors = $.parseJSON(xhr.responseText).errors;
-        var errores = 'Error\n';
+        var errores = '';
         for (i in errors) {
           errores += '*' + errors[i] + '\n';
         }
-        alert(errores);
+        swal({
+          title: "Error",
+          text: "Se producieron los siguientes errores:\n" + errores,
+          type: "error"
+        });
       }
     });
   });
@@ -109,7 +113,11 @@ function checkFile()
     var extension = file_array[file_array.length - 1];
     if (extension != "csv" && extension != "xls")
     {
-      alert("El archivo no tiene la extensión correcta. Por favor importa sólo archivos de tipo csv o xls.");
+      swal({
+        title: "El archivo no tiene la extensión correcta",
+        text: "Por favor importa sólo archivos de tipo csv o xls.",
+        type: "error"
+      });
       return false;
     }
     else
@@ -119,7 +127,7 @@ function checkFile()
   }
   else
   {
-    alert("No hay archivo seleccionado.");
+    swal("No hay archivo seleccionado.");
     return false;
   }
 }

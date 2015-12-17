@@ -135,7 +135,7 @@ function loadHourModal () {
     if ($('input[name="hoursRadio"]:checked').val()) {
       loadUserModal();
     } else {
-      alert('Debe seleccionar una hora');
+      swal('Debe seleccionar una hora');
     };
   }); // Bind click event
 }

@@ -29,12 +29,12 @@ function updateCompany () {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+        title: "Error",
+        text: "Se producieron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        type: "error",
+        html: true
+      });
 			$('#fieldset_step1').removeAttr('disabled');
 			$('#update_company_button').button('reset');
 		},

@@ -73,11 +73,15 @@ function saveComment(typeURL, clientId, json) {
     },
     error: function(xhr){
       var errors = $.parseJSON(xhr.responseText).errors;
-      var errores = 'Error\n';
+      var errores = '';
       for (i in errors) {
         errores += '*' + errors[i];
       }
-      alert(errores);
+      swal({
+        title: "Error",
+        text: "Se producieron los siguientes errores:\n" + errores,
+        type: "error"
+      });
     }
   });
 }

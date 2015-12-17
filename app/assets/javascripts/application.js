@@ -1,6 +1,7 @@
 //= require bootstrap
 //= require Alert
 //= require ga
+//= require sweetalert.min
 
 //por defecto:
 //= require jquery_ujs

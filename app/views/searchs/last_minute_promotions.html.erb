@@ -163,8 +163,6 @@
 			$("#last-minute-promotions-form").submit();
 		});
 
-		myAlert = new Alert();
-
 	    var input2 = document.getElementById('inputLocalization2');
 	    var options = {
 	      types: ['geocode']
@@ -259,28 +257,32 @@
 	                function (error) {
 	                    positioned = true;
 	                    if (error.code == 1) {
-	                        myAlert.showAlert(
-	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
-	                            '<p>No hay permiso, por favor asegúrate permitir la geolicalización automática en tu explorador.</p>'
-	                        );
+	                    	swal({
+	                    		title: "Hubo un error en el proceso de localización",
+	                    		text: "No hay permiso, por favor asegúrate permitir la geolicalización automática en tu explorador.",
+	                    		type: "error"
+	                    	});
 	                    }
 	                    else if (error.code == 2) {
-	                        myAlert.showAlert(
-	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
-	                            '<p>Posición no disponible, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-	                        );
+	                    	swal({
+	                    		title: "Hubo un error en el proceso de localización",
+	                    		text: "Posición no disponible, por favor inténtalo nuevamente o escribe tu ubicación.",
+	                    		type: "error"
+	                    	});
 	                    }
 	                    else if (error.code == 3) {
-	                        myAlert.showAlert(
-	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
-	                            '<p>La consulta tardó mucho, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-	                        );
+	                    	swal({
+	                    		title: "Hubo un error en el proceso de localización",
+	                    		text: "La consulta tardó mucho, por favor inténtalo nuevamente o escribe tu ubicación.",
+	                    		type: "error"
+	                    	});
 	                    }
 	                    else {
-	                        myAlert.showAlert(
-	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
-	                            '<p>Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-	                        );
+	                    	swal({
+	                    		title: "Hubo un error en el proceso de localización",
+	                    		text: "Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación.",
+	                    		type: "error"
+	                    	});
 	                    }
 	                    $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
 	                },
@@ -288,19 +290,21 @@
 	            );
 	            setTimeout(function () {
 	                if (!positioned) {
-	                    myAlert.showAlert(
-	                      '<h3>Hubo un error en el proceso de localización.</h3>' +
-	                      '<p>No hubo respuesta, por favor asegúrate permitir la geolicalización automática en tu explorador.</p>'
-	                    );
+	                	swal({
+	                		title: "Hubo un error en el proceso de localización",
+	                		text: "No hubo respuesta, por favor asegúrate permitir la geolicalización automática en tu explorador.",
+	                		type: "error"
+	                	});
 	                    $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
 	                }
 	            }, 15000);
 	        }
 	        else {
-	            myAlert.showAlert(
-	              '<h3>Hubo un error en el proceso de localización.</h3>' +
-	              '<p>Este explorador no permite geolocalización automática, por favor escribe tu ubicación.</p>'
-	            );
+	        	swal({
+	        		title: "Hubo un error en el proceso de localización",
+	        		text: "Este explorador no permite geolocalización automática, por favor escribe tu ubicación.",
+	        		type: "error"
+	        	});
 	        }
 	        return;
 	    }

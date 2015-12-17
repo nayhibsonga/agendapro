@@ -1,16 +1,16 @@
-Date.isLeapYear = function (year) { 
-    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+Date.isLeapYear = function (year) {
+    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
 };
 
 Date.getDaysInMonth = function (year, month) {
     return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
 };
 
-Date.prototype.isLeapYear = function () { 
-    return Date.isLeapYear(this.getFullYear()); 
+Date.prototype.isLeapYear = function () {
+    return Date.isLeapYear(this.getFullYear());
 };
 
-Date.prototype.getDaysInMonth = function () { 
+Date.prototype.getDaysInMonth = function () {
     return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
 };
 
@@ -21,9 +21,6 @@ Date.prototype.addMonths = function (value) {
     this.setDate(Math.min(n, this.getDaysInMonth()));
     return this;
 };
-
-
-myAlert = new Alert();
 
 $(document).ready(function() {
   if($("#session-booking-select").length > 0) {
@@ -121,10 +118,11 @@ $(".session-btn-delete").click(function(){
     },
     error: function(response)
     {
-      myAlert.showAlert(
-        '<h3>Hubo un error.</h3>' +
-        '<p>Ocurrió un error al eliminar la sesión.</p>'
-      );
+      swal({
+        title: "Hubo un error",
+        text: "Ocurrió un error al eliminar la sesión.",
+        type: "error"
+      });
     }
   })
 });
@@ -161,10 +159,11 @@ $(".session-btn-validate").click(function(){
     },
     error: function(response)
     {
-      myAlert.showAlert(
-        '<h3>Hubo un error.</h3>' +
-        '<p>Ocurrió un error al eliminar la sesión.</p>'
-      );
+      swal({
+        title: "Hubo un error",
+        text: "Ocurrió un error ak eliminar la sesión.",
+        type: "error"
+      });
     }
   })
 });
@@ -296,7 +295,7 @@ function loadServiceStaff (service_id, location_id, provider_preference, service
                 provider.public_name +
                 '</p>' +
               '</label>' +
-            '</div>' 
+            '</div>'
           );
         });
       }
@@ -317,7 +316,7 @@ function loadServiceStaff (service_id, location_id, provider_preference, service
 function loadCalendar()
 {
     selected = false;
-    var localId = $("#selectedLocal").val();     
+    var localId = $("#selectedLocal").val();
     var start_date = $("#optimizerDateSelector").val();
     $("#optimizerFirst").hide();
     $("#loader-div").show();
@@ -352,7 +351,7 @@ function loadCalendar()
     $(document).on('hourClick', function (e) {
 
         $("#selected-hour-body").empty();
-        
+
         bookSummary = bookSummaries[e.index];
         bookDetails = bookSummary.bookings[0];
 
@@ -390,7 +389,7 @@ function loadCalendar()
 
 $('body').on('click', '[name="changeProvider"]', function(event){
 
-  var localId = $("#selectedLocal").val();     
+  var localId = $("#selectedLocal").val();
   var start_date = $("#optimizerDateSelector").val();
 
 
@@ -428,7 +427,7 @@ $('body').on('click', '[name="changeProvider"]', function(event){
   $(document).on('hourClick', function (e) {
 
       $("#selected-hour-body").empty();
-      
+
       bookSummary = bookSummaries[e.index];
       bookDetails = bookSummary.bookings[0];
 
@@ -476,7 +475,7 @@ $('body').on('click', '[name="changeProvider"]', function(event){
     onSelect: function(newDate){
 
         selected = false;
-        var localId = $("#selectedLocal").val();     
+        var localId = $("#selectedLocal").val();
         var start_date = $("#optimizerDateSelector").val();
 
         $("#loader-div").show();
@@ -503,7 +502,7 @@ $('body').on('click', '[name="changeProvider"]', function(event){
         $(document).on('hourClick', function (e) {
 
             $("#selected-hour-body").empty();
-            
+
             bookSummary = bookSummaries[e.index];
             bookDetails = bookSummary.bookings[0];
 
@@ -668,7 +667,7 @@ $("#nextButton").click(function(){
       });
   }
   else {
-      alert('Debes seleccionar una hora');
+      swal('Debes seleccionar una hora');
   }
 });
 
@@ -683,7 +682,7 @@ $(document).on('calendarBuilded', function (e) {
 
     var now_date = new Date();
     var after_date = now_date.addMonths(parseInt($("#after_booking").val()));
-    
+
     if (e.date < after_date)
     {
       if($(".bloque-hora").size() == 0)
@@ -696,7 +695,7 @@ $(document).on('calendarBuilded', function (e) {
     {
 
 
-      var localId = $("#selectedLocal").val();     
+      var localId = $("#selectedLocal").val();
       $("#optimizerFirst").hide();
       $("#loader-div").show();
       $("#openCalendarBtn").hide();
@@ -830,28 +829,32 @@ function geolocate() {
       function (error) {
         positioned = true;
         if (error.code == 1) {
-          myAlert.showAlert(
-            '<h3>Hubo un error en el proceso de localización.</h3>' +
-            '<p>No hay permiso, por favor asegúrate permitir la geolicalización automática en tu explorador.</p>'
-          );
+          swal({
+            title: "Hubo un error en el proceso de localización",
+            text: "No hay permiso, por favor asegúrate permitir la geolicalización automática en tu explorador.",
+            type: "error"
+          });
         }
         else if (error.code == 2) {
-          myAlert.showAlert(
-            '<h3>Hubo un error en el proceso de localización.</h3>' +
-            '<p>Posición no disponible, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-          );
+          swal({
+            title: "Hubo un error en el proceso de localización",
+            text: "Posición no disponible, por favor inténtalo nuevamente o escribe tu ubicación.",
+            type: "error"
+          });
         }
         else if (error.code == 3) {
-          myAlert.showAlert(
-            '<h3>Hubo un error en el proceso de localización.</h3>' +
-            '<p>La consulta tardó mucho, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-          );
+          swal({
+            title: "Hubo un error en el proceso de localización",
+            text: "la consulta tardó mucho, por favor inténtalo nuevamente o escribe tu ubicación.",
+            type: "error"
+          });
         }
         else {
-          myAlert.showAlert(
-            '<h3>Hubo un error en el proceso de localización.</h3>' +
-            '<p>Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-          );
+          swal({
+            title: "Hubo un error en el proceso de localización",
+            text: "Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación.",
+            type: "error"
+          });
         }
         $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
       },
@@ -859,19 +862,21 @@ function geolocate() {
     );
     setTimeout(function () {
       if (!positioned) {
-        myAlert.showAlert(
-          '<h3>Hubo un error en el proceso de localización.</h3>' +
-          '<p>No hubo respuesta, por favor asegúrate permitir la geolicalización automática en tu explorador.</p>'
-        );
+        swal({
+          title: "Hubo un error en el proceso de localización",
+          text: "No hubo respuesta, por favor asegúrate permitir la geolicalización automática en tu explorador",
+          type: "error"
+        });
         $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
       }
     }, 15000);
   }
   else {
-    myAlert.showAlert(
-      '<h3>Hubo un error en el proceso de localización.</h3>' +
-      '<p>Este explorador no permite geolocalización automática, por favor escribe tu ubicación.</p>'
-    );
+    swal({
+      title: "Hubo un error en el proceso de localización",
+      text: "Este explorador no permite geolocalización automática, por favor escribe tu ubicación",
+      type: "error"
+    });
   }
   return;
 }
@@ -899,7 +904,7 @@ $('#modal_search').click(function() {
   var sb_id = $("#session-booking-select").val();
   if(confirm("¿Estás seguro que deseas eliminar el tratamiento?"))
   {
-    
+
   }
 });*/
 

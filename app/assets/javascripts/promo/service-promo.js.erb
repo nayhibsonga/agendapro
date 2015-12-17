@@ -1,8 +1,4 @@
-var myAlert;
-
 $(document).ready(function(){
-
-  myAlert = new Alert('.main');
 
 	$("#finish_date").datepicker({
       autoSize: true,
@@ -20,7 +16,7 @@ $(document).ready(function(){
       clear: '',
       dateFormat: 'dd/mm/yy',
       onSelect: function(newDate){
-      	
+
       }
 	});
 
@@ -40,7 +36,7 @@ $(document).ready(function(){
       clear: '',
       dateFormat: 'dd/mm/yy',
       onSelect: function(newDate){
-      	
+
       }
 	});
 
@@ -60,7 +56,7 @@ $(document).ready(function(){
       clear: '',
       dateFormat: 'dd/mm/yy',
       onSelect: function(newDate){
-      	
+
       }
 	});
 
@@ -68,21 +64,21 @@ $(document).ready(function(){
   {
   	for(pi_index = 1; pi_index < 8; pi_index++)
   	{
-    	$('#morning-' + pi_index).editableSelect({ 
+    	$('#morning-' + pi_index).editableSelect({
     		effects: 'default',
     		onShow: function () {
   	        $(".es-list li").show();
   	    }
     	});
 
-    	$('#afternoon-' + pi_index).editableSelect({ 
+    	$('#afternoon-' + pi_index).editableSelect({
     		effects: 'default',
     		onShow: function () {
   	        $(".es-list li").show();
   	    }
     	});
 
-    	$('#night-' + pi_index).editableSelect({ 
+    	$('#night-' + pi_index).editableSelect({
     		effects: 'default',
     		onShow: function () {
   	        $(".es-list li").show();
@@ -171,7 +167,7 @@ function timeCheck(morningStart, morningEnd, afternoonStart, afternoonEnd, night
   	$("#afternoon-error").show();
   }
 
-  
+
 
   if (result3 && result4)
   {
@@ -255,10 +251,11 @@ function saveRegularPromotions()
 
       $("#morning-" + i).addClass("error");
 
-      myAlert.showAlert(
-    '<h3>Error de descuento</h3>' +
-      '<p>Si ingresas un descuento personalizado, asegúrate que sea de la forma "XX %".</p>'
-    );
+      swal({
+        title: "Error de descuento",
+        text: 'Si ingresas un descuento personalizado, asegúrate que sea de la forma "XX %"',
+        type: "error"
+      });
     return false;
     }
     else
@@ -273,10 +270,11 @@ function saveRegularPromotions()
 
       $("#afternoon-" + i).addClass("error");
 
-      myAlert.showAlert(
-    '<h3>Error de descuento</h3>' +
-      '<p>Si ingresas un descuento personalizado, asegúrate que sea de la forma "XX %".</p>'
-    );
+      swal({
+        title: "Error de descuento",
+        text: 'Si ingresas un descuento personalizado, asegúrate que sea de la forma "XX %"',
+        type: "error"
+      });
     return false;
     }
     else
@@ -290,10 +288,11 @@ function saveRegularPromotions()
     {
       $("#night-" + i).addClass("error");
 
-      myAlert.showAlert(
-    '<h3>Error de descuento</h3>' +
-      '<p>Si ingresas un descuento personalizado, asegúrate que sea de la forma "XX %".</p>'
-    );
+      swal({
+        title: "Error de descuento",
+        text: 'Si ingresas un descuento personalizado, asegúrate que sea de la forma "XX %"',
+        type: "error"
+      });
     return false;
     }
     else
@@ -312,10 +311,11 @@ function saveRegularPromotions()
 
       $("#morning-" + i).addClass("error");
 
-      myAlert.showAlert(
-    '<h3>Error de descuento</h3>' +
-      '<p>El descuento no puede ser mayor que 99%.</p>'
-    );
+      swal({
+        title: "Error de descuento",
+        text: "El descuento no puede ser mayor que 99%",
+        type: "error"
+      });
     return false;
     }
     else
@@ -328,10 +328,11 @@ function saveRegularPromotions()
 
       $("#afternoon-" + i).addClass("error");
 
-      myAlert.showAlert(
-    '<h3>Error de descuento</h3>' +
-      '<p>El descuento no puede ser mayor que 99%.</p>'
-    );
+      swal({
+        title: "Error de descuento",
+        text: "El descuento no puede ser mayor que 99%",
+        type: "error"
+      });
     return false;
     }
     else
@@ -344,10 +345,11 @@ function saveRegularPromotions()
 
       $("#night-" + i).addClass("error");
 
-      myAlert.showAlert(
-    '<h3>Error de descuento</h3>' +
-      '<p>El descuento no puede ser mayor que 99%.</p>'
-    );
+      swal({
+        title: "Error de descuento",
+        text: "El descuento no puede ser mayor que 99%",
+        type: "error"
+      });
     return false;
     }
     else
@@ -373,36 +375,42 @@ function saveRegularPromotions()
 
   if (locations.length < 1 && has_time_discount)
   {
-    myAlert.showAlert(
-      '<h3>Selecciona locales</h3>' +
-        '<p>Debes seleccionar al menos un local para las promociones por horario.</p>'
-    );
+    swal({
+      title: "Selecciona locales",
+      text: "Debes seleccionar al menos un local para las promociones por horario.",
+      type: "error"
+    });
     return false;
   }
 
   if (last_minute_locations.length < 1 && has_last_minute_discount)
   {
-    myAlert.showAlert(
-      '<h3>Selecciona locales</h3>' +
-        '<p>Debes seleccionar al menos un local para las promociones de último minuto.</p>'
-    );
+    swal({
+      title: "Selecciona locales",
+      text: "Debes seleccionar al menos un local para las promociones de último minuto.",
+      type: "error"
+    });
     return false;
   }
 
   if(has_time_discount && (max_bookings == "" || parseInt(max_bookings) < 0) && $("#limit_booking").prop('checked'))
   {
-    myAlert.showAlert(
-      '<h3>Ingresa el stock</h3>' +
-        '<p>Debes ingresar el stock de reservas disponibles para la promoción.</p>'
-    );
+    swal({
+      title: "Ingresa el stock",
+      text: "Debes ingresar el stock de reservas disponibles para la promoción.",
+      type: "error"
+    });
     return false;
   }
 
   if(timeCheck(morning_start, morning_end, afternoon_start, afternoon_end, night_start, night_end))
   {
-    myAlert.showAlert(
-      '<p class="text-center">Guardando las promociones...<br /><i class="fa fa-spinner fa-spin fa-2x"></i></p>'
-    );
+    swal({
+      title: "Guardando las promociones",
+      text: '<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>',
+      type: "info",
+      html: true
+    });
     $.ajax({
       url: "/set_service_promotions",
       type: "post",
@@ -426,7 +434,7 @@ function saveRegularPromotions()
           , function(){
           location.reload();
         });
-          
+
         }
         else
         {
@@ -474,16 +482,19 @@ function saveTreatmentPromotions()
   if (treatment_locations.length < 1)
   {
     console.log("Reaches 4");
-    myAlert.showAlert(
-      '<h3>Selecciona locales</h3>' +
-        '<p>Debes seleccionar al menos un local para las promociones de tratamientos.</p>'
-    );
+    swal({
+      title: "Selecciona locales",
+      text: "Debes seleccionar al menos un local para las promociones de tratamientos.",
+      type: "error"
+    });
     return false;
   }
 
-  myAlert.showAlert(
-    '<p class="text-center">Guardando las promociones...<br /><i class="fa fa-spinner fa-spin fa-2x"></i></p>'
-  );
+  swal({
+    title: "Guardando las promociones",
+    text: '<p class="text-center"<i class="fa fa-spinner fa-spin fa-2x"></i></p>'
+    type: "info"
+  });
 
   $.ajax({
     url: "/set_service_promotions",
@@ -491,7 +502,7 @@ function saveTreatmentPromotions()
     data: {service_id: service_id, has_treatment_promo: has_treatment_promo, treatment_max_bookings: treatment_max_bookings, treatment_locations: treatment_locations, treatment_finish_date: treatment_finish_date, treatment_limit_booking: treatment_limit_booking, treatment_discount: treatment_discount},
     dataType: 'json',
     error: function(response){
-      alert("Ocurrió un error.");
+      swal("Ocurrió un error.");
     },
     success: function(response){
       if(response[0] == "ok")
@@ -502,7 +513,7 @@ function saveTreatmentPromotions()
       , function(){
         location.reload();
       });
-        
+
       }
       else
       {
@@ -537,5 +548,5 @@ $(".promotions-submit").click(function(e){
   {
     saveTreatmentPromotions();
   }
-  
+
 });

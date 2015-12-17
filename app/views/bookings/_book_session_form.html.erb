@@ -73,9 +73,7 @@
 
 <script type="text/javascript">
 
-    var myAlert;
     $(document).ready(function(){
-        myAlert = new Alert();
         $(".session-btn").attr("disabled", false);
     });
 
@@ -318,10 +316,11 @@
                         $("#bookModal").modal('hide');
                         //$('#bookModal').remove();
                         //$("#session-booking-select").trigger("change");
-                        myAlert.showAlert(
-                          '<h3>Error al reservar</h3>' +
-                          '<p>' + response[0][0] + '</p>'
-                        );
+                        swal({
+                            title: "Error al Reservar",
+                            text: response[0][0],
+                            type: "error"
+                        });
                         loadSessions();
                     }
                 },
@@ -334,7 +333,7 @@
             });
         }
         else {
-            alert('Debe seleccionar una hora');
+            swal('Debe seleccionar una hora');
         };
     });
 
