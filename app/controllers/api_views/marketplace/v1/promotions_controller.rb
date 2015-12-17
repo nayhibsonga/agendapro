@@ -31,16 +31,54 @@ module ApiViews::Marketplace
           arr.each do |s|
 
             time_promo_services = []
+            last_minute_services = []
+            treatment_promo_services = []
 
             ServiceProvider.where(active: true, location_id: s[0]).each do |service_provider|
               time_promo_services = service_provider.services.with_time_promotions
 
+              # time promos
               time_promo_services.each do |service|
                 #Check it has stock
                 if service.active_service_promo.max_bookings > 0 || !service.active_service_promo.limit_booking
                   if DateTime.now < service.active_service_promo.finish_date && DateTime.now < service.active_service_promo.book_limit_date
                     promo_detail = [service, s[0]]
                     if @results.exclude?(promo_detail)
+                      @results << promo_detail
+                      #if !@locations.include?(s[0])
+                      @locations << s[0]
+                    end
+                  end
+                end
+              end
+
+
+              # last minute promos
+              last_minute_services = service_provider.services.with_last_minute_promotions
+
+              last_minute_services.each do |service|
+                #Check it has stock
+                if service.active_service_promo.max_bookings > 0 || !service.active_service_promo.limit_booking
+                  if DateTime.now < service.active_service_promo.finish_date && DateTime.now < service.active_service_promo.book_limit_date
+                    promo_detail = [service, s[0]]
+                    if @results.exclude?(promo_detail)
+                      @results << promo_detail
+                      #if !@locations.include?(s[0])
+                      @locations << s[0]
+                    end
+                  end
+                end
+              end
+
+              # treatment promos
+              treatment_promo_services = service_provider.services.with_treatment_promotions
+
+              treatment_promo_services.each do |service|
+                #Check it has stock
+                if service.active_treatment_promo.max_bookings > 0 || !service.active_treatment_promo.limit_booking
+                  if DateTime.now < service.active_treatment_promo.finish_date
+                    promo_detail = [service, s[0]]
+                    if !@results.include?(promo_detail)
                       @results << promo_detail
                       #if !@locations.include?(s[0])
                       @locations << s[0]
@@ -101,14 +139,52 @@ module ApiViews::Marketplace
           arr.each do |s|
 
             time_promo_services = []
+            last_minute_services = []
+            treatment_promo_services = []
 
-            ServiceProvider.where(:active => true, :location_id => s[0]).each do |service_provider|
+            ServiceProvider.where(active: true, location_id: s[0]).each do |service_provider|
               time_promo_services = service_provider.services.with_time_promotions
 
+              # time promos
               time_promo_services.each do |service|
                 #Check it has stock
                 if service.active_service_promo.max_bookings > 0 || !service.active_service_promo.limit_booking
                   if DateTime.now < service.active_service_promo.finish_date && DateTime.now < service.active_service_promo.book_limit_date
+                    promo_detail = [service, s[0]]
+                    if @results.exclude?(promo_detail)
+                      @results << promo_detail
+                      #if !@locations.include?(s[0])
+                      @locations << s[0]
+                    end
+                  end
+                end
+              end
+
+
+              # last minute promos
+              last_minute_services = service_provider.services.with_last_minute_promotions
+
+              last_minute_services.each do |service|
+                #Check it has stock
+                if service.active_service_promo.max_bookings > 0 || !service.active_service_promo.limit_booking
+                  if DateTime.now < service.active_service_promo.finish_date && DateTime.now < service.active_service_promo.book_limit_date
+                    promo_detail = [service, s[0]]
+                    if @results.exclude?(promo_detail)
+                      @results << promo_detail
+                      #if !@locations.include?(s[0])
+                      @locations << s[0]
+                    end
+                  end
+                end
+              end
+
+              # treatment promos
+              treatment_promo_services = service_provider.services.with_treatment_promotions
+
+              treatment_promo_services.each do |service|
+                #Check it has stock
+                if service.active_treatment_promo.max_bookings > 0 || !service.active_treatment_promo.limit_booking
+                  if DateTime.now < service.active_treatment_promo.finish_date
                     promo_detail = [service, s[0]]
                     if !@results.include?(promo_detail)
                       @results << promo_detail
@@ -118,9 +194,12 @@ module ApiViews::Marketplace
                   end
                 end
               end
+
             end
           end
         end
+
+        @results.sort_by{|e| -(Math.sqrt((e[1][:latitude] - lat.to_f)**2 + (e[1][:longitude] - long.to_f)**2))}
 
         @results = @results.first(3)
       end
@@ -130,38 +209,72 @@ module ApiViews::Marketplace
         @location = Location.find(params[:location_id])
         @company = @location.company
         @booking_conditions = ''
-        if @service.active_service_promo.limit_booking
-          @booking_conditions += 'Quedan ' + @service.active_promo_left_bookings.to_s + ' reservas disponibles para esta promoción.'
-          if @service.active_promo_left_bookings <= 20
-            @booking_conditions += '¡Apúrate y reserva antes que se acaben!'
+        if @service.has_sessions
+          if @service.active_treatment_promo.limit_booking
+            @booking_conditions += 'Quedan ' + @service.active_treatment_promo_left_bookings.to_s + ' reservas disponibles para esta promoción.'
+            if @service.active_treatment_promo_left_bookings <= 20
+              @booking_conditions += '¡Apúrate y reserva antes que se acaben!'
+            end
+          else
+            @booking_conditions += 'Esta promoción no tiene límite de stock.'
           end
-        else
-          @booking_conditions += 'Esta promoción no tiene límite de stock.'
+          @booking_dates = 'Esta promoción acaba el ' + I18n.l(@service.active_treatment_promo.finish_date.to_date) + '.'
+          @discount = @service.active_treatment_promo.discount.to_s + '%'
+          @discounts = ''
+          @promo_type = 'treatment_promo'
+          #Check existance of promo
+          if !@service.has_treatment_promo || @service.treatment_promos.nil? || @service.active_treatment_promo_id.nil?
+            render json: { errors: "No existen promociones para el servicio buscado." }, status: 422
+            return
+          end
+
+          #Check promo has stock
+          if @service.active_treatment_promo.max_bookings < 1 && @service.active_treatment_promo.limit_booking
+            render json: { errors: "No queda stock para la promoción buscada." }, status: 422
+            return
+          end
+
+          #Check promo hasn't expired
+          if DateTime.now > @service.active_treatment_promo.finish_date
+            render json: { errors: "La promoción buscada ya expiró." }, status: 422
+            return
+          end
+        else  
+          if @service.active_service_promo.limit_booking
+            @booking_conditions += 'Quedan ' + @service.active_promo_left_bookings.to_s + ' reservas disponibles para esta promoción.'
+            if @service.active_promo_left_bookings <= 20
+              @booking_conditions += '¡Apúrate y reserva antes que se acaben!'
+            end
+          else
+            @booking_conditions += 'Esta promoción no tiene límite de stock.'
+          end
+          @booking_dates = 'Esta promoción acaba el ' + I18n.l(@service.active_service_promo.finish_date.to_date) + ', y permite reservar horas hasta el ' + I18n.l(@service.active_service_promo.book_limit_date.to_date)
+          @discounts = @service.get_time_promos(@location.id)
+          @discount = ''
+          @promo_type = 'service_promo'
+          #Check existance of promo
+          if !@service.has_time_discount || @service.service_promos.nil? || @service.active_service_promo_id.nil?
+            render json: { errors: "No existen promociones para el servicio buscado." }, status: 422
+            return
+          end
+
+          #Check promo has stock
+          if @service.active_service_promo.max_bookings < 1 && @service.active_service_promo.limit_booking
+            render json: { errors: "No queda stock para la promoción buscada." }, status: 422
+            return
+          end
+
+          #Check promo hasn't expired
+          if DateTime.now > @service.active_service_promo.finish_date || DateTime.now > @service.active_service_promo.book_limit_date
+            render json: { errors: "La promoción buscada ya expiró." }, status: 422
+            return
+          end
         end
-        @booking_dates = 'Esta promoción acaba el ' + I18n.l(@service.active_service_promo.finish_date.to_date) + ', y permite reservar horas hasta el ' + I18n.l(@service.active_service_promo.book_limit_date.to_date)
-        @discounts = @service.get_time_promos(@location.id)
         @service_providers_array = []
         @service.service_providers.where(active: true, online_booking: true, location_id: @location.id).each do |service_provider|
           @service_providers_array.push({id: service_provider.id, public_name: service_provider.public_name})
         end
 
-        #Check existance of promo
-        if !@service.has_time_discount || @service.service_promos.nil? || @service.active_service_promo_id.nil?
-          render json: { errors: "No existen promociones para el servicio buscado." }, status: 422
-          return
-        end
-
-        #Check promo has stock
-        if @service.active_service_promo.max_bookings < 1 && @service.active_service_promo.limit_booking
-          render json: { errors: "No queda stock para la promoción buscada." }, status: 422
-          return
-        end
-
-        #Check promo hasn't expired
-        if DateTime.now > @service.active_service_promo.finish_date || DateTime.now > @service.active_service_promo.book_limit_date
-          render json: { errors: "La promoción buscada ya expiró." }, status: 422
-          return
-        end
       end
     end
   end

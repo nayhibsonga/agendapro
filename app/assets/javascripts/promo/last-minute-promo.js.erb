@@ -1,3 +1,27 @@
+Date.isLeapYear = function (year) { 
+    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+};
+
+Date.getDaysInMonth = function (year, month) {
+    return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+};
+
+Date.prototype.isLeapYear = function () { 
+    return Date.isLeapYear(this.getFullYear()); 
+};
+
+Date.prototype.getDaysInMonth = function () { 
+    return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
+};
+
+Date.prototype.addMonths = function (value) {
+    var n = this.getDate();
+    this.setDate(1);
+    this.setMonth(this.getMonth() + value);
+    this.setDate(Math.min(n, this.getDaysInMonth()));
+    return this;
+};
+
 var currMarker;
 
 var bookings = [];
@@ -63,8 +87,9 @@ function localMap(id) {
 
 
 $(document).ready(function(){
+
   var map;
-  initializeMap(-33.413084, -70.592161, 'map');
+  initializeMap(-33.413084, -70.592161, 'time-promo-map');
 
   if ($("#locationId").val() != "") {
     var localId = $("#locationId").val();
@@ -90,6 +115,7 @@ $(document).ready(function(){
 
   $('#backBtn').on('click', function(){
     var date = $('#available_dates_select').val();
+    $('input[name="mp"]:checked').attr("checked", false);
     loadAvailableHours(date);
   });
 
@@ -112,6 +138,13 @@ $(document).ready(function(){
 
     $("#bookingForm").submit();
     
+  });
+
+  $('input[name="mp"]').on('change', function(){
+    if($('input[name="mp"]:checked').length > 0)
+    {
+      $('#payBtn').attr("disabled", false);
+    }
   });
 
 });
@@ -241,6 +274,7 @@ function generateDate(time) {
 function loadPaymentForm()
 {
 
+  $('input[name="mp"]:checked').attr("checked", false);
   compose_name('#full_name', '#firstName', '#lastName');
   split_name('#full_name', '#firstName', '#lastName');
 
@@ -371,7 +405,7 @@ function loadPaymentForm()
   $("#backBtn").attr("disabled", false);
   $("#backBtn").show();
 
-  $("#payBtn").attr("disabled", false);
+  $("#payBtn").attr("disabled", true);
   $("#openPayFormBtn").attr("disabled", true);
 
 }

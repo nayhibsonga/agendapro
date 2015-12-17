@@ -1,41 +1,47 @@
 <%= stylesheet_link_tag "search/show-promo" %>
 
-<div class="overview-main">
+<input type="hidden" id="locationId" value="<%= @location.id %>" />
+<input type="hidden" id="serviceId" value="<%= @service.id %>" />
+<input type="hidden" id="serviceName" value="<%= @service.name %>" />
+<input type="hidden" id="servicePrice" value="<%= @service.price %>" />
+<input type="hidden" id="currentDate" value="<%= DateTime.now.strftime('%d/%m/%Y') %>" />
+<input type="hidden" id="last_minute_discount" value="<%= @last_minute_promo.discount %>" />
+<input type="hidden" id="locationAddress" value="<%= @location.address %>" />
+<input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
+
+<% if @service.has_sessions %>
+  <input type="hidden" id="hasSessions" value="1" />
+<% else %>
+  <input type="hidden" id="hasSessions" value="0" />
+<% end %>
+
+<% if user_signed_in? %>
+  <input type="hidden" id="user_id" value="<%= current_user.id %>" />
+<% end %>
+
+<div class="main below-navbar">
   <div class="container">
 
     <div class="row">
-      <div class="col-sm-12" style="text-align: center;">
-        <%= image_tag "promociones/header_image.png", :alt => "Header", :class => "img-responsive" %>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-12" style="text-align: right;">
-        <%= link_to "Volver a Promociones de último minuto", get_last_minute_promotions_path %>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xs-6 col-md-6">
+      <div class="col-sm-9">
         <div class="promo-title">
-          <%= @service.name %>
-        </div>
-        <div class="promo-description">
-          <%= @service.description %>
-        </div>
-        <div class="google-maps-empresa">
-          <h3><%= @service.company.name %></h3>
-          <div id="map"></div>
-          <div style="margin-top: 5px; margin-bottom: 5px;">
-            <%= image_tag "promociones/pin.png", :alt => "Dirección", :size => "18x26" %>
-            <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
-          </div>
-          <div>
-            <%= image_tag "promociones/phone.png", :alt => "Teléfono", :size => "18x18" %>
-            <%= @location.phone %>
-          </div>
+          <%= @service.name %> en <%= @location.name %> de <%= @location.company.name %>
         </div>
       </div>
+      <div class="col-sm-3" style="text-align: right;">
+        <div class="promotions-results-subtitle">
+          <%= form_tag({controller: "searchs", action: "last_minute_promotions"}, method: "GET", class: "navbar-form", id: "last-minute-promotions-side-form") do %>
+            <%= hidden_field_tag :latitude, params[:latitude] %>
+            <%= hidden_field_tag :longitude, params[:longitude] %>
+            <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+            <%= hidden_field_tag :inputSearch, params[:inputSearch] %>
+            <button class="promotions-search-btn btn btn-default" type="submit">Volver a promociones de último minuto&nbsp;<i class="fa fa-search"></i></button>
+        <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="col-xs-6 col-md-6">
         <div class="promo-price">
           <div class="col-sm-2">
@@ -43,16 +49,18 @@
           <div class="col-sm-8" style="text-align: right;">
             <table style="width: 100%;">
               <tr>
-                <td style="vertical-align: bottom; text-align: right; width: 20%;">
-                  <%= image_tag("promociones/flecha.png", :class => "flecha-icon", :size => "60x120") %>
+                <td style="vertical-align: bottom; text-align: right; width: 18%; padding-left: 10px;">
+                  <%= image_tag("promociones/flecha.png", :class => "flecha-icon", :size => "58x116") %>
                 </td>
-                <td style="text-align: right; width: 80%;">
-                  <span style="color: #b5b5b5; font-size: 40px;"><strike><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></strike></span><br />
-                  <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "46x60", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 65px;"><%= number_to_currency(@service.price*(100-@service.get_last_minute_discount(@location.id))/100, unit: "", delimiter: ".") %></span><br />
-                  <span style="color: #22c488; font-size: 22px;"><%= @service.get_last_minute_discount(@location.id) %>% de descuento</span><br />
-                  <span>
-                    <button class="btnBook" id="btnPayBook" data-toggle="modal" data-target="#selectProviderModal">Comprar y reservar</button>
-                  </span>
+                <td style="width: 70%; padding-right: 10px;">
+                  <div style="text-align: right; float: left;">
+                    <span style="color: #b5b5b5; font-size: 36px; text-decoration: line-through;"><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></span><br />
+                    <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "42x52", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 58px;"><%= number_to_currency(@service.price*(100-@service.get_last_minute_discount)/100, unit: "", delimiter: ".") %></span><br />
+                    <span style="color: #22c488; font-size: 20px;"><%= @service.get_last_minute_discount %>% de descuento</span><br />
+                    <span>
+                      <button class="btnBook" id="btnPayBook" data-toggle="modal" data-target="#selectProviderModal">Comprar y reservar</button>
+                    </span>
+                  </div>
                 </td>
               </tr>
             </table>
@@ -63,11 +71,10 @@
         </div>
         <div class="social-links">
           <%
-            share_text = "Promoción de " + @service.name + " con " + @service.get_last_minute_discount(@location.id).to_s+ "% de descuento en AgendaPro"
+            share_text = "Promoción de " + @service.name + " con " + @service.get_max_time_discount.to_s + "% de descuento en AgendaPro"
             share_text = url_encode(share_text)
           %>
-          <a href="http://twitter.com/intent/tweet?status=<%= share_text %>+<%= url_encode(request.original_url) %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/twitter_doble.png", :size => "32x32" %></a> &nbsp;&nbsp; <a href="http://www.facebook.com/sharer.php?u=<%= url_encode(request.original_url) %>
-&t=<%= share_text %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/facebook_doble.png", :size => "32x32" %></a>
+          <a href="http://twitter.com/intent/tweet?status=<%= share_text %>+<%= url_encode(request.original_url) %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/twitter_doble.png", :size => "32x32" %></a> &nbsp;&nbsp; <a href="<%= url_encode(request.original_url) %>" id="facebookShare"><%= image_tag "promociones/facebook_doble.png", :size => "32x32" %></a>
         </div>
         <div class="details-accordions">
 
@@ -89,7 +96,7 @@
               <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
 
-                    <p style="color: #949292;">Reserva hasta <%= @service.get_last_minute_hours(@location.id) %> horas antes y obtén un <%= @service.get_last_minute_discount(@location.id) %>% de descuento.</p>
+                    <p style="color: #949292;">Reserva hasta <%= @service.get_last_minute_hours %> horas antes y obtén un <%= @service.get_last_minute_discount %>% de descuento.</p>
 
 
                 </div>
@@ -99,13 +106,21 @@
               <div class="panel-heading" role="tab" id="headingThree">
                 <h4 class="panel-title minus">
                   <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    <%= image_tag "promociones/agendapro_doble.png", :size => "30x30" %> &nbsp;&nbsp;Políticas de la empresa
+                    <%= image_tag "promociones/agendapro_doble.png", :size => "30x30" %> &nbsp;&nbsp;Políticas de la promoción
                   </a>
                 </h4>
               </div>
               <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
                 <div class="panel-body">
-                  Políticas
+                  <h3 style="color: #949292;">Modificación/Cancelación:</h3>
+
+                  <p style="color: #949292;">
+                    No se permite modificar ni cancelar reservas pagadas en promoción.
+                  </p>
+
+                  <p style="color: #949292;">
+                    Si la empresa cancela o modifica sus promociones, se respetarán el precio y horario en que efectuaste tu reserva.
+                  </p>
                 </div>
               </div>
             </div>
@@ -113,6 +128,26 @@
 
 
 
+        </div>
+      </div>
+      <div class="col-xs-6 col-md-6">
+        <div class="promo-image" style="margin-top: 15px;">
+          <%= image_tag @service.time_promo_photo.url.to_s, :alt => "Loader", :size => "554x302", :class => "img-responsive", :id => "promo_photo" %>
+        </div>
+        <div class="promo-description">
+          <%= @service.promo_description.html_safe %>
+        </div>
+        <div class="google-maps-empresa">
+          <h3><%= @service.company.name %></h3>
+          <div id="time-promo-map"></div>
+          <div style="margin-top: 5px; margin-bottom: 5px;">
+            <%= image_tag "promociones/pin.png", :alt => "Dirección", :size => "18x26" %>
+            <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
+          </div>
+          <div>
+            <%= image_tag "promociones/phone.png", :alt => "Teléfono", :size => "18x18" %>
+            <%= @location.phone %>
+          </div>
         </div>
       </div>
     </div>
@@ -128,7 +163,7 @@
           <div class="row">
           <% @relatedPromos.each do |promo_detail| %>
             <div class="col-md-4">
-              <%= render :partial => 'searchs/service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
+              <%= render :partial => 'searchs/last_minute_service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
             </div>
             <% if i%3 == 0 %>
               </div>
@@ -481,27 +516,12 @@
   </div>
 </div>
 
-
-
-<input type="hidden" id="locationId" value="<%= @location.id %>" />
-<input type="hidden" id="serviceId" value="<%= @service.id %>" />
-<input type="hidden" id="serviceName" value="<%= @service.name %>" />
-<input type="hidden" id="servicePrice" value="<%= @service.price %>" />
-<input type="hidden" id="currentDate" value="<%= DateTime.now.strftime('%d/%m/%Y') %>" />
-<input type="hidden" id="last_minute_discount" value="<%= @last_minute_promo.discount %>" />
-<input type="hidden" id="locationAddress" value="<%= @location.address %>" />
-<input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
-
-<% if @service.has_sessions %>
-  <input type="hidden" id="hasSessions" value="1" />
-<% else %>
-  <input type="hidden" id="hasSessions" value="0" />
+<%= content_tag "div", id: "clientExclusive", data: {client_exclusive: @location.company.company_setting.client_exclusive} do %>
 <% end %>
-
-<% if user_signed_in? %>
-  <input type="hidden" id="user_id" value="<%= current_user.id %>" />
+<%= content_tag "div", id: "providerPreference", data: {provider_preference: @location.company.company_setting.provider_preference } do %>
 <% end %>
-
+<%= content_tag "div", id: "dealCode", data: {deal_identification_number: @location.company.company_setting.deal_identification_number, deal_required: @location.company.company_setting.deal_required } do %>
+<% end %>
 
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "calendar" %>
@@ -509,10 +529,48 @@
 
 <% content_for :scripts do %>
 
-  <%= javascript_include_tag 'workflow/promotions-calendar' %>
   <%= javascript_include_tag 'validations/validate' %>
   <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag 'validations/home/promo' %>
   <%= javascript_include_tag 'promo/last-minute-promo' %>
+  <%= javascript_include_tag 'split-name' %>
+
+  <script type="text/javascript">
+
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '<%= ENV["FACEBOOK_APP_ID"] %>',
+          xfbml      : true,
+          version    : 'v2.1'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+
+      document.getElementById('facebookShare').onclick = function(e) {
+        e.preventDefault();
+        var share_url = document.getElementById('facebookShare').href;
+        var share_text = "Promoción de <%= @service.name %> con <%= @service.get_last_minute_discount.to_s %> % de descuento en <%= @service.company.name %>.";
+        var picture_href = $("#promo_photo").get(0).src;
+        console.log(picture_href);
+        FB.ui({
+          display: 'popup',
+          method: 'share',
+          picture: picture_href,
+          name: 'Promoción en AgendaPro',
+          caption: 'AgendaPro',
+          description: share_text,
+          href: share_url
+        }, function(response){});
+      }
+
+
+  </script>
 
 <% end %>

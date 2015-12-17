@@ -1,0 +1,286 @@
+Date.isLeapYear = function (year) { 
+    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+};
+
+Date.getDaysInMonth = function (year, month) {
+    return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+};
+
+Date.prototype.isLeapYear = function () { 
+    return Date.isLeapYear(this.getFullYear()); 
+};
+
+Date.prototype.getDaysInMonth = function () { 
+    return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
+};
+
+Date.prototype.addMonths = function (value) {
+    var n = this.getDate();
+    this.setDate(1);
+    this.setMonth(this.getMonth() + value);
+    this.setDate(Math.min(n, this.getDaysInMonth()));
+    return this;
+};
+
+var bookings = [];
+var currentBooking = null;
+var booking_buffer = [];
+
+
+$(document).ready(function(){
+
+
+  $("#btnPayBook").on('click', function(e){
+      $('#last-minute-main-div').hide();
+      $('#last-minute-payment-div').show();
+      $("#hours-selection-div").empty();
+      loadAvailableHours($('#currentDate').val());
+  });
+
+  $('body').on('change', '#available_dates_select', function(){
+      var date = $('#available_dates_select').val();
+      loadAvailableHours(date);
+  });
+
+  $('body').on('change', '#providerOptimizerSelector', function(){
+      var date = $('#available_dates_select').val();
+      loadAvailableHours(date);
+  });
+
+  $('#backBtn').on('click', function(){
+    var date = $('#available_dates_select').val();
+    $('input[name="mp"]:checked').attr("checked", false)
+    loadAvailableHours(date);
+  });
+
+  $(".promo-service-box").click(function(){
+    console.log($(this).attr("service_id"));
+    $('.show-promo-link[service_id="' + $(this).attr("service_id") + '"][location_id="' + $(this).attr("location_id") + '"]')[0].click();
+  });
+
+  $('body').on('click', '.available-hour', function(){
+    $('.available-hour.selected').removeClass('selected');
+    $(this).addClass("selected");
+    selectHour($(this));
+  });
+
+  $("#openPayFormBtn").on('click', function(){
+    loadPaymentForm();
+  });
+
+  $("#payBtn").click(function(){
+
+    $("#bookingForm").submit();
+    
+  });
+
+  $('#closeBookForm').on('click', function(){
+    $('#available_dates_select').val($('#currentDate').val());
+    $('#last-minute-payment-div').hide();
+    $("#hours-selection-div").empty();
+    $('#last-minute-main-div').show();
+    $('#payBtn').hide();
+    $('#backBtn').hide();
+    $('#openPayFormBtn').hide();
+    $('#payment-form-div').hide();
+    $("#hours-selection-div").empty();
+    $('input[name="mp"]:checked').attr("checked", false);
+  });
+
+  $('input[name="mp"]').on('change', function(){
+    if($('input[name="mp"]:checked').length > 0)
+    {
+      $('#payBtn').attr("disabled", false);
+    }
+  });
+
+});
+
+
+
+
+
+var promoCalendar;
+
+function simple_currency(price)
+{
+  var amount = Math.round(price).toString();
+  //console.log(amount);
+  //console.log(amount.length);
+  var j = 0;
+  var stack = new Array();
+  for(i = amount.length-1; i>=0; i--)
+  {
+    j = j+1;
+    stack.push(amount[i]);
+    if(j == 3 && i>0)
+    {
+      stack.push('.');
+      j = 0;
+    }
+  }
+  var formatted_amount = "$";
+  for(i = stack.length-1; i >=0 ; i--)
+  {
+    formatted_amount = formatted_amount + stack[i];
+  }
+
+  return formatted_amount;
+}
+
+function loadAvailableHours(date)
+{
+
+  //Reset selected hour
+  currentBooking = null;
+  booking_buffer = [];
+  $('#payBtn').hide();
+  $('#backBtn').hide();
+  $('#openPayFormBtn').hide();
+  $('#payment-form-div').hide();
+  $('#optimizerFirst').show();
+
+  var service_id = $("#serviceId").val();
+  var location_id = $("#locationId").val();
+  var service_provider_id = $("#providerOptimizerSelector").val();
+
+  $("#hours-selection-div").empty();
+  $("#loader-div").show();
+
+  $.ajax({
+    url: '/last_minute_hours',
+    type: 'GET',
+    data: {id: service_id, location_id: location_id, service_provider_id: service_provider_id, date: date},
+    success: function(response){
+      $("#loader-div").hide();
+      $("#hours-selection-div").empty();
+      $("#hours-selection-div").append(response);
+    },
+    error: function(response){
+      $("#loader-div").hide();
+      $("#hours-selection-div").empty();
+      alert("Ocurrió un error.");
+    }
+  });
+}
+
+function selectHour(target)
+{
+
+  //Generate currentBooking
+  addBooking(target);
+
+  $("html, body").delay(500).animate({ scrollTop: $(document).height() }, 1000, "swing");
+
+}
+
+function addBooking(target)
+{
+
+  var provider_lock = false;
+  if(target.attr("provider") != "0")
+  {
+    provider_lock = true;
+  }
+
+  //Generate dates for booking
+  currentBooking = {
+    start: generateDate(target.attr("start")),
+    end: generateDate(target.attr("end")),
+    provider: target.attr("provider"),
+    provider_name: target.attr("provider_name"),
+    provider_lock: provider_lock,
+    service: $('#serviceId').val(),
+    service_name: $('#serviceName').val(),
+    online_payable: true,
+    has_discount: false,
+    discount: parseInt($('#last_minute_discount').val()),
+    price: $('#servicePrice').val(),
+    show_price: true,
+    has_sessions: false,
+    sessions_amount: 0,
+    must_be_paid_online: true,
+    is_time_discount: false,
+    service_promo_id: 0
+  };
+
+  $("#openPayFormBtn").attr("disabled", false);
+  $("#openPayFormBtn").show();
+
+}
+
+function generateDate(time) {
+
+  var date_arr = $('#available_dates_select').val().split("/");
+
+  date = date_arr[2] + "-" + date_arr[1] + "-" + date_arr[0];
+
+  time = time + ':00';
+
+  return date + ' ' + time;
+}
+
+function loadPaymentForm()
+{
+
+  compose_name('#full_name', '#firstName', '#lastName');
+  split_name('#full_name', '#firstName', '#lastName');
+
+  if(currentBooking == null)
+  {
+    $("#booking-error").append("Debes elegir un horario antes de ir al siguiente paso.");
+    return;
+  }
+  else
+  {
+
+      $('#summary').empty();
+
+      booking_buffer.push(currentBooking);
+
+      var discount_price = Math.round(currentBooking.price*(100 - currentBooking.discount)/100);
+
+      $('.bookings').val(JSON.stringify(booking_buffer));
+
+      $('#summary').append(
+        '<tr>' + 
+          '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(currentBooking.price) + '</td>' +
+        '</tr>' +
+        '<tr>' +
+          '<td class="dark-gray">Descuento</td><td class="light-gray">' + currentBooking.discount + '% </td>' +
+        '</tr>' +
+        '<tr>' +
+          '<td class="dark-gray">Precio final</td><td class="light-gray">' + simple_currency(discount_price) + '</td>' +
+        '</tr>'
+      );
+  }
+
+  $('#optimizerFirst').hide();
+  $("#payment-form-div").show();
+  $("#openPayFormBtn").hide();
+  $("#payBtn").show();
+
+  $("#backBtn").attr("disabled", false);
+  $("#backBtn").show();
+
+  $("#payBtn").attr("disabled", true);
+  $("#openPayFormBtn").attr("disabled", true);
+
+}
+
+function formattedTime (timestamp) {
+  var dateString = timestamp;
+
+  var s = new Date(dateString.substring(0, 4), parseInt(dateString.substring(5, 7)) - 1, dateString.substring(8, 10), dateString.substring(11, 13), dateString.substring(14, 16), 0);
+
+  var weekday = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+
+  var monthname = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+
+  var day = weekday[s.getDay()];
+  var month = monthname[s.getMonth()];
+
+  var formattedStart = day + " " + parseInt(timestamp.substring(8,10)) + " de " + month + " a las " + timestamp.substring(11,16);
+
+  return formattedStart;
+}

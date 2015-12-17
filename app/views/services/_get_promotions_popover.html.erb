@@ -5,11 +5,24 @@
 		</div>
 		<div>
 			<div class="online-discount-div">
-				<% if @service.online_payable && @service.has_discount && @service.discount > 0 %>
-					Obtén un <span class="light-green"><%= @service.discount.round.to_s %>%</span> de descuento pagando en línea en cualquier horario.
-				<% end %>
+				
+					<% if @service.online_payable && @service.has_discount && @service.discount > 0 %>
+						<% if @service.has_sessions && @service.has_treatment_promo && @service.time_promo_active %>
+							<% if @service.discount > @service.active_treatment_promo.discount %>
+								Obtén un <span class="light-green"><%= @service.discount.round.to_s %>%</span> de descuento pagando en línea en cualquier horario.
+							<% else %>
+								Obtén un <span class="light-green"><%= @service.active_treatment_promo.discount.round.to_s %>%</span> de descuento pagando en línea el tratamiento completo.
+							<% end %>
+						<% else %>
+							Obtén un <span class="light-green"><%= @service.discount.round.to_s %>%</span> de descuento pagando en línea en cualquier horario.
+						<% end %>
+					<% else %>
+						<% if @service.has_sessions && @service.has_treatment_promo && @service.time_promo_active %>
+							Obtén un <span class="light-green"><%= @service.active_treatment_promo.discount.round.to_s %>%</span> de descuento pagando en línea el tratamiento completo.
+						<% end %>
+					<% end %>
 			</div>
-			<% if @promos.count > 0 %>
+			<% if @promos.count > 0 && @service.has_time_discount && @service.time_promo_active %>
 				<table class="promotion-popover-table">
 					<tr>
 						<% 

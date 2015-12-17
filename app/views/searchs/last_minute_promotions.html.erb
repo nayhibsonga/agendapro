@@ -7,9 +7,34 @@
 
 
 		<div class="row">
-			<p style="text-align: center;">
-			<%= link_to "Ir a Promociones por horario", get_promotions_path %>
-			</p>
+			<div class="col-md-3">
+
+			</div>
+			<div class="col-md-6">
+				<div class="promotions-results-title">
+					Promociones de último minuto
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="promotions-results-subtitle">
+					<%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "navbar-form promo-input-search", id: "promotions-form") do %>
+                        <%= hidden_field_tag :latitude, params[:latitude] %>
+                        <%= hidden_field_tag :longitude, params[:longitude] %>
+                        <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+                        <%= hidden_field_tag :inputSearch, params[:inputSearch] %>
+						<button class="promotions-search-btn btn btn-default" type="submit">Ver promociones por horario&nbsp;<i class="fa fa-search"></i></button>
+                    <% end %>
+				</div>
+				<div class="promotions-results-subtitle">
+					<%= form_tag({controller: "searchs", action: "treatment_promotions"}, method: "GET", class: "navbar-form", id: "treatment-promotions-form") do %>
+                        <%= hidden_field_tag :latitude, params[:latitude] %>
+                        <%= hidden_field_tag :longitude, params[:longitude] %>
+                        <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+                        <%= hidden_field_tag :inputSearch, params[:inputSearch] %>
+                        <button class="promotions-search-btn btn btn-default" type="submit">Ver promociones de tratamientos&nbsp;<i class="fa fa-search"></i></button>
+                    <% end %>
+				</div>
+			</div>
 		</div>
 
 		<% if @results.count >0 %>

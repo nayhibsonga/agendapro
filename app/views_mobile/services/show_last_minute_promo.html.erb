@@ -1,0 +1,483 @@
+<%= stylesheet_link_tag "search/show-promo" %>
+<%
+	economic_sectors = EconomicSector.all
+%>
+<div class="container below-navbar" id="last-minute-main-div">
+
+	<div id="economic-sectors-wrapper">
+		<div id="economic-sectors-row">
+				<a class="economic-sector-btn" economic_sector_id="0" href="/get_last_minute_promotions?economicSector=0">
+					Todos
+				</a>
+			<% economic_sectors.each do |economic_sector| %>
+				<span class="economic-sector-span">
+
+					<a class="economic-sector-btn" economic_sector_id="<%= economic_sector.id %>" href="/get_last_minute_promotions?economicSector=<%= economic_sector.id %>">
+						<%= economic_sector.name %>
+					</a>
+
+				</span>
+			<% end %>
+		</div>
+		<div style="clear: both;">
+		</div>
+	</div>
+
+	<div id="promotions-div">
+
+
+			<div class="promo-box">
+				<div class="promo-photo">
+					<%= image_tag @service.time_promo_photo.url.to_s, :class => "img-responsive promo-img" %>
+				</div>
+				<div style="padding-left: 5px; padding-top: 5px; padding-bottom: 4px; background-color: #B5B5B5; color: #505050; display: block; width: 100%; font-weight: bold; font-size: 14px;">
+					<div class="col-xs-5 promo-company" style="color: #505050 !important;">
+						<%= @service.company.name %>
+					</div>
+					<div class="col-xs-7 promo-discount" style="color: #505050 !important;">
+						<%= @service.get_last_minute_discount %>% de dscto.
+					</div>
+					<div style="clear: both;"></div>
+				</div>
+				<div class="promo-detail">
+					<div class="col-xs-7" style="color: #636363;">
+						<%= @service.name %> en <%= @location.name %>
+					</div>
+					<div class="col-xs-5" style="text-align: right; border-left: 1px solid #b5b5b5;">
+						<span style="color: #b5b5b5; font-size: 12px; padding-top: 10px;"><strike><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></strike></span><br />
+						<span style="color: #22c488; font-size: 14px;"><%= number_to_currency(@service.price*(100-@service.get_last_minute_discount)/100, unit: "$", delimiter: ".") %></span>
+					</div>
+					<div style="clear: both;"></div>
+				</div>
+			</div>
+			<div class="promo-description">
+
+				<div class="details-accordions">
+
+		          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+		          	<div class="panel panel-default">
+		              <div class="panel-heading" role="tab" id="headingDescription">
+		                <h4 class="panel-title minus">
+		                  <a class="" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">
+		                    <%= image_tag "promociones/descripcion.png", :size => "20x20" %> &nbsp;&nbsp;Descripción
+		                  </a>
+		                </h4>
+		              </div>
+		              <div id="collapseDescription" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingDescription">
+		                <div class="panel-body">
+		                	<div class="description-body">
+		                  		<%= @service.promo_description.html_safe %>.
+		                  	</div>
+		                </div>
+		              </div>
+		            </div>
+
+		            <div class="panel panel-default">
+		              <div class="panel-heading" role="tab" id="headingOne">
+
+		                <h4 class="panel-title minus">
+
+		                  <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+
+		                    <%= image_tag "promociones/reloj_doble.png", :size => "20x20" %> &nbsp;&nbsp; Horarios de reserva
+
+		                  </a>
+		                </h4>
+		              </div>
+		              <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+		                <div class="panel-body">
+		                	<p style="color: #949292;">Reserva hasta <%= @service.get_last_minute_hours %> horas antes y obtén un <%= @service.get_last_minute_discount %>% de descuento.</p>
+		                </div>
+		              </div>
+		            </div>
+
+		            <div class="panel panel-default">
+		              <div class="panel-heading" role="tab" id="headingThree">
+		                <h4 class="panel-title minus">
+		                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+		                    <%= image_tag "promociones/agendapro_doble.png", :size => "20x20" %> &nbsp;&nbsp;Políticas de la empresa
+		                  </a>
+		                </h4>
+		              </div>
+		              <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+		                <div class="panel-body">
+
+		                  <p style="color: #949292; font-size: 14px;">
+		                    La empresa no permite modificar ni cancelar reservas pagadas en promoción.
+		                  </p>
+
+		                  <p style="color: #949292; font-size: 14px;">
+		                    Si la empresa cancela o modifica sus promociones, se respetarán el precio y horario en que efectuaste tu reserva.
+		                  </p>
+
+		                </div>
+		              </div>
+		            </div>
+		          </div>
+
+
+
+		        </div>
+			</div>
+			<div class="promo-buttons">
+				<div class="row">
+					<div class="col-xs-12">
+                  		<button class="btn btnBook" id="btnPayBook">Comprar y reservar</button>
+                  	</div>
+                </div>
+			</div>
+
+	</div>
+
+</div>
+
+<div class="container below-navbar" id="last-minute-payment-div" hidden>
+
+    <div style="margin-top: 20px;">
+
+        <div id="optimizerFirst">
+          	<form class="form-horizontal" id="serviceOptimizer">
+              <div class="form-group">
+                <label for="providerOptimizerSelector" class="col-xs-3 control-label">Prestador</label>
+                <div class="col-xs-9">
+                  <select class="form-control" name="providerOptimizerSelector" id="providerOptimizerSelector">
+                    <% if @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).count > 1 %>
+                        <% if @location.company.company_setting.provider_preference != 1 %>
+                            <option value="0">Sin Preferencia</option>
+                        <% end %>
+                    <% end %>
+                    <% if @location.company.company_setting.provider_preference != 2 %>
+                      <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(:order, :public_name).each do |provider| %>
+
+                        <option value="<%= provider.id %>">
+                            <%= provider.public_name %>
+                        </option>
+
+                      <% end %>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="available_dates_select" class="col-xs-3 control-label">Fecha</label>
+                <div class="col-xs-9">
+                  <select id="available_dates_select" name="available_dates_select" class="form-control">
+                    <% @available_dates.each do |available_date| %>
+                      <% if available_date == @selected_date %>
+                        <option value="<%= available_date.strftime('%d/%m/%Y') %>" selected>
+                          <%= available_date.strftime('%d/%m/%Y') %>
+                        </option>
+                      <% else %>
+                        <option value="<%= available_date.strftime('%d/%m/%Y') %>">
+                          <%= available_date.strftime('%d/%m/%Y') %>
+                        </option>
+                      <% end %>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+              <div id="hours-selection-div">
+
+              </div>
+              <input type="hidden" name="service" value="<%= @service.id %>" />
+          	</form>
+        </div>
+
+        <div id="hoursList" style="display: none;">
+
+        </div>
+
+
+        <!-- Payment Form -->
+
+        <div id="payment-form-div" hidden>
+
+            <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
+              <div class="row" style="margin-left: 0px !important;">
+
+                <div class="col-xs-12">
+                  <!-- INICIO FORM -->
+                  <div id="form-datos">
+
+                    <div class="panel-body">
+                      <input type="hidden" name="bookings" class="bookings" value="" />
+                      <input type="hidden" name="location" id="location" value="<%= @location.id %>" />
+                      <input type="hidden" name="origin" id="origin" value="true" />
+                      <input type="hidden" name="payment" id="payment" value="1" />
+                      <input type="hidden" name="is_last_minute_promo" id="is_last_minute_promo" value="1" />
+                      <input type="hidden" name="has_sessions" id ="has_sessions" value="0" />
+
+                      <% if user_signed_in? %>
+                      <div id="user-data">
+                        <%= hidden_field_tag :user_id, current_user.id %>
+                        <%= hidden_field_tag :firstName, current_user.first_name %>
+                        <%= hidden_field_tag :lastName, current_user.last_name %>
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            Nombre
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <input type="text" id="full_name" name="full_name" class="form-control light-gray" placeholder="Nombre completo (requerido)" value="<%= current_user.first_name %> <%= current_user.last_name %>">
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6 dark-gray">
+                            Email
+                          </div>
+                          <div class="col-md-6 dark-gray">
+                            Teléfono
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group has-feedback">
+                              <%= email_field_tag(:email, current_user.email, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group has-feedback">
+                              <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <% else %>
+                        <%= hidden_field_tag :firstName %>
+                        <%= hidden_field_tag :lastName %>
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            Nombre
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-6 dark-gray">
+                            Email
+                          </div>
+                          <div class="col-sm-6 dark-gray">
+                            Teléfono
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <div class="form-group has-feedback">
+                              <%= email_field_tag(:email, nil, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group has-feedback">
+                              <%= telephone_field_tag(:phone, nil, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                      <% if @location.company.company_setting.client_exclusive %>
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            <%= (I18n.t('ci')).capitalize %>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                      <% if @location.company.company_setting.deal_activate %>
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            <%= !@location.company.company_setting.deal_name.blank? ? @location.company.company_setting.deal_name : "Convenio" %>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <%= text_field_tag(:deal_code, nil, :class => "form-control light-gray" ) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                      <% if @service.outcall %>
+                      <div id="outcallAddress" class="row form-group has-feedback">
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            Dirección
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <% end %>
+                      <% if @location.company.company_setting.activate_notes %>
+                      <div class="row">
+                        <div class="col-md-12 dark-gray">
+                          Comentario
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+                          </div>
+                        </div>
+                      </div>
+                      <% end %>
+                      <% if !user_signed_in? %>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="checkbox">
+                            <label>
+                              <%= check_box_tag :mailing_option, true, class: 'checkbox' %> Quiero recibir promociones a mi email
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <% end %>
+
+                      <!-- MEDIO DE PAGO -->
+
+                        <div class="row">
+                          <div class="col-sm-12 dark-gray" id="payment-way">
+                              <div class="form-group has-feedback">
+                                <span id="payment_title" name="payment_title">Elige el medio de pago</span>
+                                <span class="help-block"></span>
+                                <span class="form-control-feedback"></span>
+                              </div>
+                          </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-xs-6">
+                              <input type="radio" name="mp" value="04" class="mp_radio" id="mp_radio_04" />
+                              <label for="mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" /></label>
+                            </div>
+                            <div class="col-xs-6">
+                              <input type="radio" name="mp" value="10" class="mp_radio" id="mp_radio_10" />
+                              <label for="mp_radio_10"><image src="https://www.puntopagos.com/content/mp10.gif" alt="Banco Ripley" class="mp_link" mp = "10" /></label>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                          <div class="col-xs-6">
+                            <input type="radio" name="mp" value="07" class="mp_radio" id="mp_radio_07" />
+                            <label for="mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" /></label>
+                          </div>
+                          <div class="col-xs-6">
+                            <input type="radio" name="mp" value="03" class="mp_radio" id="mp_radio_03" />
+                            <label for="mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" /></label>
+                          </div>
+
+                        </div>
+
+                      <!-- FIN MEDIO DE PAGO -->
+
+                    </div>
+
+                  </div>
+                  <!-- FIN FORM -->
+
+                </div>
+                <div class="col-xs-12">
+                    <table class="table">
+                        <tbody id="summary">
+                        </tbody>
+                    </table>
+                </div>
+
+              </div>
+
+            <% end %>
+        </div>
+
+        <!-- End Payment Form -->
+
+
+        <div class="row" id="loader-div" hidden>
+          <p style="text-align: center; margin-top: 40px;">
+            <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+          </p>
+        </div>
+
+    </div>
+
+    <div class="row">
+    	<div class="col-xs-3" style="text-align: left; padding-left: 30px;">
+    		<a type="button" class="btn btn-white" id="closeBookForm">Volver</a>
+    	</div>
+        <div class="col-xs-9" style="text-align: right; padding-right: 30px;">
+          <a type="button" class="btn promo-back-btn" id="backBtn" style="display: none;" disabled="true">Atrás</a>
+          <a type="button" class="btn hour-selected-btn" id="openPayFormBtn" style="display: none;" disabled="true">Siguiente</a>
+          <a type="button" class="btn hour-selected-btn" id="payBtn" style="display: none;" disabled="true">Pagar</a>
+        </div>
+    </div>
+
+</div>
+
+<input type="hidden" id="locationId" value="<%= @location.id %>" />
+<input type="hidden" id="serviceId" value="<%= @service.id %>" />
+<input type="hidden" id="serviceName" value="<%= @service.name %>" />
+<input type="hidden" id="servicePrice" value="<%= @service.price %>" />
+<input type="hidden" id="currentDate" value="<%= DateTime.now.strftime('%d/%m/%Y') %>" />
+<input type="hidden" id="last_minute_discount" value="<%= @last_minute_promo.discount %>" />
+<input type="hidden" id="locationAddress" value="<%= @location.address %>" />
+<input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
+
+<!-- Localization inputs -->
+<% if params[:latitude] && params[:latitude] != "" && params[:longitude] && params[:longitude] != "" && params[:inputLocalization] && params[:inputLocalization] != "" %>
+
+	<input type="hidden" id="latitude" value="<%= params[:latitude] %>" />
+	<input type="hidden" id="longitude" value="<%= params[:longitude] %>" />
+	<input type="hidden" id="inputLocalization" value="<%= params[:inputLocalization] %>" />
+
+<% end %>
+
+<% content_for :stylesheets do %>
+	<%= stylesheet_link_tag "mobile/mobile-promotions" %>
+	<%= stylesheet_link_tag "datepicker" %>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag 'validations/validate' %>
+  	<%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
+  	<%= javascript_include_tag 'validations/home/promo' %>
+  	<%= javascript_include_tag 'mobile/last-minute-promo' %>
+  	<%= javascript_include_tag 'split-name' %>
+	<%= javascript_include_tag "datepicker" %>
+<% end %>

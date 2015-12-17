@@ -229,8 +229,10 @@
     # Promotions
     get '/get_promotions', :to => 'searchs#promotions'
     get '/get_last_minute_promotions', :to => 'searchs#last_minute_promotions'
+    get '/get_treatment_promotions', :to => 'searchs#treatment_promotions'
     get '/manage_promotions', :to => 'services#manage_promotions'
     get '/manage_service_promotion', :to => 'services#manage_service_promotion'
+    get '/manage_treatment_promotion', :to => 'services#manage_treatment_promotion'
 
     # Workflow
     # Workflow - overview
@@ -379,6 +381,7 @@
     #post '/admin_update_promo', :to => 'services#admin_update_promo'
     get "/show_time_promo", :to => 'services#show_time_promo'
     get '/show_last_minute_promo', :to => 'services#show_last_minute_promo'
+    get '/show_treatment_promo', :to => 'services#show_treatment_promo'
     get '/last_minute_hours', :to => 'services#last_minute_hours'
 
     # Root

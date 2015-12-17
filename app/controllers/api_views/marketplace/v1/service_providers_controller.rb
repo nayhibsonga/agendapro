@@ -374,65 +374,114 @@ module ApiViews
                       bookings.last[:has_time_discount] = false
                       bookings.last[:discount] = 0
                       bookings.last[:time_discount] = 0
+                      bookings.last[:has_treatment_discount] = false
+                      bookings.last[:treatment_discount_discount] = 0
                     elsif !service.company.company_setting.promo_offerer_capable
                       bookings.last[:has_time_discount] = false
                       bookings.last[:time_discount] = 0
+                      bookings.last[:has_treatment_discount] = false
+                      bookings.last[:treatment_discount_discount] = 0
                     end
 
-                    if service.has_time_discount && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable && service.time_promo_active
+                    if !service.has_sessions
 
-                      promo = Promo.where(:day_id => date.cwday, :service_promo_id => service.active_service_promo_id, :location_id => local.id).first
+                      bookings.last[:has_treatment_discount] = false
+                      bookings.last[:treatment_discount] = 0
 
-                      if !session_booking.nil? && !session_booking.service_promo_id.nil?
-                        promo = Promo.where(:day_id => date.cwday, :service_promo_id => session_booking.service_promo_id, :location_id => local.id).first
-                      end
+                      if service.has_time_discount && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable && service.time_promo_active
 
-                      if !promo.nil?
+                        promo = Promo.where(:day_id => date.cwday, :service_promo_id => service.active_service_promo_id, :location_id => local.id).first
 
-                        service_promo = ServicePromo.find(service.active_service_promo_id)
+                        if !promo.nil?
 
-                        #Check if there is a limit for bookings, and if there are any left
-                        if service_promo.max_bookings > 0 || !service_promo.limit_booking
+                          service_promo = ServicePromo.find(service.active_service_promo_id)
 
-                          #Check if the promo is still active, and if the booking ends before the limit date
+                          #Check if there is a limit for bookings, and if there are any left
+                          if service_promo.max_bookings > 0 || !service_promo.limit_booking
 
-                          if bookings.last[:end].to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
+                            #Check if the promo is still active, and if the booking ends before the limit date
 
-                            if !(service_promo.morning_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
+                            if bookings.last[:end].to_datetime < service_promo.book_limit_date && DateTime.now < service_promo.finish_date
 
-                              bookings.last[:time_discount] = promo.morning_discount
+                              if !(service_promo.morning_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.morning_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
 
-                            elsif !(service_promo.afternoon_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
+                                bookings.last[:time_discount] = promo.morning_discount
 
-                              bookings.last[:time_discount] = promo.afternoon_discount
+                              elsif !(service_promo.afternoon_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.afternoon_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
 
-                            elsif !(service_promo.night_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
+                                bookings.last[:time_discount] = promo.afternoon_discount
 
-                              bookings.last[:time_discount] = promo.night_discount
+                              elsif !(service_promo.night_start.strftime("%H:%M") >= bookings.last[:end].strftime("%H:%M") || service_promo.night_end.strftime("%H:%M") <= bookings.last[:start].strftime("%H:%M"))
 
+                                bookings.last[:time_discount] = promo.night_discount
+
+                              else
+
+                                bookings.last[:time_discount] = 0
+
+                              end
                             else
-
                               bookings.last[:time_discount] = 0
-
                             end
                           else
                             bookings.last[:time_discount] = 0
                           end
+
                         else
+
                           bookings.last[:time_discount] = 0
+
                         end
 
                       else
 
+                        bookings.last[:has_time_discount] = false
                         bookings.last[:time_discount] = 0
 
                       end
-
                     else
 
+                      bookings.last[:has_time_discount] = false
                       bookings.last[:time_discount] = 0
 
+                      #Check treatment promo
+                      if service.has_treatment_promo && service.online_payable && service.company.company_setting.online_payment_capable && service.company.company_setting.promo_offerer_capable && service.time_promo_active
+
+                        if !service.active_treatment_promo.nil?
+                          if TreatmentPromoLocation.where(treatment_promo_id: service.active_treatment_promo_id, location_id: local.id).count > 0
+
+                            if service.active_treatment_promo.max_bookings > 0
+
+                              if !service.active_treatment_promo.limit_booking || (service.active_treatment_promo.finish_date > bookings.last[:start])
+                                bookings.last[:has_treatment_discount] = true
+                                bookings.last[:treatment_discount] = service.active_treatment_promo.discount
+                              else
+                                bookings.last[:has_treatment_discount] = false
+                                bookings.last[:treatment_discount] = 0
+                              end
+
+                            else
+                              bookings.last[:has_treatment_discount] = false
+                              bookings.last[:treatment_discount] = 0
+                            end
+
+                          else
+                            bookings.last[:has_treatment_discount] = false
+                            bookings.last[:treatment_discount] = 0
+                          end
+                        else
+                          bookings.last[:has_treatment_discount] = false
+                          bookings.last[:treatment_discount] = 0
+                        end
+
+                      else
+                        bookings.last[:has_treatment_discount] = false
+                        bookings.last[:treatment_discount] = 0
+                      end
+
                     end
+
+                    #Check for active promos (regular or treatment)
 
                     if service.active_service_promo_id.nil?
                       bookings.last[:service_promo_id] = "0"
@@ -440,7 +489,11 @@ module ApiViews
                       bookings.last[:service_promo_id] = service.active_service_promo_id
                     end
 
-
+                    if service.active_treatment_promo_id.nil?
+                      bookings.last[:treatment_promo_id] = "0"
+                    else
+                      bookings.last[:treatment_promo_id] = service.active_treatment_promo_id
+                    end
 
                     serviceStaffPos += 1
 
@@ -466,7 +519,6 @@ module ApiViews
                     end
 
                     break
-
                   end
                 end
               end
@@ -737,27 +789,49 @@ module ApiViews
             if bookings.length == serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
 
               has_time_discount = false
+              has_treatment_discount = false
               bookings_group_discount = 0
               bookings_group_total_price = 0
               bookings_group_computed_price = 0
 
-              bookings.each do |b|
-                bookings_group_total_price = bookings_group_total_price + b[:price]
-                if (b[:has_time_discount] && b[:time_discount] > 0) || (b[:has_discount] && b[:discount] > 0)
-                  has_time_discount = true
-                  if b[:has_discount] && !b[:has_time_discount]
-                    bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:discount]) / 100)
-                  elsif !b[:has_discount] && b[:has_time_discount]
-                    bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:time_discount]) / 100)
+              if bookings.first[:has_sessions]
+                if (bookings.first[:has_treatment_discount] && bookings.first[:treatment_discount] > 0) || (bookings.first[:has_discount] && bookings.first[:discount] > 0)
+                  has_treatment_discount = true
+                  if bookings.first[:has_treatment_discount] && !bookings.first[:has_discount]
+                    bookings_group_discount = bookings.first[:treatment_discount]
+                  elsif !bookings.first[:has_treatment_discount] && bookings.first[:has_discount]
+                    bookings_group_discount = bookings.first[:discount]
                   else
-                    if b[:discount] > b[:time_discount]
-                      bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:discount]) / 100)
+                    if bookings.first[:treatment_discount] > bookings.first[:discount]
+                      bookings_group_discount = bookings.first[:treatment_discount]
                     else
-                      bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:time_discount]) / 100)
+                      bookings_group_discount = bookings.first[:discount]
                     end
                   end
                 else
-                  bookings_group_computed_price = bookings_group_computed_price + b[:price]
+                  bookings_group_discount = 0
+                end
+                bookings_group_total_price = bookings.first[:price]
+                bookings_group_computed_price = bookings_group_total_price.to_f*(100.0 - bookings_group_discount.to_f)/100.0
+              else
+                bookings.each do |b|
+                  bookings_group_total_price = bookings_group_total_price + b[:price]
+                  if (b[:has_time_discount] && b[:time_discount] > 0) || (b[:has_discount] && b[:discount] > 0)
+                    has_time_discount = true
+                    if b[:has_discount] && !b[:has_time_discount]
+                      bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:discount]) / 100)
+                    elsif !b[:has_discount] && b[:has_time_discount]
+                      bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:time_discount]) / 100)
+                    else
+                      if b[:discount] > b[:time_discount]
+                        bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:discount]) / 100)
+                      else
+                        bookings_group_computed_price = bookings_group_computed_price + (b[:price] * (100-b[:time_discount]) / 100)
+                      end
+                    end
+                  else
+                    bookings_group_computed_price = bookings_group_computed_price + b[:price]
+                  end
                 end
               end
 
@@ -767,7 +841,7 @@ module ApiViews
 
               status = "hora-disponible"
 
-              if has_time_discount
+              if has_time_discount || has_treatment_discount
                 if session_booking.nil?
                   status = "hora-promocion"
                 end
@@ -788,7 +862,11 @@ module ApiViews
               curr_promo_discount = 0
 
               if bookings.length == 1
-                curr_promo_discount = bookings[0][:time_discount]
+                if has_time_discount
+                  curr_promo_discount = bookings[0][:time_discount]
+                elsif has_treatment_discount
+                  curr_promo_discount = bookings[0][:treatment_discount]
+                end
               end
 
               paying_price = 0
@@ -804,7 +882,8 @@ module ApiViews
                   hidden_price = true
                 end
                 if booking_calcs[:online_payable]
-                  booking_calcs_discount = booking_calcs[:discount] > booking_calcs[:time_discount] ? booking_calcs[:discount] : booking_calcs[:time_discount]
+                  current_promo_discount = booking_calcs[:treatment_discount] > booking_calcs[:time_discount] ? booking_calcs[:treatment_discount] : booking_calcs[:time_discount]
+                  booking_calcs_discount = booking_calcs[:discount] > current_promo_discount ? booking_calcs[:discount] : current_promo_discount
                   paying_price += booking_calcs[:price] * (100 - booking_calcs_discount) / 100
                   paying_total_price += booking_calcs[:price] * (100 - booking_calcs_discount) / 100
                 else
@@ -816,7 +895,7 @@ module ApiViews
 
               if params[:mandatory_discount] == 'true' || params[:mandatory_discount] == true
 
-                if has_time_discount
+                if has_time_discount || has_treatment_discount
 
 
                   new_hour = {
@@ -832,6 +911,7 @@ module ApiViews
                     provider_id: bookings[0][:provider_id],
                     promo_discount: curr_promo_discount.to_s,
                     has_time_discount: has_time_discount,
+                    has_treatment_discount: has_treatment_discount,
                     time_diff: hour_time_diff,
                     has_sessions: bookings[0][:has_sessions],
                     sessions_amount: bookings[0][:sessions_amount],
@@ -882,6 +962,9 @@ module ApiViews
                   provider_id: bookings[0][:provider_id],
                   promo_discount: curr_promo_discount.to_s,
                   has_time_discount: has_time_discount,
+                  has_treatment_discount: has_treatment_discount,
+                  has_sessions: bookings[0][:has_sessions],
+                  sessions_amount: bookings[0][:sessions_amount],
                   time_diff: hour_time_diff,
                   group_discount: bookings_group_discount.to_s,
                   show_pay: bookings.any? { |booking| booking[:online_payable] == true },
@@ -898,19 +981,19 @@ module ApiViews
 
                 should_add = true
 
-                if !session_booking.nil?
+                # if !session_booking.nil?
 
-                  if !session_booking.service_promo_id.nil? && session_booking.max_discount != 0
-                    if new_hour[:group_discount].to_f < session_booking.max_discount.to_f
-                      should_add = false
-                    end
-                  end
+                #   if !session_booking.service_promo_id.nil? && session_booking.max_discount != 0
+                #     if new_hour[:group_discount].to_f < session_booking.max_discount.to_f
+                #       should_add = false
+                #     end
+                #   end
 
-                end
+                # end
 
-                if params[:edit] && status == 'hora-promocion'
-                  should_add = false
-                end
+                # if params[:edit] && status == 'hora-promocion'
+                #   should_add = false
+                # end
 
                 if should_add
                   if !hours_array.include?(new_hour)
