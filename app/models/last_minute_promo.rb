@@ -3,7 +3,8 @@ class LastMinutePromo < ActiveRecord::Base
 	include PgSearch
 	
 	belongs_to :service
-	belongs_to :location
+	has_many :last_minute_promo_locations
+	has_many :locations, :through => :last_minute_promo_locations
 
 	has_one :service_category, :through => :service
 

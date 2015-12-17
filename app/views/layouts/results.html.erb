@@ -120,8 +120,20 @@
 		                                    </span>
 		                                </div>
 	                                <% end %>
-	                            <% elsif current_page?(get_last_minute_promotions_path) %>
+	                            <% elsif current_page?(get_last_minute_promotions_path) || current_page?(show_last_minute_promo_path) %>
 	                            	<%= form_tag({controller: "searchs", action: "last_minute_promotions"}, method: "GET", class: "navbar-form", id: "last-minute-promotions-form") do %>
+		                                <%= hidden_field_tag :latitude, params[:latitude] %>
+		                                <%= hidden_field_tag :longitude, params[:longitude] %>
+		                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+										<div class="input-group">
+		                                    <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control", placeholder: "Buscar..." %>
+		                                    <span class="input-group-btn">
+		                                        <button id="promotions-search-btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+		                                    </span>
+		                                </div>
+	                                <% end %>
+	                            <% elsif current_page?(get_treatment_promotions_path) || current_page?(show_treatment_promo_path) %>
+	                            	<%= form_tag({controller: "searchs", action: "treatment_promotions"}, method: "GET", class: "navbar-form", id: "treatment-promotions-form") do %>
 		                                <%= hidden_field_tag :latitude, params[:latitude] %>
 		                                <%= hidden_field_tag :longitude, params[:longitude] %>
 		                                <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
