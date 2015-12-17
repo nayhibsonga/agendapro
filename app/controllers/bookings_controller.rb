@@ -1933,6 +1933,36 @@ class BookingsController < ApplicationController
         render layout: "workflow"
         return
       end
+    elsif @company.company_setting.use_identification_number
+      if !params[:identification_number].blank?
+        if Client.where(email: params[:email], company_id: @company).count > 0
+          client = Client.where(email: params[:email], company_id: @company).first
+          client.first_name = params[:firstName]
+          client.last_name = params[:lastName]
+          client.phone = params[:phone]
+          client.identification_number = params[:identification_number]
+          if client.save
+
+          else
+            @errors << client.errors.full_messages
+            render layout: "workflow"
+            return
+          end
+        else
+          client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], identification_number: params[:identification_number], company_id: @company.id)
+          if client.save
+
+          else
+            @errors << client.errors.full_messages
+            render layout: "workflow"
+            return
+          end
+        end
+      else
+        @errors << "No se ingresó " + (I18n.t('ci')).capitalize + " de cliente"
+        render layout: "workflow"
+        return
+      end
     else
       if Client.where(email: params[:email], company_id: @company).count > 0
         client = Client.where(email: params[:email], company_id: @company).first
