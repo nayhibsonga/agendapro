@@ -142,8 +142,8 @@ class UsersController < ApplicationController
   end
 
   def check_user_email
-    @user = User.find_by(:email => params[:user][:email])
-    render :json => @user.nil?
+    @users = User.where("email ilike ?", params[:user][:email])
+    render :json => @users.count < 1
   end
 
   def delete_session_booking
