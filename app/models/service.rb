@@ -17,6 +17,7 @@ class Service < ActiveRecord::Base
 
 	has_many :service_promos
 	has_many :last_minute_promos
+	has_many :treatment_promos
 
 	has_many :economic_sectors, :through => :company
   	has_many :economic_sectors_dictionaries, :through => :economic_sectors
@@ -28,7 +29,8 @@ class Service < ActiveRecord::Base
 	mount_uploader :time_promo_photo, TimePromoPhotoUploader
 
 	scope :with_time_promotions, -> { where(has_time_discount: true, active: true, online_payable: true, online_booking: true, time_promo_active: true).where.not(:active_service_promo_id => nil) }
-	scope :with_last_minute_promotions, -> { where(has_last_minute_discount: true, active: true, online_payable: true, online_booking: true)}
+	scope :with_last_minute_promotions, -> { where(has_last_minute_discount: true, active: true, online_payable: true, online_booking: true).where.not(:active_last_minute_promo_id => nil) }
+	scope :with_treatment_promotions, -> { where(has_treatment_promo: true, active: true, online_payable: true, online_booking: true).where.not(:active_treatment_promo_id => nil) }
 
 	accepts_nested_attributes_for :service_category, :reject_if => :all_blank, :allow_destroy => true
 
@@ -65,8 +67,8 @@ class Service < ActiveRecord::Base
     		#Update promo values to be false/inactive
     		self.update_column(:has_time_discount, false)
     		self.update_column(:has_last_minute_discount, false)
-    		self.update_column(:time_promo_active, false)
-    		self.update_column(:active_service_promo_id, nil)
+    	else
+    		self.update_column(:has_treatment_promo, false)
     	end
     end
 
@@ -75,6 +77,22 @@ class Service < ActiveRecord::Base
     		return nil
     	else
     		return ServicePromo.find(self.active_service_promo_id)
+    	end
+    end
+
+    def active_last_minute_promo
+    	if self.active_last_minute_promo_id.nil?
+    		return nil
+    	else
+    		return LastMinutePromo.find(self.active_last_minute_promo_id)
+    	end
+    end
+
+    def active_treatment_promo
+    	if self.active_treatment_promo_id.nil?
+    		return nil
+    	else
+    		return TreatmentPromo.find(self.active_treatment_promo_id)
     	end
     end
 
@@ -167,22 +185,74 @@ class Service < ActiveRecord::Base
 
 	end
 
-	def get_last_minute_hours(location_id)
-		if !self.has_last_minute_discount
+	def active_treatment_promo_left_bookings
+
+		if self.active_treatment_promo_id.nil?
+
+			return 0
+
+		else
+
+			treatment_promo = TreatmentPromo.find(self.active_treatment_promo_id)
+
+			if treatment_promo.max_bookings.nil?
+				treatment_promo.max_bookings = 0
+				treatment_promo.save
+				return 0
+			end
+
+			return treatment_promo.max_bookings
+
+		end
+
+	end
+
+
+	def get_last_minute_hours
+		if !self.has_last_minute_discount || self.active_last_minute_promo.nil?
 			return 0
 		else
-			promo = LastMinutePromo.where(:service_id => self.id, :location_id => location_id).first
-			return promo.hours
+			return self.active_last_minute_promo.hours
 		end
 	end
 
-	def get_last_minute_discount(location_id)
-		if !self.has_last_minute_discount
+	def get_last_minute_discount
+		if !self.has_last_minute_discount || self.active_last_minute_promo.nil?
 			return 0
 		else
-			promo = LastMinutePromo.where(:service_id => self.id, :location_id => location_id).first
-			return promo.discount
+			return self.active_last_minute_promo.discount
 		end
+	end
+
+	def get_max_discount
+		discount = 0
+		if self.has_sessions
+			if self.has_treatment_promo && !self.active_treatment_promo_id.nil?
+				treatment_promo = TreatmentPromo.find(self.active_treatment_promo_id)
+				if treatment_promo
+					discount = treatment_promo.discount
+				end
+			end
+		else
+			if self.has_time_discount && !self.active_service_promo_id.nil?
+				
+				service_promo = ServicePromo.find(self.active_service_promo_id)
+				service_promo.promos.each do |promo|
+					if promo.morning_discount > discount
+						discount = promo.morning_discount
+					end
+					if promo.afternoon_discount > discount
+						discount = promo.afternoon_discount
+					end
+					if promo.night_discount > discount
+						discount = promo.night_discount
+					end
+				end
+
+			end
+		end
+
+		return discount
 	end
 
 	# def get_last_minute_available_hours(provider_id, location_id, day_id)
@@ -622,22 +692,10 @@ class Service < ActiveRecord::Base
 
 		while (dateTimePointer < limit_date && dateTimePointer < last_minute_limit)
 
-			logger.debug "***"
-			logger.debug "***"
-			logger.debug "DTP is: " + dateTimePointer.to_s
-			logger.debug "***"
-			logger.debug "***"
-
 			serviceStaffPos = 0
 			bookings = []
 
 			while serviceStaffPos < serviceStaff.length and (dateTimePointer < limit_date && dateTimePointer < last_minute_limit)
-
-				logger.debug "***"
-				logger.debug "***"
-				logger.debug "DTP is: " + dateTimePointer.to_s
-				logger.debug "***"
-				logger.debug "***"
 
 				serviceStaffPos = 0
 				bookings = []
@@ -652,6 +710,21 @@ class Service < ActiveRecord::Base
 			    dateTimePointer = min_pt.open
 			    dateTimePointer = DateTime.new(now.year, now.mon, now.mday, dateTimePointer.hour, dateTimePointer.min)
 			    day_open_time = dateTimePointer
+			  end
+
+			  now_comparer = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+
+			  now_comparer = now_comparer + 30.minutes
+
+			  logger.debug "++++++++"
+			  logger.debug "++++++++"
+			  logger.debug "DTP: " + dateTimePointer.to_s
+			  logger.debug "NOW: " + now_comparer.to_s
+			  logger.debug "++++++++"
+			  logger.debug "++++++++"
+
+			  if dateTimePointer < now_comparer
+			  	dateTimePointer = now_comparer
 			  end
 
 			  #To deattach continous services, just delete the serviceStaffPos condition
@@ -678,42 +751,12 @@ class Service < ActiveRecord::Base
 			      location_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
 			      location_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
 
-			      logger.debug "***"
-					logger.debug "***"
-					logger.debug "location open: " + location_open.to_s
-					logger.debug "***"
-					logger.debug "***"
-
-					logger.debug "***"
-					logger.debug "***"
-					logger.debug "location open: " + location_close.to_s
-					logger.debug "***"
-					logger.debug "***"
-
-					logger.debug "***"
-					logger.debug "***"
-					logger.debug "DTP is: " + dateTimePointer.to_s
-					logger.debug "***"
-					logger.debug "***"
-
 			      if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
 			        service_valid = true
 			        break
 			      end
 			    end
 			  end
-
-			  	logger.debug "***"
-				logger.debug "***"
-				logger.debug "Reaches before providers loop"
-				logger.debug "***"
-				logger.debug "***"
-
-				logger.debug "***"
-				logger.debug "***"
-				logger.debug "Service valid: " + service_valid.to_s
-				logger.debug "***"
-				logger.debug "***"
 
 			  # Horario dentro del horario del provider
 				if service_valid
@@ -750,12 +793,6 @@ class Service < ActiveRecord::Base
 
 					  #Check directly on query instead of looping through
 
-					  logger.debug "***"
-						logger.debug "***"
-						logger.debug "Reaches before provider times"
-						logger.debug "***"
-						logger.debug "***"
-
 					  provider.provider_times.where(day_id: dateTimePointer.cwday).each do |provider_time|
 					    provider_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.open.hour, provider_time.open.min)
 					    provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time.close.hour, provider_time.close.min)
@@ -766,12 +803,6 @@ class Service < ActiveRecord::Base
 					    end
 					  end
 
-					  logger.debug "***"
-						logger.debug "***"
-						logger.debug "Reaches before provider breaks"
-						logger.debug "***"
-						logger.debug "***"
-
 					  # Provider breaks
 					  if service_valid
 
@@ -780,12 +811,6 @@ class Service < ActiveRecord::Base
 					    end
 
 					  end
-
-					  logger.debug "***"
-						logger.debug "***"
-						logger.debug "Reaches before cross bookings"
-						logger.debug "***"
-						logger.debug "***"
 
 					  # Cross Booking
 					  if service_valid
@@ -806,12 +831,6 @@ class Service < ActiveRecord::Base
 					    end
 
 					  end
-
-					  logger.debug "***"
-						logger.debug "***"
-						logger.debug "Reaches before resources"
-						logger.debug "***"
-						logger.debug "***"
 
 					  # Recursos
 					  if service_valid and service.resources.count > 0
@@ -842,12 +861,6 @@ class Service < ActiveRecord::Base
 					      end
 					    end
 					  end
-
-					  logger.debug "***"
-						logger.debug "***"
-						logger.debug "Reaches before validity check"
-						logger.debug "***"
-						logger.debug "***"
 
 					  if service_valid
 
@@ -915,12 +928,6 @@ class Service < ActiveRecord::Base
 					  end
 					end
 				end
-
-				logger.debug "***"
-				logger.debug "***"
-				logger.debug "Reaches before not valid"
-				logger.debug "***"
-				logger.debug "***"
 
 			  	if !service_valid
 

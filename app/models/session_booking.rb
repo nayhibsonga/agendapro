@@ -6,7 +6,7 @@ class SessionBooking < ActiveRecord::Base
 	belongs_to :service
 	belongs_to :user
 	belongs_to :client
-	belongs_to :service_promo
+	belongs_to :treatment_promo
 
 
 	def send_sessions_booking_mail

@@ -5,15 +5,32 @@
 <input type="hidden" id="service_price" value="<%= @service.price %>" />
 <input type="hidden" id="after_booking" value="<%= @service.company.company_setting.after_booking %>" />
 <input type="hidden" id="book_limit_date" value="<%= @service.active_service_promo.book_limit_date.to_s %>" />
+<input type="hidden" id="locationId" value="<%= @location.id %>" />
+<input type="hidden" id="serviceId" value="<%= @service.id %>" />
+<input type="hidden" id="locationAddress" value="<%= @location.address %>" />
+<input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
+
+<% if user_signed_in? %>
+  <input type="hidden" id="user_id" value="<%= current_user.id %>" />
+<% end %>
 
 <div class="main below-navbar">
   <div class="container">
 
     <div class="row">
-      <div class="col-sm-12">
+      <div class="col-sm-9">
         <div class="promo-title">
           <%= @service.name %> en <%= @location.name %> de <%= @location.company.name %>
         </div>
+      </div>
+      <div class="col-sm-3" style="text-align: right;">
+        <%= form_tag({controller: "searchs", action: "promotions"}, method: "GET", class: "navbar-form", id: "promotions-side-form") do %>
+            <%= hidden_field_tag :latitude, params[:latitude] %>
+            <%= hidden_field_tag :longitude, params[:longitude] %>
+            <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+            <%= hidden_field_tag :inputSearch, params[:inputSearch] %>
+            <button class="promotions-search-btn btn btn-default" type="submit">Volver a promociones por horario&nbsp;<i class="fa fa-search"></i></button>
+        <% end %>
       </div>
     </div>
 
@@ -235,7 +252,7 @@
               <div class="panel-heading" role="tab" id="headingThree">
                 <h4 class="panel-title minus">
                   <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    <%= image_tag "promociones/agendapro_doble.png", :size => "30x30" %> &nbsp;&nbsp;Políticas de la empresa
+                    <%= image_tag "promociones/agendapro_doble.png", :size => "30x30" %> &nbsp;&nbsp;Políticas de promoción
                   </a>
                 </h4>
               </div>
@@ -244,7 +261,7 @@
                   <h3 style="color: #949292;">Modificación/Cancelación:</h3>
 
                   <p style="color: #949292;">
-                    La empresa no permite modificar ni cancelar reservas pagadas en promoción.
+                    No se permite modificar ni cancelar reservas pagadas en promoción.
                   </p>
 
                   <p style="color: #949292;">
@@ -787,16 +804,6 @@
     </div>
   </div>
 </div>
-
-<input type="hidden" id="locationId" value="<%= @location.id %>" />
-<input type="hidden" id="serviceId" value="<%= @service.id %>" />
-<input type="hidden" id="locationAddress" value="<%= @location.address %>" />
-<input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
-
-<% if user_signed_in? %>
-  <input type="hidden" id="user_id" value="<%= current_user.id %>" />
-<% end %>
-
 
 <%= content_tag "div", id: "clientExclusive", data: {client_exclusive: @location.company.company_setting.client_exclusive} do %>
 <% end %>

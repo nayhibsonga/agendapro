@@ -20,4 +20,4 @@
 	</div>
 </div>
 
-<a href="show_time_promo?id=<%= service.id %>&location_id=<%= location.id %>" service_id="<%= service.id %>" location_id="<%= location.id %>" class="show-promo-link" hidden>Click</a>
+<a href="show_time_promo?id=<%= service.id %>&location_id=<%= location.id %>&latitude=<%= params[:latitude] %>&longitude=<%= params[:longitude] %>&inputLocalization=<%= params[:inputLocalization] %>&inputSearch=<%= params[:inputSearch] %>" service_id="<%= service.id %>" location_id="<%= location.id %>" class="show-promo-link" hidden>Click</a>

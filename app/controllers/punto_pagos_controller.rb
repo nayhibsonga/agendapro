@@ -270,10 +270,10 @@ class PuntoPagosController < ApplicationController
         if @are_session_bookings
           session_booking = SessionBooking.find(bookings.first.session_booking_id)
 
-          if !session_booking.service_promo_id.nil?
-            service_promo = ServicePromo.find(session_booking.service_promo_id)
-            service_promo.max_bookings = service_promo.max_bookings + 1
-            service_promo.save
+          if !session_booking.treatment_promo_id.nil?
+            treatment_promo = TreatmentPromo.find(session_booking.treatment_promo_id)
+            treatment_promo.max_bookings = treatment_promo.max_bookings + 1
+            treatment_promo.save
           end
 
           session_booking.delete
@@ -312,12 +312,13 @@ class PuntoPagosController < ApplicationController
       end
 
       if @are_session_bookings
+
         session_booking = SessionBooking.find(bookings.first.session_booking_id)
 
-        if !session_booking.service_promo_id.nil?
-          service_promo = ServicePromo.find(session_booking.service_promo_id)
-          service_promo.max_bookings = service_promo.max_bookings + 1
-          service_promo.save
+        if !session_booking.treatment_promo_id.nil?
+          treatment_promo = TreatmentPromo.find(session_booking.treatment_promo_id)
+          treatment_promo.max_bookings = treatment_promo.max_bookings + 1
+          treatment_promo.save
         end
 
         session_booking.delete

@@ -13,17 +13,12 @@
 			</div>
 			<div class="col-sm-5" style="text-align: right; border-left: 1px solid #b5b5b5;">
 				<span style="color: #b5b5b5; font-size: 14px; padding-top: 10px;"><strike><%= number_to_currency(service.price, unit: "$", delimiter: ".") %></strike></span><br />
-				<span style="color: #b5b5b5; font-size: 16px;">Desde</span> <span style="color: #22c488; font-size: 16px;"><%= number_to_currency(service.price*(100-service.get_last_minute_discount(location.id))/100, unit: "$", delimiter: ".") %></span>
+				<span style="color: #b5b5b5; font-size: 16px;">Desde</span> <span style="color: #22c488; font-size: 16px;"><%= number_to_currency(service.price*(100-service.get_last_minute_discount)/100, unit: "$", delimiter: ".") %></span>
 			</div>
 			<div style="clear: both;"></div>
-			<p style="text-align: center; padding-top: 10px !important;"><span style="color: #505050; font-size: 16px;">Al reservar hasta <%= service.get_last_minute_hours(location.id).to_s %> horas antes.</span></p>
+			<p style="text-align: center; padding-top: 10px !important;"><span style="color: #505050; font-size: 16px;">Al reservar hasta <%= service.get_last_minute_hours.to_s %> horas antes.</span></p>
 		</div>
 	</div>
 </div>
 
-<a href="show_last_minute_promo?id=<%= service.id %>&location_id=<%= location.id %>" service_id="<%= service.id %>" location_id="<%= location.id %>" class="show-promo-link" hidden>Click</a>
-
-
-<script type="text/javascript">
-	
-</script>
+<a href="show_last_minute_promo?id=<%= service.id %>&location_id=<%= location.id %>&latitude=<%= params[:latitude] %>&longitude=<%= params[:longitude] %>&inputLocalization=<%= params[:inputLocalization] %>&inputSearch=<%= params[:inputSearch] %>" service_id="<%= service.id %>" location_id="<%= location.id %>" class="show-promo-link" hidden>Click</a>

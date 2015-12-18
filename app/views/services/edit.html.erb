@@ -28,6 +28,12 @@
 }
 </style>
 
+<% if @service.has_sessions %>
+	<input type="hidden" id="is_treatment" value="1" />
+<% else %>
+	<input type="hidden" id="is_treatment" value="0" />
+<% end %>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
@@ -70,6 +76,9 @@
 							<input type="hidden" id="promo_service_id" value="<%= @service.id %>" />
 							
 							<% if @service.online_payable && @service.check_company_promos && !@service.has_sessions %>
+
+								
+
 								<div class="row">
 									<div class="col-md-12">
 										<label>Descuento en reservas de último minuto</label>
@@ -87,15 +96,18 @@
 							                        </label>
 							                        <span>Permitir</span>
 						                        	<select name="last_minute_discount" id="last_minute_discount" class="promotions-input">
+						                        		<%
+					                        				last_minute_discount = 0
+					                        				last_minute_hours = 0
+					                        				if !@service.active_last_minute_promo_id.nil?
+
+					                        					last_minute_discount = @service.active_last_minute_promo.discount
+					                        					last_minute_hours = @service.active_last_minute_promo.hours
+
+					                        				end
+					                        			%>
 						                        		<% for i in 0..99 %>
-						                        			<%
-						                        				last_minute_discount = 0
-						                        				last_minute_hours = 0
-						                        				if !@service.last_minute_promos.nil? && @service.last_minute_promos.count > 0
-						                        					last_minute_discount = @service.last_minute_promos.first.discount
-						                        					last_minute_hours = @service.last_minute_promos.first.hours
-						                        				end
-						                        			%>
+						                        			
 						                        			<% if last_minute_discount == i %>
 						                        				<option value="<%= i.to_s %>" selected><%= i.to_s %> %</option>
 						                        			<% else %>
@@ -137,11 +149,15 @@
 												<% locations.each do |location| %>
 													<div class="checkbox">
 									                    <label>
-									                    	<% if LastMinutePromo.where(:service_id => @service.id, :location_id => location.id).count > 0 || @service.last_minute_promos.nil? || @service.last_minute_promos.count == 0 %>
+									                    	<% if @service.active_service_promo.nil? %>
 									                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
 									                    	<% else %>
-									                    		<input type="checkbox" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
-									                    	<% end %>
+										                    	<% if LastMinutePromoLocation.where(:last_minute_promo_id => @service.active_last_minute_promo_id, :location_id => location.id).count > 0 %>
+										                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
+										                    	<% else %>
+										                    		<input type="checkbox" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
+										                    	<% end %>
+										                    <% end %>
 									                    </label>
 									                </div>
 												<% end %>
@@ -632,21 +648,222 @@
 
 							<% else %>
 
-								<div class="row">
-									<div class="col-md-8">
-										<div class="form-group">
-											<p style="text-aling: justify;">
-												<% if !@service.online_payable %>
-													Este servicio no se puede pagar en línea, por lo que no puedes ofrecerlo en promoción.
-												<% elsif !@service.check_company_promos %>
-													Aún no has configurado las promociones. Entra a Configuraciones, a la sección de Promociones, para configurar el horario y activar las promociones. Si la opción no te aparece, ponte en contacto con nosotros para habilitar las promociones.
-												<% else %>
-													Este servicio corresponde a un tratamiento por sesiones, por lo que no puedes ofrecerlo en promoción por horario o de último minuto. Como alternativa, puedes ofrecerlo con descuento si es prepagado en línea. Para hacerlo, vuelve a la pantalla de edición del servicio, elige una opción de pago en línea, marca la opción de descuento or pago en línea e ingresa el porcentaje de descuento.
-												<% end %>
-											</p>
+								<!--
+									For now, make a dummy check so treatment_promos are not shown.
+								-->
+								<% if @service.online_payable && @service.check_company_promos && @service.has_sessions %>
+									
+									<div class="row">
+										<div class="col-md-12">
+											<label>Descuento de tratamiento</label>
+											<span class="help-block">Activa un descuento por pago en línea del tratamiento completo.</span>
+
+											<div class="form-group">
+												<div style="display: inline !important;">
+													<div class="checkbox">
+														<label>
+															<% if @service.has_treatment_promo %>
+								                          		<input type="checkbox" id="has_treatment_promo" name="has_treatment_promo" checked />
+								                          	<% else %>
+								                          		<input type="checkbox" id="has_treatment_promo" name="has_treatment_promo" />
+								                          	<% end %>
+								                          	Permitir descuento
+								                        </label>
+							                        </div>
+						                        	
+												</div>
+											</div>
 										</div>
 									</div>
-								</div>
+
+									<div class="row">
+										<div class="col-md-12">
+											<label>En los siguientes locales</label>
+											<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción por horario.</span>
+
+											<div class="form-group">
+												
+												<%
+													locations = []
+													@service.service_providers.each do |service_provider|  
+														if !locations.include?(service_provider.location)
+															locations << service_provider.location
+														end
+													end
+												%>
+
+												<% locations.each do |location| %>
+													<div class="checkbox">
+									                    <label>
+									                    	<% if @service.active_treatment_promo_id.nil? %>
+									                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="treatment_locations" /> <%= location.name %>
+									                    	<% else %>
+									                    		<% if TreatmentPromoLocation.where(:treatment_promo_id => @service.active_treatment_promo_id, :location_id => location.id).count > 0 %>
+									                    			<input type="checkbox" checked="checked" value="<%= location.id %>" name="treatment_locations" /> <%= location.name %>
+									                    		<% else %>
+									                    			<input type="checkbox" value="<%= location.id %>" name="treatment_locations" /> <%= location.name %>
+									                    		<% end %>
+									                    	<% end %>
+									                    </label>
+									                </div>
+												<% end %>
+
+											</div>
+
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-12">
+											<label>Descuento</label>
+											<span class="help-block">Selecciona el porcentaje de descuento.</span>
+
+											<div class="form-group">
+												<div class="row">
+													<div class="col-md-1">
+														<% 
+															treatment_discount = 0
+															if !@service.active_treatment_promo.nil?
+																treatment_discount = @service.active_treatment_promo.discount
+															end
+														%>
+														<select id="treatment_discount" name="treatment_discount" class="form-control">
+														<% for i in 0..99 %>
+						                        			<% if treatment_discount == i %>
+						                        				<option value="<%= i.to_s %>" selected><%= i.to_s %> %</option>
+						                        			<% else %>
+						                        				<option value="<%= i.to_s %>"><%= i.to_s %> %</option>
+						                        			<% end %>
+						                        		<% end %>
+						                        		</select>
+													</div>
+												</div>
+											</div>
+
+										</div>
+									</div>
+
+
+									<div class="row">
+										<div class="col-md-12">
+											<label>Promociones disponibles</label>
+											<span class="help-block">Selecciona el stock de reservas que tendrán descuento.</span>
+
+											<div class="form-group">
+												
+												<div class="checkbox">
+													<label>
+
+														<%
+															treatment_limit_booking = false
+															treatment_stock = 0
+
+															if !@service.active_treatment_promo.nil?
+
+																treatment_limit_booking = @service.active_treatment_promo.limit_booking
+																treatment_stock = @service.active_treatment_promo.max_bookings
+
+															end
+
+														%>
+														
+														<% if treatment_limit_booking %>
+							                          		<input type="checkbox" id="treatment_limit_booking" name="treatment_limit_booking" checked />
+							                          	<% else %>
+							                          		<input type="checkbox" id="treatment_limit_booking" name="treatment_limit_booking" />
+							                          	<% end %>
+							                          		Stock limitado.
+							                          		<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Marca la opción para definir un stock máximo, o desmárcala para definir un stock ilimitado."><i class="fa fa-question-circle fa-lg"></i></span>
+							                        </label>
+						                        </div>
+
+												<% if @service.active_treatment_promo.nil? %>
+													<div>
+														
+
+														<div class="input-group" style="width: 160px !important;">
+										                    <input type="number" id="treatment_max_bookings" name="treatment_max_bookings" value="0" class="form-control" />
+										                    <span class="input-group-addon">Reservas</span>
+			                  							</div>
+
+													
+
+													</div>
+												<% else %>
+													<div>
+														<div class="input-group" style="width: 160px !important;">
+										                    <input type="number" id="treatment_max_bookings" name="treatment_max_bookings" value="<%= treatment_stock %>" class="form-control" />
+										                    <span class="input-group-addon">Reservas</span>
+				              							</div>
+				              							<% if treatment_limit_booking %>
+															Quedan <%= treatment_stock.to_s %> reservas disponibles.
+														<% else %>
+															No hay límite de reservas. Edita la opción "stock limitado" e ingresa el stock de reservas para modificar esta opción.
+														<% end %>
+													</div>
+												<% end %>
+												<div style="clear: both;">
+												</div>
+
+											</div>
+
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-12">
+											<label>Fechas</label>
+											<span class="help-block">Selecciona la duración de la promoción.</span>
+
+											<div class="form-group">
+												<div class="row">
+													<div class="col-md-2">
+														Finaliza el:
+													</div>
+													<div class="col-md-3">
+														<% 
+															treatment_finish_date = DateTime.now.strftime('%d/%m/%Y')
+															if !@service.active_treatment_promo.nil?
+																treatment_finish_date = @service.active_treatment_promo.finish_date.strftime('%d/%m/%Y')
+															end
+														%>
+														<input type="text" id="treatment_finish_date" name="treatment_finish_date" class="form-control" value="<%= treatment_finish_date %>" />
+													</div>
+												</div>
+											</div>
+
+										</div>
+									</div>
+
+								
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<button class="btn btn-green promotions-submit">Guardar</button>
+												<%= link_to 'Cancelar', services_path, :class => "btn btn-default" %>
+											</div>
+										</div>
+									</div>
+
+								<% else %>
+
+									<div class="row">
+										<div class="col-md-8">
+											<div class="form-group">
+												<p style="text-aling: justify;">
+													<% if !@service.online_payable %>
+														Este servicio no se puede pagar en línea, por lo que no puedes ofrecerlo en promoción.
+													<% elsif !@service.check_company_promos %>
+														Aún no has configurado las promociones. Entra a Configuraciones, a la sección de Promociones, para configurar el horario y activar las promociones. Si la opción no te aparece, ponte en contacto con nosotros para habilitar las promociones.
+													<% else %>
+														Este servicio corresponde a un tratamiento por sesiones, por lo que no puedes ofrecerlo en promoción por horario o de último minuto. Como alternativa, puedes ofrecerlo con descuento si es prepagado en línea. Para hacerlo, vuelve a la pantalla de edición del servicio, elige una opción de pago en línea, marca la opción de descuento or pago en línea e ingresa el porcentaje de descuento.
+													<% end %>
+												</p>
+											</div>
+										</div>
+									</div>
+
+								<% end %>
 
 							<% end %>
 

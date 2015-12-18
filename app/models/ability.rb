@@ -119,6 +119,8 @@ class Ability
     can :show_time_promo, Service
     can :show_last_minute_promo, Service
     can :last_minute_hours, Service
+    can :show_treatment_promo, Service
+    can :treatment_promo_hours, Service
     can :get_treatment_price, Booking
 
 

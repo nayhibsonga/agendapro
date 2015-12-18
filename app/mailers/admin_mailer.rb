@@ -9,8 +9,17 @@ class AdminMailer < ActionMailer::Base
 		template_content = []
 
 		locations = ''
-		service_promo = ServicePromo.find(service.active_service_promo_id)
-		location_ids = service_promo.promos.pluck(:location_id).uniq
+		location_ids = []
+
+		if !service.active_service_promo.nil?
+			location_ids = location_ids + service.active_service_promo.promos.pluck(:location_id).uniq
+		end
+
+		if !service.active_last_minute_promo.nil?
+			location_ids = location_ids + service.active_last_minute_promo.locations.pluck(:id)
+		end
+
+		location_ids = location_ids.uniq
 
 		location_ids.each do |l_id|
 			location = Location.find(l_id)
@@ -20,7 +29,7 @@ class AdminMailer < ActionMailer::Base
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => 'Promociones AgendaPro',
-			:subject => 'Nueva promoción en ' + service.company.name,
+			:subject => 'Creación o edición de promoción en ' + service.company.name,
 			:to => [{
 								:email => 'nrossi@agendapro.cl',
 								:name => 'Nicolás Rossi',
