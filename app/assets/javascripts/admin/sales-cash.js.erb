@@ -279,30 +279,36 @@ function saveSalesCashTransaction()
 
 function deleteSalesCashTransaction(sales_cash_transaction_id)
 {
-  var r = confirm("¿Estás seguro que deseas eliminar el traspaso?");
-  if (r == true) {
-    $.ajax({
-      url: '/delete_sales_cash_transaction',
-      method: 'post',
-      data: {sales_cash_transaction_id: sales_cash_transaction_id},
-      dataType: 'json',
-      error: function(response){
-        swal('Ocurrió un error al eliminar el traspaso.');
-        loadPayments();
-      },
-      success: function(response){
-        if(response[0] == "error")
-        {
+  swal({
+    title: "¿Estás seguro que deseas eliminar el traspaso?",
+    type: "warning",
+    showCancelButton: true
+  },
+  function (isConfirm) {
+    if (isConfirm) {
+      $.ajax({
+        url: '/delete_sales_cash_transaction',
+        method: 'post',
+        data: {sales_cash_transaction_id: sales_cash_transaction_id},
+        dataType: 'json',
+        error: function(response){
           swal('Ocurrió un error al eliminar el traspaso.');
+          loadPayments();
+        },
+        success: function(response){
+          if(response[0] == "error")
+          {
+            swal('Ocurrió un error al eliminar el traspaso.');
+          }
+          else
+          {
+            swal('Traspaso eliminado correctamente.');
+          }
+          loadPayments();
         }
-        else
-        {
-          swal('Traspaso eliminado correctamente.');
-        }
-        loadPayments();
-      }
-    });
-  }
+      });
+    };
+  });
 }
 
 function loadSalesCashIncome(sales_cash_income)
@@ -410,30 +416,36 @@ function saveSalesCashIncome()
 
 function deleteSalesCashIncome(sales_cash_income_id)
 {
-  var r = confirm("¿Estás seguro que deseas eliminar el ingreso?");
-  if (r == true) {
-    $.ajax({
-      url: '/delete_sales_cash_income',
-      method: 'post',
-      data: {sales_cash_income_id: sales_cash_income_id},
-      dataType: 'json',
-      error: function(response){
-        swal('Ocurrió un error al eliminar el ingreso.');
-        loadPayments();
-      },
-      success: function(response){
-        if(response[0] == "error")
-        {
+  swal({
+    title: "¿Estás seguro que deseas eliminar el ingreso?",
+    type: "warning",
+    showCancelButton: true
+  },
+  function (isConfirm) {
+    if (isConfirm) {
+      $.ajax({
+        url: '/delete_sales_cash_income',
+        method: 'post',
+        data: {sales_cash_income_id: sales_cash_income_id},
+        dataType: 'json',
+        error: function(response){
           swal('Ocurrió un error al eliminar el ingreso.');
+          loadPayments();
+        },
+        success: function(response){
+          if(response[0] == "error")
+          {
+            swal('Ocurrió un error al eliminar el ingreso.');
+          }
+          else
+          {
+            swal('Ingreso eliminado correctamente.');
+          }
+          loadPayments();
         }
-        else
-        {
-          swal('Ingreso eliminado correctamente.');
-        }
-        loadPayments();
-      }
-    });
-  }
+      });
+    };
+  });
 }
 
 function saveSalesCash()

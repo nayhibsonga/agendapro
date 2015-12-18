@@ -41,9 +41,13 @@ function cancelEditComment(id) {
 }
 
 function deleteComment(id) {
-  if (confirm("¿Estás seguro de eliminar el Comentario seleccionado?")) {
+  swal({
+    title: "¿Estás seguro de eliminar el Comentario seleccionado?",
+    type: "warning"
+  },
+  function () {
     saveComment("DELETE",$('#client_comment_client_id').val(),{"id": id });
-  }
+  });
   return false;
 }
 

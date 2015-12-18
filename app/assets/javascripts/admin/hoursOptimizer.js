@@ -413,7 +413,7 @@ function saveBookings () {
     },
     error: function(xhr){
       var errors = $.parseJSON(xhr.responseText).errors;
-      var errores = '\u26A0 No se pudo guardar todos los servicios \u26A0 \n\n';
+      var errores = '';
       $.each(errors, function (booking, error) {
         errores += 'Servicio ' + error.booking + '\n';
         for (i in error.errors) {
@@ -423,57 +423,63 @@ function saveBookings () {
       errores += '\n¿Guardar de todos modos?';
       $('#nextButton').removeAttr("disabled");
       $('#small_loader').remove();
-      var result = confirm(errores);
-      if (result) {
-        $.post('/force_create.json', { "bookings": bookingBuffer }, function (bookings) {
-          $('#bookingAlerts').hide();
-          $('#bookingWarnings').empty();
-          var warning = false;
-          $.each(bookings, function (pos, booking) {
-            if (booking.status_id != 5) {
-              var providerLock = '-unlock';
-              if (booking.provider_lock) {
-                providerLock = '-lock';
-              };
-              var originClass = 'origin-manual';
-              originClass += providerLock + statusIcon[booking.status_id];
-              var events = {
-                id: booking.id,
-                title: booking.first_name+' '+booking.last_name+' - '+booking.service_name,
-                allDay: false,
-                start: booking.start,
-                end: booking.end,
-                resourceId: booking.service_provider_id,
-                textColor: textColors[booking.status_id],
-                borderColor: textColors[booking.status_id],
-                backgroundColor: backColors[booking.status_id],
-                className: originClass,
-                title_qtip: booking.first_name+' '+booking.last_name,
-                time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
-                service_qtip: booking.service_name,
-                phone_qtip: booking.phone,
-                email_qtip: booking.email,
-                comment_qtip: booking.company_comment
-              };
-              $('#calendar').fullCalendar('renderEvent', events, true);
-            }
-            if (booking.warnings.length > 0) {
-              var warnings = '';
-              for (i in booking.warnings) {
-                warnings += booking.warnings[i] + '. ';
+      swal({
+        title: "No se pudo guardar todos los servicios",
+        text: errores,
+        type: "warning"
+      },
+      function (isConfirm) {
+        if (isConfirm) {
+          $.post('/force_create.json', { "bookings": bookingBuffer }, function (bookings) {
+            $('#bookingAlerts').hide();
+            $('#bookingWarnings').empty();
+            var warning = false;
+            $.each(bookings, function (pos, booking) {
+              if (booking.status_id != 5) {
+                var providerLock = '-unlock';
+                if (booking.provider_lock) {
+                  providerLock = '-lock';
+                };
+                var originClass = 'origin-manual';
+                originClass += providerLock + statusIcon[booking.status_id];
+                var events = {
+                  id: booking.id,
+                  title: booking.first_name+' '+booking.last_name+' - '+booking.service_name,
+                  allDay: false,
+                  start: booking.start,
+                  end: booking.end,
+                  resourceId: booking.service_provider_id,
+                  textColor: textColors[booking.status_id],
+                  borderColor: textColors[booking.status_id],
+                  backgroundColor: backColors[booking.status_id],
+                  className: originClass,
+                  title_qtip: booking.first_name+' '+booking.last_name,
+                  time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
+                  service_qtip: booking.service_name,
+                  phone_qtip: booking.phone,
+                  email_qtip: booking.email,
+                  comment_qtip: booking.company_comment
+                };
+                $('#calendar').fullCalendar('renderEvent', events, true);
               }
-              $('#bookingWarnings').append(warnings);
-              warning = true;
-            }
+              if (booking.warnings.length > 0) {
+                var warnings = '';
+                for (i in booking.warnings) {
+                  warnings += booking.warnings[i] + '. ';
+                }
+                $('#bookingWarnings').append(warnings);
+                warning = true;
+              }
+            });
+            if (warning) {
+              $('#bookingAlerts').show();
+            };
+            $('#hoursOptimizer').modal('hide');
           });
-          if (warning) {
-            $('#bookingAlerts').show();
-          };
+        } else{
           $('#hoursOptimizer').modal('hide');
-        });
-      } else {
-        $('#hoursOptimizer').modal('hide');
-      };
+        };
+      });
     }
   });
 }

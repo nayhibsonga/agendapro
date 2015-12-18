@@ -87,7 +87,7 @@ $(function() {
 
         loadProductPrice();
       });
-  });  
+  });
 
   if($('#editable_payment_prices').val() == "0" && $('#is_admin_role').val() == "0")
   {
@@ -184,7 +184,7 @@ $(function() {
     {
       $("#selected_pay_method").val("other");
     }
-    
+
   });
 
   $("#payment_cashier_code").on('focusout', function(){
@@ -205,7 +205,7 @@ $(function() {
         $("#payment_cashier_id").val("");
       }
     });
-    
+
   });
 
   $("#internal_sale_cashier_code").on('focusout', function(){
@@ -226,7 +226,7 @@ $(function() {
         $("#internal_sale_cashier_id").val("");
       }
     });
-    
+
   });
 
   $("#addServiceBtn").click(function(){
@@ -371,7 +371,7 @@ $(function() {
 
   $("#paymentBtnSave").click(function(){
     parseReceipts();
-    createAndServePayment("save");    
+    createAndServePayment("save");
   });
 
   $("#paymentBtnPrint").click(function(){
@@ -517,7 +517,7 @@ $(function() {
             $("#payment_cashier_name").val("");
           }
         });
-        
+
       }
     }
     else if(paymentModalState == 'Step1')
@@ -823,7 +823,7 @@ function loadInternalSaleProduct(internal_sale)
         if(internal_sale)
         {
           $('#internal_sale_product_brand').val(internal_sale.product_brand_id)
-        } 
+        }
 
         //Finally, load products
         $.getJSON('/get_products_for_payment_or_sale', {location_id: parseInt($('#internal_sale_location').val()), product_category_id: $('#internal_sale_product_category').val(), product_brand_id: $('#internal_sale_product_brand').val() }, function (products) {
@@ -837,9 +837,9 @@ function loadInternalSaleProduct(internal_sale)
           loadInternalSaleProductPrice(internal_sale);
         });
 
-      });  
+      });
 
-  });  
+  });
 
 }
 
@@ -1204,17 +1204,17 @@ function savePaymentIntro()
 
   var payment_data = {
     payment_id: payment_id,
-    cashier_id: cashier_id, 
+    cashier_id: cashier_id,
     set_client: set_client,
-    client_name: client_name, 
-    client_first_name: client_first_name, 
-    client_last_name: client_last_name, 
-    client_id: client_id, 
-    client_name: client_name, 
+    client_name: client_name,
+    client_first_name: client_first_name,
+    client_last_name: client_last_name,
+    client_id: client_id,
+    client_name: client_name,
     client_phone: client_phone,
     client_gender: client_gender,
     client_email: client_email,
-    payment_date: payment_date, 
+    payment_date: payment_date,
   };
 
   $.ajax({
@@ -1242,7 +1242,7 @@ function savePaymentIntro()
         }
         triggerAlert("Ocurrieron errores al tratar de guardar los datos: " + errors_str);
       }
-      
+
       $(".payment-btn-close").trigger("click");
       //loadPayments();
     }
@@ -1295,12 +1295,12 @@ function getPayment(payment_id)
         var past_booking_index = paymentPastBookings.length-1;
 
         $("#paymentItemsTable").append(
-          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' + 
+          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' +
           '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
           '<td style="width: 5%;">' + item_id + '</td>' +
-          '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
-          '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
-          '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
+          '<td style="width: 24%;"><span>Reserva existente</span></td>' +
+          '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' +
+          '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' +
           '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" ' + disabledPrice + ' /></div></td>' +
           '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
           '</tr>'
@@ -1322,13 +1322,13 @@ function getPayment(payment_id)
         var new_booking_index = paymentNewBookings.length-1;
 
         $("#paymentItemsTable").append(
-          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1">' + 
+          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1">' +
           '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
           '<td style="width: 5%;">' + item_id + '</td>' +
           /*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
-          '<td style="width: 24%;"><span>Servicio</span></td>' + 
-          '<td style="width: 24%;"><span class="itemName">' + new_booking['service_name'] + '</span></td>' + 
-          '<td style="width: 7%;"><input type="number" class="form-control itemQuantity" value="1" disabled /></td>' + 
+          '<td style="width: 24%;"><span>Servicio</span></td>' +
+          '<td style="width: 24%;"><span class="itemName">' + new_booking['service_name'] + '</span></td>' +
+          '<td style="width: 7%;"><input type="number" class="form-control itemQuantity" value="1" disabled /></td>' +
           '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + new_booking['price'] + '" ' + disabledPrice + ' /></div></td>' +
           '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + new_booking['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
           '</tr>'
@@ -1349,13 +1349,13 @@ function getPayment(payment_id)
         var product_index = paymentProducts.length-1;
 
         $("#paymentItemsTable").append(
-          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '">' + 
+          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '">' +
           '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
           '<td style="width: 5%;">' + item_id + '</td>' +
           /*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
-          '<td style="width: 24%;"><span>Producto</span></td>' + 
-          '<td style="width: 24%;"><span class="itemName">' + product['name'] + '</span></td>' + 
-          '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="' + product['quantity'] + '" /></span></td>' + 
+          '<td style="width: 24%;"><span>Producto</span></td>' +
+          '<td style="width: 24%;"><span class="itemName">' + product['name'] + '</span></td>' +
+          '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="' + product['quantity'] + '" /></span></td>' +
           '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + product['price'] + '" ' + disabledPrice + ' /></div></td>' +
           '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + product['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
           '</tr>'
@@ -1401,7 +1401,7 @@ function calculatePaymentTotal(){
     var price_str = $(this).find('.itemPrice').val();
     var price = parseInt(price_str);
     var discount = parseInt($(this).find('.itemDiscount').val());
-    
+
     total = total + (quantity*price*(100-discount)/100);
 
   });
@@ -1475,7 +1475,7 @@ function loadPaymentModal2(booking_id) {
   $("#payment_total_change_amount").val("0");
   $('.payment_method_amount').val("0");
   $('.company_payment_method_amount').val("0");
-  
+
   $("#paymentModal1").modal('hide');
   $("#paymentModal2").modal('show');
   $("#paymentModal3").modal('hide');
@@ -1544,9 +1544,9 @@ function loadLocationProducts()
           loadProductPrice();
         });
 
-      });  
+      });
 
-  });  
+  });
 
 }
 
@@ -1589,7 +1589,7 @@ function loadProductSellers()
 {
   $("#payment_product_seller").empty();
   $.getJSON('/location_sellers', {id: parseInt($('#payment_location').val()) }, function (sellers) {
-    
+
     $.each(sellers, function (key, seller) {
       $("#payment_product_seller").append('<option value="' + seller.id + '_' + seller.seller_type + '">' + seller.full_name + ' (' + seller.role_name + ')</option>');
     });
@@ -1719,7 +1719,7 @@ function loadClientPastBookings(){
                     placement: "right",
                     template: '<div class="tooltip custom-tooltip-div" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner custom-tooltip"></div></div>'
                   });
-                  
+
                 }
 
                 $("#cpb-bookings").append('<div class="pastBookingRow" session_booking_id="' + past_booking.session_booking_id + '" booking_id="' + past_booking.booking.id + '">' +
@@ -1759,12 +1759,12 @@ function addNotBooked(){
     if($("#payment_not_booked_service").val() == "-1")
     {
       triggerAlert("Debes elegir un servicio antes de agregarlo.");
-      return; 
+      return;
     }
     if($("#payment_not_booked_provider").val() == "-1")
     {
       triggerAlert("Debes elegir un prestador antes de agregarlo.");
-      return; 
+      return;
     }
   }
 
@@ -1785,13 +1785,13 @@ function addNotBooked(){
   var new_booking_index = paymentNewBookings.length-1;
 
   $("#paymentItemsTable").append(
-    '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1">' + 
+    '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1">' +
     '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
     '<td style="width: 5%;">' + item_id + '</td>' +
     /*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="' + new_booking_index + '" product_index="-1"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
-    '<td style="width: 24%;"><span>Servicio</span></td>' + 
-    '<td style="width: 24%;"><span class="itemName">' + new_booking['service_name'] + '</span></td>' + 
-    '<td style="width: 7%;"><input type="number" class="form-control itemQuantity" value="1" disabled /></td>' + 
+    '<td style="width: 24%;"><span>Servicio</span></td>' +
+    '<td style="width: 24%;"><span class="itemName">' + new_booking['service_name'] + '</span></td>' +
+    '<td style="width: 7%;"><input type="number" class="form-control itemQuantity" value="1" disabled /></td>' +
     '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + new_booking['price'] + '" ' + disabledPrice + ' /></div></td>' +
     '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + new_booking['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
     '</tr>'
@@ -1822,13 +1822,13 @@ function addPastBooked(booking_id){
     var past_booking_index = paymentPastBookings.length-1;
 
     $("#paymentItemsTable").append(
-      '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' + 
+      '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' +
       '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
       '<td style="width: 5%;">' + item_id + '</td>' +
     /*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
-      '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
-      '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
-      '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
+      '<td style="width: 24%;"><span>Reserva existente</span></td>' +
+      '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' +
+      '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' +
       '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" ' + disabledPrice + ' /></div></td>' +
       '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
       '</tr>'
@@ -1869,12 +1869,12 @@ function addPastBookedTreatment(session_booking_id){
 
 
       $("#paymentItemsTable").append(
-        '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' + 
+        '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' +
         '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
         '<td style="width: 5%;">' + item_id + '</td>' +
-        '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
-        '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
-        '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
+        '<td style="width: 24%;"><span>Reserva existente</span></td>' +
+        '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' +
+        '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' +
         '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" ' + disabledPrice + ' /></div></td>' +
         '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
         '</tr>'
@@ -1901,7 +1901,7 @@ function addProduct()
   if($("#payment_product").val() == "-1")
   {
     triggerAlert("Debes elegir un producto antes de agregarlo.");
-    return; 
+    return;
   }
 
   var product = new Object();
@@ -1921,13 +1921,13 @@ function addProduct()
   var product_index = paymentProducts.length-1;
 
   $("#paymentItemsTable").append(
-    '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '">' + 
+    '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '">' +
     '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
     '<td style="width: 5%;">' + item_id + '</td>' +
     /*'<td style="width: 5%; text-align: center; cursor: pointer; margin-bottom: -2px;"><span class="editPaymentItem" item_id="' + item_id + '" past_booking_index="-1" new_booking_index="-1" product_index="' + product_index + '"><button><i class="fa fa-pencil-square-o fa-lg"></i></button></span></td>' +*/
-    '<td style="width: 24%;"><span>Producto</span></td>' + 
-    '<td style="width: 24%;"><span class="itemName">' + product['name'] + '</span></td>' + 
-    '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="' + product['quantity'] + '" /></span></td>' + 
+    '<td style="width: 24%;"><span>Producto</span></td>' +
+    '<td style="width: 24%;"><span class="itemName">' + product['name'] + '</span></td>' +
+    '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="' + product['quantity'] + '" /></span></td>' +
     '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + product['price'] + '" ' + disabledPrice + ' /></div></td>' +
     '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + product['discount'] + '" /><span class="input-group-addon">%</span></div></td>' +
     '</tr>'
@@ -1955,33 +1955,33 @@ function fillReceiptsItemsTable(){
       if(paymentItems[x]['item_type'] == "product")
       {
         $("#receiptsItemsTable").append(
-          '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' + 
+          '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' +
           '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" /></td>' +
           '<td>' + paymentItems[x]['item_id'] + '</td>' +
-          '<td>Producto</td>' + 
-          '<td>' + paymentItems[x]['name'] + '</td>' + 
+          '<td>Producto</td>' +
+          '<td>' + paymentItems[x]['name'] + '</td>' +
           '</tr>'
         );
       }
       else if(paymentItems[x]['item_type'] == "past_booking")
       {
         $("#receiptsItemsTable").append(
-          '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' + 
+          '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' +
           '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" /></td>' +
           '<td>' + paymentItems[x]['item_id'] + '</td>' +
-          '<td>Reserva existente</td>' + 
-          '<td>' + paymentItems[x]['service_name'] + '</td>' + 
+          '<td>Reserva existente</td>' +
+          '<td>' + paymentItems[x]['service_name'] + '</td>' +
           '</tr>'
         );
       }
       else
       {
         $("#receiptsItemsTable").append(
-          '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' + 
+          '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' +
           '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" /></td>' +
           '<td>' + paymentItems[x]['item_id'] + '</td>' +
-          '<td>Servicio</td>' + 
-          '<td>' + paymentItems[x]['service_name'] + '</td>' + 
+          '<td>Servicio</td>' +
+          '<td>' + paymentItems[x]['service_name'] + '</td>' +
           '</tr>'
         );
       }
@@ -2007,7 +2007,7 @@ function removePaymentItem(index)
     paymentPastBookings[past_book_index] = null;
   }
   if(new_book_index != "-1")
-  { 
+  {
     paymentNewBookings[new_book_index] = null;
   }
   $('.paymentItemsRow[item_id="' + index + '"]').remove();
@@ -2079,33 +2079,33 @@ function removeReceipt(receipt_id)
     if(current_item['item_type'] == 'product')
     {
       $("#receiptsItemsTable").append(
-        '<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' + 
+        '<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' +
         '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" /></td>' +
         '<td>' + current_item['item_id'] + '</td>' +
-        '<td>Producto</td>' + 
-        '<td>' + current_item['name'] + '</td>' + 
+        '<td>Producto</td>' +
+        '<td>' + current_item['name'] + '</td>' +
         '</tr>'
       );
     }
     else if(current_item['item_type'] == 'past_booking')
     {
       $("#receiptsItemsTable").append(
-        '<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' + 
+        '<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' +
         '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" /></td>' +
         '<td>' + current_item['item_id'] + '</td>' +
-        '<td>Reserva existente</td>' + 
-        '<td>' + current_item.service_name + '</td>' + 
+        '<td>Reserva existente</td>' +
+        '<td>' + current_item.service_name + '</td>' +
         '</tr>'
       );
     }
     else
     {
       $("#receiptsItemsTable").append(
-        '<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' + 
+        '<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' +
         '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" /></td>' +
         '<td>' + current_item['item_id'] + '</td>' +
-        '<td>Servicio</td>' + 
-        '<td>' + current_item['service_name'] + '</td>' + 
+        '<td>Servicio</td>' +
+        '<td>' + current_item['service_name'] + '</td>' +
         '</tr>'
       );
     }
@@ -2153,7 +2153,7 @@ function addReceipt()
     var current_item_id = parseInt($(this).attr("item_id"));
 
     var current_item = $('.paymentItemsRow[item_id="'+current_item_id+'"]');
-    
+
     for(x = 0; x < paymentItems.length; x++)
     {
       if(paymentItems[x] != null)
@@ -2195,7 +2195,7 @@ function addReceiptSummary(receipt)
   $("#paymentReceiptsForms").hide();
 
   $("#addedReceipts").append(
-    '<div class="addedReceipt" receipt_id="' + receipt['receipt_id'] + '">' + 
+    '<div class="addedReceipt" receipt_id="' + receipt['receipt_id'] + '">' +
     receipt['receipt_type_name'] + '<span class="removeReceipt" receipt_id="' + receipt['receipt_id'] + '"><i class="fa fa-times"></i></span><br />' +
     'N° ' + receipt['number'] + '<br />' +
     'Monto: $' + receipt['amount'] +
@@ -2225,7 +2225,7 @@ function addReceiptFinal(receipt)
   for(y = 0; y < receipt['items'].length; y++)
   {
     var current_item = $('.paymentItemsRow[item_id="'+ receipt['items'][y]['item_id'] +'"]');
-    
+
     var item_quantity = parseInt(current_item.find('.itemQuantity').val());
     var item_price_str = current_item.find('.itemPrice').val();
     var item_price = parseInt(item_price_str);
@@ -2246,7 +2246,7 @@ function addReceiptFinal(receipt)
 
   $("#paymentReceiptsFinal").append(
     '<div class="receiptFinal" receipt_id="' + receipt['receipt_id'] + '"><div><span class="receiptTitle">' + receipt['receipt_type_name'] + '</span><span class="receiptNumber">N° ' + receipt['number'] +'</span></div><div><br /><table>' +
-      items_header + 
+      items_header +
       items_str +
       items_total +
     '</table></div></div>'
@@ -2293,7 +2293,7 @@ function checkReceiptsReady()
 /*
 * Parsers for items and receipts.
 *
-* They stringify items and receipts list from their json nature so that then a simple string is passed in the form, 
+* They stringify items and receipts list from their json nature so that then a simple string is passed in the form,
 * delegating the job of decoding it to the controller.
 */
 
@@ -2420,25 +2420,25 @@ function createAndServePayment(option)
   var callback_option_str = option;
 
   var payment_data = {
-    location_id: location_id, 
-    cashier_id: cashier_id, 
+    location_id: location_id,
+    cashier_id: cashier_id,
     set_client: set_client,
-    client_name: client_name, 
-    client_first_name: client_first_name, 
-    client_last_name: client_last_name, 
-    client_id: client_id, 
-    client_name: client_name, 
+    client_name: client_name,
+    client_first_name: client_first_name,
+    client_last_name: client_last_name,
+    client_id: client_id,
+    client_name: client_name,
     client_phone: client_phone,
     client_gender: client_gender,
     client_email: client_email,
-    past_bookings: payment_past_bookings, 
-    new_bookings: payment_new_bookings, 
-    products: payment_products, 
-    paid_amount: payment_paid_amount, 
-    cost: payment_cost, 
-    change_amount: payment_change_amount, 
+    past_bookings: payment_past_bookings,
+    new_bookings: payment_new_bookings,
+    products: payment_products,
+    paid_amount: payment_paid_amount,
+    cost: payment_cost,
+    change_amount: payment_change_amount,
     transactions: transactions,
-    payment_date: payment_date, 
+    payment_date: payment_date,
     receipts: payment_receipts,
     callback_option: callback_option_str
   };
@@ -2463,7 +2463,7 @@ function createAndServePayment(option)
           $(".payment-btn-close").trigger("click");
           if (callback_option_str == "print")
           {
-            
+
             $("#paymentPrintLink").append('<a target="_blank" href="/payment_pdf.pdf?payment_id=' + response[1]['id'] + '" class="print-link">Imprimir resumen de pago</a><br />');
 
             for(x = 0; x < response[2].length; x++)
@@ -2524,7 +2524,7 @@ function createAndServePayment(option)
           $(".payment-btn-close").trigger("click");
           if (callback_option_str == "print")
           {
-            
+
             $("#paymentPrintLink").append('<a target="_blank" href="/payment_pdf.pdf?payment_id=' + response[1]['id'] + '" class="print-link">Imprimir resumen de pago</a><br />');
 
             for(x = 0; x < response[2].length; x++)
@@ -2768,7 +2768,7 @@ function resetPaymentStep2()
   $('.payment_method_amount').val("0");
   $('.company_payment_method_amount').val("0");
   $("#transactionsReadyBtn").prop('disabled', true);
-  
+
 
 }
 
@@ -2781,7 +2781,7 @@ function resetPaymentStep3()
   $("#paymentReceiptsArray").val("");
 
   $("#addedReceipts").empty();
-  
+
   $("#checkAllItems").prop('checked', false);
 
   $(".receiptsItemsRow").remove();
@@ -2812,8 +2812,8 @@ function editPayment(payment_id)
 {
   /*$.getJSON('/load_payment/', { payment_id: payment_id }, function (full_payment) {
     console.log(full_payment);
-    
-    
+
+
   });*/
 
   $("#editPaymentId").val(payment_id);
@@ -2830,8 +2830,11 @@ function editPayment(payment_id)
 function deletePayment(payment_id)
 {
   var r = confirm("¿Estás seguro que deseas eliminar el pago?");
-  if (r == true)
-  {
+  swal({
+    title: "¿Estás seguro que deseas eliminar el pago?",
+    type: "warning"
+  },
+  function () {
     $.ajax({
       url: '/delete_payment',
       type: 'post',
@@ -2852,7 +2855,7 @@ function deletePayment(payment_id)
         loadPayments();
       }
     });
-  }
+  });
 }
 
 function openPaymentSummary(payment_id)

@@ -1006,16 +1006,37 @@ function booking_valid (booking) {
 }
 
 function deleteBooking(eventId) {
-  var warning = '¿Estás seguro que quieres cancelar esta reserva?\nEsta acción no se puede revertir.';
   // Staff code
   var confirmation = false;
   if ($('#calendar-data').data('staff-code')) {
-    warning += "\n\nIngrese el código de Empleado";
-    var staffCode = prompt(warning, "");
-    confirmation = (staffCode != null) && (staffCode != "");
-    $('#booking_staff_code').val(staffCode);
+    swal({
+      title: "¿Estás seguro que quieres cancelar esta reserva?",
+      text: "Esta acción no se puede revertir.\nIngrese el código de Empleado:",
+      type: "input",
+      inputType: "password",
+      showCancelButton: true,
+      closeOnConfirm: false
+    },
+    function (inputValue) {
+      if (inputValue === false) return false;
+      if (inputValue === "") {
+        swal.showInputError("El código no puede estar en blanco.");
+        return false;
+      };
+      confirmation = true;
+      $('#booking_staff_code').val(inputValue);
+      swal.close();
+    });
   } else{
-    confirmation = confirm(warning);
+    swal({
+      title: "¿Estás seguro que quieres cancelar esta reserva?",
+      text: "Esta acción no se puede revertir.",
+      type: "warning",
+      showCancelButton: true
+    },
+    function() {
+      confirmation = true;
+    });
   };
   if (confirmation) {
     $('.booking-button').attr("disabled", "disabled");
@@ -1082,48 +1103,82 @@ function editDrag(event) {
     break_service_providers_ids.push(event.resourceId)
     $.extend(eventJSON, {service_provider_id: break_service_providers_ids, provider_lock: false});
 
-    if (confirm('¿Estás seguro que deseas modificar el bloqueo de horario?')) {
-      $.ajax({
-        type: 'PATCH',
-        url: '/provider_breaks/'+ event.id.substring(1) +'.json',
-        data: { "provider_break": eventJSON },
-        dataType: 'json',
-        success: function(){
-          swal("Bloqueo actualizado exitosamente.");
-        },
-        error: function(xhr){
-          showErrors(xhr);
-          $.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break) {
-            event.start = provider_break.start;
-            event.end = provider_break.end;
-            event.resourceId = provider_break.service_provider_id;
-            $('#calendar').fullCalendar('updateEvent', event);
-          });
-        }
-      });
-    } else {
-      $.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break) {
-        event.start = provider_break.start;
-        event.end = provider_break.end;
-        event.resourceId = provider_break.service_provider_id;
-        $('#calendar').fullCalendar('updateEvent', event);
-      });
-    };
+    swal({
+      title: "¿Estás seguro que deseas modificar el bloqueo de horario?",
+      type: "warning",
+      showCancelButton: true,
+      closeOnConfirm: false
+    },
+    function (isConfirm) {
+      if (isConfirm) {
+        $.ajax({
+          type: 'PATCH',
+          url: '/provider_breaks/'+ event.id.substring(1) +'.json',
+          data: { "provider_break": eventJSON },
+          dataType: 'json',
+          success: function(){
+            swal({
+              title: "Bloqueo actualizado exitosamente",
+              type: "success"
+            });
+          },
+          error: function(xhr){
+            swal.close();
+            showErrors(xhr);
+            $.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break) {
+              event.start = provider_break.start;
+              event.end = provider_break.end;
+              event.resourceId = provider_break.service_provider_id;
+              $('#calendar').fullCalendar('updateEvent', event);
+            });
+          }
+        });
+      } else{
+        $.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break) {
+          event.start = provider_break.start;
+          event.end = provider_break.end;
+          event.resourceId = provider_break.service_provider_id;
+          $('#calendar').fullCalendar('updateEvent', event);
+        });
+      };
+    });
   }
   else {
-    var warning = '¿Estás seguro que deseas modificar la reserva?';
+    var text = '';
     if (event.resourceId) {
-      var warning = '¿Estás seguro que deseas modificar la reserva? Si la reserva tenía una preferencia de prestador, esta se perderá.';
+      text = 'Si la reserva tenía una preferencia de prestador, esta se perderá.\n';
     };
     // Staff code
     var confirmation = false;
     if ($('#calendar-data').data('staff-code')) {
-      warning += "\n\nIngrese el código de Empleado";
-      var staffCode = prompt(warning, "");
-      $.extend(eventJSON, {staff_code: staffCode});
-      confirmation = (staffCode != null) && (staffCode != "");
+      swal({
+        title: "¿Estás seguro que deseas modificar la reserva?",
+        text: text + "Ingrese el código de Empleado:",
+        type: "input",
+        inputType: "password",
+        showCancelButton: true,
+        closeOnConfirm: false
+      },
+      function (inputValue) {
+        if (inputValue === false) return false;
+        if (inputValue === "") {
+          swal.showInputError("El código no puede estar en blanco.");
+          return false;
+        };
+        confirmation = true;
+        $.extend(eventJSON, {staff_code: inputValue});
+        swal.close();
+      });
     } else{
-      confirmation = confirm(warning);
+      swal({
+        title: "¿Estás seguro que deseas modificar la reserva?",
+        text: text,
+        type: "warning",
+        showCancelButton: true
+      },
+      function() {
+        confirmation = true;
+      });
     };
 
     if (confirmation) {
@@ -1428,7 +1483,7 @@ function saveBookingBuffer () {
     },
     error: function(xhr){
       var errors = $.parseJSON(xhr.responseText).errors;
-      var errores = '\u26A0 No se pudo guardar todos los servicios \u26A0 \n\n';
+      var errores = '';
       $.each(errors, function (booking, error) {
         errores += 'Servicio ' + error.booking + '\n';
         for (i in error.errors) {
@@ -1438,77 +1493,83 @@ function saveBookingBuffer () {
       errores += '\n¿Guardar de todos modos?'
       $('.booking-button').removeAttr("disabled");
       $('#small_loader').remove();
-      var result = confirm(errores);
-      if (result) {
-        $.post('/force_create.json', { "bookings": bookingBuffer }, function (bookings) {
-          $('#bookingAlerts').hide();
-          $('#bookingWarnings').empty();
-          var warning = false;
-          $.each(bookings, function (pos, booking) {
-            if (booking.status_id != 5) {
-              var providerLock = '-unlock';
-              if (booking.provider_lock) {
-                providerLock = '-lock';
-              };
+      swal({
+        title: "No se pudo guardar todos los servicios",
+        text: errores,
+        type: "warning"
+      },
+      function (isConfirm) {
+        if (isConfirm) {
+          $.post('/force_create.json', { "bookings": bookingBuffer }, function (bookings) {
+            $('#bookingAlerts').hide();
+            $('#bookingWarnings').empty();
+            var warning = false;
+            $.each(bookings, function (pos, booking) {
+              if (booking.status_id != 5) {
+                var providerLock = '-unlock';
+                if (booking.provider_lock) {
+                  providerLock = '-lock';
+                };
 
-              var payedState = '';
-              if (booking.payed_state)
-              {
-                payedState = ' payed';
-              }
+                var payedState = '';
+                if (booking.payed_state)
+                {
+                  payedState = ' payed';
+                }
 
-              var originClass = 'origin-manual';
-              originClass += providerLock + statusIcon[booking.status_id] + payedState;
-              var backColor = backColors[booking.status_id];
-              var textColor = textColors[booking.status_id];
-              if (booking.is_session && !booking.user_session_confirmed)
-              {
-                backColor = "#105E82";
-                textColor = "#DFDBDB";
+                var originClass = 'origin-manual';
+                originClass += providerLock + statusIcon[booking.status_id] + payedState;
+                var backColor = backColors[booking.status_id];
+                var textColor = textColors[booking.status_id];
+                if (booking.is_session && !booking.user_session_confirmed)
+                {
+                  backColor = "#105E82";
+                  textColor = "#DFDBDB";
+                }
+                var events = {
+                  id: booking.id,
+                  title: booking.first_name+' '+booking.last_name+' - '+booking.service_name,
+                  allDay: false,
+                  start: booking.start,
+                  end: booking.end,
+                  resourceId: booking.service_provider_id,
+                  textColor: textColor,
+                  borderColor: textColor,
+                  backgroundColor: backColor,
+                  className: originClass,
+                  title_qtip: booking.first_name+' '+booking.last_name,
+                  time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
+                  service_qtip: booking.service_name,
+                  phone_qtip: booking.phone,
+                  email_qtip: booking.email,
+                  comment_qtip: booking.company_comment,
+                  is_session_qtip: booking.is_session_booked,
+                  sessions_ratio_qtip: booking.sessions_ratio
+                };
+                $('#calendar').fullCalendar('renderEvent', events, true);
+                if(booking.is_session && !booking.user_session_confirmed)
+                {
+                  swal("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+                }
               }
-              var events = {
-                id: booking.id,
-                title: booking.first_name+' '+booking.last_name+' - '+booking.service_name,
-                allDay: false,
-                start: booking.start,
-                end: booking.end,
-                resourceId: booking.service_provider_id,
-                textColor: textColor,
-                borderColor: textColor,
-                backgroundColor: backColor,
-                className: originClass,
-                title_qtip: booking.first_name+' '+booking.last_name,
-                time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
-                service_qtip: booking.service_name,
-                phone_qtip: booking.phone,
-                email_qtip: booking.email,
-                comment_qtip: booking.company_comment,
-                is_session_qtip: booking.is_session_booked,
-                sessions_ratio_qtip: booking.sessions_ratio
-              };
-              $('#calendar').fullCalendar('renderEvent', events, true);
-              if(booking.is_session && !booking.user_session_confirmed)
-              {
-                swal("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+              if (booking.warnings.length > 0) {
+                var warnings = '';
+                for (i in booking.warnings) {
+                  warnings += booking.warnings[i] + '. ';
+                }
+                $('#bookingWarnings').append(warnings);
+                warning = true;
               }
-            }
-            if (booking.warnings.length > 0) {
-              var warnings = '';
-              for (i in booking.warnings) {
-                warnings += booking.warnings[i] + '. ';
-              }
-              $('#bookingWarnings').append(warnings);
-              warning = true;
-            }
+            });
+            if (warning) {
+              $('#bookingAlerts').show();
+            };
+            $('#bookingModal').modal('hide');
           });
-          if (warning) {
-            $('#bookingAlerts').show();
-          };
+        } else{
           $('#bookingModal').modal('hide');
-        });
-      } else {
-        $('#bookingModal').modal('hide');
-      };
+        };
+      });
     }
   });
 }

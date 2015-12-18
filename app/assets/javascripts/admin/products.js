@@ -24,126 +24,171 @@ function saveCategory (typeURL, extraURL) {
 	$('#saveProductCategoryButton').attr('disabled', true);
 	var categoryJSON = { "name": $('#product_category_name').val() };
 	if (typeURL == 'DELETE') {
-		var r = confirm("¿Estás seguro?");
-		if (r != true) {
-		    return false;
-		}
-	}
-	else if (!$('#new_product_category').valid()) {
+		swal({
+      title: "¿Estás seguro?",
+      type: "warning",
+      showCancelButton: true
+    },
+    function (isConfirm) {
+      if (isConfirm) {
+				$.ajax({
+					type: typeURL,
+					url: '/product_categories'+extraURL+'.json',
+					data: { "product_category": categoryJSON },
+					dataType: 'json',
+					success: function(product_category){
+						$('#product_product_category_id option[value="'+extraURL.substring(1)+'"]').remove();
+						$('#productCategoryModal').modal('hide');
+						$('#saveProductCategoryButton').attr('disabled', false);
+					},
+					error: function(xhr){
+						showErrors(xhr);
+						$('#saveProductCategoryButton').attr('disabled', false);
+					}
+				});
+      };
+    });
+	} else if (!$('#new_product_category').valid()) {
 		return false;
-	};
-	$.ajax({
-		type: typeURL,
-		url: '/product_categories'+extraURL+'.json',
-		data: { "product_category": categoryJSON },
-		dataType: 'json',
-		success: function(product_category){
-			switch(typeURL) {
-			case 'POST':
-				$('#product_product_category_id').append('<option value="'+product_category.id+'">'+product_category.name+'</option>');
-				$('#product_product_category_id option[value="'+product_category.id+'"]').prop('selected', true);
-				$('#productCategoryModal').modal('hide');
+	} else {
+		$.ajax({
+			type: typeURL,
+			url: '/product_categories'+extraURL+'.json',
+			data: { "product_category": categoryJSON },
+			dataType: 'json',
+			success: function(product_category){
+				switch(typeURL) {
+				case 'POST':
+					$('#product_product_category_id').append('<option value="'+product_category.id+'">'+product_category.name+'</option>');
+					$('#product_product_category_id option[value="'+product_category.id+'"]').prop('selected', true);
+					$('#productCategoryModal').modal('hide');
+					$('#saveProductCategoryButton').attr('disabled', false);
+					break;
+				case 'PATCH':
+					$('#saveProductCategoryButton').attr('disabled', false);
+					break;
+				}
+			},
+			error: function(xhr){
+				showErrors(xhr);
 				$('#saveProductCategoryButton').attr('disabled', false);
-				break;
-			case 'PATCH':
-				$('#saveProductCategoryButton').attr('disabled', false);
-				break;
-			case 'DELETE':
-				$('#product_product_category_id option[value="'+extraURL.substring(1)+'"]').remove();
-				$('#productCategoryModal').modal('hide');
-				$('#saveProductCategoryButton').attr('disabled', false);
-				break;
 			}
-		},
-		error: function(xhr){
-			showErrors(xhr);
-			$('#saveProductCategoryButton').attr('disabled', false);
-		}
-	});
+		});
+	}
 }
 
 function saveBrand (typeURL, extraURL) {
 	$('#saveProductBrandButton').attr('disabled', true);
 	var brandJSON = { "name": $('#product_brand_name').val() };
 	if (typeURL == 'DELETE') {
-		var r = confirm("¿Estás seguro?");
-		if (r != true) {
-		    return false;
-		}
-	}
-	else if (!$('#new_product_brand').valid()) {
+		swal({
+      title: "¿Estás seguro?",
+      type: "warning",
+      showCancelButton: true
+    },
+    function (isConfirm) {
+      if (isConfirm) {
+				$.ajax({
+					type: typeURL,
+					url: '/product_brands'+extraURL+'.json',
+					data: { "product_brand": brandJSON },
+					dataType: 'json',
+					success: function(product_brand){
+						$('#product_product_brand_id option[value="'+extraURL.substring(1)+'"]').remove();
+						$('#productBrandModal').modal('hide');
+						$('#saveProductBrandButton').attr('disabled', false);
+					},
+					error: function(xhr){
+						showErrors(xhr);
+						$('#saveProductBrandButton').attr('disabled', false);
+					}
+				});
+      };
+    });
+	} else if (!$('#new_product_brand').valid()) {
 		return false;
-	};
-	$.ajax({
-		type: typeURL,
-		url: '/product_brands'+extraURL+'.json',
-		data: { "product_brand": brandJSON },
-		dataType: 'json',
-		success: function(product_brand){
-			switch(typeURL) {
-			case 'POST':
-				$('#product_product_brand_id').append('<option value="'+product_brand.id+'">'+product_brand.name+'</option>');
-				$('#product_product_brand_id option[value="'+product_brand.id+'"]').prop('selected', true);
-				$('#productBrandModal').modal('hide');
+	} else {
+		$.ajax({
+			type: typeURL,
+			url: '/product_brands'+extraURL+'.json',
+			data: { "product_brand": brandJSON },
+			dataType: 'json',
+			success: function(product_brand){
+				switch(typeURL) {
+				case 'POST':
+					$('#product_product_brand_id').append('<option value="'+product_brand.id+'">'+product_brand.name+'</option>');
+					$('#product_product_brand_id option[value="'+product_brand.id+'"]').prop('selected', true);
+					$('#productBrandModal').modal('hide');
+					$('#saveProductBrandButton').attr('disabled', false);
+					break;
+				case 'PATCH':
+					$('#saveProductBrandButton').attr('disabled', false);
+					break;
+				}
+			},
+			error: function(xhr){
+				showErrors(xhr);
 				$('#saveProductBrandButton').attr('disabled', false);
-				break;
-			case 'PATCH':
-				$('#saveProductBrandButton').attr('disabled', false);
-				break;
-			case 'DELETE':
-				$('#product_product_brand_id option[value="'+extraURL.substring(1)+'"]').remove();
-				$('#productBrandModal').modal('hide');
-				$('#saveProductBrandButton').attr('disabled', false);
-				break;
 			}
-		},
-		error: function(xhr){
-			showErrors(xhr);
-			$('#saveProductBrandButton').attr('disabled', false);
-		}
-	});
+		});
+	}
 }
 
 function saveDisplay (typeURL, extraURL) {
 	$('#saveProductDisplayButton').attr('disabled', true);
 	var displayJSON = { "name": $('#product_display_name').val() };
 	if (typeURL == 'DELETE') {
-		var r = confirm("¿Estás seguro?");
-		if (r != true) {
-		    return false;
-		}
-	}
-	else if (!$('#new_product_display').valid()) {
+		swal({
+      title: "¿Estás seguro?",
+      type: "warning",
+      showCancelButton: true
+    },
+    function (isConfirm) {
+      if (isConfirm) {
+				$.ajax({
+					type: typeURL,
+					url: '/product_displays'+extraURL+'.json',
+					data: { "product_display": displayJSON },
+					dataType: 'json',
+					success: function(product_display){
+						$('#product_product_display_id option[value="'+extraURL.substring(1)+'"]').remove();
+						$('#productDisplayModal').modal('hide');
+						$('#saveProductDisplayButton').attr('disabled', false);
+					},
+					error: function(xhr){
+						showErrors(xhr);
+						$('#saveProductDisplayButton').attr('disabled', false);
+					}
+				});
+      };
+    });
+	} else if (!$('#new_product_display').valid()) {
 		return false;
-	};
-	$.ajax({
-		type: typeURL,
-		url: '/product_displays'+extraURL+'.json',
-		data: { "product_display": displayJSON },
-		dataType: 'json',
-		success: function(product_display){
-			switch(typeURL) {
-			case 'POST':
-				$('#product_product_display_id').append('<option value="'+product_display.id+'">'+product_display.name+'</option>');
-				$('#product_product_display_id option[value="'+product_display.id+'"]').prop('selected', true);
-				$('#productDisplayModal').modal('hide');
-				$('#saveProductDisplayButton').attr('disabled', false);
-				break;
-			case 'PATCH':
-				$('#saveProductDisplayButton').attr('disabled', false);
-				break;
-			case 'DELETE':
-				$('#product_product_display_id option[value="'+extraURL.substring(1)+'"]').remove();
-				$('#productDisplayModal').modal('hide');
-				$('#saveProductDisplayButton').attr('disabled', false);
-				break;
-			}
-		},
-		error: function(xhr){
-			showErrors(xhr);
-			$('#saveProductDisplayButton').attr('disabled', false);
-		}
-	});
+	} else {
+		$.ajax({
+					type: typeURL,
+					url: '/product_displays'+extraURL+'.json',
+					data: { "product_display": displayJSON },
+					dataType: 'json',
+					success: function(product_display){
+						switch(typeURL) {
+						case 'POST':
+							$('#product_product_display_id').append('<option value="'+product_display.id+'">'+product_display.name+'</option>');
+							$('#product_product_display_id option[value="'+product_display.id+'"]').prop('selected', true);
+							$('#productDisplayModal').modal('hide');
+							$('#saveProductDisplayButton').attr('disabled', false);
+							break;
+						case 'PATCH':
+							$('#saveProductDisplayButton').attr('disabled', false);
+							break;
+						}
+					},
+					error: function(xhr){
+						showErrors(xhr);
+						$('#saveProductDisplayButton').attr('disabled', false);
+					}
+				});
+	}
 }
 
 function saveProduct (typeURL, extraURL) {
