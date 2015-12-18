@@ -1,6 +1,24 @@
 $(function() {
 
   /*
+  * Menu & selections
+  */
+
+  $('.plan-section-link').on('click', function(){
+    old_target_div = $('.plan-section-link.active').attr("targetdiv");
+    $('.plan-section-link.active').removeClass('active');
+    target_div = $(this).attr("targetdiv");
+    $(this).addClass("active");
+    $('#' + old_target_div).hide();
+    $('#' + target_div).show();
+  });
+
+  $('#change_plan_pr_link').click(function(e){
+    e.preventDefault();
+    $('.plan-section-link[targetdiv="change_plan_div"]').trigger("click");
+  });
+
+  /*
   * Wire transfers
   */
 
@@ -31,23 +49,18 @@ $(function() {
   * Others
   */
 
-  if($('#amount_select').val() != 0) {
+  /*if($('#amount_select').val() != 0) {
     $('.mp_table').show();
     $('#openBillingWireTransferForm').show();
   } else {
     $('.mp_table').hide();
     $('#openBillingWireTransferForm').hide();
-  }
-  $('.mp_link').each(function(i, obj) {
-    $(this).attr('href', function(i,a){
-      return a.replace( /\/[^\/]+$/, '/'+$('#amount_select').val() );
-    });
-    if($('#amount_select').val() != 0) {
-      $('.mp_table').show();
-    } else {
-      $('.mp_table').hide();
-    }
+  }*/
+  $('.mp_radio').on('change', function(){
+    mp = $('.mp_radio:checked').val();
   });
+
+
   if (!$('#billing_info_active').prop('checked')) {
     $('input.form-control').attr('disabled', true);
     $('input.form-accept').attr('disabled', true);
@@ -65,6 +78,12 @@ $(function() {
     }
   });
   $('#amount_select').change(function(o) {
+
+      $('#payBtn').attr('href', function(i,a){
+        return a.replace( /\/[^\/]+$/, '/'+o.target.value );
+      });
+    
+    /*
     $('.mp_link').each(function(i, obj) {
       $(this).attr('href', function(i,a){
         return a.replace( /\/[^\/]+$/, '/'+o.target.value );
@@ -77,6 +96,8 @@ $(function() {
         $('#openBillingWireTransferForm').hide();
       }
     });
+    */
+
   });
   $('a.change_plan').click(function(event){
     $('#plan_mp_button').hide();
