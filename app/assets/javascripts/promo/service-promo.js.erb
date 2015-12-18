@@ -428,12 +428,14 @@ function saveRegularPromotions()
 
           response_str = response_str + '.';
 
-          myAlert.showAlert(
-          '<h3>Promociones guardadas</h3>' +
-          '<p>' + response_str + '</p>'
-          , function(){
-          location.reload();
-        });
+          swal({
+            title: "Promociones guardadas",
+            text: response_str,
+            type: "success"
+          },
+          function (isConfirm) {
+            location.reload();
+          });
 
         }
         else
@@ -444,14 +446,14 @@ function saveRegularPromotions()
             errors = errors + response[2][i] + "<br />";
           }
 
-          myAlert.showAlert(
-          '<h3>Ocurrió un error</h3>' +
-          '<p>No se pudieron guardar las sesiones por las siguientes razones: </p>' +
-          '<p>' + errors + '</p>',
-          function(){
+          swal({
+            title: "Ocurrió un error",
+            text: "No se pudieron guardar las sesiones por las siguientes razones:\n" + errors,
+            type: "error"
+          },
+          function () {
             location.reload();
-          }
-        );
+          });
         }
       }
     });
@@ -507,13 +509,14 @@ function saveTreatmentPromotions()
     success: function(response){
       if(response[0] == "ok")
       {
-        myAlert.showAlert(
-        '<h3>Promociones guardadas</h3>' +
-        '<p>Las promociones para el servicio ' + response[1].name + ' se guardaron correctamente y se encontrarán activas una vez que sean revisadas.</p>'
-      , function(){
-        location.reload();
-      });
-
+        swal({
+          title: "Promociones guardadas",
+          text: "Las promociones para el servicio " + response[1].name + " se guardaron correctamente y se encontrarán activas una vez que sean revisadas",
+          type: "success"
+        },
+        function () {
+          location.reload();
+        });
       }
       else
       {
@@ -523,14 +526,14 @@ function saveTreatmentPromotions()
           errors = errors + response[2][i] + "<br />";
         }
 
-        myAlert.showAlert(
-        '<h3>Ocurrió un error</h3>' +
-        '<p>No se pudieron guardar las sesiones por las siguientes razones: </p>' +
-        '<p>' + errors + '</p>',
-        function(){
+        swal({
+          title: "Ocurrió un error",
+          text: "No se pudieron guardar las sesiones por las siguientes razones:\n" + errors,
+          type: "error"
+        },
+        function () {
           location.reload();
-        }
-      );
+        });
       }
     }
   });

@@ -181,21 +181,15 @@ function saveProduct (typeURL, extraURL) {
 		data: { "product": productJSON, "location_products": JSON.stringify(location_products)},
 		dataType: 'json',
 		success: function() {
-			alertId.showAlert(
-				'<h3>Producto guardado</h3>' +
-				'<p>El producto se ha editado de manera correcta.</p>'
-				,
-				function(){
-					document.location.href = '/products/';
-				}
-				,
-				"Aceptar"
-				,
-				function(){
-					document.location.href = '/products/';
-				}
-			);
-
+			swal({
+				title: "Producto Guardado",
+				text: "El producto se ha editado de manera correcta",
+				type: "success",
+				confirmButtonText: "Aceptar"
+			},
+			function (isConfirm) {
+				document.location.href = '/products/';
+			});
 		},
 		error: function(xhr){
 			showErrors(xhr);

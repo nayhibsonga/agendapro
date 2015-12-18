@@ -132,14 +132,15 @@ $(function() {
         changeLocation(district.id);
       }
       else {
-        myAlert.showAlert(
-          '<h3>Hubo un error el proceso de localización.</h3>' +
-          '<p>No fue posible encontrar tu comuna.</p>',
-          function () {
-            $('#modalLocation').modal('show');
-          },
-          'Buscar de nuevo'
-        );
+        swal({
+          title: "Hubo un error en el proceso de localización",
+          text: "No fue posible encontrar tu comuna.",
+          type: "error",
+          confirmButtonText: "Buscar de nuevo"
+        },
+        function () {
+          $('#modalLocation').modal('show');
+        });
       }
     });
     $('#modalLocation').modal('hide');

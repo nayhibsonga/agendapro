@@ -97,23 +97,25 @@ $(".session-btn-delete").click(function(){
     {
       if(response[0] == "ok")
       {
-        myAlert.showAlert(
-          '<h3>Sesión eliminada.</h3>' +
-          '<p>La sesión fue eliminada de manera exitosa.</p>',
-          function(){
-            location.reload();
-          }
-        );
+        swal({
+          title: "Sesión eliminada",
+          text: "La sesión fue eliminada de manera exitosa.",
+          type: "success"
+        },
+        function () {
+          location.reload();
+        });
       }
       else
       {
-        myAlert.showAlert(
-          '<h3>Hubo un error.</h3>' +
-          '<p>Ocurrió un error al eliminar la sesión.</p>',
-          function(){
-            location.reload();
-          }
-        );
+        swal({
+          title: "Hubo un error",
+          text: "Ocurrió un error al eliminar la sesión.",
+          type: "error"
+        },
+        function () {
+          location.reload();
+        });
       }
     },
     error: function(response)
@@ -138,23 +140,25 @@ $(".session-btn-validate").click(function(){
     {
       if(response[0] == "ok")
       {
-        myAlert.showAlert(
-          '<h3>Sesión eliminada.</h3>' +
-          '<p>La sesión fue eliminada de manera exitosa.</p>',
-          function(){
-            location.reload();
-          }
-        );
+        swal({
+          title: "Sesión eliminada",
+          text: "La sesión fue eliminada de manera exitosa.",
+          type: "success"
+        },
+        function () {
+          location.reload();
+        });
       }
       else
       {
-        myAlert.showAlert(
-          '<h3>Hubo un error.</h3>' +
-          '<p>Ocurrió un error al eliminar la sesión.</p>',
-          function(){
-            location.reload();
-          }
-        );
+        swal({
+          title: "Hubo un error",
+          text: "Ocurrió un error al eliminar la sesión.",
+          type: "error"
+        },
+        function () {
+          location.reload();
+        });
       }
     },
     error: function(response)
@@ -255,13 +259,14 @@ function loadServiceStaff (service_id, location_id, provider_preference, service
       }
       else
       {
-        myAlert.showAlert(
-          '<h3>Lo sentimos</h3>' +
-          '<p>No hay prestadores que permitan reservas en línea para el servicio buscado. Por favor ponte en contacto con la empresa que ofrece el servicio para poder agendar tus sesiones faltantes.</p>',
-          function(){
-            location.reload();
-          }
-        );
+        swal({
+          title: "Lo sentimos",
+          text: "No hay prestadores que permitan reservas en línea para el servicio buscado. Por favor ponte en contacto con la empresa que ofrece el servicio para poder agendar tus sesiones faltantes.",
+          type: "error"
+        },
+        function () {
+          location.reload();
+        });
       }
     }
     else
@@ -630,39 +635,41 @@ $("#nextButton").click(function(){
               if(response[0].length == 0)
               {
                   $("#bookModal").modal('hide');
-
-                  myAlert.showAlert(
-                    '<h3>Sesión reservada</h3>' +
-                    '<p>Tu sesión se ha reservado de manera exitosa.</p>',
-                    function(){
-                      location.reload();
-                    }
-                  );
+                  swal({
+                    title: "Sesión reservada",
+                    text: "Tu sesión se ha reservada de manera exitosa.",
+                    type: "success"
+                  },
+                  function () {
+                    location.reload();
+                  });
               }
               else
               {
                   $("#bookModal").modal('hide');
                   //$('#calendarModal').remove();
                   //$("#session-booking-select").trigger("change");
-                  myAlert.showAlert(
-                    '<h3>Error al reservar</h3>' +
-                    '<p>' + response[0][0] + '</p>',
-                    function(){
-                      location.reload();
-                    }
-                  );
+                  swal({
+                    title: "Error al reservar",
+                    text: response[0][0],
+                    type: "error"
+                  },
+                  function () {
+                    location.reload();
+                  });
               }
           },
           error: function(xhr)
           {
               $("#bookModal").modal('hide');
-              myAlert.showAlert(
-                '<h3>Error al reservar</h3>' +
-                '<p>Ha ocurrido un error al reservar la sesión.</p>',
-                function(){
-                  location.reload();
-                }
-              );
+              swal({
+                title: "Error al reservar",
+                text: "Ha ocurrido un error al reservar la sesión.",
+                type: "error"
+              },
+              function () {
+                location.reload();
+              });
           }
       });
   }

@@ -1,5 +1,4 @@
 //= require bootstrap
-//= require Alert
 //= require ga
 //= require sweetalert.min
 
