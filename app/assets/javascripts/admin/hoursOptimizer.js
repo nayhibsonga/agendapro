@@ -557,6 +557,21 @@ $(function () {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
   };
 
+  $(userForm + "#booking_client_identification_number").autocomplete({
+    source: '/clients_rut_suggestion',
+    appendTo: '#hoursOptimizer #new_booking #rut_suggestions',
+    autoFocus: true,
+    minLength: 3,
+    select: function( event, ui ) {
+      event.preventDefault();
+      var client = eval("(" + ui.item.value + ")");
+      setSuggestionData(client);
+      checkEmail();
+    }
+  }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+    return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+  };
+
   $(userForm + "#booking_client_email").on('input',function(e){
     checkEmail();
   });

@@ -26,7 +26,7 @@
             <tr>
               <td><%= service_provider.public_name %></td>
               <td>
-                <%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_service_provider_path(:id => service_provider.id), :class => "btn btn-green", data: { confirm: '¿Estás seguro de re-activar el Prestador seleccionado?' } %>
+                <%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_service_provider_path(:id => service_provider.id), method: :patch, :class => "btn btn-green", data: { confirm: '¿Estás seguro de re-activar el Prestador seleccionado?' } %>
                 <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_provider_path(service_provider), :class => "btn btn-orange" %>
               </td>
             </tr>

@@ -744,14 +744,14 @@
               <%= builder.hidden_field :address %>
               <%= builder.hidden_field :district %>
               <%= builder.hidden_field :city %>
-              <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
-                <div class="form-group">
-                  <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-md-4 control-label" %>
-                  <div class="col-md-8">
-                    <%= builder.text_field :identification_number, class: "form-control", disabled: true %>
-                  </div>
+              <div class="form-group has-feedback has-feedback">
+                <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-sm-4 control-label" %>
+                <div class="col-sm-8">
+                  <%= builder.text_field :identification_number, class: "form-control", disabled: @company_setting.client_exclusive %>
+                  <span class="help-block"></span>
+                  <ul id="rut_suggestions"></ul>
                 </div>
-              <% end %>
+              </div>
               <div class="form-group has-feedback">
                 <label for="full_name" class="col-md-4 control-label">Nombre Cliente</label>
                 <div class="col-md-8">

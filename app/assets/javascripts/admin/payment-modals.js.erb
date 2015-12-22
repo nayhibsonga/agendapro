@@ -2834,27 +2834,29 @@ function deletePayment(payment_id)
     title: "¿Estás seguro que deseas eliminar el pago?",
     type: "warning"
   },
-  function () {
-    $.ajax({
-      url: '/delete_payment',
-      type: 'post',
-      data: {payment_id: payment_id},
-      dataType: 'json',
-      error: function(resonse){
-        triggerAlert("Ocurrió un error al eliminar el pago.");
-      },
-      success: function(response){
-        if(response[0] == "ok")
-        {
-          triggerSuccess("Pago eliminado correctamente.");
-        }
-        else
-        {
+  function (isConfirm) {
+    if (isConfirm) {  
+      $.ajax({
+        url: '/delete_payment',
+        type: 'post',
+        data: {payment_id: payment_id},
+        dataType: 'json',
+        error: function(resonse){
           triggerAlert("Ocurrió un error al eliminar el pago.");
+        },
+        success: function(response){
+          if(response[0] == "ok")
+          {
+            triggerSuccess("Pago eliminado correctamente.");
+          }
+          else
+          {
+            triggerAlert("Ocurrió un error al eliminar el pago.");
+          }
+          loadPayments();
         }
-        loadPayments();
-      }
-    });
+      });
+    }
   });
 }
 

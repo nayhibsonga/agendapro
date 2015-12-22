@@ -204,87 +204,92 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
       });
       $('#popover').show();
     },
+
     eventRender: function(event, element) {
       if ($.isNumeric(event.id)) {
         var prepayed = event.prepayed_qtip;
-        if (prepayed === undefined)
-        {
-          prepayed = "No";
-        }
-        var is_event_session = event.is_session_qtip;
-        if (is_event_session === undefined)
-        {
-          is_event_session = false;
-        }
-        if (is_event_session)
-        {
-          element.qtip({
-            content: {
+          if (prepayed === undefined)
+          {
+            prepayed = "No";
+          }
+          var is_event_session = event.is_session_qtip;
+          if (is_event_session === undefined)
+          {
+            is_event_session = false;
+          }
+          if (is_event_session)
+          {
+            element.qtip({
+             content: {
               button: true,
               title: event.title_qtip,
               text: 'Horario: ' + event.time_qtip + '<br/>' +
               'Servicio: ' + event.service_qtip + '<br/>' +
               'Teléfono: ' + event.phone_qtip + '<br/>' +
               'E-mail: ' + event.email_qtip + '<br/>' +
+              'CI: ' + event.identification_number_qtip + '<br/>' +
               'Comentario: ' + event.comment_qtip + '<br />' +
               'Pagado: ' + prepayed + '<br />' +
               event.sessions_ratio_qtip
-            },
-            position: {
+             },
+             position: {
               my: 'bottom center',  // el triángulo sale de abajo al medio
               at: 'top center' // se ubica arriba del elemento en cuestión
-            },
-            style: {
+             },
+             style: {
               classes: 'qtip-bootstrap'
-            },
-            hide: {
+             },
+             hide: {
               event: 'click mouseleave unfocus',
               leave: true,
               fixed: true
             },
             events: {
-              show: function(event, api) {
-                if(dragInProgress)
-                {
-                  event.preventDefault();
-                }
+                  show: function(event, api) {
+                    if(dragInProgress)
+                    {
+                        event.preventDefault();
+                      }
+                  }
               }
-            }
-          });
-        } else {
-          element.qtip({
-            content: {
+            });
+          }
+          else
+          {
+            element.qtip({
+             content: {
               button: true,
               title: event.title_qtip,
               text: 'Horario: ' + event.time_qtip + '<br/>' +
               'Servicio: ' + event.service_qtip + '<br/>' +
               'Teléfono: ' + event.phone_qtip + '<br/>' +
               'E-mail: ' + event.email_qtip + '<br/>' +
+              'CI: ' + event.identification_number_qtip + '<br/>' +
               'Comentario: ' + event.comment_qtip + '<br />' +
               'Pagado: ' + prepayed
-            },
-            position: {
+             },
+             position: {
               my: 'bottom center',  // el triángulo sale de abajo al medio
               at: 'top center' // se ubica arriba del elemento en cuestión
-            },
-            style: {
+             },
+             style: {
               classes: 'qtip-bootstrap'
-            },
-            hide: {
+             },
+             hide: {
               event: 'click mouseleave unfocus',
               leave: true,
               fixed: true
             },
             events: {
-              show: function(event, api) {
-                if(dragInProgress)
-                {
-                  event.preventDefault();
-                }
+                  show: function(event, api) {
+                    if(dragInProgress)
+                    {
+                        event.preventDefault();
+                      }
+                  }
               }
-            }
-          });
-        }
+            });
+          }
       }
     },
     firstDay: 1,  //Lunes
@@ -403,93 +408,99 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
       });
       $('.popover').show();
     },
+
     eventRender: function(event, element) {
-      if ($.isNumeric(event.id)) {
-        if ($.isNumeric(event.id)) {
-          var prepayed = event.prepayed_qtip;
-          if (prepayed === undefined)
-          {
-            prepayed = "No";
-          }
-          var prepayed = event.prepayed_qtip;
-          if (prepayed === undefined)
-          {
-            prepayed = "No";
-          }
-          var is_event_session = event.is_session_qtip;
-          if (is_event_session === undefined)
-          {
-            is_event_session = false;
-          }
-          if(is_event_session) {
-            element.qtip({
-              content: {
-                button: true,
-                title: event.title_qtip,
-                text: 'Horario: ' + event.time_qtip + '<br/>' +
-                'Servicio: ' + event.service_qtip + '<br/>' +
-                'Teléfono: ' + event.phone_qtip + '<br/>' +
-                'E-mail: ' + event.email_qtip + '<br/>' +
-                'Comentario: ' + event.comment_qtip + '<br />' +
-                'Pagado: ' + prepayed + '<br />' +
-                event.sessions_ratio_qtip
-              },
-              position: {
+       if ($.isNumeric(event.id)) {
+         if ($.isNumeric(event.id)) {
+            var prepayed = event.prepayed_qtip;
+            if (prepayed === undefined)
+            {
+              prepayed = "No";
+            }
+            var prepayed = event.prepayed_qtip;
+            if (prepayed === undefined)
+            {
+              prepayed = "No";
+            }
+            var is_event_session = event.is_session_qtip;
+            if (is_event_session === undefined)
+            {
+              is_event_session = false;
+            }
+            if(is_event_session)
+            {
+              element.qtip({
+               content: {
+                 button: true,
+                 title: event.title_qtip,
+                 text: 'Horario: ' + event.time_qtip + '<br/>' +
+                     'Servicio: ' + event.service_qtip + '<br/>' +
+                     'Teléfono: ' + event.phone_qtip + '<br/>' +
+                     'E-mail: ' + event.email_qtip + '<br/>' +
+                     'CI: ' + event.identification_number_qtip + '<br/>' +
+                     'Comentario: ' + event.comment_qtip + '<br />' +
+                     'Pagado: ' + prepayed + '<br />' +
+                     event.sessions_ratio_qtip
+               },
+               position: {
                  my: 'bottom center',  // el triángulo sale de abajo al medio
                  at: 'top center' // se ubica arriba del elemento en cuestión
                },
                style: {
-                classes: 'qtip-bootstrap'
-              },
-              hide: {
-                event: 'click mouseleave unfocus',
-                leave: true,
-                fixed: true
-              },
-              events: {
-                show: function(event, api) {
-                  if(dragInProgress)
-                  {
-                    event.preventDefault();
-                  }
+                 classes: 'qtip-bootstrap'
+               },
+               hide: {
+                 event: 'click mouseleave unfocus',
+                 leave: true,
+                 fixed: true
+               },
+               events: {
+                    show: function(event, api) {
+                      if(dragInProgress)
+                      {
+                          event.preventDefault();
+                        }
+                    }
                 }
-              }
-            });
-          } else {
-            element.qtip({
-              content: {
-                button: true,
-                title: event.title_qtip,
-                text: 'Horario: ' + event.time_qtip + '<br/>' +
-                'Servicio: ' + event.service_qtip + '<br/>' +
-                'Teléfono: ' + event.phone_qtip + '<br/>' +
-                'E-mail: ' + event.email_qtip + '<br/>' +
-                'Comentario: ' + event.comment_qtip + '<br />' +
-                'Pagado: ' + prepayed
-              },
-              position: {
-                my: 'bottom center',  // el triángulo sale de abajo al medio
-                at: 'top center' // se ubica arriba del elemento en cuestión
-              },
-              style: {
-                classes: 'qtip-bootstrap'
-              },
-              hide: {
-                event: 'click mouseleave unfocus',
-                leave: true,
-                fixed: true
-              },
-              events: {
-                show: function(event, api) {
-                  if(dragInProgress)
-                  {
-                    event.preventDefault();
-                  }
+              });
+            }
+            else
+            {
+              element.qtip({
+               content: {
+                 button: true,
+                 title: event.title_qtip,
+                 text: 'Horario: ' + event.time_qtip + '<br/>' +
+                     'Servicio: ' + event.service_qtip + '<br/>' +
+                     'Teléfono: ' + event.phone_qtip + '<br/>' +
+                     'E-mail: ' + event.email_qtip + '<br/>' +
+                     'CI: ' + event.identification_number_qtip + '<br/>' +
+                     'Comentario: ' + event.comment_qtip + '<br />' +
+                     'Pagado: ' + prepayed
+               },
+               position: {
+                 my: 'bottom center',  // el triángulo sale de abajo al medio
+                 at: 'top center' // se ubica arriba del elemento en cuestión
+               },
+               style: {
+                 classes: 'qtip-bootstrap'
+               },
+               hide: {
+                 event: 'click mouseleave unfocus',
+                 leave: true,
+                 fixed: true
+               },
+               events: {
+                    show: function(event, api) {
+                      if(dragInProgress)
+                      {
+                          event.preventDefault();
+                        }
+                    }
                 }
-              }
-            });
+              });
           }
-        }
+         }
       }
     },
     firstDay: 1,  //Lunes
@@ -1023,9 +1034,13 @@ function deleteBooking(eventId) {
         swal.showInputError("El código no puede estar en blanco.");
         return false;
       };
-      confirmation = true;
       $('#booking_staff_code').val(inputValue);
       swal.close();
+      if (isConfirm) {
+        $('.booking-button').attr("disabled", "disabled");
+        $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+        saveBooking('DELETE','/'+eventId);
+      }
     });
   } else{
     swal({
@@ -1034,14 +1049,13 @@ function deleteBooking(eventId) {
       type: "warning",
       showCancelButton: true
     },
-    function() {
-      confirmation = true;
+    function(isConfirm) {
+      if (isConfirm) {
+        $('.booking-button').attr("disabled", "disabled");
+        $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+        saveBooking('DELETE','/'+eventId);
+      }
     });
-  };
-  if (confirmation) {
-    $('.booking-button').attr("disabled", "disabled");
-    $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
-    saveBooking('DELETE','/'+eventId);
   };
 }
 
@@ -1110,6 +1124,7 @@ function editDrag(event) {
       closeOnConfirm: false
     },
     function (isConfirm) {
+      alert(isConfirm);
       if (isConfirm) {
         $.ajax({
           type: 'PATCH',
@@ -1142,8 +1157,7 @@ function editDrag(event) {
         });
       };
     });
-  }
-  else {
+  } else {
     var text = '';
     if (event.resourceId) {
       text = 'Si la reserva tenía una preferencia de prestador, esta se perderá.\n';
@@ -1165,93 +1179,176 @@ function editDrag(event) {
           swal.showInputError("El código no puede estar en blanco.");
           return false;
         };
-        confirmation = true;
         $.extend(eventJSON, {staff_code: inputValue});
         swal.close();
+        $.ajax({
+          type: 'PATCH',
+          url: '/bookings/'+ event.id +'.json',
+          data: { "booking": eventJSON },
+          dataType: 'json',
+          success: function(booking){
+            var providerLock = '-unlock';
+            if (booking.provider_lock) {
+              providerLock = '-lock';
+            };
+            var originClass = 'origin-manual';
+            if (booking.web_origin) {
+              originClass = 'origin-web';
+            };
+
+            var payedState = '';
+            if (booking.payed_state)
+            {
+              payedState = ' payed';
+            }
+
+            var backColor = backColors[booking.status_id];
+            var textColor = textColors[booking.status_id];
+            if (booking.is_session && !booking.user_session_confirmed)
+            {
+              backColor = "#105E82";
+              textColor = "#DFDBDB";
+            }
+
+            originClass += providerLock + statusIcon[booking.status_id] + payedState;
+            event.className = originClass;
+            event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
+            event.start = booking.start;
+            event.end = booking.end;
+            event.resourceId = booking.service_provider_id;
+            event.textColor = textColor;
+            event.borderColor = textColor;
+            event.backgroundColor = backColor;
+            event.className = originClass;
+            event.title_qtip = booking.first_name+' '+booking.last_name;
+            event.time_qtip = booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16);
+            event.service_qtip = booking.service_name;
+            event.phone_qtip = booking.phone;
+            event.email_qtip = booking.email;
+            event.prepayed_qtip = booking.prepayed;
+            event.comment_qtip = booking.company_comment;
+            event.is_session_qtip = booking.is_session_booked;
+            event.sessions_ratio_qtip = booking.sessions_ratio;
+            $('#calendar').fullCalendar('updateEvent', event);
+            if(!booking.is_session || (booking.is_session && booking.user_session_confirmed))
+            {
+              swal("Reserva actualizada exitosamente.");
+            }
+            else
+            {
+              swal("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+            }
+            $('#bookingAlerts').hide();
+            if (booking.warnings.length > 0) {
+              $('#bookingWarnings').empty();
+              var warnings = '';
+              for (i in booking.warnings) {
+                warnings += booking.warnings[i] + '. ';
+              }
+              $('#bookingWarnings').append(warnings);
+              $('#bookingAlerts').show();
+            }
+          },
+          error: function(xhr){
+            showErrors(xhr);
+            $.getJSON('/bookings/'+event.id, function (booking) {
+              event.start = booking.start;
+              event.end = booking.end;
+              event.resourceId = booking.service_provider_id;
+              $('#calendar').fullCalendar('updateEvent', event);
+            });
+          }
+        });
       });
-    } else{
+    } else {
       swal({
         title: "¿Estás seguro que deseas modificar la reserva?",
         text: text,
         type: "warning",
-        showCancelButton: true
+        showCancelButton: true,
+        closeOnConfirm: false
       },
-      function() {
-        confirmation = true;
-      });
-    };
+      function(isConfirm) {
+        if(isConfirm) {
+          $.ajax({
+            type: 'PATCH',
+            url: '/bookings/'+ event.id +'.json',
+            data: { "booking": eventJSON },
+            dataType: 'json',
+            success: function(booking){
+              var providerLock = '-unlock';
+              if (booking.provider_lock) {
+                providerLock = '-lock';
+              };
+              var originClass = 'origin-manual';
+              if (booking.web_origin) {
+                originClass = 'origin-web';
+              };
 
-    if (confirmation) {
-      $.ajax({
-        type: 'PATCH',
-        url: '/bookings/'+ event.id +'.json',
-        data: { "booking": eventJSON },
-        dataType: 'json',
-        success: function(booking){
-          var providerLock = '-unlock';
-          if (booking.provider_lock) {
-            providerLock = '-lock';
-          };
-          var originClass = 'origin-manual';
-          if (booking.web_origin) {
-            originClass = 'origin-web';
-          };
+              var payedState = '';
+              if (booking.payed_state)
+              {
+                payedState = ' payed';
+              }
 
-          var payedState = '';
-          if (booking.payed_state)
-          {
-            payedState = ' payed';
-          }
+              var backColor = backColors[booking.status_id];
+              var textColor = textColors[booking.status_id];
+              if (booking.is_session && !booking.user_session_confirmed)
+              {
+                backColor = "#105E82";
+                textColor = "#DFDBDB";
+              }
 
-          var backColor = backColors[booking.status_id];
-          var textColor = textColors[booking.status_id];
-          if (booking.is_session && !booking.user_session_confirmed)
-          {
-            backColor = "#105E82";
-            textColor = "#DFDBDB";
-          }
-
-          originClass += providerLock + statusIcon[booking.status_id] + payedState;
-          event.className = originClass;
-          event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
-          event.start = booking.start;
-          event.end = booking.end;
-          event.resourceId = booking.service_provider_id;
-          event.textColor = textColor;
-          event.borderColor = textColor;
-          event.backgroundColor = backColor;
-          event.className = originClass;
-          event.title_qtip = booking.first_name+' '+booking.last_name;
-          event.time_qtip = booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16);
-          event.service_qtip = booking.service_name;
-          event.phone_qtip = booking.phone;
-          event.email_qtip = booking.email;
-          event.prepayed_qtip = booking.prepayed;
-          event.comment_qtip = booking.company_comment;
-          event.is_session_qtip = booking.is_session_booked;
-          event.sessions_ratio_qtip = booking.sessions_ratio;
-          $('#calendar').fullCalendar('updateEvent', event);
-          if(!booking.is_session || (booking.is_session && booking.user_session_confirmed))
-          {
-            swal("Reserva actualizada exitosamente.");
-          }
-          else
-          {
-            swal("Se ha enviado un correo al cliente para que valide la sesión agendada.");
-          }
-          $('#bookingAlerts').hide();
-          if (booking.warnings.length > 0) {
-            $('#bookingWarnings').empty();
-            var warnings = '';
-            for (i in booking.warnings) {
-              warnings += booking.warnings[i] + '. ';
+              originClass += providerLock + statusIcon[booking.status_id] + payedState;
+              event.className = originClass;
+              event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
+              event.start = booking.start;
+              event.end = booking.end;
+              event.resourceId = booking.service_provider_id;
+              event.textColor = textColor;
+              event.borderColor = textColor;
+              event.backgroundColor = backColor;
+              event.className = originClass;
+              event.title_qtip = booking.first_name+' '+booking.last_name;
+              event.time_qtip = booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16);
+              event.service_qtip = booking.service_name;
+              event.phone_qtip = booking.phone;
+              event.email_qtip = booking.email;
+              event.prepayed_qtip = booking.prepayed;
+              event.comment_qtip = booking.company_comment;
+              event.is_session_qtip = booking.is_session_booked;
+              event.sessions_ratio_qtip = booking.sessions_ratio;
+              $('#calendar').fullCalendar('updateEvent', event);
+              if(!booking.is_session || (booking.is_session && booking.user_session_confirmed))
+              {
+                swal("Reserva actualizada exitosamente.");
+              }
+              else
+              {
+                swal("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+              }
+              $('#bookingAlerts').hide();
+              if (booking.warnings.length > 0) {
+                $('#bookingWarnings').empty();
+                var warnings = '';
+                for (i in booking.warnings) {
+                  warnings += booking.warnings[i] + '. ';
+                }
+                $('#bookingWarnings').append(warnings);
+                $('#bookingAlerts').show();
+              }
+            },
+            error: function(xhr){
+              showErrors(xhr);
+              $.getJSON('/bookings/'+event.id, function (booking) {
+                event.start = booking.start;
+                event.end = booking.end;
+                event.resourceId = booking.service_provider_id;
+                $('#calendar').fullCalendar('updateEvent', event);
+              });
             }
-            $('#bookingWarnings').append(warnings);
-            $('#bookingAlerts').show();
-          }
-        },
-        error: function(xhr){
-          showErrors(xhr);
+          });
+        } else {
           $.getJSON('/bookings/'+event.id, function (booking) {
             event.start = booking.start;
             event.end = booking.end;
@@ -1260,15 +1357,8 @@ function editDrag(event) {
           });
         }
       });
-} else {
-  $.getJSON('/bookings/'+event.id, function (booking) {
-    event.start = booking.start;
-    event.end = booking.end;
-    event.resourceId = booking.service_provider_id;
-    $('#calendar').fullCalendar('updateEvent', event);
-  });
-};
-}
+    };
+  }
 }
 
 function saveBooking(typeURL, extraURL) {

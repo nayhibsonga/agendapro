@@ -67,9 +67,15 @@
               <span class="help-block"></span>
             </div>
           </div>
-          <% if @location.company.company_setting.client_exclusive %>
+          <% if @location.company.company_setting.client_exclusive || @location.company.company_setting.use_identification_number %>
           <div class="form-group">
-            <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => (I18n.t('ci')).capitalize ) %>
+            <% if user_signed_in? && Client.where(email: current_user.email, company_id: @location.company.id).count > 0
+              client = Client.where(email: current_user.email, company_id: @location.company.id).first
+            %>
+              <%= text_field_tag(:identification_number, client.identification_number, :class => "form-control", :placeholder => (I18n.t('ci')).capitalize ) %>
+            <% else %>
+              <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => (I18n.t('ci')).capitalize ) %>
+            <% end %>
             <span class="help-block"></span>
           </div>
           <% end %>
@@ -197,6 +203,7 @@
 
 <% content_for :scripts do %>
 <%= javascript_include_tag 'split-name' %>
+<%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
 <%= javascript_include_tag 'validations/validate' %>
 <%= javascript_include_tag 'validations/home/workflow' %>
 <script type="text/javascript">

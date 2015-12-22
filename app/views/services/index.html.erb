@@ -46,7 +46,7 @@
                       <td><%= service.duration %> min</td>
                       <td>
                         <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-sm btn-orange" %>
-                        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_path(:id => service.id), :class => "btn btn-sm btn-red", data: { confirm: '¿Estás seguro de desactivar el Servicio seleccionado?' } unless cannot? :destroy, service %>
+                        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_path(:id => service.id), method: :patch, :class => "btn btn-sm btn-red", data: { confirm: '¿Estás seguro de desactivar el Servicio seleccionado?' } unless cannot? :destroy, service %>
                         <span class="pull-right">
                           <i class="fa fa-bars"></i>
                         </span>

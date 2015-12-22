@@ -1,72 +1,537 @@
+var statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"];
+var backColors = ["#cacaca", "#77d0fa", "#fbe09f", "#fab5fb", "#adf0d1", "#FAFCAF", "#fbc1b3", "#a6a5a5"];
+var textColors = ["#707070", "#0b587d", "#a78a47", "#8e508f", "#4c8b6e", "#505205", "#a15240", "#737373"];
+var resourcesColors = [];
+var servicesJSON;
+
+var dragInProgress = false;
+var dragUi = null;
+
+var bookingBuffer = []
+
 function loadProviders () {
 	if (parseInt($('#locals-selector').val()) > 0) {
 		var localId = parseInt($('#locals-selector').val());
 		$('#providers-div').empty();
-		$.getJSON('/local_providers', {location: localId}, function (providersArray) {
-			if (providersArray.length > 0) {
-				$('#providers-div').append('<select class="form-control" id="providers-selector">');
-				$.each(providersArray, function (key, provider) {
-					$('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'">'+provider.public_name+'</option>');
-				});
-				$('#providers-selector').change(function() {
-					providerId = parseInt($('#providers-selector').val())
-					if (providerId > 0) {
-						loadTable();
+		$.getJSON('/location_services', {location: localId}, function (services) {
+			servicesJSON = services;
+			var resources = [];
+			var count = 0;
+			$.getJSON('/local_providers', {location: localId}, function (providersArray) {
+
+				if (providersArray.length > 0) {
+					$('#providers-div').append('<select class="form-control" id="providers-selector"></select>');
+					if (providersArray.length > 1) {
+						$('#providers-selector').append('<option value="0" data-resources="' + '' + '">Todos</option>');
 					}
-				});
-				loadTable();
+					var provider_groups = $('#groups_data').data('provider-groups');
+					$.each(providersArray, function (key, provider) {
+						$('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'" data-block="' + provider.block_length + '">'+provider.public_name+'</option>');
+						resources.push({id: provider.id, name: provider.public_name});
+						count += 1;
+					});
+					$('#providers-selector').change(function() {
+						providerId = parseInt($('#providers-selector').val());
+						if (providerId == 0) {
+							if ( $('#providers-selector option:selected').data('resources').length > 0 ) {
+								loadLocationTime (localId, $('#providers-selector option:selected').data('resources'));
+							}
+							else {
+								loadLocationTime (localId, resources);
+							}
+						}
+						else {
+							loadProviderTime(providerId);
+						}
+
+					});
+					if (providersArray.length > 1) {
+						loadLocationTime (localId, resources);
+					}
+					else {
+						loadProviderTime(parseInt($('#providers-selector').val()));
+					}
+					return true;
+				}
+				else {
+					$('#providers-selector').append('<option value="0">Todos</option>');
+				}
+				loadWeekCalendar(0,24,[],[],0);
 				return true;
-			}
+			});
+			return false;
 		});
 	}
 	return false;
 }
 
-function getStatusColor(status_name) {
-	if (status_name == "Reservado") {
-		return '#77d0fa';
+function getHour(str) {
+  var index = str.indexOf('T'); //2000-1-1T08:00:00Z
+  str = str.substring(index + 1, index + 6); //08:00
+  return str;
+}
+
+function loadLocationTime (locationId, resources) {
+	var extended_schedule_bool = $('#calendar-data').data('extended-schedule');
+	if (extended_schedule_bool) {
+		var extended_min_hour = $('#calendar-data').data('extended-min-hour');
+		var extended_max_hour = $('#calendar-data').data('extended-max-hour');
+		loadResourcesCalendar(extended_min_hour, extended_max_hour, [], resources, 0);
 	}
-	else if (status_name == "Confirmado") {
-		return '#fbe09f';
-	}
-	else if (status_name == "Asiste") {
-		return '#fab5fb';
-	}
-	else if (status_name == "No Asiste") {
-		return '#fbc1b3';
-	}
-	else  {
-		return '';
+	else {
+		var min_hour = $('#locals-selector').find(':selected').data('minhour');
+		var max_hour = $('#locals-selector').find(':selected').data('maxhour');
+		loadResourcesCalendar(min_hour, max_hour, [], resources, 0);
 	}
 }
 
-function loadTable() {
-	$('#provider-table-body').empty();
-	$('#provider-table-body').append('<tr><td colspan="5"><%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %></td></tr>');
-	var months = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-	var days = new Array ("Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado");
-	var f = $("#dp").datepicker("getDate");
-	$('#date-label').empty();
-	$('#date-label').append(days[f.getDay()] + " " + f.getDate() + " de " + months[f.getMonth()] + ", " + f.getFullYear());
-	$.getJSON('/provider_hours', {service_provider_id: parseInt($('#providers-selector').val()), provider_date: $("#dp").datepicker("getDate")}, function (rows) {
-		$('#provider-table-body').empty();
-		if (rows.length > 0) {
-			$.each(rows, function (key, row) {
-				if(row.length == 5) {
-					$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td><td style="background-color: ' + getStatusColor(row[4]) + ';">' + row[4] + '</td></tr>');
-				}
-				else {
-					$('#provider-table-body').append('<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td><td>' + row[4] + '</td><td style="background-color: ' + getStatusColor(row[5]) + ';">' + row[5] + '</td></tr>');
-				}
+function loadProviderTime (providerId) {
+	var extended_schedule_bool = $('#calendar-data').data('extended-schedule');
+	if (extended_schedule_bool) {
+		var extended_min_hour = $('#calendar-data').data('extended-min-hour');
+		var extended_max_hour = $('#calendar-data').data('extended-max-hour');
+		loadWeekCalendar(extended_min_hour, extended_max_hour, [], [], providerId);
+	}
+	else {
+		var min_hour = $('#locals-selector').find(':selected').data('minhour');
+		var max_hour = $('#locals-selector').find(':selected').data('maxhour');
+		loadWeekCalendar(min_hour, max_hour, [], [], providerId);
+	}
+}
+
+function setAspectRatio() {
+	var calendarWidth = $('#calendar').outerWidth();
+	var calendarHeader = 38; //Altura del header del calendario
+	var headerHeight = $('.navbar-admin').outerHeight();
+	var selectsHeight = $('.background-grey').outerHeight();
+	var margin = 5; //Margen entre el calendario y la barra
+
+	var height = window.innerHeight - headerHeight - calendarHeader - selectsHeight - margin;
+	return calendarWidth / height;
+}
+
+var bookingModalOpen = false;
+var duration = $('#calendar-data').data('calendar-duration');
+function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
+	//Default values
+	startTime = startTime || 0;
+	endTime = endTime || 24;
+	// var startHour = startTime || 9;
+	hiddenDays = [];
+
+	$('#calendar').fullCalendar('removeEvents');
+	$('#calendar').empty();
+	$('#calendar').fullCalendar({
+		header: {
+			left: 'title',
+			center: 'prev,today,next',
+			right: ''
+		},
+		hiddenDays: hiddenDays,
+		resources: resourcesArray,
+		eventClick: function(event) {
+			if (!bookingModalOpen) {
+				bookingModalOpen = true;
+				editBookingModal(event.id);
+			};
+		},
+		dayClick: function(date, allDay, jsEvent, view) {
+			var p = $('#popover').parent();
+			$('#popover').empty();
+			$('#popover').removeClass('popover-right').removeClass('popover-left');
+			$('#popover').html('<a id="closePopover" class="closePopover"><i class="fa fa-times"></i></a><br /><a id="bookingPopover" class="actionPopover">Agregar Reserva</a><br /><a id="breakPopover" class="actionPopover">Bloquear Horario</a>');
+			var offX  = (jsEvent.offsetX || jsEvent.clientX - $(jsEvent.target).offset().left);
+
+			if (offX + 75 > p.width() - 150) {
+				$('#popover').addClass('popover-left');
+				offX = offX - 150;
+			}
+			else {
+				$('#popover').addClass('popover-right');
+			}
+
+			$('#popover').css('left', offX + 75 + 'px');
+			$('#popover').css('top', jsEvent.pageY - p.offset().top - 35 + 'px');
+
+
+			var column_click = $(this).context.cellIndex;
+			var resourceId = view.resources[column_click - 1].id
+			$('#closePopover').click(function() {
+				$('#popover').hide();
 			});
-		}
-		else {
-			$('#provider-table-body').append('<tr><td colspan="4">El prestador seleccionado no trabaja este día...</td></tr>');
+			$('#bookingPopover').click(function() {
+				if (!bookingModalOpen) {
+					bookingModalOpen = true;
+					createBookingModal(date, resourceId);
+
+				};
+				$('#popover').hide();
+			});
+			$('#breakPopover').click(function() {
+				createBreakModal(date, resourceId);
+				$('#popover').hide();
+			});
+			$('#popover').show();
+		},
+
+		eventRender: function(event, element) {
+			if ($.isNumeric(event.id)) {
+				var prepayed = event.prepayed_qtip;
+		   		if (prepayed === undefined)
+		   		{
+		   			prepayed = "No";
+		   		}
+		   		var is_event_session = event.is_session_qtip;
+		   		if (is_event_session === undefined)
+		   		{
+		   			is_event_session = false;
+		   		}
+		   		if (is_event_session)
+		   		{
+		   			element.qtip({
+					   content: {
+							button: true,
+							title: event.title_qtip,
+							text: 'Horario: ' + event.time_qtip + '<br/>' +
+							'Servicio: ' + event.service_qtip + '<br/>' +
+							'Teléfono: ' + event.phone_qtip + '<br/>' +
+							'E-mail: ' + event.email_qtip + '<br/>' +
+							'CI: ' + event.identification_number_qtip + '<br/>' +
+							'Comentario: ' + event.comment_qtip + '<br />' +
+							'Pagado: ' + prepayed + '<br />' +
+							event.sessions_ratio_qtip
+					   },
+					   position: {
+							my: 'bottom center',  // el triángulo sale de abajo al medio
+							at: 'top center' // se ubica arriba del elemento en cuestión
+					   },
+					   style: {
+							classes: 'qtip-bootstrap'
+					   },
+					   hide: {
+							event: 'click mouseleave unfocus',
+							leave: true,
+							fixed: true
+						},
+						events: {
+					        show: function(event, api) {
+					        	if(dragInProgress)
+					        	{
+					            	event.preventDefault();
+					            }
+					        }
+					    }
+				   	});
+		   		}
+		   		else
+		   		{
+				   	element.qtip({
+					   content: {
+							button: true,
+							title: event.title_qtip,
+							text: 'Horario: ' + event.time_qtip + '<br/>' +
+							'Servicio: ' + event.service_qtip + '<br/>' +
+							'Teléfono: ' + event.phone_qtip + '<br/>' +
+							'E-mail: ' + event.email_qtip + '<br/>' +
+							'CI: ' + event.identification_number_qtip + '<br/>' +
+							'Comentario: ' + event.comment_qtip + '<br />' +
+							'Pagado: ' + prepayed
+					   },
+					   position: {
+							my: 'bottom center',  // el triángulo sale de abajo al medio
+							at: 'top center' // se ubica arriba del elemento en cuestión
+					   },
+					   style: {
+							classes: 'qtip-bootstrap'
+					   },
+					   hide: {
+							event: 'click mouseleave unfocus',
+							leave: true,
+							fixed: true
+						},
+						events: {
+					        show: function(event, api) {
+					        	if(dragInProgress)
+					        	{
+					            	event.preventDefault();
+					            }
+					        }
+					    }
+				   	});
+			   	}
+			}
+		},
+		firstDay: 1,	//Lunes
+		defaultView: 'resourceDay',
+		allDaySlot: false,
+		axisFormat: 'HH:mm',
+		timeFormat: 'HH:mm{ - HH:mm}',
+		columnFormat: {
+			week: 'ddd d/M',
+			day: 'dddd d/M'
+		},
+		titleFormat: {
+			week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
+			day: 'dddd, d MMM yyyy'
+		},
+		buttonText: {
+			prev:     '&lsaquo;', // <
+			next:     '&rsaquo;', // >
+			today:    'Hoy',
+			week:     '<i class="fa fa-calendar"></i>  Semana',
+			day:      '<i class="fa fa-calendar"></i>  Día',
+			resourceDay: '<i class="fa fa-calendar"></i>  Día'
+		},
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+		dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+		minTime: startTime,
+		maxTime: endTime,
+		// firstHour: startHour,
+		defaultEventMinutes: duration,
+		editable: false,
+		disableResizing: true,
+		eventDragStart: function(event, jsEvent, ui, view){
+			ui.helper.qtip('hide');
+			dragInProgress = true;
+			dragUi = ui;
+		},
+		eventDragStop: function(event, jsEvent, ui, view){
+			dragInProgress = false;
+			dragUi = null;
+		},
+		slotMinutes: duration,
+		aspectRatio: setAspectRatio(),
+		windowResize: function(view) {
+			$('#calendar').fullCalendar('option', 'aspectRatio', setAspectRatio());
 		}
 	});
+	$('.fc-button').click(function (event) {
+		var providerId = parseInt($('#providers-selector').val());
+		loadProviderEvents(providerId);
+	});
+	loadProviderEvents(providerId);
+}
+
+function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId) {
+	//Default values
+
+	startTime = startTime || 0;
+	endTime = endTime || 24;
+	// var startHour = startTime || 9;
+	// hiddenDays = $('#locals-selector').find(':selected').data('closed-days');
+	hiddenDays = []
+
+	$('#calendar').fullCalendar('removeEvents');
+	$('#calendar').empty();
+	$('#calendar').fullCalendar({
+		header: {
+			left: 'title',
+			center: 'prev,today,next',
+			right: ''
+		},
+		hiddenDays: [ 2, 4 ] ,
+		resources: resourcesArray,
+		eventRender: function(event, element) {
+		   if ($.isNumeric(event.id)) {
+			   if ($.isNumeric(event.id)) {
+			   		var prepayed = event.prepayed_qtip;
+			   		if (prepayed === undefined)
+			   		{
+			   			prepayed = "No";
+			   		}
+			   		var prepayed = event.prepayed_qtip;
+			   		if (prepayed === undefined)
+			   		{
+			   			prepayed = "No";
+			   		}
+			   		var is_event_session = event.is_session_qtip;
+			   		if (is_event_session === undefined)
+			   		{
+			   			is_event_session = false;
+			   		}
+			   		if(is_event_session)
+			   		{
+			   			element.qtip({
+						   content: {
+							   button: true,
+							   title: event.title_qtip,
+							   text: 'Horario: ' + event.time_qtip + '<br/>' +
+									   'Servicio: ' + event.service_qtip + '<br/>' +
+									   'Teléfono: ' + event.phone_qtip + '<br/>' +
+									   'E-mail: ' + event.email_qtip + '<br/>' +
+									   'CI: ' + event.identification_number_qtip + '<br/>' +
+									   'Comentario: ' + event.comment_qtip + '<br />' +
+									   'Pagado: ' + prepayed + '<br />' +
+									   event.sessions_ratio_qtip
+						   },
+						   position: {
+							   my: 'bottom center',  // el triángulo sale de abajo al medio
+							   at: 'top center' // se ubica arriba del elemento en cuestión
+						   },
+						   style: {
+							   classes: 'qtip-bootstrap'
+						   },
+						   hide: {
+							   event: 'click mouseleave unfocus',
+							   leave: true,
+							   fixed: true
+						   },
+						   events: {
+						        show: function(event, api) {
+						        	if(dragInProgress)
+						        	{
+						            	event.preventDefault();
+						            }
+						        }
+						    }
+					   	});
+			   		}
+			   		else
+			   		{
+					   	element.qtip({
+						   content: {
+							   button: true,
+							   title: event.title_qtip,
+							   text: 'Horario: ' + event.time_qtip + '<br/>' +
+									   'Servicio: ' + event.service_qtip + '<br/>' +
+									   'Teléfono: ' + event.phone_qtip + '<br/>' +
+									   'E-mail: ' + event.email_qtip + '<br/>' +
+									   'CI: ' + event.identification_number_qtip + '<br/>' +
+									   'Comentario: ' + event.comment_qtip + '<br />' +
+									   'Pagado: ' + prepayed
+						   },
+						   position: {
+							   my: 'bottom center',  // el triángulo sale de abajo al medio
+							   at: 'top center' // se ubica arriba del elemento en cuestión
+						   },
+						   style: {
+							   classes: 'qtip-bootstrap'
+						   },
+						   hide: {
+							   event: 'click mouseleave unfocus',
+							   leave: true,
+							   fixed: true
+						   },
+						   events: {
+						        show: function(event, api) {
+						        	if(dragInProgress)
+						        	{
+						            	event.preventDefault();
+						            }
+						        }
+						    }
+					   	});
+					}
+			   }
+			}
+		},
+		firstDay: 1,	//Lunes
+		defaultView: 'agendaWeek',
+		allDaySlot: false,
+		axisFormat: 'HH:mm',
+		timeFormat: 'HH:mm{ - HH:mm}',
+		columnFormat: {
+			week: 'ddd d/M',
+			day: 'dddd d/M'
+		},
+		titleFormat: {
+			week: 'MMM d[ yyyy]{ &#8212;[ MMM] d yyyy}',
+			day: 'dddd, d MMM yyyy'
+		},
+		buttonText: {
+			prev:     '&lsaquo;', // <
+			next:     '&rsaquo;', // >
+			today:    'Hoy',
+			week:     '<i class="fa fa-calendar"></i>  Semana',
+			day:      '<i class="fa fa-calendar"></i>  Día'
+		},
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+		dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+		dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+		minTime: startTime,
+		maxTime: endTime,
+		// firstHour: startHour,
+		defaultEventMinutes: $('#providers-selector option:selected').data("block"),
+		editable: false,
+		disableResizing: true,
+		eventDragStart: function(event, jsEvent, ui, view){
+			ui.helper.qtip('hide');
+			dragInProgress = true;
+			dragUi = ui;
+		},
+		eventDragStop: function(event, jsEvent, ui, view){
+			dragInProgress = false;
+			dragUi = null;
+		},
+		slotMinutes: $('#providers-selector option:selected').data("block"),
+		aspectRatio: setAspectRatio(),
+		windowResize: function(view) {
+			$('#calendar').fullCalendar('option', 'aspectRatio', setAspectRatio());
+		}
+	});
+	$('.fc-button').click(function () {
+		var providerId = parseInt($('#providers-selector').val());
+		loadProviderEvents(providerId);
+	});
+	loadProviderEvents(providerId);
+}
+
+var ajaxRequest;
+function loadProviderEvents(providerId) {
+	$('#small_loader_header').remove();
+	$(".fc-button").css("display", "none");
+	$(".fc-header-center").append('<span id="small_loader_header"><i class="fa fa-spinner fa-spin"></i> </span>');
+	var localId = parseInt($('#locals-selector').val());
+	var start = $('#calendar').fullCalendar('getView').visStart;
+	var end = $('#calendar').fullCalendar('getView').visEnd;
+	var startParam = start.getFullYear()+'-'+(start.getMonth()+1)+'-'+start.getDate();
+	var endParam = end.getFullYear()+'-'+(end.getMonth()+1)+'-'+end.getDate();
+	$('#calendar').fullCalendar('removeEvents');
+
+	if (ajaxRequest != null) {
+		ajaxRequest.abort();
+	}
+
+	ajaxRequest = $.getJSON('/booking', {location: localId, provider: providerId, start: startParam, end: endParam}, function (events_list) {
+		$('#calendar').fullCalendar('addEventSource', events_list);
+		$('#small_loader_header').remove();
+		$(".fc-button").css("display", "inline-block");
+		$(".hours-optimizer-button").show();
+	});
+	return false;
 }
 
 $(function() {
+	clearTimeout(alertDismiss);
+
+	if (parseInt($('#locals-selector').val()) > 0) {
+		loadProviders();
+	}
+	$('#locals-selector').change(function() {
+		if (parseInt($('#locals-selector').val()) > 0) {
+			loadProviders();
+		}
+	});
+	$('#datePicker').datepicker({
+		dateFormat: 'dd-mm-yy',
+		autoSize: true,
+		firstDay: 1,
+		changeMonth: true,
+		changeYear: true,
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
+	});
+
 	$("#dp").datepicker({
 		dateFormat: 'dd-mm-yy',
 		autoSize: true,
@@ -83,28 +548,46 @@ $(function() {
         today: 'Hoy',
         clear: '',
 		onSelect: function(dateText, inst) {
-			loadTable();
+			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
+			$('#calendar').fullCalendar('gotoDate', d);
+			var providerId = parseInt($('#providers-selector').val());
+			loadProviderEvents(providerId);
 		}
 	});
 
-	$('#next-day').on("click", function () {
-	    var date = $('#dp').datepicker('getDate');
-	    date.setTime(date.getTime() + (1000*60*60*24))
-	    $('#dp').datepicker("setDate", date);
-	    loadTable();
+	$("#set-date").datepicker({
+		dateFormat: 'dd-mm-yy',
+		autoSize: true,
+		firstDay: 1,
+		changeMonth: true,
+		changeYear: true,
+		monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: '',
+		onSelect: function(dateText, inst) {
+			var d = new Date(parseInt(dateText.split('-')[2]), parseInt(dateText.split('-')[1]) - 1, parseInt(dateText.split('-')[0]));
+			$('#calendar').fullCalendar('gotoDate', d);
+			var providerId = parseInt($('#providers-selector').val());
+			loadProviderEvents(providerId);
+		}
 	});
 
-	$('#prev-day').on("click", function () {
-	    var date = $('#dp').datepicker('getDate');
-	    date.setTime(date.getTime() - (1000*60*60*24))
-	    $('#dp').datepicker("setDate", date);
-	    loadTable();
+	$('#set-date-button').click(function(){
+		if ($('#ui-datepicker-div').css('display') == 'none') {
+			$('#set-date').datepicker('show');
+		}
+		else {
+			$('#set-date').datepicker('hide');
+		}
 	});
 
-	$('#locals-selector').change(function() {
-		loadProviders();
-	});
-	loadProviders();
+	$(".ui-datepicker-trigger").addClass("btn");
+	
 
-	$("#dp").datepicker('setDate', new Date());
 });

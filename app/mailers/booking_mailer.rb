@@ -133,13 +133,13 @@ class BookingMailer < ActionMailer::Base
 			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
-					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+					:content => book_info.marketplace_origin ? book_info.marketplace_url('edit') : booking_edit_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
 			if book_info.location.company.company_setting.can_cancel
 				message[:merge_vars][0][:vars] << {
 					:name => 'CANCEL',
-					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+					:content => book_info.marketplace_origin ? book_info.marketplace_url('cancel') : booking_cancel_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
 
@@ -354,13 +354,13 @@ class BookingMailer < ActionMailer::Base
 			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
-					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+					:content => book_info.marketplace_origin ? book_info.marketplace_url('edit') : booking_edit_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
 			if book_info.location.company.company_setting.can_cancel
 				message[:merge_vars][0][:vars] << {
 					:name => 'CANCEL',
-					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+					:content => book_info.marketplace_origin ? book_info.marketplace_url('cancel') : booking_cancel_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
 
@@ -941,13 +941,13 @@ class BookingMailer < ActionMailer::Base
 			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
-					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+					:content => book_info.marketplace_origin ? book_info.marketplace_url('edit') : booking_edit_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
 			if book_info.location.company.company_setting.can_cancel
 				message[:merge_vars][0][:vars] << {
 					:name => 'CANCEL',
-					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+					:content => book_info.marketplace_origin ? book_info.marketplace_url('cancel') : booking_cancel_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
 
@@ -1040,7 +1040,7 @@ class BookingMailer < ActionMailer::Base
 
 	def multiple_booking_reminder (data)
 		# => Template
-		template_name = 'Multiple Booking Reminder'
+		template_name = data[:marketplace] ? 'Confirm Multiple - Marketplace' : 'Multiple Booking Reminder'
 		template_content = []
 
 		# => Message
@@ -1183,7 +1183,7 @@ class BookingMailer < ActionMailer::Base
 
 	def multiple_booking_mail (data)
 		# => Template
-		template_name = 'Multiple Booking'
+		template_name = data[:marketplace] ? 'Multiple Bookings - Marketplace' : 'Multiple Booking'
 		template_content = []
 
 		# => Message
@@ -2066,13 +2066,13 @@ class BookingMailer < ActionMailer::Base
 			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
-					:content => booking_edit_url(:confirmation_code => book_info.confirmation_code)
+					:content => book_info.marketplace_origin ? book_info.marketplace_url('edit') : booking_edit_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
 			if book_info.location.company.company_setting.can_cancel
 				message[:merge_vars][0][:vars] << {
 					:name => 'CANCEL',
-					:content => booking_cancel_url(:confirmation_code => book_info.confirmation_code)
+					:content => book_info.marketplace_origin ? book_info.marketplace_url('cancel') : booking_cancel_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
 		end
