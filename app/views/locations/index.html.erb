@@ -39,7 +39,7 @@
               <td data-location="<%= location.id %>"><%= location.name %></td>
               <td>
                 <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_location_path(location), :class => "btn btn-sm btn-orange" %>
-                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_location_path(:id => location.id), :class => "btn btn-sm btn-red", data: { confirm: '¿Estás seguro de desactivar el Local seleccionado?' } unless cannot? :destroy, location %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_location_path(:id => location.id), method: :patch, :class => "btn btn-sm btn-red", data: { confirm: '¿Estás seguro de desactivar el Local seleccionado?' } unless cannot? :destroy, location %>
                 <span class="pull-right">
                   <i class="fa fa-bars"></i>
                 </span>

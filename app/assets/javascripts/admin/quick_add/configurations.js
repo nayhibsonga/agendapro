@@ -21,10 +21,10 @@ $(function() {
 				}
 				else
 				{
-					alert("Error");
+					swal("Error");
 				}
 			}
 		});
-		
+
 	});
 });

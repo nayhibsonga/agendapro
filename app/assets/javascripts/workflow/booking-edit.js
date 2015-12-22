@@ -1,16 +1,16 @@
-Date.isLeapYear = function (year) { 
-    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+Date.isLeapYear = function (year) {
+    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
 };
 
 Date.getDaysInMonth = function (year, month) {
     return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
 };
 
-Date.prototype.isLeapYear = function () { 
-    return Date.isLeapYear(this.getFullYear()); 
+Date.prototype.isLeapYear = function () {
+    return Date.isLeapYear(this.getFullYear());
 };
 
-Date.prototype.getDaysInMonth = function () { 
+Date.prototype.getDaysInMonth = function () {
     return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
 };
 
@@ -52,7 +52,7 @@ function loadCalendar()
 
 	$(document).on('hourClick', function (e) {
 
-	  
+
 	    bookSummary = bookSummaries[e.index];
 	    bookDetails = bookSummary.bookings[0];
 
@@ -117,7 +117,7 @@ $("#datepicker").datepicker({
 
       $(document).on('hourClick', function (e) {
 
-        
+
 			bookSummary = bookSummaries[e.index];
 			bookDetails = bookSummary.bookings[0];
 
@@ -156,10 +156,11 @@ function addBooking (booking) {
 	else {
 		selected = false;
 		$('.hora-activo').addClass('hora-disponible').removeClass('hora-activo');
-		myAlert.showAlert(
-	      '<h3>Horario Inválido</h3>' +
-	      '<p>La fecha/hora elegida es anterior a la fecha/hora actual o no cumple el tiempo mínimo requerido para agendar.</p>'
-	    );
+    swal({
+      title: "Horario Inválido",
+      text: "La fecha/hora elegida es anterior a la fecha/hora actual o no cumple el tiempo mínimo requerido para agendar.",
+      type: "error"
+    });
 	}
 }
 
@@ -177,9 +178,7 @@ $(document.body).on('click', '.date-span', function(e) {
   $(e.currentTarget).find('input').datepicker('show');
 });
 
-var myAlert;
 $(function () {
-	myAlert  = new Alert('.main');
 	loadCalendar();
 
 
@@ -191,7 +190,7 @@ $(function () {
 		*/
 
 
-		
+
 		if (e.date < after_date)
 		{
 			if($(".bloque-hora").size() == 0)
@@ -208,10 +207,11 @@ $(function () {
 				}
 				else
 				{
-					myAlert.showAlert(
-			            '<h3>No hay horarios disponibles</h3>' +
-			            '<p>Lo sentimos, no hay más horarios disponibles después de la semana del ' + after_date.toLocaleDateString() + '.</p>'
-			        );
+          swal({
+            title: "No hay horarios disponibles",
+            text: "Lo sentimos, no hay más horarios disponibles después de la semana del " + after_date.toLocaleDateString() + ".",
+            type: "error"
+          });
 				}
 			}
 		}
@@ -242,22 +242,23 @@ $(function () {
 				calendar = new PromoCalendar('/promotion_hours', data);
 			}
 
-
-			myAlert.showAlert(
-	            '<h3>No hay horarios disponibles</h3>' +
-	            '<p>Lo sentimos, no hay más horarios disponibles después de la semana del ' + after_date.toLocaleDateString() + '.</p>'
-	        );
+      swal({
+        title: "No hay horarios disponibles",
+        text: "Lo sentimos, no hay más horarios disponibles después de la semana del "+ after_date.toLocaleDateString() + ".",
+        type: "error"
+      });
 		}
 	});
 
 
 	$('#edit_form').submit(function (event) {
 		if (!selected) {
-	    	event.preventDefault();
-			myAlert.showAlert(
-		      '<h3>Selecciona un Horario</h3>' +
-		      '<p>Debes elegir un horario antes de poder continuar.</p>'
-		    );
+    	event.preventDefault();
+      swal({
+        title: "Selecciona un Horario",
+        text: "Debes elegir un horario antes de poder continuar.",
+        type: "error"
+      });
 		}
   	});
 });

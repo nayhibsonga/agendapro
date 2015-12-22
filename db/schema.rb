@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20151216135454) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 20151216135454) do
   end
 
   create_table "billing_wire_transfers", force: true do |t|
-    t.datetime "payment_date",       default: '2015-11-16 15:12:16'
+    t.datetime "payment_date",       default: '2015-12-10 14:46:35'
     t.float    "amount",             default: 0.0
     t.string   "receipt_number",     default: ""
     t.string   "account_name",       default: ""
@@ -506,7 +506,7 @@ ActiveRecord::Schema.define(version: 20151216135454) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "date",                default: '2015-10-27 17:17:43'
+    t.datetime "date",                default: '2015-11-18 15:55:51'
     t.integer  "user_id"
   end
 
@@ -910,7 +910,11 @@ ActiveRecord::Schema.define(version: 20151216135454) do
     t.integer  "company_id"
     t.float    "amount",        default: 0.0
     t.boolean  "payed",         default: false
+<<<<<<< HEAD
+    t.datetime "payment_date",  default: '2015-11-18 15:55:52'
+=======
     t.datetime "payment_date",  default: '2015-11-10 14:59:37'
+>>>>>>> 45883df860b83e7fb0693daf2b14438b683fcec2
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "discount",      default: 0.0
@@ -1258,7 +1262,7 @@ ActiveRecord::Schema.define(version: 20151216135454) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
-    t.datetime "date",          default: '2015-10-23 15:05:22'
+    t.datetime "date",          default: '2015-11-18 15:55:51'
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1278,7 +1282,7 @@ ActiveRecord::Schema.define(version: 20151216135454) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
-    t.datetime "date",                    default: '2015-10-23 13:42:39'
+    t.datetime "date",                    default: '2015-11-18 15:55:50'
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false

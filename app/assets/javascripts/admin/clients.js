@@ -41,9 +41,15 @@ function cancelEditComment(id) {
 }
 
 function deleteComment(id) {
-  if (confirm("¿Estás seguro de eliminar el Comentario seleccionado?")) {
-    saveComment("DELETE",$('#client_comment_client_id').val(),{"id": id });
-  }
+  swal({
+    title: "¿Estás seguro de eliminar el Comentario seleccionado?",
+    type: "warning"
+  },
+  function (isConfirm) {
+    if (isConfirm) {  
+      saveComment("DELETE",$('#client_comment_client_id').val(),{"id": id });
+    }
+  });
   return false;
 }
 
@@ -73,11 +79,15 @@ function saveComment(typeURL, clientId, json) {
     },
     error: function(xhr){
       var errors = $.parseJSON(xhr.responseText).errors;
-      var errores = 'Error\n';
+      var errores = '';
       for (i in errors) {
         errores += '*' + errors[i];
       }
-      alert(errores);
+      swal({
+        title: "Error",
+        text: "Se producieron los siguientes errores:\n" + errores,
+        type: "error"
+      });
     }
   });
 }

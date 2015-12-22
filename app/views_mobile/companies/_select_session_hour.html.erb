@@ -97,10 +97,11 @@
 	                $("#bookModal").modal('hide');
 	                $('#bookModal').remove();
 	                //$("#session-booking-select").trigger("change");
-	                myAlert.showAlert(
-	                  '<h3>Error al reservar</h3>' +
-	                  '<p>' + response[0][0] + '</p>'
-	                );
+	                swal({
+	                	title: "Error el reservar",
+	                	text: response[0][0],
+	                	type: "error"
+	                });
 	                loadSessions();
 	            }
 	        },
@@ -108,10 +109,10 @@
 	        {
 	            $("#bookModal").modal('hide');
 	            $('#bookModal').remove();
-	            alert("Error");
+	            swal("Error");
 	        }
 	    });
 	});
-	
-	
+
+
 </script>

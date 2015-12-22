@@ -592,7 +592,7 @@
               </div>
               <h3 class="text-green">¿Quieres desactivar las reservas en línea por Facebook?</h3>
               <p>Para hacerlo debes desactivar las reservas por Facebook apretando el siquiente botón "Desactivar Facebook", y luego debes eliminar la pestaña de tu página de Facebook manualmente, desde las configuraciones de esta.</p>
-              <p><%= link_to "Desactivar Facebook", delete_facebook_pages_path, data: { confirm: '¿Estás seguro de querer desactivar las reservas desde Facebook? Por favor recuerda eliminar la pestaña de tu página de Facebook.' }, class: "btn btn-red" %></p>
+              <p><%= link_to "Desactivar Facebook", delete_facebook_pages_path, method: :delete, data: { confirm: '¿Estás seguro de querer desactivar las reservas desde Facebook? Por favor recuerda eliminar la pestaña de tu página de Facebook.' }, class: "btn btn-red" %></p>
             </div>
           </div>
           <div class="row" style="margin-top: 20px;">
@@ -1111,9 +1111,9 @@
                         <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, company_payment_method, method: :delete, data: { confirm: '¿Estás seguro de eliminar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
                       <% else %>
                         <% if company_payment_method.active %>
-                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_company_payment_method_path(id: company_payment_method.id), data: { confirm: '¿Estás seguro de desactivar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
+                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_company_payment_method_path(id: company_payment_method.id), method: :patch, data: { confirm: '¿Estás seguro de desactivar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
                         <% else %>
-                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_company_payment_method_path(id: company_payment_method.id), data: { confirm: '¿Estás seguro de activar el medio de pago seleccionado?' }, class: 'btn btn-green' %>
+                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_company_payment_method_path(id: company_payment_method.id), method: :patch, data: { confirm: '¿Estás seguro de activar el medio de pago seleccionado?' }, class: 'btn btn-green' %>
                         <% end %>
                       <% end %>
                       </td>
@@ -1155,9 +1155,9 @@
                         <!-- link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, cashier, method: :delete, data: { confirm: '¿Estás seguro de eliminar el cajero seleccionado?' }, class: 'btn btn-red' -->
                       
                         <% if cashier.active %>
-                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_cashier_path(id: cashier.id), data: { confirm: '¿Estás seguro de desactivar el cajero seleccionado?' }, class: 'btn btn-red' %>
+                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_cashier_path(id: cashier.id), method: :patch, data: { confirm: '¿Estás seguro de desactivar el cajero seleccionado?' }, class: 'btn btn-red' %>
                         <% else %>
-                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_cashier_path(id: cashier.id), data: { confirm: '¿Estás seguro de activar el cajero seleccionado?' }, class: 'btn btn-green' %>
+                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_cashier_path(id: cashier.id), method: :patch, data: { confirm: '¿Estás seguro de activar el cajero seleccionado?' }, class: 'btn btn-green' %>
                         <% end %>
                       
                       </td>
