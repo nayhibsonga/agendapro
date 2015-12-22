@@ -136,9 +136,6 @@ class Ability
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
         can :select_plan, Plan
-        can :billing_wire_transfer_form, Company
-        can :save_billing_wire_transfer, Company
-        can :update_billing_wire_transfer, Company
 
         can :add_company, Company
 
@@ -387,6 +384,14 @@ class Ability
         can :create, Deal, :company_id => user.company_id
         can :update, Deal, :company_id => user.company_id
 
+        can :pending_billing_wire_transfers, Company
+        can :approved_billing_wire_transfers, Company
+        can :show_billing_wire_transfer, Company
+        can :approve_billing_wire_transfer, Company
+        can :delete_billing_wire_transfer, Company
+        can :save_billing_wire_transfer, Plan
+
+
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
         can :location_users, User, :company_id => user.company_id
@@ -606,6 +611,8 @@ class Ability
         can :country_regions, Region
         can :region_cities, City
         can :city_districs, District
+
+        can :save_billing_wire_transfer, Plan, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 

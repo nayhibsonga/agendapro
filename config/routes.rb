@@ -214,9 +214,12 @@
     post '/companies/update_company', :to => 'companies#update_company'
     post '/companies/deactivate_company', :to => 'companies#deactivate_company'
     post '/companies/get_monthly_bookings', :to => 'companies#get_monthly_bookings'
-    get '/billing_wire_transfer', :to => 'companies#billing_wire_transfer_form'
-    post '/billing_wire_transfers/', :to => 'companies#save_billing_wire_transfer'
-    post '/billing_wire_transfers/:id', :to => 'companies#update_billing_wire_transfer'
+    post '/save_billing_wire_transfer', :to => 'plans#save_billing_wire_transfer'
+    get '/pending_billing_wire_transfers', :to => 'companies#pending_billing_wire_transfers'
+    get '/approved_billing_wire_transfers', :to => 'companies#approved_billing_wire_transfers'
+    get '/show_billing_wire_transfer', :to => 'companies#show_billing_wire_transfer'
+    post '/approve_billing_wire_transfer', :to => 'companies#approve_billing_wire_transfer'
+    post '/delete_billing_wire_transfer', :to => 'companies#delete_billing_wire_transfer'
 
     # Search
     get "searchs/index"

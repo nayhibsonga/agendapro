@@ -1,0 +1,129 @@
+<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
+	<div class="col-md-12 payment_summary_col">
+		<div class="payment_summary_title">
+			Resumen de transferencia
+		</div>
+	</div>
+</div>
+<input type="hidden" id="billing_wire_transfer_id" value="<%= @transfer.id %>" />
+<div class="row">
+	<div class="col-md-6">
+		<div class="row">
+			<label class="control-label col-md-5">
+				Fecha de ingreso
+			</label>
+			<div class="col-md-7">
+				<%= @transfer.created_at.strftime('%d/%m/%Y %R') %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Fecha de transferencia
+			</label>
+			<div class="col-md-7">
+				<%= @transfer.payment_date.strftime('%d/%m/%Y %R') %>
+			</div>
+		</div>
+		<% if @transfer.change_plan %>
+
+			<div class="row">
+				<label class="control-label col-md-5">
+					Tipo
+				</label>
+				<div class="col-md-7">
+					Cambio de plan
+				</div>
+			</div>
+
+			<div class="row">
+				<label class="control-label col-md-5">
+					Plan actual
+				</label>
+				<div class="col-md-7">
+					<%= @transfer.company.plan.name %>
+				</div>
+			</div>
+
+			<div class="row">
+				<label class="control-label col-md-5">
+					Plan nuevo
+				</label>
+				<div class="col-md-7">
+					<%= Plan.find(@transfer.new_plan).name %>
+				</div>
+			</div>
+
+		<% else %>
+
+			<div class="row">
+				<label class="control-label col-md-5">
+					Tipo
+				</label>
+				<div class="col-md-7">
+					Pago de mensualidad
+				</div>
+			</div>
+
+			<div class="row">
+				<label class="control-label col-md-5">
+					Plan actual
+				</label>
+				<div class="col-md-7">
+					<%= @transfer.company.plan.name %>
+				</div>
+			</div>
+
+			<div class="row">
+				<label class="control-label col-md-5">
+					Meses pagados
+				</label>
+				<div class="col-md-7">
+					<%= @transfer.paid_months.to_s %>
+				</div>
+			</div>
+
+		<% end %>
+	</div>
+	<div class="col-md-6">
+		<div class="row">
+			<label class="control-label col-md-5">
+				Monto
+			</label>
+			<div class="col-md-7">
+				<%= number_to_currency(@transfer.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Titular
+			</label>
+			<div class="col-md-7">
+				<%= @transfer.account_name %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Banco
+			</label>
+			<div class="col-md-7">
+				<%= @transfer.bank.name %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Cuenta
+			</label>
+			<div class="col-md-7">
+				<%= @transfer.account_number %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				N° de comprobante
+			</label>
+			<div class="col-md-7">
+				<%= @transfer.receipt_number %>
+			</div>
+		</div>
+	</div>
+</div>

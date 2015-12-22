@@ -17,6 +17,239 @@ class CompaniesController < ApplicationController
 	end
 
 	#SuperAdmin
+
+	def pending_billing_wire_transfers
+
+		@transfers = BillingWireTransfer.where(approved: false)
+
+	end
+
+	def approved_billing_wire_transfers
+
+		@transfers = BillingWireTransfer.where(approved: true)
+
+	end
+
+	def show_billing_wire_transfer
+	    @transfer = BillingWireTransfer.find(params[:billing_wire_transfer_id])
+	    respond_to do |format|
+	      format.html { render :partial => 'billing_wire_transfer_summary' }
+	      format.json { render :json => @transfer }
+	    end
+	end
+
+	def approve_billing_wire_transfer
+
+		@json_response = []
+
+		@transfer = BillingWireTransfer.find(params[:billing_wire_transfer_id])
+		company = Company.find(@transfer.company_id)
+		sales_tax = company.country.sales_tax
+
+    	day_number = @transfer.payment_date.day
+    	month_number = @transfer.payment_date.month
+    	month_days = @transfer.payment_date.days_in_month
+
+    	if @transfer.change_plan
+
+    		plan_id = @transfer.new_plan
+
+    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+    		new_plan = Plan.find(plan_id)
+
+    		accepted_plans = Plan.where(custom: false).pluck(:id)
+
+    		if accepted_plans.include?(plan_id)
+
+    			if company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations
+
+    				previous_plan_id = company.plan.id
+			        months_active_left = company.months_active_left
+			        plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
+			        due_amount = company.due_amount
+			        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
+			        plan_month_value = (month_days - day_number + 1)*plan_price/month_days
+
+			        if months_active_left > 0
+          				if plan_value_left > (plan_month_value + due_amount)
+
+				            new_active_months_left = ((plan_value_left - plan_month_value - due_amount)/plan_price).floor + 1
+				            new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount)/plan_price)%1)*plan_price
+				            company.plan_id = plan_id
+				            company.months_active_left = new_active_months_left
+				            company.due_amount = (new_amount_due).round(0)
+
+				            if company.save
+
+				            	@transfer.approved = true
+				            	@transfer.save
+
+				              	PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
+				              	
+				            else
+				              	@json_response[0] = "error"
+								@json_response[1] = company.errors
+								render :json => @json_response
+								return
+				            end
+				        else
+
+				        	mockCompany = Company.find(company.id)
+				            mockCompany.plan_id = plan_id
+				            mockCompany.months_active_left = 1.0
+				            mockCompany.due_amount = 0.0
+				            mockCompany.due_date = nil
+				            mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
+				            if !mockCompany.valid?
+				            	@json_response[0] = "error"
+								@json_response[1] = mockCompany.errors
+								render :json => @json_response
+								return
+				            else
+
+				            	due_number = ((plan_month_value + due_amount - plan_value_left)*(1+sales_tax)).round(0)
+				              	due = sprintf('%.2f', ((plan_month_value + due_amount - plan_value_left)*(1+sales_tax)).round(0))
+
+				              	if @transfer.amount.round(0) != due_number
+					    			#Error
+									@json_response[0] = "error"
+									@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + price.to_s
+									render :json => @json_response
+									return
+					    		end
+
+				                PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
+
+				                @transfer.approved = true
+				                @transfer.save
+
+				            end
+
+				        end
+
+				    else
+
+				    	mockCompany = Company.find(current_user.company_id)
+						mockCompany.plan_id = plan_id
+						mockCompany.months_active_left = 1.0
+						mockCompany.due_amount = 0.0
+						mockCompany.due_date = nil
+						mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
+						if !mockCompany.valid?
+							@json_response[0] = "error"
+							@json_response[1] = mockCompany.errors
+							render :json => @json_response
+							return
+						else
+
+							due_number = ((plan_month_value + due_amount)*(1+sales_tax)).round(0)
+							due = sprintf('%.2f', ((plan_month_value + due_amount)*(1+sales_tax)).round(0))
+
+							if @transfer.amount.round(0) != due_number
+				    			#Error
+								@json_response[0] = "error"
+								@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + price.to_s
+								render :json => @json_response
+								return
+				    		end
+
+							PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
+
+
+						end
+
+				   	end
+
+    			else
+    				@json_response[0] = "error"
+					@json_response[1] = "La empresa tiene más prestadores o locales que el plan elegido"
+					render :json => @json_response
+					return
+    			end
+
+    		else
+    			@json_response[0] = "error"
+				@json_response[1] = "El plan solicitado no está entre los elegibles"
+				render :json => @json_response
+				return
+    		end
+
+    	else
+
+    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+    		accepted_amounts = [1,2,3,4,6,9,12]
+    		if accepted_amounts.include?(@transfer.paid_months)
+
+    			mockCompany = Company.find(company.id)
+				mockCompany.months_active_left += @transfer.paid_months
+				mockCompany.due_amount = 0.0
+				mockCompany.due_date = nil
+				mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
+				if !mockCompany.valid?
+					#Error
+					@json_response[0] = "error"
+					@json_response[1] = mockCompany.errors
+					render :json => @json_response
+					return
+				else
+					NumericParameter.find_by_name(@transfer.paid_months.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(@transfer.paid_months.to_s+"_month_discount").value : month_discount = 0
+
+					company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
+
+					due_number = ((plan_1 + price*(@transfer.paid_months-1)*(1+sales_tax))*(1-month_discount)).round(0)
+
+        			due = sprintf('%.2f', ((plan_1 + price*(@transfer.paid_months-1)*(1+sales_tax))*(1-month_discount)).round(0))
+
+        			if @transfer.amount.round(0) != due_number
+		    			#Error
+						@json_response[0] = "error"
+						@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + price.to_s
+						render :json => @json_response
+						return
+		    		end
+
+
+        			BillingLog.create(payment: due, amount: @transfer.paid_months, company_id: company.id, plan_id: company.plan.id, transaction_type_id: -1, trx_id: "")
+
+        			company.months_active_left += @transfer.paid_months
+					company.due_amount = 0.0
+					company.due_date = nil
+					company.payment_status_id = PaymentStatus.find_by_name("Activo").id
+
+        			if company.save
+        				@transfer.approved = true
+        				@transfer.save
+		          		CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
+		          		@json_response[0] = "ok"
+						@json_response[1] = company
+						render :json => @json_response
+						return
+		        	else
+		          		CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
+		          		@json_response[0] = "error"
+						@json_response[1] = company.errors
+						render :json => @json_response
+						return
+		        	end
+
+				end
+			else
+				@json_response[0] = "error"
+				@json_response[1] = "La cantidad de meses a pagar no es válida"
+				render :json => @json_response
+				return
+    		end
+
+    	end
+
+	end
+
+	def disapprove_billing_wire_transfer
+
+	end
+
 	#Manage companies payments.
 	def manage
 		if current_user.role_id == Role.find_by_name("Ventas").id
@@ -1006,29 +1239,6 @@ class CompaniesController < ApplicationController
 	def get_cashiers_by_code
 		@cashier = Cashier.find_by_code(params[:cashier_code])
 		render :json => @cashier
-	end
-
-	def billing_wire_transfer_form
-		
-		@billing_wire_transfer = BillingWireTransfer.new
-
-		#Check for latest billing_wire_transfer to prefill some data
-
-		if BillingWireTransfer.where(company_id: current_user.company_id).count > 0
-			last_billing_wire_transfer = BillingWireTransfer.where(company_id: current_user.company_id).order('updated_at desc').first.dup
-			@billing_wire_transfer.account_name = last_billing_wire_transfer.account_name
-			@billing_wire_transfer.account_number = last_billing_wire_transfer.account_number
-			@billing_wire_transfer.account_bank = last_billing_wire_transfer.account_bank
-		end
-
-	end
-
-	def save_billing_wire_transfer
-		
-	end
-
-	def update_billing_wire_transfer
-
 	end
 
 	private

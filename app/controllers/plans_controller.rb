@@ -3,7 +3,7 @@ class PlansController < ApplicationController
   before_action :constraint_locale, only: [:view_plans]
   before_action :authenticate_user!, except: [:view_plans]
   before_action :quick_add, except: [:view_plans, :select_plan]
-  before_action :verify_is_super_admin, except: [:view_plans, :select_plan]
+  before_action :verify_is_super_admin, except: [:view_plans, :select_plan, :save_billing_wire_transfer]
   layout "admin", except: [:view_plans]
   load_and_authorize_resource
 
@@ -93,15 +93,80 @@ class PlansController < ApplicationController
 
     @billing_wire_transfer = BillingWireTransfer.new
     @billing_wire_transfer.payment_date = DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])
+    @billing_wire_transfer.account_name = nil
+    @billing_wire_transfer.account_number = nil
+    @billing_wire_transfer.bank_id = nil
 
     #Check for latest billing_wire_transfer to prefill some data
 
-    #if BillingWireTransfer.where(company_id: current_user.company_id).count > 0
-    #  last_billing_wire_transfer = BillingWireTransfer.where(company_id: current_user.company_id).order('updated_at desc').first.dup
-    #  @billing_wire_transfer.account_name = last_billing_wire_transfer.account_name
-    #  @billing_wire_transfer.account_number = last_billing_wire_transfer.account_number
-    #  @billing_wire_transfer.account_bank = last_billing_wire_transfer.account_bank
-    #end
+    if BillingWireTransfer.where(company_id: current_user.company_id).count > 0
+      last_billing_wire_transfer = BillingWireTransfer.where(company_id: current_user.company_id).order('updated_at desc').first.dup
+      @billing_wire_transfer.account_name = last_billing_wire_transfer.account_name
+      @billing_wire_transfer.account_number = last_billing_wire_transfer.account_number
+      @billing_wire_transfer.bank_id = last_billing_wire_transfer.bank_id
+    end
+
+  end
+
+  def save_billing_wire_transfer
+
+    @billing_wire_transfer = BillingWireTransfer.new(payment_date: params[:transfer_datetime].to_datetime, amount: params[:transfer_amount].to_f, receipt_number: params[:transfer_receipt_number], account_name: params[:transfer_account_name], account_number: params[:transfer_account_number], approved: false, company_id: current_user.company.id, change_plan: params[:transfer_change_plan], new_plan: params[:transfer_new_plan], bank_id: params[:transfer_bank_id], paid_months: params[:transfer_paid_months])
+
+    if @billing_wire_transfer.save
+      flash[:notice] = 'Transferencia guardada correctamente y en espera de aprobación.'
+      redirect_to :action => 'select_plan'
+    else
+      flash[:alert] = 'Ocurrió un error al tratar de guardar la transferencia.'
+      redirect_to :action => 'select_plan'
+    end
+    
+  end
+
+
+  def generate_company_wire_transfer
+
+    amount = params[:amount].to_i
+
+    company = Company.find(current_user.company_id)
+    #company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+    sales_tax = company.country.sales_tax
+    day_number = Time.now.day
+    month_number = Time.now.month
+    month_days = Time.now.days_in_month
+    accepted_amounts = [1,2,3,4,6,9,12]
+
+    billing_wire_transfer = BillingWireTransfer.new(payment_date: params[:date], amount: amount, receipt_number: params[:receipt_number], account_name: params[:account_name], account_bank: params[:account_bank], account_number: params[:account_number], approved: false, company_id: company.id, change_plan: false, new_plan: nil, change_plan_amount: 0, new_plan_amount: 0)
+
+    if billing_wire_transfer.save
+
+    else
+
+    end
+
+  end
+
+  def generate_plan_wire_transfer
+
+    amount = params[:amount].to_i
+
+    new_plan = Plan.find(params[:new_plan_id])
+
+    company = Company.find(current_user.company_id)
+    
+    #company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+    sales_tax = company.country.sales_tax
+    day_number = Time.now.day
+    month_number = Time.now.month
+    month_days = Time.now.days_in_month
+    accepted_amounts = [1,2,3,4,6,9,12]
+
+    billing_wire_transfer = BillingWireTransfer.new(payment_date: params[:date], amount: amount, receipt_number: params[:receipt_number], account_name: params[:account_name], account_bank: params[:account_bank], account_number: params[:account_number], approved: false, company_id: company.id, change_plan: true, new_plan: new_plan.id, change_plan_amount: 0, new_plan_amount: 0)
+
+    if billing_wire_transfer.save
+      
+    else
+
+    end
 
   end
 

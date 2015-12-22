@@ -1,0 +1,49 @@
+function openTransfer(transfer_id)
+{
+  $.ajax({
+    url: '/show_billing_wire_transfer',
+    method: 'get',
+    data: {billing_wire_transfer_id: transfer_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#transferSummaryModalBody').empty();
+      $('#transferSummaryModalBody').append(response);
+      $('#transferSummaryModal').modal('show');
+    }
+  });
+}
+
+function approveTransfer(transfer_id)
+{
+  $.ajax({
+    url: '/approve_billing_wire_transfer',
+    method: 'post',
+    dataType: 'json',
+    data: {billing_wire_transfer_id: transfer_id},
+    error: function(error){
+      console.log("Error");
+      console.log(error);
+    },
+    success: function(response){
+      if(response[0] == "ok")
+      {
+        console.log("Success");
+        console.log(response);
+      }  
+      else
+      {
+        console.log("error: ");
+        console.log(response[1]);
+      }
+
+    }
+  });
+}
+
+$(document).ready(function(){
+  $('#approveTransferBtn').on('click', function(){
+    approveTransfer($('#billing_wire_transfer_id').val());
+  });
+});
