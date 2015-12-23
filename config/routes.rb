@@ -608,6 +608,9 @@
         get 'bookings_group', to: 'bookings#show_group'
         put 'bookings/:id', to: 'bookings#edit_booking'
         delete 'bookings/:id', to: 'bookings#destroy'
+        delete 'bookings_all/:id', to: 'bookings#cancel_all'
+        post 'bookings_confirm/:id', to: 'bookings#confirm'
+        post 'bookings_confirm_all/:id', to: 'bookings#confirm_all' 
 
       end
     end

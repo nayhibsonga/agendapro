@@ -1081,8 +1081,8 @@ module ApiViews
 		  			
 			else
 				render json: { errors: "Parámetros mal ingresados." }, status: 422
-		        return
-		    end
+	      return
+	    end
 		end
 
 		def show_group
@@ -1094,6 +1094,204 @@ module ApiViews
 		        return
 		    end
 		end
+
+		def cancel_all
+	    require 'date'
+
+	    if params[:id] && params[:access_token]
+	      @booking = Booking.find(params[:id])
+	  		unless @booking.access_token == params[:access_token]
+	  			render json: { errors: "Parámetros mal ingresados." }, status: 422
+	        return
+	  		end
+	      @company = Location.find(@booking.location_id).company
+	      @bookings_group = Booking.where(id: @booking.id)
+	  		if @booking.trx_id.present?
+	  			@bookings_group = Booking.where(trx_id: @booking.trx_id)
+	  		elsif @booking.booking_group.present?
+	  			@bookings_group = Booking.where(booking_group: @booking.booking_group, location_id: @booking.location_id)
+	  		end
+	      @bookings = @bookings_group
+	      @selectedLocation = Location.find(@booking.location_id)
+
+	      now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+
+	      #Pagadas
+
+	      if @booking.check_for_promo_payment
+	        render json: { errors: "Esta reserva no puede ser cancelada ya que fue comprada en promoción." }, status: 422
+	        return
+	      end
+
+	      #Revisar si fue pagada en línea.
+	      #Si lo fue, revisar política de modificación.
+	      @bookings.each do |booking|
+	        if booking.payed || !booking.payed_booking.nil?
+
+	          if !booking.is_session
+	            if !@company.company_setting.online_cancelation_policy.nil?
+	              ocp = @company.company_setting.online_cancelation_policy
+	              if !ocp.cancelable
+	        				render json: { errors: "Esta reserva no puede ser cancelada por la políticas de cancelación de la empresa." }, status: 422
+	                return
+	              else
+	                #Revisar tiempos de modificación, tanto máximo como el mínimo específico para los pagados en línea
+
+	                #Mínimo
+	                book_start = DateTime.parse(booking.start.to_s)
+	                min_hours = (book_start-now)/(60*60)
+	                min_hours = min_hours.to_i.abs
+
+	                if min_hours >= ocp.min_hours.to_i
+	                  render json: { errors: "Esta reserva no puede ser cancelada por la políticas de cancelación de la empresa." }, status: 422
+	                  return
+	                end
+
+	                #Máximo
+	                booking_creation = DateTime.parse(booking.created_at.to_s)
+	                minutes = (booking_creation.to_time - now.to_time)/(60)
+	                hours = (booking_creation.to_time - now.to_time)/(60*60)
+	                days = (booking_creation.to_time - now.to_time)/(60*60*24)
+	                minutes = minutes.to_i.abs
+	                hours = hours.to_i.abs
+	                days = days.to_i.abs
+	                weeks = days/7
+	                months = days/30
+
+	                #Obtener el máximo
+	                num = ocp.cancel_max.to_i
+	                if ocp.cancel_unit == TimeUnit.find_by_unit("Minutos").id
+	                  if minutes >= num
+	                    render json: { errors: "Esta reserva no puede ser cancelada por la políticas de cancelación de la empresa." }, status: 422
+	                    return
+	                  end
+	                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Horas").id
+	                  if hours >= num
+	                    render json: { errors: "Esta reserva no puede ser cancelada por la políticas de cancelación de la empresa." }, status: 422
+	                    return
+	                  end
+	                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Semanas").id
+	                  if weeks >= num
+	                    render json: { errors: "Esta reserva no puede ser cancelada por la políticas de cancelación de la empresa." }, status: 422
+	                    return
+	                  end
+	                elsif ocp.cancel_unit == TimeUnit.find_by_unit("Meses").id
+	                  if months >= num
+	                    render json: { errors: "Esta reserva no puede ser cancelada por la políticas de cancelación de la empresa." }, status: 422
+	                    return
+	                  end
+	                end
+
+	              end
+	            end
+	          end
+
+	        end
+
+	        booking_start = DateTime.parse(booking.start.to_s) - @company.company_setting.before_edit_booking / 24.0
+
+	        if (booking_start <=> now) < 1
+	          render json: { errors: "Esta reserva no puede ser cancelada por la políticas de cancelación de la empresa." }, status: 422
+	          return
+	        end
+	        status = booking.status.id
+					payed = booking.payed
+					is_booked = booking.is_session_booked
+					if !booking.is_session
+						status = Status.find_by(:name => 'Cancelado').id
+						payed = false
+					else
+						is_booked = false
+						booking.user_session_confirmed = false
+					    booking.is_session_booked = false
+					end
+
+					if booking.update(status_id: status, payed: payed, is_session_booked: is_booked)
+
+						if !booking.payed_booking.nil?
+						  booking.payed_booking.canceled = true
+						  booking.payed_booking.save
+						end
+						#flash[:notice] = "Reserva cancelada exitosamente."
+						# BookingMailer.cancel_booking(@booking)
+						@api_user ? user = @api_user.id : user = 0
+						BookingHistory.create(booking_id: booking.id, action: "Cancelada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
+					else
+						render json: { errors: booking.errors.full_messages.inspect }, status: 422
+					end
+	      end
+	    else
+				render json: { errors: "Parámetros mal ingresados." }, status: 422
+	      return
+	    end
+	  end
+
+	  def confirm
+	  	if params[:id] && params[:access_token]
+	      @booking = Booking.find(params[:id])
+	  		unless @booking.access_token == params[:access_token]
+	  			render json: { errors: "Parámetros mal ingresados." }, status: 422
+	        return
+	  		end
+
+	      now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+	      booking_start = DateTime.parse(@booking.start.to_s)
+
+        if (booking_start <=> now) < 1
+          render json: { errors: "Esta reserva no puede ser confirmada porque su fecha de inicio ya ocurrió." }, status: 422
+          return
+        elsif @booking.status = Status.find_by(:name => 'Cancelado')
+        	render json: { errors: "Esta reserva no puede ser confirmada porque se registra como cancelada." }, status: 422
+          return
+        end
+        status = Status.find_by(:name => 'Confirmado')
+        if @booking.update(status_id: status)
+					@api_user ? user = @api_user.id : user = 0
+					BookingHistory.create(booking_id: @booking.id, action: "Confirmada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
+				else
+					render json: { errors: @booking.errors.full_messages.inspect }, status: 422
+				end
+	  	end
+	  end
+
+	  def confirm_all
+	  	if params[:id] && params[:access_token]
+	      @booking = Booking.find(params[:id])
+	  		unless @booking.access_token == params[:access_token]
+	  			render json: { errors: "Parámetros mal ingresados." }, status: 422
+	        return
+	  		end
+	  		@bookings_group = Booking.where(id: @booking.id)
+	  		if @booking.trx_id.present?
+	  			@bookings_group = Booking.where(trx_id: @booking.trx_id)
+	  		elsif @booking.booking_group.present?
+	  			@bookings_group = Booking.where(booking_group: @booking.booking_group, location_id: @booking.location_id)
+	  		end
+	      @bookings = @bookings_group
+
+	      @bookings.each do |booking|
+
+		      now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+		      booking_start = DateTime.parse(booking.start.to_s)
+
+	        if (booking_start <=> now) < 1
+	          render json: { errors: "Esta reserva no puede ser confirmada porque su fecha de inicio ya ocurrió." }, status: 422
+	          return
+	        elsif booking.status = Status.find_by(:name => 'Cancelado')
+	        	render json: { errors: "Esta reserva no puede ser confirmada porque se registra como cancelada." }, status: 422
+	          return
+	        end
+	        status = Status.find_by(:name => 'Confirmado')
+	        if booking.update(status_id: status)
+						@api_user ? user = @api_user.id : user = 0
+						BookingHistory.create(booking_id: booking.id, action: "Confirmada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
+					else
+						render json: { errors: booking.errors.full_messages.inspect }, status: 422
+					end
+
+				end
+	  	end
+	  end
 
 		private
 
