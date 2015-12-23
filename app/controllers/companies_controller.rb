@@ -50,6 +50,10 @@ class CompaniesController < ApplicationController
     	month_number = @transfer.payment_date.month
     	month_days = @transfer.payment_date.days_in_month
 
+    	puts "Day number: " + day_number.to_s
+    	puts "Month number: " + month_number.to_s
+    	puts "Month_days: " + month_days.to_s
+
     	if @transfer.change_plan
 
     		plan_id = @transfer.new_plan
@@ -71,6 +75,8 @@ class CompaniesController < ApplicationController
 			        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
 			        plan_month_value = (month_days - day_number + 1)*plan_price/month_days
 
+			        puts "Plan value left: " + plan_value_left.to_s
+
 			        if months_active_left > 0
           				if plan_value_left > (plan_month_value + due_amount)
 
@@ -86,6 +92,11 @@ class CompaniesController < ApplicationController
 				            	@transfer.save
 
 				              	PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
+
+				              	@json_response[0] = "ok"
+								@json_response[1] = company
+								render :json => @json_response
+								return
 				              	
 				            else
 				              	@json_response[0] = "error"
@@ -114,15 +125,27 @@ class CompaniesController < ApplicationController
 				              	if @transfer.amount.round(0) != due_number
 					    			#Error
 									@json_response[0] = "error"
-									@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + price.to_s
+									@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
 									render :json => @json_response
 									return
 					    		end
 
-				                PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
+					    		if mockCompany.save
+					                PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
 
-				                @transfer.approved = true
-				                @transfer.save
+					                @transfer.approved = true
+					                @transfer.save
+
+					                @json_response[0] = "ok"
+									@json_response[1] = company
+									render :json => @json_response
+									return
+								else
+									@json_response[0] = "error"
+									@json_response[1] = company.errors
+									render :json => @json_response
+									return
+								end
 
 				            end
 
@@ -154,7 +177,22 @@ class CompaniesController < ApplicationController
 								return
 				    		end
 
-							PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
+				    		if mockCompany.save
+								PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
+
+								@transfer.approved
+								@transfer.save
+
+								@json_response[0] = "ok"
+								@json_response[1] = company
+								render :json => @json_response
+								return
+							else
+								@json_response[0] = "error"
+								@json_response[1] = company.errors
+								render :json => @json_response
+								return
+							end
 
 
 						end
@@ -247,6 +285,23 @@ class CompaniesController < ApplicationController
 	end
 
 	def disapprove_billing_wire_transfer
+
+	end
+
+	def delete_billing_wire_transfer
+
+		@json_response = []
+		@transfer = BillingWireTransfer.find(params[:billing_wire_transfer_id])
+
+		if @transfer.delete
+			@json_response[0] = "ok"
+			@json_response[1] = @transfer
+		else
+			@json_response[0] = "error"
+			@json_response[1] = @transfer.errors
+		end
+
+		render :json => @json_response
 
 	end
 
@@ -491,17 +546,29 @@ class CompaniesController < ApplicationController
 			else
 				end_date = DateTime.new(year+1, 1, 1)-1.minutes
 			end
-			billing_logs = BillingLog.where('company_id = ? and created_at BETWEEN ? and ?', @company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id))
+
+			billing_logs = BillingLog.where.not(transaction_type_id: -1).where('company_id = ? and created_at BETWEEN ? and ?', @company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id))
+
 			billing_records = BillingRecord.where('company_id = ? and date BETWEEN ? and ?', @company.id, start_date, end_date)
 
-			billing_logs.each do |bl|
-				month_income = month_income + bl.payment
-				total = total + bl.payment
-			end
-			billing_records.each do |br|
-				month_income = month_income + br.amount
-				total = total + br.amount
-			end
+			transfers = @company.billing_wire_transfers.where(approved: true).where('payment_date BETWEEN ? and ?', start_date, end_date)
+
+			month_income += billing_logs.sum(:payment)
+			month_income += billing_records.sum(:amount)
+			month_income += transfers.sum(:amount)
+
+			total += billing_logs.sum(:payment)
+			total += billing_records.sum(:amount)
+			total += transfers.sum(:amount)
+
+			# billing_logs.each do |bl|
+			# 	month_income = month_income + bl.payment
+			# 	total = total + bl.payment
+			# end
+			# billing_records.each do |br|
+			# 	month_income = month_income + br.amount
+			# 	total = total + br.amount
+			# end
 
 			@incomes[i]['income'] = month_income
 

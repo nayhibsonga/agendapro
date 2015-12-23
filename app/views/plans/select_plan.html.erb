@@ -202,7 +202,7 @@
             <label>Pagar (IVA incluido):</label>
             <select class="form-control" id="amount_select">
               <option value="0" amount="<%= (@plan_1 * (1 + @sales_tax)).to_s %>">Elige una opción...</option>
-              <option value="1"><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %> - <%= number_to_currency(@plan_1 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
+              <option value="1" amount="<%= (@plan_1 * (1 + @sales_tax)).to_s %>"><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %> - <%= number_to_currency(@plan_1 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
               <option value="2" amount="<%= (@plan_2 * (1 + @sales_tax)).to_s %>">2 Meses - <%= number_to_currency(@plan_2 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
               <option value="3" amount="<%= (@plan_3 * (1 + @sales_tax)).to_s %>">3 Meses - <%= number_to_currency(@plan_3 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
               <option value="4" amount="<%= (@plan_4 * (1 + @sales_tax)).to_s %>">4 Meses - <%= number_to_currency(@plan_4 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_4 * 100, precision: 0) %>% dcto.)</option>
@@ -255,8 +255,8 @@
                 </div>
 
                 <div class="col-md-3">
-                  <input type="radio" name="mp" value="00" class="mp_radio" id="mp_radio_00" />
-                  <label for="mp_radio_00"><%= image_tag "admin/wire_transfer.jpg", alt: "Webpay Transbank", class: "mp_link", mp: "00" %></label>
+                  <input type="radio" name="mp" value="000" class="mp_radio" id="mp_radio_000" />
+                  <label for="mp_radio_000"><%= image_tag "admin/wire_transfer.jpg", alt: "Transferencia bancaria", class: "mp_link", mp: "000" %></label>
                 </div>
               </div>
               <div>
@@ -475,6 +475,7 @@
   </div>
 </div>
 
+<input type="hidden" id="sales_tax" value="<%= @sales_tax.to_s %>" />
 
 <%= content_tag "div", id: "plan_info", data: { months_active_left: @company.months_active_left, plan_value_left: (@month_days - @day_number + 1)*@price/@month_days + @price*(@company.months_active_left - 1), due_amount: @company.due_amount } do %>
 <%end%>
@@ -497,56 +498,61 @@
 
             <div class="row" style="padding-left: 10px; padding-right: 10px;">
               <% if @company.country_id == Country.find_by_name('Chile').id %>
-                <div class="row mp_table">
+                <div id="plan_mp_table">
+                  <div class="row mp_table">
 
-                  <div class="col-md-4">
-                    <input type="radio" name="mp" value="16" class="change_plan_mp_radio" id="change_plan_mp_radio_16" />
-                    <label for="change_plan_mp_radio_16"><image src="https://www.puntopagos.com/content/mp16.gif" alt="Botón de Pago Banco BBVA" class="change_plan_mp_link" mp = "16" /></label>
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="16" class="change_plan_mp_radio" id="change_plan_mp_radio_16" />
+                      <label for="change_plan_mp_radio_16"><image src="https://www.puntopagos.com/content/mp16.gif" alt="Botón de Pago Banco BBVA" class="change_plan_mp_link" mp = "16" /></label>
+                    </div>
+
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="04" class="change_plan_mp_radio" id="change_plan_mp_radio_04" />
+                      <label for="change_plan_mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Botón de Pago Banco Banco de Chile" class="change_plan_mp_link" mp = "04" /></label>
+                    </div>
+
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="05" class="change_plan_mp_radio" id="change_plan_mp_radio_05" />
+                      <label for="change_plan_mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="Botón de Pago BCI" class="change_plan_mp_link" mp = "05" /></label>
+                    </div>
+
+                  </div>
+                  <div class="row mp_table">
+                    
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="06" class="change_plan_mp_radio" id="change_plan_mp_radio_06" />
+                      <label for="change_plan_mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="Botón de Pago TBanc" class="change_plan_mp_link" mp = "06" /></label>
+                    </div>
+
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="07" class="change_plan_mp_radio" id="change_plan_mp_radio_07" />
+                      <label for="change_plan_mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Botón de Pago Banco Estado" class="change_plan_mp_link" mp = "07" /></label>
+                    </div>
+
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="03" class="change_plan_mp_radio" id="change_plan_mp_radio_03" />
+                      <label for="change_plan_mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="change_plan_mp_link" mp = "03" /></label>
+                    </div>
+
+                    
                   </div>
 
-                  <div class="col-md-4">
-                    <input type="radio" name="mp" value="04" class="change_plan_mp_radio" id="change_plan_mp_radio_04" />
-                    <label for="change_plan_mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Botón de Pago Banco Banco de Chile" class="change_plan_mp_link" mp = "04" /></label>
+                  <div class="row mp_table">
+
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="000" class="change_plan_mp_radio" id="change_plan_mp_radio_000" />
+                      <label for="change_plan_mp_radio_000"><%= image_tag "admin/wire_transfer.jpg", alt: "Transferencia bancaria", class: "change_plan_mp_link", mp: "000" %></label>
+                    </div>
+
                   </div>
 
-                  <div class="col-md-4">
-                    <input type="radio" name="mp" value="05" class="change_plan_mp_radio" id="change_plan_mp_radio_05" />
-                    <label for="change_plan_mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="Botón de Pago BCI" class="change_plan_mp_link" mp = "05" /></label>
+                  <div>
+                    <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, pp_generate_plan_transaction_path(mp: "", plan_id: 0), id: "changePlanPayBtn" %>
+                    <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, "#", id: "changePlanWireTransferBtn", style: "display: none;" %>                  
                   </div>
-
                 </div>
-                <div class="row mp_table">
-                  
-                  <div class="col-md-4">
-                    <input type="radio" name="mp" value="06" class="change_plan_mp_radio" id="change_plan_mp_radio_06" />
-                    <label for="change_plan_mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="Botón de Pago TBanc" class="change_plan_mp_link" mp = "06" /></label>
-                  </div>
-
-                  <div class="col-md-4">
-                    <input type="radio" name="mp" value="07" class="change_plan_mp_radio" id="change_plan_mp_radio_07" />
-                    <label for="change_plan_mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Botón de Pago Banco Estado" class="change_plan_mp_link" mp = "07" /></label>
-                  </div>
-
-                  <div class="col-md-4">
-                    <input type="radio" name="mp" value="03" class="change_plan_mp_radio" id="change_plan_mp_radio_03" />
-                    <label for="change_plan_mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="change_plan_mp_link" mp = "03" /></label>
-                  </div>
-
-                  
-                </div>
-
-                <div class="row mp_table">
-
-                <div class="col-md-4">
-                    <input type="radio" name="mp" value="00" class="change_plan_mp_radio" id="change_plan_mp_radio_00" />
-                    <label for="change_plan_mp_radio_00"><%= image_tag "admin/wire_transfer.jpg", alt: "Webpay Transbank", class: "change_plan_mp_link", mp: "00" %></label>
-                  </div>
-
-                </div>
-
-                <div>
-                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, pp_generate_plan_transaction_path(mp: "", plan_id: 0), id: "changePlanPayBtn" %>
-                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, "#", id: "changePlanWireTransferBtn", style: "display: none;" %>
+                <div id="change_plan_free">
+                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Cambiar</button>'.html_safe, pp_generate_plan_transaction_path(mp: "000", plan_id: 0), id: "changePlanBtn" %>
                 </div>
               <% else %>
                 <div class="row mp_table">

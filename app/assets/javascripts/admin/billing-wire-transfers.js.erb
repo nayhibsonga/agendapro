@@ -1,3 +1,5 @@
+myAlert = new Alert();
+
 function openTransfer(transfer_id)
 {
   $.ajax({
@@ -23,27 +25,95 @@ function approveTransfer(transfer_id)
     dataType: 'json',
     data: {billing_wire_transfer_id: transfer_id},
     error: function(error){
-      console.log("Error");
-      console.log(error);
+        myAlert.showAlert(
+          '<h3>Error al aprobar</h3>' +
+          '<p>' + error + '</p>',
+          function(){
+            window.location.reload();
+          }
+        );
     },
     success: function(response){
       if(response[0] == "ok")
       {
-        console.log("Success");
-        console.log(response);
+        $('#transferSummaryModal').modal('hide');
+        myAlert.showAlert(
+          '<h3>Éxito</h3>' +
+          '<p>Aprobación guardada correctamente.</p>',
+          function(){
+            window.location.reload();
+          }
+        );
       }  
       else
       {
-        console.log("error: ");
-        console.log(response[1]);
+        myAlert.showAlert(
+          '<h3>Error al aprobar</h3>' +
+          '<p>' + response[1] + '</p>',
+          function(){
+            window.location.reload();
+          }
+        );
       }
 
     }
   });
 }
 
+function deleteTransfer(transfer_id)
+{
+  var delete_confirm = confirm("¿Seguro que quieres eliminar la transferencia?");
+  if(delete_confirm == true)
+  {
+    $.ajax({
+      url: '/delete_billing_wire_transfer',
+      method: 'post',
+      dataType: 'json',
+      data: {billing_wire_transfer_id: transfer_id},
+      error: function(error){
+        myAlert.showAlert(
+          '<h3>Error al eliminar</h3>' +
+          '<p>' + error + '</p>',
+          function(){
+            window.location.reload();
+          }
+        );
+      },
+      success: function(response){
+        if(response[0] == "ok")
+        {
+          myAlert.showAlert(
+            '<h3>Éxito</h3>' +
+            '<p>Aprobación eliminada correctamente.</p>',
+            function(){
+              window.location.reload();
+            }
+          );
+        }  
+        else
+        {
+          myAlert.showAlert(
+            '<h3>Error al eliminar</h3>' +
+            '<p>' + response[1] + '</p>',
+            function(){
+              window.location.reload();
+            }
+          );
+        }
+
+      }
+    });
+  }
+}
+
 $(document).ready(function(){
+
   $('#approveTransferBtn').on('click', function(){
     approveTransfer($('#billing_wire_transfer_id').val());
   });
+
+  $('#deleteTransferBtn').on('click', function(){
+    deleteTransfer($('#billing_wire_transfer_id').val());
+  });
+
 });

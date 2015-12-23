@@ -62,6 +62,11 @@ $(function() {
   });*/
 
   $('#wireTransferBtn').on('click', function(){
+    if($('#amount_select').val() == "0")
+    {
+      alert("Elige una opción de pago primero.");
+      return false;
+    }
     $('#transferModal').modal('show');
     $('#transfer_amount').val($('#amount_select option:selected').attr("amount"));
     $('#transfer_amount_detail').html($('#amount_select option:selected').text());
@@ -114,7 +119,7 @@ $(function() {
 
     curr_href = curr_href.substring(0, cut_index) + new_params;
 
-    if(mp != "00")
+    if(mp != "000")
     {
       $('#payBtn').attr('href', curr_href);
       $('#payBtn').show();
@@ -139,7 +144,7 @@ $(function() {
 
     curr_href = curr_href.substring(0, cut_index) + new_params;
 
-    if(mp != "00")
+    if(mp != "000")
     {
       $('#changePlanPayBtn').attr('href', curr_href);
       $('#changePlanPayBtn').show();
@@ -182,7 +187,7 @@ $(function() {
 
     curr_href = curr_href.substring(0, cut_index) + new_params;
 
-    if(mp != "00")
+    if(mp != "000")
     {
       $('#payBtn').attr('href', curr_href);
       $('#payBtn').show();
@@ -200,12 +205,15 @@ $(function() {
 
     $('#plan_mp_button').hide();
     $('#plan_mp_table').hide();
+    $('#change_plan_free').hide();
     var plan_id = $(this).attr("plan_id");
     var months_active_left = parseFloat($('#plan_info').data('months-active-left'));
     var plan_value_left = parseFloat($('#plan_info').data('plan-value-left'));
     var due_amount = parseFloat($('#plan_info').data('due-amount'));
     var plan_price = parseFloat($('#plan_' + plan_id).data('plan-price'));
     var plan_month_value = parseFloat($('#plan_' + plan_id).data('plan-month-value'));
+    var sales_tax = parseFloat($('#sales_tax').val());
+    console.log(sales_tax);
 
     $('#transfer_new_plan').val(plan_id);
 
@@ -220,14 +228,18 @@ $(function() {
           $('#billing_wire_transfer_change_plan_amount').val(Math.round((-1 * new_amount_due)));
           $('#billing_wire_transfer_new_plan_amount').val(0);
         } else {
-          $('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta activa por este mes sin pagar más y, además, quedaran abonados $ ' + Math.round((-1 * new_amount_due)) + ' en tu cuenta, para tu próximo pago.');
+          $('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta queda activa por este mes sin pagar más y, además, quedaran abonados $ ' + Math.round((-1 * new_amount_due)) + ' en tu cuenta, para tu próximo pago.');
           //$('#billing_wire_transfer_amount').val(Math.round((-1 * new_amount_due)));
         }
         $('#plan_mp_button').show();
+        $('#change_plan_free').show();
+        $('#changePlanBtn').attr('href', function(i,a){
+          return a.replace( /\/[^\/]+$/, '/' + plan_id );
+        });
       } else {
-        $('#plan_explanation').html('Debes pagar $ ' + Math.round(plan_month_value + due_amount - plan_value_left) + ' + IVA, para cambiarte a este plan.');
+        $('#plan_explanation').html('Debes pagar $ ' + Math.round(plan_month_value + due_amount - plan_value_left) + ' + IVA (' + Math.round( (plan_month_value + due_amount - plan_value_left) * (1 + sales_tax)) + '), para cambiarte a este plan.');
         $('#plan_mp_table').show();
-        $('#transfer_amount').val(Math.round(plan_month_value + due_amount - plan_value_left));
+        $('#transfer_amount').val(Math.round( (plan_month_value + due_amount - plan_value_left) * (1+sales_tax)));
         $('#transfer_amount_detail').text('$ ' + $('#transfer_amount').val());
         //$('#billing_wire_transfer_change_plan_amount').val(Math.round((-1 * new_amount_due)));
         //$('#billing_wire_transfer_change_plan_amount').val(0);

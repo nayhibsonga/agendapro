@@ -83,6 +83,10 @@ class PlansController < ApplicationController
     @month_number = Time.now.month
     @month_days = Time.now.days_in_month
 
+    puts "Day number: " + @day_number.to_s
+    puts "Month number: " + @month_number.to_s
+    puts "Month_days: " + @month_days.to_s
+
     @company.months_active_left > 0 ? @plan_1 = (@company.due_amount + @price).round(0) : @plan_1 = ((@company.due_amount + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
     @plan_2 = (@plan_1 + @price*1).round(0)
     @plan_3 = (@plan_1 + @price*2).round(0)
@@ -114,6 +118,8 @@ class PlansController < ApplicationController
 
     if @billing_wire_transfer.save
       flash[:notice] = 'Transferencia guardada correctamente y en espera de aprobación.'
+      #Send mail
+      #CompanyMailer.new_transfer_email(@billing_wire_transfer.id)
       redirect_to :action => 'select_plan'
     else
       flash[:alert] = 'Ocurrió un error al tratar de guardar la transferencia.'

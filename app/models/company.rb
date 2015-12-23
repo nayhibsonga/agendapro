@@ -46,7 +46,7 @@ class Company < ActiveRecord::Base
 
 	has_one :company_plan_setting
 
-	scope :collectables, -> { where(months_active_left <= 1).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentSatus.where(name: ["Inactivo", "Bloqueado", "Admin"]).pluck(:id)) }
+	scope :collectables, -> { where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
@@ -371,9 +371,27 @@ class Company < ActiveRecord::Base
 				#If it was active, just substract a month and charge for current's month price
 				#Change it's status to issued
 
+				#If it had more months, just substract one
+
 				company.months_active_left -= 1
-				company.payment_status_id = status_emitido.id
-				company.due_date = DateTime.now
+
+				if company.months_active_left <= 0
+					company.payment_status_id = status_emitido.id
+					company.due_date = DateTime.now
+				end
+
+				if company.save
+				CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
+					if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id && company.country_id == 1
+						CompanyMailer.invoice_email(company.id)
+					end
+				else
+					errors = ""
+					company.errors.full_messages.each do |error|
+						errors += error
+					end
+					CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "ERROR substract_month "+errors)
+				end
 
 				#Send charge mail
 
@@ -390,6 +408,7 @@ class Company < ActiveRecord::Base
 					company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
 				end
 				company.due_date = DateTime.now
+				company.save
 
 				#Send charge mail
 
