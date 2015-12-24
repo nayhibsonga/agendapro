@@ -296,14 +296,41 @@
                       <% end %>
                       <% if @location.company.company_setting.client_exclusive %>
                         <div class="row">
-                          <div class="col-md-12 dark-gray">
+                          <div class="col-sm-12 dark-gray">
                             <%= (I18n.t('ci')).capitalize %>
                           </div>
                         </div>
                         <div class="row">
-                          <div class="col-md-12">
+                          <div class="col-sm-12">
                             <div class="form-group has-feedback">
-                              <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
+                              <% if user_signed_in? && Client.where(email: current_user.email, company_id: @location.company.id).count > 0
+                                client = Client.where(email: current_user.email, company_id: @location.company.id).first
+                              %>
+                                <%= text_field_tag(:identification_number, client.identification_number, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
+                              <% else %>
+                                <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
+                              <% end %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      <% elsif @location.company.company_setting.use_identification_number %>
+                        <div class="row">
+                          <div class="col-sm-12 dark-gray">
+                            <%= (I18n.t('ci')).capitalize %>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <div class="form-group has-feedback">
+                              <% if user_signed_in? && Client.where(email: current_user.email, company_id: @location.company.id).count > 0
+                                client = Client.where(email: current_user.email, company_id: @location.company.id).first
+                              %>
+                                <%= text_field_tag(:identification_number, client.identification_number, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize ) %>
+                              <% else %>
+                                <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize) %>
+                              <% end %>
                               <span class="help-block"></span>
                               <span class="form-control-feedback"></span>
                             </div>
@@ -458,6 +485,7 @@
 <input type="hidden" id="last_minute_discount" value="<%= @last_minute_promo.discount %>" />
 <input type="hidden" id="locationAddress" value="<%= @location.address %>" />
 <input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
+<input type="hidden" id="companyId" value="<%= @location.company.id %>" />
 
 <!-- Localization inputs -->
 <% if params[:latitude] && params[:latitude] != "" && params[:longitude] && params[:longitude] != "" && params[:inputLocalization] && params[:inputLocalization] != "" %>

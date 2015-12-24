@@ -210,7 +210,7 @@ function loadCalendar () {
       $('[name="staffRadio"]').on('click', function(event) {
 
         $('.horario').show();
-        
+
         // if (event.target.getAttribute('value') == 0) {
         //  $('#provider_lock').val(false);
         // }
@@ -349,7 +349,7 @@ function loadCalendar () {
     });
 
   }
-  
+
 }
 
 function generateDate(date, time) {
@@ -411,10 +411,11 @@ $("#calendarBookSessionBtn").click(function(){
                     $("#calendarModal").modal('hide');
                     //$('#calendarModal').remove();
                     //$("#session-booking-select").trigger("change");
-                    myAlert.showAlert(
-                      '<h3>Error al reservar</h3>' +
-                      '<p>' + response[0][0] + '</p>'
-                    );
+                    swal({
+                      title: "Error al Reservar",
+                      text: response[0][0],
+                      type: "error"
+                    });
                     loadSessions();
                 }
             },
@@ -422,21 +423,18 @@ $("#calendarBookSessionBtn").click(function(){
             {
                 $("#calendarModal").modal('hide');
                 //$('#calendarModal').remove();
-                alert("Error");
+                swal("Error");
             }
         });
     }
     else {
-        alert('Debes seleccionar una hora');
+        swal('Debes seleccionar una hora');
     }
 });
-
-var myAlert;
 
 $(document).ready(function(){
 
   loadCalendar();
-  myAlert = new Alert();
   $(".session-btn").attr("disabled", false);
   $('#next').removeAttr('disabled');
   $('#prev').removeAttr('disabled');
@@ -445,7 +443,6 @@ $(document).ready(function(){
 
 $("#calendarModal").on('shown.bs.modal', function(){
   loadCalendar();
-  myAlert = new Alert();
   $(".session-btn").attr("disabled", false);
   $('#next').removeAttr('disabled');
   $('#prev').removeAttr('disabled');

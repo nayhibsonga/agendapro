@@ -93,9 +93,9 @@
                         <%= link_to '<i class="fa fa-pencil"></i> Factura'.html_safe, edit_billing_info_path(company.billing_info), class: "btn btn-sm btn-orange" %>
                       <% end %>
                       <% if company.active %>
-                        <%= link_to '<i class="fa fa-trash-o"></i> Desactivar'.html_safe, deactivate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' }, class: "btn btn-sm btn-red" %>
+                        <%= link_to '<i class="fa fa-trash-o"></i> Desactivar'.html_safe, deactivate_company_path(:id => company.id), method: :patch, data: { confirm: '¿Estás seguro?' }, class: "btn btn-sm btn-red" %>
                       <% else %>
-                        <%= link_to '<i class="fa fa-check"></i> Re-Activar'.html_safe, activate_company_path(:id => company.id), data: { confirm: '¿Estás seguro?' }, class: "btn btn-sm btn-red" %>
+                        <%= link_to '<i class="fa fa-check"></i> Re-Activar'.html_safe, activate_company_path(:id => company.id), method: :patch, data: { confirm: '¿Estás seguro?' }, class: "btn btn-sm btn-red" %>
                       <% end %>
                     </td>
                   </tr>

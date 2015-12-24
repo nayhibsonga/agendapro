@@ -41,7 +41,7 @@
                       <td>$<%= service.price.to_i %></td>
                       <td><%= service.duration %> min</td>
                       <td>
-                        <%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_service_path(:id => service.id), :class => "btn btn-green", data: { confirm: '¿Estás seguro de re-activar el Servicio seleccionado?' } %>
+                        <%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_service_path(:id => service.id), method: :patch, :class => "btn btn-green", data: { confirm: '¿Estás seguro de re-activar el Servicio seleccionado?' } %>
                         <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-orange" %>
                       </td>
                     </tr>

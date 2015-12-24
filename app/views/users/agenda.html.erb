@@ -193,7 +193,7 @@
                     Sesión <%= i.to_s %>
                   </div>
                   <div class="col-md-6 session-row-date">
-                    
+
                   </div>
                   <div class="col-md-4 session-row-btns">
                     <a class="btn session-btn session-btn-book" booking_id="<%= booking.id %>" session_booking_id='<%= sessionBooking.id %>'>Reservar</a>
@@ -260,7 +260,7 @@
                     <div class="sessions-summary-title">Usadas</div>
                   </div>
                   <div class="col-md-3">
-                    <i class="fa fa-circle fa-2x fa-green"></i><span class="circle-number"><%= count_used %></span>     
+                    <i class="fa fa-circle fa-2x fa-green"></i><span class="circle-number"><%= count_used %></span>
                   </div>
                   <div class="col-md-1">
                   </div>
@@ -465,7 +465,7 @@
             <h3 class="modal-title">Detalle de sesión</h3>
           </div>
           <div class="modal-body">
-                
+
           </div>
           <div class="modal-footer">
               <a href="#" class="btn btn-white" data-dismiss="modal">Cerrar</a>
@@ -502,7 +502,7 @@
                         <label for="providerOptimizerSelector" class="col-xs-3 control-label">Prestador</label>
                         <div class="col-xs-9">
                           <select class="form-control" name="providerOptimizerSelector" id="providerOptimizerSelector">
-                            
+
                           </select>
                         </div>
                       </div>
@@ -565,7 +565,7 @@
                         <div class="collapse" id="staffCollapse">
                           <div class="changeStaff" style="margin-top: 5px;">
 
-                            
+
                           </div>
                         </div>
                       </div>
@@ -577,7 +577,7 @@
                         <div id="selected-hour-body">
 
                         </div>
-                        
+
                       </div>
                     </div>
                   </div>
@@ -610,7 +610,6 @@
 <% end %>
 
 <% content_for :scripts do %>
-  <%= javascript_include_tag "Alert" %>
   <%= javascript_include_tag "workflow/promotions-calendar" %>
   <%= javascript_include_tag "agenda/agenda" %>
 <% end %>
