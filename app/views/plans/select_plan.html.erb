@@ -45,7 +45,7 @@
 
               <div class="col-md-3" style="margin-bottom: 20px;">
 
-                <%= content_tag "div", id: "plan_" + plan.id.to_s, data: { plan_price: plan.plan_countries.find_by(country_id: @company.country.id).price, plan_month_value: (@month_days - @day_number + 1) * plan.plan_countries.find_by(country_id: @company.country.id).price / @month_days } do %>
+                <%= content_tag "div", id: "plan_" + plan.id.to_s, data: { plan_price: plan.plan_countries.find_by(country_id: @company.country.id).price, plan_month_value: (@month_days - @day_number) * plan.plan_countries.find_by(country_id: @company.country.id).price / @month_days } do %>
 
                 <% end %>
 
@@ -477,7 +477,7 @@
 
 <input type="hidden" id="sales_tax" value="<%= @sales_tax.to_s %>" />
 
-<%= content_tag "div", id: "plan_info", data: { months_active_left: @company.months_active_left, plan_value_left: (@month_days - @day_number + 1)*@price/@month_days + @price*(@company.months_active_left - 1), due_amount: @company.due_amount, plan_price: @price, plan_value_taken: (@day_number*@price/@month_days + @price*(@company.months_active_left - 1)) } do %>
+<%= content_tag "div", id: "plan_info", data: { months_active_left: @company.months_active_left, plan_value_left: (@month_days - @day_number + 1)*@price/@month_days + @price*(@company.months_active_left - 1), due_amount: @company.due_amount, plan_price: @price, plan_value_taken: (@day_number*@price/@month_days + -1*@price*(@company.months_active_left)) } do %>
 <%end%>
 
 <% content_for :modals do %>
@@ -552,7 +552,7 @@
                   </div>
                 </div>
                 <div id="change_plan_free">
-                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Cambiar</button>'.html_safe, pp_generate_plan_transaction_path(mp: "000", plan_id: 0), id: "changePlanBtn" %>
+                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Cambiar</button>'.html_safe, pp_generate_plan_transaction_path(mp: "00", plan_id: 0), id: "changePlanBtn" %>
                 </div>
               <% else %>
                 <div class="row mp_table">

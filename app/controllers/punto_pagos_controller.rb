@@ -126,7 +126,7 @@ class PuntoPagosController < ApplicationController
             new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount)/plan_price)%1)*plan_price
             company.plan_id = plan_id
             company.months_active_left = new_active_months_left
-            company.due_amount = (new_amount_due).round(0)
+            company.due_amount = (new_amount_due).round(0) * (1 + sales_tax)
             if company.save
               PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."

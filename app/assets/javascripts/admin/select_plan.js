@@ -216,7 +216,8 @@ $(function() {
     var plan_month_value = parseFloat($('#plan_' + plan_id).data('plan-month-value'));
     var sales_tax = parseFloat($('#sales_tax').val());
     console.log(sales_tax);
-    console.log(plan_value_left);
+    console.log("plan_value_left " + plan_value_left);
+    console.log("plan_month_value " + plan_month_value);
 
     $('#transfer_new_plan').val(plan_id);
 

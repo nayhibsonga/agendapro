@@ -73,18 +73,22 @@ class CompaniesController < ApplicationController
 			        plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
 			        due_amount = company.due_amount
 			        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
-			        plan_month_value = (month_days - day_number + 1)*plan_price/month_days
+			        previous_plan_price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+			        plan_month_value = (month_days - day_number)*plan_price/month_days
+
+			        #Days that should be payed of current plan
+			        plan_value_taken = (day_number*previous_plan_price/month_days + -1*previous_plan_price*(company.months_active_left))
 
 			        puts "Plan value left: " + plan_value_left.to_s
 
 			        if months_active_left > 0
           				if plan_value_left > (plan_month_value + due_amount)
 
-				            new_active_months_left = ((plan_value_left - plan_month_value - due_amount)/plan_price).floor + 1
-				            new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount)/plan_price)%1)*plan_price
+				            new_active_months_left = ((plan_value_left - plan_month_value - due_amount / (1 + sales_tax) )/plan_price).floor + 1
+				            new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount / (1 + sales_tax))/plan_price)%1)*plan_price
 				            company.plan_id = plan_id
 				            company.months_active_left = new_active_months_left
-				            company.due_amount = (new_amount_due).round(0)
+				            company.due_amount = (new_amount_due).round(0) * (1 + sales_tax)
 
 				            if company.save
 
@@ -119,8 +123,8 @@ class CompaniesController < ApplicationController
 								return
 				            else
 
-				            	due_number = ((plan_month_value + due_amount - plan_value_left)*(1+sales_tax)).round(0)
-				              	due = sprintf('%.2f', ((plan_month_value + due_amount - plan_value_left)*(1+sales_tax)).round(0))
+				            	due_number = ((plan_month_value + due_amount / (1 + sales_tax) - plan_value_left)*(1+sales_tax)).round(0)
+				              	due = sprintf('%.2f', ((plan_month_value + due_amount / (1 + sales_tax) - plan_value_left)*(1+sales_tax)).round(0))
 
 				              	if @transfer.amount.round(0) != due_number
 					    			#Error
@@ -153,7 +157,7 @@ class CompaniesController < ApplicationController
 
 				    else
 
-				    	mockCompany = Company.find(current_user.company_id)
+				    	mockCompany = Company.find(company.id)
 						mockCompany.plan_id = plan_id
 						mockCompany.months_active_left = 1.0
 						mockCompany.due_amount = 0.0
@@ -165,14 +169,20 @@ class CompaniesController < ApplicationController
 							render :json => @json_response
 							return
 						else
+							puts "HERE"
+							puts "HERE"
+							puts "HERE"
+							puts "plan_value_taken: " + plan_value_taken.to_s
+							puts "plan_month_value: " + plan_month_value.to_s
+							puts "due_amount: " + due_amount.to_s
 
-							due_number = ((plan_month_value + due_amount)*(1+sales_tax)).round(0)
-							due = sprintf('%.2f', ((plan_month_value + due_amount)*(1+sales_tax)).round(0))
+							due_number = ((plan_value_taken + due_amount / (1 + sales_tax) + plan_month_value) * (1 + sales_tax)).round(0)
+							due = sprintf('%.2f', ((plan_month_value + due_amount / (1 + sales_tax))*(1+sales_tax)).round(0))
 
 							if @transfer.amount.round(0) != due_number
 				    			#Error
 								@json_response[0] = "error"
-								@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + price.to_s
+								@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
 								render :json => @json_response
 								return
 				    		end
