@@ -87,13 +87,14 @@ class PlansController < ApplicationController
     puts "Month number: " + @month_number.to_s
     puts "Month_days: " + @month_days.to_s
 
-    @company.months_active_left > 0 ? @plan_1 = (@company.due_amount + @price).round(0) : @plan_1 = ((@company.due_amount + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
-    @plan_2 = (@plan_1 + @price*1).round(0)
-    @plan_3 = (@plan_1 + @price*2).round(0)
-    @plan_4 = ((@plan_1 + @price*3)*(1-@month_discount_4)).round(0)
-    @plan_6 = ((@plan_1 + @price*5)*(1-@month_discount_6)).round(0)
-    @plan_9 = ((@plan_1 + @price*8)*(1-@month_discount_9)).round(0)
-    @plan_12 = ((@plan_1 + @price*11)*(1-@month_discount_12)).round(0)
+    #@company.months_active_left > 0 ? @plan_1 = (@company.due_amount + @price).round(0) : @plan_1 = ((@company.due_amount + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
+    @plan_1 = (@company.due_amount + @price * (1+@sales_tax)).round(0)
+    @plan_2 = (@plan_1 + @price*1* (1+@sales_tax)).round(0)
+    @plan_3 = (@plan_1 + @price*2* (1+@sales_tax)).round(0)
+    @plan_4 = ((@plan_1 + @price*3* (1+@sales_tax))*(1-@month_discount_4)).round(0)
+    @plan_6 = ((@plan_1 + @price*5* (1+@sales_tax))*(1-@month_discount_6)).round(0)
+    @plan_9 = ((@plan_1 + @price*8* (1+@sales_tax))*(1-@month_discount_9)).round(0)
+    @plan_12 = ((@plan_1 + @price*11* (1+@sales_tax))*(1-@month_discount_12)).round(0)
 
     @billing_wire_transfer = BillingWireTransfer.new
     @billing_wire_transfer.payment_date = DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])

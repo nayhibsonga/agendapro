@@ -99,9 +99,16 @@ class CompanyMailer < ActionMailer::Base
 		admin = company.users.where(role_id: Role.find_by_name('Administrador General')).first
 
 		sales_tax = company.country.sales_tax
-		current_amount = ((company.due_amount + (month_days - day_number + 1)*price/month_days)).round(0)
-		plan_amount = price
-		debt_amount = current_amount - price
+		#current_amount = ((company.due_amount + (month_days - day_number + 1)*price/month_days)).round(0)
+		plan_amount = price * (1 + sales_tax)
+		#debt_amount = current_amount - price
+
+		current_amount = plan_amount + company.due_amount
+		debt_amount = company.due_amount
+
+		puts "Current: " + current_amount.to_s
+		puts "Debt: " + debt_amount.to_s
+		puts "Plan: " + plan_amount.to_s
 
 
 		# => Template
@@ -143,15 +150,15 @@ class CompanyMailer < ActionMailer::Base
 				},
 				{
 					:name => 'CURRENT_AMOUNT',
-					:content => ActionController::Base.helpers.number_to_currency(current_amount * (1 + sales_tax), locale: company.country.locale.to_sym)
+					:content => ActionController::Base.helpers.number_to_currency(current_amount, locale: company.country.locale.to_sym)
 				},
 				{
 					:name => 'PLAN_AMOUNT',
-					:content => ActionController::Base.helpers.number_to_currency(plan_amount * (1 + sales_tax), locale: company.country.locale.to_sym)
+					:content => ActionController::Base.helpers.number_to_currency(plan_amount, locale: company.country.locale.to_sym)
 				},
 				{
 					:name => 'DEBT_AMOUNT',
-					:content => ActionController::Base.helpers.number_to_currency(debt_amount * (1 + sales_tax), locale: company.country.locale.to_sym)
+					:content => ActionController::Base.helpers.number_to_currency(debt_amount, locale: company.country.locale.to_sym)
 				}
 			],
 			:tags => ['invoice']

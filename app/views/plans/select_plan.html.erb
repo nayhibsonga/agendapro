@@ -201,14 +201,14 @@
             </div>
             <label>Pagar (IVA incluido):</label>
             <select class="form-control" id="amount_select">
-              <option value="0" amount="<%= (@plan_1 * (1 + @sales_tax)).to_s %>">Elige una opción...</option>
-              <option value="1" amount="<%= (@plan_1 * (1 + @sales_tax)).to_s %>"><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %> - <%= number_to_currency(@plan_1 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
-              <option value="2" amount="<%= (@plan_2 * (1 + @sales_tax)).to_s %>">2 Meses - <%= number_to_currency(@plan_2 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
-              <option value="3" amount="<%= (@plan_3 * (1 + @sales_tax)).to_s %>">3 Meses - <%= number_to_currency(@plan_3 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
-              <option value="4" amount="<%= (@plan_4 * (1 + @sales_tax)).to_s %>">4 Meses - <%= number_to_currency(@plan_4 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_4 * 100, precision: 0) %>% dcto.)</option>
-              <option value="6" amount="<%= (@plan_6 * (1 + @sales_tax)).to_s %>">6 Meses - <%= number_to_currency(@plan_6 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_6 * 100, precision: 0) %>% dcto.)</option>
-              <option value="9" amount="<%= (@plan_9 * (1 + @sales_tax)).to_s %>">9 Meses - <%= number_to_currency(@plan_9 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_9 * 100, precision: 0) %>% dcto.)</option>
-              <option value="12" amount="<%= (@plan_12 * (1 + @sales_tax)).to_s %>">12 Meses - <%= number_to_currency(@plan_12 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_12 * 100, precision: 0) %>% dcto.)</option>
+              <option value="0" amount="<%= (@plan_1).to_s %>">Elige una opción...</option>
+              <option value="1" amount="<%= (@plan_1).to_s %>"><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %> - <%= number_to_currency(@plan_1 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
+              <option value="2" amount="<%= @plan_2.to_s %>">2 Meses - <%= number_to_currency(@plan_2, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
+              <option value="3" amount="<%= (@plan_3).to_s %>">3 Meses - <%= number_to_currency(@plan_3, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
+              <option value="4" amount="<%= (@plan_4).to_s %>">4 Meses - <%= number_to_currency(@plan_4, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_4 * 100, precision: 0) %>% dcto.)</option>
+              <option value="6" amount="<%= (@plan_6).to_s %>">6 Meses - <%= number_to_currency(@plan_6 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_6 * 100, precision: 0) %>% dcto.)</option>
+              <option value="9" amount="<%= (@plan_9).to_s %>">9 Meses - <%= number_to_currency(@plan_9 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_9 * 100, precision: 0) %>% dcto.)</option>
+              <option value="12" amount="<%= (@plan_12).to_s %>">12 Meses - <%= number_to_currency(@plan_12 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_12 * 100, precision: 0) %>% dcto.)</option>
             </select>
           </div>
 
@@ -477,7 +477,7 @@
 
 <input type="hidden" id="sales_tax" value="<%= @sales_tax.to_s %>" />
 
-<%= content_tag "div", id: "plan_info", data: { months_active_left: @company.months_active_left, plan_value_left: (@month_days - @day_number + 1)*@price/@month_days + @price*(@company.months_active_left - 1), due_amount: @company.due_amount } do %>
+<%= content_tag "div", id: "plan_info", data: { months_active_left: @company.months_active_left, plan_value_left: (@month_days - @day_number + 1)*@price/@month_days + @price*(@company.months_active_left - 1), due_amount: @company.due_amount, plan_price: @price, plan_value_taken: (@day_number*@price/@month_days + @price*(@company.months_active_left - 1)) } do %>
 <%end%>
 
 <% content_for :modals do %>

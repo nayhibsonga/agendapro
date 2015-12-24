@@ -234,7 +234,9 @@ class CompaniesController < ApplicationController
 				else
 					NumericParameter.find_by_name(@transfer.paid_months.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(@transfer.paid_months.to_s+"_month_discount").value : month_discount = 0
 
-					company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
+					#company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
+
+					plan_1 = (company.due_amount + price*(1+sales_tax)).round(0)
 
 					due_number = ((plan_1 + price*(@transfer.paid_months-1)*(1+sales_tax))*(1-month_discount)).round(0)
 
@@ -243,7 +245,7 @@ class CompaniesController < ApplicationController
         			if @transfer.amount.round(0) != due_number
 		    			#Error
 						@json_response[0] = "error"
-						@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + price.to_s
+						@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
 						render :json => @json_response
 						return
 		    		end

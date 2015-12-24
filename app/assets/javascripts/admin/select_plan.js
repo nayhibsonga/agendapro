@@ -207,21 +207,24 @@ $(function() {
     $('#plan_mp_table').hide();
     $('#change_plan_free').hide();
     var plan_id = $(this).attr("plan_id");
+    var current_plan_price = parseFloat($('#plan_info').data('plan_price'));
     var months_active_left = parseFloat($('#plan_info').data('months-active-left'));
     var plan_value_left = parseFloat($('#plan_info').data('plan-value-left'));
+    var plan_value_taken = parseFloat($('#plan_info').data('plan-value-taken'));
     var due_amount = parseFloat($('#plan_info').data('due-amount'));
     var plan_price = parseFloat($('#plan_' + plan_id).data('plan-price'));
     var plan_month_value = parseFloat($('#plan_' + plan_id).data('plan-month-value'));
     var sales_tax = parseFloat($('#sales_tax').val());
     console.log(sales_tax);
+    console.log(plan_value_left);
 
     $('#transfer_new_plan').val(plan_id);
 
     $('#plan_explanation').empty();
     if (months_active_left > 0) {
       if (plan_value_left > (plan_month_value + due_amount)) {
-        var new_active_months_left = Math.floor((plan_value_left - plan_month_value - due_amount)/plan_price);
-        var new_amount_due = -1 * (((plan_value_left - plan_month_value - due_amount)/plan_price) % 1) * plan_price;
+        var new_active_months_left = Math.floor((plan_value_left * (1 + sales_tax) - plan_month_value * (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax)) );
+        var new_amount_due = -1 * (((plan_value_left* (1 + sales_tax) - plan_month_value* (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax))) % 1) * plan_price * (1 + sales_tax);
         if (new_active_months_left > 0) {
           $('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta quedará activa por este y ' + new_active_months_left + ' mes(es) más sin pagar más y, además, quedaran abonados $ ' + Math.round((-1 * new_amount_due)) + ' en tu cuenta, para tu próximo pago.');
           $('#billing_wire_transfer_amount').val(Math.round((-1 * new_amount_due)));
@@ -237,17 +240,27 @@ $(function() {
           return a.replace( /\/[^\/]+$/, '/' + plan_id );
         });
       } else {
-        $('#plan_explanation').html('Debes pagar $ ' + Math.round(plan_month_value + due_amount - plan_value_left) + ' + IVA (' + Math.round( (plan_month_value + due_amount - plan_value_left) * (1 + sales_tax)) + '), para cambiarte a este plan.');
+        $('#plan_explanation').html('Debes pagar $ ' + Math.round(plan_month_value + due_amount / (1 + sales_tax) - plan_value_left) + ' + IVA ($' + Math.round( (plan_month_value + due_amount / (1 + sales_tax) - plan_value_left) * (1 + sales_tax)) + '), para cambiarte a este plan.');
         $('#plan_mp_table').show();
-        $('#transfer_amount').val(Math.round( (plan_month_value + due_amount - plan_value_left) * (1+sales_tax)));
+        $('#transfer_amount').val(Math.round( (plan_month_value * (1 + sales_tax) + due_amount - plan_value_left * (1 + sales_tax))));
         $('#transfer_amount_detail').text('$ ' + $('#transfer_amount').val());
         //$('#billing_wire_transfer_change_plan_amount').val(Math.round((-1 * new_amount_due)));
         //$('#billing_wire_transfer_change_plan_amount').val(0);
       }
     } else {
-      $('#plan_explanation').html('Debes pagar $ ' + Math.round(plan_month_value + due_amount) + ' + IVA, para cambiarte a este plan.');
+
+      /*
+      Should pay days of the month passed with current_price, and forward days with new_price, plus debt
+      */
+
+      var computed_price = plan_value_taken + due_amount / (1 + sales_tax) + plan_month_value;
+      console.log(plan_value_taken);
+      console.log(due_amount);
+      console.log(plan_month_value);
+
+      $('#plan_explanation').html('Debes pagar $ ' + Math.round( computed_price ) + ' + IVA ($' + Math.round( computed_price * (1 + sales_tax) ) + '), para cambiarte a este plan.');
       $('#plan_mp_table').show();
-      $('#transfer_amount').val(Math.round(plan_month_value + due_amount));
+      $('#transfer_amount').val(Math.round(computed_price * (1 + sales_tax)));
       $('#transfer_amount_detail').text('$ ' + $('#transfer_amount').val());
 
     }

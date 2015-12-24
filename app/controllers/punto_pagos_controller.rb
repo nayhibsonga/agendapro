@@ -66,7 +66,8 @@ class PuntoPagosController < ApplicationController
           trx_id = trx_id[0, 15]
         end
 
-        company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
+        #company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
+        plan_1 = (company.due_amount + price*(1+sales_tax)).round(0)
         due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
         req = PuntoPagos::Request.new()
         resp = req.create(trx_id, due, payment_method)

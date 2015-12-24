@@ -25,6 +25,7 @@ function approveTransfer(transfer_id)
     dataType: 'json',
     data: {billing_wire_transfer_id: transfer_id},
     error: function(error){
+        $('#transferSummaryModal').modal('hide');
         myAlert.showAlert(
           '<h3>Error al aprobar</h3>' +
           '<p>' + error + '</p>',
@@ -47,6 +48,7 @@ function approveTransfer(transfer_id)
       }  
       else
       {
+        $('#transferSummaryModal').modal('hide');
         myAlert.showAlert(
           '<h3>Error al aprobar</h3>' +
           '<p>' + response[1] + '</p>',
