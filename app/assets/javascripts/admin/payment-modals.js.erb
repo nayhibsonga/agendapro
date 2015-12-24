@@ -191,6 +191,13 @@ $(function() {
 
     var cashier_code = $(this).val();
 
+    console.log("Triggers focus out 1");
+
+    if(cashier_code == "")
+    {
+      return;
+    }
+
     $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
       if(response[0] != "error")
       {
@@ -211,6 +218,13 @@ $(function() {
   $("#internal_sale_cashier_code").on('focusout', function(){
 
     var cashier_code = $(this).val();
+
+    console.log("Triggers focus out 2");
+
+    if(cashier_code == "")
+    {
+      return;
+    }
 
     $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
       if(response[0] != "error")
