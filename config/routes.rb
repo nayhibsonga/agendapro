@@ -1,4 +1,4 @@
- Agendapro::Application.routes.draw do
+Agendapro::Application.routes.draw do
 
 
 
