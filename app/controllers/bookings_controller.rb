@@ -42,7 +42,7 @@ class BookingsController < ApplicationController
     @company_setting = @company.company_setting
     @use_identification_number = @company.company_setting.use_identification_number
     if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
-      @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true).pluck(:location_id)).accessible_by(current_ability).order(:order, :name)
+      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).order(:order, :name)
     else
       @locations = Location.where(:active => true).accessible_by(current_ability).order(:order, :name)
     end
