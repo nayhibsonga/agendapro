@@ -28,7 +28,7 @@
   </div>
 </div>
 
-<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required, preset_notes: @company_setting.preset_notes } do %>
+<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required, preset_notes: @company_setting.preset_notes, strict_booking: @company_setting.strict_booking } do %>
 <% end %>
 
 <%= content_tag "div", id: "products_data", data: { products: Product.where(company_id: current_user.company_id).to_json } do %>
@@ -555,7 +555,7 @@
                           <% else %>
                             <button style="width: 150px; margin-right: 5px;" id="bookingPaymentEditBtn" class="edit-option-btn btn btn-default">
                               <i class="fa fa-pencil-square-o"></i>Editar pago
-                            </button> 
+                            </button>
                             <button style="width: 150px;" id="bookingPaymentDeleteBtn" class="edit-option-btn btn btn-red">
                               <i class="fa fa-times"></i>Eliminar pago
                             </button>

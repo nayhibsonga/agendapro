@@ -966,9 +966,20 @@ function editBooking(eventId) {
 
 function createBooking() {
   if ($('#new_booking').valid()) {
-    $('.booking-button').attr("disabled", "disabled");
-    $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
-    saveBooking('POST','');
+    var strict_booking = $('#calendar-data').data('strict-booking');
+    var client_email = $.trim($('#booking_client_email').val());
+    var client_phone = $.trim($('#booking_client_phone').val());
+    if (strict_booking && (client_email == null || client_email == "") && (client_phone == null || client_phone == "")) {
+      swal({
+        title: "Datos Incompletos",
+        text: "Por favor completa el email o teléfono del Cliente.",
+        type: "error"
+      });
+    } else{
+      $('.booking-button').attr("disabled", "disabled");
+      $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+      saveBooking('POST','');
+    };
   };
 }
 
