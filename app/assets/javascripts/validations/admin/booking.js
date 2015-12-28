@@ -105,6 +105,30 @@ $(function() {
 			full_name: {
 				required: true,
 				minlength: 3
+			},
+			'booking[client][email]': {
+				required: {
+					depends: function () {
+						var strict_booking = $('#calendar-data').data('strict-booking');
+    				var client_phone = $.trim($('#hoursOptimizer #new_booking #booking_client_phone').val());
+						return (
+							strict_booking && (client_phone == null || client_phone == "")
+						);
+					}
+				},
+				email: true
+			},
+			'booking[client][phone]': {
+				required: {
+					depends: function () {
+						var strict_booking = $('#calendar-data').data('strict-booking');
+    				var client_email = $.trim($('#hoursOptimizer #new_booking #booking_client_email').val());
+						return (
+							strict_booking && (client_email == null || client_email == "")
+						);
+					}
+				},
+				rangelength: [7, 15]
 			}
 		},
 		messages: {
