@@ -45,7 +45,7 @@
 
               <div class="col-md-3" style="margin-bottom: 20px;">
 
-                <%= content_tag "div", id: "plan_" + plan.id.to_s, data: { plan_price: plan.plan_countries.find_by(country_id: @company.country.id).price, plan_month_value: (@month_days - @day_number) * plan.plan_countries.find_by(country_id: @company.country.id).price / @month_days } do %>
+                <%= content_tag "div", id: "plan_" + plan.id.to_s, data: { plan_price: plan.plan_countries.find_by(country_id: @company.country.id).price, plan_month_value: (@month_days - @day_number + 1) * plan.plan_countries.find_by(country_id: @company.country.id).price / @month_days } do %>
 
                 <% end %>
 

@@ -122,11 +122,24 @@ class PuntoPagosController < ApplicationController
 
         if months_active_left > 0
           if plan_value_left > (plan_month_value + due_amount) && payment_method == "00"
+
             new_active_months_left = ((plan_value_left - plan_month_value - due_amount)/plan_price).floor + 1
-            new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount)/plan_price)%1)*plan_price
+
+            puts "New active months: " +  new_active_months_left.to_s
+
+            #new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount / (1 + sales_tax))/plan_price)%1)*plan_price
+
+            new_amount_due = -1 * (((plan_value_left * (1 + sales_tax) - plan_month_value* (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax)))) * plan_price * (1 + sales_tax);
+
+            puts "Plan value left: " +  plan_value_left.to_s
+            puts "Plan month value: " + plan_month_value.to_s
+            puts "Plan price: " + plan_price.to_s
+            puts "New amount due: " +  new_amount_due.to_s
+
             company.plan_id = plan_id
             company.months_active_left = new_active_months_left
-            company.due_amount = (new_amount_due).round(0) * (1 + sales_tax)
+            company.due_amount = (new_amount_due).round(0)
+
             if company.save
               PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."
@@ -143,7 +156,7 @@ class PuntoPagosController < ApplicationController
             if !mockCompany.valid?
               redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (8)"
             elsif payment_method != "00"
-              due = sprintf('%.2f', ((plan_month_value + due_amount - plan_value_left)*(1+sales_tax)).round(0))
+              due = sprintf('%.2f', ((plan_month_value + due_amount / (1 + sales_tax) - plan_value_left)*(1+sales_tax)).round(0))
               req = PuntoPagos::Request.new()
               resp = req.create(trx_id, due, payment_method)
               if resp.success?

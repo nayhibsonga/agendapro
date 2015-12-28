@@ -316,6 +316,11 @@ class Company < ActiveRecord::Base
 
 	end
 
+	# Warn trial ending 5 days before it ends
+	def self.warn_trial_end
+
+	end
+
 	def self.end_trial
 
 		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
@@ -393,7 +398,6 @@ class Company < ActiveRecord::Base
 					CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "ERROR substract_month "+errors)
 				end
 
-				#Send charge mail
 
 			elsif company.payment_status_id == status_emitido.id
 
@@ -410,7 +414,7 @@ class Company < ActiveRecord::Base
 				company.due_date = DateTime.now
 				company.save
 
-				#Send charge mail
+				#Send invoice_email
 
 			end
 
@@ -441,7 +445,7 @@ class Company < ActiveRecord::Base
 				#Add their due amount for possible reactivation in the future
 
 				company.payment_status_id = status_vencido.id
-				company.plan_id = plan_gratis
+				company.plan_id = plan_gratis.id
 				if company.due_amount.nil?
 					company.due_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
 				else
@@ -450,7 +454,7 @@ class Company < ActiveRecord::Base
 				company.due_date = DateTime.now
 				company.save
 
-				#Send mail alerting their plan change
+				#Send mail alerting their plan changed
 
 			end
 

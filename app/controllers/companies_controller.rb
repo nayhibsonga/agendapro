@@ -74,7 +74,7 @@ class CompaniesController < ApplicationController
 			        due_amount = company.due_amount
 			        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
 			        previous_plan_price = company.plan.plan_countries.find_by(country_id: company.country.id).price
-			        plan_month_value = (month_days - day_number)*plan_price/month_days
+			        plan_month_value = (month_days - day_number + 1)*plan_price/month_days
 
 			        #Days that should be payed of current plan
 			        plan_value_taken = (day_number*previous_plan_price/month_days + -1*previous_plan_price*(company.months_active_left))

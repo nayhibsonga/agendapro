@@ -74,10 +74,13 @@ class PayUController < ApplicationController
           trx_id = trx_id[0, 15]
         end
 
-        company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
-        due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
+        #company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
+        #due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
         # req = PuntoPagos::Request.new()
         # resp = req.create(trx_id, due, payment_method)
+
+        plan_1 = (company.due_amount + price*(1+sales_tax)).round(0)
+        due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
 
         crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
         encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Pago plan " + company.plan.name, amount: due, source_url: select_plan_url})
@@ -134,10 +137,12 @@ class PayUController < ApplicationController
         if months_active_left > 0
           if plan_value_left > (plan_month_value + due_amount)
             new_active_months_left = ((plan_value_left - plan_month_value - due_amount)/plan_price).floor + 1
-            new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount)/plan_price)%1)*plan_price
+            new_amount_due = -1 * (((plan_value_left * (1 + sales_tax) - plan_month_value* (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax)))) * plan_price * (1 + sales_tax);
+
             company.plan_id = plan_id
             company.months_active_left = new_active_months_left
             company.due_amount = (new_amount_due).round(0)
+            
             if company.save
               PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."

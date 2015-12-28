@@ -25,10 +25,10 @@
           		<% @transfers.each do |transfer| %>
           			<tr>
           				<td>
-          					<%= transfer.created_at.strftime('%d%m%Y %R') %>
+          					<%= transfer.created_at.strftime('%d/%m/%Y %R') %>
           				</td>
           				<td>
-          					<%= transfer.payment_date.strftime('%d%m%Y %R') %>
+          					<%= transfer.payment_date.strftime('%d/%m/%Y %R') %>
           				</td>
           				<td>
           					<%= transfer.company.name %>

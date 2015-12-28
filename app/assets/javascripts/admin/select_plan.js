@@ -218,6 +218,8 @@ $(function() {
     console.log(sales_tax);
     console.log("plan_value_left " + plan_value_left);
     console.log("plan_month_value " + plan_month_value);
+    console.log("plan_price " + plan_price);
+
 
     $('#transfer_new_plan').val(plan_id);
 
@@ -225,7 +227,8 @@ $(function() {
     if (months_active_left > 0) {
       if (plan_value_left > (plan_month_value + due_amount)) {
         var new_active_months_left = Math.floor((plan_value_left * (1 + sales_tax) - plan_month_value * (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax)) );
-        var new_amount_due = -1 * (((plan_value_left* (1 + sales_tax) - plan_month_value* (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax))) % 1) * plan_price * (1 + sales_tax);
+        var new_amount_due = -1 * (((plan_value_left * (1 + sales_tax) - plan_month_value* (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax))) % 1) * plan_price * (1 + sales_tax);
+        console.log("New amount due: " + new_amount_due);
         if (new_active_months_left > 0) {
           $('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta quedará activa por este y ' + new_active_months_left + ' mes(es) más sin pagar más y, además, quedaran abonados $ ' + Math.round((-1 * new_amount_due)) + ' en tu cuenta, para tu próximo pago.');
           $('#billing_wire_transfer_amount').val(Math.round((-1 * new_amount_due)));
@@ -255,9 +258,9 @@ $(function() {
       */
 
       var computed_price = plan_value_taken + due_amount / (1 + sales_tax) + plan_month_value;
-      console.log(plan_value_taken);
-      console.log(due_amount);
-      console.log(plan_month_value);
+      console.log("plan_value_taken " + plan_value_taken);
+      console.log("due_amount " + due_amount);
+      console.log("plan_month_value " + plan_month_value);
 
       $('#plan_explanation').html('Debes pagar $ ' + Math.round( computed_price ) + ' + IVA ($' + Math.round( computed_price * (1 + sales_tax) ) + '), para cambiarte a este plan.');
       $('#plan_mp_table').show();
