@@ -222,10 +222,22 @@ function loadUserModal () {
   $('#nextButton').off('click'); // Unbind click event
   $('#nextButton').click(function (e) {
     if ($('#hoursOptimizer #new_booking').valid()) {
-      $('#nextButton').attr("disabled", "disabled");
-      $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( "#nextButton" ) );
-      loadBookingBuffer();
-      saveBookings();
+      var strict_booking = $('#calendar-data').data('strict-booking');
+      var client_email = $.trim($(userForm + '#booking_client_email').val());
+      var client_phone = $.trim($(userForm + '#booking_client_phone').val());
+      if (strict_booking && (client_email == null || client_email == "") && (client_phone == null || client_phone == "")) {
+        swal({
+          title: "Datos Incompletos",
+          text: "Por favor completa el email o teléfono del Cliente.",
+          type: "error"
+        });
+      } else{
+        $('#nextButton').attr("disabled", "disabled");
+        $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( "#nextButton" ) );
+        loadBookingBuffer();
+        saveBookings();
+      };
+
     };
   }); // Bind click event
 }
