@@ -265,7 +265,7 @@ function saveLocation (typeURL, extraURL) {
 			}
 			swal({
         title: "Error",
-        text: "Se producieron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        text: "Se produjeron los siguientes problemas:\n<ul>" + errorList + "</ul>",
         type: "error",
         html: true
       });

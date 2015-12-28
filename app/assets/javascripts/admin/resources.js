@@ -52,7 +52,7 @@ function saveCategory (typeURL, extraURL) {
 						}
 						swal({
 							title: "Error",
-							text: "Se producieron los siguientes errores:\n" + errores,
+							text: "Se produjeron los siguientes errores:\n" + errores,
 							type: "error"
 						});
 						$('#saveResourceCategryButton').attr('disabled', false);
@@ -104,7 +104,7 @@ function saveResource (typeURL, extraURL) {
 			}
 			swal({
 				title: "Error",
-				text: "Se producieron los siguientes errores:\n<ul>" + errorList + "</ul>",
+				text: "Se produjeron los siguientes errores:\n<ul>" + errorList + "</ul>",
 				type: "error",
 				html: true
 			});

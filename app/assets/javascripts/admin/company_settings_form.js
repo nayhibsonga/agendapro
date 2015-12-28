@@ -53,7 +53,7 @@ $(function () {
           }
           swal({
             title: "Error",
-            text: "Se producieron los siguientes errores:\n" + errorList,
+            text: "Se produjeron los siguientes errores:\n" + errorList,
             type: "error"
           });
         },

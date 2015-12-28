@@ -97,7 +97,7 @@ $(function () {
         }
         swal({
           title: "Error",
-          text: "Se producieron los siguientes errores:\n" + errores,
+          text: "Se produjeron los siguientes errores:\n" + errores,
           type: "error"
         });
       }

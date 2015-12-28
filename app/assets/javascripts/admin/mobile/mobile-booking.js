@@ -90,7 +90,7 @@ function saveBooking (typeURL, booking_id) {
       $('button[type="submit"]').html('Guardar');
       swal({
         title: "Error",
-        text: "Se producieron los siguientes problemas:\n" + errores,
+        text: "Se produjeron los siguientes problemas:\n" + errores,
         type: "error"
       });
     }

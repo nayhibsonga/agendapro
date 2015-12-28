@@ -27,7 +27,7 @@ function saveServiceCategory () {
 			}
 			swal({
         title: "Error",
-        text: "Se producieron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        text: "Se produjeron los siguientes problemas:\n<ul>" + errorList + "</ul>",
         type: "error",
         html: true
       });
@@ -56,7 +56,7 @@ function deleteServiceCategory (id) {
 			}
 			swal({
         title: "Error",
-        text: "Se producieron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        text: "Se produjeron los siguientes problemas:\n<ul>" + errorList + "</ul>",
         type: "error",
         html: true
       });
@@ -111,7 +111,7 @@ function saveService () {
 			}
 			swal({
         title: "Error",
-        text: "Se producieron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        text: "Se produjeron los siguientes problemas:\n<ul>" + errorList + "</ul>",
         type: "error",
         html: true
       });
@@ -142,7 +142,7 @@ function deleteService (id) {
 			}
 			swal({
         title: "Error",
-        text: "Se producieron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        text: "Se produjeron los siguientes problemas:\n<ul>" + errorList + "</ul>",
         type: "error",
         html: true
       });
