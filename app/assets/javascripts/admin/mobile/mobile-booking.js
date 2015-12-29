@@ -71,7 +71,7 @@ function saveBooking (typeURL, booking_id) {
   if (typeURL != 'POST') {
     bookingJSON = {"booking": JSONData};
   }
-  
+
   $.ajax({
     type: typeURL,
     url: '/bookings' + booking_id + '.json',
@@ -82,13 +82,17 @@ function saveBooking (typeURL, booking_id) {
     },
     error: function(xhr){
       var errors = $.parseJSON(xhr.responseText).errors[0].errors;
-      var errores = 'Error\n';
+      var errores = '';
       for (i in errors) {
         errores += '*' + errors[i] + '\n';
       }
       $('button[type="submit"]').removeClass('disabled');
       $('button[type="submit"]').html('Guardar');
-      alert(errores);
+      swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n" + errores,
+        type: "error"
+      });
     }
   });
 }

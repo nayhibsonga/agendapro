@@ -51,11 +51,11 @@ $(function () {
           for (i in errors) {
             errorList += '* ' + errors[i] + '\n'
           }
-          alert(
-            'Error\n' +
-            '--------' +
-            errorList
-          );
+          swal({
+            title: "Error",
+            text: "Se produjeron los siguientes errores:\n" + errorList,
+            type: "error"
+          });
         },
       });
     };

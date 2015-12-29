@@ -424,6 +424,14 @@
                         <span class="help-block">Esta opción te permite poder tomar reservas fuera del horario del prestador, para reservas ingresadas internamente. Si habilitas esta opción podrás hacer reservas en todo el horario visible en la sección <strong>"Calendario"</strong>, puedes extender este habilitando la próxima opción.</span>
                       </div>
                     </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :strict_booking %> Requerir Datos de Contacto
+                          <span class="help-block">Si habilitas esta opción al generar una nueva reserva, desde el calendario, el cliente debe tener asociado, como mínimo, email o teléfono.</span>
+                        </label>
+                      </div>
+                    </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
@@ -453,7 +461,7 @@
                         <label>
                           <%= f.check_box :use_identification_number %> Usar <%= I18n.t('ci') %> en Reserva
                         </label>
-                        <span class="help-block">Al activar esta opción, en el dialogo de reserva tendrás, además de los campos por defecto, disponible un campo <%= I18n.t('ci') %>, el que también te permitirá buscar clientes por <%= I18n.t('ci') %>.</span>
+                        <span class="help-block">Al activar esta opción, en el dialogo de reserva tendrás, además de los campos por defecto, disponible un campo <%= I18n.t('ci') %>, el que también te permitirá buscar clientes por <%= I18n.t('ci') %>. Además, se exigirá <%= I18n.t('ci') %> a los clientes que reserven en línea.</span>
                       </div>
                     </div>
                     <div class="form-group">
@@ -592,7 +600,7 @@
               </div>
               <h3 class="text-green">¿Quieres desactivar las reservas en línea por Facebook?</h3>
               <p>Para hacerlo debes desactivar las reservas por Facebook apretando el siquiente botón "Desactivar Facebook", y luego debes eliminar la pestaña de tu página de Facebook manualmente, desde las configuraciones de esta.</p>
-              <p><%= link_to "Desactivar Facebook", delete_facebook_pages_path, data: { confirm: '¿Estás seguro de querer desactivar las reservas desde Facebook? Por favor recuerda eliminar la pestaña de tu página de Facebook.' }, class: "btn btn-red" %></p>
+              <p><%= link_to "Desactivar Facebook", delete_facebook_pages_path, method: :delete, data: { confirm: '¿Estás seguro de querer desactivar las reservas desde Facebook? Por favor recuerda eliminar la pestaña de tu página de Facebook.' }, class: "btn btn-red" %></p>
             </div>
           </div>
           <div class="row" style="margin-top: 20px;">
@@ -1058,7 +1066,7 @@
                       </td>
                       <td>
                       <% if payment_method.name != "Efectivo" && payment_method.name != "Otro" %>
-                        <% if payment_method.name != "Online" %> 
+                        <% if payment_method.name != "Online" %>
                           <%= a.check_box :number_required %>
                         <% else %>
                           <%= a.check_box :number_required, checked: true, disabled: true %>
@@ -1111,9 +1119,9 @@
                         <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, company_payment_method, method: :delete, data: { confirm: '¿Estás seguro de eliminar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
                       <% else %>
                         <% if company_payment_method.active %>
-                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_company_payment_method_path(id: company_payment_method.id), data: { confirm: '¿Estás seguro de desactivar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
+                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_company_payment_method_path(id: company_payment_method.id), method: :patch, data: { confirm: '¿Estás seguro de desactivar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
                         <% else %>
-                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_company_payment_method_path(id: company_payment_method.id), data: { confirm: '¿Estás seguro de activar el medio de pago seleccionado?' }, class: 'btn btn-green' %>
+                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_company_payment_method_path(id: company_payment_method.id), method: :patch, data: { confirm: '¿Estás seguro de activar el medio de pago seleccionado?' }, class: 'btn btn-green' %>
                         <% end %>
                       <% end %>
                       </td>
@@ -1151,15 +1159,15 @@
                       <td><%= cashier.active ? "Activo" : "Inactivo" %></td>
                       <td><%= cashier.code %></td>
                       <td><button class="btn btn-orange edit_cashier_button" data-name="<%= cashier.name %>" data-active="<%= cashier.active %>" data-code="<%= cashier.code %>" data-id="<%= cashier.id %>"><i class="fa fa-pencil"></i> Editar</button>
-                      
+
                         <!-- link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, cashier, method: :delete, data: { confirm: '¿Estás seguro de eliminar el cajero seleccionado?' }, class: 'btn btn-red' -->
-                      
+
                         <% if cashier.active %>
-                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_cashier_path(id: cashier.id), data: { confirm: '¿Estás seguro de desactivar el cajero seleccionado?' }, class: 'btn btn-red' %>
+                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_cashier_path(id: cashier.id), method: :patch, data: { confirm: '¿Estás seguro de desactivar el cajero seleccionado?' }, class: 'btn btn-red' %>
                         <% else %>
-                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_cashier_path(id: cashier.id), data: { confirm: '¿Estás seguro de activar el cajero seleccionado?' }, class: 'btn btn-green' %>
+                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_cashier_path(id: cashier.id), method: :patch, data: { confirm: '¿Estás seguro de activar el cajero seleccionado?' }, class: 'btn btn-green' %>
                         <% end %>
-                      
+
                       </td>
                     </tr>
                   <% end %>

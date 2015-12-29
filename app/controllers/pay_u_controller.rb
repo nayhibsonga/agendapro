@@ -247,6 +247,12 @@ class PayUController < ApplicationController
     elsif Booking.find_by_trx_id(trx_id)
       #Mostrar página similar a la de reserva hecha, confirmando que se pagó
       @bookings = Booking.where(:trx_id => trx_id)
+
+      if @bookings.count > 0 && @bookings.first.marketplace_origin
+        redirect_to 'http://' + ENV['MARKETPLACE_URL'] + '/booking/success/' + @bookings.first.id.to_s + '/' + @bookings.first.access_token
+        return
+      end
+
       @has_session_booking = false
       @session_booking = nil
       if @bookings.first.is_session
@@ -296,6 +302,11 @@ class PayUController < ApplicationController
       if trx_id.present?
         if(Booking.find_by_trx_id(trx_id))
           bookings = Booking.where(:trx_id => trx_id)
+
+          if bookings.count > 0 && bookings.first.marketplace_origin
+            redirect_to 'http://' + ENV['MARKETPLACE_URL'] + '/booking/failure/' + bookings.first.id.to_s + '/' + bookings.first.access_token
+            return
+          end
 
           @are_session_bookings = false
           if bookings.count > 0

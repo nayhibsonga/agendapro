@@ -1,4 +1,4 @@
- Agendapro::Application.routes.draw do
+Agendapro::Application.routes.draw do
 
 
 
@@ -314,15 +314,15 @@
     get '/inactive_services', :to => 'services#inactive_index', :as => 'inactive_services'
     get '/inactive_service_providers', :to => 'service_providers#inactive_index', :as => 'inactive_service_providers'
 
-    get '/companies/:id/activate', :to => 'companies#activate', :as => 'activate_company'
-    get '/locations/:id/activate', :to => 'locations#activate', :as => 'activate_location'
-    get '/services/:id/activate', :to => 'services#activate', :as => 'activate_service'
-    get '/service_providers/:id/activate', :to => 'service_providers#activate', :as => 'activate_service_provider'
+    patch '/companies/:id/activate', :to => 'companies#activate', :as => 'activate_company'
+    patch '/locations/:id/activate', :to => 'locations#activate', :as => 'activate_location'
+    patch '/services/:id/activate', :to => 'services#activate', :as => 'activate_service'
+    patch '/service_providers/:id/activate', :to => 'service_providers#activate', :as => 'activate_service_provider'
 
-    get '/companies/:id/deactivate', :to => 'companies#deactivate', :as => 'deactivate_company'
-    get '/locations/:id/deactivate', :to => 'locations#deactivate', :as => 'deactivate_location'
-    get '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
-    get '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
+    patch '/companies/:id/deactivate', :to => 'companies#deactivate', :as => 'deactivate_company'
+    patch '/locations/:id/deactivate', :to => 'locations#deactivate', :as => 'deactivate_location'
+    patch '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
+    patch '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
     post '/clients/import', :to => 'clients#import', :as => 'import_clients'
     get '/clients/:id/history', :to => 'clients#history', :as => 'client_history'
 
@@ -346,12 +346,12 @@
     patch '/iframe/facebook_submit', :to => 'iframe#facebook_submit', :as => 'facebook_submit_edit'
     get '/iframe/facebook_success', :to => 'iframe#facebook_success', :as => 'facebook_success'
     get '/iframe/facebook_addtab', :to => 'iframe#facebook_addtab', :as => 'facebook_addtab'
-    get '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
+    delete '/company_settings/:id/delete_facebook_pages', :to => 'company_settings#delete_facebook_pages', :as => 'delete_facebook_pages'
     get '/iframe/book_error', :to => 'iframe#book_error', :as => 'iframe_book_error'
 
     post '/company_settings/update_payment', :to => 'company_settings#update_payment'
-    get '/company_payment_methods/:id/activate', :to => 'company_payment_methods#activate', :as => 'activate_company_payment_method'
-    get '/company_payment_methods/:id/deactivate', :to => 'company_payment_methods#deactivate', :as => 'deactivate_company_payment_method'
+    patch '/company_payment_methods/:id/activate', :to => 'company_payment_methods#activate', :as => 'activate_company_payment_method'
+    patch '/company_payment_methods/:id/deactivate', :to => 'company_payment_methods#deactivate', :as => 'deactivate_company_payment_method'
     get '/booking_payment', :to => 'payments#booking_payment'
     get '/load_payment', :to => 'payments#load_payment'
     get '/past_bookings', :to => 'payments#past_bookings'
@@ -411,8 +411,8 @@
     post '/save_alarms', :to => 'locations#save_stock_alarm'
     get '/location_sellers', :to => 'locations#sellers'
 
-    get '/cashiers/:id/activate', :to => 'cashiers#activate', :as => 'activate_cashier'
-    get '/cashiers/:id/deactivate', :to => 'cashiers#deactivate', :as => 'deactivate_cashier'
+    patch '/cashiers/:id/activate', :to => 'cashiers#activate', :as => 'activate_cashier'
+    patch '/cashiers/:id/deactivate', :to => 'cashiers#deactivate', :as => 'deactivate_cashier'
     get '/get_cashier_by_code', :to => 'cashiers#get_by_code'
 
     get '/receipt_pdf', :to => 'payments#receipt_pdf'
@@ -611,6 +611,9 @@
         get 'bookings_group', to: 'bookings#show_group'
         put 'bookings/:id', to: 'bookings#edit_booking'
         delete 'bookings/:id', to: 'bookings#destroy'
+        delete 'bookings_all/:id', to: 'bookings#cancel_all'
+        post 'bookings_confirm/:id', to: 'bookings#confirm'
+        post 'bookings_confirm_all/:id', to: 'bookings#confirm_all' 
 
       end
     end

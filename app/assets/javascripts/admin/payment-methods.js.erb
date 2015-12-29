@@ -26,18 +26,22 @@ function destroyPayment() {
 		dataType: 'json',
 		success: function(payment){
 			// window.console.log(payment);
-			alert('Pago eliminado exitosamente.');
+			swal('Pago eliminado exitosamente.');
 			$("#delete_payment_button").html('Eliminar Pago');
 			$('#delete_payment_button').attr('disabled', false);
 			$('#bookingModal').modal('hide');
 		},
 		error: function(xhr){
 			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = 'Error\n';
+			var errores = '';
 			for (i in errors) {
 				errores += '*' + errors[i] + '\n';
 			}
-			alert(errores);
+			swal({
+				title: "Error",
+				text: "Se produjeron los siguientes errores:\n" + errores,
+				type: "error"
+			});
 			$("#delete_payment_button").html('Eliminar Pago');
 			$('#delete_payment_button').attr('disabled', false);
 		}
@@ -63,7 +67,7 @@ function checkBookingPayment(booking_id)
 		data: {booking_id: booking_id},
 		dataType: 'json',
 		error: function(response){
-			alert("Ocurrió un error inesperado al cargar la reserva.");
+			swal("Ocurrió un error inesperado al cargar la reserva.");
 		},
 		success: function(response){
 			if(response[0] == "yes")
@@ -106,7 +110,7 @@ function loadBookingNewPayment(booking_id)
 		data: {booking_id: booking_id},
 		dataType: 'json',
 		error: function(response){
-			alert("Ocurrió un error inesperado al cargar la reserva.");
+			swal("Ocurrió un error inesperado al cargar la reserva.");
 		},
 		success: function(response){
 
@@ -120,12 +124,12 @@ function loadBookingNewPayment(booking_id)
 	        var past_booking_index = paymentPastBookings.length-1;
 
 	        $("#paymentItemsTable").append(
-	          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' + 
+	          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' +
 	          '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
 	          '<td style="width: 5%;">' + item_id + '</td>' +
-	          '<td style="width: 24%;"><span>Reserva existente</span></td>' + 
-	          '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' + 
-	          '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' + 
+	          '<td style="width: 24%;"><span>Reserva existente</span></td>' +
+	          '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' +
+	          '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' +
 	          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" /></div></td>' +
 	          '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
 	          '</tr>'
@@ -148,14 +152,14 @@ function loadBookingNewPayment(booking_id)
 			{
 				$("#set_client").val("0");
 			}
-			
+
 			$("#paymentItemsTable").show();
 
 			calculatePaymentTotal();
 
 			$("#paymentItemsList").show();
 			$("#paymentSumDiv").show();
-	
+
 		}
 	});
 }

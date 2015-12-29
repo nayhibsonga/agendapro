@@ -28,7 +28,7 @@
   </div>
 </div>
 
-<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required, preset_notes: @company_setting.preset_notes } do %>
+<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required, preset_notes: @company_setting.preset_notes, strict_booking: @company_setting.strict_booking } do %>
 <% end %>
 
 <%= content_tag "div", id: "products_data", data: { products: Product.where(company_id: current_user.company_id).to_json } do %>
@@ -555,7 +555,7 @@
                           <% else %>
                             <button style="width: 150px; margin-right: 5px;" id="bookingPaymentEditBtn" class="edit-option-btn btn btn-default">
                               <i class="fa fa-pencil-square-o"></i>Editar pago
-                            </button> 
+                            </button>
                             <button style="width: 150px;" id="bookingPaymentDeleteBtn" class="edit-option-btn btn btn-red">
                               <i class="fa fa-times"></i>Eliminar pago
                             </button>
@@ -744,14 +744,14 @@
               <%= builder.hidden_field :address %>
               <%= builder.hidden_field :district %>
               <%= builder.hidden_field :city %>
-              <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
-                <div class="form-group">
-                  <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-md-4 control-label" %>
-                  <div class="col-md-8">
-                    <%= builder.text_field :identification_number, class: "form-control", disabled: true %>
-                  </div>
+              <div class="form-group has-feedback has-feedback">
+                <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-sm-4 control-label" %>
+                <div class="col-sm-8">
+                  <%= builder.text_field :identification_number, class: "form-control", disabled: @company_setting.client_exclusive %>
+                  <span class="help-block"></span>
+                  <ul id="rut_suggestions"></ul>
                 </div>
-              <% end %>
+              </div>
               <div class="form-group has-feedback">
                 <label for="full_name" class="col-md-4 control-label">Nombre Cliente</label>
                 <div class="col-md-8">

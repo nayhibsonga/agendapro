@@ -151,7 +151,7 @@ function startLocation () {
 					locationValid(local);
 				}
 				else {
-					my_alert.showAlert('Tienes que seleccionar al menos un día.');
+					swal('Tienes que seleccionar al menos un día.');
 					hideLoad();
 				}
 			});
@@ -176,7 +176,7 @@ function startLocation () {
 					locationValid(local);
 				}
 				else {
-					my_alert.showAlert('Tienes que seleccionar al menos un día.');
+					swal('Tienes que seleccionar al menos un día.');
 					hideLoad();
 				}
 			});
@@ -263,12 +263,12 @@ function saveLocation (typeURL, extraURL) {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        type: "error",
+        html: true
+      });
 			if (location_count > 0) {
 				$('#next_location_button').attr('disabled', false);
 			}

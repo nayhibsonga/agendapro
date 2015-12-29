@@ -25,7 +25,7 @@ class BookingsController < ApplicationController
       json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order, :name) do |provider_group|
         json.name  provider_group.name
         json.location_id provider_group.location_id
-        json.resources provider_group.service_providers.where(active: true) do |service_provider|
+        json.resources provider_group.service_providers.where(active: true).accessible_by(current_ability) do |service_provider|
           json.id service_provider.id
           json.name service_provider.public_name
         end
@@ -39,13 +39,24 @@ class BookingsController < ApplicationController
 
   def fixed_index
     @company = Company.find(current_user.company_id)
+    @company_setting = @company.company_setting
     @use_identification_number = @company.company_setting.use_identification_number
     if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
-      @locations = Location.where(:active => true, :id => ServiceProvider.where(active: true).pluck(:location_id)).accessible_by(current_ability).order(:order, :name)
+      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).order(:order, :name)
     else
       @locations = Location.where(:active => true).accessible_by(current_ability).order(:order, :name)
     end
     @service_providers = ServiceProvider.where(location_id: @locations).order(:order, :public_name)
+    @provider_groups = JbuilderTemplate.encode(view_context) do |json|
+      json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order, :name) do |provider_group|
+        json.name  provider_group.name
+        json.location_id provider_group.location_id
+        json.resources provider_group.service_providers.where(active: true) do |service_provider|
+          json.id service_provider.id
+          json.name service_provider.public_name
+        end
+      end
+    end
     @bookings = Booking.where(service_provider_id: @service_providers)
     @booking = Booking.new
     @provider_break = ProviderBreak.new
@@ -1793,7 +1804,8 @@ class BookingsController < ApplicationController
           comment_qtip: comment,
           prepayed_qtip: prepayed,
           is_session_qtip: is_session,
-          sessions_ratio_qtip: sessions_ratio
+          sessions_ratio_qtip: sessions_ratio,
+          identification_number_qtip: booking.client.identification_number ? booking.client.identification_number : ""
         }
 
 
@@ -1930,6 +1942,36 @@ class BookingsController < ApplicationController
         end
       else
         @errors << "No estás ingresado como cliente"
+        render layout: "workflow"
+        return
+      end
+    elsif @company.company_setting.use_identification_number
+      if !params[:identification_number].blank?
+        if Client.where(email: params[:email], company_id: @company).count > 0
+          client = Client.where(email: params[:email], company_id: @company).first
+          client.first_name = params[:firstName]
+          client.last_name = params[:lastName]
+          client.phone = params[:phone]
+          client.identification_number = params[:identification_number]
+          if client.save
+
+          else
+            @errors << client.errors.full_messages
+            render layout: "workflow"
+            return
+          end
+        else
+          client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], identification_number: params[:identification_number], company_id: @company.id)
+          if client.save
+
+          else
+            @errors << client.errors.full_messages
+            render layout: "workflow"
+            return
+          end
+        end
+      else
+        @errors << "No se ingresó " + (I18n.t('ci')).capitalize + " de cliente"
         render layout: "workflow"
         return
       end

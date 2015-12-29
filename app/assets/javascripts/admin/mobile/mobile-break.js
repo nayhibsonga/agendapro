@@ -24,7 +24,11 @@ function saveBreak (typeURL, booking_id) {
       }
       $('button[type="submit"]').removeClass('disabled');
       $('button[type="submit"]').html('Guardar');
-      alert(errores);
+      swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n" + errores,
+        type: "error"
+      });
     }
   });
 }

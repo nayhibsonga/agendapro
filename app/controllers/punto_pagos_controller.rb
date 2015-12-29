@@ -274,6 +274,11 @@ class PuntoPagosController < ApplicationController
       if(Booking.find_by_trx_id(trx_id))
         bookings = Booking.where(:trx_id => trx_id)
 
+        if bookings.count > 0 && bookings.first.marketplace_origin
+          redirect_to 'http://' + ENV['MARKETPLACE_URL'] + '/booking/failure/' + bookings.first.id.to_s + '/' + bookings.first.access_token
+          return
+        end
+
         @are_session_bookings = false
         if bookings.count > 0
           if bookings.first.is_session

@@ -236,23 +236,23 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                              <% else %>                     
+                              <% else %>
                                 <td><%= punto_pago_fail.dues_number %></td>
                                 <td><%= punto_pago_fail.operation_number %></td>
                                 <td><%= punto_pago_fail.authorization_code %></td>
                               <% end %>
-                            
+
                             </tr>
                           <% else %>
                             <tr>
                               
                               <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
                               <td><%= log.payment %></td>
-                              <td><%= log.amount %></td>                            
+                              <td><%= log.amount %></td>
                               <td><%= punto_pago.dues_number %></td>
                               <td><%= punto_pago.operation_number %></td>
                               <td><%= punto_pago.authorization_code %></td>
-                            
+
                             </tr>
                           <% end %>
                         <% end %>
@@ -585,18 +585,30 @@
 
     $("#deactivateBtn").click(function(e){
       e.preventDefault();
-      var r = confirm("¿Estás seguro que deseas desactivarla?");
-      if (r == true) {
-        $(this).closest("form").submit();
-      }
+      swal({
+        title: "¿Estás seguro que deseas desactivarla?",
+        type: "warning",
+        showCancelButton: true
+      },
+      function (isConfirm) {
+        if (isConfirm) {
+          $('#deactivateBtn').closest("form").submit();
+        };
+      });
     });
 
     $("#deletePayment").click(function(e){
       e.preventDefault();
-      var r = confirm("¿Estás seguro que deseas eliminarlo?");
-      if (r == true) {
-        $(this).closest("form").submit();
-      }
+      swal({
+        title: "¿Estás seguro que deseas eliminarlo?",
+        type: "warning",
+        showCancelButton: true
+      },
+      function (isConfirm) {
+        if (isConfirm) {
+          $('#deactivateBtn').closest("form").submit();
+        };
+      });
     });
 
     $(document).ready(function(){

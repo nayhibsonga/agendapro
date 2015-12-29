@@ -25,12 +25,12 @@ function saveServiceCategory () {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        type: "error",
+        html: true
+      });
 			$('#update_service_category_button').attr('disabled', false);
 			$('#update_service_category_spinner').hide();
 		}
@@ -54,12 +54,12 @@ function deleteServiceCategory (id) {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        type: "error",
+        html: true
+      });
 			$('#update_service_category_spinner').hide();
 		}
 	});
@@ -109,12 +109,12 @@ function saveService () {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        type: "error",
+        html: true
+      });
 			$('#update_service_button').attr('disabled', false);
 			$('#update_service_spinner').hide();
 		}
@@ -140,12 +140,12 @@ function deleteService (id) {
 			for (i in errors) {
 				errorList += '<li>' + errors[i] + '</li>'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        type: "error",
+        html: true
+      });
 			$('#update_service_spinner').hide();
 		}
 	});

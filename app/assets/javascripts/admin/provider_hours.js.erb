@@ -310,20 +310,16 @@ function saveProvider(method,extraURL) {
       for (i in errores) {
         errorList += '<li>' + errores[i] + '</li>'
       }
-      alertId.showAlert(
-        '<h3>Error</h3>' +
-        '<ul>' +
-          errorList +
-        '</ul>'
-      );
+      swal({
+        title: "Error",
+        text: "Se produjeron los siguientes errores:\n<ul>" + errorList + "</ul>",
+        type: "error"
+      });
     }
   });
 }
 
-var alertId;
 $(function() {
-  alertId = new Alert();
-
   initialize();
 
   $('.buttonProvider').click(function() {

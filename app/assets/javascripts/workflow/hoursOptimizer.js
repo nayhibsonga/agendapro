@@ -131,7 +131,7 @@ function loadHourModal () {
     if ($('input[name="hoursRadio"]:checked').val()) {
       userData();
     } else {
-      alert('Debe seleccionar una hora');
+      swal('Debe seleccionar una hora');
     };
   }); // Bind click event
 }
@@ -162,7 +162,7 @@ function loadHours () {
         services_str = services_str + '<label class="checkbox-inline"><p><i class="fa fa-check-circle-o fa-green"></i> <span style="color: #505050;">' + hour.bookings[i].service_name +
             '</span><br />' +
             '<i class="fa fa-calendar-o fa-green"></i> ' + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].start.split("T")[1].split("+")[0].split(":")[1] + ' - ' + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[0] + ":" + hour.bookings[i].end.split("T")[1].split("+")[0].split(":")[1] +
-            '<br />' + 
+            '<br />' +
             '<i class="fa fa-user fa-green"></i> ' + hour.bookings[i].provider_name +
             '</p></label>';
       }

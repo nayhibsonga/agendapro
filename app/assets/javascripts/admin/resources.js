@@ -11,48 +11,56 @@ function changeLocationStatus(location_id) {
 function saveCategory (typeURL, extraURL) {
 	$('#saveResourceCategryButton').attr('disabled', true);
 	var categoryJSON = { "name": $('#resource_category_name').val() };
-	if (typeURL == 'DELETE') {
-		var r = confirm("Estás seguro?");
-		if (r != true) {
-		    return false;
-		}
-	}
-	else if (!$('#new_resource_category').valid()) {
+	if (!$('#new_resource_category').valid()) {
 		return false;
+	} else if (typeURL == 'DELETE') {
+		swal({
+      title: "¿Estás seguro?",
+      type: "warning",
+      showCancelButton: true
+    },
+    function (isConfirm) {
+      if (isConfirm) {
+				$.ajax({
+					type: typeURL,
+					url: '/resource_categories'+extraURL+'.json',
+					data: { "resource_category": categoryJSON },
+					dataType: 'json',
+					success: function(resource_category){
+						switch(typeURL) {
+						case 'POST':
+							$('#resource_resource_category_id').append('<option value="'+resource_category.id+'">'+resource_category.name+'</option>');
+							$('#resource_resource_category_id option[value="'+resource_category.id+'"]').prop('selected', true);
+							$('#resourceCategoryModal').modal('hide');
+							$('#saveResourceCategryButton').attr('disabled', false);
+							break;
+						case 'PATCH':
+							$('#saveResourceCategryButton').attr('disabled', false);
+							break;
+						case 'DELETE':
+							$('#resource_resource_category_id option[value="'+extraURL.substring(1)+'"]').remove();
+							$('#resourceCategoryModal').modal('hide');
+							$('#saveResourceCategryButton').attr('disabled', false);
+							break;
+						}
+					},
+					error: function(xhr){
+						var errors = $.parseJSON(xhr.responseText).errors;
+						var errores = '';
+						for (i in errors) {
+							errores += '*' + errors[i] + '\n';
+						}
+						swal({
+							title: "Error",
+							text: "Se produjeron los siguientes errores:\n" + errores,
+							type: "error"
+						});
+						$('#saveResourceCategryButton').attr('disabled', false);
+					}
+				});
+      };
+    });
 	};
-	$.ajax({
-		type: typeURL,
-		url: '/resource_categories'+extraURL+'.json',
-		data: { "resource_category": categoryJSON },
-		dataType: 'json',
-		success: function(resource_category){
-			switch(typeURL) {
-			case 'POST':
-				$('#resource_resource_category_id').append('<option value="'+resource_category.id+'">'+resource_category.name+'</option>');
-				$('#resource_resource_category_id option[value="'+resource_category.id+'"]').prop('selected', true);
-				$('#resourceCategoryModal').modal('hide');
-				$('#saveResourceCategryButton').attr('disabled', false);
-				break;
-			case 'PATCH':
-				$('#saveResourceCategryButton').attr('disabled', false);
-				break;
-			case 'DELETE':
-				$('#resource_resource_category_id option[value="'+extraURL.substring(1)+'"]').remove();
-				$('#resourceCategoryModal').modal('hide');
-				$('#saveResourceCategryButton').attr('disabled', false);
-				break;
-			}
-		},
-		error: function(xhr){
-			var errors = $.parseJSON(xhr.responseText).errors;
-			var errores = 'Error\n';
-			for (i in errors) {
-				errores += '*' + errors[i] + '\n';
-			}
-			alert(errores);
-			$('#saveResourceCategryButton').attr('disabled', false);
-		}
-	});
 }
 
 function saveResource (typeURL, extraURL) {
@@ -94,12 +102,12 @@ function saveResource (typeURL, extraURL) {
 			for (i in errores) {
 				errorList += '<li>' + errores[i] + '</li>'
 			}
-			alertId.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+				title: "Error",
+				text: "Se produjeron los siguientes errores:\n<ul>" + errorList + "</ul>",
+				type: "error",
+				html: true
+			});
 		}
 	});
 }
@@ -134,7 +142,6 @@ function initialize() {
 	}
 }
 
-var alertId;
 $(function() {
 
 	$('form input, form select').bind('keypress keydown keyup', function(e){
@@ -143,7 +150,6 @@ $(function() {
        	}
     });
 
-	alertId = new Alert();
 	$('#newResourceCategoryButton').click(function() {
 		getResourceCategories();
 	});

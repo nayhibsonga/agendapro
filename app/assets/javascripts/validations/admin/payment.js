@@ -8,7 +8,14 @@ $(function() {
 		rules: {
 			'payment_client_phone': {
 				required: {
-					depends: function () { return ($("#set_client").val() == "1"); }
+					depends: function () {
+						var strict_booking = $('#calendar-data').data('strict-booking');
+    				var client_email = $.trim($('#payment_client_email').val());
+						return (
+							$("#set_client").val() == "1" ||
+							(strict_booking && (client_email == null || client_email == ""))
+						);
+					}
 				},
 				rangelength: [7, 15]
 			},
@@ -16,6 +23,18 @@ $(function() {
 				required: {
 					depends: function () { return ($("#set_client").val() == "1"); }
 				}
+			},
+			'payment_client_email': {
+				required: {
+					depends: function () {
+						var strict_booking = $('#calendar-data').data('strict-booking');
+    				var client_phone = $.trim($('#payment_client_phone').val());
+						return (
+							strict_booking && (client_phone == null || client_phone == "")
+						);
+					}
+				},
+				email: true
 			}
 		},
 		highlight: function(element) {
