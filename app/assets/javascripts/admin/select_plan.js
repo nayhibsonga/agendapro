@@ -62,7 +62,7 @@ $(function() {
   });*/
 
   $('#wireTransferBtn').on('click', function(){
-    if($('#amount_select').val() == "0")
+    if($('#amount_select').val() == "0" || $('.mp_radio:checked').length < 1)
     {
       alert("Elige una opción de pago primero.");
       return false;
@@ -73,6 +73,7 @@ $(function() {
     $('#transfer_change_plan').val("0");
     $('#transfer_new_plan').val("0");
     $('#transfer_paid_months').val($('#amount_select').val());
+    $('#saveTransferBtn').attr('disabled', false);
   });
 
   $('#changePlanWireTransferBtn').on('click', function(){
@@ -81,7 +82,9 @@ $(function() {
     $('#transfer_change_plan').val("1");
     $('#transfer_new_plan').val($('#new_plan_id').val())
     $('#transfer_paid_months').val("0");
+    $('#saveTransferBtn').attr('disabled', false);
   });
+
 
   /*$('#saveTransferBtn').on('click', function(){
 
@@ -123,12 +126,15 @@ $(function() {
     {
       $('#payBtn').attr('href', curr_href);
       $('#payBtn').show();
+      $('#payBtn').attr('disabled', false);
+      $('#payBtn').find('button').attr('disabled', false);
       $('#wireTransferBtn').hide();
     }
     else
     {
       $('#payBtn').hide();
       $('#wireTransferBtn').show();
+      $('#wireTransferBtn').attr('disabled', false);
     }
 
   });
@@ -148,12 +154,15 @@ $(function() {
     {
       $('#changePlanPayBtn').attr('href', curr_href);
       $('#changePlanPayBtn').show();
+      $('#changePlanPayBtn').attr('disabled', false);
+      $('#changePlanPayBtn').find('button').attr('disabled', false);
       $('#changePlanWireTransferBtn').hide();
     }
     else
     {
       $('#changePlanPayBtn').hide();
       $('#changePlanWireTransferBtn').show();
+      $('#changePlanWireTransferBtn').disabled('disabled', false);
     }
 
   });
@@ -191,12 +200,15 @@ $(function() {
     {
       $('#payBtn').attr('href', curr_href);
       $('#payBtn').show();
+      $('#payBtn').attr('disabled', false);
+      $('#payBtn').find('button').attr('disabled', false);
       $('#wireTransferBtn').hide();
     }
     else
     {
       $('#payBtn').hide();
       $('#wireTransferBtn').show();
+      $('#wireTransferBtn').attr('disabled', false);
     }
 
   });
@@ -324,5 +336,25 @@ $(function() {
   });
 
   $('#billing-wire-transfer-form input').attr("disabled", false);
+
+  $('#payBtn').on('click', function(e){
+    if($('.mp_radio:checked').length < 1 || $('#amount_select').val() == "0")
+    {
+      alert("Elige cantidad y medio de pago antes de pagar.")
+      e.preventDefault();
+    }
+    $(this).attr('disabled', true);
+    $(this).find('button').attr('disabled', true);
+  });
+
+  $('#changePlanPayBtn').on('click', function(e){
+    if($('.change_plan_mp_radio:checked').length < 1)
+    {
+      alert('Elige un medio de pago primero.');
+      e.preventDefault();
+    }
+    $(this).attr('disabled', true);
+    $(this).find('button').attr('disabled', true);
+  });
 
 });

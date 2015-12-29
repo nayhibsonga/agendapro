@@ -401,6 +401,7 @@ class PayUController < ApplicationController
         company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
           CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
+          CompanyMailer.pay_u_online_receipt_email(company.id, pay_u_notification.id)
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
         end
@@ -414,6 +415,7 @@ class PayUController < ApplicationController
         company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "OK notification_plan")
+          CompanyMailer.pay_u_online_receipt_email(company.id, pay_u_notification.id)
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
         end

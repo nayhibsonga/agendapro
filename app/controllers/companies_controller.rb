@@ -97,6 +97,8 @@ class CompaniesController < ApplicationController
 
 				              	PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
 
+				              	CompanyMailer.transfer_receipt_email(@transfer.id)
+
 				              	@json_response[0] = "ok"
 								@json_response[1] = company
 								render :json => @json_response
@@ -139,6 +141,8 @@ class CompaniesController < ApplicationController
 
 					                @transfer.approved = true
 					                @transfer.save
+
+					                CompanyMailer.transfer_receipt_email(@transfer.id)
 
 					                @json_response[0] = "ok"
 									@json_response[1] = company
@@ -192,6 +196,8 @@ class CompaniesController < ApplicationController
 
 								@transfer.approved
 								@transfer.save
+
+								CompanyMailer.transfer_receipt_email(@transfer.id)
 
 								@json_response[0] = "ok"
 								@json_response[1] = company
@@ -272,6 +278,7 @@ class CompaniesController < ApplicationController
         				@transfer.approved = true
         				@transfer.save
 		          		CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
+		          		CompanyMailer.transfer_receipt_email(@transfer.id)
 		          		@json_response[0] = "ok"
 						@json_response[1] = company
 						render :json => @json_response

@@ -317,7 +317,17 @@ class Company < ActiveRecord::Base
 	end
 
 	# Warn trial ending 5 days before it ends
-	def self.warn_trial_end
+	def self.warn_trial
+
+		where(payment_status_id: PaymentStatus.find_by_name("Trial").id).where('created_at BETWEEN ? AND ?', (1.months.ago + 5.days).beginning_of_day, (1.months.ago + 5.days).end_of_day).each do |company|
+
+			if company.account_used
+				CompanyMailer.trial_warning(company.id)
+			else
+				CompanyMailer.trial_recovery(company.id)
+			end
+
+		end
 
 	end
 
@@ -329,6 +339,7 @@ class Company < ActiveRecord::Base
 
 			company.plan_id = plan_id
 			company.due_date = Time.now
+			company.due_amount = 0.0
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 
 			if company.save
@@ -336,11 +347,9 @@ class Company < ActiveRecord::Base
 
 				#Check if account was used.
 				if company.account_used
-					CompanyMailer.trial_invoice(company.id)
+					CompanyMailer.trial_end(company.id)
 				else
-
-					#Send client recovery mail
-
+					CompanyMailer.trial_recovery(company.id)
 				end
 
 				#if company.country_id == 1
@@ -368,8 +377,11 @@ class Company < ActiveRecord::Base
 		status_emitido = PaymentStatus.find_by_name("Emitido")
 		status_vencido = PaymentStatus.find_by_name("Vencido")
 		plan_gratis = Plan.find_by_name("Gratis")
+		message_emitido = "Tu cuenta está atrasada de pago por un mes. Si quieres continuar usando tu plan con todas sus características, por favor ponte al día en el pago"
 
 		collectables.where.not(payment_status_id: status_vencido.id).each do |company|
+
+			sales_tax = company.country.sales_tax
 
 			if company.payment_status_id == status_activo.id
 
@@ -386,9 +398,9 @@ class Company < ActiveRecord::Base
 				end
 
 				if company.save
-				CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
+					CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
 					if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id && company.country_id == 1
-						CompanyMailer.invoice_email(company.id)
+						CompanyMailer.invoice_email(company.id, "")
 					end
 				else
 					errors = ""
@@ -407,14 +419,15 @@ class Company < ActiveRecord::Base
 				company.months_active_left -= 1
 				company.payment_status_id = status_vencido.id
 				if company.due_amount.nil?
-					company.due_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
+					company.due_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
 				else
-					company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
+					company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
 				end
 				company.due_date = DateTime.now
 				company.save
 
 				#Send invoice_email
+				CompanyMailer.invoice_email(company.id, message_emitido)
 
 			end
 
@@ -432,12 +445,21 @@ class Company < ActiveRecord::Base
 		status_emitido = PaymentStatus.find_by_name("Emitido")
 		status_vencido = PaymentStatus.find_by_name("Vencido")
 		plan_gratis = Plan.find_by_name("Gratis")
+		chile = Country.find_by_name("Chile")
 
-		collectables.where.not(payment_status_id: status_activo).id.each do |company|
+		message_emitido = "Recuerda que tu cuenta ya fue enviada. Por favor paga a la brevedad para que no tengas problemas con tu servicio"
+		message_vencido = "Tu plan se ha desactivado por no pago. Aún puedes entrar a tu cuenta, pero sólo tendrás disponible el uso del calendario para revisar tus reservas. Si quieres reactivar tu plan, por favor cancela la deuda y el mes actual"
+
+		collectables.where.not(payment_status_id: status_activo.id).each do |company|
+
+			sales_tax = company.country.sales_tax
 
 			if company.payment_status_id == status_emitido.id
 
 				#Send first reminder
+				if company.country_id == chile.id
+					CompanyMailer.invoice_email(company.id, message_emitido)
+				end
 
 			elsif company.payment_status_id == status_vencido.id
 
@@ -445,16 +467,19 @@ class Company < ActiveRecord::Base
 				#Add their due amount for possible reactivation in the future
 
 				company.payment_status_id = status_vencido.id
-				company.plan_id = plan_gratis.id
 				if company.due_amount.nil?
-					company.due_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
+					company.due_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
 				else
-					company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
+					company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1+ sales_tax)
 				end
+				company.plan_id = plan_gratis.id
 				company.due_date = DateTime.now
 				company.save
 
 				#Send mail alerting their plan changed
+				if company.country_id == chile.id
+					CompanyMailer.invoice_email(company.id, message_vencido)
+				end
 
 			end
 
@@ -462,6 +487,7 @@ class Company < ActiveRecord::Base
 
 	end
 
+	#15th of month
 	def self.collect_insistence
 
 		status_activo = PaymentStatus.find_by_name("Activo")
@@ -469,14 +495,18 @@ class Company < ActiveRecord::Base
 		status_vencido = PaymentStatus.find_by_name("Vencido")
 		plan_gratis = Plan.find_by_name("Gratis")
 
-		collectables.where(payment_status_id: status_emitido).each do |company|
+		message_emitido = "Tu cuenta fue enviada el 1° del mes. Por favor paga a la brevedad para que no tengas problemas con tu servicio"
+
+		collectables.where(payment_status_id: status_emitido.id, country_id: Country.find_by_name("Chile")).each do |company|
 
 			#Send second reminder (insistence)
+			CompanyMailer.invoice_email(company.id, message_emitido)
 
 		end
 
 	end
 
+	#25th of month
 	def self.collect_ultimatum
 
 		status_activo = PaymentStatus.find_by_name("Activo")
@@ -484,9 +514,12 @@ class Company < ActiveRecord::Base
 		status_vencido = PaymentStatus.find_by_name("Vencido")
 		plan_gratis = Plan.find_by_name("Gratis")
 
-		collectables.where(payment_status_id: status_emitido).each do |company|
+		message_emitido = "Tu cuenta fue enviada el 1° del mes. Si no cancelas el mes en curso dentro de los próximos días, tu plan actual será desactivado y sólo tendrás acceso básico a tu calendario. Por favor paga a la brevedad para que no tengas problemas con tu servicio"
+
+		collectables.where(payment_status_id: status_emitido.id, country_id: Country.find_by_name("Chile")).each do |company|
 
 			#Send ultimatum saying they will be downgraded on failure to pay
+			CompanyMailer.invoice_email(company.id, message_emitido)
 
 		end
 

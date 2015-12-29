@@ -31,6 +31,7 @@ $(function() {
       		var time = $('#transfer_payment_time_4i').val() + ":" + $('#transfer_payment_time_5i').val() + ":00";
       		$('#transfer_datetime').val(date + " " + time);
 			form.submit();
+			$('#saveTransferBtn').attr('disabled', true);
 		}
 	});
 

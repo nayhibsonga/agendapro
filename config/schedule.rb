@@ -33,6 +33,7 @@ end
 
 every 1.days, :at => '1:30 am' do
   runner "Company.end_trial"
+  runner "Company.warn_trial"
 end
 
 #every '0 1 1 * *' do
