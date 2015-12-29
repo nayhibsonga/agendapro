@@ -2,7 +2,6 @@ Agendapro::Application.routes.draw do
 
 
 
-  resources :bundles
 
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
@@ -41,6 +40,7 @@ Agendapro::Application.routes.draw do
     resources :companies
     resources :locations
     resources :services
+    resources :bundles
     resources :promotions
     resources :bookings
     resources :service_providers
