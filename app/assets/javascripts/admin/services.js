@@ -147,11 +147,15 @@ $(function() {
 				},
 				error: function(xhr){
 					var errors = $.parseJSON(xhr.responseText).errors;
-					var errores = 'Error\n';
+					var errores = '';
 					for (i in errors) {
 						errores += '*' + errors[i] + '\n';
 					}
-					alert(errores);
+					swal({
+						title: "Error",
+						text: "Se produjeron los siguientes errores:\n" + errores,
+						type: "error"
+					});
 				},
 			}).always(function () {
 				btn.button('reset');

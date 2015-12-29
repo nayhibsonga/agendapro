@@ -1,16 +1,16 @@
-	Date.isLeapYear = function (year) { 
-        return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+	Date.isLeapYear = function (year) {
+        return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
     };
 
     Date.getDaysInMonth = function (year, month) {
         return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
     };
 
-    Date.prototype.isLeapYear = function () { 
-        return Date.isLeapYear(this.getFullYear()); 
+    Date.prototype.isLeapYear = function () {
+        return Date.isLeapYear(this.getFullYear());
     };
 
-    Date.prototype.getDaysInMonth = function () { 
+    Date.prototype.getDaysInMonth = function () {
         return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
     };
 
@@ -106,12 +106,12 @@ function loadStep1 (service_id) {
 					//====== Generando Radios
 					serviceDiscount = "";
 					servicePrice = '';
-					
+
 					if ($('#online_capabilities').data('online-payment-capable') && ((service.time_promo_active && service.has_time_discount && $('#online_capabilities').data('promo-offerer-capable')) || (service.has_discount && service.online_payable && service.discount > 0)))
 					{
 						serviceDiscount = '<div class="col-sm-2 open-promotion-popover" rel="popover" service_id="' + service.id + '" data-toggle="popover" data-placement="right" data-content="">' +
 										'<%= image_tag("promociones/icono_promociones.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' +
-									'</div>';				
+									'</div>';
 					}
 					else
 					{
@@ -184,7 +184,7 @@ function loadStep1 (service_id) {
 									$('.open-promotion-popover').on('hidden.bs.popover', function(e){
 										if ($(window).width() > 770)
 										{
-											
+
 											var oldTop = $(document).scrollTop();
 											$('#box-step-1').height($("#box-step-1").height() - 10);
 											$("#foo4").trigger('updateSizes');
@@ -382,7 +382,7 @@ function loadStep2 () {
 			$('[name="staffRadio"]').on('click', function(event) {
 
 				$('.horario').show();
-				
+
 				// if (event.target.getAttribute('value') == 0) {
 				// 	$('#provider_lock').val(false);
 				// }
@@ -476,8 +476,8 @@ function loadStep2 () {
 				}
 
 				// $("#calendar-loader").show();
-				
-					
+
+
 
 				if (calendar) {
 					calendar.rebuild('/available_hours_week_html', data);
@@ -515,7 +515,7 @@ function loadStep2 () {
 		});
 
 	}
-	
+
 }
 */
 
@@ -526,7 +526,7 @@ function loadStep2() {
 	var start_date = $("#optimizerDateSelector").val();
 
 	sessions_left = 0;
-	
+
 	$("#selected-hour-body").empty();
 
 	for(k = 0; k < added_services.length; k++)
@@ -606,7 +606,7 @@ function loadStep2() {
 	$(document).on('hourClick', function (e) {
 
 		selected = true;
-		
+
 		bookSummary = bookSummaries[e.index];
 
 		$("#selected-hour-body").empty();
@@ -776,8 +776,8 @@ function loadStep2() {
 					'</div>'
 				);
 			}
-			
-			
+
+
 			if(!sessions_service)
 			{
 				addBooking(e, k, book_discount, is_time_discount);
@@ -799,10 +799,11 @@ function loadStep3 () {
 
 	if(!selected)
 	{
-		myAlert.showAlert(
-		  '<h3>Selecciona un horario</h3>' +
-		  '<p>Debes elegir un horario para continuar.</p>'
-		);
+		swal({
+			title: "Selecciona un horario",
+			text: "Debes elegir un horario para continuar.",
+			type: "error"
+		});
 		return false;
 	}
 
@@ -814,10 +815,11 @@ function loadStep3 () {
 		{
 			if(actual_booking == null)
 			{
-			  	myAlert.showAlert(
-					'<h3>Selecciona un horario</h3>' +
-					'<p>Debes elegir un horario para continuar.</p>'
-				);
+				swal({
+					title: "Selecciona un Horario",
+					text: "Debes elegir un horario para continuar.",
+					type: "error"
+				});
 				return false;
 			}
 			if(actual_booking.has_sessions)
@@ -830,7 +832,7 @@ function loadStep3 () {
 
 	            var times_str = "";
 	            var price = actual_booking.price;
-	            var min_discount = actual_booking.discount; 
+	            var min_discount = actual_booking.discount;
 	            var must_pay = false;
 
 	            for(i = 0; i < sessions_buffer.length; i++)
@@ -890,7 +892,7 @@ function loadStep3 () {
 	            if($('#online_capabilities').data('online-payment-capable') && actual_booking.show_price)
 	            {
 		            $('#summary').append(
-		              '<tr>' + 
+		              '<tr>' +
 		                '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
 		              '</tr>' +
 		              '<tr>' +
@@ -918,7 +920,7 @@ function loadStep3 () {
 	        		if(actual_booking.show_price && actual_booking.price > 0)
 	        		{
 		        		$('#summary').append(
-			              '<tr>' + 
+			              '<tr>' +
 			                '<td class="dark-gray">Precio</td><td class="light-gray">' + simple_currency(price) + '</td>' +
 			              '</tr>'
 			            );
@@ -926,7 +928,7 @@ function loadStep3 () {
 		        	else
 		        	{
 		        		$('#summary').append(
-			              '<tr>' + 
+			              '<tr>' +
 			                '<td class="dark-gray">Precio</td><td class="light-gray">Preguntar en local</td>' +
 			              '</tr>'
 			            );
@@ -947,10 +949,11 @@ function loadStep3 () {
 	        {
 	        	if(booking_buffer.length == 0)
 	        	{
-	        		myAlert.showAlert(
-						'<h3>Selecciona un horario</h3>' +
-					  	'<p>Debes elegir un horario para continuar.</p>'
-					);
+	        		swal({
+	        			title: "Selecciona un Horario",
+	        			text: "Debes elegir un horario para continuar.",
+	        			type: "error"
+	        		});
 					return false;
 	        	}
 	        	else
@@ -983,13 +986,13 @@ function loadStep3 () {
 						var booking = booking_buffer[k];
 						var price = booking.price;
 						var discount = booking.discount;
-					
+
 
 						services_str = services_str + booking.service_name + ' con ' + booking.provider_name + '.<br />';
-						
+
 						if(booking.has_discount && discount > 0 && booking.online_payable && booking.show_price)
 						{
-							
+
 
 							//may_pay = true;
 							if(discount > max_discount)
@@ -1018,19 +1021,19 @@ function loadStep3 () {
 							{
 								may_pay = true;
 								prices_str = prices_str + '<strike>' + simple_currency(price) + '</strike> - ' + simple_currency(Math.round( (price * (100 - discount))/100 )) + ' (' + discount + '% de descuento)<br />';
-								
+
 							}
 							total_price = total_price + Math.round(price * (100 - discount) / 100);
-						
+
 
 						}
 						else
 						{
-				
+
 							if(booking.show_price && booking.price > 0)
 							{
 								prices_str = prices_str + simple_currency(price) + '<br />';
-								
+
 								if(!booking.online_payable)
 								{
 									some_not_payable = true;
@@ -1050,7 +1053,7 @@ function loadStep3 () {
 								some_not_payable = true;
 							}
 						}
-						
+
 					}
 
 
@@ -1264,7 +1267,7 @@ function loadStep3 () {
 
 			var times_str = "";
 			var price = actual_booking.price;
-			var min_discount = actual_booking.discount; 
+			var min_discount = actual_booking.discount;
 			var must_pay = false;
 			var ask_in_location = false;
 
@@ -1324,7 +1327,7 @@ function loadStep3 () {
 			if($('#online_capabilities').data('online-payment-capable') && actual_booking.show_price)
 			{
 				$('#summary').append(
-					'<tr>' + 
+					'<tr>' +
 					  '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
 					'</tr>' +
 					'<tr>' +
@@ -1352,7 +1355,7 @@ function loadStep3 () {
 				if(actual_booking.show_price)
 				{
 					$('#summary').append(
-						'<tr>' + 
+						'<tr>' +
 						  '<td class="dark-gray">Precio normal</td><td class="light-gray">' + simple_currency(price) + '</td>' +
 						'</tr>'
 					);
@@ -1360,7 +1363,7 @@ function loadStep3 () {
 				else
 	        	{
 	        		$('#summary').append(
-		              '<tr>' + 
+		              '<tr>' +
 		                '<td class="dark-gray">Precio</td><td class="light-gray">Preguntar en local</td>' +
 		              '</tr>'
 		            );
@@ -1516,7 +1519,7 @@ function loadStep3 () {
 			{
 
 				sessions_buffer.push(actual_booking);
-				
+
 				booking_buffer = [];
 
 				for(i=0; i < sessions_buffer.length; i++)
@@ -1634,11 +1637,11 @@ function loadStep3 () {
 
 				if(sessions_buffer.length > 0)
 				{
-					
+
 					for(i=0; i<sessions_buffer.length; i++)
 					{
 						$("#summary").append(
-							'<tr><td></td><td class="light-gray">' + formattedTime(sessions_buffer[i].start) + ', con ' + sessions_buffer[i].provider_name + '</td></tr>'		
+							'<tr><td></td><td class="light-gray">' + formattedTime(sessions_buffer[i].start) + ', con ' + sessions_buffer[i].provider_name + '</td></tr>'
 						);
 					}
 
@@ -1742,7 +1745,7 @@ function loadDescription (serviceId) {
 
 				}
 			}
-		} 
+		}
 		else if (service.show_price && service.price == 0) {
 			$('#services-description').append(
 				'<tr>' +
@@ -1794,7 +1797,7 @@ function loadDescription (serviceId) {
 		}
 		$("#discount").empty();
 		$("#normal-book").empty();
-		
+
 		/*if(service.online_payable){
 			$("#reservar1").hide();
 			$("#reservar2").show();
@@ -1839,10 +1842,11 @@ function scrollEvents (direction) {
 			}*/
 			if(added_services.length == 0)
 			{
-				myAlert.showAlert(
-				  '<h3>Selecciona un Servicio</h3>' +
-				  '<p>Debes elegir un servicio antes de poder continuar.</p>'
-				);
+				swal({
+					title: "Selecciona un Servicio",
+					text: "Debes elegir un servicio antes de poder continuar.",
+					type: "error"
+				});
 			}
 			else {
 				loadStep2();
@@ -1854,10 +1858,11 @@ function scrollEvents (direction) {
 		else {
 
 			if(!selected) {
-				myAlert.showAlert(
-				  '<h3>Selecciona un horario</h3>' +
-				  '<p>Debes elegir un horario antes de poder continuar.</p>'
-				);
+				swal({
+					title: "Selecciona un Horario",
+					text: "Debes elegir un horario antes de poder continuar.",
+					type: "error"
+				});
 				return false;
 			}
 			else {
@@ -1865,14 +1870,14 @@ function scrollEvents (direction) {
 				step = 3;
 				return true;
 			}
-			
+
 		}
 	}
 	else if (direction == 'prev') {
 		if (step == 3) {
 			step = 2;
 			//sessions_buffer = [];
-			
+
 			if (sessions_service)
 			{
 				sessions_left = actual_booking.sessions_amount;
@@ -1897,7 +1902,7 @@ function scrollEvents (direction) {
 			$("#summary").empty();
 
 			$("#sessions-summary-tr").empty();
-      		
+
       		$("#selected-hour-body").empty();
 
 
@@ -2086,20 +2091,22 @@ function blockService(service)
 {
 	if(service.has_sessions && added_services.length > 0)
 	{
-		myAlert.showAlert(
-		  '<h3>No se puede agregar el servicio</h3>' +
-		  '<p>El servicio que quieres agregar tiene sesiones, no puede ser reservado junto a otros servicios.</p>'
-		);
+		swal({
+			title: "No se puede agregar el servicio",
+			text: "El servicio que quieres agregar tiene sesiones, no puede ser reservado junto a otros servicios.",
+			type: "error"
+		});
 		return true;
 	}
 	for(i = 0; i < added_services.length; i++)
 	{
 		if(added_services[i].has_sessions)
 		{
-			myAlert.showAlert(
-			  '<h3>No se puede agregar el servicio</h3>' +
-			  '<p>Ya existe un servicio con sesiones agregado, no puede ser reservado junto a otros servicios.</p>'
-			);
+			swal({
+        title: "No se puede agregar el servicio",
+        text: "Ya existe un servicio con sesiones agregado, no puede ser reservado junto a otros servicios.",
+        type: "error"
+      });
 			return true;
 		}
 	}
@@ -2113,10 +2120,11 @@ function addService(service_id){
 
 	if(service_id == "")
 	{
-		myAlert.showAlert(
-		  '<h3>Selecciona un servicio</h3>' +
-		  '<p>Selecciona un servicio antes de agregarlo.</p>'
-		);
+		swal({
+			title: "Selecciona un Servicio",
+			text: "Selecciona un servicio antes de agregarlo.",
+			type: "error"
+		});
 		return false;
 	}
 
@@ -2225,7 +2233,7 @@ function loadStaffForSessions(service_id, given_provider)
 	      	{
 	      		$("#changeProviderSelect").append('<option value="0">Sin preferencia</option');
 	      	}
-	      	
+
 	        /*$(".changeStaff").append(
 	          '<div class="radio">' +
                   '<label>' +
@@ -2246,7 +2254,7 @@ function loadStaffForSessions(service_id, given_provider)
 	      	{
 	      		$("#changeProviderSelect").append('<option value="' + provider.id + '">' + provider.public_name + '</option');
 	      	}
-	        
+
 	        /*$(".changeStaff").append(
 	          '<div class="radio">' +
                 '<label>' +
@@ -2268,7 +2276,7 @@ $('#changeProviderSelect').on('change', function(event){
 	var localId = $('#selectedLocal').data('local').id;
 	var selects = [];
 	var start_date = $("#optimizerDateSelector").val();
-	
+
 	$("#selected-hour-body").empty();
 
 	$(".selected-service").each(function() {
@@ -2313,7 +2321,7 @@ $('body').on('click', '[name="changeProvider"]', function(event){
 	var localId = $('#selectedLocal').data('local').id;
 	var selects = [];
 	var start_date = $("#optimizerDateSelector").val();
-	
+
 	$("#selected-hour-body").empty();
 
 	$(".selected-service").each(function() {
@@ -2326,7 +2334,7 @@ $('body').on('click', '[name="changeProvider"]', function(event){
 		});
 	});
 
-  	
+
 
   	var data;
 
@@ -2361,7 +2369,7 @@ $("#new-add-service").click(function(){
 		$('#foo4').trigger('updateSizes');
 		$(document).scrollTop(oldTop);
 		$("html, body").animate({ scrollTop: $(document).height() }, 500);
-		
+
 		//$("#hour-select-div").focus();
 	}
 });
@@ -2418,11 +2426,11 @@ function blockBookingBufferHour () {
 			var start = $(hourBlock).data('start');
 			var end = $(hourBlock).data('end');
 
-			
+
 
 			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
 			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
-			
+
 			//Check for no overlap and negate it.
 			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
 			{
@@ -2437,11 +2445,11 @@ function blockBookingBufferHour () {
 			var start = $(hourBlock).data('start');
 			var end = $(hourBlock).data('end');
 
-			
+
 
 			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
 			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
-			
+
 			//Check for no overlap and negate it.
 			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
 			{
@@ -2483,7 +2491,7 @@ function blockBookingBufferHour () {
 
 			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
 			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
-			
+
 			//Check for no overlap and negate it.
 			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
 			{
@@ -2499,7 +2507,7 @@ function blockBookingBufferHour () {
 
 			var blockStart = new Date(start_date[0], start_date[1]-1, start_date[2], start.split(":")[0], start.split(":")[1], 0, 0);
 			var blockEnd = new Date(end_date[0], end_date[1]-1, end_date[2], end.split(":")[0], end.split(":")[1], 0, 0);
-			
+
 			//Check for no overlap and negate it.
 			if(!(bookingEnd <= blockStart || blockEnd <= bookingStart))
 			{
@@ -2509,17 +2517,18 @@ function blockBookingBufferHour () {
 			}
 
 		});
-		$("#foo4").trigger('updateSizes');			
+		$("#foo4").trigger('updateSizes');
 	}
 }
 
 function addNewSession() {
 
 		if(!selected) {
-			myAlert.showAlert(
-			  '<h3>Selecciona un Horario</h3>' +
-			  '<p>Debes elegir un horario antes de agregar otra sesión.</p>'
-			);
+			swal({
+        title: "Selecciona un Horario",
+        text: "Debes elegir un horario antes de agregar otra sesión.",
+        type: "error"
+      });
 		}
 		else {
 
@@ -2562,7 +2571,7 @@ function addNewSession() {
 			}
 
 			$(hourBlock).removeClass("hora-activo");
-			
+
 			loadSessionsSummary();
 
 		}
@@ -2619,7 +2628,7 @@ function removeSession(index)
 		}
 	}
 	sessions_buffer = sessions_aux;
-	
+
 	var date = removed_session.start.split(' ')[0];
 	var start_time = removed_session.start.split(" ")[1];
 	var start_str = start_time.split(":")[0] + ":" + start_time.split(":")[1];
@@ -2640,24 +2649,26 @@ function removeSession(index)
 
 function addNewService () {
 	if(!$('[name="staffRadio"]').is(':checked')) {
-		myAlert.showAlert(
-		  '<h3>Selecciona un Staff</h3>' +
-		  '<p>Debes elegir un staff para poder reservar.</p>'
-		);
+		swal({
+			title: "Selecciona un Staff",
+			text: "Debes elegir un staff para poder reservar",
+			type: "error"
+		});
 	}
 	else {
 		if(!selected) {
-			myAlert.showAlert(
-			  '<h3>Selecciona un Horario</h3>' +
-			  '<p>Debes elegir un horario antes de poder continuar.</p>'
-			);
+			swal({
+        title: "Selecciona un Horario",
+        text: "Debes elegir un horario antes de poder continuar.",
+        type: "error"
+      });
 		}
 		else {
-			myAlert.showAlert(
-				'<h3><i class="fa fa-check fa-green fa-lg"></i>&nbsp;&nbsp;Servicio agregado.</h3>' + 
-				'<p>Has agregado el servicio ' + actual_booking.service_name + ' con ' + actual_booking.provider_name + ', el día ' +
-				formattedTime(actual_booking.start) + '</p'
-			);
+			swal({
+        title: "Servicio agregado",
+        text: "Has agregado el servicio " + actual_booking.service_name + " con " + actual_booking.provider_name + ", el día " + formattedTime(actual_booking.start),
+        type: "success"
+      });
 			booking_buffer.push(actual_booking);
 			$('input[name=serviceRadio]:checked').prop('checked', false);
 			$('#services-description').empty();
@@ -2685,9 +2696,7 @@ $("#staffCollapse").on("hidden.bs.collapse", function(){
 });
 
 
-var myAlert;
 $(function () {
-	myAlert  = new Alert();
 
 	if ($(window).width() <= 1100)
 	{
@@ -2721,7 +2730,7 @@ $(function () {
 	});
 
 
-	
+
 	$(document).on('calendarBuilded', function (e) {
 
 		/*
@@ -2730,7 +2739,7 @@ $(function () {
 		*/
 
 
-		
+
 		if (e.date < after_date)
 		{
 			if($(".bloque-hora").size() == 0)
@@ -2747,10 +2756,11 @@ $(function () {
 				}
 				else
 				{
-					myAlert.showAlert(
-			            '<h3>No hay horarios disponibles</h3>' +
-			            '<p>Lo sentimos, no hay más horarios disponibles después de la semana del ' + after_date.toLocaleDateString() + '.</p>'
-			        );
+					swal({
+						title: "No hay horarios disponibles",
+						text: "Lo sentimos, no hay más'horarios disponibles después de la semana del " + after_date.toLocaleDateString() + ".",
+						type: "error"
+					});
 				}
 			}
 		}
@@ -2788,10 +2798,11 @@ $(function () {
 			}
 
 
-			myAlert.showAlert(
-	            '<h3>No hay horarios disponibles</h3>' +
-	            '<p>Lo sentimos, no hay más horarios disponibles después de la semana del ' + after_date.toLocaleDateString() + '.</p>'
-	        );
+			swal({
+        title: "No hay horarios disponibles",
+        text: "Lo sentimos, no hay más horarios disponibles después de la semana del " + after_date.toLocaleDateString() + ".",
+        type: "error"
+      });
 		}
 
 		blockBookingBufferHour();

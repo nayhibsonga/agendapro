@@ -6,7 +6,8 @@ class Client < ActiveRecord::Base
   has_many :bookings, dependent: :destroy
   has_many :payments, dependent: :destroy
 
-  validate :mail_uniqueness, :identification_uniqueness, :record_uniqueness, :minimun_info
+  #Se quitó :identification_uniqueness
+  validate :mail_uniqueness, :record_uniqueness, :minimun_info
 
   after_update :client_notification
 

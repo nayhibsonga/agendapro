@@ -2,7 +2,7 @@ function loadProvidersReport()
 {
 	var provider_ids = []
 	$('#render_content').empty();
-	
+
 	if($('[name="person_type"]:checked').val() != "service_provider")
 	{
 		return;
@@ -27,11 +27,11 @@ function loadProvidersReport()
 		data: {service_provider_ids: provider_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
-		  	alert("Error");
+		  	swal("Error");
 		  	$('#loader-div').hide();
 		},
 		success: function(response){
-		  	
+
 		  	$('#render_content').append(response);
 		  	$('#loader-div').hide();
 		}
@@ -42,7 +42,7 @@ function loadUsersReport()
 {
 	var user_ids = []
 	$('#render_content').empty();
-	
+
 	if($('[name="person_type"]:checked').val() != "user")
 	{
 		return;
@@ -67,11 +67,11 @@ function loadUsersReport()
 		data: {user_ids: user_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
-		  	alert("Error");
+		  	swal("Error");
 		  	$('#loader-div').hide();
 		},
 		success: function(response){
-		  	
+
 		  	$('#render_content').append(response);
 		  	$('#loader-div').hide();
 		}
@@ -82,7 +82,7 @@ function loadCashiersReport()
 {
 	var cashier_ids = []
 	$('#render_content').empty();
-	
+
 	if($('[name="person_type"]:checked').val() != "cashier")
 	{
 		return;
@@ -107,11 +107,11 @@ function loadCashiersReport()
 		data: {cashier_ids: cashier_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
-		  	alert("Error");
+		  	swal("Error");
 		  	$('#loader-div').hide();
 		},
 		success: function(response){
-		  	
+
 		  	$('#render_content').append(response);
 		  	$('#loader-div').hide();
 		}
@@ -185,7 +185,7 @@ $(document).ready(function(){
 	    selectAllText: 'Todos',
 	    buttonContainer: '<div style="margin-top: 8px;"></div>',
 	    buttonText: function(options, select) {
-	      	
+
 	      	if (options.length === 0) {
 	        	return 'Ninguno';
 	      	}
@@ -223,7 +223,7 @@ $(document).ready(function(){
 	    selectAllText: 'Todos',
 	    buttonContainer: '<div style="margin-top: 8px;"></div>',
 	    buttonText: function(options, select) {
-	      	
+
 	      	if (options.length === 0) {
 	        	return 'Ninguno';
 	      	}
@@ -261,7 +261,7 @@ $(document).ready(function(){
 	    selectAllText: 'Todos',
 	    buttonContainer: '<div style="margin-top: 8px;"></div>',
 	    buttonText: function(options, select) {
-	      	
+
 	      	if (options.length === 0) {
 	        	return 'Ninguno';
 	      	}

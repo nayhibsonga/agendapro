@@ -313,12 +313,11 @@ function saveLocation() {
         for (i in errors) {
           errorList += '<li>' + errors[i] + '</li>'
         }
-        alertId.showAlert(
-          '<h3>Error</h3>' +
-          '<ul>' +
-            errorList +
-          '</ul>'
-        );
+        swal({
+          title: "Error",
+          text: "Se produjeron los siguientes errores:\n" + errorList,
+          type: "error"
+        });
       }
     });
   }
@@ -338,12 +337,11 @@ function saveLocation() {
         for (i in errors) {
           errorList += '<li>' + errors[i] + '</li>'
         }
-        alertId.showAlert(
-          '<h3>Error</h3>' +
-          '<ul>' +
-            errorList +
-          '</ul>'
-        );
+        swal({
+          title: "Error",
+          text: "Se produjeron los siguientes errores:\n" + errorList,
+          type: "error"
+        });
       }
     });
   }
@@ -486,9 +484,7 @@ function geolocate (district, address) {
   });
 }
 
-var alertId;
 $(function() {
-  alertId = new Alert();
   createMap();
   initialize();
   $('#saveLocation').click(function() {

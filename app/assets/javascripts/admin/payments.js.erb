@@ -5,7 +5,7 @@ function destroyPayment(payment_id) {
     dataType: 'json',
     success: function(payment){
       // window.console.log(payment);
-      alert('Pago eliminado exitosamente.');
+      swal('Pago eliminado exitosamente.');
       $("#save_payment_button").html('Guardar Pago');
       $('#save_payment_button').attr('disabled', false);
       $('#delete_payment_button').attr('disabled', false);
@@ -19,7 +19,7 @@ function destroyPayment(payment_id) {
       for (i in errors) {
         errores += '*' + errors[i] + '\n';
       }
-      alert(errores);
+      swal(errores);
       $("#save_payment_button").html('Guardar Pago');
       $('#save_payment_button').attr('disabled', false);
       $('#delete_payment_button').attr('disabled', false);
