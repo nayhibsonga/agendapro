@@ -3,3 +3,4 @@ json.service @booking.service.name
 json.provider @booking.service_provider.public_name
 json.location @booking.location.name
 json.status_name @booking.status.name
+json.company_name @booking.location.company.name

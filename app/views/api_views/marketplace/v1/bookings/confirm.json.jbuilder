@@ -13,3 +13,4 @@ json.bookings_group @bookings_group.each do |booking|
 	json.service_name booking.service.name
 end
 json.payment_info @payment_info
+json.company_name @booking.location.company.name
