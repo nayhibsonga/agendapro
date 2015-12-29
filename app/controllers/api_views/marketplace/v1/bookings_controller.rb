@@ -1098,8 +1098,12 @@ module ApiViews
 		def cancel_all
 	    require 'date'
 
-	    if params[:id]
-	      @booking = Booking.find(params[:id])
+	    if params[:id] && params[:access_token]
+	  		@booking = Booking.find(params[:id])
+	  		unless @booking.access_token == params[:access_token]
+	  			render json: { errors: "Parámetros mal ingresados." }, status: 422
+	        	return
+	  		end
 	      @company = Location.find(@booking.location_id).company
 	      @bookings_group = Booking.where(id: @booking.id)
 	  		if @booking.trx_id.present?
@@ -1223,8 +1227,12 @@ module ApiViews
 	  end
 
 	  def confirm
-	  	if params[:id]
-	      @booking = Booking.find(params[:id])
+	  	if params[:id] && params[:access_token]
+	  		@booking = Booking.find(params[:id])
+	  		unless @booking.access_token == params[:access_token]
+	  			render json: { errors: "Parámetros mal ingresados." }, status: 422
+	        	return
+	  		end
 
 	      now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 	      booking_start = DateTime.parse(@booking.start.to_s)
@@ -1247,8 +1255,12 @@ module ApiViews
 	  end
 
 	  def confirm_all
-	  	if params[:id]
-	      @booking = Booking.find(params[:id])
+	  	if params[:id] && params[:access_token]
+	  		@booking = Booking.find(params[:id])
+	  		unless @booking.access_token == params[:access_token]
+	  			render json: { errors: "Parámetros mal ingresados." }, status: 422
+	        	return
+	  		end
 				@bookings_group = Booking.where(id: @booking.id)
 				if @booking.trx_id.present?
 					@bookings_group = Booking.where(trx_id: @booking.trx_id)
