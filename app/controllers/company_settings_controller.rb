@@ -30,7 +30,7 @@ class CompanySettingsController < ApplicationController
     @banks = Bank.all
     @emails = current_user.company.company_from_email
     @company_from_email = CompanyFromEmail.new
-    @staff_codes = current_user.company.staff_codes
+    @staff_codes = current_user.company.staff_codes.order(active: :desc)
     @staff_code = StaffCode.new
     @deals = current_user.company.deals
     @deal = Deal.new

@@ -315,11 +315,13 @@ Agendapro::Application.routes.draw do
     patch '/locations/:id/activate', :to => 'locations#activate', :as => 'activate_location'
     patch '/services/:id/activate', :to => 'services#activate', :as => 'activate_service'
     patch '/service_providers/:id/activate', :to => 'service_providers#activate', :as => 'activate_service_provider'
+    patch '/staff_codes/:id/activate', :to => 'staff_codes#activate', :as => 'activate_staff_code'
 
     patch '/companies/:id/deactivate', :to => 'companies#deactivate', :as => 'deactivate_company'
     patch '/locations/:id/deactivate', :to => 'locations#deactivate', :as => 'deactivate_location'
     patch '/services/:id/deactivate', :to => 'services#deactivate', :as => 'deactivate_service'
     patch '/service_providers/:id/deactivate', :to => 'service_providers#deactivate', :as => 'deactivate_service_provider'
+    patch '/staff_codes/:id/deactivate', :to => 'staff_codes#deactivate', :as => 'deactivate_staff_code'
     post '/clients/import', :to => 'clients#import', :as => 'import_clients'
     get '/clients/:id/history', :to => 'clients#history', :as => 'client_history'
 
@@ -610,7 +612,7 @@ Agendapro::Application.routes.draw do
         delete 'bookings/:id', to: 'bookings#destroy'
         delete 'bookings_all/:id', to: 'bookings#cancel_all'
         post 'bookings_confirm/:id', to: 'bookings#confirm'
-        post 'bookings_confirm_all/:id', to: 'bookings#confirm_all' 
+        post 'bookings_confirm_all/:id', to: 'bookings#confirm_all'
 
       end
     end
