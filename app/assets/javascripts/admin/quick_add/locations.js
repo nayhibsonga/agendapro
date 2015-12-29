@@ -238,6 +238,10 @@ function saveLocation (typeURL, extraURL) {
 			$('#load_location_spinner').show();
 			$('#location_pills.nav-pills li').removeClass('active');
 			if (typeURL == 'POST') {
+				swal({
+					title: "Local creado exitosamente.",
+					type: "success"
+				});
 				$('#new_location_pill').parent().before('<li><a href="#" id="location_pill_'+result.id+'">'+result.name+'<!--  <button id="location_delete_'+result.id+'" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button> --></a></li>');
 				$('#service_provider_location_id').append('<option value="'+ result.id +'">'+ result.name +'</option>')
 				$('#location_pill_'+result.id).click(function(event){
@@ -248,6 +252,10 @@ function saveLocation (typeURL, extraURL) {
 				});
 			}
 			else {
+				swal({
+					title: "Local modificado exitosamente.",
+					type: "success"
+				});
 				$('#location_pill_'+result.id).html(result.name);
 				$('#service_provider_location_id option[value="'+ result.id +'"]').html(result.name);
 			}
