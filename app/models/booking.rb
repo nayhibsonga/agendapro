@@ -616,7 +616,12 @@ class Booking < ActiveRecord::Base
   end
 
   def marketplace_url(type="success")
-    return 'http://' + ENV['MARKETPLACE_URL'] + '/booking/' + type + '/' + self.id.to_s + '/' + self.access_token.to_s
+    extra_url = ''
+    if type.split(' ').count > 1
+      extra_url = '?all=true'
+      type = type.split(' ')[0]
+    end
+    return 'http://' + ENV['MARKETPLACE_URL'] + '/booking/' + type + '/' + self.id.to_s + '/' + self.access_token.to_s + extra_url
   end
 
   def send_booking_mail

@@ -1135,7 +1135,6 @@ function editDrag(event) {
       closeOnConfirm: false
     },
     function (isConfirm) {
-      alert(isConfirm);
       if (isConfirm) {
         $.ajax({
           type: 'PATCH',
@@ -1151,19 +1150,19 @@ function editDrag(event) {
           error: function(xhr){
             swal.close();
             showErrors(xhr);
-            $.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break) {
-              event.start = provider_break.start;
-              event.end = provider_break.end;
-              event.resourceId = provider_break.service_provider_id;
+            $.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break_json) {
+              event.start = provider_break_json.provider_break.start;
+              event.end = provider_break_json.provider_break.end;
+              event.resourceId = provider_break_json.provider_break.service_provider_id;
               $('#calendar').fullCalendar('updateEvent', event);
             });
           }
         });
       } else{
-        $.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break) {
-          event.start = provider_break.start;
-          event.end = provider_break.end;
-          event.resourceId = provider_break.service_provider_id;
+        $.getJSON('/provider_breaks/'+event.id.substring(1), function (provider_break_json) {
+          event.start = provider_break_json.provider_break.start;
+          event.end = provider_break_json.provider_break.end;
+          event.resourceId = provider_break_json.provider_break.service_provider_id;
           $('#calendar').fullCalendar('updateEvent', event);
         });
       };
@@ -1185,7 +1184,15 @@ function editDrag(event) {
         closeOnConfirm: false
       },
       function (inputValue) {
-        if (inputValue === false) return false;
+        if (inputValue === false) {
+          $.getJSON('/bookings/'+event.id, function (booking) {
+            event.start = booking.start;
+            event.end = booking.end;
+            event.resourceId = booking.service_provider_id;
+            $('#calendar').fullCalendar('updateEvent', event);
+          });
+          return false;
+        }
         if (inputValue === "") {
           swal.showInputError("El código no puede estar en blanco.");
           return false;
