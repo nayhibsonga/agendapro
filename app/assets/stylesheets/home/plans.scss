@@ -1,0 +1,82 @@
+@import 'variables';
+
+section.title {
+  h1, p { text-align: center; }
+}
+
+section.table {
+  $cols: 4;
+  %border {
+    border-color: $gray;
+    border-style: solid;
+  }
+
+  .border {
+    @extend %border;
+    border-width: 1px;
+  }
+  .pricing-col {
+    display: inline-block;
+    padding: 5px 10px;
+    width: 100%;
+    text-align: center;
+  }
+  .pricing-row {
+    & + .pricing-row { border-top: $gray solid 1px; }
+    p { margin-bottom: 0; }
+    .pricing-cols, .pricing-description {
+      display: inline-block;
+      width: calc((100% - 20px) / 2);
+    }
+    .pricing-description {
+      padding: 10px 15px;
+      border-right: $gray solid 1px;
+    }
+    .pricing-col {
+      padding: 10px 10px;
+    }
+  }
+  @media (min-width: 992px) {
+    .pricing-col {
+      width: calc((100% / #{$cols}) - (#{$cols} - 1)* 1px);
+      & + .pricing-col { border-left: $gray solid 1px; }
+    }
+    .pricing-row {
+      .pricing-cols {
+        width: calc((100% * 2 / 3) - (#{$cols} - 1)* 1px);
+      }
+      .pricing-description {
+        width: calc((100% / 3) - 1px);
+      }
+    }
+  }
+  .pricing-plan {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  .pricing-title {
+    & + .pricing-title { border-left: $gray solid 1px; }
+    @extend .pricing-plan;
+    @extend .pricing-col;
+    width: calc((100% / #{$cols}) - (#{$cols} - 1)* 1px);
+  }
+  .pricing-circle {
+    $size: 120px;
+    @extend %border;
+    border-width: 5px;
+    border-radius: 100%;
+    width: $size;
+    height: $size;
+    margin: 0 auto;
+    padding: 30px 5px;
+    p {
+      font-size: 14px;
+      margin-bottom: 0;
+      &.price {
+        font-size: 27px;
+        font-weight: bold;
+        color: $light-green;
+      }
+    }
+  }
+}
