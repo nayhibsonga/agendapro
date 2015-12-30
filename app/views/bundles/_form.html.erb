@@ -1,14 +1,135 @@
-<%= simple_form_for(@bundle) do |f| %>
-  <%= f.error_notification %>
-
-  <div class="form-inputs">
-    <%= f.input :name %>
-    <%= f.input :price %>
-    <%= f.association :service_category %>
-    <%= f.input :description %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <%= form_for @bundle, html: {class: "form-horizontal" } do |f| %>
+        <% if @bundle.errors.any? %>
+          <div id="error_explanation">
+            <h3><%= pluralize(@bundle.errors.count, "error") %> no permitió que el paquete fuera creado:</h3>
+            <ul>
+              <% @bundle.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+        <div class="row">
+          <div class="col-md-6">
+            <h3>Servicio</h3>
+            <div class="well">
+              <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
+              <div class="form-group">
+                <%= f.label :company_id, "Empresa", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
+                  <%= f.collection_select :company_id, Company.where(owned: false).order(:name), :id, :name, {}, { class: "form-control", required: true} %>
+                </div>
+              </div>
+              <% end %>
+              <div class="form-group has-feedback">
+                <%= f.label :name, "Nombre", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
+                  <%= f.text_field :name, :autofocus => true, class: "form-control", placeholder: 'Nombre (requerido)' %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group">
+                <%= f.label :price, "Precio", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
+                  <div class="input-group">
+                    <span class="input-group-addon">$</span>
+                    <%= f.number_field :price, class: "form-control", disabled: true, :min => 0, placeholder: '0 (requerido)' %>
+                    <span class="input-group-addon">Pesos</span>
+                  </div>
+                  <span class="help-block"></span>
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :show_price %> Mostrar el precio en tu mini-sitio AgendaPro
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h3>Detalles del Servicio</h3>
+            <div class="well">
+              <div class="form-group">
+                <%= f.label :description, "Descripción", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
+                  <%= f.text_area :description, class: "form-control" %>
+                </div>
+              </div>
+              <!-- Se deja el builder porque asi funciona el formulario -->
+              <% if @bundle.service_category.nil? then @bundle.build_service_category end %>
+              <%= f.fields_for :service_category do |builder| %>
+                <%= builder.hidden_field :company_id, class: "form-control", :value => current_user.company_id %>
+              <% end %>
+              <div class="form-group has-feedback">
+                <%= f.label :service_category_id, "Categoría de Servicio", class: "col-md-3 control-label" %>
+                <div class="col-md-9">
+                  <%= f.collection_select :service_category_id, ServiceCategory.where(company_id: current_user.company_id).order(:order, :name), :id, :name, {}, { class: "form-control" }%>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <% if current_user.role_id != Role.find_by_name("Super Admin").id %>
+              <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                  <button type="button" class="btn btn-sm btn-green" data-toggle="modal" data-target="#serviceCategoryModal"><i class="fa fa-plus"></i> Nueva Categoría de Servicio</button>
+                </div>
+              </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="well">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <div class="col-md-9 col-md-offset-3">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', services_path, class: "btn btn-white" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
   </div>
+</div>
 
-  <div class="form-actions">
-    <%= f.button :submit %>
+<% content_for :modals do %>
+  <div class="modal fade" id="serviceCategoryModal" tabindex="-1" role="dialog" aria-labelledby="serviceCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title serviceCategory-modal-title" id="serviceCategoryModalLabel">Crear Categorías de Servicios</h4>
+        </div>
+        <div class="modal-body break-modal-body">
+          <%= form_for ServiceCategory.new, html: {class: "form-horizontal"} do |sc| %>
+            <div class="form-group has-feedback">
+              <%= sc.label :name, "Nueva Categoría", class: "col-md-3 control-label" %>
+              <div class="col-md-6">
+                <%= sc.text_field :name, :class => 'form-control', :placeholder => 'Categoría (requerido)'%>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+              <div class="col-md-3">
+                <input class="btn btn-green" id="saveServiceCategryButton" type="button" value="Guardar" data-loading-text="Guardando...">
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div class="modal-footer break-modal-footer">
+          <button type="button" class="btn btn-default booking-button" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
   </div>
 <% end %>

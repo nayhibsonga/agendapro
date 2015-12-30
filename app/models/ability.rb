@@ -35,7 +35,7 @@ class Ability
     #alias_action :workflow, :to => :update
     #alias_action :workflow, :to => :create
 
-    company_abilities = [User, Location, ServiceProvider, Service, CompanySetting, ServiceCategory, Client, BillingInfo, ProviderGroup]
+    company_abilities = [User, Location, ServiceProvider, Service, Bundle, CompanySetting, ServiceCategory, Client, BillingInfo, ProviderGroup]
 
 
     user ||= User.new # guest user (not logged in)
@@ -411,6 +411,10 @@ class Ability
         can :read, Service, :company_id => user.company_id
         can :create, Service, :company_id => user.company_id
         can :update, Service, :company_id => user.company_id
+
+        can :read, Bundle, :company_id => user.company_id
+        can :create, Bundle, :company_id => user.company_id
+        can :update, Bundle, :company_id => user.company_id
 
         can :read, ServiceCategory, :company_id => user.company_id
         can :create, ServiceCategory, :company_id => user.company_id

@@ -1,5 +1,10 @@
 class BundlesController < ApplicationController
   before_action :set_bundle, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
+  before_action :quick_add
+  layout "admin"
+  load_and_authorize_resource
+
 
   respond_to :html
 

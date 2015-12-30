@@ -11,10 +11,12 @@ class ServicesController < ApplicationController
   def index
     if current_user.role_id == Role.find_by_name('Super Admin').id
       @services = Service.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
+      @bundles = Bundle.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
       @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
     else
       @services = Service.where(company_id: current_user.company_id, :active => true).order(:order, :name)
       @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(:order, :name)
+      @bundles = Bundle.where(company_id: current_user.company_id).order(:name)
     end
   end
 

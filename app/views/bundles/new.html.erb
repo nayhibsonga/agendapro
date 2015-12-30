@@ -1,5 +1,14 @@
-<h1>New bundle</h1>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Nuevo Paquete de Servicios</h2>
+      <p>Acá podrás agregar nuevos paquetes de servicios a tu empresa. Los paquetes generados son válidos para todos los locales de tu compañía.</p>
+    </div>
+  </div>
+</div>
 
 <%= render 'form' %>
 
-<%= link_to 'Back', bundles_path %>
+<% content_for :scripts do %>
+  <%= javascript_include_tag "service" %>
+<% end %>
