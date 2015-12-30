@@ -424,8 +424,8 @@ class Booking < ActiveRecord::Base
             end
             used_resource = 0
             group_services = []
-            self.location.bookings.where("bookings.start < ?", self.end).where("bookings.end > ?", self.start).where('is_session = false or (is_session = true and is_session_booked = true)').each do |location_booking|
-              if location_booking != self && location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start..location_booking.end).cover?(self.start)
+            self.location.bookings.where("bookings.start < ?", self.end.to_datetime).where("bookings.end > ?", self.start.to_datetime).where('is_session = false or (is_session = true and is_session_booked = true)').each do |location_booking|
+              if location_booking != self && location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start..location_booking.end).cover?(self.start.to_datetime)
                 puts location_booking.id.to_s + 'start'
                 if location_booking.service.resources.include?(resource)
                   if !location_booking.service.group_service
@@ -446,8 +446,8 @@ class Booking < ActiveRecord::Base
             end
             used_resource = 0
             group_services = []
-            self.location.bookings.where("bookings.start < ?", self.end).where("bookings.end > ?", self.start).where('is_session = false or (is_session = true and is_session_booked = true)').each do |location_booking|
-              if location_booking != self && location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start..location_booking.end).cover?(self.end)
+            self.location.bookings.where("bookings.start < ?", self.end.to_datetime).where("bookings.end > ?", self.start.to_datetime).where('is_session = false or (is_session = true and is_session_booked = true)').each do |location_booking|
+              if location_booking != self && location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start..location_booking.end).cover?(self.end.to_datetime)
                 puts location_booking.id.to_s + 'start'
                 if location_booking.service.resources.include?(resource)
                   if !location_booking.service.group_service
