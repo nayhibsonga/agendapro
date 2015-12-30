@@ -380,7 +380,7 @@ class Company < ActiveRecord::Base
 		plan_gratis = Plan.find_by_name("Gratis")
 		message_emitido = "Tu cuenta está atrasada de pago por un mes. Si quieres continuar usando tu plan con todas sus características, por favor ponte al día en el pago"
 
-		collectables.where(id: [136, 142]).where.not(payment_status_id: status_vencido.id).each do |company|
+		collectables.where.not(payment_status_id: status_vencido.id).each do |company|
 
 			sales_tax = company.country.sales_tax
 
@@ -455,7 +455,7 @@ class Company < ActiveRecord::Base
 		message_emitido = "Recuerda que tu cuenta ya fue enviada. Por favor paga a la brevedad para que no tengas problemas con tu servicio"
 		message_vencido = "Tu plan se ha desactivado por no pago. Aún puedes entrar a tu cuenta, pero sólo tendrás disponible el uso del calendario para revisar tus reservas. Si quieres reactivar tu plan, por favor cancela la deuda y el proporcional para el mes actual"
 
-		collectables.where(id: [136, 142]).where.not(payment_status_id: status_activo.id).each do |company|
+		collectables.where.not(payment_status_id: status_activo.id).each do |company|
 
 			sales_tax = company.country.sales_tax
 
@@ -502,7 +502,7 @@ class Company < ActiveRecord::Base
 
 		message_emitido = "Tu cuenta fue enviada el 1° del mes. Por favor paga a la brevedad para que no tengas problemas con tu servicio"
 
-		collectables.where(id: [136, 142]).where(payment_status_id: status_emitido.id).each do |company|
+		collectables.where(payment_status_id: status_emitido.id).each do |company|
 
 			#Send second reminder (insistence)
 			CompanyMailer.invoice_email(company.id, message_emitido)
@@ -521,7 +521,7 @@ class Company < ActiveRecord::Base
 
 		message_emitido = "Tu cuenta fue enviada el 1° del mes. Si no cancelas el mes en curso dentro de los próximos días, tu plan actual será desactivado y sólo tendrás acceso básico a tu calendario. Por favor paga a la brevedad para que no tengas problemas con tu servicio"
 
-		collectables.where(id: [136, 142]).where(payment_status_id: status_emitido.id).each do |company|
+		collectables.where(payment_status_id: status_emitido.id).each do |company|
 
 			#Send ultimatum saying they will be downgraded on failure to pay
 			CompanyMailer.invoice_email(company.id, message_emitido)
