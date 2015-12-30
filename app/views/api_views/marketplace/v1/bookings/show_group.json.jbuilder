@@ -7,4 +7,5 @@ json.array!(@bookings) do |booking|
 	json.client_full_name booking.client.full_name
 	json.client_email booking.client.email
 	json.client_phone booking.client.phone
+  json.company_name booking.location.company.name
 end
