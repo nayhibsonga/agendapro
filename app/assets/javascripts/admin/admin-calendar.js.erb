@@ -1030,7 +1030,15 @@ function booking_valid (booking) {
 function deleteBooking(eventId) {
   // Staff code
   var confirmation = false;
+  var isFirefox = navigator.userAgent.search("Firefox") >= 0;
+  var defaultTop = $('#bookingModal').css('top');
+
   if ($('#calendar-data').data('staff-code')) {
+    if( isFirefox ) {
+      // TempFix for firefox input Modal Over Modal swal
+      $('#bookingModal').css('top', '-180px');
+    }
+
     swal({
       title: "¿Estás seguro que quieres cancelar esta reserva?",
       text: "Esta acción no se puede revertir.\nIngrese el código de Empleado:",
@@ -1052,6 +1060,7 @@ function deleteBooking(eventId) {
         $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
         saveBooking('DELETE','/'+eventId);
       }
+      if( isFirefox ) { $('#bookingModal').css('top', defaultTop); }
     });
   } else{
     swal({
