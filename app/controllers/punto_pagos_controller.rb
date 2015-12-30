@@ -1,8 +1,8 @@
 class PuntoPagosController < ApplicationController
 
   skip_before_action :verify_authenticity_token
-  before_action :authenticate_user!, :only => [:generate_company_transaction, :generate_plan_transaction]
-  before_action :verify_is_admin, :only => [:generate_company_transaction, :generate_plan_transaction]
+  before_action :authenticate_user!, :only => [:generate_company_transaction, :generate_plan_transaction, :generate_reactivation_transaction]
+  before_action :verify_is_admin, :only => [:generate_company_transaction, :generate_plan_transaction, :generate_reactivation_transaction]
 
   #Métodos de pagos de reservas
 
@@ -42,7 +42,7 @@ class PuntoPagosController < ApplicationController
     month_number = Time.now.month
     month_days = Time.now.days_in_month
     accepted_amounts = [1,2,3,4,6,9,12]
-    accepted_payments = ["01","03","04","05","06","07"]
+    accepted_payments = ["16","03","04","05","06","07"]
     if accepted_amounts.include?(amount) && accepted_payments.include?(payment_method) && company
       mockCompany = Company.find(current_user.company_id)
       mockCompany.months_active_left += amount
@@ -98,7 +98,7 @@ class PuntoPagosController < ApplicationController
     month_number = Time.now.month
     month_days = Time.now.days_in_month
     accepted_plans = Plan.where(custom: false).pluck(:id)
-    accepted_payments = ["00","01","03","04","05","06","07"]
+    accepted_payments = ["00","16","03","04","05","06","07"]
     if accepted_plans.include?(plan_id) && accepted_payments.include?(payment_method) && company
       if company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations 
       
@@ -181,7 +181,7 @@ class PuntoPagosController < ApplicationController
           if !mockCompany.valid?
             redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (9)"
           elsif payment_method != "00"
-            due = sprintf('%.2f', ((plan_month_value + due_amount)*(1+sales_tax)).round(0))
+            due = sprintf('%.2f', ((plan_month_value + due_amount /(1 + sales_tax) )*(1 + sales_tax)).round(0))
             req = PuntoPagos::Request.new()
             resp = req.create(trx_id, due, payment_method)
             if resp.success?
@@ -202,6 +202,72 @@ class PuntoPagosController < ApplicationController
     else
       redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (5)"
     end
+  end
+
+
+  #Accepts a payment to reactivate a company, i.e. change it's plan from free to the old one
+  def generate_reactivation_transaction
+
+    payment_method = params[:mp]
+    company = Company.find(current_user.company_id)
+
+    downgradeLog = DowngradeLog.where(company_id: company.id).order('created_at desc').first
+
+    new_plan = downgradeLog.plan
+
+    #Should have free plan
+    previous_plan = company.plan
+
+    price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+
+    sales_tax = company.country.sales_tax
+
+    day_number = Time.now.day
+    month_number = Time.now.month
+    month_days = Time.now.days_in_month
+
+    plan_month_value = ((month_days - day_number + 1).to_f / month_days.to_f) * price
+    due_amount = downgradeLog.debt
+
+    accepted_payments = ["16","03","04","05","06","07"]
+
+    if accepted_payments.include?(payment_method) && company
+      mockCompany = Company.find(current_user.company_id)
+      mockCompany.plan_id = new_plan.id
+      mockCompany.months_active_left = 1.0
+      mockCompany.due_amount = 0.0
+      mockCompany.due_date = nil
+
+      if !mockCompany.valid?
+            redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (9)"
+      else
+
+        trx_comp = company.id.to_s + "0" + new_plan.id.to_s + "0"
+        trx_offset = 4
+        trx_date = DateTime.now.to_s.gsub(/[-:T]/i, '')
+        trx_date = trx_date[0, trx_date.size - trx_offset]
+        trx_date = trx_date[trx_date.size - 15 + trx_comp.size, trx_date.size]
+        trx_id = trx_comp + trx_date
+
+        if trx_id.size > 15
+          trx_id = trx_id[0, 15]
+        end
+
+        due = sprintf('%.2f', ((plan_month_value + due_amount /(1 + sales_tax) )*(1 + sales_tax)).round(0))
+        req = PuntoPagos::Request.new()
+        resp = req.create(trx_id, due, payment_method)
+        if resp.success?
+          PlanLog.create(trx_id: trx_id, new_plan_id: new_plan.id, prev_plan_id: previous_plan.id, company_id: company.id, amount: due)
+          PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Reactivación plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: Se procesa")
+          redirect_to resp.payment_process_url
+        else
+          PuntoPagosCreation.create(trx_id: trx_id, payment_method: payment_method, amount: due, details: "Error creación de reactivación de plan empresa id "+company.id.to_s+", nombre "+company.name+". Cambia de plan "+company.plan.name+"("+company.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+company.id.to_s+". Resultado: "+resp.get_error+".")
+          redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (3)"
+        end
+      end
+
+    end
+
   end
 
   def success

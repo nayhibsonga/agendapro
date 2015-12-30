@@ -54,81 +54,138 @@ class CompaniesController < ApplicationController
     	puts "Month number: " + month_number.to_s
     	puts "Month_days: " + month_days.to_s
 
-    	if @transfer.change_plan
 
-    		plan_id = @transfer.new_plan
+    	if company.plan_id != Plan.find_by_name("Gratis").id
+	    	if @transfer.change_plan
 
-    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+	    		plan_id = @transfer.new_plan
 
-    		new_plan = Plan.find(plan_id)
+	    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 
-    		accepted_plans = Plan.where(custom: false).pluck(:id)
+	    		new_plan = Plan.find(plan_id)
 
-    		if accepted_plans.include?(plan_id)
+	    		accepted_plans = Plan.where(custom: false).pluck(:id)
 
-    			if company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations
+	    		if accepted_plans.include?(plan_id)
 
-    				previous_plan_id = company.plan.id
-			        months_active_left = company.months_active_left
-			        plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
-			        due_amount = company.due_amount
-			        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
-			        previous_plan_price = company.plan.plan_countries.find_by(country_id: company.country.id).price
-			        plan_month_value = (month_days - day_number + 1)*plan_price/month_days
+	    			if company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations
 
-			        #Days that should be payed of current plan
-			        plan_value_taken = (day_number*previous_plan_price/month_days + -1*previous_plan_price*(company.months_active_left))
+	    				previous_plan_id = company.plan.id
+				        months_active_left = company.months_active_left
+				        plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
+				        due_amount = company.due_amount
+				        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
+				        previous_plan_price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+				        plan_month_value = (month_days - day_number + 1)*plan_price/month_days
 
-			        puts "Plan value left: " + plan_value_left.to_s
+				        #Days that should be payed of current plan
+				        plan_value_taken = (day_number*previous_plan_price/month_days + -1*previous_plan_price*(company.months_active_left))
 
-			        if months_active_left > 0
-          				if plan_value_left > (plan_month_value + due_amount)
+				        puts "Plan value left: " + plan_value_left.to_s
 
-				            new_active_months_left = ((plan_value_left - plan_month_value - due_amount / (1 + sales_tax) )/plan_price).floor + 1
-				            new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount / (1 + sales_tax))/plan_price)%1)*plan_price
-				            company.plan_id = plan_id
-				            company.months_active_left = new_active_months_left
-				            company.due_amount = (new_amount_due).round(0) * (1 + sales_tax)
+				        if months_active_left > 0
+	          				if plan_value_left > (plan_month_value + due_amount)
 
-				            if company.save
+					            new_active_months_left = ((plan_value_left - plan_month_value - due_amount / (1 + sales_tax) )/plan_price).floor + 1
+					            new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount / (1 + sales_tax))/plan_price)%1)*plan_price
+					            company.plan_id = plan_id
+					            company.months_active_left = new_active_months_left
+					            company.due_amount = (new_amount_due).round(0) * (1 + sales_tax)
 
-				            	@transfer.approved = true
-				            	@transfer.save
+					            if company.save
 
-				              	PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
+					            	@transfer.approved = true
+					            	@transfer.save
 
-				              	CompanyMailer.transfer_receipt_email(@transfer.id)
+					              	PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
 
-				              	@json_response[0] = "ok"
-								@json_response[1] = company
-								render :json => @json_response
-								return
-				              	
-				            else
-				              	@json_response[0] = "error"
-								@json_response[1] = company.errors
-								render :json => @json_response
-								return
-				            end
-				        else
+					              	CompanyMailer.transfer_receipt_email(@transfer.id)
 
-				        	mockCompany = Company.find(company.id)
-				            mockCompany.plan_id = plan_id
-				            mockCompany.months_active_left = 1.0
-				            mockCompany.due_amount = 0.0
-				            mockCompany.due_date = nil
-				            mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
-				            if !mockCompany.valid?
-				            	@json_response[0] = "error"
+					              	@json_response[0] = "ok"
+									@json_response[1] = company
+									render :json => @json_response
+									return
+					              	
+					            else
+					              	@json_response[0] = "error"
+									@json_response[1] = company.errors
+									render :json => @json_response
+									return
+					            end
+					        else
+
+					        	mockCompany = Company.find(company.id)
+					            mockCompany.plan_id = plan_id
+					            mockCompany.months_active_left = 1.0
+					            mockCompany.due_amount = 0.0
+					            mockCompany.due_date = nil
+					            mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
+					            if !mockCompany.valid?
+					            	@json_response[0] = "error"
+									@json_response[1] = mockCompany.errors
+									render :json => @json_response
+									return
+					            else
+
+					            	due_number = ((plan_month_value + due_amount / (1 + sales_tax) - plan_value_left)*(1+sales_tax)).round(0)
+					              	due = sprintf('%.2f', ((plan_month_value + due_amount / (1 + sales_tax) - plan_value_left)*(1+sales_tax)).round(0))
+
+					              	if @transfer.amount.round(0) != due_number
+						    			#Error
+										@json_response[0] = "error"
+										@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
+										render :json => @json_response
+										return
+						    		end
+
+						    		if mockCompany.save
+						                PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
+
+						                @transfer.approved = true
+						                @transfer.save
+
+						                CompanyMailer.transfer_receipt_email(@transfer.id)
+
+						                @json_response[0] = "ok"
+										@json_response[1] = company
+										render :json => @json_response
+										return
+									else
+										@json_response[0] = "error"
+										@json_response[1] = company.errors
+										render :json => @json_response
+										return
+									end
+
+					            end
+
+					        end
+
+					    else
+
+					    	mockCompany = Company.find(company.id)
+							mockCompany.plan_id = plan_id
+							mockCompany.months_active_left = 1.0
+							mockCompany.due_amount = 0.0
+							mockCompany.due_date = nil
+							mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
+							if !mockCompany.valid?
+								@json_response[0] = "error"
 								@json_response[1] = mockCompany.errors
 								render :json => @json_response
 								return
-				            else
+							else
+								puts "HERE"
+								puts "HERE"
+								puts "HERE"
+								puts "plan_value_taken: " + plan_value_taken.to_s
+								puts "plan_month_value: " + plan_month_value.to_s
+								puts "due_amount: " + due_amount.to_s
 
-				            	due_number = ((plan_month_value + due_amount / (1 + sales_tax) - plan_value_left)*(1+sales_tax)).round(0)
-				              	due = sprintf('%.2f', ((plan_month_value + due_amount / (1 + sales_tax) - plan_value_left)*(1+sales_tax)).round(0))
+								due_number = ((plan_value_taken + due_amount / (1 + sales_tax) + plan_month_value) * (1 + sales_tax)).round(0)
+								due = sprintf('%.2f', ((plan_month_value + due_amount / (1 + sales_tax))*(1+sales_tax)).round(0))
 
-				              	if @transfer.amount.round(0) != due_number
+								if @transfer.amount.round(0) != due_number
 					    			#Error
 									@json_response[0] = "error"
 									@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
@@ -137,14 +194,14 @@ class CompaniesController < ApplicationController
 					    		end
 
 					    		if mockCompany.save
-					                PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
+									PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
 
-					                @transfer.approved = true
-					                @transfer.save
+									@transfer.approved
+									@transfer.save
 
-					                CompanyMailer.transfer_receipt_email(@transfer.id)
+									CompanyMailer.transfer_receipt_email(@transfer.id)
 
-					                @json_response[0] = "ok"
+									@json_response[0] = "ok"
 									@json_response[1] = company
 									render :json => @json_response
 									return
@@ -155,151 +212,158 @@ class CompaniesController < ApplicationController
 									return
 								end
 
-				            end
 
-				        end
-
-				    else
-
-				    	mockCompany = Company.find(company.id)
-						mockCompany.plan_id = plan_id
-						mockCompany.months_active_left = 1.0
-						mockCompany.due_amount = 0.0
-						mockCompany.due_date = nil
-						mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
-						if !mockCompany.valid?
-							@json_response[0] = "error"
-							@json_response[1] = mockCompany.errors
-							render :json => @json_response
-							return
-						else
-							puts "HERE"
-							puts "HERE"
-							puts "HERE"
-							puts "plan_value_taken: " + plan_value_taken.to_s
-							puts "plan_month_value: " + plan_month_value.to_s
-							puts "due_amount: " + due_amount.to_s
-
-							due_number = ((plan_value_taken + due_amount / (1 + sales_tax) + plan_month_value) * (1 + sales_tax)).round(0)
-							due = sprintf('%.2f', ((plan_month_value + due_amount / (1 + sales_tax))*(1+sales_tax)).round(0))
-
-							if @transfer.amount.round(0) != due_number
-				    			#Error
-								@json_response[0] = "error"
-								@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
-								render :json => @json_response
-								return
-				    		end
-
-				    		if mockCompany.save
-								PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
-
-								@transfer.approved
-								@transfer.save
-
-								CompanyMailer.transfer_receipt_email(@transfer.id)
-
-								@json_response[0] = "ok"
-								@json_response[1] = company
-								render :json => @json_response
-								return
-							else
-								@json_response[0] = "error"
-								@json_response[1] = company.errors
-								render :json => @json_response
-								return
 							end
 
+					   	end
 
-						end
+	    			else
+	    				@json_response[0] = "error"
+						@json_response[1] = "La empresa tiene más prestadores o locales que el plan elegido"
+						render :json => @json_response
+						return
+	    			end
 
-				   	end
-
-    			else
-    				@json_response[0] = "error"
-					@json_response[1] = "La empresa tiene más prestadores o locales que el plan elegido"
+	    		else
+	    			@json_response[0] = "error"
+					@json_response[1] = "El plan solicitado no está entre los elegibles"
 					render :json => @json_response
 					return
-    			end
+	    		end
 
-    		else
-    			@json_response[0] = "error"
-				@json_response[1] = "El plan solicitado no está entre los elegibles"
+	    	else
+
+	    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+	    		accepted_amounts = [1,2,3,4,6,9,12]
+	    		if accepted_amounts.include?(@transfer.paid_months)
+
+	    			mockCompany = Company.find(company.id)
+					mockCompany.months_active_left += @transfer.paid_months
+					mockCompany.due_amount = 0.0
+					mockCompany.due_date = nil
+					mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
+					if !mockCompany.valid?
+						#Error
+						@json_response[0] = "error"
+						@json_response[1] = mockCompany.errors
+						render :json => @json_response
+						return
+					else
+						NumericParameter.find_by_name(@transfer.paid_months.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(@transfer.paid_months.to_s+"_month_discount").value : month_discount = 0
+
+						#company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
+
+						plan_1 = (company.due_amount + price*(1+sales_tax)).round(0)
+
+						due_number = ((plan_1 + price*(@transfer.paid_months-1)*(1+sales_tax))*(1-month_discount)).round(0)
+
+	        			due = sprintf('%.2f', ((plan_1 + price*(@transfer.paid_months-1)*(1+sales_tax))*(1-month_discount)).round(0))
+
+	        			if @transfer.amount.round(0) != due_number
+			    			#Error
+							@json_response[0] = "error"
+							@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
+							render :json => @json_response
+							return
+			    		end
+
+
+	        			BillingLog.create(payment: due, amount: @transfer.paid_months, company_id: company.id, plan_id: company.plan.id, transaction_type_id: -1, trx_id: "")
+
+	        			company.months_active_left += @transfer.paid_months
+						company.due_amount = 0.0
+						company.due_date = nil
+						company.payment_status_id = PaymentStatus.find_by_name("Activo").id
+
+	        			if company.save
+	        				@transfer.approved = true
+	        				@transfer.save
+			          		CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
+			          		CompanyMailer.transfer_receipt_email(@transfer.id)
+			          		@json_response[0] = "ok"
+							@json_response[1] = company
+							render :json => @json_response
+							return
+			        	else
+			          		CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
+			          		@json_response[0] = "error"
+							@json_response[1] = company.errors
+							render :json => @json_response
+							return
+			        	end
+
+					end
+				else
+					@json_response[0] = "error"
+					@json_response[1] = "La cantidad de meses a pagar no es válida"
+					render :json => @json_response
+					return
+	    		end
+
+	    	end
+	    else
+
+	    	downgradeLog = DowngradeLog.where(company_id: company.id).order('created_at desc').first
+
+		    new_plan = downgradeLog.plan
+
+		    #Should have free plan
+		    previous_plan = company.plan
+
+		    price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+
+		    plan_month_value = ((month_days - day_number + 1).to_f / month_days.to_f) * price
+		    due_amount = downgradeLog.debt
+
+		    due_number = (due_amount + plan_month_value * (1 + sales_tax)).round(0)
+
+		    company = Company.find(company.id)
+			company.plan_id = new_plan.id
+			company.months_active_left = 1.0
+			company.due_amount = 0.0
+			company.due_date = nil
+			company.payment_status_id = PaymentStatus.find_by_name("Activo").id
+
+			if !company.valid?
+			    #Error
+				@json_response[0] = "error"
+				@json_response[1] = company.errors
+				render :json => @json_response
+				return
+			end
+
+			if @transfer.amount.round(0) != due_number
+    			#Error
+				@json_response[0] = "error"
+				@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
 				render :json => @json_response
 				return
     		end
 
-    	else
+    		if company.save
 
-    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+    			due = sprintf('%.2f', due_number)
 
-    		accepted_amounts = [1,2,3,4,6,9,12]
-    		if accepted_amounts.include?(@transfer.paid_months)
+                PlanLog.create(trx_id: "", new_plan_id: new_plan.id, prev_plan_id: previous_plan.id, company_id: company.id, amount: due)
 
-    			mockCompany = Company.find(company.id)
-				mockCompany.months_active_left += @transfer.paid_months
-				mockCompany.due_amount = 0.0
-				mockCompany.due_date = nil
-				mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
-				if !mockCompany.valid?
-					#Error
-					@json_response[0] = "error"
-					@json_response[1] = mockCompany.errors
-					render :json => @json_response
-					return
-				else
-					NumericParameter.find_by_name(@transfer.paid_months.to_s+"_month_discount") ? month_discount = NumericParameter.find_by_name(@transfer.paid_months.to_s+"_month_discount").value : month_discount = 0
+                @transfer.approved = true
+                @transfer.save
 
-					#company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
+                CompanyMailer.transfer_receipt_email(@transfer.id)
 
-					plan_1 = (company.due_amount + price*(1+sales_tax)).round(0)
-
-					due_number = ((plan_1 + price*(@transfer.paid_months-1)*(1+sales_tax))*(1-month_discount)).round(0)
-
-        			due = sprintf('%.2f', ((plan_1 + price*(@transfer.paid_months-1)*(1+sales_tax))*(1-month_discount)).round(0))
-
-        			if @transfer.amount.round(0) != due_number
-		    			#Error
-						@json_response[0] = "error"
-						@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
-						render :json => @json_response
-						return
-		    		end
-
-
-        			BillingLog.create(payment: due, amount: @transfer.paid_months, company_id: company.id, plan_id: company.plan.id, transaction_type_id: -1, trx_id: "")
-
-        			company.months_active_left += @transfer.paid_months
-					company.due_amount = 0.0
-					company.due_date = nil
-					company.payment_status_id = PaymentStatus.find_by_name("Activo").id
-
-        			if company.save
-        				@transfer.approved = true
-        				@transfer.save
-		          		CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
-		          		CompanyMailer.transfer_receipt_email(@transfer.id)
-		          		@json_response[0] = "ok"
-						@json_response[1] = company
-						render :json => @json_response
-						return
-		        	else
-		          		CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
-		          		@json_response[0] = "error"
-						@json_response[1] = company.errors
-						render :json => @json_response
-						return
-		        	end
-
-				end
+                @json_response[0] = "ok"
+				@json_response[1] = company
+				render :json => @json_response
+				return
 			else
 				@json_response[0] = "error"
-				@json_response[1] = "La cantidad de meses a pagar no es válida"
+				@json_response[1] = company.errors
 				render :json => @json_response
 				return
-    		end
+			end
 
-    	end
+	    end
 
 	end
 

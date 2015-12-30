@@ -279,6 +279,18 @@ class CompanyMailer < ActionMailer::Base
 		plan_amount = price * (1 + sales_tax)
 		#debt_amount = current_amount - price
 
+		if company.plan_id == Plan.find_by_name("Gratis").id
+
+			downgradeLog = DowngradeLog.where(company_id: company.id).order('created_at desc').first
+
+			if !downgradeLog.nil?
+				prev_plan = Plan.find(downgradeLog.plan_id)
+				price = prev_plan.plan_countries.find_by(country_id: company.country.id).price
+				plan_amount = ((month_days.to_f - day_number + 1) / month_days.to_f) * price * (1 + sales_tax)
+			end
+
+		end
+
 		current_amount = plan_amount + company.due_amount
 		debt_amount = company.due_amount
 
@@ -421,7 +433,7 @@ class CompanyMailer < ActionMailer::Base
 		transfer = BillingWireTransfer.find(transfer_id)
 		company = transfer.company
 		admins = company.users.where(role_id: Role.find_by_name('Administrador General'))
-		admin = admin.first
+		admin = admins.first
 
 		current_date = DateTime.now
 		day_number = Time.now.day
@@ -466,10 +478,6 @@ class CompanyMailer < ActionMailer::Base
 				{
 					:name => 'AMOUNT',
 					:content => ActionController::Base.helpers.number_to_currency(transfer.amount, locale: company.country.locale.to_sym)
-				},
-				{
-					:name => 'RECEIPT_NUMBER',
-					:content => transfer.receipt_number
 				},
 				{
 					:name => 'DATE',
@@ -548,10 +556,6 @@ class CompanyMailer < ActionMailer::Base
 				{
 					:name => 'AMOUNT',
 					:content => ActionController::Base.helpers.number_to_currency(transfer.amount, locale: company.country.locale.to_sym)
-				},
-				{
-					:name => 'RECEIPT_NUMBER',
-					:content => transfer.receipt_number
 				},
 				{
 					:name => 'DATE',

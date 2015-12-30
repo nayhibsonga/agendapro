@@ -272,7 +272,6 @@
                           <th>Tipo</th>
                           <th>Meses pagados/Nuevo plan</th>
                           <th>Monto</th>
-                          <th>N° de comprobante</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -288,7 +287,6 @@
                               <td><%= transfer.paid_months.to_s %></td>
                             <% end %>
                             <td><%= transfer.amount %></td>
-                            <td><%= transfer.receipt_number %></td>
                           </tr>
                         <% end %>
                       </tbody>

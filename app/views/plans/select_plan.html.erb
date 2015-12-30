@@ -15,21 +15,29 @@
           Estado de cuenta
         </div>
       </div>
-      <div class="plan-section-link" targetdiv="pay_div">
-        <div class="plan-section-link-title">
-          Pagar
+      <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
+        <div class="plan-section-link" targetdiv="pay_div">
+          <div class="plan-section-link-title">
+            Pagar
+          </div>
         </div>
-      </div>
+      <% end %>
       <div class="plan-section-link" targetdiv="billing_info_div">
-        <div class="plan-section-link-title">
+        <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
+          <div class="plan-section-link-title">
+        <% else %>
+          <div class="plan-section-link-title last">
+        <% end %>
           Datos de facturación
         </div>
       </div>
-      <div class="plan-section-link" targetdiv="change_plan_div">
-        <div class="plan-section-link-title last">
-          Cambio de plan
+      <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
+        <div class="plan-section-link" targetdiv="change_plan_div">
+          <div class="plan-section-link-title last">
+            Cambio de plan
+          </div>
         </div>
-      </div>
+      <% end %>
     </div>
     <div class="col-md-10">
       <div class="row plan-section" id="change_plan_div" hidden>
@@ -259,6 +267,20 @@
                   <label for="mp_radio_000"><%= image_tag "admin/wire_transfer.jpg", alt: "Transferencia bancaria", class: "mp_link", mp: "000" %></label>
                 </div>
               </div>
+              <div id="payWireTransferSelected" hidden>
+                  <p style="text-align: justify;">
+                    Si vas a pagar con transferencia, primero haz la transferencia por el valor total y luego selecciona "Pagar". Se abrirá un formulario que deberás llenar para darnos aviso de la transferencia.
+                  </p>
+                  <p>
+                    Los datos para transferir son los siguientes:<br /><br />
+                    Empresa: Gunei Investment Spa <br />
+                    RUT: 76.233.336-8 <br />
+                    Banco: Banco BICE <br />
+                    Cuenta: Cuenta Corriente 21709174 <br />
+                    Email: cuentas@agendapro.cl <br />
+                    Monto: <span id="wireAmount"></span>
+                  </p>
+              </div>
               <div>
                 <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, pp_generate_company_transaction_path(mp: "", amount: 0), id: "payBtn" %>
                 <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, "#", id: "wireTransferBtn", style: "display: none;" %>
@@ -469,6 +491,118 @@
               </tr>
             </table> 
           </div>
+
+          <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
+            <div style="margin-top: 20px;">
+              <p style="text-align: center;">
+
+                <button id="openPayDiv" class="btn btn-green" style="width: 260px; font-size: 24px;">
+                    Pagar
+                </button>
+
+              </p>
+            </div>
+
+          <% else %>
+
+            <div id="reactivate_div_payment_method" style="margin-top: 10px;">
+
+              <div class="plan-section-title">
+                Reactivar mi cuenta
+              </div>
+
+              <%
+                downgradeLog = DowngradeLog.where(company_id: @company.id).order('created_at desc').first
+                sales_tax = @company.country.sales_tax
+                month_days = Time.now.days_in_month
+                day_number = Time.now.day
+                old_plan_price = ((month_days - day_number + 1).to_f / month_days.to_f) * downgradeLog.plan.plan_countries.find_by(country_id: @company.country.id).price
+              %>
+              <p style="text-align: justify;">
+                Para reactivar tu cuenta, debes cancelar la deuda acumulada al momento de desactivación, más el valor proporcional del plan que tenías para lo que resta del mes presente.
+              </p>
+              <p style="text-align: justify;">
+                La deuda que acumulaste alcanza a <%= number_to_currency(downgradeLog.debt, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>. Antes de la desactivación tu plan era el Plan <%= downgradeLog.plan.name %>. El valor de este plan para lo que resta del mes es <%= number_to_currency(old_plan_price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %> (+ IVA). El valor total a cancelar de reactivación asciende a <%= number_to_currency(downgradeLog.debt + old_plan_price * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %> (IVA incluido).
+              </p>
+
+              <input type="hidden" id="renovation_amount" value="<%= (downgradeLog.debt + old_plan_price * (1 + sales_tax)).round(0).to_s %>" />
+              <input type="hidden" id="renovation_amount_detail" value="<%= number_to_currency(downgradeLog.debt + old_plan_price * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>" />
+
+              <div class="plan-section-title">
+                Selecciona tu método de pago
+              </div>
+
+              <% if @company.country_id == Country.find_by_name('Chile').id %>
+                <div class="row mp_table">
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="16" class="reactivate_mp_radio" id="reactivate_mp_radio_16" />
+                    <label for="reactivate_mp_radio_16"><image src="https://www.puntopagos.com/content/mp16.gif" alt="Botón de Pago Banco BBVA" class="reactivate_mp_link" mp = "16" /></label>
+                  </div>
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="04" class="reactivate_mp_radio" id="reactivate_mp_radio_04" />
+                    <label for="reactivate_mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Botón de Pago Banco Banco de Chile" class="reactivate_mp_link" mp = "04" /></label>
+                  </div>
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="05" class="reactivate_mp_radio" id="reactivate_mp_radio_05" />
+                    <label for="reactivate_mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="Botón de Pago BCI" class="reactivate_mp_link" mp = "05" /></label>
+                  </div>
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="06" class="reactivate_mp_radio" id="reactivate_mp_radio_06" />
+                    <label for="reactivate_mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="Botón de Pago TBanc" class="reactivate_mp_link" mp = "06" /></label>
+                  </div>
+
+                </div>
+                <div class="row mp_table">
+                  
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="07" class="reactivate_mp_radio" id="reactivate_mp_radio_07" />
+                    <label for="reactivate_mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Botón de Pago Banco Estado" class="reactivate_mp_link" mp = "07" /></label>
+                  </div>
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="03" class="reactivate_mp_radio" id="reactivate_mp_radio_03" />
+                    <label for="reactivate_mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="reactivate_mp_link" mp = "03" /></label>
+                  </div>
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="000" class="reactivate_mp_radio" id="reactivate_mp_radio_000" />
+                    <label for="reactivate_mp_radio_000"><%= image_tag "admin/wire_transfer.jpg", alt: "Transferencia bancaria", class: "reactivate_mp_link", mp: "000" %></label>
+                  </div>
+                </div>
+                <div id="renovateWireTransferSelected" hidden>
+                  <p style="text-align: justify;">
+                    Si vas a pagar con transferencia, primero haz la transferencia por el valor total y luego selecciona "Pagar". Se abrirá un formulario que deberás llenar para darnos aviso de la transferencia.
+                  </p>
+                  <p>
+                    Los datos para transferir son los siguientes:<br /><br />
+                    Empresa: Gunei Investment Spa <br />
+                    RUT: 76.233.336-8 <br />
+                    Banco: Banco BICE <br />
+                    Cuenta: Cuenta Corriente 21709174 <br />
+                    Email: cuentas@agendapro.cl <br />
+                    Monto: <%= number_to_currency(downgradeLog.debt + old_plan_price * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>
+                  </p>
+                </div>
+                <div>
+                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, pp_generate_reactivation_transaction_path(mp: ""), id: "reactivatePayBtn" %>
+                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, "#", id: "reactivateWireTransferBtn", style: "display: none;" %>
+                </div>
+              <% else %>
+                <div class="row mp_table">
+                  <div class="col-md-4 text-center">
+                    <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_reactivation_transaction_path, alt: "Botón de Pago Pay U", class: "mp_link" %>
+                  </div>
+                </div>
+              <% end %>
+
+            </div>
+
+          <% end %>
+
         </div>
       </div>
     </div>
@@ -544,6 +678,21 @@
                       <label for="change_plan_mp_radio_000"><%= image_tag "admin/wire_transfer.jpg", alt: "Transferencia bancaria", class: "change_plan_mp_link", mp: "000" %></label>
                     </div>
 
+                  </div>
+
+                  <div id="changeWireTransferSelected" hidden>
+                      <p style="text-align: justify;">
+                        Si vas a pagar con transferencia, primero haz la transferencia por el valor total y luego selecciona "Pagar". Se abrirá un formulario que deberás llenar para darnos aviso de la transferencia.
+                      </p>
+                      <p>
+                        Los datos para transferir son los siguientes:<br /><br />
+                        Empresa: Gunei Investment Spa <br />
+                        RUT: 76.233.336-8 <br />
+                        Banco: Banco BICE <br />
+                        Cuenta: Cuenta Corriente 21709174 <br />
+                        Email: cuentas@agendapro.cl <br />
+                        Monto: <span id="wireChangeAmount"></span>
+                      </p>
                   </div>
 
                   <div>
@@ -630,14 +779,14 @@
                 <div style="clear: both;">
                 </div>
 
-                <div class="form-group has-feedback" style="margin-top: 5px;">
+                <!--<div class="form-group has-feedback" style="margin-top: 5px;">
                     <label class="col-xs-4 control-label">N° de comprobante</label>
                     <div class="col-xs-8">
                       <input type="text" id="transfer_receipt_number" name="transfer_receipt_number" class="form-control" value="" />
                       <span class="help-block"></span>
                       <span class="form-control-feedback"></span>
                     </div>
-                </div>
+                </div>-->
 
                 <div style="clear: both;">
                 </div>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151228135710) do
+ActiveRecord::Schema.define(version: 20151230153909) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,7 +71,6 @@ ActiveRecord::Schema.define(version: 20151228135710) do
   create_table "billing_wire_transfers", force: true do |t|
     t.datetime "payment_date",   default: '2015-11-16 15:12:16'
     t.float    "amount",         default: 0.0
-    t.string   "receipt_number", default: ""
     t.string   "account_name",   default: ""
     t.string   "account_number", default: ""
     t.boolean  "approved",       default: false
@@ -422,6 +421,14 @@ ActiveRecord::Schema.define(version: 20151228135710) do
   end
 
   add_index "districts", ["city_id"], name: "index_districts_on_city_id", using: :btree
+
+  create_table "downgrade_logs", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "plan_id"
+    t.float    "debt"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "economic_sectors", force: true do |t|
     t.string   "name",                                    null: false

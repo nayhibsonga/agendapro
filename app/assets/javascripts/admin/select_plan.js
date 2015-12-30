@@ -30,6 +30,15 @@ $(function() {
     $('#' + target_div).show();
   });
 
+  $('#openPayDiv').on('click', function(){
+    old_target_div = $('.plan-section-link.active').attr("targetdiv");
+    $('.plan-section-link.active').removeClass('active');
+    target_div = "pay_div";
+    $('.plan-section-link[targetdiv="pay_div"]').addClass("active");
+    $('#' + old_target_div).hide();
+    $('#pay_div').show();
+  });
+
   $('#change_plan_pr_link').click(function(e){
     e.preventDefault();
     $('.plan-section-link[targetdiv="change_plan_div"]').trigger("click");
@@ -64,7 +73,7 @@ $(function() {
   $('#wireTransferBtn').on('click', function(){
     if($('#amount_select').val() == "0" || $('.mp_radio:checked').length < 1)
     {
-      alert("Elige una opción de pago primero.");
+      swal("Elige una opción de pago primero.");
       return false;
     }
     $('#transferModal').modal('show');
@@ -80,6 +89,16 @@ $(function() {
     $('#changePlanModal').modal('hide');
     $('#transferModal').modal('show');
     $('#transfer_change_plan').val("1");
+    $('#transfer_new_plan').val($('#new_plan_id').val())
+    $('#transfer_paid_months').val("0");
+    $('#saveTransferBtn').attr('disabled', false);
+  });
+
+  $('#reactivateWireTransferBtn').on('click', function(){
+    $('#transferModal').modal('show');
+    $('#transfer_change_plan').val("1");
+    $('#transfer_amount').val($('#renovation_amount').val());
+    $('#transfer_amount_detail').html($('#renovation_amount_detail').val());
     $('#transfer_new_plan').val($('#new_plan_id').val())
     $('#transfer_paid_months').val("0");
     $('#saveTransferBtn').attr('disabled', false);
@@ -129,9 +148,12 @@ $(function() {
       $('#payBtn').attr('disabled', false);
       $('#payBtn').find('button').attr('disabled', false);
       $('#wireTransferBtn').hide();
+      $('#payWireTransferSelected').hide();
     }
     else
     {
+      $('#payWireTransferSelected').show();
+      $('#wireAmount').html($('#amount_select option:selected').text());
       $('#payBtn').hide();
       $('#wireTransferBtn').show();
       $('#wireTransferBtn').attr('disabled', false);
@@ -157,12 +179,44 @@ $(function() {
       $('#changePlanPayBtn').attr('disabled', false);
       $('#changePlanPayBtn').find('button').attr('disabled', false);
       $('#changePlanWireTransferBtn').hide();
+      $('#changeWireTransferSelected').hide();
     }
     else
     {
+      $('#changeWireTransferSelected').show();
       $('#changePlanPayBtn').hide();
       $('#changePlanWireTransferBtn').show();
-      $('#changePlanWireTransferBtn').disabled('disabled', false);
+      $('#changePlanWireTransferBtn').attr('disabled', false);
+    }
+
+  });
+
+  $('.reactivate_mp_radio').on('change', function(){
+
+    mp = $('.reactivate_mp_radio:checked').val();
+    var new_params = "/" + mp;
+    var cut_str = "generate_reactivation_transaction";
+    var curr_href = $('#reactivatePayBtn').attr('href');
+    var cut_index = curr_href.indexOf(cut_str);
+    cut_index += cut_str.length;
+
+    curr_href = curr_href.substring(0, cut_index) + new_params;
+
+    if(mp != "000")
+    {
+      $('#reactivatePayBtn').attr('href', curr_href);
+      $('#reactivatePayBtn').show();
+      $('#reactivatePayBtn').attr('disabled', false);
+      $('#reactivatePayBtn').find('button').attr('disabled', false);
+      $('#reactivateWireTransferBtn').hide();
+      $('#renovateWireTransferSelected').hide();
+    }
+    else
+    {
+      $('#renovateWireTransferSelected').show();
+      $('#reactivatePayBtn').hide();
+      $('#reactivateWireTransferBtn').show();
+      $('#reactivateWireTransferBtn').attr('disabled', false);
     }
 
   });
@@ -193,6 +247,8 @@ $(function() {
     var curr_href = $('#payBtn').attr('href');
     var cut_index = curr_href.indexOf(cut_str);
     cut_index += cut_str.length;
+
+    $('#wireAmount').html($('#amount_select option:selected').text());
 
     curr_href = curr_href.substring(0, cut_index) + new_params;
 
@@ -246,6 +302,7 @@ $(function() {
           $('#billing_wire_transfer_amount').val(Math.round((-1 * new_amount_due)));
           $('#billing_wire_transfer_change_plan_amount').val(Math.round((-1 * new_amount_due)));
           $('#billing_wire_transfer_new_plan_amount').val(0);
+          $('#wireChangeAmount').text('$ ' + $('#billing_wire_transfer_amount').val());
         } else {
           $('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta queda activa por este mes sin pagar más y, además, quedaran abonados $ ' + Math.round((-1 * new_amount_due)) + ' en tu cuenta, para tu próximo pago.');
           //$('#billing_wire_transfer_amount').val(Math.round((-1 * new_amount_due)));
@@ -260,6 +317,7 @@ $(function() {
         $('#plan_mp_table').show();
         $('#transfer_amount').val(Math.round( (plan_month_value * (1 + sales_tax) + due_amount - plan_value_left * (1 + sales_tax))));
         $('#transfer_amount_detail').text('$ ' + $('#transfer_amount').val());
+        $('#wireChangeAmount').text('$ ' + $('#transfer_amount').val());
         //$('#billing_wire_transfer_change_plan_amount').val(Math.round((-1 * new_amount_due)));
         //$('#billing_wire_transfer_change_plan_amount').val(0);
       }
@@ -278,6 +336,7 @@ $(function() {
       $('#plan_mp_table').show();
       $('#transfer_amount').val(Math.round(computed_price * (1 + sales_tax)));
       $('#transfer_amount_detail').text('$ ' + $('#transfer_amount').val());
+      $('#wireChangeAmount').text('$ ' + $('#transfer_amount').val());
 
     }
 
@@ -340,7 +399,17 @@ $(function() {
   $('#payBtn').on('click', function(e){
     if($('.mp_radio:checked').length < 1 || $('#amount_select').val() == "0")
     {
-      alert("Elige cantidad y medio de pago antes de pagar.")
+      swal("Elige cantidad y medio de pago antes de pagar.");
+      e.preventDefault();
+    }
+    $(this).attr('disabled', true);
+    $(this).find('button').attr('disabled', true);
+  });
+
+  $('#reactivatePayBtn').on('click', function(e){
+    if($('.reactivate_mp_radio:checked').length < 1)
+    {
+      swal("Elige medio de pago antes de pagar.");
       e.preventDefault();
     }
     $(this).attr('disabled', true);
@@ -350,7 +419,7 @@ $(function() {
   $('#changePlanPayBtn').on('click', function(e){
     if($('.change_plan_mp_radio:checked').length < 1)
     {
-      alert('Elige un medio de pago primero.');
+      swal('Elige un medio de pago primero.');
       e.preventDefault();
     }
     $(this).attr('disabled', true);

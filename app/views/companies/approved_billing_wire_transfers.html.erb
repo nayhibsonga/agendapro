@@ -17,7 +17,6 @@
 	              		<th>Fecha de pago</th>
 	              		<th>Empresa</th>
 	              		<th>Monto</th>
-	              		<th>N° de comprobante</th>
 	              		<th>Opciones</th>
             		</tr>
           		</thead>
@@ -35,9 +34,6 @@
           				</td>
           				<td>
           					<%= transfer.amount.to_s %>
-          				</td>
-          				<td>
-          					<%= transfer.receipt_number %>
           				</td>
           				<td>
           					<button type="button" class="openTransfer btn btn-default btn-xs" onclick="openTransfer(<%= transfer.id %>);" transfer_id="<%= transfer.id %>"><i class="fa fa-search-plus"></i></button>

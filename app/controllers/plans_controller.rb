@@ -115,7 +115,13 @@ class PlansController < ApplicationController
 
   def save_billing_wire_transfer
 
-    @billing_wire_transfer = BillingWireTransfer.new(payment_date: params[:transfer_datetime].to_datetime, amount: params[:transfer_amount].to_f, receipt_number: params[:transfer_receipt_number], account_name: params[:transfer_account_name], account_number: params[:transfer_account_number], approved: false, company_id: current_user.company.id, change_plan: params[:transfer_change_plan], new_plan: params[:transfer_new_plan], bank_id: params[:transfer_bank_id], paid_months: params[:transfer_paid_months])
+    @billing_wire_transfer = BillingWireTransfer.new(payment_date: params[:transfer_datetime].to_datetime, amount: params[:transfer_amount].to_f, account_name: params[:transfer_account_name], account_number: params[:transfer_account_number], approved: false, company_id: current_user.company.id, change_plan: params[:transfer_change_plan], new_plan: params[:transfer_new_plan], bank_id: params[:transfer_bank_id], paid_months: params[:transfer_paid_months])
+
+    if current_user.company.plan_id == Plan.find_by_name("Gratis").id
+      downgradeLog = DowngradeLog.where(company_id: current_user.company.id).order('created_at desc').first
+      @billing_wire_transfer.new_plan = downgradeLog.plan_id
+      @billing_wire_transfer.change_plan = true
+    end
 
     if @billing_wire_transfer.save
       flash[:notice] = 'Transferencia guardada correctamente y en espera de aprobación.'

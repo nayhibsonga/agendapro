@@ -214,6 +214,75 @@ class PayUController < ApplicationController
     end
   end
 
+
+  #Accepts a payment to reactivate a company, i.e. change it's plan from free to the old one
+  def generate_reactivation_transaction
+
+    payment_method = params[:mp]
+    company = Company.find(current_user.company_id)
+
+    downgradeLog = DowngradeLog.where(company_id: company.id).order('created_at desc').first
+
+    new_plan = downgradeLog.plan
+
+    #Should have free plan
+    previous_plan = company.plan
+
+    price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+
+    sales_tax = company.country.sales_tax
+
+    day_number = Time.now.day
+    month_number = Time.now.month
+    month_days = Time.now.days_in_month
+
+    plan_month_value = ((month_days - day_number + 1).to_f / month_days.to_f) * price
+    due_amount = downgradeLog.debt
+
+
+    if company
+      mockCompany = Company.find(current_user.company_id)
+      mockCompany.plan_id = new_plan.id
+      mockCompany.months_active_left = 1.0
+      mockCompany.due_amount = 0.0
+      mockCompany.due_date = nil
+
+      if !mockCompany.valid?
+            redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (9)"
+      else
+
+        trx_comp = mockCompany.id.to_s + "0" + new_plan.id.to_s + "0"
+        trx_offset = 4
+        trx_date = DateTime.now.to_s.gsub(/[-:T]/i, '')
+        trx_date = trx_date[0, trx_date.size - trx_offset]
+        trx_date = trx_date[trx_date.size - 15 + trx_comp.size, trx_date.size]
+        trx_id = trx_comp + trx_date
+
+        if trx_id.size > 15
+          trx_id = trx_id[0, 15]
+        end
+
+        due = sprintf('%.2f', ((plan_month_value + due_amount /(1 + sales_tax) )*(1 + sales_tax)).round(0))
+
+        crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+
+        encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Cambio a plan " + mockCompany.plan.name, amount: due, source_url: select_plan_path})
+
+        
+        if encrypted_data
+          PlanLog.create(trx_id: trx_id, new_plan_id: new_plan.id, prev_plan_id: previous_plan.id, company_id: mockCompany.id, amount: due)
+          PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Creación de reactivación de plan empresa id "+mockCompany.id.to_s+", nombre "+mockCompany.name+". Cambia de plan "+mockCompany.plan.name+"("+mockCompany.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+mockCompany.id.to_s+". Resultado: Se procesa")
+          redirect_to action: 'generate_transaction', encrypted_task: encrypted_data
+          return
+        else
+          PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Error creación de cambio de plan empresa id "+mockCompany.id.to_s+", nombre "+mockCompany.name+". Cambia de plan "+mockCompany.plan.name+"("+mockCompany.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+mockCompany.id.to_s+". Resultado: "+resp.get_error+".")
+          redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (3)"
+        end
+      end
+    end
+  end
+
+
   def response_handler
     crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
     encrypted_transaction = ''
