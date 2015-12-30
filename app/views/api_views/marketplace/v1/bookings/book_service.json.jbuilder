@@ -8,3 +8,5 @@ json.location_address @booking.location.get_full_address
 json.client_full_name @booking.client.full_name
 json.client_email @booking.client.email
 json.client_phone @booking.client.phone
+json.status_name @booking.status.name
+json.company_name @booking.location.company.name
