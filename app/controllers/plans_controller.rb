@@ -87,8 +87,17 @@ class PlansController < ApplicationController
     puts "Month number: " + @month_number.to_s
     puts "Month_days: " + @month_days.to_s
 
+    puts "Price " + @price.to_s
+
     #@company.months_active_left > 0 ? @plan_1 = (@company.due_amount + @price).round(0) : @plan_1 = ((@company.due_amount + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
     @plan_1 = (@company.due_amount + @price * (1+@sales_tax)).round(0)
+
+    if @company.payment_status_id == PaymentStatus.find_by_name("Trial").id
+      puts "True"
+      special_price = ((@month_days - @day_number + 1).to_f / @month_days.to_f) * @price
+      @plan_1 = (@company.due_amount + special_price * (1+@sales_tax)).round(0)
+    end
+
     @plan_2 = (@plan_1 + @price*1* (1+@sales_tax)).round(0)
     @plan_3 = (@plan_1 + @price*2* (1+@sales_tax)).round(0)
     @plan_4 = ((@plan_1 + @price*3* (1+@sales_tax))*(1-@month_discount_4)).round(0)

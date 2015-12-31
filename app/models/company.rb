@@ -285,11 +285,12 @@ class Company < ActiveRecord::Base
 	#Get days count till end of month, divide by month length and multiply by company's plan price.
 	def calculate_trial_debt
 
+		sales_tax = self.country.sales_tax
 		current_date = Date.today
 		month_end = current_date.end_of_month
-		debt_proportion = (month_end.day.to_f - current_date.day.to_f)/month_end.day.to_f
+		debt_proportion = (month_end.day.to_f - current_date.day.to_f + 1)/month_end.day.to_f
 
-		debt = self.plan.plan_countries.find_by(country_id: self.country.id).price.to_f * debt_proportion
+		debt = self.plan.plan_countries.find_by(country_id: self.country.id).price.to_f * debt_proportion * ( 1 + sales_tax)
 
 		return debt
 
@@ -334,13 +335,20 @@ class Company < ActiveRecord::Base
 
 	def self.end_trial
 
+		day_number = Time.now.day
+    	month_number = Time.now.month
+    	month_days = Time.now.days_in_month
+
 		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
 
 			plan_id = Plan.where.not(id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
 
+			sales_tax = company.country.sales_tax
+
 			company.plan_id = plan_id
 			company.due_date = Time.now
-			company.due_amount = 0.0
+			company.due_amount = - 1 * ((day_number - 1).to_f / month_days.to_f) * company.plan.plan_countries.find_by(country_id: company.country.id).price * (1 + sales_tax)
+			company.months_active_left = 0
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 
 			if company.save
