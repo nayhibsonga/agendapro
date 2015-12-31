@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20151230153909) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -69,11 +69,13 @@ ActiveRecord::Schema.define(version: 20151230153909) do
   end
 
   create_table "billing_wire_transfers", force: true do |t|
-    t.datetime "payment_date",   default: '2015-11-16 15:12:16'
-    t.float    "amount",         default: 0.0
-    t.string   "account_name",   default: ""
-    t.string   "account_number", default: ""
-    t.boolean  "approved",       default: false
+    t.datetime "payment_date",       default: '2015-12-30 19:45:40'
+    t.float    "amount",             default: 0.0
+    t.string   "receipt_number",     default: ""
+    t.string   "account_name",       default: ""
+    t.string   "account_bank",       default: ""
+    t.string   "account_number",     default: ""
+    t.boolean  "approved",           default: false
     t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
