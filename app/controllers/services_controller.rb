@@ -215,7 +215,7 @@ class ServicesController < ApplicationController
       end
       bundles.each do |bundle|
         if bundle.service_category_id == category.id
-          bundleJSON = bundle.attributes.merge({'name_with_small_outcall' => bundle.name, 'bundle' => true, 'duration' => bundle.services.sum(:price) })
+          bundleJSON = bundle.attributes.merge({'name_with_small_outcall' => bundle.name, 'bundle' => true, 'duration' => bundle.services.sum(:duration) })
           services_array.push(bundleJSON)
         end
       end
