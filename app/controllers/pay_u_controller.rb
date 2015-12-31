@@ -74,10 +74,13 @@ class PayUController < ApplicationController
           trx_id = trx_id[0, 15]
         end
 
-        company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
-        due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
+        #company.months_active_left > 0 ? plan_1 = (company.due_amount + price*(1+sales_tax)).round(0) : plan_1 = ((company.due_amount + (month_days - day_number + 1)*price/month_days)*(1+sales_tax)).round(0)
+        #due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
         # req = PuntoPagos::Request.new()
         # resp = req.create(trx_id, due, payment_method)
+
+        plan_1 = (company.due_amount + price*(1+sales_tax)).round(0)
+        due = sprintf('%.2f', ((plan_1 + price*(amount-1)*(1+sales_tax))*(1-month_discount)).round(0))
 
         crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
         encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Pago plan " + company.plan.name, amount: due, source_url: select_plan_url})
@@ -134,10 +137,12 @@ class PayUController < ApplicationController
         if months_active_left > 0
           if plan_value_left > (plan_month_value + due_amount)
             new_active_months_left = ((plan_value_left - plan_month_value - due_amount)/plan_price).floor + 1
-            new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount)/plan_price)%1)*plan_price
+            new_amount_due = -1 * (((plan_value_left * (1 + sales_tax) - plan_month_value* (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax)))) * plan_price * (1 + sales_tax);
+
             company.plan_id = plan_id
             company.months_active_left = new_active_months_left
             company.due_amount = (new_amount_due).round(0)
+            
             if company.save
               PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."
@@ -208,6 +213,75 @@ class PayUController < ApplicationController
       return
     end
   end
+
+
+  #Accepts a payment to reactivate a company, i.e. change it's plan from free to the old one
+  def generate_reactivation_transaction
+
+    payment_method = params[:mp]
+    company = Company.find(current_user.company_id)
+
+    downgradeLog = DowngradeLog.where(company_id: company.id).order('created_at desc').first
+
+    new_plan = downgradeLog.plan
+
+    #Should have free plan
+    previous_plan = company.plan
+
+    price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+
+    sales_tax = company.country.sales_tax
+
+    day_number = Time.now.day
+    month_number = Time.now.month
+    month_days = Time.now.days_in_month
+
+    plan_month_value = ((month_days - day_number + 1).to_f / month_days.to_f) * price
+    due_amount = downgradeLog.debt
+
+
+    if company
+      mockCompany = Company.find(current_user.company_id)
+      mockCompany.plan_id = new_plan.id
+      mockCompany.months_active_left = 1.0
+      mockCompany.due_amount = 0.0
+      mockCompany.due_date = nil
+
+      if !mockCompany.valid?
+            redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (9)"
+      else
+
+        trx_comp = mockCompany.id.to_s + "0" + new_plan.id.to_s + "0"
+        trx_offset = 4
+        trx_date = DateTime.now.to_s.gsub(/[-:T]/i, '')
+        trx_date = trx_date[0, trx_date.size - trx_offset]
+        trx_date = trx_date[trx_date.size - 15 + trx_comp.size, trx_date.size]
+        trx_id = trx_comp + trx_date
+
+        if trx_id.size > 15
+          trx_id = trx_id[0, 15]
+        end
+
+        due = sprintf('%.2f', ((plan_month_value + due_amount /(1 + sales_tax) )*(1 + sales_tax)).round(0))
+
+        crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+
+        encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Cambio a plan " + mockCompany.plan.name, amount: due, source_url: select_plan_path})
+
+        
+        if encrypted_data
+          PlanLog.create(trx_id: trx_id, new_plan_id: new_plan.id, prev_plan_id: previous_plan.id, company_id: mockCompany.id, amount: due)
+          PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Creación de reactivación de plan empresa id "+mockCompany.id.to_s+", nombre "+mockCompany.name+". Cambia de plan "+mockCompany.plan.name+"("+mockCompany.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+mockCompany.id.to_s+". Resultado: Se procesa")
+          redirect_to action: 'generate_transaction', encrypted_task: encrypted_data
+          return
+        else
+          PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Error creación de cambio de plan empresa id "+mockCompany.id.to_s+", nombre "+mockCompany.name+". Cambia de plan "+mockCompany.plan.name+"("+mockCompany.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+mockCompany.id.to_s+". Resultado: "+resp.get_error+".")
+          redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor escríbenos a contacto@agendapro.cl si el problema persiste. (3)"
+        end
+      end
+    end
+  end
+
 
   def response_handler
     crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
@@ -407,6 +481,7 @@ class PayUController < ApplicationController
         company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
           CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
+          CompanyMailer.pay_u_online_receipt_email(company.id, pay_u_notification.id)
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
         end
@@ -420,6 +495,7 @@ class PayUController < ApplicationController
         company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "OK notification_plan")
+          CompanyMailer.pay_u_online_receipt_email(company.id, pay_u_notification.id)
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
         end

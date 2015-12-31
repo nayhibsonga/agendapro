@@ -499,4 +499,21 @@ module ApplicationHelper
 		end
 	end
 
+	def code_to_payment_method(code)
+		case code
+		when "03"
+			return "WebPay"
+		when "04"
+			return "Banco de Chile"
+		when "05"
+			return "Banco BCI"
+		when "06"
+			return "Banco TBanc"
+		when "07"
+			return "BancoEstado"
+		when "16"
+			return "Banco BBVA"
+		end
+	end
+
 end

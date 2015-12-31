@@ -144,11 +144,20 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
+
     if current_user && current_user.company_id && current_user.company_id > 0
       if current_user.company.country && current_user.company.country.locale
-        dashboard_path(locale: current_user.company.country.locale)
+        if !session[:user_return_to].nil? && (session[:user_return_to] == select_plan_path.to_s || session[:user_return_to] == select_plan_path(locale: current_user.company.country.locale).to_s)
+          select_plan_path(locale: current_user.company.country.locale)
+        else
+          dashboard_path(locale: current_user.company.country.locale)
+        end
       else
-        dashboard_path
+        if !session[:user_return_to].nil? && (session[:user_return_to] == select_plan_path.to_s || session[:user_return_to] == select_plan_path(locale: current_user.company.country.locale).to_s)
+          select_plan_path
+        else
+          dashboard_path
+        end
       end
     else
       if request.env['omniauth.origin']

@@ -75,6 +75,8 @@
                     end
                     billing_logs = BillingLog.where('company_id = ? and created_at BETWEEN ? and ?', company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id))
                     billing_records = BillingRecord.where('company_id = ? and date BETWEEN ? and ?', company.id, start_date, end_date)
+                    transfers = company.billing_wire_transfers.where(approved: true).where('payment_date BETWEEN ? and ?', start_date, end_date)
+
                     billing_logs.each do |bl|
                       month_income = month_income + bl.payment
                       company_income = company_income + bl.payment
@@ -86,6 +88,12 @@
                       company_income = company_income + br.amount
                       @incomes[i]['income'] = @incomes[i]['income'] + br.amount
                       @incomes[13]['income'] = @incomes[13]['income'] + br.amount
+                    end
+                    transfers.each do |transfer|
+                      month_income = month_income + transfer.amount
+                      company_income = company_income + transfer.amount
+                      @incomes[i]['income'] = @incomes[i]['income'] + transfer.amount
+                      @incomes[13]['income'] = @incomes[13]['income'] + transfer.amount
                     end
                   %>
                   <td><%= month_income.to_s %></td>

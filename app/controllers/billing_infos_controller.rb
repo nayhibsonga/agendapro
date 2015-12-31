@@ -23,6 +23,7 @@ class BillingInfosController < ApplicationController
 
   # GET /billing_infos/1/edit
   def edit
+
   end
 
   # POST /billing_infos

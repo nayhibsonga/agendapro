@@ -178,6 +178,7 @@ Agendapro::Application.routes.draw do
     get "/punto_pagos/generate_transaction/:mp/:amount", :to => 'punto_pagos#generate_transaction', :as => 'punto_pagos_generate'
     get "/punto_pagos/generate_company_transaction/:mp/:amount", :to => 'punto_pagos#generate_company_transaction', :as => 'pp_generate_company_transaction'
     get "/punto_pagos/generate_plan_transaction/:mp/:plan_id", :to => 'punto_pagos#generate_plan_transaction', :as => 'pp_generate_plan_transaction'
+    get "/punto_pagos/generate_reactivation_transaction/:mp", :to => 'punto_pagos#generate_reactivation_transaction', :as => 'pp_generate_reactivation_transaction'
     post "/punto_pagos/notification", :to => 'punto_pagos#notification', :as => 'punto_pagos_notification'
     get "/punto_pagos/success", :to => 'punto_pagos#success', :as => 'punto_pagos_success'
     get "/punto_pagos/failure", :to => 'punto_pagos#failure', :as => 'punto_pagos_failure'
@@ -187,6 +188,7 @@ Agendapro::Application.routes.draw do
     get "/pay_u/generate_transaction", :to => 'pay_u#generate_transaction', :as => 'pay_u_generate'
     get "/pay_u/generate_company_transaction/:amount", :to => 'pay_u#generate_company_transaction', :as => 'pu_generate_company_transaction'
     get "/pay_u/generate_plan_transaction/:plan_id", :to => 'pay_u#generate_plan_transaction', :as => 'pu_generate_plan_transaction'
+    get "/pay_u/generate_reactivation_transaction", :to => 'pay_u#generate_reactivation_transaction', :as => 'pu_generate_reactivation_transaction'
     post "/pay_u/confirmation", :to => 'pay_u#confirmation', :as => 'pay_u_confirmation'
     get "/pay_u/response", :to => 'pay_u#response_handler', :as => 'pay_u_response'
     get "/pay_u/success", :to => 'pay_u#success', :as => 'pay_u_success'
@@ -214,9 +216,12 @@ Agendapro::Application.routes.draw do
     post '/companies/update_company', :to => 'companies#update_company'
     post '/companies/deactivate_company', :to => 'companies#deactivate_company'
     post '/companies/get_monthly_bookings', :to => 'companies#get_monthly_bookings'
-    get '/billing_wire_transfer', :to => 'companies#billing_wire_transfer_form'
-    post '/billing_wire_transfers/', :to => 'companies#save_billing_wire_transfer'
-    post '/billing_wire_transfers/:id', :to => 'companies#update_billing_wire_transfer'
+    post '/save_billing_wire_transfer', :to => 'plans#save_billing_wire_transfer'
+    get '/pending_billing_wire_transfers', :to => 'companies#pending_billing_wire_transfers'
+    get '/approved_billing_wire_transfers', :to => 'companies#approved_billing_wire_transfers'
+    get '/show_billing_wire_transfer', :to => 'companies#show_billing_wire_transfer'
+    post '/approve_billing_wire_transfer', :to => 'companies#approve_billing_wire_transfer'
+    post '/delete_billing_wire_transfer', :to => 'companies#delete_billing_wire_transfer'
 
     # Search
     get "searchs/index"
