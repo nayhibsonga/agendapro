@@ -66,7 +66,7 @@ class CompanyMailer < ActionMailer::Base
 				},
 				{
 					:name => 'ACTIVATE_URL',
-					:content => select_plan_path
+					:content => select_plan_url
 				}
 			],
 			:tags => ['invoice']
@@ -158,7 +158,7 @@ class CompanyMailer < ActionMailer::Base
 				},
 				{
 					:name => 'ACTIVATE_URL',
-					:content => select_plan_path
+					:content => select_plan_url
 				}
 			],
 			:tags => ['invoice']
@@ -240,7 +240,7 @@ class CompanyMailer < ActionMailer::Base
 				},
 				{
 					:name => 'ACTIVATE_URL',
-					:content => select_plan_path
+					:content => select_plan_url
 				}
 			],
 			:tags => ['invoice']
@@ -362,6 +362,10 @@ class CompanyMailer < ActionMailer::Base
 					{
 						:name => 'REMINDER_MESSAGE',
 						:content => reminder_message
+					},
+					{
+						:name => 'ACTIVATE_URL',
+						:content => select_plan_url
 					}
 				],
 				:tags => ['invoice']
@@ -372,7 +376,7 @@ class CompanyMailer < ActionMailer::Base
 			message = {
 				:from_email => 'no-reply@agendapro.cl',
 				:from_name => 'AgendaPro',
-				:subject => '¡Tu cuenta AgendaPro ya está lista!',
+				:subject => '¡Ya puedes pagar tu cuenta AgendaPro!',
 				:to => recipients,
 				:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
 				:global_merge_vars => [
@@ -407,6 +411,10 @@ class CompanyMailer < ActionMailer::Base
 					{
 						:name => 'DEBT_AMOUNT',
 						:content => ActionController::Base.helpers.number_to_currency(debt_amount, locale: company.country.locale.to_sym)
+					},
+					{
+						:name => 'ACTIVATE_URL',
+						:content => select_plan_url
 					}
 				],
 				:tags => ['invoice']
@@ -449,7 +457,7 @@ class CompanyMailer < ActionMailer::Base
 			:subject => 'Nueva transferencia de pago de cuenta',
 			:to => [
 				{
-					:email => 'iegomez@agendapro.cl',
+					:email => 'cuentas@agendapro.cl',
 					:type => 'to'
 				}
 			],

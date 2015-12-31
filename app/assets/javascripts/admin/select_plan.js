@@ -1,5 +1,16 @@
 $(function() {
 
+  var datetime_str = new Date().toLocaleString();
+  var time_str = datetime_str.split(" ")[1].split(":");
+  var time_hour = time_str[0];
+  var time_minute = time_str[1];
+
+  console.log(time_hour);
+  console.log(time_minute);
+
+  $("#transfer_payment_time_4i").val(time_hour);
+  $("#transfer_payment_time_5i").val(time_minute);
+
   $("#transfer_payment_date").datepicker({
     dateFormat: 'dd/mm/yy',
     autoSize: true,

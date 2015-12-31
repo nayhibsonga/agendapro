@@ -696,17 +696,17 @@
                   </div>
 
                   <div>
-                    <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, pp_generate_plan_transaction_path(mp: "", plan_id: 0), id: "changePlanPayBtn" %>
-                    <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, "#", id: "changePlanWireTransferBtn", style: "display: none;" %>                  
+                    <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, pp_generate_plan_transaction_path(mp: "", plan_id: 0), id: "changePlanPayBtn", style: "float: right;" %>
+                    <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, "#", id: "changePlanWireTransferBtn", style: "display: none; float: right;" %>                  
                   </div>
                 </div>
                 <div id="change_plan_free">
-                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Cambiar</button>'.html_safe, pp_generate_plan_transaction_path(mp: "00", plan_id: 0), id: "changePlanBtn" %>
+                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Cambiar</button>'.html_safe, pp_generate_plan_transaction_path(mp: "00", plan_id: 0), id: "changePlanBtn", style: "float: right;" %>
                 </div>
               <% else %>
                 <div class="row mp_table">
                   <div class="col-md-4 text-center">
-                    <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_plan_transaction_path(plan_id: 0), alt: "Botón de Pago Pay U", class: "change_plan_mp_link" %>
+                    <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_plan_transaction_path(plan_id: 0), alt: "Botón de Pago Pay U", class: "change_plan_mp_link", style: "float: right;" %>
                   </div>
                 </div>
               <% end %>
@@ -836,11 +836,11 @@
                 </div>
 
                 <div class="form-group has-feedback">
-                    <div class="col-xs-4">
-                      <button type="submit" class="btn btn-green" id="saveTransferBtn">Guardar</button>
-                    </div>
                     <div class="col-xs-8">
                     </div>
+                    <div class="col-xs-4">
+                      <button type="submit" class="btn btn-green" style="width: 140px; float: right;" id="saveTransferBtn">Guardar</button>
+                    </div>              
                 </div>
               </div>
             </div>
