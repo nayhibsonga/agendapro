@@ -1281,11 +1281,11 @@ module ApiViews
 	        if (booking_start <=> now) < 1
 	          render json: { errors: "Esta reserva no puede ser confirmada porque su fecha de inicio ya ocurrió." }, status: 422
 	          return
-	        elsif booking.status = Status.find_by(:name => 'Cancelado')
+	        elsif booking.status.id == Status.find_by(:name => 'Cancelado').id
 	        	render json: { errors: "Esta reserva no puede ser confirmada porque se registra como cancelada." }, status: 422
 	          return
 	        end
-	        status = Status.find_by(:name => 'Confirmado')
+	        status = Status.find_by(:name => 'Confirmado').id
 	        if booking.update(status_id: status)
 						@api_user ? user = @api_user.id : user = 0
 						BookingHistory.create(booking_id: booking.id, action: "Confirmada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)

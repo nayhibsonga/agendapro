@@ -544,10 +544,14 @@ class Booking < ActiveRecord::Base
 
   def marketplace_url(type="success")
     extra_url = ''
-    if type.split(' ').count > 1
+    if type.split('_').count > 1
       extra_url = '?all=true'
-      type = type.split(' ')[0]
+      type = type.split('_')[0]
     end
+    puts type
+    puts self.id.to_s
+    puts self.access_token.to_s
+    puts extra_url
     return 'http://' + ENV['MARKETPLACE_URL'] + '/booking/' + type + '/' + self.id.to_s + '/' + self.access_token.to_s + extra_url
   end
 
