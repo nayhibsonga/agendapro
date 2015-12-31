@@ -4,40 +4,54 @@ section.title {
   h1, p { text-align: center; }
 }
 
-section.table {
+section.plans {
   $cols: 4;
   %border {
     border-color: $gray;
     border-style: solid;
   }
 
+  margin-top: 20px;
+  margin-bottom: 10px;
+
   .border {
     @extend %border;
     border-width: 1px;
   }
   .pricing-col {
-    display: inline-block;
+    display: none;
     padding: 5px 10px;
     width: 100%;
     text-align: center;
+
+    &.active {
+      display: inline-block;
+    }
   }
   .pricing-row {
+    min-height: 44px;
+
     & + .pricing-row { border-top: $gray solid 1px; }
     p { margin-bottom: 0; }
     .pricing-cols, .pricing-description {
       display: inline-block;
-      width: calc((100% - 20px) / 2);
+      min-height: inherit;
+      //width: calc((100% - 20px) / 2);
     }
+    .pricing-cols { width: calc(30% - 10px); }
+    .pricing-description { width: calc(70% - 10px); }
     .pricing-description {
       padding: 10px 15px;
       border-right: $gray solid 1px;
     }
     .pricing-col {
       padding: 10px 10px;
+      min-height: inherit;
     }
   }
   @media (min-width: 992px) {
     .pricing-col {
+      display: inline-block;
       width: calc((100% / #{$cols}) - (#{$cols} - 1)* 1px);
       & + .pricing-col { border-left: $gray solid 1px; }
     }
@@ -55,10 +69,17 @@ section.table {
     font-size: 20px;
   }
   .pricing-title {
-    & + .pricing-title { border-left: $gray solid 1px; }
     @extend .pricing-plan;
-    @extend .pricing-col;
+    display: inline-block;
+    padding: 5px 10px;
+    text-align: center;
     width: calc((100% / #{$cols}) - (#{$cols} - 1)* 1px);
+    cursor: pointer;
+
+    & + .pricing-title { border-left: $gray solid 1px; }
+    &.active {
+      color: $light-orange;
+    }
   }
   .pricing-circle {
     $size: 120px;
@@ -78,5 +99,8 @@ section.table {
         color: $light-green;
       }
     }
+  }
+  .pricing-section, .pricing-icon {
+    color: $light-green;
   }
 }
