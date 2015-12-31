@@ -19,6 +19,7 @@ class BundlesController < ApplicationController
 
   def new
     @bundle = Bundle.new
+    service_bundle = @bundle.service_bundles.build
     respond_with(@bundle)
   end
 
@@ -27,6 +28,9 @@ class BundlesController < ApplicationController
 
   def create
     @bundle = Bundle.new(bundle_params)
+    if current_user.role_id != Role.find_by_name("Super Admin").id
+      @bundle.company_id = current_user.company_id
+    end
     @bundle.save
     respond_with(@bundle)
   end
@@ -47,6 +51,6 @@ class BundlesController < ApplicationController
     end
 
     def bundle_params
-      params.require(:bundle).permit(:name, :price, :service_category_id, :description)
+      params.require(:bundle).permit(:name, :price, :service_category_id, :show_price, :description, service_bundles_attributes: [:id, :service_id, :price, :_destroy])
     end
 end
