@@ -177,7 +177,7 @@ class BookingsController < ApplicationController
             else
               @booking.list_price = @booking.service.price
             end
-              
+
             logger.debug "Debug 1"
           else
             @booking.list_price = 0
@@ -243,8 +243,8 @@ class BookingsController < ApplicationController
       end
 
       if @company_setting.staff_code
-        if !buffer_params[:staff_code].blank? && StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code]).count > 0
-          staff_code = StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code]).first.id
+        if !buffer_params[:staff_code].blank? && StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).count > 0
+          staff_code = StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).first.id
         else
           @errors << {
             :booking => pos,
@@ -657,8 +657,8 @@ class BookingsController < ApplicationController
       end
 
       if @company_setting.staff_code
-        if !buffer_params[:staff_code].blank? && StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code]).count > 0
-          staff_code = StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code]).first.id
+        if !buffer_params[:staff_code].blank? && StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).count > 0
+          staff_code = StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).first.id
         else
           @errors << {
             :booking => pos,
@@ -964,8 +964,8 @@ class BookingsController < ApplicationController
     staff_code = nil
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code)
     if @company_setting.staff_code
-      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
-        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first.id
+      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).count > 0
+        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).first.id
       else
         render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
         return
@@ -1118,8 +1118,8 @@ class BookingsController < ApplicationController
     staff_code = nil
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code)
     if @company_setting.staff_code
-      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
-        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first.id
+      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).count > 0
+        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).first.id
       else
         render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
         return
@@ -1435,8 +1435,8 @@ class BookingsController < ApplicationController
   def destroy
     @company_setting = current_user.company.company_setting
     if @company_setting.staff_code
-      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).count > 0
-        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code]).first.id
+      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).count > 0
+        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).first.id
       else
         render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
         return
@@ -2432,7 +2432,7 @@ class BookingsController < ApplicationController
 
               #LastMinutePromo.where(location_id: @selectedLocation.id, service_id: booking.service.id).first
 
-              if last_minute_promo.nil? 
+              if last_minute_promo.nil?
 
                 @errors << "La promoción de último minuto ya no existe."
 
@@ -2515,7 +2515,7 @@ class BookingsController < ApplicationController
                 else
                   booking.discount = 0
                 end
-              end        
+              end
 
             end
 
@@ -4380,7 +4380,7 @@ class BookingsController < ApplicationController
 
 
           #Uncomment for overlaping hours
-          
+
           #if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization && last_check
           #  dateTimePointer = dateTimePointer - total_services_duration.minutes + first_service.company.company_setting.calendar_duration.minutes
           #end
@@ -4440,7 +4440,7 @@ class BookingsController < ApplicationController
               #If they do, choose the one with less ocupations to start with
               #If they don't, choose the one that starts earlier.
               if service.check_providers_day_times(dateTimePointer)
-                
+
                 providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
 
                 if providers.count == 0
@@ -4450,7 +4450,7 @@ class BookingsController < ApplicationController
                 #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
 
               else
-                
+
                 providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
 
                 if providers.count == 0
@@ -4525,7 +4525,7 @@ class BookingsController < ApplicationController
                   if Booking.where(service_provider_id: provider.id, service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count >= service.capacity
                     service_valid = false
                   end
-                  
+
                 end
 
 
@@ -6049,7 +6049,7 @@ class BookingsController < ApplicationController
         if booking.is_session_booked
           if !booking.price.nil?
             treatment_price += booking.price
-          elsif !booking.list_price.nil? 
+          elsif !booking.list_price.nil?
             if !booking.discount.nil?
               booking.price = booking.list_price * (100 - booking.discount) / 100
               treatment_price += booking.price

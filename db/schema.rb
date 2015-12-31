@@ -1458,6 +1458,7 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active",     default: true
   end
 
   add_index "staff_codes", ["company_id"], name: "index_staff_codes_on_company_id", using: :btree
