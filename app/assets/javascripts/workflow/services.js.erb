@@ -97,12 +97,15 @@ function loadStep1 (service_id) {
 	var localId = $('#selectedLocal').data('local').id;
 	var categoryCount = 0;
 	$.getJSON('/local_services', {location: localId}, function (categorized_services) {
+		window.console.log(categorized_services);
 		$('#services-selector').empty();
 		$.each(categorized_services, function (key, service_hash) {
+			window.console.log(service_hash);
 			if (service_hash.services.length > 0) {
 				var servicesHTML = '';
 				categoryCount = categoryCount + 1;
 				$.each(service_hash.services, function (key, service) {
+					window.console.log(service);
 					//====== Generando Radios
 					serviceDiscount = "";
 					servicePrice = '';
