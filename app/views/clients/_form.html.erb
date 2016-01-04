@@ -280,6 +280,40 @@
               </table>
             </div>
           </div>
+          <div class="panel panel-green">
+            <div class="panel-heading">
+              <div class="row">
+                <div class="col-md-6">
+                  Archivos
+                </div>
+                <div class="col-md-6">
+                  <button id="addFileBtn" class="btn btn-default" style="float: right; color: #22c488;">Agregar archivo</button>
+                </div>
+              </div>
+            </div>
+            <div class="panel-body panel-scrollable" style="max-height: 230px !important;">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Fecha</th>
+                    <th>Tamaño</th>
+                    <th>Opciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @files.each do |file| %>
+                  <tr>
+                    <td><%= file.name %></td>
+                    <td><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
+                    <td><%= file.get_size %></td>
+                    <td>Botones</td>
+                  </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
           <%= link_to '<i class="fa fa-eye"></i> Historial Completo'.html_safe, client_history_path(:id => @client.id), class: "btn btn-white" %>
         </div>
         <% end %>
@@ -330,6 +364,86 @@
     </div>
   </div>
 </div>
+
+<!-- File upload Modal -->
+
+<div class="modal fade fileUploadModal" id="fileUploadModal" tabindex="-1" role="dialog" aria-labelledby="Agregar archivo" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="fileUploadModallTitle" style="line-height: 1.1;">
+          Subir archivo
+        </h3>
+      </div>
+      <div class="modal-body" id="fileUploadModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <%= form_tag upload_client_file_path, multipart: true, class: 'form-horizontal' do %>
+
+              <input type="hidden" id="client_id" name="client_id" value="<%= @client.id %>" %>
+
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label">Archivo</label>
+                <div class="col-xs-8">
+                  <%= file_field_tag :file, :class => 'form-control'  %>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label">Nombre</label>
+                <div class="col-xs-8">
+                  <input type="text" class="form-control" id="file_name" name="file_name" value="" />
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label">Carpeta</label>
+                <div class="col-xs-8">
+                  <select id="folderSelect" class="form-control" name="folder_name">
+                    <option value="select">Nueva carpeta</option>
+                    <% @folders.each do |folder_name| %>
+                      <option value="<%= folder_name %>"><%= folder_name %></option>
+                    <% end %>
+                  </select>
+                  <input type="text" id="new_folder_name" name="new_folder_name" class="form-control" value="" style="margin-top: 10px;" />
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label"></label>
+                <div class="col-xs-8">
+                  <button type="submit" class="btn btn-green">Guardar</button>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+            <% end %>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-green" id="salesCashIncomeSaveBtn" aria-label="Guardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- END File upload Modal -->
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>

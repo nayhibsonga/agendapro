@@ -131,6 +131,7 @@ Agendapro::Application.routes.draw do
     post '/change_providers_order', :to => 'service_providers#change_providers_order'
     post '/change_groups_order', :to => 'provider_groups#change_groups_order'
     get '/confirm_email', :to => 'company_from_emails#confirm_email', :as => 'confirm_email'
+    post '/upload_client_file', :to => 'clients#upload_file'
 
     # Autocompletar del Booking
     get '/clients_suggestion', :to => 'clients#suggestion'

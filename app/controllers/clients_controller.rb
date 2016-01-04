@@ -67,6 +67,13 @@ class ClientsController < ApplicationController
 
     @sessionBookings = []
 
+    @files = @client.client_files.order('updated_at desc').limit(5)
+
+    s3 = Aws::S3::Client.new
+    resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'test_companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/', delimiter: '/')
+
+    @folders = resp.common_prefixes
+
     @preSessionBookings.each do |session_booking|
 
       include_sb = false
@@ -401,6 +408,47 @@ class ClientsController < ApplicationController
       end
     end
     redirect_to clients_path, notice: message
+  end
+
+  def upload_file
+
+    @client = Client.find(params[:client_id])
+
+    file_name = params[:file_name]
+    folder_name = params[:folder_name]
+
+    if !params[:new_folder_name].blank? && folder_name == "select"
+      folder_name = params[:new_folder_name]
+    end
+
+    full_name = 'test_companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/' + folder_name + '/' + file_name
+
+    s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+    obj = s3_bucket.object(full_name)
+
+    # Upload the file
+    #obj.write(
+    #  file: params[:file],
+    #  acl: :public_read
+    #)
+
+    logger.debug params[:file].inspect
+    logger.debug params[:file].path()
+
+    obj.upload_file(params[:file].path(), {acl: 'public-read'})
+
+    @client_file = ClientFile.create(client_id: @client.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size)
+
+
+    # Save the upload
+    if @client_file.save
+      redirect_to edit_client_path(id: @client.id), success: 'Archivo guardado correctamente'
+    else
+      #flash.now[:notice] = 'There was an error'
+      #render :new
+    end
+
   end
 
   private

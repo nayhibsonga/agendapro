@@ -185,3 +185,6 @@ gem 'sass-rails'
 
 #Squirm-rails for stored procedures
 #gem "squirm_rails", require: "squirm/rails"
+
+#Amazon Web Service SDK
+gem 'aws-sdk', '~> 2'

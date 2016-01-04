@@ -138,4 +138,8 @@ $(function() {
     setAge();
   });
 
+  $('#addFileBtn').on('click', function(){
+    $('#fileUploadModal').modal('show');
+  });
+
 });

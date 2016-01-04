@@ -136,6 +136,7 @@ class Ability
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
         can :select_plan, Plan
+        can :upload_file, Client
 
         can :add_company, Company
 
@@ -393,6 +394,8 @@ class Ability
 
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
+
+        can :upload_file, Client
 
         can :location_users, User, :company_id => user.company_id
 

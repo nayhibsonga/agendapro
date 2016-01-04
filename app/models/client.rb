@@ -5,6 +5,7 @@ class Client < ActiveRecord::Base
   has_many :session_bookings, dependent: :destroy
   has_many :bookings, dependent: :destroy
   has_many :payments, dependent: :destroy
+  has_many :client_files
 
   #Se quitó :identification_uniqueness
   validate :mail_uniqueness, :record_uniqueness, :minimun_info
