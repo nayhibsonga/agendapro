@@ -425,7 +425,8 @@ class Booking < ActiveRecord::Base
             used_resource = 0
             group_services = []
             self.location.bookings.where("bookings.start < ?", self.end.to_datetime).where("bookings.end > ?", self.start.to_datetime).where('is_session = false or (is_session = true and is_session_booked = true)').each do |location_booking|
-              if location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start - self.end) * (self.start - location_booking.end) > 0
+              if location_booking != self && location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start..location_booking.end).cover?(self.start.to_datetime)
+                puts location_booking.id.to_s + 'start'
                 if location_booking.service.resources.include?(resource)
                   if !location_booking.service.group_service
                     used_resource += 1
@@ -441,6 +442,78 @@ class Booking < ActiveRecord::Base
               if !self.is_session || (self.is_session && self.is_session_booked)
                 errors.add(:base, "Este local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio")
                 return
+              end
+            end
+            used_resource = 0
+            group_services = []
+            self.location.bookings.where("bookings.start < ?", self.end.to_datetime).where("bookings.end > ?", self.start.to_datetime).where('is_session = false or (is_session = true and is_session_booked = true)').each do |location_booking|
+              if location_booking != self && location_booking != self && location_booking.status_id != cancelled_id && (location_booking.start..location_booking.end).cover?(self.end.to_datetime)
+                puts location_booking.id.to_s + 'start'
+                if location_booking.service.resources.include?(resource)
+                  if !location_booking.service.group_service
+                    used_resource += 1
+                  else
+                    if location_booking.service != self.service || location_booking.service_provider != self.service_provider
+                      group_services.push(location_booking.service_provider.id)
+                    end
+                  end
+                end
+              end
+            end
+            if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
+              if !self.is_session || (self.is_session && self.is_session_booked)
+                errors.add(:base, "Este local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio")
+                return
+              end
+            end
+            self.location.bookings.where("bookings.start < ?", self.end.to_datetime).where("bookings.end > ?", self.start.to_datetime).where('is_session = false or (is_session = true and is_session_booked = true)').each do |possible_booking|
+              if (possible_booking.start >= self.start.to_datetime)
+                used_resource = 0
+                group_services = []
+                possible_booking.location.bookings.where("bookings.start < ?", possible_booking.end).where("bookings.end > ?", possible_booking.start).where('is_session = false or (is_session = true and is_session_booked = true)').each do |location_booking|
+                  if location_booking != self && location_booking != possible_booking && location_booking.status_id != cancelled_id && (location_booking.start..location_booking.end).cover?(possible_booking.start)
+                    puts location_booking.id.to_s + 'start'
+                    if location_booking.service.resources.include?(resource)
+                      if !location_booking.service.group_service
+                        used_resource += 1
+                      else
+                        if location_booking.service != self.service || location_booking.service_provider != self.service_provider
+                          group_services.push(location_booking.service_provider.id)
+                        end
+                      end
+                    end
+                  end
+                end
+                if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
+                  if !self.is_session || (self.is_session && self.is_session_booked)
+                    errors.add(:base, "Este local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio")
+                    return
+                  end
+                end
+              end
+              if (possible_booking.end <= self.end.to_datetime)
+                used_resource = 0
+                group_services = []
+                possible_booking.location.bookings.where("bookings.start < ?", possible_booking.end).where("bookings.end > ?", possible_booking.start).where('is_session = false or (is_session = true and is_session_booked = true)').each do |location_booking|
+                  if location_booking != self && location_booking != possible_booking && location_booking.status_id != cancelled_id && (location_booking.start..location_booking.end).cover?(possible_booking.end)
+                    puts location_booking.id.to_s + 'end'
+                    if location_booking.service.resources.include?(resource)
+                      if !location_booking.service.group_service
+                        used_resource += 1
+                      else
+                        if location_booking.service != self.service || location_booking.service_provider != self.service_provider
+                          group_services.push(location_booking.service_provider.id)
+                        end
+                      end
+                    end
+                  end
+                end
+                if group_services.uniq.count + used_resource >= ResourceLocation.where(resource_id: resource.id, location_id: self.location.id).first.quantity
+                  if !self.is_session || (self.is_session && self.is_session_booked)
+                    errors.add(:base, "Este local ya tiene asignado(s) el(los) recurso(s) necesario(s) para realizar este servicio")
+                    return
+                  end
+                end
               end
             end
           end

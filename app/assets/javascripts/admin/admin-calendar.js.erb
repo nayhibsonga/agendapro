@@ -1030,7 +1030,15 @@ function booking_valid (booking) {
 function deleteBooking(eventId) {
   // Staff code
   var confirmation = false;
+  var isFirefox = navigator.userAgent.search("Firefox") >= 0;
+  var defaultTop = $('#bookingModal').css('top');
+
   if ($('#calendar-data').data('staff-code')) {
+    if( isFirefox ) {
+      // TempFix for firefox input Modal Over Modal swal
+      $('#bookingModal').css('top', '-180px');
+    }
+
     swal({
       title: "¿Estás seguro que quieres cancelar esta reserva?",
       text: "Esta acción no se puede revertir.\nIngrese el código de Empleado:",
@@ -1040,18 +1048,19 @@ function deleteBooking(eventId) {
       closeOnConfirm: false
     },
     function (inputValue) {
-      if (inputValue === false) return false;
+      if (inputValue === false) {
+        $('#bookingModal').css('top', defaultTop);
+        return false;
+      }
       if (inputValue === "") {
         swal.showInputError("El código no puede estar en blanco.");
         return false;
       };
       $('#booking_staff_code').val(inputValue);
-      swal.close();
-      if (isConfirm) {
-        $('.booking-button').attr("disabled", "disabled");
-        $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
-        saveBooking('DELETE','/'+eventId);
-      }
+      $('.booking-button').attr("disabled", "disabled");
+      $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+      saveBooking('DELETE','/'+eventId);
+      if( isFirefox ) { $('#bookingModal').css('top', defaultTop); }
     });
   } else{
     swal({
@@ -1198,7 +1207,6 @@ function editDrag(event) {
           return false;
         };
         $.extend(eventJSON, {staff_code: inputValue});
-        swal.close();
         $.ajax({
           type: 'PATCH',
           url: '/bookings/'+ event.id +'.json',
@@ -1503,6 +1511,7 @@ function saveBooking(typeURL, extraURL) {
           break;
           case 'DELETE':
           $('#calendar').fullCalendar('removeEvents',booking.id);
+          swal.close();
           break;
         }
         $('#bookingModal').modal('hide');

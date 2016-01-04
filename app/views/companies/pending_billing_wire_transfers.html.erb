@@ -1,0 +1,70 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Transferencias por aprobar</h2>
+      <p><%= link_to "Ir a transferencias aprobadas", approved_billing_wire_transfers_path %></p>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid tab-margin">
+    <div class="row">
+      	<div class="col-md-12">
+        	<table class="table table-green">
+          		<thead>
+            		<tr>
+	              		<th>Fecha de creación</th>
+	              		<th>Fecha de pago</th>
+	              		<th>Empresa</th>
+	              		<th>Monto</th>
+	              		<th>Opciones</th>
+            		</tr>
+          		</thead>
+          	<tbody>
+          		<% @transfers.each do |transfer| %>
+          			<tr>
+          				<td>
+          					<%= transfer.created_at.strftime('%d/%m/%Y %R') %>
+          				</td>
+          				<td>
+          					<%= transfer.payment_date.strftime('%d/%m/%Y %R') %>
+          				</td>
+          				<td>
+          					<%= transfer.company.name %>
+          				</td>
+          				<td>
+          					<%= transfer.amount.to_s %>
+          				</td>
+          				<td>
+          					<button type="button" class="openTransfer btn btn-default btn-xs" onclick="openTransfer(<%= transfer.id %>);" transfer_id="<%= transfer.id %>"><i class="fa fa-search-plus"></i></button>
+                    <button type="button" class="deleteTransfer btn btn-red btn-xs" transfer_id="<%= transfer.id %>" onclick="deleteTransfer(<%= transfer.id %>);"><i class="fa fa-trash-o"></i></button>
+          				</td>
+          			</tr>
+          		<% end %>
+          	</tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade summaryModal" id="transferSummaryModal" tabindex="-1" role="dialog" aria-labelledby="Resumen de transferencia" aria-hidden="true">
+  <div class="modal-dialog" style="width: 70%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="transferSummaryModalTitle" style="line-height: 1.1;">Resumen de transferencia</h3>
+      </div>
+      <div class="modal-body" id="transferSummaryModalBody">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-green" id="approveTransferBtn">Aprobar</button>
+        <button type="button" class="btn btn-default btn-red" id="deleteTransferBtn">Eliminar</button>
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/billing-wire-transfers" %>
+<% end %>

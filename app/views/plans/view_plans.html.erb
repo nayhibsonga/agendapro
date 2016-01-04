@@ -1,59 +1,1135 @@
-<section class="hgroup">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-5">
-                <h1>Planes</h1>
-                <h3>Elige el plan que mejor se acomode a tus necesidades o <strong>contáctanos si necesitas uno a tu medida.</strong></h3>
-            </div>
-            <div class="col-sm-2 text-center">
+<section class="title">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <h1>Nuestros Planes</h1>
+        <p>Elige el plan que mejor se acomode a tus necesidades o contáctanos si necesitas uno a tu medida</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-            </div>
-            <div class="col-sm-5">
-                <h1>&nbsp;</h1>
-                <h3 class="right-pricing">¡El <strong> primer mes </strong> es <strong>absolutamente gratis!</strong> Con sólo <strong> 2 clicks </strong> crea tu cuenta <strong>AgendaPro</strong></strong></h3>
-            </div>
+<section class="plans">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 hidden-md hidden-lg" style="margin-bottom: 20px;">
+        <div class="border">
+          <div class="pricing-title" data-target="personal">Personal</div>
+          <div class="pricing-title" data-target="normal">Normal</div>
+          <div class="pricing-title active" data-target="premium">Premium</div>
+          <div class="pricing-title" data-target="pro">Pro</div>
         </div>
-    </div>
-</section>
-<section class="green-background">
-    <div class="pricing_wrapper">
-        <div class="container">
-            <div class="row">
-                <% @plans.each do |plan| %>
-                <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-                    <div class="pricing_plan <%= 'special' if plan.special %>">
-                        <%= image_tag "home/elmaspopular.png", :alt => "Special Tag", :class => "img-responsive special_tag", size: "86x127" %>
-                        <h3><strong><%= plan.name %></strong></h3>
-                        <hr class="pricing-hr">
-                        <div class="the_price"><span><%= @country.currency_code %> $</span><%= number_with_precision(plan.plan_countries.find_by(country_id: @country.id).price, precision: 0, separator: '', delimiter: '.') %><small>/Mes<br>(+ IVA)</small></div>
-                        <div class="the_offerings">
-                            <p>
-                                <strong>¡Primer mes GRATIS!</strong><br />
-                                <strong><%= plan.locations %></strong> Local(es)<br />
-                                <strong><%= plan.service_providers %></strong> Staffs<br />
-                                <strong><%= number_with_delimiter(plan.monthly_mails) %></strong> E-mails publicitarios
-                            </p>
-                            <br>
-                        </div>
-                    </div>
-                </div>
-                <% end %>
+      </div>
+      <div class="col-xs-12 col-md-8 col-md-push-4">
+        <div class="border">
+          <div class="pricing-col" data-plan="personal">
+            <p class="pricing-plan">Personal</p>
+            <div class="pricing-circle">
+              <p class="price"><%= number_to_currency(t "plans.personal") %></p>
+              <p>+ IVA</p>
             </div>
+          </div>
+          <div class="pricing-col" data-plan="normal">
+            <p class="pricing-plan">Normal</p>
+            <div class="pricing-circle">
+              <p class="price"><%= number_to_currency(t "plans.normal") %></p>
+              <p>+ IVA</p>
+            </div>
+          </div>
+          <div class="pricing-col active" data-plan="premium">
+            <p class="pricing-plan">Premium</p>
+            <div class="pricing-circle">
+              <p class="price"><%= number_to_currency(t "plans.premium") %></p>
+              <p>+ IVA</p>
+            </div>
+          </div>
+          <div class="pricing-col" data-plan="pro">
+            <p class="pricing-plan">Pro</p>
+            <div class="pricing-circle">
+              <p class="price"><%= number_to_currency(t "plans.pro") %></p>
+              <p>+ IVA</p>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="border">
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Staff
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p>
+                  1
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p>
+                  Ilimitado
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p>
+                  Ilimitado
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p>
+                  Ilimitado
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12">
+        <h3 class="pricing-section">Calendario y Reservas en Linea</h3>
+      </div>
+      <div class="col-xs-12">
+        <div class="border">
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Reservas Internas desde Calendario
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Buscador de Horas automático<span class="pull-right" data-toggle="tooltip" data-placement="top" title="El sistema AgendaPro busca en tu agenda las próximas horas disponibles, para que puedas generar las reservas de forma rápida cuando te llaman o pasan a reservar."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Notificaciones para el Staff<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Emails de notificación personales a cada profesional, para que siempre esté al tanto de su agenda."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Confirmaciones Automáticas<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Sistema de confirmaciones automáticas, para recordarles las citas a tus clientes."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Reservas Web 24/7<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Desde tu propia web, tus clientes podrán reservar las 24 horas del día, los 7 días de la semana. Aprovecha de recibir reservas incluso cuando estás cerrado."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Reservas desde Facebook<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Puedes agregar una app especial a tu Fanpage de Facebook, para que tus clientes reserven desde tu perfil de Facebook."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Pagos en línea
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Abonos para las reservas
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Over-booking de acuedo a comportamiento de clientes<span class="pull-right" data-toggle="tooltip" data-placement="top" title="El sistema te permitirá definir un porcentaje exigido de asistencia al cliente para que en caso de que falle mucho, permita que alguien más pueda reservar y así asegurar una hora efectiva."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                App móvil a la medida de tu negocio<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Fidelización y marketing en la mano de tus clientes. Con una app a la medida para que puedas enviarles promociones y eventos directamente. Además, que puedan reservar y ver la información de tu negocio, todo desde tu propia app a medida."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12">
+        <h3 class="pricing-section">Sistema de Búsqueda y Gestión de Promociones</h3>
+      </div>
+      <div class="col-xs-12">
+        <div class="border">
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Buscador AgendaPro
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Lugar en portal Horachic.com
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Promociones tradicionales
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Promociones por baja demanda
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Promociones última hora
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Aplicación móvil AgendaPro
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Aplicación móvil HoraChic
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12">
+        <h3 class="pricing-section">Herramientas de Gestión Interna</h3>
+      </div>
+      <div class="col-xs-12">
+        <div class="border">
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Perfil de Usuario para Staff
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Código de empleado / + control
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Administración de Recursos
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Impresión de Horario
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Fichas de Clientes
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p>
+                  Básicas
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p>
+                  Básicas
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p>
+                  Pro
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p>
+                  Pro
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Exportación/Importación base de datos
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Mailing PRO
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p>
+                  Básico
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p>
+                  Básico
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p>
+                  Pro
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p>
+                  Pro
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Reporting
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Sistema de Caja
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Pago de Comisiones
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Inventario
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Packs de servicios (grupos de servicios con distintos profesionales)
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Personalización del sistema
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12">
+        <h3 class="pricing-section">Soporte para el Cliente</h3>
+      </div>
+      <div class="col-xs-12">
+        <div class="border">
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Soporte Online
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Soporte Telefónico
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Soporte Presencial
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="personal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
+
 <section>
-    <div class="container">
-        <div class="row text-center">
-            <h3><%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:company => true), :class => "btn-orange" %></h3>
-        </div>
+  <div class="container">
+    <div class="row text-center">
+      <h3><%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:company => true), :class => "btn-orange" %></h3>
     </div>
+  </div>
 </section>
+
+<!-- <section class="green-background">
+  <div class="pricing_wrapper">
+    <div class="container">
+      <div class="row">
+        <% @plans.each do |plan| %>
+        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+          <div class="pricing_plan <%= 'special' if plan.special %>">
+            <%= image_tag "home/elmaspopular.png", :alt => "Special Tag", :class => "img-responsive special_tag", size: "86x127" %>
+            <h3><strong><%= plan.name %></strong></h3>
+            <hr class="pricing-hr">
+            <div class="the_price"><span><%= @country.currency_code %> $</span><%= number_with_precision(plan.plan_countries.find_by(country_id: @country.id).price, precision: 0, separator: '', delimiter: '.') %><small>/Mes<br>(+ IVA)</small></div>
+            <div class="the_offerings">
+              <p>
+                <strong>¡Primer mes GRATIS!</strong><br />
+                <strong><%= plan.locations %></strong> Local(es)<br />
+                <strong><%= plan.service_providers %></strong> Staffs<br />
+                <strong><%= number_with_delimiter(plan.monthly_mails) %></strong> E-mails publicitarios
+              </p>
+              <br>
+            </div>
+          </div>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section> -->
 
 <% content_for :scripts do %>
-<script>
-    $(function() {
-        $("body").addClass("collapsing_header")
+<script type="text/javascript">
+  $(function() {
+    $('.pricing-title').click(function (e) {
+      var target = $(e.target).data('target');
+
+      // Change Active Title
+      $('.pricing-title.active').removeClass('active');
+      $(this).addClass('active');
+
+      // Hide pricing-col
+      $('.pricing-col.active').removeClass('active');
+
+      // Show pricing-col
+      $('.pricing-col[data-plan="' + target + '"]').addClass('active');
     });
+
+    $('[data-toggle="tooltip"]').tooltip();
+  });
 </script>
 <% end %>

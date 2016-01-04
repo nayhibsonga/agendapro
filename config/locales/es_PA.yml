@@ -15,3 +15,8 @@ es_PA:
   district: 'localidad'
   ditricts: 'localidades'
   ci: 'cédula'
+  plans:
+    personal: 22
+    normal: 44
+    premium: 80
+    pro: 160

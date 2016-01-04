@@ -3,7 +3,7 @@ es_CO:
     currency:
       format:
         delimiter: '.'
-        format: '%u %n'
+        format: '%u%n'
         precision: 0
         separator: ','
         significant: false
@@ -15,3 +15,8 @@ es_CO:
   district: 'localidad'
   ditricts: 'localidades'
   ci: 'cédula'
+  plans:
+    personal: 60000
+    normal: 120000
+    premium: 240000
+    pro: 460000

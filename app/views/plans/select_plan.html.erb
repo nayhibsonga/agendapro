@@ -1,296 +1,617 @@
 <div class="container-fluid background-grey">
   <div class="row">
     <div class="col-md-12">
-      <h2 class="text-green">Mi Plan AgendaPro</h2>
-      <p>Acá puedes cambiar el plan seleccionado, configurar la facturación y pagar tu plan. En caso de existir diferencias, estas se cobrarán o abonarán inmediatamente.</p>
+      <h2 class="text-green">Planes y facturación</h2>
+      <p>Acá puedes cambiar el plan seleccionado, configurar la facturación y pagar tu plan. En caso de existir diferencias, se cobrarán o abonarán inmediatamente.</p>
     </div>
   </div>
 </div>
-<div class="container-fluid" style="margin-top: 20px;">
+
+<div class="container-fluid">
   <div class="row">
-    <div class="col-md-12">
-      <div class="background-grey">
-        <h3 class="text-green">Planes</h3>
+    <div class="col-md-2" style="background-color: #22c488; padding-left: 0px; padding-right: 0px;">
+      <div class="plan-section-link active" targetdiv="account_state_div">
+        <div class="plan-section-link-title">
+          Estado de cuenta
+        </div>
       </div>
-      <table class="table table-bordered table-green">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Locales</th>
-            <th>Prestadores</th>
-            <th>E-mails mensuales</th>
-            <th>Precio (sin IVA)</th>
-            <th>Opciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @plans.each do |plan| %>
-            <tr class="<%= "success" if @company.plan_id == plan.id %>">
-              <td><%= plan.name %></td>
-              <td><%= plan.locations %></td>
-              <td><%= plan.service_providers %></td>
-              <td><%= number_with_delimiter(plan.monthly_mails) %></td>
-              <td><%= number_to_currency(plan.plan_countries.find_by(country_id: @company.country.id).price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %></td>
-              <% if @company.plan == Plan.find_by_name("Trial") && plan.plan_countries.find_by(country_id: @company.country.id).price == @price %>
-                <td>¡Este sería tu Plan!</td>
-              <% elsif @company.service_providers.where(active: true).count > plan.service_providers || @company.locations.where(active: true).count > plan.locations %>
-                <td>Tienes más sucursales o prestadores de lo que este plan permite.</td>
-              <% elsif @company.plan_id != plan.id %>
-                <td><%= link_to '<i class="fa fa-check"></i> Elegir este Plan'.html_safe, "#", :class => "btn btn-green change_plan", id: "change_plan_" + plan.id.to_s %></td>
+      <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
+        <div class="plan-section-link" targetdiv="pay_div">
+          <div class="plan-section-link-title">
+            Pagar
+          </div>
+        </div>
+      <% end %>
+      <div class="plan-section-link" targetdiv="billing_info_div">
+        <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
+          <div class="plan-section-link-title">
+        <% else %>
+          <div class="plan-section-link-title last">
+        <% end %>
+          Datos de facturación
+        </div>
+      </div>
+      <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
+        <div class="plan-section-link" targetdiv="change_plan_div">
+          <div class="plan-section-link-title last">
+            Cambio de plan
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-md-10">
+      <div class="row plan-section" id="change_plan_div" hidden>
+        <div class="col-md-12">
+
+          <div class="plan-section-title">
+            Planes
+          </div>
+
+
+          <div class="row">
+            <% @plans.where.not(name: "Gratis").order(:locations, :service_providers).each do |plan| %>
+
+              <div class="col-md-3" style="margin-bottom: 20px;">
+
+                <%= content_tag "div", id: "plan_" + plan.id.to_s, data: { plan_price: plan.plan_countries.find_by(country_id: @company.country.id).price, plan_month_value: (@month_days - @day_number + 1) * plan.plan_countries.find_by(country_id: @company.country.id).price / @month_days } do %>
+
+                <% end %>
+
+                <% if @company.plan_id == plan.id || (@company.plan.id == Plan.find_by_name("Trial") && plan.plan_countries.find_by(country_id: @company.country.id).price == @price) %>
+                <div class="plan-box current-plan">
+                <% else %>
+                  <% if @company.service_providers.where(active: true).count > plan.service_providers || @company.locations.where(active: true).count > plan.locations %>
+                    <div class="plan-box blocked">
+                  <% else %>
+                    <div class="plan-box change-plan" plan_id="<%= plan.id.to_s %>">
+                  <% end %>
+                <% end %>
+
+                  <div class="plan-box-title">
+                    <%= plan.name %>
+                  </div>
+                  <div class="plan-box-price">
+                    <div>
+                      <%= @company.country.currency_code %>
+                    </div>
+                    <div style="color: #22c488 !important;">
+                      <%= number_to_currency(plan.plan_countries.find_by(country_id: @company.country.id).price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%>
+                    </div>
+                    <div>
+                      (+ IVA)
+                    </div>
+                  </div>
+                  <div class="plan-box-detail">
+                    <div>
+                      <% if plan.locations == 1 %>
+                        1 local
+                      <% else %>
+                        <%= plan.locations.to_s %> locales
+                      <% end %>
+                    </div>
+                    <div>
+                      <% if plan.service_providers == 1 %>
+                        1 prestador
+                      <% else %>
+                        <%= plan.service_providers.to_s %> prestadores
+                      <% end %>
+                    </div>
+                    <div>
+                      <%= plan.monthly_mails.to_s %> emails mensuales
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            <% end %>
+            <% if @company.plan.custom && @company.plan != Plan.find_by_name("Trial") %>
+
+              <div class="col-md-3" style="margin-bottom: 20px;">
+
+                <%= content_tag "div", id: "plan_" + @company.plan.id.to_s, data: { plan_price: @company.plan.plan_countries.find_by(country_id: @company.country.id).price, plan_month_value: (@month_days - @day_number + 1) * @company.plan.plan_countries.find_by(country_id: @company.country.id).price / @month_days } do %>
+
+                <% end %>
+
+                <div class="plan-box current-plan">
+
+                  <div class="plan-box-title">
+                    <%= @company.plan.name %>
+                  </div>
+                  <div class="plan-box-price">
+                    <div>
+                      <%= @company.country.currency_code %>
+                    </div>
+                    <div style="color: #22c488 !important;">
+                      <%= number_to_currency(@company.plan.plan_countries.find_by(country_id: @company.country.id).price, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %>
+                    </div>
+                    <div>
+                      (+ IVA)
+                    </div>
+                  </div>
+                  <div class="plan-box-detail">
+                    <div>
+                      <% if @company.plan.locations == 1 %>
+                        1 local
+                      <% else %>
+                        <%= @company.plan.locations.to_s %> locales
+                      <% end %>
+                    </div>
+                    <div>
+                      <% if @company.plan.service_providers == 1 %>
+                        1 prestador
+                      <% else %>
+                        <%= @company.plan.service_providers.to_s %> prestadores
+                      <% end %>
+                    </div>
+                    <div>
+                      <%= @company.plan.monthly_mails.to_s %> emails mensuales
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            <% end %>
+          </div>
+
+        </div>
+      </div>
+      <div class="row plan-section" id="pay_div" hidden>
+
+        <div class="col-md-12">
+
+          <div id="pay_div_current_plan">
+
+            <div class="plan-section-title">
+              <% if @company.plan.name == "Trial" %>
+                Te encuentras en período de prueba. Si quieres activar tu cuenta, el plan que mejor se ajusta a tus necesidades es éste.
               <% else %>
-                <td>¡Plan Elegido!</td>
+                Tu plan actual es el siguiente.
+              <% end %>
+            </div>
+
+            <div class="plan-section-table-wrapper">
+              <table class="current-plan-table">
+                <tr>
+                  <td class="left">
+                    <div style="color: #22c488; font-weight: bold; font-size: 18px;">
+                      <%= @company.plan.name %>
+                    </div>
+                    <div>
+                      $<%= @company.plan.plan_countries.find_by_country_id(@company.country.id).price.to_s %> / Mes + IVA
+                    </div>
+                  </td>
+                  <td class="right">
+                    <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.locations.to_s %> locales
+                    <br />
+                    <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.service_providers.to_s %> prestadores
+                    <br />
+                    <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <div>
+              <p style="text-align: right; font-size: 14px;">
+                Si quieres cambiar de plan, <a href="#" id="change_plan_pr_link">haz click aquí.</a>
+              </p>
+            </div>
+
+          </div>
+
+          <div id="pay_div_payment_option" style="margin-top: 10px;">
+            <div class="plan-section-title">
+              <%= @company.months_active_left > 0 ? "¡Agrega más tiempo de uso a tu cuenta AgendaPro aquí!" : "¡Paga tu cuenta AgendaPro aquí!" %>
+            </div>
+            <label>Pagar (IVA incluido):</label>
+            <select class="form-control" id="amount_select">
+              <option value="0" amount="<%= (@plan_1).to_s %>">Elige una opción...</option>
+              <option value="1" amount="<%= (@plan_1).to_s %>"><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %> - <%= number_to_currency(@plan_1 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
+              <option value="2" amount="<%= @plan_2.to_s %>">2 Meses - <%= number_to_currency(@plan_2, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
+              <option value="3" amount="<%= (@plan_3).to_s %>">3 Meses - <%= number_to_currency(@plan_3, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
+              <option value="4" amount="<%= (@plan_4).to_s %>">4 Meses - <%= number_to_currency(@plan_4, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_4 * 100, precision: 0) %>% dcto.)</option>
+              <option value="6" amount="<%= (@plan_6).to_s %>">6 Meses - <%= number_to_currency(@plan_6 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_6 * 100, precision: 0) %>% dcto.)</option>
+              <option value="9" amount="<%= (@plan_9).to_s %>">9 Meses - <%= number_to_currency(@plan_9 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_9 * 100, precision: 0) %>% dcto.)</option>
+              <option value="12" amount="<%= (@plan_12).to_s %>">12 Meses - <%= number_to_currency(@plan_12 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_12 * 100, precision: 0) %>% dcto.)</option>
+            </select>
+          </div>
+
+          <div id="pay_div_payment_method" style="margin-top: 10px;">
+
+            <div class="plan-section-title">
+              Selecciona tu método de pago
+            </div>
+
+            <% if @company.country_id == Country.find_by_name('Chile').id %>
+              <div class="row mp_table">
+
+                <div class="col-md-3">
+                  <input type="radio" name="mp" value="16" class="mp_radio" id="mp_radio_16" />
+                  <label for="mp_radio_16"><image src="https://www.puntopagos.com/content/mp16.gif" alt="Botón de Pago Banco BBVA" class="mp_link" mp = "16" /></label>
+                </div>
+
+                <div class="col-md-3">
+                  <input type="radio" name="mp" value="04" class="mp_radio" id="mp_radio_04" />
+                  <label for="mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Botón de Pago Banco Banco de Chile" class="mp_link" mp = "04" /></label>
+                </div>
+
+                <div class="col-md-3">
+                  <input type="radio" name="mp" value="05" class="mp_radio" id="mp_radio_05" />
+                  <label for="mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="Botón de Pago BCI" class="mp_link" mp = "05" /></label>
+                </div>
+
+                <div class="col-md-3">
+                  <input type="radio" name="mp" value="06" class="mp_radio" id="mp_radio_06" />
+                  <label for="mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="Botón de Pago TBanc" class="mp_link" mp = "06" /></label>
+                </div>
+
+              </div>
+              <div class="row mp_table">
+                
+                <div class="col-md-3">
+                  <input type="radio" name="mp" value="07" class="mp_radio" id="mp_radio_07" />
+                  <label for="mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Botón de Pago Banco Estado" class="mp_link" mp = "07" /></label>
+                </div>
+
+                <div class="col-md-3">
+                  <input type="radio" name="mp" value="03" class="mp_radio" id="mp_radio_03" />
+                  <label for="mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" /></label>
+                </div>
+
+                <div class="col-md-3">
+                  <input type="radio" name="mp" value="000" class="mp_radio" id="mp_radio_000" />
+                  <label for="mp_radio_000"><%= image_tag "admin/wire_transfer.jpg", alt: "Transferencia bancaria", class: "mp_link", mp: "000" %></label>
+                </div>
+              </div>
+              <div id="payWireTransferSelected" hidden>
+                  <p style="text-align: justify;">
+                    Si vas a pagar con transferencia, primero haz la transferencia por el valor total y luego selecciona "Pagar". Se abrirá un formulario que deberás llenar para darnos aviso de la transferencia.
+                  </p>
+                  <p>
+                    Los datos para transferir son los siguientes:<br /><br />
+                    Empresa: Gunei Investment Spa <br />
+                    RUT: 76.233.336-8 <br />
+                    Banco: Banco BICE <br />
+                    Cuenta: Cuenta Corriente 21709174 <br />
+                    Email: cuentas@agendapro.cl <br />
+                    Monto: <span id="wireAmount"></span>
+                  </p>
+              </div>
+              <div>
+                <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, pp_generate_company_transaction_path(mp: "", amount: 0), id: "payBtn" %>
+                <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, "#", id: "wireTransferBtn", style: "display: none;" %>
+              </div>
+            <% else %>
+              <div class="row mp_table">
+                <div class="col-md-4 text-center">
+                  <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_company_transaction_path(amount: 0), alt: "Botón de Pago Pay U", class: "mp_link" %>
+                </div>
+              </div>
+            <% end %>
+
+          </div>
+
+          <div id="pay_div_messages" style="margin-top: 10px;">
+            <p class="text-justify">Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un e-mail a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir. </p>
+            <p class="text-justify">En caso de que estés en el período de prueba (Trial) de la herramienta no es necesario pagar. Si quieres agregar de inmediato meses, de todas formas puedes hacerlo y automáticamente se activará tu cuenta y vendrá con los meses pre-cargados.</p>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="row plan-section" id="billing_info_div" hidden>
+        <div class="col-md-12">
+          <div class="plan-section-title">
+            Datos de facturación
+          </div>
+          <%= form_for @billing_info, html: {class: "form-horizontal" } do |f| %>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group has-feedback">
+                  <div class="col-md-9 col-md-offset-3">
+                    <div class="checkbox">
+                      <label>
+                        <%= f.check_box :active %> Solicitar Factura
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group has-feedback">
+                  <%= f.label :rut, "RUT Empresa:", class: "col-md-3 control-label" %>
+                  <div class="col-md-9">
+                    <%= f.text_field :rut, required: true, class: "form-control" %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
+                <div class="form-group has-feedback">
+                  <%= f.label :name, "Razón Social:", class: "col-md-3 control-label" %>
+                  <div class="col-md-9">
+                    <%= f.text_field :name, required: true, class: "form-control" %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
+                <div class="form-group has-feedback">
+                  <%= f.label :sector, "Giro:", class: "col-md-3 control-label" %>
+                  <div class="col-md-9">
+                    <%= f.text_field :sector, required: true, class: "form-control" %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
+                <div class="form-group has-feedback">
+                  <%= f.label :contact, "Nombre Responsable:", class: "col-md-3 control-label" %>
+                  <div class="col-md-9">
+                    <%= f.text_field :contact, required: true, class: "form-control" %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
+                <div class="form-group has-feedback">
+                  <%= f.label :address, "Dirección Completa:", class: "col-md-3 control-label" %>
+                  <div class="col-md-9">
+                    <%= f.text_field :address, required: true, class: "form-control" %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
+                <div class="form-group has-feedback">
+                  <%= f.label :phone, "Teléfono:", class: "col-md-3 control-label" %>
+                  <div class="col-md-9">
+                    <%= f.text_field :phone, required: true, class: "form-control" %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
+                <div class="form-group has-feedback">
+                  <%= f.label :email, "E-Mail:", class: "col-md-3 control-label" %>
+                  <div class="col-md-9">
+                    <%= f.text_field :email, required: true, class: "form-control" %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group has-feedback">
+                  <div class="col-md-12">
+                    <div class="checkbox">
+                      <label>
+                        <%= f.check_box :accept, required: true %> Autorización voluntaria de envío de DTEs por Email
+                      </label>
+                      <span class="help-block"></span>
+                      <span class="help-block">Acepto el envío electrónico de factura o boleta por mail a: <%= if @billing_info.email then @billing_info.email else "E-MAIL" end %></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="well well-scrollable">
+                  <p class="text-justify">
+                    Yo, <mark class="text-uppercase"><%= if @billing_info.contact then @billing_info.contact else "NOMBRE RESPONSABLE" end %></mark>, con domicilio en <mark class="text-uppercase"><%= if @billing_info.address then @billing_info.address else "DIRECCIÓN" end %></mark>, <%= @company.country.name %>, en mi calidad de receptor manual de documentos electrónicos, de conformidad con la Resolución Exenta No. 11/ de fecha 14 de febrero de 2003 del Servicio de Impuestos Internos (agregar link a la información) , que estableció el procedimiento para que contribuyentes autorizados para emitir documentos electrónicos puedan también enviarlos por estos medios a receptores manuales, declaro lo siguiente:
+                  </p>
+                  <p class="text-justify">
+                    Por el presente instrumento autorizo a la empresa <mark class="text-uppercase">GUNEI INVESTMENT SPA</mark>, RUT 76.233.336-8, para que la factura correspondiente al uso de la plataforma web AgendaPro, me sea entregada solamente por un medio electrónico, mediante envío a la dirección de e-mail <mark class="text-uppercase"><%= if @billing_info.email then @billing_info.email else "E-MAIL" end %>.</mark>
+                  </p>
+                  <p class="text-justify">
+                    Me comprometo a cumplir las siguientes condiciones, en relación a los documentos tributarios, en caso de requerirlo para respaldar la información contable:
+                  </p>
+                  <ul>
+                    <li>Imprimir los documentos recibidos en forma electrónica, para cada período tributario, en forma inmediata a su recepción desde el emisor.</li>
+                    <li>Imprimir el documento en el tamaño y forma que fue generado.</li>
+                    <li>Utilizar papel blanco tipo original de tamaño mínimo 21,5 cms. x 14 cms. (1/2 carta) y de tamaño máximo 21,5 x 33 cms. (oficio).</li>
+                    <li>Imprimir en una calidad que asegure la permanencia de la legibilidad del documento durante un periodo mínimo de seis años, conforme lo establece la legislación vigente sobre la materia. Esta impresión se hará hecha usando impresión láser o de inyección de tinta, excepto que se establezca una autorización o norma distinta al respecto.</li>
+                  </ul>
+                  <p class="text-justify">Nota: La factura se generará automáticamente al confirmarse el pago y los datos de facturación. Si no ingresas información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</p>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-12">
+                    <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="row plan-section" id="account_state_div">
+        <div class="col-md-12">
+
+          <div class="plan-section-title">
+            Información de la Cuenta
+          </div>
+
+          <div class="plan-section-table-wrapper">
+            <table class="plan-section-table">
+              <tr>
+                <td class="left">
+                  <div class="col-md-6 td-title">
+                    Administrador
+                  </div>
+                  <div class="col-md-6">
+                    <%= current_user.first_name + " " + current_user.last_name %>
+                  </div>
+                </td>
+                <td>
+                  <div class="col-md-6 td-title">
+                    Estado de cuenta
+                  </div>
+                  <div class="col-md-6">
+                    <%= PaymentStatus.find(@company.payment_status_id).name %>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="left">
+                  <div class="col-md-6 td-title">
+                    Email
+                  </div>
+                  <div class="col-md-6">
+                    <%= current_user.email %>
+                  </div>
+                </td>
+                <td>
+                  <div class="col-md-6 td-title">
+                    Meses restantes
+                  </div>
+                  <div class="col-md-6">
+                    <%= @company.months_active_left.to_i %> (Incluyendo mes actual)
+                  </div>
+                </td>
+              </tr>
+              <tr class="last">
+                <td class="left">
+                  <div class="col-md-6 td-title">
+                    Teléfono
+                  </div>
+                  <div class="col-md-6">
+                    <%= current_user.phone %>
+                  </div>
+                </td>
+                <td>
+                  <% if @company.due_amount >= 0 %> 
+                    <div class="col-md-6 td-title">
+                      Deuda actual
+                    </div>
+                    <div class="col-md-6">
+                      <%= number_to_currency(@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>
+                    </div>
+                  <% else %>
+                    <div class="col-md-6 td-title">
+                      Saldo a favor
+                    </div>
+                    <div class="col-md-6">
+                      <%= number_to_currency(-1*@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>
+                    </div>
+                  <% end %>
+                </td>
+              </tr>
+            </table> 
+          </div>
+
+          <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
+            <div style="margin-top: 20px;">
+              <p style="text-align: center;">
+
+                <button id="openPayDiv" class="btn btn-green" style="width: 260px; font-size: 24px;">
+                    Pagar
+                </button>
+
+              </p>
+            </div>
+
+          <% else %>
+
+            <div id="reactivate_div_payment_method" style="margin-top: 10px;">
+
+              <div class="plan-section-title">
+                Reactivar mi cuenta
+              </div>
+
+              <%
+                downgradeLog = DowngradeLog.where(company_id: @company.id).order('created_at desc').first
+                sales_tax = @company.country.sales_tax
+                month_days = Time.now.days_in_month
+                day_number = Time.now.day
+                old_plan_price = ((month_days - day_number + 1).to_f / month_days.to_f) * downgradeLog.plan.plan_countries.find_by(country_id: @company.country.id).price
+              %>
+              <p style="text-align: justify;">
+                Para reactivar tu cuenta, debes cancelar la deuda acumulada al momento de desactivación, más el valor proporcional del plan que tenías para lo que resta del mes presente.
+              </p>
+              <p style="text-align: justify;">
+                La deuda que acumulaste alcanza a <%= number_to_currency(downgradeLog.debt, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>. Antes de la desactivación tu plan era el Plan <%= downgradeLog.plan.name %>. El valor de este plan para lo que resta del mes es <%= number_to_currency(old_plan_price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %> (+ IVA). El valor total a cancelar de reactivación asciende a <%= number_to_currency(downgradeLog.debt + old_plan_price * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %> (IVA incluido).
+              </p>
+
+              <input type="hidden" id="renovation_amount" value="<%= (downgradeLog.debt + old_plan_price * (1 + sales_tax)).round(0).to_s %>" />
+              <input type="hidden" id="renovation_amount_detail" value="<%= number_to_currency(downgradeLog.debt + old_plan_price * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>" />
+
+              <div class="plan-section-title">
+                Selecciona tu método de pago
+              </div>
+
+              <% if @company.country_id == Country.find_by_name('Chile').id %>
+                <div class="row mp_table">
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="16" class="reactivate_mp_radio" id="reactivate_mp_radio_16" />
+                    <label for="reactivate_mp_radio_16"><image src="https://www.puntopagos.com/content/mp16.gif" alt="Botón de Pago Banco BBVA" class="reactivate_mp_link" mp = "16" /></label>
+                  </div>
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="04" class="reactivate_mp_radio" id="reactivate_mp_radio_04" />
+                    <label for="reactivate_mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Botón de Pago Banco Banco de Chile" class="reactivate_mp_link" mp = "04" /></label>
+                  </div>
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="05" class="reactivate_mp_radio" id="reactivate_mp_radio_05" />
+                    <label for="reactivate_mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="Botón de Pago BCI" class="reactivate_mp_link" mp = "05" /></label>
+                  </div>
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="06" class="reactivate_mp_radio" id="reactivate_mp_radio_06" />
+                    <label for="reactivate_mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="Botón de Pago TBanc" class="reactivate_mp_link" mp = "06" /></label>
+                  </div>
+
+                </div>
+                <div class="row mp_table">
+                  
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="07" class="reactivate_mp_radio" id="reactivate_mp_radio_07" />
+                    <label for="reactivate_mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Botón de Pago Banco Estado" class="reactivate_mp_link" mp = "07" /></label>
+                  </div>
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="03" class="reactivate_mp_radio" id="reactivate_mp_radio_03" />
+                    <label for="reactivate_mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="reactivate_mp_link" mp = "03" /></label>
+                  </div>
+
+                  <div class="col-md-3">
+                    <input type="radio" name="mp" value="000" class="reactivate_mp_radio" id="reactivate_mp_radio_000" />
+                    <label for="reactivate_mp_radio_000"><%= image_tag "admin/wire_transfer.jpg", alt: "Transferencia bancaria", class: "reactivate_mp_link", mp: "000" %></label>
+                  </div>
+                </div>
+                <div id="renovateWireTransferSelected" hidden>
+                  <p style="text-align: justify;">
+                    Si vas a pagar con transferencia, primero haz la transferencia por el valor total y luego selecciona "Pagar". Se abrirá un formulario que deberás llenar para darnos aviso de la transferencia.
+                  </p>
+                  <p>
+                    Los datos para transferir son los siguientes:<br /><br />
+                    Empresa: Gunei Investment Spa <br />
+                    RUT: 76.233.336-8 <br />
+                    Banco: Banco BICE <br />
+                    Cuenta: Cuenta Corriente 21709174 <br />
+                    Email: cuentas@agendapro.cl <br />
+                    Monto: <%= number_to_currency(downgradeLog.debt + old_plan_price * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>
+                  </p>
+                </div>
+                <div>
+                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, pp_generate_reactivation_transaction_path(mp: ""), id: "reactivatePayBtn" %>
+                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, "#", id: "reactivateWireTransferBtn", style: "display: none;" %>
+                </div>
+              <% else %>
+                <div class="row mp_table">
+                  <div class="col-md-4 text-center">
+                    <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_reactivation_transaction_path, alt: "Botón de Pago Pay U", class: "mp_link" %>
+                  </div>
+                </div>
               <% end %>
 
-              <%= content_tag "div", id: "plan_" + plan.id.to_s, data: { plan_price: plan.plan_countries.find_by(country_id: @company.country.id).price, plan_month_value: (@month_days - @day_number + 1) * plan.plan_countries.find_by(country_id: @company.country.id).price / @month_days } do %>
-              <%end%>
-            </tr>
+            </div>
+
           <% end %>
-          <% if @company.plan.custom && @company.plan != Plan.find_by_name("Trial") %>
-            <tr class="success">
-              <td><%= @company.plan.name %></td>
-              <td><%= @company.plan.locations %></td>
-              <td><%= @company.plan.service_providers %></td>
-              <td><%= number_with_delimiter(@company.plan.monthly_mails) %></td>
-              <td><%= number_to_currency(@price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %></td>
-              <td>¡Plan Elegido!</td>
-            </tr>
-          <%  end %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="panel panel-green">
-        <div class="panel-heading">
-          <h3 class="panel-title"><%= @company.months_active_left > 0 ? "¡Agrega más tiempo de uso a tu cuenta AgendaPro aquí!" : "¡Paga tu cuenta AgendaPro aquí!" %></h3>
-        </div>
-        <div class="panel-body background-grey">
-          <p class="text-justify">Puedes pagar tu cuenta directamente a través de la página, por medio de WebPay o transferencias bancarias de los principales bancos. Si no te acomoda ninguna de estas opciones o tienes alguna duda respecto a tu plan actual, te invitamos a ponerte en contacto con nosotros enviando un e-mail a <%= link_to 'contacto@agendapro.cl', contact_path, :target => "_blank" %>, para recibir las instrucciones a seguir. </p>
-          <p class="text-justify">En caso de que estés en el período de prueba (Trial) de la herramienta no es necesario pagar. Si quieres agregar de inmediato meses, de todas formas puedes hacerlo y automáticamente se activará tu cuenta y vendrá con los meses pre-cargados.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <label>Pagar (IVA incluido):</label>
-      <select class="form-control" id="amount_select">
-        <option value="0">Elige una opción...</option>
-        <option value="1"><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %> - <%= number_to_currency(@plan_1 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
-        <option value="2">2 Meses - <%= number_to_currency(@plan_2 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
-        <option value="3">3 Meses - <%= number_to_currency(@plan_3 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></option>
-        <option value="4">4 Meses - <%= number_to_currency(@plan_4 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_4 * 100, precision: 0) %>% dcto.)</option>
-        <option value="6">6 Meses - <%= number_to_currency(@plan_6 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_6 * 100, precision: 0) %>% dcto.)</option>
-        <option value="9">9 Meses - <%= number_to_currency(@plan_9 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_9 * 100, precision: 0) %>% dcto.)</option>
-        <option value="12">12 Meses - <%= number_to_currency(@plan_12 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_12 * 100, precision: 0) %>% dcto.)</option>
-      </select>
-      <p>Y, luego, selecciona el medio de pago haciendo click sobre su imagen:</p>
-      <% if @company.country_id == Country.find_by_name('Chile').id %>
-      <div class="row mp_table">
-        <div class="col-md-4 text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp16.gif"), pp_generate_company_transaction_path(mp: "16", amount: 0), alt: "Botón de Pago Banco BBVA", class: "mp_link" %>
-        </div>
-        <div class="col-md-4 text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), pp_generate_company_transaction_path(mp: "04", amount: 0), alt: "Botón de Pago Banco de Chile", class: "mp_link" %>
-        </div>
-        <div class="col-md-4 text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), pp_generate_company_transaction_path(mp: "05", amount: 0), alt: "Botón de Pago BCI", class: "mp_link" %>
-        </div>
-      </div>
-      <div class="row mp_table">
-        <div class="col-md-4 text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), pp_generate_company_transaction_path(mp: "06", amount: 0), alt: "Botón de Pago TBanc", class: "mp_link" %>
-        </div>
-        <div class="col-md-4 text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), pp_generate_company_transaction_path(mp: "07", amount: 0), alt: "Botón de Pago Banco Estado", class: "mp_link" %>
-        </div>
-        <div class="col-md-4 text-center">
-          <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), pp_generate_company_transaction_path(mp: "03", amount: 0), alt: "Webpay Transbank", class: "mp_link" %>
-        </div>
-      </div>
-      <% else %>
-      <div class="row mp_table">
-        <div class="col-md-4 text-center">
-          <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_company_transaction_path(amount: 0), alt: "Botón de Pago Pay U", class: "mp_link" %>
-        </div>
-      </div>
-      <% end %>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <h3>Datos de Facturación</h3>
-      <%= form_for @billing_info, html: {class: "form-horizontal" } do |f| %>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group has-feedback">
-              <div class="col-md-9 col-md-offset-3">
-                <div class="checkbox">
-                  <label>
-                    <%= f.check_box :active %> Solicitar Factura
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= f.label :rut, "RUT Empresa:", class: "col-md-3 control-label" %>
-              <div class="col-md-9">
-                <%= f.text_field :rut, required: true, class: "form-control" %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= f.label :name, "Razón Social:", class: "col-md-3 control-label" %>
-              <div class="col-md-9">
-                <%= f.text_field :name, required: true, class: "form-control" %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= f.label :sector, "Giro:", class: "col-md-3 control-label" %>
-              <div class="col-md-9">
-                <%= f.text_field :sector, required: true, class: "form-control" %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= f.label :contact, "Nombre Responsable:", class: "col-md-3 control-label" %>
-              <div class="col-md-9">
-                <%= f.text_field :contact, required: true, class: "form-control" %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= f.label :address, "Dirección Completa:", class: "col-md-3 control-label" %>
-              <div class="col-md-9">
-                <%= f.text_field :address, required: true, class: "form-control" %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= f.label :phone, "Teléfono:", class: "col-md-3 control-label" %>
-              <div class="col-md-9">
-                <%= f.text_field :phone, required: true, class: "form-control" %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= f.label :email, "E-Mail:", class: "col-md-3 control-label" %>
-              <div class="col-md-9">
-                <%= f.text_field :email, required: true, class: "form-control" %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group has-feedback">
-              <div class="col-md-12">
-                <div class="checkbox">
-                  <label>
-                    <%= f.check_box :accept, required: true %> Autorización voluntaria de envío de DTEs por Email
-                  </label>
-                  <span class="help-block"></span>
-                  <span class="help-block">Acepto el envío electrónico de factura o boleta por mail a: <%= if @billing_info.email then @billing_info.email else "E-MAIL" end %></span>
-                </div>
-              </div>
-            </div>
-            <div class="well well-scrollable">
-              <p class="text-justify">
-                Yo, <mark class="text-uppercase"><%= if @billing_info.contact then @billing_info.contact else "NOMBRE RESPONSABLE" end %></mark>, con domicilio en <mark class="text-uppercase"><%= if @billing_info.address then @billing_info.address else "DIRECCIÓN" end %></mark>, <%= @company.country.name %>, en mi calidad de receptor manual de documentos electrónicos, de conformidad con la Resolución Exenta No. 11/ de fecha 14 de febrero de 2003 del Servicio de Impuestos Internos (agregar link a la información) , que estableció el procedimiento para que contribuyentes autorizados para emitir documentos electrónicos puedan también enviarlos por estos medios a receptores manuales, declaro lo siguiente:
-              </p>
-              <p class="text-justify">
-                Por el presente instrumento autorizo a la empresa <mark class="text-uppercase">GUNEI INVESTMENT SPA</mark>, RUT 76.233.336-8, para que la factura correspondiente al uso de la plataforma web AgendaPro, me sea entregada solamente por un medio electrónico, mediante envío a la dirección de e-mail <mark class="text-uppercase"><%= if @billing_info.email then @billing_info.email else "E-MAIL" end %>.</mark>
-              </p>
-              <p class="text-justify">
-                Me comprometo a cumplir las siguientes condiciones, en relación a los documentos tributarios, en caso de requerirlo para respaldar la información contable:
-              </p>
-              <ul>
-                <li>Imprimir los documentos recibidos en forma electrónica, para cada período tributario, en forma inmediata a su recepción desde el emisor.</li>
-                <li>Imprimir el documento en el tamaño y forma que fue generado.</li>
-                <li>Utilizar papel blanco tipo original de tamaño mínimo 21,5 cms. x 14 cms. (1/2 carta) y de tamaño máximo 21,5 x 33 cms. (oficio).</li>
-                <li>Imprimir en una calidad que asegure la permanencia de la legibilidad del documento durante un periodo mínimo de seis años, conforme lo establece la legislación vigente sobre la materia. Esta impresión se hará hecha usando impresión láser o de inyección de tinta, excepto que se establezca una autorización o norma distinta al respecto.</li>
-              </ul>
-              <p class="text-justify">Nota: La factura se generará automáticamente al confirmarse el pago y los datos de facturación. Si no ingresas información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</p>
-            </div>
-            <div class="form-group">
-              <div class="col-md-12">
-                <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Información de la Cuenta:</h3>
-        </div>
-        <div class="panel-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="row">
-                <label class="col-md-3">Administrador</label>
-                <div class="col-md-9">
-                  <%= current_user.first_name + " " + current_user.last_name %>
-                </div>
-              </div>
-              <div class="row">
-                <label class="col-md-3">Email</label>
-                <div class="col-md-9">
-                  <%= current_user.email %>
-                </div>
-              </div>
-              <div class="row">
-                <label class="col-md-3">Teléfono</label>
-                <div class="col-md-9">
-                  <%= current_user.phone %>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="row">
-                <label class="col-md-3">Estado de Cuenta</label>
-                <div class="col-md-9">
-                  <%= PaymentStatus.find(@company.payment_status_id).name %>
-                </div>
-              </div>
-              <div class="row">
-                <label class="col-md-3">Meses Restantes</label>
-                <div class="col-md-9">
-                  <%= @company.months_active_left.to_i %> (Incluyendo mes actual)
-                </div>
-              </div>
-              <div class="row">
-                <% if @company.due_amount >= 0 %>
-                <label class="col-md-3">Deuda Actual</label>
-                <div class="col-md-9">
-                  <%= number_to_currency(@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>
-                </div>
-                <% else %>
-                <label class="col-md-3">Saldo a Favor</label>
-                <div class="col-md-9">
-                  <%= number_to_currency(-1*@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>
-                </div>
-                <% end %>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<%= content_tag "div", id: "plan_info", data: { months_active_left: @company.months_active_left, plan_value_left: (@month_days - @day_number + 1)*@price/@month_days + @price*(@company.months_active_left - 1), due_amount: @company.due_amount } do %>
+<input type="hidden" id="sales_tax" value="<%= @sales_tax.to_s %>" />
+
+<%= content_tag "div", id: "plan_info", data: { months_active_left: @company.months_active_left, plan_value_left: (@month_days - @day_number + 1)*@price/@month_days + @price*(@company.months_active_left - 1), due_amount: @company.due_amount, plan_price: @price, plan_value_taken: (@day_number*@price/@month_days + -1*@price*(@company.months_active_left)) } do %>
 <%end%>
 
 <% content_for :modals do %>
@@ -304,43 +625,232 @@
         <div class="modal-body">
           <p class="text-justify">Estás cambiando tu cuenta AgendaPro a un nuevo plan mensual. Es importante que para cada cambio de plan se considera el tiempo de activación restante (o deuda actual de la cuenta en el caso correspondiente) y se ajusta para el nuevo plan. Es decir, se abonará o cobrará el proporcional correspondiente de acuerdo al nuevo plan elegido. Si tienes dudas, por favor <%= link_to 'comunícate con nosotros', contact_path, :target => "_blank" %>.</p>
           <p class="text-justify" id="plan_explanation"></p>
-          <% if @company.country_id == Country.find_by_name('Chile').id %>
-          <div  id="plan_mp_table">
+
             <p>Medios de pago disponibles:</p>
-            <div class="row">
-              <div class="col-md-4 hidden text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp16.gif"), pp_generate_plan_transaction_path(mp: "16", plan_id: 0), alt: "Botón de Pago Banco BBVA", class: "plan_mp_link" %>
-              </div>
-              <div class="col-md-4 col-md-offset-2 text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp4.gif"), pp_generate_plan_transaction_path(mp: "04", plan_id: 0), alt: "Botón de Pago Banco de Chile", class: "plan_mp_link" %>
-              </div>
-              <div class="col-md-4 text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp5.gif"), pp_generate_plan_transaction_path(mp: "05", plan_id: 0), alt: "Botón de Pago BCI", class: "plan_mp_link" %>
-              </div>
+
+            <input type="hidden" id="new_plan_id" value="" />
+
+            <div class="row" style="padding-left: 10px; padding-right: 10px;">
+              <% if @company.country_id == Country.find_by_name('Chile').id %>
+                <div id="plan_mp_table">
+                  <div class="row mp_table">
+
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="16" class="change_plan_mp_radio" id="change_plan_mp_radio_16" />
+                      <label for="change_plan_mp_radio_16"><image src="https://www.puntopagos.com/content/mp16.gif" alt="Botón de Pago Banco BBVA" class="change_plan_mp_link" mp = "16" /></label>
+                    </div>
+
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="04" class="change_plan_mp_radio" id="change_plan_mp_radio_04" />
+                      <label for="change_plan_mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Botón de Pago Banco Banco de Chile" class="change_plan_mp_link" mp = "04" /></label>
+                    </div>
+
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="05" class="change_plan_mp_radio" id="change_plan_mp_radio_05" />
+                      <label for="change_plan_mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="Botón de Pago BCI" class="change_plan_mp_link" mp = "05" /></label>
+                    </div>
+
+                  </div>
+                  <div class="row mp_table">
+                    
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="06" class="change_plan_mp_radio" id="change_plan_mp_radio_06" />
+                      <label for="change_plan_mp_radio_06"><image src="https://www.puntopagos.com/content/mp6.gif" alt="Botón de Pago TBanc" class="change_plan_mp_link" mp = "06" /></label>
+                    </div>
+
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="07" class="change_plan_mp_radio" id="change_plan_mp_radio_07" />
+                      <label for="change_plan_mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Botón de Pago Banco Estado" class="change_plan_mp_link" mp = "07" /></label>
+                    </div>
+
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="03" class="change_plan_mp_radio" id="change_plan_mp_radio_03" />
+                      <label for="change_plan_mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="change_plan_mp_link" mp = "03" /></label>
+                    </div>
+
+                    
+                  </div>
+
+                  <div class="row mp_table">
+
+                    <div class="col-md-4">
+                      <input type="radio" name="mp" value="000" class="change_plan_mp_radio" id="change_plan_mp_radio_000" />
+                      <label for="change_plan_mp_radio_000"><%= image_tag "admin/wire_transfer.jpg", alt: "Transferencia bancaria", class: "change_plan_mp_link", mp: "000" %></label>
+                    </div>
+
+                  </div>
+
+                  <div id="changeWireTransferSelected" hidden>
+                      <p style="text-align: justify;">
+                        Si vas a pagar con transferencia, primero haz la transferencia por el valor total y luego selecciona "Pagar". Se abrirá un formulario que deberás llenar para darnos aviso de la transferencia.
+                      </p>
+                      <p>
+                        Los datos para transferir son los siguientes:<br /><br />
+                        Empresa: Gunei Investment Spa <br />
+                        RUT: 76.233.336-8 <br />
+                        Banco: Banco BICE <br />
+                        Cuenta: Cuenta Corriente 21709174 <br />
+                        Email: cuentas@agendapro.cl <br />
+                        Monto: <span id="wireChangeAmount"></span>
+                      </p>
+                  </div>
+
+                  <div>
+                    <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, pp_generate_plan_transaction_path(mp: "", plan_id: 0), id: "changePlanPayBtn", style: "float: right;" %>
+                    <%= link_to '<button class="btn btn-green" style="width: 200px;">Pagar</button>'.html_safe, "#", id: "changePlanWireTransferBtn", style: "display: none; float: right;" %>                  
+                  </div>
+                </div>
+                <div id="change_plan_free">
+                  <%= link_to '<button class="btn btn-green" style="width: 200px;">Cambiar</button>'.html_safe, pp_generate_plan_transaction_path(mp: "00", plan_id: 0), id: "changePlanBtn", style: "float: right;" %>
+                </div>
+              <% else %>
+                <div class="row mp_table">
+                  <div class="col-md-4 text-center">
+                    <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_plan_transaction_path(plan_id: 0), alt: "Botón de Pago Pay U", class: "change_plan_mp_link", style: "float: right;" %>
+                  </div>
+                </div>
+              <% end %>
             </div>
-            <div class="row">
-              <div class="col-md-4 text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp6.gif"), pp_generate_plan_transaction_path(mp: "06", plan_id: 0), alt: "Botón de Pago TBanc", class: "plan_mp_link" %>
-              </div>
-              <div class="col-md-4 text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp7.gif"), pp_generate_plan_transaction_path(mp: "07", plan_id: 0), alt: "Botón de Pago Banco Estado", class: "plan_mp_link" %>
-              </div>
-              <div class="col-md-4 text-center">
-                <%= link_to image_tag("https://www.puntopagos.com/content/mp3.gif"), pp_generate_plan_transaction_path(mp: "03", plan_id: 0), alt: "Webpay Transbank", class: "plan_mp_link" %>
-              </div>
-            </div>
-          </div>
-          <% else %>
-          <div class="row mp_table">
-            <div class="col-md-4 text-center">
-              <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_plan_transaction_path(plan_id: 0), alt: "Botón de Pago Pay U", class: "plan_mp_link" %>
-            </div>
-          </div>
-          <% end %>
+
         </div>
         <div class="modal-footer">
           <div  id="plan_mp_button">
             <button type="button" class="btn btn-default pull-right button-plan" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-labelledby="tranferModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="transferModalLabel">Transferencia electrónica</h4>
+        </div>
+        <div class="modal-body">
+
+          <%= form_tag("/save_billing_wire_transfer", method: "post", role: "form", class: "form-horizontal", id: "save_billing_wire_transfer_form" ) do %>
+
+
+            <input type="hidden" id="transfer_company_id" name="transfer_company_id" value="<%= current_user.company_id %>" />
+            <input type="hidden" id="transfer_change_plan" name="transfer_change_plan" value="0" />
+            <input type="hidden" id="transfer_new_plan" name="transfer_new_plan" value="" />
+            <input type="hidden" id="transfer_amount" name="transfer_amount" value="0" />
+            <input type="hidden" id="transfer_paid_months" name="transfer_paid_months" value="0" />
+            <input type="hidden" id="transfer_datetime" name="transfer_datetime" value="" />
+
+
+            <div class="row">
+              <div class="col-md-12">
+                <p>
+                  Si pagaste tu plan por medio de transferencia electrónica, llena este formulario con los datos de la transferencia. Una vez revisada, la aprobaremos y el estado de pago de tu cuenta se actualizará automáticamente.
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+
+                <div class="form-group">
+                  <label class="col-xs-4 control-label">Fecha de transferencia</label>
+                  <div class="col-xs-4">
+                    <input type="text" class="form-control payment_date_ignore" id="transfer_payment_date" name="transfer_payment_date" value="<%= Date.today.strftime('%d/%m/%Y') %>" />
+                  </div>
+                  <div class="col-xs-4">
+                  <%= time_select 'transfer', 'payment_time', {minute_step: 1}, {:class => 'form-control date-select payment_date_ignore', required: true} %>
+                  </div>
+                </div>
+
+                <div style="clear: both;">
+                </div>
+
+                <div class="form-group has-feedback" style="margin-top: 8px;">
+                    <label class="col-xs-4 control-label">Monto</label>
+                    <div class="col-xs-8">
+                      <div id="transfer_amount_detail">
+
+                      </div>
+                    </div>
+                </div>
+
+                <div style="clear: both;">
+                </div>
+
+                <!--<div class="form-group has-feedback" style="margin-top: 5px;">
+                    <label class="col-xs-4 control-label">N° de comprobante</label>
+                    <div class="col-xs-8">
+                      <input type="text" id="transfer_receipt_number" name="transfer_receipt_number" class="form-control" value="" />
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                </div>-->
+
+                <div style="clear: both;">
+                </div>
+
+
+                <div class="form-group has-feedback">
+                    <label class="col-xs-4 control-label">Nombre de titular</label>
+                    <div class="col-xs-8">
+                      <input type="text" id="transfer_account_name" name="transfer_account_name" class="form-control" value="<%= @billing_wire_transfer.account_name %>" />
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                </div>
+
+                <div style="clear: both;">
+                </div>
+
+
+                <div class="form-group has-feedback">
+                    <label class="col-xs-4 control-label">Banco</label>
+                    <div class="col-xs-8">
+                      <select id="transfer_bank_id" name="transfer_bank_id" class="form-control">
+                        <% Bank.all.each do |bank| %>
+                          <% if !@billing_wire_transfer.bank_id.nil? && @billing_wire_transfer.bank_id == bank.id %>
+                            <option value="<%= bank.id %>" selected><%= bank.name %></option>
+                          <% else %>
+                            <option value="<%= bank.id %>"><%= bank.name %></option>
+                          <% end %>
+                        <% end %>
+                      </select>
+                    </div>
+                </div>
+
+                <div style="clear: both;">
+                </div>
+
+                <div class="form-group has-feedback" style="margin-top: 10px;">
+                    <label class="col-xs-4 control-label">N° de cuenta</label>
+                    <div class="col-xs-8">
+                      <input type="text" id="transfer_account_number" name="transfer_account_number" class="form-control" value="<%= @billing_wire_transfer.account_number %>" />
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                </div>
+
+                <div style="clear: both;">
+                </div>
+
+                <div class="form-group has-feedback">
+                    <div class="col-xs-8">
+                    </div>
+                    <div class="col-xs-4">
+                      <button type="submit" class="btn btn-green" style="width: 140px; float: right;" id="saveTransferBtn">Guardar</button>
+                    </div>              
+                </div>
+              </div>
+            </div>
+            
+          <% end %>
+
+        </div>
+        <div class="modal-footer">
+          <div  id="plan_mp_button">
+            <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cerrar</button>
           </div>
         </div>
       </div>

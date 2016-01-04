@@ -1,0 +1,106 @@
+@import 'variables';
+
+section.title {
+  h1, p { text-align: center; }
+}
+
+section.plans {
+  $cols: 4;
+  %border {
+    border-color: $gray;
+    border-style: solid;
+  }
+
+  margin-top: 20px;
+  margin-bottom: 10px;
+
+  .border {
+    @extend %border;
+    border-width: 1px;
+  }
+  .pricing-col {
+    display: none;
+    padding: 5px 10px;
+    width: 100%;
+    text-align: center;
+
+    &.active {
+      display: inline-block;
+    }
+  }
+  .pricing-row {
+    min-height: 44px;
+
+    & + .pricing-row { border-top: $gray solid 1px; }
+    p { margin-bottom: 0; }
+    .pricing-cols, .pricing-description {
+      display: inline-block;
+      min-height: inherit;
+      //width: calc((100% - 20px) / 2);
+    }
+    .pricing-cols { width: calc(30% - 10px); }
+    .pricing-description { width: calc(70% - 10px); }
+    .pricing-description {
+      padding: 10px 15px;
+      border-right: $gray solid 1px;
+    }
+    .pricing-col {
+      padding: 10px 10px;
+      min-height: inherit;
+    }
+  }
+  @media (min-width: 992px) {
+    .pricing-col {
+      display: inline-block;
+      width: calc((100% / #{$cols}) - (#{$cols} - 1)* 1px);
+      & + .pricing-col { border-left: $gray solid 1px; }
+    }
+    .pricing-row {
+      .pricing-cols {
+        width: calc((100% * 2 / 3) - (#{$cols} - 1)* 1px);
+      }
+      .pricing-description {
+        width: calc((100% / 3) - 1px);
+      }
+    }
+  }
+  .pricing-plan {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  .pricing-title {
+    @extend .pricing-plan;
+    display: inline-block;
+    padding: 5px 10px;
+    text-align: center;
+    width: calc((100% / #{$cols}) - (#{$cols} - 1)* 1px);
+    cursor: pointer;
+
+    & + .pricing-title { border-left: $gray solid 1px; }
+    &.active {
+      color: $light-orange;
+    }
+  }
+  .pricing-circle {
+    $size: 120px;
+    @extend %border;
+    border-width: 5px;
+    border-radius: 100%;
+    width: $size;
+    height: $size;
+    margin: 0 auto;
+    padding: 30px 5px;
+    p {
+      font-size: 14px;
+      margin-bottom: 0;
+      &.price {
+        font-size: 27px;
+        font-weight: bold;
+        color: $light-green;
+      }
+    }
+  }
+  .pricing-section, .pricing-icon {
+    color: $light-green;
+  }
+}
