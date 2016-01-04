@@ -1048,13 +1048,15 @@ function deleteBooking(eventId) {
       closeOnConfirm: false
     },
     function (inputValue) {
-      if (inputValue === false) return false;
+      if (inputValue === false) {
+        $('#bookingModal').css('top', defaultTop);
+        return false;
+      }
       if (inputValue === "") {
         swal.showInputError("El código no puede estar en blanco.");
         return false;
       };
       $('#booking_staff_code').val(inputValue);
-      swal.close();
       $('.booking-button').attr("disabled", "disabled");
       $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
       saveBooking('DELETE','/'+eventId);
@@ -1205,7 +1207,6 @@ function editDrag(event) {
           return false;
         };
         $.extend(eventJSON, {staff_code: inputValue});
-        swal.close();
         $.ajax({
           type: 'PATCH',
           url: '/bookings/'+ event.id +'.json',
@@ -1510,6 +1511,7 @@ function saveBooking(typeURL, extraURL) {
           break;
           case 'DELETE':
           $('#calendar').fullCalendar('removeEvents',booking.id);
+          swal.close();
           break;
         }
         $('#bookingModal').modal('hide');
