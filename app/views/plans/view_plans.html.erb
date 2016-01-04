@@ -20,34 +20,40 @@
           <div class="pricing-title" data-target="pro">Pro</div>
         </div>
       </div>
-      <div class="col-xs-12 col-md-8 col-md-push-4">
-        <div class="border">
-          <div class="pricing-col" data-plan="personal">
-            <p class="pricing-plan">Personal</p>
-            <div class="pricing-circle">
-              <p class="price"><%= number_to_currency(t "plans.personal") %></p>
-              <p>+ IVA</p>
+      <div class="col-xs-12 pricing-header">
+        <div id="floating-header" class="">
+          <div class="border">
+            <div class="pricing-col" data-plan="personal">
+              <p class="pricing-plan">Personal</p>
+              <div class="pricing-circle">
+                <p><%= @country.currency_code %></p>
+                <p class="price"><%= number_to_currency(t "plans.personal") %></p>
+                <p>+ IVA</p>
+              </div>
             </div>
-          </div>
-          <div class="pricing-col" data-plan="normal">
-            <p class="pricing-plan">Normal</p>
-            <div class="pricing-circle">
-              <p class="price"><%= number_to_currency(t "plans.normal") %></p>
-              <p>+ IVA</p>
+            <div class="pricing-col" data-plan="normal">
+              <p class="pricing-plan">Normal</p>
+              <div class="pricing-circle">
+                <p><%= @country.currency_code %></p>
+                <p class="price"><%= number_to_currency(t "plans.normal") %></p>
+                <p>+ IVA</p>
+              </div>
             </div>
-          </div>
-          <div class="pricing-col active" data-plan="premium">
-            <p class="pricing-plan">Premium</p>
-            <div class="pricing-circle">
-              <p class="price"><%= number_to_currency(t "plans.premium") %></p>
-              <p>+ IVA</p>
+            <div class="pricing-col active" data-plan="premium">
+              <p class="pricing-plan">Premium</p>
+              <div class="pricing-circle">
+                <p><%= @country.currency_code %></p>
+                <p class="price"><%= number_to_currency(t "plans.premium") %></p>
+                <p>+ IVA</p>
+              </div>
             </div>
-          </div>
-          <div class="pricing-col" data-plan="pro">
-            <p class="pricing-plan">Pro</p>
-            <div class="pricing-circle">
-              <p class="price"><%= number_to_currency(t "plans.pro") %></p>
-              <p>+ IVA</p>
+            <div class="pricing-col" data-plan="pro">
+              <p class="pricing-plan">Pro</p>
+              <div class="pricing-circle">
+                <p><%= @country.currency_code %></p>
+                <p class="price"><%= number_to_currency(t "plans.pro") %></p>
+                <p>+ IVA</p>
+              </div>
             </div>
           </div>
         </div>
@@ -1127,6 +1133,22 @@
 
       // Show pricing-col
       $('.pricing-col[data-plan="' + target + '"]').addClass('active');
+    });
+
+    var header = $('#floating-header');
+    var headerY = header.offset().top - 60/* Navbar height */;
+    var isFloating = false;
+    var $w = $(window);
+    $w.scroll(function() {
+      var scrollTop = $w.scrollTop();
+      var shouldBeFloating = scrollTop > headerY;
+      if (shouldBeFloating && !isFloating) {
+        header.addClass("floating-header");
+        isFloating = true;
+      } else if (!shouldBeFloating && isFloating){
+        header.removeClass("floating-header");
+        isFloating = false;
+      };
     });
 
     $('[data-toggle="tooltip"]').tooltip();

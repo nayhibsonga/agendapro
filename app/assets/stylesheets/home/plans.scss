@@ -19,50 +19,92 @@ section.plans {
     border-width: 1px;
   }
   .pricing-col {
+    position: relative;
+    min-height: 1px;
+    float: left;
+
     display: none;
     padding: 5px 10px;
     width: 100%;
     text-align: center;
 
     &.active {
-      display: inline-block;
+      display: initial;
     }
   }
   .pricing-row {
-    min-height: 44px;
-
     & + .pricing-row { border-top: $gray solid 1px; }
     p { margin-bottom: 0; }
     .pricing-cols, .pricing-description {
-      display: inline-block;
-      min-height: inherit;
-      //width: calc((100% - 20px) / 2);
+      position: relative;
+      min-height: 1px;
+      float: left;
     }
-    .pricing-cols { width: calc(30% - 10px); }
-    .pricing-description { width: calc(70% - 10px); }
+    .pricing-cols { width: 30%; }
     .pricing-description {
+      width: 70%;
       padding: 10px 15px;
       border-right: $gray solid 1px;
+      span { color: $light-gray; }
     }
     .pricing-col {
       padding: 10px 10px;
-      min-height: inherit;
     }
   }
   @media (min-width: 992px) {
     .pricing-col {
-      display: inline-block;
-      width: calc((100% / #{$cols}) - (#{$cols} - 1)* 1px);
+      display: initial;
+      width: 25%;
       & + .pricing-col { border-left: $gray solid 1px; }
     }
     .pricing-row {
       .pricing-cols {
-        width: calc((100% * 2 / 3) - (#{$cols} - 1)* 1px);
+        width: 70%;
       }
       .pricing-description {
-        width: calc((100% / 3) - 1px);
+        width: 30%;
       }
     }
+    .pricing-header {
+      width: 71%;
+      float: right;
+      height: 170px;
+    }
+    .floating-header {
+      position: fixed;
+      top: 60px;
+      z-index: 1;
+      margin-left: auto;
+      margin-right: auto;
+      width: 970px;
+      .border {
+        background: white top right no-repeat;
+        width: 68%;
+      }
+    }
+  }
+  @media (min-width: 1200px) {
+    .floating-header {
+      width: 1170px;
+      .border {
+        background: white top right no-repeat;
+        width: 68.5%;
+      }
+    }
+  }
+  .border:before,
+  .border:after,
+  .pricing-row:before,
+  .pricing-row:after,
+  .pricing-header:before,
+  .pricing-header:after {
+    display: table;
+    content: " ";
+  }
+  .border:after,
+  .pricing-row:after,
+  .pricing-header:after {
+    clear: both;
   }
   .pricing-plan {
     font-weight: bold;
@@ -84,12 +126,13 @@ section.plans {
   .pricing-circle {
     $size: 120px;
     @extend %border;
+    border-color: $lighter-gray;
     border-width: 5px;
     border-radius: 100%;
     width: $size;
     height: $size;
     margin: 0 auto;
-    padding: 30px 5px;
+    padding: 15px 5px;
     p {
       font-size: 14px;
       margin-bottom: 0;
