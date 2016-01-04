@@ -15,3 +15,8 @@ es_VE:
   district: 'localidad'
   ditricts: 'localidades'
   ci: 'cédula'
+  plans:
+    personal: 140
+    normal: 280
+    premium: 470
+    pro: 940

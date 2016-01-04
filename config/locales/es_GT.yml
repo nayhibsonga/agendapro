@@ -15,3 +15,8 @@ es_GT:
   district: 'localidad'
   ditricts: 'localidades'
   ci: 'cédula'
+  plans:
+    personal: 170
+    normal: 340
+    premium: 570
+    pro: 1140
