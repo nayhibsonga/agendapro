@@ -114,10 +114,10 @@ $(function () {
 
   $('#staffCode').on('hidden.bs.modal', function (e) {
     validator.resetForm();
-    $('.has-success').removeClass('has-success');
-    $('.fa.fa-check').removeClass('fa fa-check');
-    $('.has-error').removeClass('has-error');
-    $('.fa.fa-times').removeClass('fa fa-times');
+    $('#staffCode .has-success').removeClass('has-success');
+    $('#staffCode .fa.fa-check').removeClass('fa fa-check');
+    $('#staffCode .has-error').removeClass('has-error');
+    $('#staffCode .fa.fa-times').removeClass('fa fa-times');
   });
 
   if($('#company_setting_allows_online_payment').prop('checked')) {
@@ -318,6 +318,26 @@ $(function () {
     $('#company_payment_method_active').attr('checked', $(e.currentTarget).data('active'));
     $('#company_payment_method_number_required').attr('checked', $(e.currentTarget).data('number-required'));
     $('#payment_method').modal('show');
+  });
+
+  $('#NewStaffCode').click(function() {
+    $('#staffCode form').attr('action', '/staff_codes');
+    $('#staffCode form').attr('id', 'new_staff_code');
+    $('#staffCode form input[name="_method"]').remove();
+    $('#staff_code_staff').val('');
+    $('#staff_code_code').val('');
+    $('#staff_code_active').val(true);
+  });
+
+  $('.edit_staff_code_button').click(function(e) {
+    $('#staffCode form').attr('action', '/staff_codes/' + $(e.currentTarget).data('id'));
+    $('#staffCode form').attr('id', 'edit_staff_code_method_' + $(e.currentTarget).data('id'));
+    if ($('#staffCode form input[name="_method"]').length < 1) {
+      $('#staffCode form').append('<input name="_method" type="hidden" value="patch">');
+    }
+    $('#staff_code_staff').val($(e.currentTarget).data('staff'));
+    $('#staff_code_code').val($(e.currentTarget).data('code'));
+    $('#staff_code_active').val($(e.currentTarget).data('active'));
   });
 
   $('#new_cashier_button').click(function() {

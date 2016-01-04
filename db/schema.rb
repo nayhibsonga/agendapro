@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151228135710) do
+ActiveRecord::Schema.define(version: 20151230153909) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,20 +69,18 @@ ActiveRecord::Schema.define(version: 20151228135710) do
   end
 
   create_table "billing_wire_transfers", force: true do |t|
-    t.datetime "payment_date",       default: '2015-12-02 18:34:34'
-    t.float    "amount",             default: 0.0
-    t.string   "receipt_number",     default: ""
-    t.string   "account_name",       default: ""
-    t.string   "account_bank",       default: ""
-    t.string   "account_number",     default: ""
-    t.boolean  "approved",           default: false
+    t.datetime "payment_date",   default: '2015-12-02 18:34:34'
+    t.float    "amount",         default: 0.0
+    t.string   "account_name",   default: ""
+    t.string   "account_number", default: ""
+    t.boolean  "approved",       default: false
     t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "change_plan",        default: false
+    t.boolean  "change_plan",    default: false
     t.integer  "new_plan"
-    t.float    "change_plan_amount", default: 0.0
-    t.float    "new_plan_amount",    default: 0.0
+    t.integer  "bank_id"
+    t.integer  "paid_months"
   end
 
   create_table "booking_histories", force: true do |t|
@@ -147,6 +145,7 @@ ActiveRecord::Schema.define(version: 20151228135710) do
     t.boolean  "marketplace_origin",     default: false
     t.integer  "treatment_promo_id"
     t.integer  "last_minute_promo_id"
+    t.boolean  "bundled",                default: false
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -159,6 +158,20 @@ ActiveRecord::Schema.define(version: 20151228135710) do
   add_index "bookings", ["start"], name: "index_bookings_on_start", using: :btree
   add_index "bookings", ["status_id"], name: "index_bookings_on_status_id", using: :btree
   add_index "bookings", ["user_id"], name: "index_bookings_on_user_id", using: :btree
+
+  create_table "bundles", force: true do |t|
+    t.string   "name",                default: "",   null: false
+    t.decimal  "price",               default: 0.0,  null: false
+    t.integer  "service_category_id"
+    t.integer  "company_id"
+    t.text     "description",         default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "show_price",          default: true
+  end
+
+  add_index "bundles", ["company_id"], name: "index_bundles_on_company_id", using: :btree
+  add_index "bundles", ["service_category_id"], name: "index_bundles_on_service_category_id", using: :btree
 
   create_table "cashiers", force: true do |t|
     t.integer  "company_id"
@@ -287,6 +300,17 @@ ActiveRecord::Schema.define(version: 20151228135710) do
 
   add_index "company_payment_methods", ["company_id"], name: "index_company_payment_methods_on_company_id", using: :btree
 
+  create_table "company_plan_settings", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "locations",         default: 1
+    t.integer  "service_providers", default: 1
+    t.integer  "monthly_mails",     default: 0
+    t.boolean  "has_custom_price",  default: false
+    t.float    "custom_price"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "company_settings", force: true do |t|
     t.text     "signature"
     t.boolean  "email",                       default: false
@@ -412,6 +436,14 @@ ActiveRecord::Schema.define(version: 20151228135710) do
   end
 
   add_index "districts", ["city_id"], name: "index_districts_on_city_id", using: :btree
+
+  create_table "downgrade_logs", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "plan_id"
+    t.float    "debt"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "economic_sectors", force: true do |t|
     t.string   "name",                                      null: false
@@ -1291,6 +1323,18 @@ ActiveRecord::Schema.define(version: 20151228135710) do
     t.boolean  "scheduled_reset",         default: false
   end
 
+  create_table "service_bundles", force: true do |t|
+    t.integer  "service_id"
+    t.integer  "bundle_id"
+    t.integer  "order",      default: 0,   null: false
+    t.decimal  "price",      default: 0.0, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "service_bundles", ["bundle_id"], name: "index_service_bundles_on_bundle_id", using: :btree
+  add_index "service_bundles", ["service_id"], name: "index_service_bundles_on_service_id", using: :btree
+
   create_table "service_categories", force: true do |t|
     t.string   "name",                   null: false
     t.integer  "company_id"
@@ -1441,6 +1485,7 @@ ActiveRecord::Schema.define(version: 20151228135710) do
     t.integer  "company_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active",     default: true
   end
 
   add_index "staff_codes", ["company_id"], name: "index_staff_codes_on_company_id", using: :btree
