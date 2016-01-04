@@ -1055,11 +1055,9 @@ function deleteBooking(eventId) {
       };
       $('#booking_staff_code').val(inputValue);
       swal.close();
-      if (isConfirm) {
-        $('.booking-button').attr("disabled", "disabled");
-        $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
-        saveBooking('DELETE','/'+eventId);
-      }
+      $('.booking-button').attr("disabled", "disabled");
+      $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+      saveBooking('DELETE','/'+eventId);
       if( isFirefox ) { $('#bookingModal').css('top', defaultTop); }
     });
   } else{
