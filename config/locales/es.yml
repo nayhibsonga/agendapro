@@ -211,3 +211,8 @@ es:
   district: 'comuna'
   ditricts: 'comunas'
   ci: 'cédula'
+  plans:
+    personal: 14900
+    normal: 29900
+    premium: 49900
+    pro: 99900
