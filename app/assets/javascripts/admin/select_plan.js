@@ -252,30 +252,48 @@ $(function() {
 
   $('#amount_select').change(function(o) {
 
-    mp = $('.mp_radio:checked').val();
-    var new_params = "/" + mp + "/" + $("#amount_select").val();
-    var cut_str = "generate_company_transaction";
-    var curr_href = $('#payBtn').attr('href');
-    var cut_index = curr_href.indexOf(cut_str);
-    cut_index += cut_str.length;
-
-    $('#wireAmount').html($('#amount_select option:selected').text());
-
-    curr_href = curr_href.substring(0, cut_index) + new_params;
-
-    if(mp != "000")
+    if($('#payBtn').length > 0)
     {
-      $('#payBtn').attr('href', curr_href);
-      $('#payBtn').show();
-      $('#payBtn').attr('disabled', false);
-      $('#payBtn').find('button').attr('disabled', false);
-      $('#wireTransferBtn').hide();
+      mp = $('.mp_radio:checked').val();
+      var new_params = "/" + mp + "/" + $("#amount_select").val();
+      var cut_str = "generate_company_transaction";
+      var curr_href = $('#payBtn').attr('href');
+      var cut_index = curr_href.indexOf(cut_str);
+      cut_index += cut_str.length;
+
+      $('#wireAmount').html($('#amount_select option:selected').text());
+
+      curr_href = curr_href.substring(0, cut_index) + new_params;
+
+      if(mp != "000")
+      {
+        $('#payBtn').attr('href', curr_href);
+        $('#payBtn').show();
+        $('#payBtn').attr('disabled', false);
+        $('#payBtn').find('button').attr('disabled', false);
+        $('#wireTransferBtn').hide();
+      }
+      else
+      {
+        $('#payBtn').hide();
+        $('#wireTransferBtn').show();
+        $('#wireTransferBtn').attr('disabled', false);
+      }
     }
     else
     {
-      $('#payBtn').hide();
-      $('#wireTransferBtn').show();
-      $('#wireTransferBtn').attr('disabled', false);
+      var new_params = "/" + $("#amount_select").val();
+      var cut_str = "generate_company_transaction";
+      var curr_href = $('#payBtnCol').attr('href');
+      var cut_index = curr_href.indexOf(cut_str);
+      cut_index += cut_str.length;
+      curr_href = curr_href.substring(0, cut_index) + new_params;
+      console.log("Acá");
+      console.log(curr_href);
+      $('#payBtnCol').attr('href', curr_href);
+      $('#payBtnCol').show();
+      //$('#payBtnCol').attr('disabled', false);
+      //$('#payBtnCol').find('button').attr('disabled', false);
     }
 
   });
@@ -352,6 +370,20 @@ $(function() {
     }
 
     $('#new_plan_id').val(plan_id);
+
+    if($('#changePlanBtnCol').length > 0)
+    {
+      var new_params = "/" + plan_id;
+      var cut_str = "generate_plan_transaction";
+      var curr_href = $('#changePlanBtnCol').attr('href');
+      var cut_index = curr_href.indexOf(cut_str);
+      cut_index += cut_str.length;
+      curr_href = curr_href.substring(0, cut_index) + new_params;
+      console.log("Acá");
+      console.log(curr_href);
+      $('#changePlanBtnCol').attr('href', curr_href);
+      $('#changePlanBtnCol').show();
+    }
 
     $('#changePlanModal').modal('show');
   });

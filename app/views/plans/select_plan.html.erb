@@ -49,7 +49,7 @@
 
 
           <div class="row">
-            <% @plans.where.not(name: "Gratis").order(:locations, :service_providers).each do |plan| %>
+            <% @plans.where.not(name: "Gratis").where(custom: false).order(:locations, :service_providers).each do |plan| %>
 
               <div class="col-md-3" style="margin-bottom: 20px;">
 
@@ -288,7 +288,7 @@
             <% else %>
               <div class="row mp_table">
                 <div class="col-md-4 text-center">
-                  <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_company_transaction_path(amount: 0), alt: "Botón de Pago Pay U", class: "mp_link" %>
+                  <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_company_transaction_path(amount: 0), alt: "Botón de Pago Pay U", class: "mp_link", id: "payBtnCol" %>
                 </div>
               </div>
             <% end %>
@@ -594,7 +594,7 @@
               <% else %>
                 <div class="row mp_table">
                   <div class="col-md-4 text-center">
-                    <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_reactivation_transaction_path, alt: "Botón de Pago Pay U", class: "mp_link" %>
+                    <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_reactivation_transaction_path, alt: "Botón de Pago Pay U", class: "mp_link", id: "reactivatePayBtnCol" %>
                   </div>
                 </div>
               <% end %>
@@ -706,7 +706,7 @@
               <% else %>
                 <div class="row mp_table">
                   <div class="col-md-4 text-center">
-                    <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_plan_transaction_path(plan_id: 0), alt: "Botón de Pago Pay U", class: "change_plan_mp_link", style: "float: right;" %>
+                    <%= link_to image_tag("http://www.payulatam.com/img-secure-2015/boton_pagar_mediano.png"), pu_generate_plan_transaction_path(plan_id: 0), alt: "Botón de Pago Pay U", id: "changePlanBtnCol", class: "change_plan_mp_link", style: "float: right;" %>
                   </div>
                 </div>
               <% end %>
