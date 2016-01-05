@@ -85,49 +85,11 @@
                   <dd><%= @company.locations.where(:active => true).count %></dd>
                   <dt>Última fecha de pago</dt>
                   <dd>
-                    <%
-                      bl = BillingLog.where.not(transaction_type_id: -1).where(:company_id => @company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
-                      rec = BillingRecord.where(:company_id => @company.id).order('date desc').first
-                      bwt = BillingWireTransfer.where(:company_id => @company.id, :approved => true).order('payment_date desc').first
-
-                      last_payment_date = ""
-                      paid_amount = "0"
-
-                      if bl.nil? && rec.nil? && bwt.nil?
-                        last_payment_date = "No existen pagos"
-                      else
-                        date1 = Time.at(0).to_datetime
-                        date2 = date1
-                        date3 = date1
-
-                        if !bl.nil?
-                          date1 = bl.created_at
-                        end
-                        if !rec.nil?
-                          date2 = rec.date.to_datetime
-                        end
-                        if !bwt.nil?
-                          date3 = bwt.payment_date
-                        end
-
-                        if date1 >= date2 && date1 >= date3
-                          last_payment_date = bl.created_at.strftime('%d/%m/%Y %R')
-                          paid_amount = "$" + bl.payment.to_s
-                        elsif date2 >= date1 && date2 >= date3
-                          last_payment_date = rec.date.strftime('%d/%m/%Y')
-                          paid_amount = "$" + rec.amount.to_s
-                        else
-                          last_payment_date = bwt.payment_date.strftime('%d/%m/%Y %R')
-                          paid_amount = "$" + bwt.amount.to_s
-                        end
-
-                      end
-                    %>
-                    <%= last_payment_date %>
+                    <%= @company.last_payment_detail[0] %>
                   </dd>
                   <dt>Último monto de pago</dt>
                   <dd>
-                    <%= paid_amount %>
+                    <%= @company.last_payment_detail[1] %>
                   </dd>
                   <dt>Deuda actual</dt>
                   <dd><%= @company.due_amount %></dd>
@@ -256,10 +218,66 @@
                             </tr>
                           <% end %>
                         <% end %>
+                        
                       </tbody>
                     </table>
                   </div>
                 </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Cambios de plan en línea</h4>
+                  </div>
+                  <div class="panel-body panel-scrollable">
+                    <table class="table table-green">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Monto</th>
+                          <th>Número de cuotas</th>
+                          <th>Número de operación</th>
+                          <th>Código de autorización</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+
+                        <% plan_logs = @company.plan_logs.where.not(trx_id: nil).where.not(trx_id: "").where('amount > 0').order('created_at desc') %>
+                        <% plan_logs.each do |log| %>
+                          <% punto_pago = PuntoPagosConfirmation.where(:trx_id => log.trx_id, :response => "00").first %>
+                          <% if punto_pago.nil? %>
+                            <% punto_pago_fail = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
+                            <tr style="background-color: #fd633f;">
+                              
+                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.amount.to_s %></td>
+                              <% if punto_pago_fail.nil? %>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                              <% else %>
+                                <td><%= punto_pago_fail.dues_number %></td>
+                                <td><%= punto_pago_fail.operation_number %></td>
+                                <td><%= punto_pago_fail.authorization_code %></td>
+                              <% end %>
+
+                            </tr>
+                          <% else %>
+                            <tr>
+                              
+                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.amount.to_s %></td>
+                              <td><%= punto_pago.dues_number %></td>
+                              <td><%= punto_pago.operation_number %></td>
+                              <td><%= punto_pago.authorization_code %></td>
+
+                            </tr>
+                          <% end %>
+                        <% end %>
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     <h4 class="panel-title">Transferencias</h4>
@@ -479,44 +497,9 @@
                   <div class="form-group">
                     <label class="col-md-2 control-label">Última fecha de pago</label>
                     <div class="col-md-4">
-                      <% 
-                        bl = BillingLog.where.not(transaction_type_id: -1).where(:company_id => @company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
-                        rec = BillingRecord.where(:company_id => @company.id).order('date desc').first
-                        bwt = BillingWireTransfer.where(:company_id => @company.id, :approved => true).order('payment_date desc').first
+                      
 
-                        last_payment_date = ""
-                        paid_amount = ""
-
-                        if bl.nil? && rec.nil? && bwt.nil?
-                          last_payment_date = "No existen pagos"
-                        else
-                          date1 = Time.at(0).to_datetime
-                          date2 = date1
-                          date3 = date1
-
-                          if !bl.nil?
-                            date1 = bl.created_at
-                          end
-                          if !rec.nil?
-                            date2 = rec.date.to_datetime
-                          end
-                          if !bwt.nil?
-                            date3 = bwt.payment_date
-                          end
-
-                          if date1 >= date2 && date1 >= date3
-                            last_payment_date = "$" + bl.payment.to_s + " el " + bl.created_at.strftime('%d/%m/%Y %R')
-                          elsif date2 >= date1 && date2 >= date3
-                            last_payment_date = "$" + rec.amount.to_s + " el " + rec.date.strftime('%d/%m/%Y')
-                          else
-                            last_payment_date = "$" + bwt.amount.to_s + " el " + bwt.payment_date.strftime('%d/%m/%Y %R')
-                          end
-
-                        end
-
-                      %>
-
-                        <p class="form-control-static"><%= last_payment_date %></p>
+                        <p class="form-control-static"><%= @company.last_payment_detail[0] %></p>
                       
                     </div>
                     <div class="col-md-4">

@@ -44,6 +44,12 @@ class PayUController < ApplicationController
   def generate_company_transaction
     amount = params[:amount].to_i
     company = Company.find(current_user.company_id)
+
+    if company.plan_id == Plan.find_by_name("Gratis").id
+      redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor refresca la página para volver a intentarlo. Escríbenos a contacto@agendapro.cl si el problema persiste. (11)"
+      return
+    end
+    
     company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
     # sales_tax = NumericParameter.find_by_name("sales_tax").value
     sales_tax = company.country.sales_tax
