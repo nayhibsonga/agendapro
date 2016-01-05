@@ -307,7 +307,10 @@
                     <td><%= file.name %></td>
                     <td><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
                     <td><%= file.get_size %></td>
-                    <td>Botones</td>
+                    <td>
+                      <button id="seeFile" class="btn btn-green btn-xs"><i class="fa fa-search-plus"></i>&nbsp;Ver</button>
+                      <button id="deleteFile" class="btn btn-red btn-xs"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</button>
+                    </td>
                   </tr>
                   <% end %>
                 </tbody>

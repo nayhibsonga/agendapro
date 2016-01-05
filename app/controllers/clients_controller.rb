@@ -70,9 +70,15 @@ class ClientsController < ApplicationController
     @files = @client.client_files.order('updated_at desc').limit(5)
 
     s3 = Aws::S3::Client.new
-    resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'test_companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/', delimiter: '/')
+    resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/', delimiter: '/')
 
-    @folders = resp.common_prefixes
+    folders_prefixes = resp.common_prefixes
+    @folders = []
+
+    folders_prefixes.each do |folder|
+      sub_str = folder.prefix[0, folder.prefix.rindex("/")]
+      @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
+    end
 
     @preSessionBookings.each do |session_booking|
 
@@ -416,12 +422,16 @@ class ClientsController < ApplicationController
 
     file_name = params[:file_name]
     folder_name = params[:folder_name]
+    logger.debug "File name: " + params[:file].original_filename
+    file_extension = params[:file].original_filename[params[:file].original_filename.rindex(".") + 1, params[:file].original_filename.length]
 
     if !params[:new_folder_name].blank? && folder_name == "select"
       folder_name = params[:new_folder_name]
     end
 
-    full_name = 'test_companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/' + folder_name + '/' + file_name
+    file_name = file_name + "." + file_extension
+
+    full_name = 'companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/' + folder_name + '/' + file_name
 
     s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
 
@@ -433,7 +443,7 @@ class ClientsController < ApplicationController
     #  acl: :public_read
     #)
 
-    logger.debug params[:file].inspect
+    logger.debug params[:file].original_filename
     logger.debug params[:file].path()
 
     obj.upload_file(params[:file].path(), {acl: 'public-read'})
