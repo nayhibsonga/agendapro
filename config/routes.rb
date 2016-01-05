@@ -1,6 +1,6 @@
 Agendapro::Application.routes.draw do
 
-
+  post "email_content/upload"
 
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
