@@ -4286,9 +4286,11 @@ class BookingsController < ApplicationController
     current_gap = 0
 
     services_arr = []
+    bundles_arr = []
     providers_arr = []
     for i in 0..serviceStaff.length-1
       services_arr[i] = Service.find(serviceStaff[i][:service])
+      bundles_arr[i] = Bundle.find_by(id: serviceStaff[i][:bundle_id])
       total_services_duration += services_arr[i].duration
       if serviceStaff[i][:provider] != "0"
         providers_arr[i] = []
@@ -4356,6 +4358,7 @@ class BookingsController < ApplicationController
           service_valid = false
           #service = Service.find(serviceStaff[serviceStaffPos][:service])
           service = services_arr[serviceStaffPos]
+          bundle = bundles_arr[serviceStaffPos]
 
           current_service_providers = ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id))
 
@@ -4581,14 +4584,14 @@ class BookingsController < ApplicationController
                   :online_payable => service.online_payable,
                   :has_discount => service.has_discount,
                   :discount => service.discount,
-                  :show_price => service.show_price,
+                  :show_price => service.show_price && bundle.blank?,
                   :has_time_discount => service.has_time_discount,
                   :has_sessions => service.has_sessions,
                   :sessions_amount => book_sessions_amount,
                   :must_be_paid_online => service.must_be_paid_online
                 }
 
-                if !service.online_payable || !service.company.company_setting.online_payment_capable
+                if !service.online_payable || !service.company.company_setting.online_payment_capable || bundle.present?
                   bookings.last[:has_discount] = false
                   bookings.last[:has_time_discount] = false
                   bookings.last[:discount] = 0

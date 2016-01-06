@@ -2131,13 +2131,13 @@ function appendService(service, bundle_id) {
 	bundle_id = bundle_id || null;
 
 	$("#selected-services").append(
-		'<div id="selected-service-' + added_services_count + '" class="selected-service" service_id="' + service.id + '" draggable="true" ondragstart="drag(event)" bundle_id="' + bundle_id + '">' +
+		'<div id="selected-service-' + added_services_count + '" class="selected-service" service_id="' + service.id + '" bundle_id="' + bundle_id + '" draggable="true" ondragstart="drag(event)">' +
 			'<div class="selected-service-header row">' +
 				'<div class="col-sm-1"><i class="fa fa-times remove-service"></i></div>' +
 				'<div class="col-sm-9">' + service.name + '</div>' +
-				'<div class="col-sm-1"><i class="fa fa-bars move-service"></i></div>' +
+				'<div class="col-sm-1">' + (bundle_id > 0 ? '' : '<i class="fa fa-bars move-service"></i>') + '</div>' +
 			'</div>' +
-			'<div class="selected-service-providers">' +
+			'<div class="selected-service-providers" ' + ($('#providerPreference').data('provider-preference') == 2 ? 'style="display: none;"' : '' ) + '>' +
 				'<div class="form-group">' +
 			        '<label for="selected-service-provider" class="col-xs-3 control-label">Prestador</label>' +
 			        '<div class="col-xs-9">' +
