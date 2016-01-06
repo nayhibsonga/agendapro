@@ -517,11 +517,11 @@ $(function() {
 					errors = response[1];
 					errorList = '';
 					for (i in errors) {
-						errorList += '<li>' + errores[i] + '</li>'
+						errorList += '- ' + errores[i] + '\n\n'
 					}
 					swal({
 						title: "Error",
-						text: "Ocurrió un error al guardar la alarma:\n" + "<ul>" + errorList + "</ul>",
+						text: "Ocurrió un error al guardar la alarma:\n\n" + errorList,
 						type: "error",
 						html: true
 					});
@@ -624,11 +624,11 @@ $(function() {
 					errors = response[1];
 					errorList = '';
 					for (i in errors) {
-						errorList += '<li>' + errores[i] + '</li>'
+						errorList += '- ' + errores[i] + '\n\n'
 					}
 					swal({
 						title: "Error",
-						text: "Ocurrió un error al guardar las alarmas:\n<ul>" + errorList + "</ul>",
+						text: "Ocurrió un error al guardar las alarmas:\n\n" + errorList,
 						type: "error"
 					});
 				}

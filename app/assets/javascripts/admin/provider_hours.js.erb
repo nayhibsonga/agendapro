@@ -308,11 +308,11 @@ function saveProvider(method,extraURL) {
       var errores = $.parseJSON(xhr.responseText).errors;
       var errorList = '';
       for (i in errores) {
-        errorList += '<li>' + errores[i] + '</li>'
+        errorList += '- ' + errores[i] + '\n\n'
       }
       swal({
         title: "Error",
-        text: "Se produjeron los siguientes errores:\n<ul>" + errorList + "</ul>",
+        text: "Se produjeron los siguientes errores:\n\n" + errorList,
         type: "error"
       });
     }
