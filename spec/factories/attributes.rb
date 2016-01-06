@@ -4,6 +4,7 @@ FactoryGirl.define do
 name "MyString"
 description "MyText"
 datatype "MyString"
+mandatory false
   end
 
 end

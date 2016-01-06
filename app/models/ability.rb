@@ -381,6 +381,22 @@ class Ability
         can :activate, Cashier, :company_id => user.company_id
         can :deactivate, Cashier, :company_id => user.company_id
 
+        can :read, Attribute, :company_id => user.company_id
+        can :create, Attribute, :company_id => user.company_id
+        can :update, Attribute, :company_id => user.company_id
+        can :destroy, Attribute, :company_id => user.company_id
+        can :activate, Attribute, :company_id => user.company_id
+        can :deactivate, Attribute, :company_id => user.company_id
+
+        can :read, AttributeCategory, :company_id => user.company_id
+        can :create, AttributeCategory, :company_id => user.company_id
+        can :update, AttributeCategory, :company_id => user.company_id
+        can :destroy, AttributeCategory, :company_id => user.company_id
+        can :activate, AttributeCategory, :company_id => user.company_id
+        can :deactivate, AttributeCategory, :company_id => user.company_id
+
+        can :get_attribute_categories, Attribute, :company_id => user.company_id
+
         can :read, Deal, :company_id => user.company_id
         can :create, Deal, :company_id => user.company_id
         can :update, Deal, :company_id => user.company_id

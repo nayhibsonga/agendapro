@@ -2,6 +2,10 @@ Agendapro::Application.routes.draw do
 
 
 
+  resources :attribute_categories
+
+  resources :attributes
+
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -510,6 +514,8 @@ Agendapro::Application.routes.draw do
     get '/get_products_for_payment_or_sale', :to => 'payments#get_products_for_payment_or_sale'
     get '/get_product_categories_for_payment_or_sale', :to => 'payments#get_product_categories_for_payment_or_sale'
     get '/get_product_brands_for_payment_or_sale', :to => 'payments#get_product_brands_for_payment_or_sale'
+
+    get '/get_attribute_categories', :to => 'attributes#get_attribute_categories'
 
 
   end

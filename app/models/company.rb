@@ -14,6 +14,8 @@ class Company < ActiveRecord::Base
 
 	has_many :company_files
 
+	has_many :attributes
+
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
 
 	def reject_company_country(attributes)

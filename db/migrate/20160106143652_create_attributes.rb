@@ -5,6 +5,7 @@ class CreateAttributes < ActiveRecord::Migration
       t.string :name
       t.text :description
       t.string :datatype
+      t.boolean :mandatory
 
       t.timestamps
     end

@@ -364,6 +364,52 @@ $(function () {
     $('#cashierModal').modal('show');
   });
 
+  $('#new_attribute_button').on('click', function(){
+    $('#attributeModal').modal('show');
+  });
+
+  $('.add_attribute_category_button').on('click', function(e){
+    var attribute_id = $(e.currentTarget).data('attributeid');
+    $('#existing_categories').empty();
+    $('#attribute_category_attribute_id').val(attribute_id)
+    $.ajax({
+      url: '/get_attribute_categories',
+      method: 'get',
+      dataType: 'json',
+      data: {attribute_id: attribute_id},
+      error: function(response){
+        swal({
+            title: "Error",
+            text: "Se produjo un error",
+            type: "error"
+          });
+      },
+      success: function(response){
+        $.each(response, function(i, attribute_category){
+          $('#existing_categories').append('<p>' + attribute_category.category + '</p>');
+        });
+      }
+    })
+    $('#attributeCategoryModal').modal('show');
+  });
+
+  $("#attribute_category_form").on("ajax:success", function(e, data, status, xhr){
+    $('#existing_categories').append(data.category);
+    $('#attribute_category_category').val("");
+    swal({
+        title: "Éxito",
+        text: "Categoría agregada.",
+        type: "success"
+    });
+  }).on("ajax:error", function(e, xhr, status, error){
+    console.log(xhr.responseText)
+    swal({
+      title: "Error",
+      text: "Se produjo un error",
+      type: "error"
+    });
+  });
+
 });
 
 function uncheckCheckbox (parent) {

@@ -425,6 +425,11 @@ class ClientsController < ApplicationController
     logger.debug "File name: " + params[:file].original_filename
     file_extension = params[:file].original_filename[params[:file].original_filename.rindex(".") + 1, params[:file].original_filename.length]
 
+    file_description = ""
+    if !params[:description].blank?
+      file_description = params[:description]
+    end
+
     if !params[:new_folder_name].blank? && folder_name == "select"
       folder_name = params[:new_folder_name]
     end
@@ -448,7 +453,7 @@ class ClientsController < ApplicationController
 
     obj.upload_file(params[:file].path(), {acl: 'public-read'})
 
-    @client_file = ClientFile.create(client_id: @client.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size)
+    @client_file = ClientFile.create(client_id: @client.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description)
 
 
     # Save the upload

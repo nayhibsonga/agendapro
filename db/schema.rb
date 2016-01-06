@@ -11,13 +11,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160106124818) do
+ActiveRecord::Schema.define(version: 20160106150358) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
+
+  create_table "attribute_categories", force: true do |t|
+    t.integer  "attribute_id"
+    t.string   "category"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "attributes", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.text     "description"
+    t.string   "datatype"
+    t.boolean  "mandatory"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "banks", force: true do |t|
     t.integer  "code"
@@ -158,11 +175,27 @@ ActiveRecord::Schema.define(version: 20160106124818) do
   add_index "bookings", ["status_id"], name: "index_bookings_on_status_id", using: :btree
   add_index "bookings", ["user_id"], name: "index_bookings_on_user_id", using: :btree
 
+  create_table "boolean_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.boolean  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "cashiers", force: true do |t|
     t.integer  "company_id"
     t.string   "name"
     t.string   "code"
     t.boolean  "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "categoric_attributes", force: true do |t|
+    t.integer  "client_id"
+    t.integer  "attribute_id"
+    t.integer  "attribute_category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -393,6 +426,22 @@ ActiveRecord::Schema.define(version: 20160106124818) do
     t.float    "sales_tax",         default: 0.0, null: false
   end
 
+  create_table "date_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.date     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "date_time_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.datetime "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "days", force: true do |t|
     t.string   "name",       null: false
     t.datetime "created_at"
@@ -523,6 +572,30 @@ ActiveRecord::Schema.define(version: 20160106124818) do
 
   add_index "favorites", ["location_id"], name: "index_favorites_on_location_id", using: :btree
   add_index "favorites", ["user_id"], name: "index_favorites_on_user_id", using: :btree
+
+  create_table "file_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.integer  "client_file_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "float_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.float    "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "integer_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.integer  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "internal_sales", force: true do |t|
     t.integer  "location_id"
@@ -1544,6 +1617,14 @@ ActiveRecord::Schema.define(version: 20160106124818) do
   end
 
   add_index "tags", ["economic_sector_id"], name: "index_tags_on_economic_sector_id", using: :btree
+
+  create_table "text_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "time_units", force: true do |t|
     t.string   "unit"

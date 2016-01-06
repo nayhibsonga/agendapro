@@ -6,6 +6,13 @@ class Client < ActiveRecord::Base
   has_many :bookings, dependent: :destroy
   has_many :payments, dependent: :destroy
   has_many :client_files
+  has_many :float_attributes
+  has_many :integer_attributes
+  has_many :text_attributes
+  has_many :boolean_attributes
+  has_many :date_attributes
+  has_many :datetime_attributes
+  has_many :file_attributes
 
   #Se quitó :identification_uniqueness
   validate :mail_uniqueness, :record_uniqueness, :minimun_info

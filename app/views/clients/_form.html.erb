@@ -368,7 +368,7 @@
   </div>
 </div>
 
-<!-- File upload Modal -->
+<!-- File Upload Modal -->
 
 <div class="modal fade fileUploadModal" id="fileUploadModal" tabindex="-1" role="dialog" aria-labelledby="Agregar archivo" aria-hidden="true">
   <div class="modal-dialog" style="width: auto;">
@@ -408,6 +408,16 @@
               </div>
 
               <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label">Descripción</label>
+                <div class="col-xs-8">
+                  <input type="text" class="form-control" id="file_description" name="file_description" value="" />
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group">
                 <label class="col-xs-4 control-label">Carpeta</label>
                 <div class="col-xs-8">
                   <select id="folderSelect" class="form-control" name="folder_name">
@@ -440,13 +450,85 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
-        <button type="button" class="btn btn-green" id="salesCashIncomeSaveBtn" aria-label="Guardar">Guardar</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- END File upload Modal -->
+<!-- END File Upload Modal -->
+
+<!-- View File Modal -->
+
+<div class="modal fade fileUploadModal" id="viewFileModal" tabindex="-1" role="dialog" aria-labelledby="Ver archivo" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="viewFileModallTitle" style="line-height: 1.1;">
+          Subir archivo
+        </h3>
+      </div>
+      <div class="modal-body" id="viewFileModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label">Nombre</label>
+                <div class="col-xs-8">
+                  <div id="view_file_name">
+
+                  </div>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label">Descripción</label>
+                <div class="col-xs-8">
+                  <div id="view_file_description">
+
+                  </div>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+            
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label">Enlace</label>
+                <div class="col-xs-8">
+                  <a href="" id="view__file_link">Link</a>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group" id="view_file_preview_div">
+                <label class="col-xs-4 control-label">Vista previa</label>
+                <div class="col-xs-8">
+                  <div id="view_file_preview">
+
+                  </div>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- END View File Modal -->
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
