@@ -472,21 +472,12 @@
                   </div>
                 </td>
                 <td>
-                  <% if @company.due_amount >= 0 %> 
-                    <div class="col-md-6 td-title">
-                      Deuda actual
-                    </div>
-                    <div class="col-md-6">
-                      <%= number_to_currency(@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>
-                    </div>
-                  <% else %>
-                    <div class="col-md-6 td-title">
-                      Saldo a favor
-                    </div>
-                    <div class="col-md-6">
-                      <%= number_to_currency(-1*@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>
-                    </div>
-                  <% end %>
+                  <div class="col-md-6 td-title">
+                    <%= @company.months_active_left > 0 ? "Agregar Mes Adicional" : "Pagar Mes Actual" %>
+                  </div>
+                  <div class="col-md-6">
+                    <%= number_to_currency(@plan_1 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
+                  </div>
                 </td>
               </tr>
             </table> 
