@@ -10,4 +10,11 @@ class Bundle < ActiveRecord::Base
 
 
   accepts_nested_attributes_for :service_bundles, :reject_if => lambda { |a| a[:service_id].blank? }, :allow_destroy => true
+
+  after_create :update_price
+  after_update :update_price
+
+  def update_price
+    self.update_columns(price: self.service_bundles.sum(:price))
+  end
 end
