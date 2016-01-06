@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20160105174512) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
