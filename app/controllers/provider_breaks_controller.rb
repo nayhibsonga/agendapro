@@ -98,7 +98,7 @@ class ProviderBreaksController < ApplicationController
         
         @break_errors = Array.new
 
-        @provider_break_repeat = ProviderBreakRepeat.create(:start_date => params[:provider_break][:start].to_datetime, :repeat_option => params[:provider_break][:repeat_option], :repeat_type => params[:provider_break][:repeat])
+        @provider_break_repeat = ProviderBreakRepeat.create(:start_date => params[:provider_break][:start].to_datetime, :repeat_option => params[:provider_break][:repeat_option], :repeat_type => params[:provider_break][:repeat], :weeks => params[:provider_break][:repeat_weeks])
 
         status = true
 
@@ -139,6 +139,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "fourthweekly"
               start_date = first_start_date + (i*4).weeks
               end_date = first_end_date + (i*4).weeks
+            elsif params[:provider_break][:repeat] == "xweekly"
+              start_date = first_start_date + (i*@provider_break_repeat.weeks).weeks
+              end_date = first_end_date + (i*@provider_break_repeat.weeks).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -213,6 +216,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "fourthweekly"
               start_date = first_start_date + (i*4).weeks
               end_date = first_end_date + (i*4).weeks
+            elsif params[:provider_break][:repeat] == "xweekly"
+              start_date = first_start_date + (i*@provider_break_repeat.weeks).weeks
+              end_date = first_end_date + (i*@provider_break_repeat.weeks).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -300,7 +306,7 @@ class ProviderBreaksController < ApplicationController
 
       if params[:provider_break][:repeat] != "never"
 
-        @provider_break_repeat = ProviderBreakRepeat.create(:start_date => params[:provider_break][:start].to_datetime, :repeat_option => params[:provider_break][:repeat_option], :repeat_type => params[:provider_break][:repeat])
+        @provider_break_repeat = ProviderBreakRepeat.create(:start_date => params[:provider_break][:start].to_datetime, :repeat_option => params[:provider_break][:repeat_option], :repeat_type => params[:provider_break][:repeat], :weeks => params[:provider_break][:repeat_weeks])
 
         repeat_id = @provider_break_repeat.id
 
@@ -336,6 +342,9 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "fourthweekly"
                 start_date = first_start_date + (i*4).weeks
                 end_date = first_end_date + (i*4).weeks
+              elsif params[:provider_break][:repeat] == "xweekly"
+                start_date = first_start_date + (i*@provider_break_repeat.weeks).weeks
+                end_date = first_end_date + (i*@provider_break_repeat.weeks).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -408,6 +417,9 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "fourthweekly"
                 start_date = first_start_date + (i*4).weeks
                 end_date = first_end_date + (i*4).weeks
+              elsif params[:provider_break][:repeat] == "xweekly"
+                start_date = first_start_date + (i*@provider_break_repeat.weeks).weeks
+                end_date = first_end_date + (i*@provider_break_repeat.weeks).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -808,6 +820,7 @@ class ProviderBreaksController < ApplicationController
       #Edit ProviderBreakRepeat and redo breaks for given providers using its sart_date and the given params.
       provider_break_repeat.repeat_option = params[:provider_break][:repeat_option]
       provider_break_repeat.repeat_type = params[:provider_break][:repeat]
+      provider_break_repeat.weeks = params[:provider_break][:repeat_weeks]
 
       repeat_id = provider_break_repeat.id
 
@@ -848,6 +861,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "fourthweekly"
               start_date = first_start_date + (i*4).weeks
               end_date = first_end_date + (i*4).weeks
+            elsif params[:provider_break][:repeat] == "xweekly"
+              start_date = first_start_date + (i*provider_break_repeat.weeks).weeks
+              end_date = first_end_date + (i*provider_break_repeat.weeks).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -920,6 +936,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "fourthweekly"
               start_date = first_start_date + (i*4).weeks
               end_date = first_end_date + (i*4).weeks
+            elsif params[:provider_break][:repeat] == "xweekly"
+              start_date = first_start_date + (i*provider_break_repeat).weeks
+              end_date = first_end_date + (i*provider_break_repeat).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -1009,6 +1028,7 @@ class ProviderBreaksController < ApplicationController
         #Create breaks given providers using its sart_date and the given params.
         provider_break_repeat.repeat_option = params[:provider_break][:repeat_option]
         provider_break_repeat.repeat_type = params[:provider_break][:repeat]
+        provider_break_repeat.weeks = params[:provider_break][:repeat_weeks]
 
         repeat_id = provider_break_repeat.id
 
@@ -1049,6 +1069,9 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "fourthweekly"
                 start_date = first_start_date + (i*4).weeks
                 end_date = first_end_date + (i*4).weeks
+              elsif params[:provider_break][:repeat] == "xweekly"
+                start_date = first_start_date + (i*provider_break_repeat.weeks).weeks
+                end_date = first_end_date + (i*provider_break_repeat.weeks).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -1121,6 +1144,9 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "fourthweekly"
                 start_date = first_start_date + (i*4).weeks
                 end_date = first_end_date + (i*4).weeks
+              elsif params[:provider_break][:repeat] == "xweekly"
+                start_date = first_start_date + (i*provider_break_repeat.weeks).weeks
+                end_date = first_end_date + (i*provider_break_repeat.weeks).weeks
               elsif params[:provider_break][:repeat] == "monthly_date"
                 start_date = first_start_date + i.months
                 end_date = first_end_date + i.months
@@ -1186,6 +1212,7 @@ class ProviderBreaksController < ApplicationController
       #Delete and redo breaks for given providers using its sart_date and the given params.
       provider_break_repeat.repeat_option = params[:provider_break][:repeat_option]
       provider_break_repeat.repeat_type = params[:provider_break][:repeat]
+      provider_break_repeat.weeks = params[:provider_break][:repeat_weeks]
 
       repeat_id = provider_break_repeat.id
 
@@ -1235,6 +1262,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "fourthweekly"
               start_date = first_start_date + (i*4).weeks
               end_date = first_end_date + (i*4).weeks
+            elsif params[:provider_break][:repeat] == "xweekly"
+              start_date = first_start_date + (i*provider_break_repeat.weeks).weeks
+              end_date = first_end_date + (i*provider_break_repeat.weeks).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -1307,6 +1337,9 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "fourthweekly"
               start_date = first_start_date + (i*4).weeks
               end_date = first_end_date + (i*4).weeks
+            elsif params[:provider_break][:repeat] == "xweekly"
+              start_date = first_start_date + (i*provider_break_repeat.weeks).weeks
+              end_date = first_end_date + (i*provider_break_repeat.weeks).weeks
             elsif params[:provider_break][:repeat] == "monthly_date"
               start_date = first_start_date + i.months
               end_date = first_end_date + i.months
@@ -1479,6 +1512,6 @@ class ProviderBreaksController < ApplicationController
   end
 
   def provider_break_params
-    params.require(:provider_break).permit(:id, :start, :end, :name, :local, :repeat, :repeat_option, :times, :repeat_end, :repeat_id, :service_provider_id => [])
+    params.require(:provider_break).permit(:id, :start, :end, :name, :local, :repeat, :repeat_option, :repeat_weeks, :times, :repeat_end, :repeat_id, :service_provider_id => [])
   end
 end

@@ -1717,6 +1717,7 @@ function saveBreak (typeURL, extraURL) {
     "end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
     "local": $('#locals-selector').val(),
     "repeat": $('#break_repeat').val(),
+    "repeat_weeks": $('#break_repeat_weeks').val(),
     "repeat_end": $('#provider_break_repeat_repeat_end_1i').val() +"-"+ $('#provider_break_repeat_repeat_end_2i').val() +"-"+ $('#provider_break_repeat_repeat_end_3i').val() +"T"+ $('#provider_break_repeat_repeat_end_4i').val() +":"+ $('#provider_break_repeat_repeat_end_5i').val() +":00Z",
     "times": $("#break_times").val(),
     "repeat_option": $('input[name="repeat_option"]:checked').val()
@@ -1910,6 +1911,7 @@ function editRepeatBreak(breakId) {
     "end": $('#provider_break_end_1i').val() +"-"+ $('#provider_break_end_2i').val() +"-"+ $('#provider_break_end_3i').val() +"T"+ $('#provider_break_end_4i').val() +":"+ $('#provider_break_end_5i').val() +":00Z",
     "local": $('#locals-selector').val(),
     "repeat_id" : $("#provider_break_repeat_id").val(),
+    "repeat_weeks": $('#break_repeat_weeks').val(),
     "id" : breakId,
     "repeat": $('#break_repeat').val(),
     "repeat_end": $('#provider_break_repeat_repeat_end_1i').val() +"-"+ $('#provider_break_repeat_repeat_end_2i').val() +"-"+ $('#provider_break_repeat_repeat_end_3i').val() +"T"+ $('#provider_break_repeat_repeat_end_4i').val() +":"+ $('#provider_break_repeat_repeat_end_5i').val() +":00Z",
@@ -2075,6 +2077,7 @@ function createBreakModal(date, providerId) {
 
   $('#break_repeat option[value="never"]').prop("selected", true);
   $("#break_times").val('');
+
   $("#repeat_option_times").prop("checked", true);
   $(".form-repeat-div").show();
 
@@ -2130,6 +2133,7 @@ function createBreakModal(date, providerId) {
     '<button type="button" class="btn btn-default btn-close break-button" data-dismiss="modal">Cerrar</button>' +
     '<button type="button" class="btn btn-green break-button" id="save_break" onClick="saveBreak(\'POST\',\'\')">Guardar</button>'
     );
+  $('#break_repeat_weeks_div').hide();
   $('#breakModal').modal('show');
 }
 
@@ -2238,6 +2242,19 @@ function editBreakModal(breakId) {
       $('#break_repeat option[value="' + provider_break_repeat.repeat_type + '"]').prop("selected", true);
 
       $('[name="repeat_option"][value="' + provider_break_repeat.repeat_option + '"]').prop("checked", true);
+
+      $('#break_repeat_weeks').val(provider_break_repeat.weeks);
+
+      console.log(provider_break_repeat.repeat_type);
+
+      if(provider_break_repeat.repeat_type == "xweekly")
+      {
+        $('#break_repeat_weeks_div').show();
+      }
+      else
+      {
+        $('#break_repeat_weeks_div').hide();
+      }
 
 
       if(provider_break_repeat.repeat_option == "times")
@@ -3096,6 +3113,18 @@ $(function() {
 
       checkTreatmentPrice(service_id, session_booking_id);
 
+    });
+
+    $('#break_repeat').on('change', function(){
+      console.log($(this).val());
+      if($(this).val() == "xweekly")
+      {
+        $('#break_repeat_weeks_div').show();
+      }
+      else
+      {
+        $('#break_repeat_weeks_div').hide();
+      }
     });
 
 
