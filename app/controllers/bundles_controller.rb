@@ -19,7 +19,7 @@ class BundlesController < ApplicationController
 
   def new
     @bundle = Bundle.new
-    service_bundle = @bundle.service_bundles.build
+    service_bundles = @bundle.service_bundles.build
     respond_with(@bundle)
   end
 
@@ -31,18 +31,32 @@ class BundlesController < ApplicationController
     if current_user.role_id != Role.find_by_name("Super Admin").id
       @bundle.company_id = current_user.company_id
     end
-    @bundle.save
-    respond_with(@bundle)
+    respond_to do |format|
+      if @bundle.save
+        format.html { redirect_to services_path, notice: 'Paquete de Servicios creado exitosamente.' }
+        format.json { render :json => @bundle }
+      else
+        format.html { render action: 'edit' }
+        format.json { render :json => { :errors => @bundle.errors.full_messages }, :status => 422 }
+      end
+    end
   end
 
   def update
-    @bundle.update(bundle_params)
-    respond_with(@bundle)
+    respond_to do |format|
+      if @bundle.update(bundle_params)
+        format.html { redirect_to services_path, notice: 'Paquete de Servicios actualizado exitosamente.' }
+        format.json { render :json => @bundle }
+      else
+        format.html { render action: 'edit' }
+        format.json { render :json => { :errors => @bundle.errors.full_messages }, :status => 422 }
+      end
+    end
   end
 
   def destroy
     @bundle.destroy
-    respond_with(@bundle)
+    redirect_to services_path, notice: 'Paquete de servicios eliminado exitosamente.'
   end
 
   private
