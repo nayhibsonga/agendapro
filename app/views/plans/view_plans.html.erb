@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-sm-12">
         <h1>Nuestros Planes</h1>
-        <p>Elige el plan que mejor se acomode a tus necesidades o contáctanos si necesitas uno a tu medida</p>
+        <p>Estos son nuestros nuevos planes cuyo precio es para el primer local, cada local extra tiene un costo del 50% del plan. Elige el plan que mejor se acomode a tus necesidades o contáctanos si necesitas uno a tu medida</p>
       </div>
     </div>
   </div>
@@ -12,7 +12,7 @@
 <section class="plans">
   <div class="container">
     <div class="row">
-      <div class="col-xs-12 hidden-md hidden-lg" style="margin-bottom: 20px;">
+      <div class="col-xs-12 hidden-md hidden-lg">
         <div class="border">
           <div class="pricing-title" data-target="personal">Personal</div>
           <div class="pricing-title" data-target="normal">Normal</div>
@@ -20,9 +20,13 @@
           <div class="pricing-title" data-target="pro">Pro</div>
         </div>
       </div>
-      <div class="col-xs-12 pricing-header">
-        <div id="floating-header" class="">
-          <div class="border">
+      <div class="col-xs-12">
+        <div class="fill"></div>
+        <div class="pricing-header">
+          <div class="pricing-description">
+            <p>&nbsp;</p>
+          </div>
+          <div class="pricing-cols border">
             <div class="pricing-col" data-plan="personal">
               <p class="pricing-plan">Personal</p>
               <div class="pricing-circle">
@@ -1135,7 +1139,7 @@
       $('.pricing-col[data-plan="' + target + '"]').addClass('active');
     });
 
-    var header = $('#floating-header');
+    var header = $('.pricing-header');
     var headerY = header.offset().top - 60/* Navbar height */;
     var isFloating = false;
     var $w = $(window);
@@ -1144,9 +1148,11 @@
       var shouldBeFloating = scrollTop > headerY;
       if (shouldBeFloating && !isFloating) {
         header.addClass("floating-header");
+        $('.fill').show();
         isFloating = true;
       } else if (!shouldBeFloating && isFloating){
         header.removeClass("floating-header");
+        $('.fill').hide();
         isFloating = false;
       };
     });

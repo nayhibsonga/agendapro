@@ -24,7 +24,7 @@ section.plans {
     float: left;
 
     display: none;
-    padding: 5px 10px;
+    padding: 10px 10px;
     width: 100%;
     text-align: center;
 
@@ -32,79 +32,30 @@ section.plans {
       display: initial;
     }
   }
+  .pricing-cols, .pricing-description {
+    position: relative;
+    min-height: 1px;
+    float: left;
+  }
+  .pricing-description {
+    padding: 10px 15px;
+    span { color: $light-gray; }
+  }
+  .pricing-header {
+    p { margin-bottom: 0; }
+    .pricing-cols { width: 100%; }
+    .pricing-description {
+      width: 0%;
+    }
+  }
   .pricing-row {
     & + .pricing-row { border-top: $gray solid 1px; }
     p { margin-bottom: 0; }
-    .pricing-cols, .pricing-description {
-      position: relative;
-      min-height: 1px;
-      float: left;
-    }
     .pricing-cols { width: 30%; }
     .pricing-description {
       width: 70%;
-      padding: 10px 15px;
       border-right: $gray solid 1px;
-      span { color: $light-gray; }
     }
-    .pricing-col {
-      padding: 10px 10px;
-    }
-  }
-  @media (min-width: 992px) {
-    .pricing-col {
-      display: initial;
-      width: 25%;
-      & + .pricing-col { border-left: $gray solid 1px; }
-    }
-    .pricing-row {
-      .pricing-cols {
-        width: 70%;
-      }
-      .pricing-description {
-        width: 30%;
-      }
-    }
-    .pricing-header {
-      width: 71%;
-      float: right;
-      height: 170px;
-    }
-    .floating-header {
-      position: fixed;
-      top: 60px;
-      z-index: 1;
-      margin-left: auto;
-      margin-right: auto;
-      width: 970px;
-      .border {
-        background: white top right no-repeat;
-        width: 68%;
-      }
-    }
-  }
-  @media (min-width: 1200px) {
-    .floating-header {
-      width: 1170px;
-      .border {
-        background: white top right no-repeat;
-        width: 68.5%;
-      }
-    }
-  }
-  .border:before,
-  .border:after,
-  .pricing-row:before,
-  .pricing-row:after,
-  .pricing-header:before,
-  .pricing-header:after {
-    display: table;
-    content: " ";
-  }
-  .border:after,
-  .pricing-row:after,
-  .pricing-header:after {
-    clear: both;
   }
   .pricing-plan {
     font-weight: bold;
@@ -145,5 +96,57 @@ section.plans {
   }
   .pricing-section, .pricing-icon {
     color: $light-green;
+  }
+  @media (min-width: 992px) {
+    .pricing-col {
+      display: initial;
+      width: 25%;
+      & + .pricing-col { border-left: $gray solid 1px; }
+    }
+    .pricing-row {
+      .pricing-cols {
+        width: 70%;
+      }
+      .pricing-description {
+        width: 30%;
+      }
+    }
+    .pricing-header {
+      .pricing-cols { width: 70%; }
+      .pricing-description {
+        width: 30%;
+      }
+    }
+    .floating-header {
+      position: fixed;
+      background: white;
+      z-index: 1;
+      top: 60px;
+      width: 940px;
+      @media (min-width: 1200px) {
+        width: 1140px;
+      }
+      -webkit-box-shadow: 0px 10px 10px -5px rgba(50, 50, 50, 0.25);
+      -moz-box-shadow:    0px 10px 10px -5px rgba(50, 50, 50, 0.25);
+      box-shadow:         0px 10px 10px -5px rgba(50, 50, 50, 0.25);
+    }
+    .fill {
+      height: 209px;
+      display: none;
+    }
+  }
+  .border:before,
+  .border:after,
+  .pricing-row:before,
+  .pricing-row:after,
+  .pricing-header:before,
+  .pricing-header:after {
+    display: table;
+    content: " ";
+  }
+  .border:after,
+  .pricing-row:after,
+  .pricing-header:after {
+    clear: both;
   }
 }
