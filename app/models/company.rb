@@ -47,7 +47,7 @@ class Company < ActiveRecord::Base
 
 	has_one :company_plan_setting
 
-	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin"]).pluck(:id)) }
+	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
@@ -246,23 +246,28 @@ class Company < ActiveRecord::Base
   		stats.week_bookings = Booking.where(location_id: Location.where(company_id: company.id), created_at: 7.days.ago..Time.now).count
   		stats.past_week_bookings = Booking.where(location_id: Location.where(company_id: company.id), created_at: 14.days.ago..7.days.ago).count
 
-		bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
-		rec = BillingRecord.where(:company_id => company.id).order('date desc').first
-		if !bl.nil? && !rec.nil?
-			if bl.created_at <= rec.date
-				stats.last_payment = rec.date
-				stats.last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
-			else
-				stats.last_payment = bl.created_at
-				stats.last_payment_method = "Automático"
-			end
-		elsif bl.nil? && !rec.nil?
-			stats.last_payment = rec.date
-			stats.last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
-		elsif !bl.nil? && rec.nil?
-			stats.last_payment = bl.created_at
-			stats.last_payment_method = "Automático"
-		end
+  		last_payment_arr = company.last_payment_detail
+  		stats.last_payment = last_payment_arr[0]
+  		stats.last_payment_method = last_payment_arr[2]
+
+		#bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
+		#rec = BillingRecord.where(:company_id => company.id).order('date desc').first
+		#if !bl.nil? && !rec.nil?
+		#	if bl.created_at <= rec.date
+		# 		stats.last_payment = rec.date
+		# 		stats.last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
+		# 	else
+		# 		stats.last_payment = bl.created_at
+		# 		stats.last_payment_method = "Automático"
+		# 	end
+		# elsif bl.nil? && !rec.nil?
+		# 	stats.last_payment = rec.date
+		# 	stats.last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
+		# elsif !bl.nil? && rec.nil?
+		# 	stats.last_payment = bl.created_at
+		# 	stats.last_payment_method = "Automático"
+		# end
+
 		stats.save
 	end
 
@@ -422,6 +427,12 @@ class Company < ActiveRecord::Base
 
 			elsif company.payment_status_id == status_emitido.id
 
+				#If it was created within the last 2 months, it just got out of trial
+				#Check for use
+
+				#Check if account was used.
+				
+
 				#If it was issued, the company is late 1 month in their payments
 				#Change their status to expired, add to their due and charge them for next month
 
@@ -436,7 +447,12 @@ class Company < ActiveRecord::Base
 				company.save
 
 				#Send invoice_email
-				CompanyMailer.invoice_email(company.id, message_emitido)
+				if company.created_at > (DateTime.now - 2.months) && !company.account_used
+					CompanyMailer.trial_recovery(company.id)
+				else
+					CompanyMailer.invoice_email(company.id, message_emitido)
+				end
+
 
 			end
 
@@ -470,7 +486,11 @@ class Company < ActiveRecord::Base
 			if company.payment_status_id == status_emitido.id
 
 				#Send first reminder
-				CompanyMailer.invoice_email(company.id, message_emitido)
+				if company.created_at > (DateTime.now - 2.months) && !company.account_used
+					#Was in trial and hasn't used
+				else
+					CompanyMailer.invoice_email(company.id, message_emitido)
+				end
 
 			elsif company.payment_status_id == status_vencido.id
 
@@ -513,7 +533,11 @@ class Company < ActiveRecord::Base
 		collectables.where(payment_status_id: status_emitido.id).each do |company|
 
 			#Send second reminder (insistence)
-			CompanyMailer.invoice_email(company.id, message_emitido)
+			if company.created_at > (DateTime.now - 2.months) && !company.account_used
+				#Was in trial and hasn't used
+			else
+				CompanyMailer.invoice_email(company.id, message_emitido)
+			end
 
 		end
 
@@ -532,9 +556,86 @@ class Company < ActiveRecord::Base
 		collectables.where(payment_status_id: status_emitido.id).each do |company|
 
 			#Send ultimatum saying they will be downgraded on failure to pay
-			CompanyMailer.invoice_email(company.id, message_emitido)
+			if company.created_at > (DateTime.now - 2.months) && !company.account_used
+				#Was in trial and hasn't used
+			else
+				CompanyMailer.invoice_email(company.id, message_emitido)
+			end
 
 		end
+
+	end
+
+	#Return an array containing
+	#response[0] = Last payment date (or "No existen pagos" if nil)
+	#response[1] = Last payment amount (or 0 if nil)
+	def last_payment_detail
+
+		bl = BillingLog.where.not(transaction_type_id: -1).where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
+		rec = BillingRecord.where(:company_id => self.id).order('date desc').first
+		bwt = BillingWireTransfer.where(:company_id => self.id, :approved => true).order('payment_date desc').first
+		pl = PlanLog.where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
+
+		last_payment_date = ""
+		paid_amount = "0"
+		last_payment_method = ""
+
+		if bl.nil? && rec.nil? && bwt.nil? && pl.nil?
+
+			last_payment_date = "No existen pagos"
+			response_array = []
+			response_array[0] = last_payment_date
+			response_array[1] = paid_amount
+			response_array[2] = last_payment_method
+
+			return response_array
+
+		else
+
+			date1 = Time.at(0).to_datetime
+			date2 = date1
+			date3 = date1
+			date4 = date1
+			
+		end
+
+		if !bl.nil?
+		  date1 = bl.created_at
+		end
+		if !rec.nil?
+		  date2 = rec.date.to_datetime
+		end
+		if !bwt.nil?
+		  date3 = bwt.payment_date
+		end
+		if !pl.nil?
+		  date4 = pl.created_at
+		end
+
+		if date1 >= date2 && date1 >= date3 && date1 >= date4
+		  last_payment_date = bl.created_at.strftime('%d/%m/%Y %R')
+		  paid_amount = "$" + bl.payment.to_s
+		  last_payment_method = "Automático"
+		elsif date2 >= date1 && date2 >= date3 && date2 >= date4
+		  last_payment_date = rec.date.strftime('%d/%m/%Y')
+		  paid_amount = "$" + rec.amount.to_s
+		  last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
+		elsif date3 >= date1 && date3 >= date2 && date3 >= date4
+		  last_payment_date = bwt.payment_date.strftime('%d/%m/%Y %R')
+		  paid_amount = "$" + bwt.amount.to_s
+		  last_payment_method = "Transferencia"
+		else
+		  last_payment_date = pl.created_at.strftime('%d/%m/%Y %R')
+		  paid_amount = "$" + pl.amount.to_s
+		  last_payment_method = "Automático"
+		end
+
+		response_array = []
+		response_array[0] = last_payment_date
+		response_array[1] = paid_amount
+		response_array[2] = last_payment_method
+
+		return response_array
 
 	end
 

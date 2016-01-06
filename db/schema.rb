@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151230153909) do
+ActiveRecord::Schema.define(version: 20160105174512) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 20151230153909) do
   end
 
   create_table "billing_wire_transfers", force: true do |t|
-    t.datetime "payment_date",   default: '2015-12-02 18:34:34'
+    t.datetime "payment_date",   default: '2015-11-16 15:12:16'
     t.float    "amount",         default: 0.0
     t.string   "account_name",   default: ""
     t.string   "account_number", default: ""
@@ -94,8 +94,8 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes"
-    t.text     "company_comment"
+    t.text     "notes",               default: ""
+    t.text     "company_comment",     default: ""
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -123,29 +123,28 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.integer  "client_id"
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
-    t.integer  "max_changes",            default: 2
     t.boolean  "payed",                  default: false
     t.string   "trx_id",                 default: ""
+    t.integer  "max_changes",            default: 2
     t.string   "token",                  default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
-    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
-    t.integer  "reminder_group"
+    t.integer  "payment_id"
+    t.float    "discount",               default: 0.0
     t.boolean  "is_booked",              default: true
+    t.integer  "reminder_group"
     t.float    "list_price",             default: 0.0
     t.integer  "receipt_id"
     t.boolean  "payed_state",            default: false
     t.boolean  "marketplace_origin",     default: false
     t.integer  "treatment_promo_id"
     t.integer  "last_minute_promo_id"
-    t.boolean  "bundled",                default: false
   end
 
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
@@ -158,20 +157,6 @@ ActiveRecord::Schema.define(version: 20151230153909) do
   add_index "bookings", ["start"], name: "index_bookings_on_start", using: :btree
   add_index "bookings", ["status_id"], name: "index_bookings_on_status_id", using: :btree
   add_index "bookings", ["user_id"], name: "index_bookings_on_user_id", using: :btree
-
-  create_table "bundles", force: true do |t|
-    t.string   "name",                default: "",   null: false
-    t.decimal  "price",               default: 0.0,  null: false
-    t.integer  "service_category_id"
-    t.integer  "company_id"
-    t.text     "description",         default: ""
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "show_price",          default: true
-  end
-
-  add_index "bundles", ["company_id"], name: "index_bundles_on_company_id", using: :btree
-  add_index "bundles", ["service_category_id"], name: "index_bundles_on_service_category_id", using: :btree
 
   create_table "cashiers", force: true do |t|
     t.integer  "company_id"
@@ -199,6 +184,16 @@ ActiveRecord::Schema.define(version: 20151230153909) do
   end
 
   add_index "client_comments", ["client_id"], name: "index_client_comments_on_client_id", using: :btree
+
+  create_table "client_files", force: true do |t|
+    t.integer  "client_id"
+    t.text     "name"
+    t.text     "full_path"
+    t.text     "public_url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "size",       default: 0
+  end
 
   create_table "clients", force: true do |t|
     t.integer  "company_id"
@@ -279,6 +274,16 @@ ActiveRecord::Schema.define(version: 20151230153909) do
   add_index "company_economic_sectors", ["company_id"], name: "index_company_economic_sectors_on_company_id", using: :btree
   add_index "company_economic_sectors", ["economic_sector_id"], name: "index_company_economic_sectors_on_economic_sector_id", using: :btree
 
+  create_table "company_files", force: true do |t|
+    t.integer  "company_id"
+    t.text     "name"
+    t.text     "full_path"
+    t.text     "public_url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "size",       default: 0
+  end
+
   create_table "company_from_emails", force: true do |t|
     t.string   "email",                      null: false
     t.integer  "company_id"
@@ -337,16 +342,16 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.boolean  "booking_history",             default: true
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
-    t.boolean  "deal_activate",               default: false
-    t.string   "deal_name",                   default: ""
-    t.boolean  "deal_overcharge",             default: true
     t.boolean  "allows_online_payment",       default: false
     t.string   "account_number",              default: ""
     t.string   "company_rut",                 default: ""
     t.string   "account_name",                default: ""
     t.integer  "account_type",                default: 3
     t.integer  "bank_id"
-    t.boolean  "deal_exclusive",              default: true
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name",                   default: ""
+    t.boolean  "deal_overcharge",             default: true
+    t.boolean  "deal_exclusive",              default: false
     t.integer  "deal_quantity",               default: 0
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
@@ -362,9 +367,9 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.boolean  "can_edit",                    default: true
     t.boolean  "can_cancel",                  default: true
     t.boolean  "use_identification_number",   default: false
-    t.string   "preset_notes"
     t.boolean  "payment_client_required",     default: true
     t.boolean  "show_cashes",                 default: false
+    t.string   "preset_notes"
     t.boolean  "editable_payment_prices",     default: true
     t.boolean  "mandatory_mock_booking_info", default: false
     t.boolean  "strict_booking",              default: false,                 null: false
@@ -446,18 +451,16 @@ ActiveRecord::Schema.define(version: 20151230153909) do
   end
 
   create_table "economic_sectors", force: true do |t|
-    t.string   "name",                                      null: false
+    t.string   "name",                                    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "show_in_home",              default: true
-    t.boolean  "show_in_company",           default: true
-    t.string   "mobile_preview",            default: ""
-    t.boolean  "marketplace",               default: false
-    t.integer  "marketplace_categories_id"
+    t.boolean  "show_in_home",            default: true
+    t.boolean  "show_in_company",         default: true
+    t.string   "mobile_preview",          default: ""
+    t.boolean  "marketplace",             default: false
     t.integer  "marketplace_category_id"
   end
 
-  add_index "economic_sectors", ["marketplace_categories_id"], name: "index_economic_sectors_on_marketplace_categories_id", using: :btree
   add_index "economic_sectors", ["marketplace_category_id"], name: "index_economic_sectors_on_marketplace_category_id", using: :btree
 
   create_table "economic_sectors_dictionaries", force: true do |t|
@@ -530,7 +533,7 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "date",                default: '2015-10-30 21:54:55'
+    t.datetime "date",                default: '2015-10-27 17:17:43'
     t.integer  "user_id"
   end
 
@@ -561,8 +564,8 @@ ActiveRecord::Schema.define(version: 20151230153909) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-    t.integer  "location_id"
-    t.integer  "stock"
+    t.integer  "location_id",                null: false
+    t.integer  "stock",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "stock_limit"
@@ -903,8 +906,8 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.integer  "quantity",    default: 1,   null: false
     t.integer  "seller_id"
     t.integer  "seller_type"
-    t.float    "list_price",  default: 0.0
     t.integer  "receipt_id"
+    t.float    "list_price",  default: 0.0
   end
 
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
@@ -934,7 +937,7 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.integer  "company_id"
     t.float    "amount",        default: 0.0
     t.boolean  "payed",         default: false
-    t.datetime "payment_date",  default: '2015-11-12 13:16:44'
+    t.datetime "payment_date",  default: '2015-11-10 14:59:37'
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "discount",      default: 0.0
@@ -1098,6 +1101,7 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.integer  "times"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "weeks",         default: 0
   end
 
   create_table "provider_breaks", force: true do |t|
@@ -1282,7 +1286,7 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
-    t.datetime "date",          default: '2015-10-30 21:54:55'
+    t.datetime "date",          default: '2015-10-23 15:05:22'
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1302,7 +1306,7 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
-    t.datetime "date",                    default: '2015-10-30 21:54:55'
+    t.datetime "date",                    default: '2015-10-23 13:42:39'
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false
@@ -1322,18 +1326,6 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.datetime "updated_at"
     t.boolean  "scheduled_reset",         default: false
   end
-
-  create_table "service_bundles", force: true do |t|
-    t.integer  "service_id"
-    t.integer  "bundle_id"
-    t.integer  "order",      default: 0,   null: false
-    t.decimal  "price",      default: 0.0, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "service_bundles", ["bundle_id"], name: "index_service_bundles_on_bundle_id", using: :btree
-  add_index "service_bundles", ["service_id"], name: "index_service_bundles_on_service_id", using: :btree
 
   create_table "service_categories", force: true do |t|
     t.string   "name",                   null: false
@@ -1455,7 +1447,7 @@ ActiveRecord::Schema.define(version: 20151230153909) do
     t.boolean  "has_time_discount",           default: false
     t.boolean  "has_last_minute_discount",    default: false
     t.boolean  "time_promo_active",           default: false
-    t.string   "time_promo_photo",            default: ""
+    t.string   "time_promo_photo"
     t.integer  "active_service_promo_id"
     t.boolean  "must_be_paid_online",         default: false
     t.text     "promo_description",           default: ""
