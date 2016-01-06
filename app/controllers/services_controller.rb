@@ -231,8 +231,15 @@ class ServicesController < ApplicationController
   end
 
   def service_data
+    if (params[:bundle] == "true")
+      bundle = Bundle.find(params[:id])
+      render :json => bundle.attributes.merge({'bundle' => true, 'duration' => bundle.services.sum(:duration), 'services' => bundle.services })
+      return
+    end
+
     service = Service.find(params[:id])
     render :json => service
+    return
   end
 
   def services_data

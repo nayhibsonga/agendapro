@@ -68,7 +68,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def plan_settings
-		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
+		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true, location_id: self.locations.where(active: true).pluck(:id)).count > self.plan.service_providers
 			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/prestadores activos que lo que permite el plan.")
 		end
 	end

@@ -97,15 +97,15 @@ function loadStep1 (service_id) {
 	var localId = $('#selectedLocal').data('local').id;
 	var categoryCount = 0;
 	$.getJSON('/local_services', {location: localId}, function (categorized_services) {
-		window.console.log(categorized_services);
+		// window.console.log(categorized_services);
 		$('#services-selector').empty();
 		$.each(categorized_services, function (key, service_hash) {
-			window.console.log(service_hash);
+			// window.console.log(service_hash);
 			if (service_hash.services.length > 0) {
 				var servicesHTML = '';
 				categoryCount = categoryCount + 1;
 				$.each(service_hash.services, function (key, service) {
-					window.console.log(service);
+					// window.console.log(service);
 					//====== Generando Radios
 					serviceDiscount = "";
 					servicePrice = '';
@@ -125,13 +125,14 @@ function loadStep1 (service_id) {
 					{
 						servicePrice = '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' + simple_currency(service.price);
 					}
+					
 					servicesHTML +=
 						'<li class="list-group-item">' +
 							'<div class="radio">' +
 								'<div style="width: 95%"><div class="row">' +
 									'<div class="col-sm-4">' +
 										'<label>' +
-											'<input type="radio" name="serviceRadio" value="' + service.id + '" data-outcall="'+service.outcall+'">' +
+											'<input type="radio" name="serviceRadio" value="' + service.id + '" data-outcall="'+service.outcall+'" data-bundle="'+service.bundle+'">' +
 											'<p class="service-selector-text">' + service.name_with_small_outcall + '</p>' +
 										'</label>' +
 									'</div><div class="col-sm-3 service-selector-price service-selector-text">' +
@@ -251,13 +252,13 @@ function loadStep1 (service_id) {
         		delete settings.rules.address;
 			}
 
-			console.log($(window).width());
+			// console.log($(window).width());
 			if ($(window).width() > 1200)
 			{
 				var oldTop = $(document).scrollTop();
 				$('#foo4').trigger('updateSizes');
 				$(document).scrollTop(oldTop);
-				loadDescription(serviceId);
+				loadDescription(serviceId, $(event.target).data('bundle'));
 			}
 			else
 			{
@@ -265,7 +266,7 @@ function loadStep1 (service_id) {
 				var oldTop = $(document).scrollTop();
 				$('#foo4').trigger('updateSizes');
 				$(document).scrollTop(oldTop);
-				loadDescription(serviceId);
+				loadDescription(serviceId, $(event.target).data('bundle'));
 				$("#new-add-service").focus();
 			}
 		});
@@ -580,10 +581,12 @@ function loadStep2() {
 	$(".selected-service").each(function() {
 		var provider = $(this).find('.selected-service-provider').val();
 		var service_id = $(this).attr("service_id");
+		var bundle_id = $(this).attr("bundle_id");
 
 		selects.push({
 			service: service_id,
-			provider: provider
+			provider: provider,
+			bundle_id: bundle_id,
 		});
 	});
 
@@ -627,7 +630,7 @@ function loadStep2() {
 
 			bookDetailsDiscountPrice = bookDetails.price;
 
-			console.log(bookDetails);
+			// console.log(bookDetails);
 
 			if(bookDetails.show_price)
 			{
@@ -1681,12 +1684,14 @@ function checkUserCrossBookings () {
 }
 
 //====== Load Info ======//
-function loadDescription (serviceId) {
+function loadDescription (serviceId, bundle) {
 	$('#services-description').html('<tr><td class="text-center" style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></td></tr>');
-	$.getJSON('/service', {id: serviceId}, function (service) {
+	bundle = bundle || false;
+	$.getJSON('/service', {id: serviceId, bundle: bundle}, function (service) {
 		current_service = service;
 
 		$("#selectedServiceId").val(service.id);
+		$("#selectedServiceId").data('bundle', bundle);
 
 		$("#description-default").hide();
 
@@ -2117,6 +2122,41 @@ function blockService(service)
 	return false;
 }
 
+function appendService(service, bundle_id) {
+	if(blockService(service))
+	{
+		return;
+	}
+
+	bundle_id = bundle_id || null;
+
+	$("#selected-services").append(
+		'<div id="selected-service-' + added_services_count + '" class="selected-service" service_id="' + service.id + '" draggable="true" ondragstart="drag(event)" bundle_id="' + bundle_id + '">' +
+			'<div class="selected-service-header row">' +
+				'<div class="col-sm-1"><i class="fa fa-times remove-service"></i></div>' +
+				'<div class="col-sm-9">' + service.name + '</div>' +
+				'<div class="col-sm-1"><i class="fa fa-bars move-service"></i></div>' +
+			'</div>' +
+			'<div class="selected-service-providers">' +
+				'<div class="form-group">' +
+			        '<label for="selected-service-provider" class="col-xs-3 control-label">Prestador</label>' +
+			        '<div class="col-xs-9">' +
+			          '<select class="form-control selected-service-provider"></select>' +
+			        '</div>' +
+			    '</div>' +
+			'</div>' +
+			'<div style="clear: both;">' +
+			'</div>' +
+		'</div>'
+	);
+
+	loadServiceStaff(service.id);
+
+	added_services.push(service);
+	added_services_count = added_services_count + 1;
+
+	return;
+}
 
 function addService(service_id){
 
@@ -2131,37 +2171,16 @@ function addService(service_id){
 		return false;
 	}
 
-	$.getJSON('/service', {id: service_id}, function (service) {
+	$.getJSON('/service', {id: service_id, bundle: $("#selectedServiceId").data('bundle')}, function (service) {
 
-		if(blockService(service))
-		{
-			return;
+		if($("#selectedServiceId").data('bundle') && service.services.length > 0) {
+			$.each(service.services, function (key, service) {
+        appendService(service, service_id);
+      });
 		}
-
-		$("#selected-services").append(
-			'<div id="selected-service-' + added_services_count + '" class="selected-service" service_id="' + service.id + '" draggable="true" ondragstart="drag(event)">' +
-				'<div class="selected-service-header row">' +
-					'<div class="col-sm-1"><i class="fa fa-times remove-service"></i></div>' +
-					'<div class="col-sm-9">' + service.name + '</div>' +
-					'<div class="col-sm-1"><i class="fa fa-bars move-service"></i></div>' +
-				'</div>' +
-				'<div class="selected-service-providers">' +
-					'<div class="form-group">' +
-				        '<label for="selected-service-provider" class="col-xs-3 control-label">Prestador</label>' +
-				        '<div class="col-xs-9">' +
-				          '<select class="form-control selected-service-provider"></select>' +
-				        '</div>' +
-				    '</div>' +
-				'</div>' +
-				'<div style="clear: both;">' +
-				'</div>' +
-			'</div>'
-		);
-
-		loadServiceStaff(service.id);
-
-		added_services.push(service);
-		added_services_count = added_services_count + 1;
+		else {
+			appendService(service);
+		}
 
 	});
 }
@@ -2285,10 +2304,12 @@ $('#changeProviderSelect').on('change', function(event){
 	$(".selected-service").each(function() {
 		var provider = $("#changeProviderSelect").val();
 		var service_id = $(this).attr("service_id");
+		var bundle_id = $(this).attr("bundle_id");
 
 		selects.push({
 			service: service_id,
-			provider: provider
+			provider: provider,
+			bundle_id: bundle_id
 		});
 	});
 
@@ -2330,10 +2351,12 @@ $('body').on('click', '[name="changeProvider"]', function(event){
 	$(".selected-service").each(function() {
 		var provider = $('input[name="changeProvider"]:checked').val();
 		var service_id = $(this).attr("service_id");
+		var bundle_id = $(this).attr("bundle_id");
 
 		selects.push({
 			service: service_id,
-			provider: provider
+			provider: provider,
+			bundle_id: bundle_id
 		});
 	});
 
@@ -2778,10 +2801,12 @@ $(function () {
 			$(".selected-service").each(function() {
 				var provider = $(this).find('.selected-service-provider').val();
 				var service_id = $(this).attr("service_id");
+				var bundle_id = $(this).attr("bundle_id");
 
 				selects.push({
 					service: service_id,
-					provider: provider
+					provider: provider,
+					bundle_id: bundle_id
 				});
 			});
 
