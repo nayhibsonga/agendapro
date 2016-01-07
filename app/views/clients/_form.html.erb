@@ -6,7 +6,7 @@
 
 <div class="container-fluid">
       <div class="row">
-        <%= form_for @client, html: {class: "form-horizontal" } do |f| %>
+        <%= form_for @client, html: {class: "form-horizontal", multipart: true} do |f| %>
           <% if @client.errors.any? %>
             <div id="error_explanation">
               <h2 class="text-green"><%= pluralize(@client.errors.count, "error") %> no permitió que el cliente fuera guardado:</h2>
@@ -142,6 +142,176 @@
                   <%= f.select :gender, [['No especificado',0], ['Femenino',1], ['Masculino',2]], { }, { class: "form-control"} %>
                 </div>
               </div>
+
+              <% @company.attributes.each do |attribute| %>
+
+                <% if attribute.datatype == "float" %>
+
+                  <% 
+                    float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                  %>
+
+                  <div class="form-group has-feedback">
+                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                      <%= attribute.name %>
+                    </label>
+                    <div class="col-sm-9">
+                      <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= float_attribute.value %>" />
+                      <span class="help-block"><%= attribute.description %></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+
+                <% elsif attribute.datatype == "integer" %>
+
+                  <% 
+                    integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                  %>
+                  
+                  <div class="form-group has-feedback">
+                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                      <%= attribute.name %>
+                    </label>
+                    <div class="col-sm-9">
+                      <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= integer_attribute.value %>" />
+                      <span class="help-block"><%= attribute.description %></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+
+                <% elsif attribute.datatype == "text" %>
+
+                  <% 
+                    text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                  %>
+                  
+                  <div class="form-group has-feedback">
+                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                      <%= attribute.name %>
+                    </label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= text_attribute.value %>" />
+                      <span class="help-block"><%= attribute.description %></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+
+                <% elsif attribute.datatype == "boolean" %>
+
+                  <% 
+                    boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                  %>
+                  
+                  <div class="form-group has-feedback">
+                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                      <%= attribute.name %>
+                    </label>
+                    <div class="col-sm-9">
+                      <select class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
+                        <% if boolean_attribute.value %>
+                          <option value="1" selected>Sí</option>
+                          <option value="0">No</option>
+                        <% else %>
+                          <option value="0" selected>No</option>
+                          <option value="1">Sí</option>
+                        <% end %>
+                      </select>
+                      <span class="help-block"><%= attribute.description %></span>
+                    </div>
+                  </div>
+
+                <% elsif attribute.datatype == "date" %>
+
+                  <% 
+                    date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                  %>
+                  
+                  <div class="form-group has-feedback">
+                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                      <%= attribute.name %>
+                    </label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= date_attribute.value.strftime('%d/%m/%Y') %>" />
+                      <span class="help-block"><%= attribute.description %></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+
+                <% elsif attribute.datatype == "datetime" %>
+
+                  <% 
+                    date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                  %>
+                  
+                  <div class="form-group has-feedback">
+                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                      <%= attribute.name %>
+                    </label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= date_time_attribute.value.strftime('%d/%m/%Y') %>" />
+                      <span class="help-block"><%= attribute.description %></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+
+                <% elsif attribute.datatype == "file" %>
+
+                  <% file_attribute = FileAttribute.where(attribute_id: attribute.id, client_id: @client.id).first %>
+
+                  <div class="form-group has-feedback">
+                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                      <%= attribute.name %>
+                    </label>
+                    <div class="col-sm-9">
+                      <input type="file" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" />
+                      <span class="help-block"><%= attribute.description %></span>
+                      <% 
+                        if !file_attribute.nil?
+
+                          full_path = file_attribute.client_file.full_path
+                          obj = @s3_bucket.object(full_path)
+
+                          if !obj.content_type.index("image").nil?
+                          %>
+                            <span style="color: #949292; font-size: 14px; margin-top: 5px;">Actual: <br /><img src="<%= obj.public_url %>" width="120px" hegith="120px" /></span>
+                          <%
+                          else
+                          %>
+                            <span style="color: #949292; font-size: 14px; margin-top: 5px;">Actual: <a href="<%= obj.public_url %>"><%= file_attribute.client_file.name %></a>
+                          <% 
+                          end
+
+                        end 
+                      %>
+                    </div>
+                  </div>
+
+                <% elsif attribute.datatype == "categoric" %>
+                  <% 
+                    categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                  %>
+                  
+                  <div class="form-group has-feedback">
+                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                      <%= attribute.name %>
+                    </label>
+                    <div class="col-sm-9">
+                      <select class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
+                        <% attribute.attribute_categories.each do |category| %>
+                          <% if !categoric_attribute.nil? && !categoric_attribute.attribute_category_id.nil? && categoric_attribute.attribute_category_id == category.id %>
+                            <option value="<%= category.id %>" selected><%= category.category %></option>
+                          <% else %>
+                            <option value="<%= category.id %>"><%= category.category %></option>
+                          <% end %>
+                        <% end %>
+                      </select>
+                      <span class="help-block"><%= attribute.description %></span>
+                    </div>
+                  </div>
+                <% end %>
+
+              <% end %>
+
               <div class="form-group">
                 <div class="col-md-6 col-md-offset-3">
                   <%= f.submit 'Guardar', :class => 'btn btn-green' %>
@@ -303,13 +473,13 @@
                 </thead>
                 <tbody>
                   <% @files.each do |file| %>
-                  <tr>
+                  <tr class="file-row" file_id="<%= file.id %>">
                     <td><%= file.name %></td>
                     <td><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
                     <td><%= file.get_size %></td>
                     <td>
-                      <button id="seeFile" class="btn btn-green btn-xs"><i class="fa fa-search-plus"></i>&nbsp;Ver</button>
-                      <button id="deleteFile" class="btn btn-red btn-xs"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</button>
+                      <button id="viewFileBtn" class="btn btn-green btn-xs"><i class="fa fa-search-plus"></i>&nbsp;Ver</button>
+                      <%= link_to '<i class="fa fa-trash-o"></i>&nbsp;Eliminar'.html_safe, file, method: :delete, :remote => true, data: { confirm: '¿Estás seguro de eliminar el archivo seleccionado?', type: :json }, class: 'btn btn-red btn-xs file-delete' %>
                     </td>
                   </tr>
                   <% end %>
@@ -386,6 +556,7 @@
             <%= form_tag upload_client_file_path, multipart: true, class: 'form-horizontal' do %>
 
               <input type="hidden" id="client_id" name="client_id" value="<%= @client.id %>" %>
+              <input type="hidden" id="origin" name="origin" value="edit_client" %>
 
               <div class="payment-form-div form-group">
                 <label class="col-xs-4 control-label">Archivo</label>
@@ -499,7 +670,10 @@
               <div class="payment-form-div form-group">
                 <label class="col-xs-4 control-label">Enlace</label>
                 <div class="col-xs-8">
-                  <a href="" id="view__file_link">Link</a>
+                  <a href="" id="view_file_link">Link</a>
+                  <div id="view_file_thumb">
+
+                  </div>
                 </div>
               </div>
 

@@ -385,15 +385,21 @@ class Ability
         can :create, Attribute, :company_id => user.company_id
         can :update, Attribute, :company_id => user.company_id
         can :destroy, Attribute, :company_id => user.company_id
-        can :activate, Attribute, :company_id => user.company_id
-        can :deactivate, Attribute, :company_id => user.company_id
 
         can :read, AttributeCategory, :company_id => user.company_id
         can :create, AttributeCategory, :company_id => user.company_id
         can :update, AttributeCategory, :company_id => user.company_id
         can :destroy, AttributeCategory, :company_id => user.company_id
-        can :activate, AttributeCategory, :company_id => user.company_id
-        can :deactivate, AttributeCategory, :company_id => user.company_id
+
+        can :read, ClientFile, :client => {:company_id => user.company_id}
+        can :create, ClientFile, :client => {:company_id => user.company_id}
+        can :update, ClientFile, :client => {:company_id => user.company_id}
+        can :destroy, ClientFile, :client => {:company_id => user.company_id}
+
+        can :read, CompanyFile, :company_id => user.company_id
+        can :create, CompanyFile, :company_id => user.company_id
+        can :update, CompanyFile, :company_id => user.company_id
+        can :destroy, CompanyFile, :company_id => user.company_id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
 

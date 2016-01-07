@@ -1414,7 +1414,7 @@
                       <td>
                         <!--<button class="btn btn-orange edit_attribute_button" data-name="<%= attribute.name %>" data-mandatory="<%= attribute.mandatory %>" data-name="<%= attribute.name %>" data-datatype="<%= attribute.datatype %>" data-description="<%= attribute.description %>" data-id="<%= attribute.id %>"><i class="fa fa-pencil"></i> Editar</button>-->
                         <% if attribute.datatype == "categoric" %>
-                          <button class="btn btn-green add_attribute_category_button" data-attributeid="<%= attribute.id %>"><i class="fa fa-pencil"></i>&nbsp;Agregar categoría</button>
+                          <button class="btn btn-green add_attribute_category_button" data-attributeid="<%= attribute.id %>"><i class="fa fa-pencil"></i>&nbsp;Categorías</button>
                         <% end %>
                         <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, attribute, method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo seleccionado?' }, class: 'btn btn-red' %>
                       </td>
@@ -1720,7 +1720,12 @@
             <% end %>
 
             <div id="existing_categories">
+              <div id="categories-title">
+                Categorías actuales
+              </div>
+              <div id="existing_categories_subdiv">
 
+              </div>
             </div>
 
           </div>

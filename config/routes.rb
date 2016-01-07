@@ -81,6 +81,10 @@ Agendapro::Application.routes.draw do
 
     resources :cashiers
 
+    resources :client_files
+
+    resources :company_files
+
     namespace :admin do
       get '', :to => 'dashboard#index', :as => '/'
       resources :users

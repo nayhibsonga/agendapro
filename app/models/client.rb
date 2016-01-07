@@ -19,6 +19,126 @@ class Client < ActiveRecord::Base
 
   after_update :client_notification
 
+  def save_attributes(params)
+
+    self.company.attributes.each do |attribute|
+
+      str_sm = attribute.slug + "_attribute"
+      param_value = params[str_sm]
+
+      case attribute.datatype
+      when "float"
+        
+        float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if float_attribute.nil?
+          float_attribute = FloatAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          float_attribute.value = param_value
+          float_attribute.save
+        end
+
+      when "integer"
+        
+        integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if integer_attribute.nil?
+          IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          integer_attribute.value = param_value
+          integer_attribute.save
+        end
+
+      when "text"
+        
+        text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if text_attribute.nil?
+          TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          text_attribute.value = param_value
+          text_attribute.save
+        end
+
+      when "boolean"
+
+        boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if boolean_attribute.nil?
+          BooleanAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          boolean_attribute.value = param_value
+          boolean_attribute.save
+        end
+
+      when "date"
+        
+        date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if date_attribute.nil?
+          DateAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          date_attribute.value = param_value
+          date_attribute.save
+        end
+
+      when "datetime"
+        
+        date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if date_time_attribute.nil?
+          DateTimeAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          date_time_attribute.value = param_value
+          date_time_attribute.save
+        end
+
+      when "file"
+
+        file_attribute = FileAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+
+        #Delete previous file
+        
+
+        file_name = attribute.name
+        folder_name = attribute.slug
+        content_type = param_value.content_type
+
+        file_extension = param_value.original_filename[param_value.original_filename.rindex(".") + 1, param_value.original_filename.length]
+
+        file_description = attribute.description
+
+        full_name = 'companies/' +  self.company_id.to_s + '/clients/' + self.id.to_s + '/' + folder_name + '/' + param_value.original_filename
+
+        s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+        obj = s3_bucket.object(full_name)
+
+        obj.upload_file(param_value.path(), {acl: 'public-read', content_type: content_type})
+
+        client_file = ClientFile.create(client_id: self.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description)
+
+        if file_attribute.nil?
+          FileAttribute.create(attribute_id: attribute.id, client_id: self.id, client_file_id: client_file.id)
+        else
+          if !file_attribute.client_file.nil?
+            file_attribute.client_file.destroy
+          end
+          file_attribute.client_file_id = client_file.id
+          file_attribute.save
+        end
+
+
+      when "categoric"
+
+        categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if categoric_attribute.nil?
+          CategoricAttribute.create(attribute_id: attribute.id, client_id: self.id, attribute_category_id: param_value)
+        else
+          categoric_attribute.attribute_category_id = param_value
+          categoric_attribute.save
+        end
+
+      end
+
+    end
+
+  end
+
   def self.bookings_reminder
 
     canceled_status = Status.find_by_name("Cancelado")

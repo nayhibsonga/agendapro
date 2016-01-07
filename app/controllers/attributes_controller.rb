@@ -4,7 +4,7 @@ class AttributesController < ApplicationController
   layout "admin"
   load_and_authorize_resource
 
-  respond_to :html
+  respond_to :html, :json
 
   def index
     @attributes = Attribute.all

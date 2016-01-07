@@ -370,7 +370,7 @@ $(function () {
 
   $('.add_attribute_category_button').on('click', function(e){
     var attribute_id = $(e.currentTarget).data('attributeid');
-    $('#existing_categories').empty();
+    $('#existing_categories_subdiv').empty();
     $('#attribute_category_attribute_id').val(attribute_id)
     $.ajax({
       url: '/get_attribute_categories',
@@ -386,7 +386,7 @@ $(function () {
       },
       success: function(response){
         $.each(response, function(i, attribute_category){
-          $('#existing_categories').append('<p>' + attribute_category.category + '</p>');
+          $('#existing_categories_subdiv').append('<div>' + attribute_category.category + '</div>');
         });
       }
     })
@@ -394,7 +394,7 @@ $(function () {
   });
 
   $("#attribute_category_form").on("ajax:success", function(e, data, status, xhr){
-    $('#existing_categories').append(data.category);
+    $('#existing_categories_subdiv').append('<div>' + data.category + '</div>');
     $('#attribute_category_category').val("");
     swal({
         title: "Éxito",

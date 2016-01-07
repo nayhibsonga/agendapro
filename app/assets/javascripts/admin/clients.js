@@ -142,4 +142,21 @@ $(function() {
     $('#fileUploadModal').modal('show');
   });
 
+  $(".file-delete").on("ajax:success", function(e, data, status, xhr){
+    var file_id = data.id;
+    $('.file-row[file_id="' + file_id + '"]').remove();
+    swal({
+        title: "Éxito",
+        text: "Archivo eliminado correctamente..",
+        type: "success"
+    });
+  }).on("ajax:error", function(e, xhr, status, error){
+    console.log(xhr.responseText)
+    swal({
+      title: "Error",
+      text: "Se produjo un error",
+      type: "error"
+    });
+  });
+
 });

@@ -1,5 +1,7 @@
 class ClientFile < ActiveRecord::Base
+
 	belongs_to :client
+	before_destroy :delete_file
 
 	def get_size
 		return (self.size.to_f / 1000.0).round(0).to_s + " KB"
@@ -15,9 +17,17 @@ class ClientFile < ActiveRecord::Base
 		
 		if image_types.include?(self.get_extension.downcase)
 			return true
-		else
+		end
 
 		return false
+
+	end
+
+	def delete_file
+
+		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+    	obj = s3_bucket.object(self.full_path)
+    	obj.delete
 
 	end
 

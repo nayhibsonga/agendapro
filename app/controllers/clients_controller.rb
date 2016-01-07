@@ -65,6 +65,9 @@ class ClientsController < ApplicationController
 
   # GET /clients/1/edit
   def edit
+
+    @company = @client.company
+
     @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client).where("start > ?", DateTime.now).order(start: :asc)
     @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client).where("start <= ?", DateTime.now).order(start: :desc)
     @next_bookings = Booking
@@ -77,6 +80,8 @@ class ClientsController < ApplicationController
 
     s3 = Aws::S3::Client.new
     resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/', delimiter: '/')
+
+    @s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
 
     folders_prefixes = resp.common_prefixes
     @folders = []
@@ -140,7 +145,12 @@ class ClientsController < ApplicationController
   def update
     respond_to do |format|
       if @client.update(client_params)
-        format.html { redirect_to clients_path, notice: 'Cliente actualizado exitosamente.' }
+
+        #Check for custom attributes
+
+        @client.save_attributes(params)
+
+        format.html { redirect_to edit_client_path(id: @client.id), notice: 'Cliente actualizado exitosamente.' }
         format.json { head :no_content }
       else
         format.html {
@@ -428,12 +438,15 @@ class ClientsController < ApplicationController
 
   def upload_file
 
+    upload_origin = params[:origin]
+
     @client = Client.find(params[:client_id])
 
     file_name = params[:file_name]
     folder_name = params[:folder_name]
     logger.debug "File name: " + params[:file].original_filename
     file_extension = params[:file].original_filename[params[:file].original_filename.rindex(".") + 1, params[:file].original_filename.length]
+    content_type = params[:file].content_type
 
     file_description = ""
     if !params[:description].blank?
@@ -444,9 +457,7 @@ class ClientsController < ApplicationController
       folder_name = params[:new_folder_name]
     end
 
-    file_name = file_name + "." + file_extension
-
-    full_name = 'companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/' + folder_name + '/' + file_name
+    full_name = 'companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/' + folder_name + '/' + params[:file].original_filename
 
     s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
 
@@ -461,16 +472,20 @@ class ClientsController < ApplicationController
     logger.debug params[:file].original_filename
     logger.debug params[:file].path()
 
-    obj.upload_file(params[:file].path(), {acl: 'public-read'})
+    obj.upload_file(params[:file].path(), {acl: 'public-read', content_type: content_type})
 
-    @client_file = ClientFile.create(client_id: @client.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description)
+    @client_file = ClientFile.new(client_id: @client.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description)
 
 
     # Save the upload
     if @client_file.save
-      redirect_to edit_client_path(id: @client.id), success: 'Archivo guardado correctamente'
+      if upload_origin == "edit_client"
+        redirect_to edit_client_path(id: @client.id), success: 'Archivo guardado correctamente'
+      else
+
+      end
     else
-      #flash.now[:notice] = 'There was an error'
+      flash[:notice] = 'Error al guardar el archivo'
       #render :new
     end
 
