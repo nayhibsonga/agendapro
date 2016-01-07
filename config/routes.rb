@@ -122,8 +122,7 @@ Agendapro::Application.routes.draw do
     get '/get_direction', :to => 'districts#get_direction'
     # get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
     # get '/minisite', :to => 'company_settings#minisite', :as => 'minisite'
-    get '/compose_mail', :to => 'clients#compose_mail', :as => 'send_mail'
-    post '/send_mail_client', :to => 'clients#send_mail'
+
     get '/get_link', :to => 'companies#get_link', :as => 'get_link'
     post '/change_categories_order', :to => 'service_categories#change_categories_order'
     post '/change_services_order', :to => 'services#change_services_order'
@@ -131,6 +130,13 @@ Agendapro::Application.routes.draw do
     post '/change_providers_order', :to => 'service_providers#change_providers_order'
     post '/change_groups_order', :to => 'provider_groups#change_groups_order'
     get '/confirm_email', :to => 'company_from_emails#confirm_email', :as => 'confirm_email'
+
+    # Mail Composing
+    scope controller: 'clients' do
+      get '/compose_mail', action: 'compose_mail', as: 'send_mail'
+      post '/send_mail_client', action: 'send_mail'
+      post '/mail_editor', action: 'mail_editor', as: 'mail_editor'
+    end
 
     # Autocompletar del Booking
     get '/clients_suggestion', :to => 'clients#suggestion'

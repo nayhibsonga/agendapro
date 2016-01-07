@@ -1,0 +1,57 @@
+<div id="full-container" class="col-xs-12">
+
+  <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+        <a href="#templates" aria-controls="templates" role="tab" data-toggle="tab">Plantillas</a>
+      </li>
+      <li role="presentation">
+        <a href="#saved" aria-controls="saved" role="tab" data-toggle="tab">Guardadas</a>
+      </li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="templates">
+      <% @templates.each do |template| %>
+        <%= render partial: '/clients/email/full/template_list', locals: {template: template} %>
+      <% end %>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="saved">
+      <% @saved.each do |template| %>
+         <%= render partial: '/clients/email/full/template_list', locals: {template: template} %>
+      <% end %>
+    </div>
+
+  </div>
+</div>
+
+
+<style>
+  #full-container ul {
+    border-bottom: 1px solid;
+    margin: 10px 0 30px;
+  }
+
+  #full-container li {
+    margin-right: 20px;
+    list-style: none;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  #full-container li.active {
+    border-bottom: 4px solid darkgray;
+  }
+
+  #full-container li a {
+    color: #555;
+    border: none;
+    padding: 0;
+  }
+
+  #full-container li.active a {
+    color: #22c488;
+  }
+
+</style>

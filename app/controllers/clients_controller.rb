@@ -243,15 +243,25 @@ class ClientsController < ApplicationController
   end
 
   def compose_mail
-    attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
+    attendance = params[:attendance].blank? || params[:attendance] == 'true'
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
     mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(:last_name, :first_name).pluck(:email).uniq
 
     @to = Array.new
+    @tmpl = 'basic'
+
+    template_selection if can?(:use_email_templates, Client )
 
     mail_list.each do |email|
       @to.push(email) if email=~ /([^\s]+)@([^\s]+)/
     end
+  end
+
+  def mail_editor
+    @from = current_user.email
+    @recipients = params[:recipients]
+    @tmpl = Email::Template.find(params[:tmpl])
+    render 'clients/email/full/mail_editor'
   end
 
   def send_mail
@@ -428,4 +438,12 @@ class ClientsController < ApplicationController
     def sort_direction
       %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
     end
+
+    def template_selection
+      @tmpl = 'full'
+      @templates = Email::Template.all
+      @saved = []
+    end
+
+
 end

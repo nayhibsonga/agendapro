@@ -11,12 +11,12 @@ class Ability
     #     can :read, :all
     #   end
     #
-    # The first argument to `can` is the action you are giving the user 
+    # The first argument to `can` is the action you are giving the user
     # permission to do.
     # If you pass :manage it will apply to every action. Other common actions
     # here are :read, :create, :update and :destroy.
     #
-    # The second argument is the resource the user can perform the action on. 
+    # The second argument is the resource the user can perform the action on.
     # If you pass :all it will apply to every resource. Otherwise pass a Ruby
     # class of the resource.
     #
@@ -30,7 +30,7 @@ class Ability
     # https://github.com/ryanb/cancan/wiki/Defining-Abilities
 
     alias_action :index, :show, :to => :read
-    
+
     #alias_action :workflow, :to => :destroy
     #alias_action :workflow, :to => :update
     #alias_action :workflow, :to => :create
@@ -113,7 +113,7 @@ class Ability
     can :check_user_email, User
     can :check_company_web_address, Company
 
-    
+
     can :get_promotions_popover, Service
     can :promotion_hours, Booking
     can :show_time_promo, Service
@@ -127,15 +127,17 @@ class Ability
     if user.role_id == Role.find_by_name("Super Admin").id
 
         can :manage, :all
-    
+
     elsif user.role_id == Role.find_by_name("Usuario Registrado").id
 
         can :add_company, Company
-        can :create, Company  
+        can :create, Company
 
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
         can :select_plan, Plan
+        can :use_email_templates, Client #FIXME
+        can :mail_editor, Client, :company_id => user.company_id #FIXME
 
         can :add_company, Company
 
@@ -277,7 +279,7 @@ class Ability
         can :destroy, LocationTime, :location => { :company_id => user.company_id }
         can :create, LocationTime, :location => { :company_id => user.company_id }
         can :update, LocationTime, :location => { :company_id => user.company_id }
-                
+
         can :read, ProviderTime, :service_provider => { :company_id => user.company_id }
         can :destroy, ProviderTime, :service_provider => { :company_id => user.company_id }
         can :create, ProviderTime, :service_provider => { :company_id => user.company_id }
@@ -570,7 +572,7 @@ class Ability
         can :update, ProviderTime, :service_provider => { :location_id => user.locations.pluck(:id) }
 
         can :read, Booking, :location_id => user.locations.pluck(:id)
-        can :destroy, Booking, :location_id => user.locations.pluck(:id) 
+        can :destroy, Booking, :location_id => user.locations.pluck(:id)
         can :create, Booking, :location_id => user.locations.pluck(:id)
         can :update, Booking, :location_id => user.locations.pluck(:id)
 
@@ -580,7 +582,7 @@ class Ability
         can :rut_suggestion, Client
         can :bookings_history, Client
         can :check_sessions, Client
-        
+
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
         can :destroy_comment, Client, :company_id => user.company_id
@@ -595,7 +597,7 @@ class Ability
         can :read, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
         can :sellers, Location, :company_id => user.company_id
-        
+
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
@@ -639,7 +641,7 @@ class Ability
         can :read, ServiceProvider, :location_id => user.locations.pluck(:id)
 
         can :read, Location, :id => user.locations
-        
+
         can :read, ProviderTime, :service_provider => { :location_id => user.locations.pluck(:id) }
 
         can :history, Client, :company_id => user.company_id
@@ -668,7 +670,7 @@ class Ability
         can :read, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
         can :sellers, Location, :company_id => user.company_id
-        
+
         can :create_comment, Client, :company_id => user.company_id
         can :update_comment, Client, :company_id => user.company_id
         can :destroy_comment, Client, :company_id => user.company_id
@@ -721,7 +723,7 @@ class Ability
         can :service_providers_report, Payment, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff").id
-        
+
         can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
 
         can :read, ServiceProvider, :id => user.service_providers.pluck(:id)
@@ -746,7 +748,7 @@ class Ability
         can :destroy_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
         can :update_repeat_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
         can :destroy_repeat_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
-        
+
         can :name_suggestion, Client
         can :suggestion, Client
         can :rut_suggestion, Client
@@ -816,7 +818,7 @@ class Ability
         # can :create_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
         # can :update_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
         # can :destroy_provider_break, ProviderBreak, :service_provider_id => user.service_providers.pluck(:id)
-        
+
         # can :name_suggestion, Client
         # can :suggestion, Client
         # can :rut_suggestion, Client

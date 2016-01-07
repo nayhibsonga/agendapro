@@ -1,0 +1,39 @@
+<div ng-app="AgendaProApp">
+  <div id="mail-editor" class="clearfix" ng-controller="EditorController as ec">
+    <div id="content" class="col-xs-12 col-md-7">
+      <div class="page">
+        <div>
+            <%= render @tmpl.src %>
+        </div>
+      </div>
+    </div>
+
+    <div id="composing" class="col-xs-12 col-md-5">
+      <div class="well">
+
+        <div>
+          <span style="display: inline-block">De:</span> <input type="text" style="width: 100%;display: inline-block;" ng-model="ec.data.from">
+        </div>
+
+        <div style="text-align: right;">*Estas enviando el e-mail a <%= @recipients.size %> personas.</div>
+
+        <span>Para:</span>
+
+
+        <div>
+          <%= button_tag('Ver lista completa', class: 'btn btn-list') %>
+        </div>
+        <span>Asunto:</span> <input type="text" style="width: 100%;">
+      </div>
+
+      <div>
+        <%= cktext_area :page, :info, cols: 40, ckeditor: {:uiColor => '#FFFFFF', :toolbar => 'mini'} %>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<%= content_for :scripts do %>
+  <%= javascript_include_tag 'admin/email/editor' %>
+<% end %>
