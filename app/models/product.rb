@@ -80,7 +80,7 @@ class Product < ActiveRecord::Base
 
         logger.debug row.inspect
 
-        sku = row[0].to_s.chomp('.0')
+        sku = row[0].to_s.chomp('.0').strip
         category_str = row[1].to_s
         brand_str = row[2].to_s
         name_str = row[3].to_s

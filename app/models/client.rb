@@ -247,12 +247,24 @@ class Client < ActiveRecord::Base
     end
   end
 
+  def self.filter_attendance(attendance, company_id)
+    if attendance # not nill
+      if attendance == "true"
+        where(company_id: company_id).where(id: Booking.where(location_id: Location.where(company: Company.find(company_id))).select(:client_id))
+      else
+        where(company_id: company_id).where.not(id: Booking.where(location_id: Location.where(company: Company.find(company_id))).select(:client_id))
+      end
+    else
+      all
+    end
+  end
+
   def self.filter_location(locations, attendace)
     if !locations.blank?
       if attendace
         where(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
       else
-        where(id: Booking.where.not(location_id: Location.find(locations)).select(:client_id))
+        where.not(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
       end
     else
       all
@@ -264,7 +276,7 @@ class Client < ActiveRecord::Base
       if attendace
         where(id: Booking.where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
       else
-        where(id: Booking.where.not(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
+        where.not(id: Booking.where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
       end
     else
       all
@@ -276,7 +288,7 @@ class Client < ActiveRecord::Base
       if attendace
         where(id: Booking.where(service_id: Service.find(services)).select(:client_id))
       else
-        where(id: Booking.where.not(service_id: Service.find(services)).select(:client_id))
+        where.not(id: Booking.where(service_id: Service.find(services)).select(:client_id))
       end
     else
       all
@@ -330,7 +342,7 @@ class Client < ActiveRecord::Base
       if attendace
         where(id: Booking.where('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
       else
-        where(id: Booking.where.not('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
+        where.not(id: Booking.where('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
       end
     else
       all
