@@ -264,6 +264,25 @@ class ClientsController < ApplicationController
     render 'clients/email/full/mail_editor'
   end
 
+  def upload_content
+    if params[:file].present?
+      begin
+        uploader = EmailContentUploader.new
+        uploader.store!(params[:file].tempfile)
+
+        render json: {
+          filename: uploader.file.filename,
+          path: uploader.path,
+          url: uploader.url
+        }.to_json
+      rescue
+        render json: { error: "Error processing file"}, status: :unprocessable_entity
+      end
+    else
+      render json: { error: "No file attached"}, status: :unprocessable_entity
+    end
+  end
+
   def send_mail
     # Sumar mails eviados
     current_sent = current_user.company.company_setting.monthly_mails

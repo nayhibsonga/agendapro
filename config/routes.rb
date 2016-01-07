@@ -1,7 +1,5 @@
 Agendapro::Application.routes.draw do
 
-
-
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -136,6 +134,7 @@ Agendapro::Application.routes.draw do
       get '/compose_mail', action: 'compose_mail', as: 'send_mail'
       post '/send_mail_client', action: 'send_mail'
       post '/mail_editor', action: 'mail_editor', as: 'mail_editor'
+      post "/email_content/upload", action: 'upload_content'
     end
 
     # Autocompletar del Booking
@@ -158,14 +157,19 @@ Agendapro::Application.routes.draw do
     get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
     get '/get_session_bookings', :to => 'users#get_session_bookings'
     get '/get_session_summary', :to => 'users#get_session_summary'
-    post '/delete_session_booking', :to => 'bookings#delete_session_booking'
-    post '/validate_session_booking', :to => 'bookings#validate_session_booking'
-    post '/validate_session_form', :to => 'bookings#validate_session_form'
-    get '/validate_session_form', :to => 'bookings#validate_session_form'
-    get '/session_booking_detail', :to => 'bookings#session_booking_detail'
-    get '/book_session_form', :to => 'bookings#book_session_form'
-    post '/update_book_session', :to => 'bookings#update_book_session'
-    get '/sessions_calendar', :to => 'bookings#sessions_calendar'
+
+    scope controller: 'bookings' do
+      post '/delete_session_booking', action: 'delete_session_booking'
+      post '/validate_session_booking', action: 'validate_session_booking'
+      post '/validate_session_form', action: 'validate_session_form'
+      get '/validate_session_form', action: 'validate_session_form'
+      get '/session_booking_detail', action: 'session_booking_detail'
+      get '/book_session_form', action: 'book_session_form'
+      post '/update_book_session', action: 'update_book_session'
+      get '/sessions_calendar', action: 'sessions_calendar'
+    end
+
+
 
     # Add Company from Usuario Registrado
     get '/add_company', :to => 'companies#add_company', :as => 'add_company'

@@ -112,6 +112,7 @@ gem 'roo'
 # gem 'rmagick'
 gem "mini_magick"
 gem 'carrierwave'
+gem "fog"
 
 # Calendar
 gem 'ri_cal'

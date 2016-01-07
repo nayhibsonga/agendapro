@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160105184539) do
+ActiveRecord::Schema.define(version: 20160105210939) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -451,6 +451,15 @@ ActiveRecord::Schema.define(version: 20160105184539) do
   end
 
   add_index "economic_sectors_dictionaries", ["economic_sector_id"], name: "index_economic_sectors_dictionaries_on_economic_sector_id", using: :btree
+
+  create_table "email_contents", force: true do |t|
+    t.integer  "template_id"
+    t.json     "data",        null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "email_contents", ["template_id"], name: "index_email_contents_on_template_id", using: :btree
 
   create_table "email_templates", force: true do |t|
     t.string   "name"

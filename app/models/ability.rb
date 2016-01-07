@@ -138,6 +138,7 @@ class Ability
         can :select_plan, Plan
         can :use_email_templates, Client #FIXME
         can :mail_editor, Client, :company_id => user.company_id #FIXME
+        can :upload_content, Client, :company_id => user.company_id
 
         can :add_company, Company
 

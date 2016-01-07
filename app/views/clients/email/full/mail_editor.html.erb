@@ -26,6 +26,19 @@
         <span>Asunto:</span> <input type="text" style="width: 100%;">
       </div>
 
+      <div style="padding: 50px; font-size: 26px">
+        <%= form_tag('/email_content/upload', multipart: true) do %>
+          <%= file_field_tag :file %>
+          <%= submit_tag 'SUBETE!' %>
+        <% end %>
+
+
+
+
+
+      </div>
+
+
       <div>
         <%= cktext_area :page, :info, cols: 40, ckeditor: {:uiColor => '#FFFFFF', :toolbar => 'mini'} %>
       </div>
