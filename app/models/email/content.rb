@@ -7,4 +7,8 @@ class Email::Content < ActiveRecord::Base
       json = {}
     end
   end
+
+  def save
+
+  end
 end

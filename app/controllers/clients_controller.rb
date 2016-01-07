@@ -283,6 +283,15 @@ class ClientsController < ApplicationController
     end
   end
 
+  def save_content
+    @id = Email::Content.save(params)
+    send_content if params[:save]
+  end
+
+  def send_content
+    @id #el del metodo anterior
+  end
+
   def send_mail
     # Sumar mails eviados
     current_sent = current_user.company.company_setting.monthly_mails

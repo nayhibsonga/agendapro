@@ -139,6 +139,8 @@ class Ability
         can :use_email_templates, Client #FIXME
         can :mail_editor, Client, :company_id => user.company_id #FIXME
         can :upload_content, Client, :company_id => user.company_id
+        can :save_content, Client, company_id: user.company_id
+        can :send_content, Client, company_id: user.company_id
 
         can :add_company, Company
 
