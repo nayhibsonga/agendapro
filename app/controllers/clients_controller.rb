@@ -284,8 +284,9 @@ class ClientsController < ApplicationController
   end
 
   def save_content
-    @id = Email::Content.save(params)
+    @id = Email::Content.generate(params[:id], params.except(:id, :send))
     send_content if params[:save]
+    render :json, { id: @id, status: @id ? 200 : 500 }
   end
 
   def send_content
@@ -328,6 +329,7 @@ class ClientsController < ApplicationController
 
       # Close database connection
       ActiveRecord::Base.connection.close
+      Thread.exit
     end
 
     redirect_to '/clients', notice: 'E-mail enviado exitosamente.'
