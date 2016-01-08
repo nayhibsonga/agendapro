@@ -39,6 +39,9 @@ class AttributeCategoriesController < ApplicationController
     flash[:notice] = "Categoría eliminada." if @attribute_category.destroy
     respond_with(@attribute_category) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+      format.json {
+        render json: @attribute_category
+      }
     end
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160107142704) do
+ActiveRecord::Schema.define(version: 20160108145010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,7 +34,11 @@ ActiveRecord::Schema.define(version: 20160107142704) do
     t.boolean  "mandatory"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "slug",        default: ""
+    t.string   "slug",                  default: ""
+    t.boolean  "show_on_calendar",      default: false
+    t.boolean  "show_on_workflow",      default: false
+    t.boolean  "mandatory_on_calendar", default: false
+    t.boolean  "mandatory_on_workflow", default: false
   end
 
   create_table "banks", force: true do |t|
@@ -1620,6 +1624,14 @@ ActiveRecord::Schema.define(version: 20160107142704) do
   add_index "tags", ["economic_sector_id"], name: "index_tags_on_economic_sector_id", using: :btree
 
   create_table "text_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "textarea_attributes", force: true do |t|
     t.integer  "attribute_id"
     t.integer  "client_id"
     t.text     "value"

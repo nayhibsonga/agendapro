@@ -1,5 +1,5 @@
 class AttributesController < ApplicationController
-  before_action :set_attribute, only: [:show, :edit, :update, :destroy]
+  before_action :set_attribute, only: [:show, :edit, :update, :destroy, :edit_form]
   before_action :authenticate_user!
   layout "admin"
   load_and_authorize_resource
@@ -51,12 +51,18 @@ class AttributesController < ApplicationController
     end
   end
 
+  def edit_form
+    respond_to do |format|
+        format.html { render :partial => 'edit_attribute' }
+      end
+  end
+
   private
-    def set_attribute
+    def set_attribute      
       @attribute = Attribute.find(params[:id])
     end
 
     def attribute_params
-      params.require(:attribute).permit(:company_id, :name, :description, :datatype, :mandatory)
+      params.require(:attribute).permit(:company_id, :name, :description, :datatype, :mandatory, :show_on_calendar, :mandatory_on_calendar, :show_on_workflow, :mandatory_on_workflow)
     end
 end

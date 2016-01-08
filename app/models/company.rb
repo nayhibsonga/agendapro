@@ -14,7 +14,7 @@ class Company < ActiveRecord::Base
 
 	has_many :company_files
 
-	has_many :attributes
+	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
 
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
 

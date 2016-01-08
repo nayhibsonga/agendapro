@@ -19,13 +19,17 @@ class ClientFilesController < ApplicationController
     json_response = []
 
     s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
-    obj = @s3_bucket.object(@client_file.full_path)
+    obj = s3_bucket.object(@client_file.full_path)
     is_image = false
     public_url = obj.public_url
 
     if !obj.content_type.index("image").nil?
       is_image = true
     end
+
+    json_response << @client_file
+    json_response << public_url
+    json_response << is_image
 
     respond_with(@client_file) do |format|
 

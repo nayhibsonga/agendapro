@@ -142,6 +142,45 @@ $(function() {
     $('#fileUploadModal').modal('show');
   });
 
+  $('.viewFileBtn').on('click', function(){
+
+    var client_file_id = $(this).attr('client_file_id');
+
+    $.ajax({
+      url: '/client_files/' + client_file_id,
+      method: 'get',
+      dataType: 'json',
+      error: function(response){
+        swal({
+          title: "Error",
+          text: "Se produjo un error",
+          type: "error"
+        });
+      },
+      success: function(response){
+        client_file = response[0];
+        public_url = response[1];
+        is_image = response[2];
+        $('#view_file_name').html(client_file.name);
+        $('#view_file_description').html(client_file.description);
+        $('#view_file_link').empty();
+        $('#view_file_link').append('<a style="margin-top: 4px;" href="' + public_url + '">Descargar</a>');
+        if(is_image)
+        {
+          $('#view_file_preview').html('<image src="' + public_url + '" width="200px;" height="200px;" />');
+          $('#view_file_preview_div').show();
+        }
+        else
+        {
+          $('#view_file_preview').empty();
+          $('#view_file_preview_div').hide();
+        }
+        $('#viewFileModal').modal('show');
+      }
+    })
+
+  });
+
   $(".file-delete").on("ajax:success", function(e, data, status, xhr){
     var file_id = data.id;
     $('.file-row[file_id="' + file_id + '"]').remove();
@@ -157,6 +196,23 @@ $(function() {
       text: "Se produjo un error",
       type: "error"
     });
+  });
+
+  $(".attribute_datepicker").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
   });
 
 });

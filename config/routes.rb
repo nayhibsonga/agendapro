@@ -520,6 +520,7 @@ Agendapro::Application.routes.draw do
     get '/get_product_brands_for_payment_or_sale', :to => 'payments#get_product_brands_for_payment_or_sale'
 
     get '/get_attribute_categories', :to => 'attributes#get_attribute_categories'
+    get '/attribute_edit_form', :to => 'attributes#edit_form'
 
 
   end

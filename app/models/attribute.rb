@@ -11,6 +11,7 @@ class Attribute < ActiveRecord::Base
 	has_many :date_time_attributes, dependent: :destroy
 	has_many :file_attributes, dependent: :destroy
 	has_many :categoric_attributes, dependent: :destroy
+	has_many :textarea_attributes, dependent: :destroy
 
 	after_create :create_clients_attributes
 	after_save :generate_slug
@@ -21,6 +22,11 @@ class Attribute < ActiveRecord::Base
 	end
 
 	def create_clients_attributes
+
+		if self.datatype == "categoric"
+			attribute_category = AttributeCategory.create(attribute_id: self.id, category: "Otra")
+		end
+
 
 		company = self.company
 		company.clients.each do |client|
@@ -41,6 +47,12 @@ class Attribute < ActiveRecord::Base
 				
 				if TextAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
 					TextAttribute.create(attribute_id: self.id, client_id: client.id)
+				end
+
+			when "textarea"
+				
+				if TextareaAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+					TextareaAttribute.create(attribute_id: self.id, client_id: client.id)
 				end
 
 			when "boolean"
@@ -67,7 +79,7 @@ class Attribute < ActiveRecord::Base
 				end
 			when "categoric"
 				if CategoricAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-					CategoricAttribute.create(attribute_id: self.id, client_id: client.id)
+					CategoricAttribute.create(attribute_id: self.id, client_id: client.id, attribute_category_id: attribute_category.id)
 				end
 			end
 		end
@@ -82,6 +94,8 @@ class Attribute < ActiveRecord::Base
 			return "Númerico"
 		when "text"
 			return "Texto"
+		when "textarea"
+			return "Área de texto"
 		when "boolean"
 			return "Binario (Sí/No)"
 		when "date"

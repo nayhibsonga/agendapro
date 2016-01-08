@@ -1413,10 +1413,11 @@
                       </td>
                       <td>
                         <!--<button class="btn btn-orange edit_attribute_button" data-name="<%= attribute.name %>" data-mandatory="<%= attribute.mandatory %>" data-name="<%= attribute.name %>" data-datatype="<%= attribute.datatype %>" data-description="<%= attribute.description %>" data-id="<%= attribute.id %>"><i class="fa fa-pencil"></i> Editar</button>-->
-                        <% if attribute.datatype == "categoric" %>
-                          <button class="btn btn-green add_attribute_category_button" data-attributeid="<%= attribute.id %>"><i class="fa fa-pencil"></i>&nbsp;Categorías</button>
-                        <% end %>
+                        <button class="btn btn-orange edit_attribute_btn" data-attributeid="<%= attribute.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
                         <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, attribute, method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo seleccionado?' }, class: 'btn btn-red' %>
+                        <% if attribute.datatype == "categoric" %>
+                          <button class="btn btn-green add_attribute_category_button" data-attributeid="<%= attribute.id %>"><i class="fa fa-bars"></i>&nbsp;Categorías</button>
+                        <% end %>
                       </td>
                     </tr>
                   <% end %>
@@ -1641,7 +1642,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title" id="attributeModalLabel">Cajero</h4>
+          <h4 class="modal-title" id="attributeModalLabel">Nuevo campo</h4>
         </div>
         <%= form_for @attribute, :html => {:class => 'form-horizontal attribute_form', :id => 'attribute_form'} do |f| %>
           <div class="modal-body">
@@ -1665,7 +1666,35 @@
             <div class="form-group">
               <div class="col-xs-offset-4 col-xs-8">
                 <label for="attribute_mandatory">
-                  <%= f.check_box :mandatory %> Obligatorio
+                  <%= f.check_box :mandatory %> Obligatorio en ficha
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-offset-4 col-xs-8">
+                <label for="attribute_show_on_calendar">
+                  <%= f.check_box :show_on_calendar %> Pedir en Calendario
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-offset-4 col-xs-8">
+                <label for="attribute_mandatory_on_calendar">
+                  <%= f.check_box :mandatory_on_calendar %> Obligatorio en Calendario
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-offset-4 col-xs-8">
+                <label for="attribute_show_on_workflow">
+                  <%= f.check_box :show_on_workflow %> Pedir en buscador
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-offset-4 col-xs-8">
+                <label for="attribute_mandatory_on_workflow">
+                  <%= f.check_box :mandatory_on_workflow %> Obligatorio en buscador
                 </label>
               </div>
             </div>
@@ -1676,6 +1705,7 @@
                   <option value="integer">Numérico</option>
                   <option value="float">Decimal</option>
                   <option value="text">Texto</option>
+                  <option value="textarea">Área de texto</option>
                   <option value="boolean">Binario (Sí/No)</option>
                   <option value="date">Fecha</option>
                   <option value="datetime">Fecha y hora</option>
@@ -1690,6 +1720,14 @@
             <%= f.submit 'Guardar', :class => 'btn btn-green' %>
           </div>
         <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editAttributeModal" tabindex="-1" role="dialog" aria-labelledby="editAttributeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        
       </div>
     </div>
   </div>

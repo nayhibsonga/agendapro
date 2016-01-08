@@ -385,6 +385,7 @@ class Ability
         can :create, Attribute, :company_id => user.company_id
         can :update, Attribute, :company_id => user.company_id
         can :destroy, Attribute, :company_id => user.company_id
+        can :edit_form, Attribute, :company_id => user.company.id
 
         can :read, AttributeCategory, :company_id => user.company_id
         can :create, AttributeCategory, :company_id => user.company_id

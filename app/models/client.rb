@@ -9,10 +9,12 @@ class Client < ActiveRecord::Base
   has_many :float_attributes
   has_many :integer_attributes
   has_many :text_attributes
+  has_many :textarea_attributes
   has_many :boolean_attributes
   has_many :date_attributes
-  has_many :datetime_attributes
+  has_many :date_time_attributes
   has_many :file_attributes
+  has_many :categoric_attributes
 
   #Se quitó :identification_uniqueness
   validate :mail_uniqueness, :record_uniqueness, :minimun_info
@@ -21,7 +23,7 @@ class Client < ActiveRecord::Base
 
   def save_attributes(params)
 
-    self.company.attributes.each do |attribute|
+    self.company.custom_attributes.each do |attribute|
 
       str_sm = attribute.slug + "_attribute"
       param_value = params[str_sm]
@@ -57,13 +59,29 @@ class Client < ActiveRecord::Base
           text_attribute.save
         end
 
+      when "textarea"
+        
+        textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if textarea_attribute.nil?
+          TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          textarea_attribute.value = param_value
+          textarea_attribute.save
+        end
+
       when "boolean"
+
+        if param_value == 1 || param_value == "1"
+          param_boolean = true
+        else
+          param_boolean = false
+        end
 
         boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if boolean_attribute.nil?
-          BooleanAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+          BooleanAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_boolean)
         else
-          boolean_attribute.value = param_value
+          boolean_attribute.value = param_boolean
           boolean_attribute.save
         end
 
@@ -79,11 +97,16 @@ class Client < ActiveRecord::Base
 
       when "datetime"
         
+        date_hour = params[attribute.slug + "_attribute_hour"]
+        date_minute = params[attribute.slug + "_attribute_minute"]
+
+        complete_datetime = param_value + " " + date_hour + ":" + date_minute + ":00"
+
         date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if date_time_attribute.nil?
-          DateTimeAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+          DateTimeAttribute.create(attribute_id: attribute.id, client_id: self.id, value: complete_datetime)
         else
-          date_time_attribute.value = param_value
+          date_time_attribute.value = complete_datetime
           date_time_attribute.save
         end
 
@@ -91,35 +114,36 @@ class Client < ActiveRecord::Base
 
         file_attribute = FileAttribute.where(attribute_id: attribute.id, client_id: self.id).first
 
-        #Delete previous file
-        
+        if !param_value.nil?
 
-        file_name = attribute.name
-        folder_name = attribute.slug
-        content_type = param_value.content_type
+          file_name = attribute.name
+          folder_name = attribute.slug
+          content_type = param_value.content_type
 
-        file_extension = param_value.original_filename[param_value.original_filename.rindex(".") + 1, param_value.original_filename.length]
+          file_extension = param_value.original_filename[param_value.original_filename.rindex(".") + 1, param_value.original_filename.length]
 
-        file_description = attribute.description
+          file_description = attribute.description
 
-        full_name = 'companies/' +  self.company_id.to_s + '/clients/' + self.id.to_s + '/' + folder_name + '/' + param_value.original_filename
+          full_name = 'companies/' +  self.company_id.to_s + '/clients/' + self.id.to_s + '/' + folder_name + '/' + param_value.original_filename
 
-        s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+          s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
 
-        obj = s3_bucket.object(full_name)
+          obj = s3_bucket.object(full_name)
 
-        obj.upload_file(param_value.path(), {acl: 'public-read', content_type: content_type})
+          obj.upload_file(param_value.path(), {acl: 'public-read', content_type: content_type})
 
-        client_file = ClientFile.create(client_id: self.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description)
+          client_file = ClientFile.create(client_id: self.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description)
 
-        if file_attribute.nil?
-          FileAttribute.create(attribute_id: attribute.id, client_id: self.id, client_file_id: client_file.id)
-        else
-          if !file_attribute.client_file.nil?
-            file_attribute.client_file.destroy
+          if file_attribute.nil?
+            FileAttribute.create(attribute_id: attribute.id, client_id: self.id, client_file_id: client_file.id)
+          else
+            if !file_attribute.client_file.nil?
+              file_attribute.client_file.destroy
+            end
+            file_attribute.client_file_id = client_file.id
+            file_attribute.save
           end
-          file_attribute.client_file_id = client_file.id
-          file_attribute.save
+
         end
 
 

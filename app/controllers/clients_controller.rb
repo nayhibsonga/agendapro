@@ -58,6 +58,8 @@ class ClientsController < ApplicationController
     @lastBookings = Array.new
     @client = Client.new
     @client_comment = ClientComment.new
+    @company = current_user.company
+    @folders = []
     if mobile_request?
       @company = current_user.company
     end
@@ -123,6 +125,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.save
+        @client.save_attributes(params)
         format.html { redirect_to clients_path, notice: 'Cliente creado exitosamente.' }
         format.json { render action: 'edit', status: :created, location: @client }
       else

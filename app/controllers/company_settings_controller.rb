@@ -57,7 +57,7 @@ class CompanySettingsController < ApplicationController
     @attribute = Attribute.new
     @attribute_category = AttributeCategory.new
 
-    @attributes = @company.attributes
+    @attributes = @company.custom_attributes
 
     @notification_email = NotificationEmail.new
     @notifications = NotificationEmail.where(company: @company).order(:receptor_type)
