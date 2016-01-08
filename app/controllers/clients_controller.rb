@@ -268,6 +268,7 @@ class ClientsController < ApplicationController
     if params[:file].present?
       begin
         uploader = EmailContentUploader.new
+        uploader.store_dir = "email_content/#{params[:id]}/"
         uploader.store!(params[:file].tempfile)
 
         render json: {

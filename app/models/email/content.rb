@@ -8,16 +8,10 @@ class Email::Content < ActiveRecord::Base
     end
   end
 
-  def self.generate(id=nil, params)
-    if id
-      content = where(id: id).try(:first)
-      if content
-        content.update_attributes(params) ? content.id : nil
-      end
-    else
-      content = Email::Content.create(params)
-
-      content.present? ? content.id : nil
+  def self.generate(id, params)
+    content = where(id: id).try(:first)
+    if content
+      content.update(params) ? content.id : nil
     end
   end
 end
