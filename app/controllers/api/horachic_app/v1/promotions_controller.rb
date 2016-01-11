@@ -1,5 +1,5 @@
 module Api
-	module Horachic
+	module HorachicApp
   module V1
   	class PromotionsController < V1Controller
       def index

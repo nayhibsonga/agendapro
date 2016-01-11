@@ -1,5 +1,5 @@
 module Api
-  module Horachic
+  module AgendaproApp
   module V1
   	class SearchsController < V1Controller
   		

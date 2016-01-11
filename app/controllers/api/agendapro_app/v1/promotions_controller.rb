@@ -1,5 +1,5 @@
 module Api
-	module Agendapro
+	module AgendaproApp
   module V1
   	class PromotionsController < V1Controller
       def index

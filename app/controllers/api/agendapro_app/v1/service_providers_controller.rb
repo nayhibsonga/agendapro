@@ -1,5 +1,5 @@
 module Api
-	module Horachic
+	module AgendaproApp
   module V1
   	class ServiceProvidersController < V1Controller
   	  before_action :check_available_hours_params, only: [:available_hours]
@@ -31,7 +31,7 @@ module Api
 
 			# Variable Data
 			day = @date.cwday
-			ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
+			ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
 			location_times = @location.location_times.where(day_id: day).order(:open)
 
 			if location_times.length > 0
@@ -341,7 +341,7 @@ module Api
 		@location = Location.find(params[:location_id])
 		company_setting = CompanySetting.find(Company.find(@location.company_id).company_setting)
 		cancelled_id = Status.find_by(name: 'Cancelado').id
-		
+
 		if params[:id] == "0"
 			# Data
 			provider_breaks = ProviderBreak.where(:service_provider_id => @location.service_providers.pluck(:id))
@@ -364,7 +364,7 @@ module Api
 				# Variable Data
 				day = wdate.cwday
 				@available_days[day - 1] = { date: wdate, available: false }
-				ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(wdate) }
+				ordered_providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(@date) }
 				location_times = @location.location_times.where(day_id: day).order(:open)
 
 				if location_times.length > 0
@@ -424,7 +424,7 @@ module Api
 						            if !@service.group_service || @service.id != provider_booking.service_id
 						              provider_free = false
 						              break
-						            elsif @service.group_service && @service.id == provider_booking.service_id && service_provider.bookings.where(:service_id => @service.id, :start => start_time_block).count >= @service.capacity
+						            elsif @service.group_service && @service.id == provider_booking.service_id && provider.bookings.where(:service_id => @service.id, :start => start_time_block).count >= @service.capacity
 						              provider_free = false
 						              break
 						            end
@@ -584,6 +584,7 @@ module Api
 						if provider_time_valid
 						  if (before_now <=> now) < 1
 						    status = 'past'
+						    puts 'past'
 						  elsif (after_now <=> end_time_block) < 1
 						    status = 'past'
 						  else
@@ -674,7 +675,7 @@ module Api
 	end
 
       private
-      
+
   	  def check_available_hours_params
   	  	if !params[:service_id].present? || !params[:date].present?
           render json: { error: 'Invalid User. Param(s) missing.' }, status: 500

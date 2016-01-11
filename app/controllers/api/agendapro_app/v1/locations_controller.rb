@@ -1,9 +1,9 @@
 module Api
-	module Horachic
+	module AgendaproApp
   module V1
   	class LocationsController < V1Controller
       def index
-      	@locations = @api_company.locations.where(active: true, online_booking: true)
+      	@locations = Location.where(active: true, online_booking: true).last(20)
       end
 
       def show
@@ -243,7 +243,7 @@ module Api
 					results = ActiveRecord::Base.connection.execute(query)
 
 					results.each do |result|
-						if Location.find(result['location_id']) && Location.where(company_id: Company.where(id: CompanyEconomicSector.where(economic_sector_id: EconomicSector.where(marketplace: true)).pluck(:company_id))).pluck(:id).include?(result['location_id'].to_i)
+						if Location.find(result['location_id'])
 							@results << Location.find(result['location_id'])
 						end
 					end

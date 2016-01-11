@@ -1,6 +1,6 @@
 module Api
-  module Horachic
-	class V1::V1Controller < HorachicController
+  module HorachicApp
+	class V1::V1Controller < HorachicAppController
 		before_filter :check_api_key
 		
 		def check_api_key

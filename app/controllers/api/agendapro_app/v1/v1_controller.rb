@@ -1,6 +1,6 @@
 module Api
-  module Agendapro
-	class V1::V1Controller < AgendaproController
+  module AgendaproApp
+	class V1::V1Controller < AgendaproAppController
 		before_filter :check_api_key
 		
 		def check_api_key

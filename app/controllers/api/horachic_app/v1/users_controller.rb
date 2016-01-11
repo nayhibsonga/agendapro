@@ -1,5 +1,5 @@
 module Api
-  module Horachic
+  module HorachicApp
   module V1
   	class UsersController < V1Controller
   	  skip_before_filter :check_auth_token, only: [:login, :create, :oauth]
