@@ -1,0 +1,306 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-10">
+      <h2 class="text-green">Mis archivos</h2>
+      <p>Agrega, revisa y maneja los archivos de tu compañía.</p>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-green" id="addFolderBtn">Agregar carpeta</button><br /><br />
+      <button class="btn btn-green" id="addFileBtn">Agregar archivo</button>
+    </div>
+  </div>
+</div>
+<div class="container-fluid" style="margin-top: 20px;">
+
+  <div class="row">
+
+    <div class="col-md-12">
+      <div style="padding: 15px; background-color: #22c488;">
+        <table id="folders-heading">
+          <tr>
+            <td style="width: 20%; text-align: left;">
+              Nombre
+            </td>
+            <td style="width: 20%; text-align: left;">
+              Fecha
+            </td>
+            <td style="width: 20%; text-align: left;">
+              Tamaño
+            </td>
+            <td style="width: 40%; text-align: right; padding-right: 10px;">
+              Opciones
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="col-md-12">
+
+      <div class="panel-group" id="folders_accordion" role="tablist" aria-multiselectable="true">
+        <% folder_index = 0 %>
+        <% @folders.each do |folder| %>
+          <% if folder != "clients" %>
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="folder_heading_<%= folder_index.to_s %>">
+                <h4 class="panel-title">
+                  <a role="button" class="collapsed custom-collapsed" data-toggle="collapse" data-parent="#folders_accordion" href="#folder_collapse_<%= folder_index.to_s %>" aria-expanded="true" aria-controls="folder_collapse_<%= folder_index.to_s %>">
+                    <span class="folder-icons-closed"><i class="fa fa-caret-right"></i>&nbsp;<i class="fa fa-folder-o"></i>&nbsp;</span><span class="folder-icons-open" hidden><i class="fa fa-caret-down"></i>&nbsp;<i class="fa fa-folder-open-o"></i>&nbsp;</span><%= folder %>
+                  </a>
+                </h4>
+              </div>
+              <div id="folder_collapse_<%= folder_index.to_s %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= folder_index.to_s %>">
+                <div class="panel-body">
+                  <% files = @company.company_files.where(folder: folder).order('created_at desc') %>
+                  <table class="folder-table">
+                      <% files.each do |file| %>
+                        <% 
+                          s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+                          if s3_bucket.object(file.full_path).exists?
+                        %>
+                        <tr class="file-row" file_id="<%= file.id %>">
+                          <td style="width: 20%; text-align: left;"><%= file.name %></td>
+                          <td style="width: 20%; text-align: left;"><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
+                          <td style="width: 20%; text-align: left;"><%= file.get_size %></td>
+                          <td style="width: 40%; text-align: right;">
+                            <button class="btn btn-green btn-xs viewFileBtn" company_file_id="<%= file.id %>"><i class="fa fa-search-plus"></i>&nbsp;Ver</button>
+                            <%= link_to '<i class="fa fa-trash-o"></i>&nbsp;Eliminar'.html_safe, file, method: :delete, :remote => true, data: { confirm: '¿Estás seguro de eliminar el archivo seleccionado?', type: :json }, class: 'btn btn-red btn-xs file-delete' %>
+                          </td>
+                        </tr>
+                        <% end %>
+                      <% end %>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <% folder_index += 1 %>
+          <% end %>
+        <% end %>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- File Upload Modal -->
+
+<div class="modal fade fileUploadModal" id="fileUploadModal" tabindex="-1" role="dialog" aria-labelledby="Agregar archivo" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="fileUploadModallTitle" style="line-height: 1.1;">
+          Subir archivo
+        </h3>
+      </div>
+      <div class="modal-body" id="fileUploadModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <%= form_tag upload_company_file_path, multipart: true, class: 'form-horizontal', id: 'company_upload_file_form' do %>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label class="col-xs-4 control-label">Archivo</label>
+                <div class="col-xs-8">
+                  <%= file_field_tag :file, :class => 'form-control'  %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label class="col-xs-4 control-label">Nombre</label>
+                <div class="col-xs-8">
+                  <input type="text" class="form-control" id="file_name" name="file_name" value="" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label class="col-xs-4 control-label">Descripción</label>
+                <div class="col-xs-8">
+                  <input type="text" class="form-control" id="file_description" name="file_description" value="" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group has-feedback">
+                <label class="col-xs-4 control-label">Carpeta</label>
+                <div class="col-xs-8">
+                  <select id="folderSelect" class="form-control" name="folder_name">
+                    <option value="select">Nueva carpeta</option>
+                    <% @folders.each do |folder_name| %>
+                      <option value="<%= folder_name %>"><%= folder_name %></option>
+                    <% end %>
+                  </select>
+                  <input type="text" id="new_folder_name" name="new_folder_name" class="form-control" value="" style="margin-top: 10px;" />
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label"></label>
+                <div class="col-xs-8">
+                  <button type="submit" class="btn btn-green">Guardar</button>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+            <% end %>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- END File Upload Modal -->
+
+<!-- View File Modal -->
+
+<div class="modal fade fileUploadModal" id="viewFileModal" tabindex="-1" role="dialog" aria-labelledby="Ver archivo" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="viewFileModallTitle" style="line-height: 1.1;">
+          Archivo
+        </h3>
+      </div>
+      <div class="modal-body" id="viewFileModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label">Nombre</label>
+                <div class="col-xs-8">
+                  <div id="view_file_name" class="view_file_content">
+
+                  </div>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label">Descripción</label>
+                <div class="col-xs-8">
+                  <div id="view_file_description" class="view_file_content">
+
+                  </div>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+            
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label">Enlace</label>
+                <div class="col-xs-8">
+                  <div id="view_file_link" class="view_file_content">
+
+                  </div>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+              <div class="payment-form-div form-group" id="view_file_preview_div">
+                <label class="col-xs-4 control-label">Vista previa</label>
+                <div class="col-xs-8">
+                  <div id="view_file_preview" class="view_file_content">
+
+                  </div>
+                </div>
+              </div>
+
+              <div style="clear: both;">
+              </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade fileUploadModal" id="addFolderModal" tabindex="-1" role="dialog" aria-labelledby="Agregar carpeta" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="viewFileModallTitle" style="line-height: 1.1;">
+          Nueva carpeta
+        </h3>
+      </div>
+      <div class="modal-body" id="addFolderModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+            <%= form_tag create_company_folder_path, multipart: true, class: 'form-horizontal', id: 'company_create_folder_form' do %>
+
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label">Nombre</label>
+                <div class="col-xs-8">
+                  <input class="form-control" type="text" id="company_folder_name" name="folder_name" required />
+                </div>
+              </div>
+
+              <div class="payment-form-div form-group">
+                <label class="col-xs-4 control-label"></label>
+                <div class="col-xs-8">
+                  <button type="submit" class="btn btn-green">Guardar</button>
+                </div>
+              </div>
+
+
+            <% end %>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- END View File Modal -->
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/company-files' %>
+  <%= javascript_include_tag 'admin/company-files' %>
+<% end %>

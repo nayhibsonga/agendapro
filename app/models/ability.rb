@@ -136,7 +136,6 @@ class Ability
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
         can :select_plan, Plan
-        can :upload_file, Client
 
         can :add_company, Company
 
@@ -403,6 +402,14 @@ class Ability
         can :destroy, CompanyFile, :company_id => user.company_id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
+
+        can :files, Company, :company_id => user.company_id
+        can :upload_file, Company, :company_id => user.company_id
+        can :create_folder, Company, :company_id => user.company_id
+
+        can :files, Client, :company_id => user.company_id
+        can :upload_file, Client, :company_id => user.company_id
+        can :create_folder, Client, :company_id => user.company_id
 
         can :read, Deal, :company_id => user.company_id
         can :create, Deal, :company_id => user.company_id

@@ -452,8 +452,8 @@ class ClientsController < ApplicationController
     content_type = params[:file].content_type
 
     file_description = ""
-    if !params[:description].blank?
-      file_description = params[:description]
+    if !params[:file_description].blank?
+      file_description = params[:file_description]
     end
 
     if !params[:new_folder_name].blank? && folder_name == "select"
@@ -477,7 +477,7 @@ class ClientsController < ApplicationController
 
     obj.upload_file(params[:file].path(), {acl: 'public-read', content_type: content_type})
 
-    @client_file = ClientFile.new(client_id: @client.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description)
+    @client_file = ClientFile.new(client_id: @client.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description, folder: folder_name)
 
 
     # Save the upload
@@ -485,11 +485,45 @@ class ClientsController < ApplicationController
       if upload_origin == "edit_client"
         redirect_to edit_client_path(id: @client.id), success: 'Archivo guardado correctamente'
       else
-
+        redirect_to get_client_files_path(client_id: @client.id), success: 'Archivo guardado correctamente'
       end
     else
       flash[:notice] = 'Error al guardar el archivo'
       #render :new
+    end
+
+  end
+
+  def create_folder
+
+    @client = Client.find(params[:client_id])
+
+    full_name = 'companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/' + params[:folder_name] + '/'
+
+    #s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+    s3 = Aws::S3::Client.new
+    s3.put_object(bucket: ENV['S3_BUCKET'], key: full_name)
+      #obj = s3_bucket.object(full_name)
+
+      redirect_to get_client_files_path(client_id: @client.id), success: 'Carpeta creada correctamente'
+
+  end
+
+  def files
+
+    @client = Client.find(params[:client_id])
+
+    s3 = Aws::S3::Client.new
+    resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/', delimiter: '/')
+
+    @s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+    folders_prefixes = resp.common_prefixes
+    @folders = []
+
+    folders_prefixes.each do |folder|
+      sub_str = folder.prefix[0, folder.prefix.rindex("/")]
+      @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
     end
 
   end

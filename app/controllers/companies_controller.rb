@@ -1391,6 +1391,87 @@ class CompaniesController < ApplicationController
 		render :json => @cashier
 	end
 
+	#Company files that are not associated against any client
+	def files
+
+		@company = current_user.company
+
+		s3 = Aws::S3::Client.new
+	    resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'companies/' +  @company.id.to_s + '/', delimiter: '/')
+
+	    @s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+	    folders_prefixes = resp.common_prefixes
+	    @folders = []
+
+	    folders_prefixes.each do |folder|
+	      sub_str = folder.prefix[0, folder.prefix.rindex("/")]
+	      @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
+	    end
+
+	end
+
+	#Creates an empty key to late folder
+	#Should be deleted once a file is written to that folder
+	#When deleting all folder files, should be recreated
+	def create_folder
+
+		@company = current_user.company
+
+		full_name = 'companies/' +  @company.id.to_s + '/' + params[:folder_name] + '/'
+
+		#s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+		s3 = Aws::S3::Client.new
+		s3.put_object(bucket: ENV['S3_BUCKET'], key: full_name)
+    	#obj = s3_bucket.object(full_name)
+
+    	redirect_to '/get_company_files', success: 'Carpeta creada correctamente'
+
+	end
+
+	def upload_file
+
+		@company = current_user.company
+
+	    file_name = params[:file_name]
+	    folder_name = params[:folder_name]
+	    logger.debug "File name: " + params[:file].original_filename
+	    file_extension = params[:file].original_filename[params[:file].original_filename.rindex(".") + 1, params[:file].original_filename.length]
+	    content_type = params[:file].content_type
+
+	    file_description = ""
+	    if !params[:file_description].blank?
+	      file_description = params[:file_description]
+	    end
+
+	    if !params[:new_folder_name].blank? && folder_name == "select"
+	      folder_name = params[:new_folder_name]
+	    end
+
+	    full_name = 'companies/' +  @company.id.to_s + '/' + folder_name + '/' + params[:file].original_filename
+
+	    s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+	    old_obj = s3_bucket.object('companies/' +  @company.id.to_s + '/' + folder_name + '/')
+    	old_obj.delete
+
+	    obj = s3_bucket.object(full_name)
+
+	    obj.upload_file(params[:file].path(), {acl: 'public-read', content_type: content_type})
+
+	    @company_file = CompanyFile.new(company_id: @company.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description, folder: folder_name)
+
+
+	    # Save the upload
+	    if @company_file.save
+	    	redirect_to '/get_company_files', success: 'Archivo guardado correctamente'
+	    else
+	    	flash[:notice] = 'Error al guardar el archivo'
+	      	#render :new
+	    end
+
+	end
+
 	private
 
 		#Common method to obtain available hours

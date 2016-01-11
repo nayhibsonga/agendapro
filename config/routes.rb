@@ -139,7 +139,6 @@ Agendapro::Application.routes.draw do
     post '/change_providers_order', :to => 'service_providers#change_providers_order'
     post '/change_groups_order', :to => 'provider_groups#change_groups_order'
     get '/confirm_email', :to => 'company_from_emails#confirm_email', :as => 'confirm_email'
-    post '/upload_client_file', :to => 'clients#upload_file'
 
     # Autocompletar del Booking
     get '/clients_suggestion', :to => 'clients#suggestion'
@@ -519,8 +518,17 @@ Agendapro::Application.routes.draw do
     get '/get_product_categories_for_payment_or_sale', :to => 'payments#get_product_categories_for_payment_or_sale'
     get '/get_product_brands_for_payment_or_sale', :to => 'payments#get_product_brands_for_payment_or_sale'
 
+
+    #Client charts and files
     get '/get_attribute_categories', :to => 'attributes#get_attribute_categories'
     get '/attribute_edit_form', :to => 'attributes#edit_form'
+    get '/get_company_files', :to => 'companies#files'
+    post '/create_company_folder', :to => 'companies#create_folder'
+    post '/upload_company_file', :to => 'companies#upload_file'
+
+    post '/upload_client_file', :to => 'clients#upload_file'
+    post '/create_client_folder', :to => 'clients#create_folder'
+    get '/get_client_files', :to => 'clients#files'
 
 
   end

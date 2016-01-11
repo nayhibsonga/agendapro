@@ -4,6 +4,8 @@ class CompanyFilesController < ApplicationController
   
   load_and_authorize_resource
 
+  respond_to :html, :json
+
   # GET /company_files
   # GET /company_files.json
   def index
@@ -13,6 +15,29 @@ class CompanyFilesController < ApplicationController
   # GET /company_files/1
   # GET /company_files/1.json
   def show
+    json_response = []
+
+    s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+    obj = s3_bucket.object(@company_file.full_path)
+    is_image = false
+    public_url = obj.public_url
+
+    if !obj.content_type.index("image").nil?
+      is_image = true
+    end
+
+    json_response << @company_file
+    json_response << public_url
+    json_response << is_image
+
+    respond_with(@company_file) do |format|
+
+      format.json {
+        render json: json_response
+      }
+
+    end
+
   end
 
   # GET /company_files/new
@@ -57,10 +82,24 @@ class CompanyFilesController < ApplicationController
   # DELETE /company_files/1
   # DELETE /company_files/1.json
   def destroy
-    @company_file.destroy
-    respond_to do |format|
-      format.html { redirect_to company_files_url }
-      format.json { head :no_content }
+    respond_with(@company_file) do |format|
+      if @company_file.destroy
+        format.html { 
+          flash[:notice] = "Archivo eliminado." 
+          redirect_to get_company_files_path() 
+        }
+        format.json {
+          render json: @company_file
+        }
+      else
+        format.html { 
+          flash[:notice] = "Archivo no pudo ser eliminado." 
+          redirect_to get_company_files_path() 
+        }
+        format.json {
+          render json: @company_file
+        }
+      end
     end
   end
 

@@ -575,21 +575,27 @@
                 </thead>
                 <tbody>
                   <% @files.each do |file| %>
-                  <tr class="file-row" file_id="<%= file.id %>">
-                    <td><%= file.name %></td>
-                    <td><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
-                    <td><%= file.get_size %></td>
-                    <td>
-                      <button class="btn btn-green btn-xs viewFileBtn" client_file_id="<%= file.id %>"><i class="fa fa-search-plus"></i>&nbsp;Ver</button>
-                      <%= link_to '<i class="fa fa-trash-o"></i>&nbsp;Eliminar'.html_safe, file, method: :delete, :remote => true, data: { confirm: '¿Estás seguro de eliminar el archivo seleccionado?', type: :json }, class: 'btn btn-red btn-xs file-delete' %>
-                    </td>
-                  </tr>
+                    <% 
+                      s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+                      if s3_bucket.object(file.full_path).exists?
+                    %>
+                      <tr class="file-row" file_id="<%= file.id %>">
+                        <td><%= file.name %></td>
+                        <td><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
+                        <td><%= file.get_size %></td>
+                        <td>
+                          <button class="btn btn-green btn-xs viewFileBtn" client_file_id="<%= file.id %>"><i class="fa fa-search-plus"></i>&nbsp;Ver</button>
+                          <%= link_to '<i class="fa fa-trash-o"></i>&nbsp;Eliminar'.html_safe, file, method: :delete, :remote => true, data: { confirm: '¿Estás seguro de eliminar el archivo seleccionado?', type: :json }, class: 'btn btn-red btn-xs file-delete' %>
+                        </td>
+                      </tr>
+                    <% end %>
                   <% end %>
                 </tbody>
               </table>
             </div>
           </div>
           <%= link_to '<i class="fa fa-eye"></i> Historial Completo'.html_safe, client_history_path(:id => @client.id), class: "btn btn-white" %>
+          <%= link_to '<i class="fa fa-file-o"></i> Todos los archivos'.html_safe, get_client_files_path(:client_id => @client.id), class: "btn btn-white" %>
         </div>
         <% end %>
   </div>

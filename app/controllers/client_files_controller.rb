@@ -79,13 +79,23 @@ class ClientFilesController < ApplicationController
   def destroy
     
     respond_with(@client_file) do |format|
-      format.html { 
-        flash[:notice] = "Archivo eliminado." if @client_file.destroy
-        redirect_to client_files_path() 
-      }
-      format.json {
-        render json: @client_file
-      }
+      if @client_file.destroy
+        format.html { 
+          flash[:notice] = "Archivo eliminado."
+          redirect_to client_files_path() 
+        }
+        format.json {
+          render json: @client_file
+        }
+      else
+        format.html { 
+          flash[:notice] = "Archivo no pudo ser eliminado."
+          redirect_to client_files_path() 
+        }
+        format.json {
+          render json: @client_file
+        }
+      end
     end
   end
 

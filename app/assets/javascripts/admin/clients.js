@@ -215,4 +215,22 @@ $(function() {
         clear: ''
   });
 
+  $('#addFolderBtn').on('click', function(){
+    $('#addFolderModal').modal('show');
+  });
+
+  $('#folders_accordion .panel-collapse').on('hide.bs.collapse', function (e) {
+      console.log('Event fired on #' + e.currentTarget.id);
+      var folder_id = e.currentTarget.id.split("_")[2];
+      $('#folder_heading_' + folder_id).find('.folder-icons-closed').show();
+      $('#folder_heading_' + folder_id).find('.folder-icons-open').hide();
+  });
+
+  $('#folders_accordion .panel-collapse').on('show.bs.collapse', function (e) {
+      console.log('Event fired on #' + e.currentTarget.id);
+      var folder_id = e.currentTarget.id.split("_")[2];
+      $('#folder_heading_' + folder_id).find('.folder-icons-closed').hide();
+      $('#folder_heading_' + folder_id).find('.folder-icons-open').show();
+  });
+
 });
