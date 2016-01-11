@@ -79,6 +79,15 @@ class Company < ActiveRecord::Base
 		return encrypted_data
 	end
 
+	def encode_company_token
+		return (self.id * 12345678).to_s(30)
+	end
+
+	def self.api_decode_and_find(token)
+		id = token.to_i(30) / 12345678
+		return Company.find_by_id(id)
+	end
+
 	def self.substract_month
 		month_days = Time.now.days_in_month
 		where(payment_status_id: PaymentStatus.find_by_name("Activo").id).each do |company|
