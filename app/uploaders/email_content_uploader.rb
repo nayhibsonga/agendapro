@@ -30,6 +30,11 @@ class EmailContentUploader < CarrierWave::Uploader::Base
   #   "email_content/"
   # end
 
+  def store(id, file)
+    EmailContentUploader.store_dir = "email_content/#{id}/"
+    store!(file)
+  end
+
   # Provide a default URL as a default if there hasn't been a file uploaded:
   # def default_url
   #   # For Rails 3.1+ asset pipeline compatibility:
