@@ -576,7 +576,7 @@ Agendapro::Application.routes.draw do
       get 'promotions', to: 'promotions#index'
       get 'promotions/:id', to: 'promotions#show'
     end
-    namespace :agendapro
+    namespace :agendapro do
       namespace :v1 do
 
         resources :locations, only: [:index, :show]
@@ -609,7 +609,7 @@ Agendapro::Application.routes.draw do
         get 'promotions/:id', to: 'promotions#show'
       end
     end
-    namespace :horachic
+    namespace :horachic do
       namespace :v1 do
 
         resources :locations, only: [:index, :show]
@@ -642,7 +642,7 @@ Agendapro::Application.routes.draw do
         get 'promotions/:id', to: 'promotions#show'
       end
     end
-    namespace :custom_app
+    namespace :custom_app do
       namespace :v1 do
 
         resources :locations, only: [:index, :show]
