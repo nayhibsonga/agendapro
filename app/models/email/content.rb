@@ -5,14 +5,14 @@ class Email::Content < ActiveRecord::Base
   def self.generate(id, params)
     content = where(id: id).try(:first)
     if content
-      content.update(params) ? content.id : nil
+      content.update(params)
     end
   end
 
   private
     def empty_json
-      if data.blank?
-        data = {}
+      if self.data.blank?
+        self.data = {}
       end
     end
 end

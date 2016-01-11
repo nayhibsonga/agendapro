@@ -284,9 +284,9 @@ class ClientsController < ApplicationController
   end
 
   def save_content
-    @id = Email::Content.generate(params[:id], params.except(:id, :send))
+    @updated = Email::Content.generate(params[:id], params.except(:id, :send))
     send_content if params[:save]
-    render :json, { id: @id, status: @id ? 200 : 500 }
+    render :json, status: @updated ? :ok : :internal_server_error
   end
 
   def send_content
