@@ -25,6 +25,7 @@ class Booking < ActiveRecord::Base
     s.validate after_commit :bookings_resources_warning
     s.validate after_commit :bookings_deal_warning
     s.validate after_commit :provider_in_break_warning
+    s.validate after_update :bundled_booking_warning
   end
 
 
@@ -130,6 +131,13 @@ class Booking < ActiveRecord::Base
         end
       end
       self.delete
+    end
+  end
+
+  def bundled_booking_warning
+    if self.bundled && self.status_id != Status.find_by(name: 'Cancelado').id
+      warnings.add(:base, "Esta reserva es parte de un paquete de servicios")
+      return
     end
   end
 

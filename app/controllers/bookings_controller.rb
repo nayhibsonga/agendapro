@@ -94,7 +94,7 @@ class BookingsController < ApplicationController
     after_book_date = DateTime.now + u.service.company.company_setting.after_booking.months
     after_book_date = I18n.l after_book_date.to_date, format: :day
 
-    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id}
+    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id, :bundled => u.bundled}
     respond_to do |format|
       format.html { }
       format.json { render :json => @booking_json }
@@ -4286,9 +4286,11 @@ class BookingsController < ApplicationController
     current_gap = 0
 
     services_arr = []
+    bundles_arr = []
     providers_arr = []
     for i in 0..serviceStaff.length-1
       services_arr[i] = Service.find(serviceStaff[i][:service])
+      bundles_arr[i] = Bundle.find_by(id: serviceStaff[i][:bundle_id])
       total_services_duration += services_arr[i].duration
       if serviceStaff[i][:provider] != "0"
         providers_arr[i] = []
@@ -4356,6 +4358,7 @@ class BookingsController < ApplicationController
           service_valid = false
           #service = Service.find(serviceStaff[serviceStaffPos][:service])
           service = services_arr[serviceStaffPos]
+          bundle = bundles_arr[serviceStaffPos]
 
           current_service_providers = ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id))
 
@@ -4581,14 +4584,14 @@ class BookingsController < ApplicationController
                   :online_payable => service.online_payable,
                   :has_discount => service.has_discount,
                   :discount => service.discount,
-                  :show_price => service.show_price,
+                  :show_price => service.show_price && bundle.blank?,
                   :has_time_discount => service.has_time_discount,
                   :has_sessions => service.has_sessions,
                   :sessions_amount => book_sessions_amount,
                   :must_be_paid_online => service.must_be_paid_online
                 }
 
-                if !service.online_payable || !service.company.company_setting.online_payment_capable
+                if !service.online_payable || !service.company.company_setting.online_payment_capable || bundle.present?
                   bookings.last[:has_discount] = false
                   bookings.last[:has_time_discount] = false
                   bookings.last[:discount] = 0
@@ -6102,6 +6105,6 @@ class BookingsController < ApplicationController
     end
 
     def booking_buffer_params
-      params.permit(bookings: [:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :session_booking_id, :payed_state])
+      params.permit(bookings: [:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :session_booking_id, :payed_state, :bundled, :bundle_id])
     end
 end
