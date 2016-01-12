@@ -268,7 +268,7 @@ class ClientsController < ApplicationController
     if params[:file].present?
       begin
         uploader = EmailContentUploader.new
-        uploader.store!(params[:file].tempfile)
+        uploader.store(params[:id], params[:file].tempfile)
 
         render json: {
           filename: uploader.file.filename,
@@ -281,6 +281,16 @@ class ClientsController < ApplicationController
     else
       render json: { error: "No file attached"}, status: :unprocessable_entity
     end
+  end
+
+  def save_content
+    @updated = Email::Content.generate(params[:id], params.except(:id, :send))
+    send_content if params[:save]
+    render :json, status: @updated ? :ok : :internal_server_error
+  end
+
+  def send_content
+    @id #el del metodo anterior
   end
 
   def send_mail
@@ -319,6 +329,7 @@ class ClientsController < ApplicationController
 
       # Close database connection
       ActiveRecord::Base.connection.close
+      Thread.exit
     end
 
     redirect_to '/clients', notice: 'E-mail enviado exitosamente.'
