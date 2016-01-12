@@ -1413,12 +1413,12 @@ function editDrag(event) {
 
 function saveBooking(typeURL, extraURL) {
   var bookingJSON = jsonBooking();
-  if(Array.isArray(bookingJSON)) {
-    bookingBuffer = bookingJSON;
-    saveBookingBuffer();
-    return false;
-  }
   if (typeURL == 'POST') {
+    if(Array.isArray(bookingJSON)) {
+      bookingBuffer = bookingJSON;
+      saveBookingBuffer();
+      return false;
+    }
     $.ajax({
       type: 'POST',
       url: '/booking_valid.json',
