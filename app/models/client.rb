@@ -572,6 +572,37 @@ class Client < ActiveRecord::Base
           row["identification_number"] = row["identification_number"].to_s.chomp('.0')
         end
 
+        #Check for custom attributes
+        self.company.custom_attributes.each do |attribute|
+
+          case attribute.datatype
+          when "float"
+            if row[attribute.slug].present?
+              row[attribute.slug] = row[attribute.slug].to_f
+            end
+          when "integer"
+            if row[attribute.slug].present?
+              row[attribute.slug] = row[attribute.slug].to_i
+            end
+          when "text"
+            if row[attribute.slug].present?
+              row[attribute.slug] = row[attribute.slug].to_s.chomp('.0').strip
+            end
+          when "textarea"
+            if row[attribute.slug].present?
+              row[attribute.slug] = row[attribute.slug].to_s.chomp('.0').strip
+            end
+          when "date"
+          when "datetime"
+          when "categoric"
+            if row[attribute.slug].present?
+              row[attribute.slug] = row[attribute.slug].to_s.chomp('.0').strip
+              cat_id = attribute.check_categories(row[attribute.slug])
+            end
+          end
+
+        end
+
         if row["identification_number"].present? && Client.where(identification_number: row["identification_number"], company_id: company_id).count > 0
           client = Client.where(identification_number: row["identification_number"], company_id: company_id).first
         elsif row["email"].present? && Client.where(email: row["email"], company_id: company_id).count > 0

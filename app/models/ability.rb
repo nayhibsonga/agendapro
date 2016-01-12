@@ -406,10 +406,18 @@ class Ability
         can :files, Company, :company_id => user.company_id
         can :upload_file, Company, :company_id => user.company_id
         can :create_folder, Company, :company_id => user.company_id
+        can :rename_folder, Company, :company_id => user.company_id
+        can :delete_folder, Company, :company_id => user.company_id
+        can :move_file, Company, :company_id => user.company_id
+        can :edit_file, Company, :company_id => user.company_id
 
         can :files, Client, :company_id => user.company_id
         can :upload_file, Client, :company_id => user.company_id
         can :create_folder, Client, :company_id => user.company_id
+        can :rename_folder, Client, :company_id => user.company_id
+        can :delete_folder, Client, :company_id => user.company_id
+        can :move_file, Client, :company_id => user.company_id
+        can :edit_file, Client, :company_id => user.company_id
 
         can :read, Deal, :company_id => user.company_id
         can :create, Deal, :company_id => user.company_id

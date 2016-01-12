@@ -525,10 +525,18 @@ Agendapro::Application.routes.draw do
     get '/get_company_files', :to => 'companies#files'
     post '/create_company_folder', :to => 'companies#create_folder'
     post '/upload_company_file', :to => 'companies#upload_file'
+    post '/rename_company_folder', :to => 'companies#rename_folder'
+    post '/delete_company_folder', :to => 'companies#delete_folder'
+    post '/move_company_file', :to => 'companies#move_file'
+    post '/change_company_file', :to => 'companies#edit_file'
 
     post '/upload_client_file', :to => 'clients#upload_file'
     post '/create_client_folder', :to => 'clients#create_folder'
     get '/get_client_files', :to => 'clients#files'
+    post '/rename_client_folder', :to => 'clients#rename_folder'
+    post '/delete_client_folder', :to => 'clients#delete_folder'
+    post '/move_client_file', :to => 'clients#move_file'
+    post '/change_client_file', :to => 'clients#edit_file'
 
 
   end

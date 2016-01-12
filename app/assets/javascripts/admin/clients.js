@@ -138,10 +138,6 @@ $(function() {
     setAge();
   });
 
-  $('#addFileBtn').on('click', function(){
-    $('#fileUploadModal').modal('show');
-  });
-
   $('.viewFileBtn').on('click', function(){
 
     var client_file_id = $(this).attr('client_file_id');
@@ -215,8 +211,67 @@ $(function() {
         clear: ''
   });
 
+  $('#addFileBtn').on('click', function(){
+    clearValidations("#file");
+    clearValidations("#file_name");
+    clearValidations("#file_description");
+    clearValidations("#new_folder_name");
+    clearValidations("#folderSelect");
+    $('#fileUploadModal').modal('show');
+  });
+
   $('#addFolderBtn').on('click', function(){
+    clearValidations("#client_folder_name");
     $('#addFolderModal').modal('show');
+  });
+
+  $('.addFolderFileBtn').on('click', function(){
+    clearValidations("#file");
+    clearValidations("#file_name");
+    clearValidations("#file_description");
+    clearValidations("#new_folder_name");
+    clearValidations("#folderSelect");
+    $('#fileUploadModal #folderSelect').val($(this).attr("folder_name"));
+    $('#fileUploadModal').modal('show');
+  });
+
+  $('.renameFolderBtn').on('click', function(e){
+    clearValidations("#rename_folder_name");
+    $('#old_folder_name').val($(this).attr("folder_name"));
+    $('#renameFolderModal').modal('show');
+  });
+
+  $('.moveFileBtn').on('click', function(e){
+    $('#move_client_file_id').val($(this).attr("client_file_id"));
+    $('#moveFileModal').modal('show');
+  });
+
+  $('.editFileBtn').on('click', function(){
+    clearValidations("#edit_file_name");
+    clearValidations("#edit_file_description");
+    clearValidations("#edit_new_folder_name");
+    clearValidations("#editFolderSelect");
+    $('#edit_client_file_id').val($(this).attr("client_file_id"));
+    $('#edit_file_name').val($(this).attr("client_file_name"));
+    $('#edit_file_description').val($(this).attr("client_file_description"));
+    $('#editFolderSelect').val($(this).attr("client_file_folder"));
+    $('#editFileModal').modal('show');
+  });
+
+  $('.deleteFolderBtn').on('click', function(e){
+
+    $('#delete_folder_name').val("");
+    var folder_name = $(this).attr("folder_name");
+
+    swal({
+      title: "¿Estás seguro que deseas eliminar la carpeta? Se eliminarán todos los archivos que contiene.",
+      type: "warning"
+    },
+    function (isConfirm) {
+      $('#delete_folder_name').val(folder_name);
+      $('#client_delete_folder_form').submit();
+    });
+
   });
 
   $('#folders_accordion .panel-collapse').on('hide.bs.collapse', function (e) {

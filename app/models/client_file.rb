@@ -29,7 +29,7 @@ class ClientFile < ActiveRecord::Base
     	obj = s3_bucket.object(self.full_path)
     	obj.delete
 
-    	folder_path = 'companies/' +  self.client.company_id.to_s + '/clients/' + self.client_id + '/' + self.folder + '/'
+    	folder_path = 'companies/' +  self.client.company_id.to_s + '/clients/' + self.client_id.to_s + '/' + self.folder + '/'
     	folder_obj = s3_bucket.object(folder_path)
 
     	if !folder_obj.exists?

@@ -1429,6 +1429,76 @@ class CompaniesController < ApplicationController
 
 	end
 
+	def rename_folder
+
+		@company = current_user.company
+
+		new_folder_name = params[:new_folder_name]
+		old_folder_name = params[:old_folder_name]
+
+		s3 = Aws::S3::Client.new
+
+		old_folder_path = 'companies/' +  @company.id.to_s + '/' + old_folder_name + '/'
+		new_folder_path = 'companies/' +  @company.id.to_s + '/' + new_folder_name + '/'
+
+		#Create new folder in case there are no files
+		s3.put_object(bucket: ENV['S3_BUCKET'], key: new_folder_path)
+
+		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+		#Move each object to new folder
+		@company.company_files.where(folder: old_folder_name).each do |company_file|
+			obj = s3_bucket.object(company_file.full_path)
+
+			obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
+
+			obj.move_to({bucket: ENV['S3_BUCKET'], key: new_folder_path + obj_name}, {acl: 'public-read', content_type: content_type})
+
+			company_file.full_path = new_folder_path + obj_name
+			company_file.public_url = obj.public_url
+			company_file.folder = new_folder_name
+			company_file.save
+
+		end
+
+		#Delete old folder
+		old_folder = s3_bucket.object(old_folder_path)
+		old_folder.delete
+
+		redirect_to '/get_company_files', success: 'Carpeta renombrada correctamente'
+
+	end
+
+	def delete_folder
+
+		@company = current_user.company
+
+		folder_name = params[:folder_name]
+
+		s3 = Aws::S3::Client.new
+
+		folder_path = 'companies/' +  @company.id.to_s + '/' + folder_name + '/'
+
+
+		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+		#Move each object to new folder
+		@company.company_files.where(folder: folder_name).each do |company_file|
+			
+			company_file.destroy
+
+		end
+
+		#Delete old folder
+		old_folder = s3_bucket.object(folder_path)
+		if old_folder.exists?
+			old_folder.delete
+		end
+
+		redirect_to '/get_company_files', success: 'Carpeta eliminada correctamente'
+
+	end
+
 	def upload_file
 
 		@company = current_user.company
@@ -1457,7 +1527,13 @@ class CompaniesController < ApplicationController
 
 	    obj = s3_bucket.object(full_name)
 
-	    obj.upload_file(params[:file].path(), {acl: 'public-read', content_type: content_type})
+	    if !obj.exists?
+	    	obj.upload_file(params[:file].path(), {acl: 'public-read', content_type: content_type})
+	    else
+	    	full_name = 'companies/' +  @company.id.to_s + '/' + folder_name + '/' + DateTime.now.to_i.to_s + '_' +  params[:file].original_filename
+	    	obj = s3_bucket.object(full_name)
+	    	obj.upload_file(params[:file].path(), {acl: 'public-read', content_type: content_type})
+	    end
 
 	    @company_file = CompanyFile.new(company_id: @company.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description, folder: folder_name)
 
@@ -1469,6 +1545,104 @@ class CompaniesController < ApplicationController
 	    	flash[:notice] = 'Error al guardar el archivo'
 	      	#render :new
 	    end
+
+	end
+
+	def move_file
+
+		@company = current_user.company
+		@company_file = CompanyFile.find(params[:company_file_id])
+		new_folder_name = params[:folder_name]
+
+		new_folder_path = 'companies/' +  @company.id.to_s + '/' + new_folder_name + '/'
+
+		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+		obj = s3_bucket.object(@company_file.full_path)
+
+		obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
+
+		obj.move_to({bucket: ENV['S3_BUCKET'], key: new_folder_path + obj_name}, {acl: 'public-read', content_type: content_type})
+
+		old_folder_path = 'companies/' +  @company.id.to_s + '/' + @company_file.folder + '/'
+    	old_folder_obj = s3_bucket.object(old_folder_path)
+
+    	logger.debug "Path: " + old_folder_path
+    	logger.debug "Exists? " + old_folder_obj.exists?.to_s
+
+    	if !old_folder_obj.exists?
+    		s3 = Aws::S3::Client.new
+			s3.put_object(bucket: ENV['S3_BUCKET'], key: old_folder_path)
+    	end
+
+		@company_file.full_path = new_folder_path + obj_name
+		@company_file.public_url = obj.public_url
+		@company_file.folder = new_folder_name
+		
+		if @company_file.save
+			flash[:notice] = 'Archivo movido correctamente'
+			redirect_to '/get_company_files'
+	    else
+	    	flash[:warning] = 'Error al mover el archivo'
+	    	redirect_to '/get_company_files'
+		end
+
+	end
+
+	def edit_file
+
+		@company = current_user.company
+		@company_file = CompanyFile.find(params[:company_file_id])
+
+		@company_file.name = params[:file_name]
+		@company_file.description = params[:file_description]
+
+		folder_name = params[:folder_name]
+
+		if !params[:new_folder_name].blank? && folder_name == "select"
+	      folder_name = params[:new_folder_name]
+	    end
+
+		if folder_name != @company_file.folder
+
+			new_folder_name = folder_name
+
+			new_folder_path = 'companies/' +  @company.id.to_s + '/' + new_folder_name + '/'
+
+			s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+			obj = s3_bucket.object(@company_file.full_path)
+
+			obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
+
+			obj.move_to({bucket: ENV['S3_BUCKET'], key: new_folder_path + obj_name}, {acl: 'public-read', content_type: content_type})
+
+			old_folder_path = 'companies/' +  @company.id.to_s + '/' + @company_file.folder + '/'
+	    	old_folder_obj = s3_bucket.object(old_folder_path)
+
+	    	logger.debug "Path: " + old_folder_path
+	    	logger.debug "Exists? " + old_folder_obj.exists?.to_s
+
+	    	if !old_folder_obj.exists?
+	    		s3 = Aws::S3::Client.new
+				s3.put_object(bucket: ENV['S3_BUCKET'], key: old_folder_path)
+	    	end
+
+			
+			@company_file.full_path = new_folder_path + obj_name
+			@company_file.public_url = obj.public_url
+			@company_file.folder = new_folder_name
+
+		end
+		
+		if @company_file.save
+			flash[:notice] = 'Archivo editado correctamente'
+			redirect_to '/get_company_files'
+	    else
+	    	flash[:warning] = 'Error al mover el archivo'
+	    	redirect_to '/get_company_files'
+		end
+
 
 	end
 

@@ -1,7 +1,6 @@
 class CompanyFile < ActiveRecord::Base
 
 	belongs_to :company
-
 	before_destroy :delete_file
 
 	def get_size
