@@ -24,11 +24,12 @@ class BookingMailer < ActionMailer::Base
 			sessions_ratio = "(Sesión " + session_index.to_s + " de " + book_info.session_booking.sessions_amount.to_s + ")"
 		end
 
+		company = book_info.service_provider.company
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
-			:from_name => book_info.service_provider.company.name,
-			:subject => 'Nueva Reserva en ' + book_info.service_provider.company.name,
+			:from_name => company.name,
+			:subject => 'Nueva Reserva en ' + company.name,
 			:to => [],
 			:headers => { 'Reply-To' => book_info.location.email },
 			:global_merge_vars => [
@@ -38,7 +39,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'COMPANYNAME',
-					:content => book_info.service_provider.company.name
+					:content => company.name
 				},
 				{
 					:name => 'CLIENTNAME',
@@ -46,7 +47,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:content => company.company_setting.provider_preference == 2 ? "" : book_info.service_provider.public_name
 				},
 				{
 					:name => 'SERVICENAME',
@@ -58,11 +59,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => book_info.location.company.company_setting.signature
+					:content => company.company_setting.signature
 				},
 				{
 					:name => 'DOMAIN',
-					:content => book_info.location.company.country.domain
+					:content => company.country.domain
 				},
 				{
 					:name => 'SESSIONSRATIO',
@@ -81,18 +82,18 @@ class BookingMailer < ActionMailer::Base
 			:attachments => [
 				{
 					:type => 'text/calendar',
-					:name => book_info.service.name + ' - ' + book_info.service_provider.company.name + '.ics',
+					:name => book_info.service.name + ' - ' + company.name + '.ics',
 					:content => Base64.encode64(book_info.generate_ics.export())
 				}
 			]
 		}
 
 		# => Logo empresa
-		if !book_info.location.company.logo.email.url.include? "logo_vacio"
+		if !company.logo.email.url.include? "logo_vacio"
 			message[:images] = [{
 							:type => 'image/png',
 							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
+							:content => Base64.encode64(File.read('public' + company.logo.email.url.to_s))
 						}]
 		end
 
@@ -130,13 +131,13 @@ class BookingMailer < ActionMailer::Base
 							]
 						}]
 
-			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
+			if company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
 					:content => book_info.marketplace_origin ? book_info.marketplace_url('edit') : booking_edit_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
-			if book_info.location.company.company_setting.can_cancel
+			if company.company_setting.can_cancel
 				message[:merge_vars][0][:vars] << {
 					:name => 'CANCEL',
 					:content => book_info.marketplace_origin ? book_info.marketplace_url('cancel') : booking_cancel_url(:confirmation_code => book_info.confirmation_code)
@@ -210,19 +211,19 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Email notificacion compañia
-		company_emails = NotificationEmail.where(company: book_info.location.company, receptor_type: 0).select(:email).distinct
+		company_emails = NotificationEmail.where(company: company, receptor_type: 0).select(:email).distinct
 		if book_info.web_origin
 			company_emails = company_emails.where(new_web: true)
 		else
 			company_emails = company_emails.where(new: true)
 		end
-		company_emails.each do |company|
+		company_emails.each do |company_email|
 			message[:to] = [{
-							:email => company.email,
+							:email => company_email.email,
 							:type => 'bcc'
 						}]
 			message[:merge_vars] = [{
-							:rcpt => company.email,
+							:rcpt => company_email.email,
 							:vars => [
 								{
 									:name => 'COMPANYCOMMENT',
@@ -232,7 +233,7 @@ class BookingMailer < ActionMailer::Base
 						}]
 			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
-						:content => book_info.location.company.name
+						:content => company.name
 					}
 
 			# => Send mail
@@ -245,11 +246,12 @@ class BookingMailer < ActionMailer::Base
 		template_name = 'Update Booking'
 		template_content = []
 
+		company = book_info.service_provider.company
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => book_info.service_provider.company.name,
-			:subject => 'Reserva Actualizada en ' + book_info.service_provider.company.name,
+			:subject => 'Reserva Actualizada en ' + company.name,
 			:to => [],
 			:headers => { 'Reply-To' => book_info.location.email },
 			:global_merge_vars => [
@@ -259,7 +261,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'COMPANYNAME',
-					:content => book_info.service_provider.company.name
+					:content => company.name
 				},
 				{
 					:name => 'CLIENTNAME',
@@ -267,7 +269,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:content => company.company_setting.provider_preference == 2 ? "" : book_info.service_provider.public_name
 				},
 				{
 					:name => 'SERVICENAME',
@@ -279,7 +281,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => book_info.location.company.company_setting.signature
+					:content => company.company_setting.signature
 				},
 				{
 					:name => 'OLD_START',
@@ -287,7 +289,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'DOMAIN',
-					:content => book_info.location.company.country.domain
+					:content => company.country.domain
 				}
 			],
 			:merge_vars => [],
@@ -302,18 +304,18 @@ class BookingMailer < ActionMailer::Base
 			:attachments => [
 				{
 					:type => 'text/calendar',
-					:name => book_info.service.name + ' - ' + book_info.service_provider.company.name + '.ics',
+					:name => book_info.service.name + ' - ' + company.name + '.ics',
 					:content => Base64.encode64(book_info.generate_ics.export())
 				}
 			]
 		}
 
 		# => Logo empresa
-		if !book_info.location.company.logo.email.url.include? "logo_vacio"
+		if !company.logo.email.url.include? "logo_vacio"
 			message[:images] = [{
 							:type => 'image/png',
 							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
+							:content => Base64.encode64(File.read('public' + company.logo.email.url.to_s))
 						}]
 		end
 
@@ -351,13 +353,13 @@ class BookingMailer < ActionMailer::Base
 							]
 						}]
 
-			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
+			if company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
 					:content => book_info.marketplace_origin ? book_info.marketplace_url('edit') : booking_edit_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
-			if book_info.location.company.company_setting.can_cancel
+			if company.company_setting.can_cancel
 				message[:merge_vars][0][:vars] << {
 					:name => 'CANCEL',
 					:content => book_info.marketplace_origin ? book_info.marketplace_url('cancel') : booking_cancel_url(:confirmation_code => book_info.confirmation_code)
@@ -430,19 +432,19 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Email notificacion compañia
-		company_emails = NotificationEmail.where(company: book_info.location.company, receptor_type: 0).select(:email).distinct
+		company_emails = NotificationEmail.where(company: company, receptor_type: 0).select(:email).distinct
 		if book_info.web_origin
 			company_emails = company_emails.where(modified_web: true)
 		else
 			company_emails = company_emails.where(modified: true)
 		end
-		company_emails.each do |company|
+		company_emails.each do |company_email|
 			message[:to] = [{
-							:email => company.email,
+							:email => company_email.email,
 							:type => 'bcc'
 						}]
 			message[:merge_vars] = [{
-							:rcpt => company.email,
+							:rcpt => company_email.email,
 							:vars => [
 								{
 									:name => 'COMPANYCOMMENT',
@@ -452,7 +454,7 @@ class BookingMailer < ActionMailer::Base
 						}]
 			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
-						:content => book_info.location.company.name
+						:content => company.name
 					}
 
 			# => Send mail
@@ -469,6 +471,8 @@ class BookingMailer < ActionMailer::Base
 		if !book_info.location.second_address.blank?
 			second_address = ", " + book_info.location.second_address
 		end
+
+		company = book_info.service_provider.company
 
 		# => Message
 		message = {
@@ -492,7 +496,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:content => company.company_setting.provider_preference == 2 ? "" : book_info.service_provider.public_name
 				},
 				{
 					:name => 'BSTART',
@@ -500,11 +504,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => book_info.location.company.company_setting.signature
+					:content => company.company_setting.signature
 				},
 				{
 					:name => 'COMPANYNAME',
-					:content => book_info.service_provider.company.name
+					:content => company.name
 				},
 				{
 					:name => 'URL',
@@ -512,7 +516,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'DOMAIN',
-					:content => book_info.location.company.country.domain
+					:content => company.country.domain
 				}
 			],
 			:merge_vars => [],
@@ -527,11 +531,11 @@ class BookingMailer < ActionMailer::Base
 		}
 
 		# => Logo empresa
-		if !book_info.location.company.logo.email.url.include? "logo_vacio"
+		if !company.logo.email.url.include? "logo_vacio"
 			message[:images] = [{
 							:type => 'image/png',
 							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
+							:content => Base64.encode64(File.read('public' + company.logo.email.url.to_s))
 						}]
 		end
 
@@ -596,19 +600,19 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Email notificacion compañia
-		company_emails = NotificationEmail.where(company: book_info.location.company, receptor_type: 0).select(:email).distinct
+		company_emails = NotificationEmail.where(company: company, receptor_type: 0).select(:email).distinct
 		if book_info.web_origin
 			company_emails = company_emails.where(confirmed_web: true)
 		else
 			company_emails = company_emails.where(confirmed: true)
 		end
-		company_emails.each do |company|
+		company_emails.each do |company_emails|
 			message[:to] = [{
-							:email => company.email,
+							:email => company_emails.email,
 							:type => 'bcc'
 						}]
 			message[:merge_vars] = [{
-							:rcpt => company.email,
+							:rcpt => company_emails.email,
 							:vars => [
 								{
 									:name => 'COMPANYCOMMENT',
@@ -618,7 +622,7 @@ class BookingMailer < ActionMailer::Base
 						}]
 			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
-						:content => book_info.location.company.name
+						:content => company.name
 					}
 
 			# => Send mail
@@ -631,11 +635,13 @@ class BookingMailer < ActionMailer::Base
 		template_name = 'Cancel Booking'
 		template_content = []
 
+		company = book_info.service_provider.company
+
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
-			:from_name => book_info.service_provider.company.name,
-			:subject => 'Reserva Cancelada en ' + book_info.service_provider.company.name,
+			:from_name => company.name,
+			:subject => 'Reserva Cancelada en ' + company.name,
 			:to => [],
 			:headers => { 'Reply-To' => book_info.location.email },
 			:global_merge_vars => [
@@ -645,7 +651,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'COMPANYNAME',
-					:content => book_info.service_provider.company.name
+					:content => company.name
 				},
 				{
 					:name => 'CLIENTNAME',
@@ -653,7 +659,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:content => company.company_setting.provider_preference == 2 ? "" : book_info.service_provider.public_name
 				},
 				{
 					:name => 'SERVICENAME',
@@ -665,11 +671,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => book_info.location.company.company_setting.signature
+					:content => company.company_setting.signature
 				},
 				{
 					:name => 'DOMAIN',
-					:content => book_info.location.company.country.domain
+					:content => company.country.domain
 				}
 			],
 			:merge_vars => [],
@@ -684,11 +690,11 @@ class BookingMailer < ActionMailer::Base
 		}
 
 		# => Logo empresa
-		if !book_info.location.company.logo.email.url.include? "logo_vacio"
+		if !company.logo.email.url.include? "logo_vacio"
 			message[:images] = [{
 							:type => 'image/png',
 							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
+							:content => Base64.encode64(File.read('public' + company.logo.email.url.to_s))
 						}]
 		end
 
@@ -799,19 +805,19 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Email notificacion compañia
-		company_emails = NotificationEmail.where(company: book_info.location.company, receptor_type: 0).select(:email).distinct
+		company_emails = NotificationEmail.where(company: company, receptor_type: 0).select(:email).distinct
 		if book_info.web_origin
 			company_emails = company_emails.where(canceled_web: true)
 		else
 			company_emails = company_emails.where(canceled: true)
 		end
-		company_emails.each do |company|
+		company_emails.each do |company_emails|
 			message[:to] = [{
-							:email => company.email,
+							:email => company_emails.email,
 							:type => 'bcc'
 						}]
 			message[:merge_vars] = [{
-							:rcpt => company.email,
+							:rcpt => company_emails.email,
 							:vars => [
 								{
 									:name => 'COMPANYCOMMENT',
@@ -821,7 +827,7 @@ class BookingMailer < ActionMailer::Base
 						}]
 			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
-						:content => book_info.location.company.name
+						:content => company.name
 					}
 
 			# => Send mail
@@ -834,11 +840,13 @@ class BookingMailer < ActionMailer::Base
 		template_name = 'Booking Reminder'
 		template_content = []
 
+		company = book_info.service_provider.company
+
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
-			:from_name => book_info.service_provider.company.name,
-			:subject => 'Confirma tu reserva en ' + book_info.service_provider.company.name,
+			:from_name => company.name,
+			:subject => 'Confirma tu reserva en ' + company.name,
 			:to => [],
 			:headers => { 'Reply-To' => book_info.location.email },
 			:global_merge_vars => [
@@ -848,7 +856,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'COMPANYNAME',
-					:content => book_info.service_provider.company.name
+					:content => company.name
 				},
 				{
 					:name => 'CLIENTNAME',
@@ -856,7 +864,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:content => company.company_setting.provider_preference == 2 ? "" : book_info.service_provider.public_name
 				},
 				{
 					:name => 'SERVICENAME',
@@ -868,11 +876,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => book_info.location.company.company_setting.signature
+					:content => company.company_setting.signature
 				},
 				{
 					:name => 'DOMAIN',
-					:content => book_info.location.company.country.domain
+					:content => company.country.domain
 				}
 			],
 			:merge_vars => [],
@@ -896,11 +904,11 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# => Logo empresa
-		if !book_info.location.company.logo.email.url.include? "logo_vacio"
+		if !company.logo.email.url.include? "logo_vacio"
 			message[:images][0] = {
 							:type => 'image/png',
 							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
+							:content => Base64.encode64(File.read('public' + company.logo.email.url.to_s))
 						}
 		end
 
@@ -938,13 +946,13 @@ class BookingMailer < ActionMailer::Base
 						  ]
 						}]
 
-			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
+			if company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
 					:content => book_info.marketplace_origin ? book_info.marketplace_url('edit') : booking_edit_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
-			if book_info.location.company.company_setting.can_cancel
+			if company.company_setting.can_cancel
 				message[:merge_vars][0][:vars] << {
 					:name => 'CANCEL',
 					:content => book_info.marketplace_origin ? book_info.marketplace_url('cancel') : booking_cancel_url(:confirmation_code => book_info.confirmation_code)
@@ -961,7 +969,7 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# New subject
-		message[:subject] = 'Recuerda tu reserva en ' + book_info.service_provider.company.name
+		message[:subject] = 'Recuerda tu reserva en ' + company.name
 
 		# Remove arrow
 		message[:images].pop
@@ -1013,14 +1021,14 @@ class BookingMailer < ActionMailer::Base
 		end
 
 		# Email notificacion compañia
-		company_emails = NotificationEmail.where(company_id: Company.where(id: book_info.location.company.id, active: true), receptor_type: 0, summary: false).select(:email).distinct
-		company_emails.each do |company|
+		company_emails = NotificationEmail.where(company_id: Company.where(id: company.id, active: true), receptor_type: 0, summary: false).select(:email).distinct
+		company_emails.each do |company_emails|
 			message[:to] = [{
-							:email => company.email,
+							:email => company_emails.email,
 							:type => 'bcc'
 						}]
 			message[:merge_vars] = [{
-							:rcpt => company.email,
+							:rcpt => company_emails.email,
 							:vars => [
 								{
 									:name => 'COMPANYCOMMENT',
@@ -1030,7 +1038,7 @@ class BookingMailer < ActionMailer::Base
 						}]
 			message[:global_merge_vars][3] = {
 						:name => 'SERVICEPROVIDER',
-						:content => book_info.location.company.name
+						:content => company.name
 					}
 
 			# => Send mail
@@ -1957,11 +1965,12 @@ class BookingMailer < ActionMailer::Base
 		template_name = 'Admin Session Booking'
 		template_content = []
 
+		company = book_info.service_provider.company
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
-			:from_name => book_info.service_provider.company.name,
-			:subject => 'Nueva Reserva en ' + book_info.service_provider.company.name,
+			:from_name => company.name,
+			:subject => 'Nueva Reserva en ' + company.name,
 			:to => [],
 			:headers => { 'Reply-To' => book_info.location.email },
 			:global_merge_vars => [
@@ -1971,7 +1980,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'COMPANYNAME',
-					:content => book_info.service_provider.company.name
+					:content => company.name
 				},
 				{
 					:name => 'CLIENTNAME',
@@ -1979,7 +1988,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SERVICEPROVIDER',
-					:content => book_info.service_provider.public_name
+					:content => company.company_setting.provider_preference == 2 ? "" : book_info.service_provider.public_name
 				},
 				{
 					:name => 'SERVICENAME',
@@ -1991,11 +2000,11 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'SIGNATURE',
-					:content => book_info.location.company.company_setting.signature
+					:content => company.company_setting.signature
 				},
 				{
 					:name => 'DOMAIN',
-					:content => book_info.location.company.country.domain
+					:content => company.country.domain
 				}
 			],
 			:merge_vars => [],
@@ -2010,18 +2019,18 @@ class BookingMailer < ActionMailer::Base
 			:attachments => [
 				{
 					:type => 'text/calendar',
-					:name => book_info.service.name + ' - ' + book_info.service_provider.company.name + '.ics',
+					:name => book_info.service.name + ' - ' + company.name + '.ics',
 					:content => Base64.encode64(book_info.generate_ics.export())
 				}
 			]
 		}
 
 		# => Logo empresa
-		if !book_info.location.company.logo.email.url.include? "logo_vacio"
+		if !company.logo.email.url.include? "logo_vacio"
 			message[:images] = [{
 							:type => 'image/png',
 							:name => 'LOGO',
-							:content => Base64.encode64(File.read('public' + book_info.location.company.logo.email.url.to_s))
+							:content => Base64.encode64(File.read('public' + company.logo.email.url.to_s))
 						}]
 		end
 
@@ -2063,13 +2072,13 @@ class BookingMailer < ActionMailer::Base
 							]
 						}]
 
-			if book_info.location.company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
+			if company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
 				message[:merge_vars][0][:vars] << {
 					:name => 'EDIT',
 					:content => book_info.marketplace_origin ? book_info.marketplace_url('edit') : booking_edit_url(:confirmation_code => book_info.confirmation_code)
 				}
 			end
-			if book_info.location.company.company_setting.can_cancel
+			if company.company_setting.can_cancel
 				message[:merge_vars][0][:vars] << {
 					:name => 'CANCEL',
 					:content => book_info.marketplace_origin ? book_info.marketplace_url('cancel') : booking_cancel_url(:confirmation_code => book_info.confirmation_code)
