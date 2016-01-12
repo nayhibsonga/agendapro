@@ -166,12 +166,27 @@ class ServicesController < ApplicationController
   def location_services
     categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(:order, :name)
     services = Service.where(:active => true).order(:order, :name).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(:order, :name)
+    bundles = Bundle.where(id: ServiceBundle.where(service_id: services.pluck(:id)).pluck(:bundle_id))
 
     services_hash = []
 
     services.each do |service|
-      service_hash = service.attributes.to_options
+      service_hash = service.attributes.merge({'bundle' => false, 'bundle_services' => []}).to_options
       service_hash['service_category_name'] = service.service_category.name
+      services_hash << service_hash
+    end
+
+    bundles.each do |bundle|
+      service_bundles_array = []
+      bundle.service_bundles.each do |service_bundle|
+        bundle_service_providers_array = []
+        service_bundle.service.service_providers.where(active: true, location_id: params[:location]).each do |service_provider|
+          bundle_service_providers_array.push({'id' => service_provider.id, 'public_name' => service_provider.public_name})
+        end
+        service_bundles_array.push(service_bundle.attributes.merge({'service_name' => service_bundle.service.name, 'service_duration' => service_bundle.service.duration, 'service_providers' => bundle_service_providers_array}))
+      end
+      service_hash = bundle.attributes.merge({'bundle' => true, 'duration' => bundle.services.sum(:duration), 'service_bundles' => service_bundles_array }).to_options
+      service_hash['service_category_name'] = bundle.service_category.name
       services_hash << service_hash
     end
 

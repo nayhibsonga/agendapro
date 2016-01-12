@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160105174512) do
+ActiveRecord::Schema.define(version: 20160112132635) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "banks", force: true do |t|
@@ -146,8 +146,10 @@ ActiveRecord::Schema.define(version: 20160105174512) do
     t.integer  "treatment_promo_id"
     t.integer  "last_minute_promo_id"
     t.boolean  "bundled",                default: false
+    t.integer  "bundle_id"
   end
 
+  add_index "bookings", ["bundle_id"], name: "index_bookings_on_bundle_id", using: :btree
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
   add_index "bookings", ["deal_id"], name: "index_bookings_on_deal_id", using: :btree
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
