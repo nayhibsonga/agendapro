@@ -1691,8 +1691,6 @@ class BookingsController < ApplicationController
 
   def provider_booking
     statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"]
-    backColors = ["#cacaca", "#77d0fa", "#fbe09f", "#fab5fb", "#adf0d1", "#FAFCAF", "#fbc1b3", "#a6a5a5"]
-    textColors = ["#707070", "#0b587d", "#a78a47", "#8e508f", "#4c8b6e", "#505205", "#a15240", "#737373"]
     if params[:provider] != "0"
       @providers = ServiceProvider.where(:id => params[:provider])
     else
@@ -1778,11 +1776,8 @@ class BookingsController < ApplicationController
         end
 
 
-        backColor = backColors[booking.status_id]
-        textColor = textColors[booking.status_id]
         if booking.is_session && booking.is_session_booked && !booking.user_session_confirmed
-          textColor = "#DFDBDB"
-          backColor = "#105E82"
+          originClass += ' session'
         end
 
         event = {
@@ -1792,9 +1787,6 @@ class BookingsController < ApplicationController
           start: booking.start,
           end: booking.end,
           resourceId: booking.service_provider_id,
-          # textColor: textColor,
-          # borderColor: textColor,
-          # backgroundColor: backColor,
           className: originClass,
           title_qtip: qtip,
           time_qtip: booking.start.strftime("%H:%M") + ' - ' + booking.end.strftime("%H:%M"),
@@ -1807,7 +1799,6 @@ class BookingsController < ApplicationController
           sessions_ratio_qtip: sessions_ratio,
           identification_number_qtip: booking.client.identification_number ? booking.client.identification_number : ""
         }
-
 
         events.push(event)
       end
@@ -1827,9 +1818,7 @@ class BookingsController < ApplicationController
         start: provider_break.start,
         end: provider_break.end,
         resourceId: provider_break.service_provider_id,
-        textColor: textColors[7],
-        borderColor: textColors[7],
-        backgroundColor: backColors[7]
+        className: 'break'
       }
       events.push(event)
     end
@@ -1852,9 +1841,7 @@ class BookingsController < ApplicationController
         start: start_date,
         end: end_date,
         resourceId: provider.id,
-        textColor: textColors[0],
-        borderColor: textColors[0],
-        backgroundColor: backColors[0]
+        className: 'blocked'
       }
       provider.provider_times.order(:day_id, :open).each do |provider_time|
         offset = (provider_time.day_id - day_number)
@@ -1873,9 +1860,7 @@ class BookingsController < ApplicationController
           start: time_end,
           end: time_start,
           resourceId: provider.id,
-          textColor: textColors[0],
-          borderColor: textColors[0],
-          backgroundColor: backColors[0]
+          className: 'blocked'
         }
       end
       event[:end] = end_date

@@ -1,6 +1,4 @@
 var statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"];
-var backColors = ["#cacaca", "#77d0fa", "#fbe09f", "#fab5fb", "#adf0d1", "#FAFCAF", "#fbc1b3", "#a6a5a5"];
-var textColors = ["#707070", "#0b587d", "#a78a47", "#8e508f", "#4c8b6e", "#505205", "#a15240", "#737373"];
 var resourcesColors = [];
 var servicesJSON;
 
@@ -1163,6 +1161,7 @@ function editDrag(event) {
               event.start = provider_break_json.provider_break.start;
               event.end = provider_break_json.provider_break.end;
               event.resourceId = provider_break_json.provider_break.service_provider_id;
+              event.className = 'break';
               $('#calendar').fullCalendar('updateEvent', event);
             });
           }
@@ -1172,6 +1171,7 @@ function editDrag(event) {
           event.start = provider_break_json.provider_break.start;
           event.end = provider_break_json.provider_break.end;
           event.resourceId = provider_break_json.provider_break.service_provider_id;
+          event.className = 'break';
           $('#calendar').fullCalendar('updateEvent', event);
         });
       };
@@ -1228,12 +1228,9 @@ function editDrag(event) {
               payedState = ' payed';
             }
 
-            var backColor = backColors[booking.status_id];
-            var textColor = textColors[booking.status_id];
             if (booking.is_session && !booking.user_session_confirmed)
             {
-              backColor = "#105E82";
-              textColor = "#DFDBDB";
+              payedState += ' session';
             }
 
             originClass += providerLock + statusIcon[booking.status_id] + payedState;
@@ -1242,9 +1239,6 @@ function editDrag(event) {
             event.start = booking.start;
             event.end = booking.end;
             event.resourceId = booking.service_provider_id;
-            event.textColor = textColor;
-            event.borderColor = textColor;
-            event.backgroundColor = backColor;
             event.className = originClass;
             event.title_qtip = booking.first_name+' '+booking.last_name;
             event.time_qtip = booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16);
@@ -1317,12 +1311,9 @@ function editDrag(event) {
                 payedState = ' payed';
               }
 
-              var backColor = backColors[booking.status_id];
-              var textColor = textColors[booking.status_id];
               if (booking.is_session && !booking.user_session_confirmed)
               {
-                backColor = "#105E82";
-                textColor = "#DFDBDB";
+                payedState += ' session';
               }
 
               originClass += providerLock + statusIcon[booking.status_id] + payedState;
@@ -1331,9 +1322,6 @@ function editDrag(event) {
               event.start = booking.start;
               event.end = booking.end;
               event.resourceId = booking.service_provider_id;
-              event.textColor = textColor;
-              event.borderColor = textColor;
-              event.backgroundColor = backColor;
               event.className = originClass;
               event.title_qtip = booking.first_name+' '+booking.last_name;
               event.time_qtip = booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16);
@@ -1424,18 +1412,15 @@ function saveBooking(typeURL, extraURL) {
             if (booking.web_origin) {
               originClass = 'origin-web';
             };
-            var backColor = backColors[booking.status_id];
-            var textColor = textColors[booking.status_id];
-            if (booking.is_session && !booking.user_session_confirmed)
-            {
-              backColor = "#105E82";
-              textColor = "#DFDBDB";
-            }
 
             var payedState = '';
             if (booking.payed_state)
             {
               payedState = ' payed';
+            }
+            if (booking.is_session && !booking.user_session_confirmed)
+            {
+              payedState += ' session';
             }
 
             originClass += providerLock + statusIcon[booking.status_id] + payedState;
@@ -1443,9 +1428,6 @@ function saveBooking(typeURL, extraURL) {
             event.start = booking.start;
             event.end = booking.end;
             event.resourceId = booking.service_provider_id;
-            event.textColor = textColor;
-            event.borderColor = textColor;
-            event.backgroundColor = backColor;
             event.className = originClass;
             event.title_qtip = booking.first_name+' '+booking.last_name;
             event.time_qtip = booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16);
@@ -1550,12 +1532,9 @@ function saveBookingBuffer () {
           }
 
           originClass += providerLock + statusIcon[booking.status_id] + payedState;
-          var backColor = backColors[booking.status_id];
-          var textColor = textColors[booking.status_id];
           if (booking.is_session && !booking.user_session_confirmed)
           {
-            backColor = "#174F69";
-            textColor = "#DFDBDB";
+            originClass += ' session';
           }
           var events = {
             id: booking.id,
@@ -1564,9 +1543,6 @@ function saveBookingBuffer () {
             start: booking.start,
             end: booking.end,
             resourceId: booking.service_provider_id,
-            textColor: textColor,
-            borderColor: textColor,
-            backgroundColor: backColor,
             className: originClass,
             title_qtip: booking.first_name+' '+booking.last_name,
             time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
@@ -1636,12 +1612,9 @@ function saveBookingBuffer () {
 
                 var originClass = 'origin-manual';
                 originClass += providerLock + statusIcon[booking.status_id] + payedState;
-                var backColor = backColors[booking.status_id];
-                var textColor = textColors[booking.status_id];
                 if (booking.is_session && !booking.user_session_confirmed)
                 {
-                  backColor = "#105E82";
-                  textColor = "#DFDBDB";
+                  originClass += ' session';
                 }
                 var events = {
                   id: booking.id,
@@ -1650,9 +1623,6 @@ function saveBookingBuffer () {
                   start: booking.start,
                   end: booking.end,
                   resourceId: booking.service_provider_id,
-                  textColor: textColor,
-                  borderColor: textColor,
-                  backgroundColor: backColor,
                   className: originClass,
                   title_qtip: booking.first_name+' '+booking.last_name,
                   time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
@@ -1751,9 +1721,7 @@ function saveBreak (typeURL, extraURL) {
                 start: provider_break.start,
                 end: provider_break.end,
                 resourceId: parseInt(provider_break.service_provider_id),
-                textColor: textColors[7],
-                borderColor: textColors[7],
-                backgroundColor: backColors[7]
+                className: 'break'
               };
               if (provider_break.warnings && provider_break.warnings.length > 0) {
                 for (i in provider_break.warnings) {
@@ -1780,9 +1748,7 @@ function saveBreak (typeURL, extraURL) {
                   start: provider_break.start,
                   end: provider_break.end,
                   resourceId: parseInt(provider_break.service_provider_id),
-                  textColor: textColors[7],
-                  borderColor: textColors[7],
-                  backgroundColor: backColors[7]
+                  className: 'break'
                 };
                 if (provider_break.warnings && provider_break.warnings.length > 0) {
                   for (i in provider_break.warnings) {
@@ -1833,9 +1799,7 @@ function saveBreak (typeURL, extraURL) {
                 start: provider_break.start,
                 end: provider_break.end,
                 resourceId: parseInt(provider_break.service_provider_id),
-                textColor: textColors[7],
-                borderColor: textColors[7],
-                backgroundColor: backColors[7]
+                className: 'break'
               };
               $('#calendar').fullCalendar('renderEvent', events, true);
             };
@@ -1957,9 +1921,7 @@ function editRepeatBreak(breakId) {
             start: provider_break.start,
             end: provider_break.end,
             resourceId: parseInt(provider_break.service_provider_id),
-            textColor: textColors[7],
-            borderColor: textColors[7],
-            backgroundColor: backColors[7]
+            className: 'break'
           };
           $('#calendar').fullCalendar('renderEvent', events, true);
         };
