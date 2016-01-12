@@ -27,14 +27,8 @@
       </div>
 
       <div style="padding: 50px; font-size: 26px">
-        <%= form_tag('/email_content/upload', multipart: true) do %>
-          <%= file_field_tag :file %>
-          <%= submit_tag 'SUBETE!' %>
-        <% end %>
 
-
-
-
+      <input type="file" nv-file-select uploader="ec.uploader"/>
 
       </div>
 
