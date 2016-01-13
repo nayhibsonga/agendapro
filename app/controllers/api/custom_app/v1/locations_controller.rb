@@ -3,7 +3,7 @@ module Api
   module V1
   	class LocationsController < V1Controller
       def index
-      	@locations = Location.where(active: true, online_booking: true, company_id: @api_company)
+      	@locations = Location.where(active: true, online_booking: true, company_id: @api_company.id)
       	@lat = "-33.4052419" 
 				@lng = "-70.597557"
 
