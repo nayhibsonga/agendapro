@@ -4,7 +4,7 @@ module Api
 		before_filter :check_api_key
 		
 		def check_api_key
-			if request.headers['Token'] != '5ef724454a1a642b369fe92ef1700c37'
+			if request.headers['Token'] != '5r1t5yldv4efktg8bkkm7vvmhqmw30'
 				return render json: {error: 'Not valid API Token.'}, status: 498
 			end
 		end
