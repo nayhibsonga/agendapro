@@ -22,6 +22,8 @@ module Api
 				@results = Array.new
       	@locations = Location.where(active: true, online_booking: true, company_id: @api_company.id).select('locations.*, sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)').order('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)')
 
+      	Rails.logger.info @locations.inspect
+
 				# First, search services with promotions based on time of book (morning, afternoon, night)
 
 				time_query = @locations
@@ -62,10 +64,7 @@ module Api
 									end
 								end
 							end
-
-						end
-
-						
+						end						
 					end
 				end
       end
