@@ -188,7 +188,7 @@
                         <% logs.each do |log| %>
                           <% punto_pago = PuntoPagosConfirmation.where(:trx_id => log.trx_id, :response => "00").first %>
                           <% pay_u = PayUNotification.where(:reference_sale => log.trx_id, :state_pol => "4").first %>
-                          <% if punto_pago.blank? %>
+                          <% if punto_pago.blank? && pay_u.blank? %>
                             <% punto_pago_fail = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
                             <tr style="background-color: #fd633f;">
                               
