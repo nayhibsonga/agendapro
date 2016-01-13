@@ -1095,10 +1095,11 @@ function deleteBooking(eventId) {
 }
 
 function jsonBooking() {
-  var date = new Date($('#datePicker').val());
+  var booking_date = objectToDate($('#datePicker').val());
+  window.console.log(booking_date);
   var jsBooking = {
-    "start": date.toISOString().slice(0, 10) +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z",
-    "end": date.toISOString().slice(0, 10) +"T"+ $('#bookingEndHour').val() +":"+ $('#bookingEndMinute').val() +":00Z",
+    "start": booking_date.toISOString().slice(0, 10) +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z",
+    "end": booking_date.toISOString().slice(0, 10) +"T"+ $('#bookingEndHour').val() +":"+ $('#bookingEndMinute').val() +":00Z",
     "service_provider_id": parseInt($('#booking_service_provider_id').val()),
     "service_id": parseInt($('#booking_service_id').val()),
     "status_id": parseInt($('#booking_status_id').val()),
@@ -2448,6 +2449,26 @@ function modalChange() {
       }
     }
   }
+}
+
+function objectToDate(date) {
+  parts = [null, null, null];
+  if ( date instanceof Date) {
+    return date;
+  }
+  else if(!isNaN(new Date(date))) {
+    return new Date(date);
+  }
+  else if (date.indexOf('-') > -1) {
+    parts = date.split("-");
+  }
+  else if (date.indexOf('/') > -1) {
+    parts = date.split("/");
+  }
+  var dt = new Date(parseInt(parts[2], 10),
+    parseInt(parts[1], 10) - 1,
+    parseInt(parts[0], 10));
+  return dt;
 }
 
 function setAge() {
