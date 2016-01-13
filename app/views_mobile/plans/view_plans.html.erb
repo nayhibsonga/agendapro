@@ -1089,38 +1089,10 @@
 <section>
   <div class="container">
     <div class="row text-center">
-      <h3><%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:company => true), :class => "btn-orange" %></h3>
+      <h3><%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:company => true), :class => "btn btn-orange" %></h3>
     </div>
   </div>
 </section>
-
-<!-- <section class="green-background">
-  <div class="pricing_wrapper">
-    <div class="container">
-      <div class="row">
-        <% @plans.each do |plan| %>
-        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-          <div class="pricing_plan <%= 'special' if plan.special %>">
-            <%= image_tag "home/elmaspopular.png", :alt => "Special Tag", :class => "img-responsive special_tag", size: "86x127" %>
-            <h3><strong><%= plan.name %></strong></h3>
-            <hr class="pricing-hr">
-            <div class="the_price"><span><%= @country.currency_code %> $</span><%= number_with_precision(plan.plan_countries.find_by(country_id: @country.id).price, precision: 0, separator: '', delimiter: '.') %><small>/Mes<br>(+ IVA)</small></div>
-            <div class="the_offerings">
-              <p>
-                <strong>¡Primer mes GRATIS!</strong><br />
-                <strong><%= plan.locations %></strong> Local(es)<br />
-                <strong><%= plan.service_providers %></strong> Staffs<br />
-                <strong><%= number_with_delimiter(plan.monthly_mails) %></strong> E-mails publicitarios
-              </p>
-              <br>
-            </div>
-          </div>
-        </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</section> -->
 
 <% content_for :scripts do %>
 <script type="text/javascript">
