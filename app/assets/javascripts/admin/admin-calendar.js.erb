@@ -765,6 +765,17 @@ function editBookingModal(eventId) {
         //$("#xButton").attr("disabled", true);
       }
 
+      var custom_attributes = booking.custom_attributes;
+
+      for(var key in custom_attributes)
+      {
+        console.log(key);
+        console.log(custom_attributes[key]);
+        $('[name="' + key + '"]').val(custom_attributes[key]);
+      }
+
+      console.log(custom_attributes);
+
       $('#bookingModal #myTab').show();
       $('#bookingModal .booking-modal-footer').show();
       $('#bookingModal #payment_client_group').hide();
@@ -1079,6 +1090,17 @@ function deleteBooking(eventId) {
   };
 }
 
+function jsonAttributes()
+{
+  var jsAttributes = {};
+  $('.custom-attribute').each(function(){
+    var attribute_name = $(this).attr("name");
+    var attribute_val = $(this).val();
+    jsAttributes[attribute_name] = attribute_val;
+  });
+  return jsAttributes;
+}
+
 function jsonBooking() {
   var jsBooking = {
     "start": $('#datePicker').val() +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z",
@@ -1111,6 +1133,7 @@ function jsonBooking() {
     "deal_code": $('#booking_deal_code').val(),
     "payed_state": $('#booking_payed_state').val()
   };
+
   if($("#has_sessions").val() == "1")
   {
     jsBooking["session_booking_id"] = $('[name="sessions-choice"]:checked').val();
@@ -1389,11 +1412,12 @@ function editDrag(event) {
 
 function saveBooking(typeURL, extraURL) {
   var bookingJSON = jsonBooking();
+  var attributesJSON = jsonAttributes();
   if (typeURL == 'POST') {
     $.ajax({
       type: 'POST',
       url: '/booking_valid.json',
-      data: { "booking": bookingJSON },
+      data: { "booking": bookingJSON},
       dataType: 'json',
       success: function (result) {
         bookingBuffer.push(bookingJSON);
@@ -1409,7 +1433,7 @@ function saveBooking(typeURL, extraURL) {
     $.ajax({
       type: typeURL,
       url: '/bookings'+ extraURL +'.json',
-      data: { "booking": bookingJSON },
+      data: { "booking": bookingJSON, "custom_attributes": attributesJSON },
       dataType: 'json',
       success: function(booking){
         switch(typeURL) {
@@ -1526,10 +1550,11 @@ function saveBooking(typeURL, extraURL) {
 }
 
 function saveBookingBuffer () {
+  var attributesJSON = jsonAttributes();
   $.ajax({
     type: 'POST',
     url: '/bookings.json',
-    data: { "bookings": bookingBuffer },
+    data: { "bookings": bookingBuffer, "custom_attributes": attributesJSON },
     dataType: 'json',
     success: function(bookings){
       $('#bookingAlerts').hide();
@@ -2828,6 +2853,18 @@ $(function() {
       select: function( event, ui ) {
         event.preventDefault();
         var client = eval("(" + ui.item.value + ")");
+
+        var custom_attributes = ui.item.custom_attributes;
+
+        for(var key in custom_attributes)
+        {
+          console.log(key);
+          console.log(custom_attributes[key]);
+          $('[name="' + key + '"]').val(custom_attributes[key]);
+        }
+
+        console.log(custom_attributes);
+
         $('#booking_client_first_name').val(client.first_name);
         $('#booking_client_last_name').val(client.last_name);
         $('#booking_client_phone').val(client.phone);
@@ -2880,6 +2917,18 @@ $(function() {
       select: function( event, ui ) {
         event.preventDefault();
         var client = eval("(" + ui.item.value + ")");
+
+        var custom_attributes = ui.item.custom_attributes;
+
+        for(var key in custom_attributes)
+        {
+          console.log(key);
+          console.log(custom_attributes[key]);
+          $('[name="' + key + '"]').val(custom_attributes[key]);
+        }
+
+        console.log(custom_attributes);
+
         $('#booking_client_first_name').val(client.first_name);
         $('#booking_client_last_name').val(client.last_name);
         $('#booking_client_phone').val(client.phone);
@@ -2933,6 +2982,18 @@ $(function() {
       select: function( event, ui ) {
         event.preventDefault();
         var client = eval("(" + ui.item.value + ")");
+
+        var custom_attributes = ui.item.custom_attributes;
+
+        for(var key in custom_attributes)
+        {
+          console.log(key);
+          console.log(custom_attributes[key]);
+          $('[name="' + key + '"]').val(custom_attributes[key]);
+        }
+
+        console.log(custom_attributes);
+
         $('#booking_client_first_name').val(client.first_name);
         $('#booking_client_last_name').val(client.last_name);
         $('#booking_client_phone').val(client.phone);
@@ -3032,6 +3093,11 @@ $(function() {
     });
 
     $('#xButton').click(function() {
+
+      $('.custom-attribute').each(function(){
+        $(this).val('');
+      });
+
       $('#booking_client_first_name').val('');
       $('#booking_client_last_name').val('');
       $('#booking_client_phone').val('');
@@ -3125,6 +3191,23 @@ $(function() {
       {
         $('#break_repeat_weeks_div').hide();
       }
+    });
+
+    $(".attribute_datepicker").datepicker({
+      dateFormat: 'dd/mm/yy',
+      autoSize: true,
+      firstDay: 1,
+      changeMonth: true,
+      changeYear: true,
+      monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+          prevText: 'Atrás',
+          nextText: 'Adelante',
+          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+          today: 'Hoy',
+          clear: ''
     });
 
 

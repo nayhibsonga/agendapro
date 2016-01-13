@@ -265,11 +265,17 @@ $(function() {
 
     swal({
       title: "¿Estás seguro que deseas eliminar la carpeta? Se eliminarán todos los archivos que contiene.",
-      type: "warning"
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar'
     },
     function (isConfirm) {
-      $('#delete_folder_name').val(folder_name);
-      $('#client_delete_folder_form').submit();
+      if(isConfirm)
+      {
+        $('#delete_folder_name').val(folder_name);
+        $('#client_delete_folder_form').submit();
+      }
     });
 
   });

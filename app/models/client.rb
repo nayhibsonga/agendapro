@@ -21,6 +21,98 @@ class Client < ActiveRecord::Base
 
   after_update :client_notification
 
+  def get_custom_attributes
+
+    custom_attributes = {}
+
+    self.company.custom_attributes.each do |attribute|
+
+      case attribute.datatype
+      when "float"
+        
+        float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !float_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = float_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = nil
+        end
+
+      when "integer"
+        
+        integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !integer_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = integer_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = nil
+        end
+
+      when "text"
+        
+        text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !text_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = text_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = ""
+        end
+
+      when "textarea"
+        
+        textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !textarea_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = textarea_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = ""
+        end
+
+      when "boolean"
+
+        boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !boolean_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = boolean_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = false
+        end
+
+      when "date"
+        
+        date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !date_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = date_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = nil
+        end
+
+      when "datetime"
+
+        datetime_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !datetime_attribute.nil? && !datetime_attribute.value.nil?
+          datetime_val = datetime_attribute.value.strftime("%d/%m/%Y %R")
+          custom_attributes[attribute.slug + "_attribute"] = datetime_val.split(" ")[0]
+          custom_attributes[attribute.slug + "_attribute_hour"] = datetime_val.split(" ")[1].split(":")[0]
+          custom_attributes[attribute.slug + "_attribute_minute"] = datetime_val.split(" ")[1].split(":")[1]
+        else
+          custom_attributes[attribute.slug + "_attribute"] = ""
+          custom_attributes[attribute.slug + "_attribute_hour"] = nil
+          custom_attributes[attribute.slug + "_attribute_minute"] = nil
+        end
+
+      when "categoric"
+
+        categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !categoric_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = categoric_attribute.attribute_category_id
+        else
+          custom_attributes[attribute.slug + "_attribute"] = attribute.attribute_categories.where(category: "Otra").id
+        end
+
+      end
+
+    end
+
+    return custom_attributes
+
+  end
+
   def save_attributes(params)
 
     self.company.custom_attributes.each do |attribute|
@@ -71,7 +163,7 @@ class Client < ActiveRecord::Base
 
       when "boolean"
 
-        if param_value == 1 || param_value == "1"
+        if param_value == 1 || param_value == "1" || param_value == true
           param_boolean = true
         else
           param_boolean = false
@@ -100,7 +192,10 @@ class Client < ActiveRecord::Base
         date_hour = params[attribute.slug + "_attribute_hour"]
         date_minute = params[attribute.slug + "_attribute_minute"]
 
-        complete_datetime = param_value + " " + date_hour + ":" + date_minute + ":00"
+        complete_datetime = nil
+        if !param_value.nil?
+          complete_datetime = param_value + " " + date_hour + ":" + date_minute + ":00"
+        end
 
         date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if date_time_attribute.nil?
@@ -146,6 +241,108 @@ class Client < ActiveRecord::Base
 
         end
 
+
+      when "categoric"
+
+        categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if categoric_attribute.nil?
+          CategoricAttribute.create(attribute_id: attribute.id, client_id: self.id, attribute_category_id: param_value)
+        else
+          categoric_attribute.attribute_category_id = param_value
+          categoric_attribute.save
+        end
+
+      end
+
+    end
+
+  end
+
+  def save_attributes_from_import(params)
+
+    self.company.custom_attributes.each do |attribute|
+
+      str_sm = attribute.slug
+      param_value = params[str_sm]
+
+      case attribute.datatype
+      when "float"
+        
+        float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if float_attribute.nil?
+          float_attribute = FloatAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          float_attribute.value = param_value
+          float_attribute.save
+        end
+
+      when "integer"
+        
+        integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if integer_attribute.nil?
+          IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          integer_attribute.value = param_value
+          integer_attribute.save
+        end
+
+      when "text"
+        
+        text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if text_attribute.nil?
+          TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          text_attribute.value = param_value
+          text_attribute.save
+        end
+
+      when "textarea"
+        
+        textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if textarea_attribute.nil?
+          TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          textarea_attribute.value = param_value
+          textarea_attribute.save
+        end
+
+      when "boolean"
+
+        if param_value == 1 || param_value == "1" || param_value == true
+          param_boolean = true
+        else
+          param_boolean = false
+        end
+
+        boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if boolean_attribute.nil?
+          BooleanAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_boolean)
+        else
+          boolean_attribute.value = param_boolean
+          boolean_attribute.save
+        end
+
+      when "date"
+        
+        date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if date_attribute.nil?
+          DateAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          date_attribute.value = param_value
+          date_attribute.save
+        end
+
+      when "datetime"
+        
+        complete_datetime = param_value
+
+        date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if date_time_attribute.nil?
+          DateTimeAttribute.create(attribute_id: attribute.id, client_id: self.id, value: complete_datetime)
+        else
+          date_time_attribute.value = complete_datetime
+          date_time_attribute.save
+        end
 
       when "categoric"
 
@@ -505,6 +702,9 @@ class Client < ActiveRecord::Base
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
     spreadsheet = open_spreadsheet(file)
+
+    company = Company.find(company_id)
+
     if !spreadsheet.nil?
       header = spreadsheet.row(1)
       (2..spreadsheet.last_row).each do |i|
@@ -572,36 +772,73 @@ class Client < ActiveRecord::Base
           row["identification_number"] = row["identification_number"].to_s.chomp('.0')
         end
 
+        custom_params = Hash.new
         #Check for custom attributes
-        self.company.custom_attributes.each do |attribute|
+        company.custom_attributes.each do |attribute|
 
           case attribute.datatype
           when "float"
             if row[attribute.slug].present?
-              row[attribute.slug] = row[attribute.slug].to_f
+              custom_params[attribute.slug] = row[attribute.slug].to_f
+            else
+              custom_params[attribute.slug] = nil
             end
           when "integer"
             if row[attribute.slug].present?
-              row[attribute.slug] = row[attribute.slug].to_i
+              custom_params[attribute.slug] = row[attribute.slug].to_i
+            else
+              custom_params[attribute.slug] = nil
+            end
+          when "boolean"
+            if row[attribute.slug].present?
+              if row[attribute.slug].downcase == "sí" || row[attribute.slug].downcase == "si"
+                custom_params[attribute.slug] = true
+              elsif row[attribute.slug] == "1"
+                custom_params[attribute.slug] = true
+              elsif row[attribute.slug].downcase == "no"
+                custom_params[attribute.slug] = false
+              elsif row[attribute.slug].downcase == "0"
+                custom_params[attribute.slug] = false
+              else
+                custom_params[attribute.slug] = false
+              end
+            else
+              custom_params[attribute.slug] = nil
             end
           when "text"
             if row[attribute.slug].present?
-              row[attribute.slug] = row[attribute.slug].to_s.chomp('.0').strip
+              custom_params[attribute.slug] = row[attribute.slug].to_s.chomp('.0').strip
+            else
+              custom_params[attribute.slug] = ""
             end
           when "textarea"
             if row[attribute.slug].present?
-              row[attribute.slug] = row[attribute.slug].to_s.chomp('.0').strip
+              custom_params[attribute.slug] = row[attribute.slug].to_s.chomp('.0').strip
+            else
+              custom_params[attribute.slug] = ""
             end
           when "date"
-          when "datetime"
-          when "categoric"
             if row[attribute.slug].present?
-              row[attribute.slug] = row[attribute.slug].to_s.chomp('.0').strip
-              cat_id = attribute.check_categories(row[attribute.slug])
+              custom_params[attribute.slug] = row[attribute.slug].to_date rescue nil
+            else
+              custom_params[attribute.slug] = nil
             end
+          when "datetime"
+            if row[attribute.slug].present?
+              custom_params[attribute.slug] = row[attribute.slug].to_datetime rescue nil
+            else
+              custom_params[attribute.slug] = nil
+            end
+          when "categoric"
+            cat_str = row[attribute.slug].to_s.chomp('.0').strip
+            cat_id = attribute.check_categories(cat_str)
+            custom_params[attribute.slug] = cat_id
           end
 
         end
+
+        "Custom params: "
+        puts custom_params.to_s
 
         if row["identification_number"].present? && Client.where(identification_number: row["identification_number"], company_id: company_id).count > 0
           client = Client.where(identification_number: row["identification_number"], company_id: company_id).first
@@ -617,7 +854,9 @@ class Client < ActiveRecord::Base
         if company_id
           client.company_id = company_id
         end
-        client.save
+        if client.save
+          client.save_attributes_from_import(custom_params)
+        end
       end
       message = "Clientes importados exitosamente."
     else
@@ -632,4 +871,5 @@ class Client < ActiveRecord::Base
     when ".xlsx" then Roo::Excelx.new(file.path, file_warning: :ignore)
     end
   end
+
 end

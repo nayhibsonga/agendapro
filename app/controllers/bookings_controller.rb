@@ -94,7 +94,7 @@ class BookingsController < ApplicationController
     after_book_date = DateTime.now + u.service.company.company_setting.after_booking.months
     after_book_date = I18n.l after_book_date.to_date, format: :day
 
-    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id}
+    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id, :custom_attributes => u.client.get_custom_attributes}
     respond_to do |format|
       format.html { }
       format.json { render :json => @booking_json }
@@ -273,6 +273,7 @@ class BookingsController < ApplicationController
           @client.second_phone = buffer_params[:client_second_phone]
           @client.gender = buffer_params[:client_gender]
           @client.save
+          @client.save_attributes(params[:custom_attributes])
           if User.find_by_email(@client.email)
             new_booking_params[:user_id] = User.find_by_email(@client.email).id
           end
@@ -302,6 +303,7 @@ class BookingsController < ApplicationController
           @client.second_phone = buffer_params[:client_second_phone]
           @client.gender = buffer_params[:client_gender]
           if @client.save
+            @client.save_attributes(params[:custom_attributes])
             if User.find_by_email(@client.email)
               new_booking_params[:user_id] = User.find_by_email(@client.email).id
             end
@@ -316,10 +318,12 @@ class BookingsController < ApplicationController
             if buffer_params[:client_email].empty?
               if Client.where(email: '', company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => buffer_params[:client_first_name]+' '+buffer_params[:client_last_name]).count > 0
                 client = Client.where(email: '', company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => buffer_params[:client_first_name]+' '+buffer_params[:client_last_name]).first
+                client.save_attributes(params[:custom_attributes])
                 @booking.client = client
               else
                 client = Client.new(email: buffer_params[:client_email], identification_number: buffer_params[:client_identification_number], first_name: buffer_params[:client_first_name], last_name: buffer_params[:client_last_name], phone: buffer_params[:client_phone], address: buffer_params[:client_address], district: buffer_params[:client_district], city: buffer_params[:client_city], birth_day: buffer_params[:client_birth_day], birth_month: buffer_params[:client_birth_month], birth_year: buffer_params[:client_birth_year], age: buffer_params[:client_age], record: buffer_params[:client_record], second_phone: buffer_params[:client_second_phone], gender: buffer_params[:client_gender], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id)
                 if client.save
+                  client.save_attributes(params[:custom_attributes])
                   @booking.client = client
                 else
                   @errors << {
@@ -331,10 +335,12 @@ class BookingsController < ApplicationController
             else
               if Client.where(email: buffer_params[:client_email], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).count > 0
                 client = Client.where(email: buffer_params[:client_email], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).first
+                client.save_attributes(params[:custom_attributes])
                 @booking.client = client
               else
                 client = Client.new(email: buffer_params[:client_email], identification_number: buffer_params[:client_identification_number], first_name: buffer_params[:client_first_name], last_name: buffer_params[:client_last_name], phone: buffer_params[:client_phone], address: buffer_params[:client_address], district: buffer_params[:client_district], city: buffer_params[:client_city], birth_day: buffer_params[:client_birth_day], birth_month: buffer_params[:client_birth_month], birth_year: buffer_params[:client_birth_year], age: buffer_params[:client_age], record: buffer_params[:client_record], second_phone: buffer_params[:client_second_phone], gender: buffer_params[:client_gender], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id)
                 if client.save
+                  client.save_attributes(params[:custom_attributes])
                   @booking.client = client
                 else
                   @errors << {
@@ -1934,7 +1940,7 @@ class BookingsController < ApplicationController
         client.email = params[:email]
         client.phone = params[:phone]
         if client.save
-
+          client.save_attributes(params)
         else
           @errors << client.errors.full_messages
           render layout: "workflow"
@@ -1954,7 +1960,7 @@ class BookingsController < ApplicationController
           client.phone = params[:phone]
           client.identification_number = params[:identification_number]
           if client.save
-
+            client.save_attributes(params)
           else
             @errors << client.errors.full_messages
             render layout: "workflow"
@@ -1963,7 +1969,7 @@ class BookingsController < ApplicationController
         else
           client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], identification_number: params[:identification_number], company_id: @company.id)
           if client.save
-
+            client.save_attributes(params)
           else
             @errors << client.errors.full_messages
             render layout: "workflow"
@@ -1982,7 +1988,7 @@ class BookingsController < ApplicationController
         client.last_name = params[:lastName]
         client.phone = params[:phone]
         if client.save
-
+          client.save_attributes(params)
         else
           @errors << client.errors.full_messages
           render layout: "workflow"
@@ -1991,7 +1997,7 @@ class BookingsController < ApplicationController
       else
         client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
         if client.save
-
+          client.save_attributes(params)
         else
           @errors << client.errors.full_messages
           render layout: "workflow"

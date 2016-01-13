@@ -2698,6 +2698,24 @@ $("#staffCollapse").on("hidden.bs.collapse", function(){
 
 $(function () {
 
+
+	$(".attribute_datepicker").datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    autoSize: true,
+	    firstDay: 1,
+	    changeMonth: true,
+	    changeYear: true,
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	        prevText: 'Atrás',
+	        nextText: 'Adelante',
+	        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	        today: 'Hoy',
+	        clear: ''
+	});
+
 	if ($(window).width() <= 1100)
 	{
 		$("#new-add-service").css("font-size", "17px");

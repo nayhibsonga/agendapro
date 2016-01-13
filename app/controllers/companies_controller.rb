@@ -9,6 +9,7 @@ class CompaniesController < ApplicationController
 	layout "admin", except: [:show, :overview, :workflow, :add_company, :select_hour, :user_data, :select_session_hour, :select_promo_hour]
 	load_and_authorize_resource
 
+	respond_to :html, :json, :xls, :csv
 
 	# GET /companies
 	# GET /companies.json
@@ -1436,6 +1437,12 @@ class CompaniesController < ApplicationController
 		new_folder_name = params[:new_folder_name]
 		old_folder_name = params[:old_folder_name]
 
+		#Do nothing if same folder
+	    if new_folder_name == old_folder_name
+	      redirect_to '/get_company_files', success: 'Carpeta renombrada correctamente'
+	      return
+	    end
+
 		s3 = Aws::S3::Client.new
 
 		old_folder_path = 'companies/' +  @company.id.to_s + '/' + old_folder_name + '/'
@@ -1554,6 +1561,13 @@ class CompaniesController < ApplicationController
 		@company_file = CompanyFile.find(params[:company_file_id])
 		new_folder_name = params[:folder_name]
 
+		#Do nothing if same folder
+		if new_folder_name == @company_file.folder
+			flash[:notice] = 'Archivo movido correctamente'
+			redirect_to '/get_company_files'
+			return
+		end
+
 		new_folder_path = 'companies/' +  @company.id.to_s + '/' + new_folder_name + '/'
 
 		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
@@ -1643,6 +1657,15 @@ class CompaniesController < ApplicationController
 	    	redirect_to '/get_company_files'
 		end
 
+
+	end
+
+
+	def generate_clients_base
+
+		@company = current_user.company
+
+		respond_with(@company)
 
 	end
 

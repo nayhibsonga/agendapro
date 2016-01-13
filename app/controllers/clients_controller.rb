@@ -352,7 +352,8 @@ class ClientsController < ApplicationController
       if client.phone
         desc += client.phone
       end
-      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})
+
+      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json, :custom_attributes => client.get_custom_attributes})
     end
 
     render :json => @clients_arr
@@ -389,7 +390,7 @@ class ClientsController < ApplicationController
       if client.phone
         desc += client.phone
       end
-      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})
+      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json, :custom_attributes => client.get_custom_attributes})
     end
 
     render :json => @clients_arr
@@ -413,7 +414,7 @@ class ClientsController < ApplicationController
       if client.identification_number
         label = client.identification_number
       end
-      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})
+      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json, :custom_attributes => client.get_custom_attributes})
     end
 
     render :json => @clients_arr
@@ -514,6 +515,12 @@ class ClientsController < ApplicationController
     new_folder_name = params[:new_folder_name]
     old_folder_name = params[:old_folder_name]
 
+    #Do nothing if same folder
+    if new_folder_name == old_folder_name
+      redirect_to get_client_files_path(client_id: @client.id), success: 'Carpeta renombrada correctamente'
+      return
+    end
+
     s3 = Aws::S3::Client.new
 
     old_folder_path = 'companies/' +  @company.id.to_s + '/clients/' + @client.id.to_s + '/' + old_folder_name + '/'
@@ -585,6 +592,13 @@ class ClientsController < ApplicationController
     @client = Client.find(params[:client_id])
 
     new_folder_name = params[:folder_name]
+
+    #Do nothing if same folder
+    if new_folder_name == @client_file.folder
+      flash[:notice] = 'Archivo movido correctamente'
+      redirect_to get_client_files_path(client_id: @client.id)
+      return
+    end
 
     new_folder_path = 'companies/' +  @company.id.to_s + '/clients/' + @client.id.to_s + '/' + new_folder_name + '/'
 

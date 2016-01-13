@@ -419,6 +419,8 @@ class Ability
         can :move_file, Client, :company_id => user.company_id
         can :edit_file, Client, :company_id => user.company_id
 
+        can :generate_clients_base, Company, :company_id => user.company_id
+
         can :read, Deal, :company_id => user.company_id
         can :create, Deal, :company_id => user.company_id
         can :update, Deal, :company_id => user.company_id

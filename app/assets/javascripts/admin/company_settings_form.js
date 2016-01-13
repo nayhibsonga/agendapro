@@ -368,6 +368,10 @@ $(function () {
     $('#attributeModal').modal('show');
   });
 
+  $('#attribute_datatype').on('change', function(){
+    
+  });
+
   $('.add_attribute_category_button').on('click', function(e){
     var attribute_id = $(e.currentTarget).data('attributeid');
     $('#existing_categories_subdiv').empty();

@@ -122,10 +122,12 @@ class Attribute < ActiveRecord::Base
 
 	def check_categories(cat_str)
 		if self.datatype != "categoric"
+			return nil
+		elsif cat_str.nil? || cat_str == ""
 			return self.attribute_categories.find_by_category("Otra").id
 		else
 			self.attribute_categories.each do |category|
-				if cat_str.downcase == category.downcase
+				if cat_str.downcase == category.category.downcase
 					return category.id
 				end
 			end
