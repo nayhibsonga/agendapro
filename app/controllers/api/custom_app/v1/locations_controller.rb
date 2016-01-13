@@ -20,9 +20,7 @@ module Api
 				@longitude = @lng
 
 				@results = Array.new
-      	@locations = Location.where(active: true, online_booking: true, company_id: @api_company.id).select('locations.*, sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)').order('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)')
-
-      	Rails.logger.info @locations.inspect
+      	@locations = Location.where(company_id: @api_company.id, online_booking: true, id: ServiceProvider.where(active: true, online_booking: true, id: ServiceStaff.where(service_id: Service.where(online_booking: true, active: true)).pluck(:service_provider_id)).pluck('location_id')).where(company_id: Company.where(:active => true, :owned => true).where(id: CompanySetting.where(:activate_workflow => true).pluck('company_id'))).where(:active => true).select('locations.*, sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)').order('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)')
 
 				# First, search services with promotions based on time of book (morning, afternoon, night)
 
