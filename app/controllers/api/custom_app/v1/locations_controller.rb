@@ -40,7 +40,7 @@ module Api
 				ordered_locs[0] = locs.sort_by{ |loc| loc[1]}
 
 				@results = Array.new
-				@locations = Array.new
+				@locations2 = Array.new
 				@last_minute_results = Array.new
 
 				ordered_locs.each do |arr|
@@ -58,8 +58,8 @@ module Api
 										promo_detail = [service, s[0]]
 										if !@results.include?(promo_detail)
 											@results << promo_detail
-											#if !@locations.include?(s[0])
-											@locations << s[0]
+											#if !@locations2.include?(s[0])
+											@locations2 << s[0]
 										end
 									end
 								end
