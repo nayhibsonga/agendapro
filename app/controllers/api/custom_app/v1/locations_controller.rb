@@ -3,7 +3,6 @@ module Api
   module V1
   	class LocationsController < V1Controller
       def index
-      	@locations = Location.where(active: true, online_booking: true, company_id: @api_company.id)
       	@lat = "-33.4052419" 
 				@lng = "-70.597557"
 
@@ -14,7 +13,6 @@ module Api
 					@lng = params[:longitude]
 				end
 
-
 				lat = @lat
 				long = @lng
 
@@ -22,6 +20,7 @@ module Api
 				@longitude = @lng
 
 				@results = Array.new
+      	@locations = Location.where(active: true, online_booking: true, company_id: @api_company.id).select('locations.*, sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)').order('sqrt((latitude - ' + @latitude.to_s + ')^2 + (longitude - ' + @longitude.to_s + ')^2)')
 
 				# First, search services with promotions based on time of book (morning, afternoon, night)
 

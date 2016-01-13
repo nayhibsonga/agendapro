@@ -1,8 +1,8 @@
 module Api
   class CustomApp::CustomAppController < ApiController
-    before_filter :check_auth_token
+    before_filter :check_company_token
 
-    def check_auth_token
+    def check_company_token
       if !request.headers['Company-Token'].present?
         return render json: {error: 'No company. Token not present.'}, status: 403
       else
