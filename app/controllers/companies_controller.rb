@@ -1426,7 +1426,7 @@ class CompaniesController < ApplicationController
 		s3.put_object(bucket: ENV['S3_BUCKET'], key: full_name)
     	#obj = s3_bucket.object(full_name)
 
-    	redirect_to '/get_company_files', success: 'Carpeta creada correctamente'
+    	redirect_to '/get_company_files', notice: 'Carpeta creada correctamente'
 
 	end
 
@@ -1439,7 +1439,7 @@ class CompaniesController < ApplicationController
 
 		#Do nothing if same folder
 	    if new_folder_name == old_folder_name
-	      redirect_to '/get_company_files', success: 'Carpeta renombrada correctamente'
+	      redirect_to '/get_company_files', notice: 'Carpeta renombrada correctamente'
 	      return
 	    end
 
@@ -1472,7 +1472,7 @@ class CompaniesController < ApplicationController
 		old_folder = s3_bucket.object(old_folder_path)
 		old_folder.delete
 
-		redirect_to '/get_company_files', success: 'Carpeta renombrada correctamente'
+		redirect_to '/get_company_files', notice: 'Carpeta renombrada correctamente'
 
 	end
 
@@ -1502,7 +1502,7 @@ class CompaniesController < ApplicationController
 			old_folder.delete
 		end
 
-		redirect_to '/get_company_files', success: 'Carpeta eliminada correctamente'
+		redirect_to '/get_company_files', notice: 'Carpeta eliminada correctamente'
 
 	end
 
