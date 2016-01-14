@@ -6,6 +6,9 @@ class Client < ActiveRecord::Base
   has_many :bookings, dependent: :destroy
   has_many :payments, dependent: :destroy
 
+  scope :filter_gender, -> gender { where(gender: gender) if gender.present? }
+  scope :filter_status, -> statuses { where(id: Booking.where(status_id: Status.find(statuses)).select(:client_id)) if statuses.present? }
+
   #Se quitó :identification_uniqueness
   validate :mail_uniqueness, :record_uniqueness, :minimun_info
 
@@ -251,9 +254,9 @@ class Client < ActiveRecord::Base
     end
   end
 
-  def self.filter_location(locations, attendace)
+  def self.filter_location(locations, attendance)
     if !locations.blank?
-      if attendace
+      if attendance
         where(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
       else
         where.not(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
@@ -263,9 +266,9 @@ class Client < ActiveRecord::Base
     end
   end
 
-  def self.filter_provider(providers, attendace)
+  def self.filter_provider(providers, attendance)
     if !providers.blank?
-      if attendace
+      if attendance
         where(id: Booking.where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
       else
         where.not(id: Booking.where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
@@ -275,21 +278,13 @@ class Client < ActiveRecord::Base
     end
   end
 
-  def self.filter_service(services, attendace)
+  def self.filter_service(services, attendance)
     if !services.blank?
-      if attendace
+      if attendance
         where(id: Booking.where(service_id: Service.find(services)).select(:client_id))
       else
         where.not(id: Booking.where(service_id: Service.find(services)).select(:client_id))
       end
-    else
-      all
-    end
-  end
-
-  def self.filter_gender(gender)
-    if !gender.blank?
-      where(gender: gender)
     else
       all
     end
@@ -317,21 +312,13 @@ class Client < ActiveRecord::Base
     end
   end
 
-  def self.filter_status(statuses)
-    if !statuses.blank?
-      where(id: Booking.where(status_id: Status.find(statuses)).select(:client_id))
-    else
-      all
-    end
-  end
-
-  def self.filter_range(from, to, attendace)
+  def self.filter_range(from, to, attendance)
     if from.present? and to.present?
       # Transformar string a datetime
       from = Date.parse(from).to_datetime
       to = Date.parse(to).to_datetime
 
-      if attendace
+      if attendance
         where(id: Booking.where('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
       else
         where.not(id: Booking.where('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
