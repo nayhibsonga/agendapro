@@ -703,15 +703,34 @@ function editBookingModal(eventId) {
         $("#is_prepayed").append("No");
       }
 
+      $('#cancelBookingDiv').remove();
       if(booking.bundled)
-      {
+      { 
+        window.console.log($('#booking_status_id').closest('.col-md-6'));
         $('#bundled_service').show();
         $("#is_bundle").html("Sí");
+        $('#booking_status_id').closest('.col-md-6').append(
+          '<div class="form-group" id="cancelBookingDiv">' +
+            '<div class="col-sm-offset-4 col-sm-4">' +
+              '<button type="button" class="btn btn-red btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+', true)" id="cancelBundleButton">Cancelar Paquete</button>' +
+            '</div>' +
+            '<div class="col-sm-4">' +
+              '<button type="button" class="btn btn-red btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+')" id="cancelBookingButton">Cancelar Reserva</button>' +
+            '</div>'+
+          '</div>'
+        );
       }
       else
       {
         $('#bundled_service').hide();
         $("#is_bundle").html("No");
+        $('#booking_status_id').closest('.col-md-6').append(
+          '<div class="form-group" id="cancelBookingDiv">' +
+          '<div class="col-sm-offset-4 col-sm-8">' +
+          '<button type="button" class="btn btn-red btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+')" id="cancelBookingButton">Cancelar Reserva</button>' +
+          '</div>' +
+          '</div>'
+        );
       }
 
       $('.booking-modal-title').empty();
@@ -721,14 +740,6 @@ function editBookingModal(eventId) {
         '<a class="btn btn-white pull-left" href="/bookings/' + eventId + '.pdf">Imprimir</a>' +
         '<button type="button" class="btn btn-default btn-close booking-button" data-dismiss="modal">Cerrar</button>' +
         '<button type="button" id="save_booking_button" class="btn btn-green booking-button" onclick="editBooking('+eventId+')">Guardar</button>'
-      );
-      $('#cancelBookingDiv').remove();
-      $('#booking_status_id').closest('.col-md-6').append(
-        '<div class="form-group" id="cancelBookingDiv">' +
-        '<div class="col-sm-offset-4 col-sm-8">' +
-        '<button type="button" class="btn btn-red btn-ss btn-block booking-button" onclick="deleteBooking('+eventId+')" id="cancelBookingButton">Cancelar Reserva</button>' +
-        '</div>' +
-        '</div>'
       );
 
       if ( booking.service_provider_id > 0) {
@@ -1040,7 +1051,8 @@ function booking_valid (booking) {
   });
 }
 
-function deleteBooking(eventId) {
+function deleteBooking(eventId, bundled) {
+  bundled = bundled || false;
   // Staff code
   var confirmation = false;
   var isFirefox = navigator.userAgent.search("Firefox") >= 0;
@@ -1072,7 +1084,7 @@ function deleteBooking(eventId) {
       $('#booking_staff_code').val(inputValue);
       $('.booking-button').attr("disabled", "disabled");
       $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
-      saveBooking('DELETE','/'+eventId);
+      saveBooking('DELETE','/'+eventId, bundled);
       if( isFirefox ) { $('#bookingModal').css('top', defaultTop); }
     });
   } else{
@@ -1086,7 +1098,7 @@ function deleteBooking(eventId) {
       if (isConfirm) {
         $('.booking-button').attr("disabled", "disabled");
         $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
-        saveBooking('DELETE','/'+eventId);
+        saveBooking('DELETE','/'+eventId, bundled);
       }
     });
   };
@@ -1094,7 +1106,6 @@ function deleteBooking(eventId) {
 
 function jsonBooking() {
   var booking_date = objectToDate($('#datePicker').val());
-  window.console.log(booking_date);
   var jsBooking = {
     "start": booking_date.toISOString().slice(0, 10) +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z",
     "end": booking_date.toISOString().slice(0, 10) +"T"+ $('#bookingEndHour').val() +":"+ $('#bookingEndMinute').val() +":00Z",
@@ -1424,8 +1435,12 @@ function editDrag(event) {
   }
 }
 
-function saveBooking(typeURL, extraURL) {
+function saveBooking(typeURL, extraURL, bundled) {
+  bundled = bundled || false;
   var bookingJSON = jsonBooking();
+  if (bundled) {
+    bookingJSON = $.extend(bookingJSON, {'bundled_delete': bundled });
+  }
   if (typeURL == 'POST') {
     if(Array.isArray(bookingJSON)) {
       bookingBuffer = bookingJSON;
@@ -1451,7 +1466,7 @@ function saveBooking(typeURL, extraURL) {
     $.ajax({
       type: typeURL,
       url: '/bookings'+ extraURL +'.json',
-      data: { "booking": bookingJSON },
+      data: { "booking": bookingJSON  },
       dataType: 'json',
       success: function(booking){
         switch(typeURL) {
@@ -1553,7 +1568,9 @@ function saveBooking(typeURL, extraURL) {
           }
           break;
           case 'DELETE':
-          $('#calendar').fullCalendar('removeEvents',booking.id);
+          $.each(booking, function(key, b) {
+            $('#calendar').fullCalendar('removeEvents',b);
+          });
           swal.close();
           break;
         }

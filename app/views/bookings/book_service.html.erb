@@ -175,12 +175,14 @@
                       <dt class="dark-gray">¿Dónde?</dt>
                       <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
                       <dd class="light-gray"><p><%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %></p></dd>
+                      <% if @bookings.first.location.company.company_setting.provider_preference != 2 %>
                       <dt class="dark-gray">¿Con quién?</dt>
                       <dd class="light-gray">
                         <% @bookings.each do |booking| %>
                           <p><%= booking.service_provider.public_name %></p>
                         <% end %>
                       </dd>
+                      <% end %>
                       <dt class="dark-gray">¿Cuándo?</dt>
                       <dd class="light-gray">
                         <% @bookings.each do |booking| %>

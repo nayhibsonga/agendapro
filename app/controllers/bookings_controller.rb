@@ -1446,24 +1446,29 @@ class BookingsController < ApplicationController
     end
     status = @booking.status.id
     is_booked = @booking.is_session_booked
+    @bookings = Booking.where(id: @booking.id)
     if !@booking.is_session
       status = Status.find_by(:name => 'Cancelado').id
+      if booking_params[:bundled_delete] == "true"
+        @bookings = Booking.where(bundle_id: @booking.bundle_id, client_id: @booking.client_id, booking_group: @booking.booking_group)
+      end
     else
       is_booked = false
     end
-    @booking.update(status_id: status, is_session_booked: false)
     # @booking.destroy
     respond_to do |format|
-      if @booking.update(status_id: status)
-        BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, notes: @booking.notes, company_comment: @booking.company_comment)
-        if @booking.is_session
-          @booking.send_session_cancel_mail
+      if @bookings.update_all(status_id: status, is_session_booked: false) >= @bookings.count
+        @bookings.each do |booking|
+          BookingHistory.create(booking_id: booking.id, action: "Cancelada por Calendario", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: current_user.id, notes: booking.notes, company_comment: booking.company_comment)
+          if booking.is_session
+            booking.send_session_cancel_mail
+          end
         end
         format.html { redirect_to bookings_url }
-        format.json { render :json => @booking }
+        format.json { render :json => @bookings.pluck(:id) }
       else
         format.html { redirect_to bookings_url }
-        format.json { render :json => { :errors => @booking.errors.full_messages }, :status => 422 }
+        format.json { render :json => { :errors => "No se puedieron cancelar todas las reservas." }, :status => 422 }
       end
     end
   end
@@ -2139,7 +2144,9 @@ class BookingsController < ApplicationController
           client_id: client.id,
           user_id: current_user.id,
           web_origin: params[:origin],
-          provider_lock: buffer_params[:provider_lock]
+          provider_lock: buffer_params[:provider_lock],
+          bundled: buffer_params[:bundled],
+          bundle_id: buffer_params[:bundle_id]
         )
       else
         if User.find_by_email(params[:email])
@@ -2155,7 +2162,9 @@ class BookingsController < ApplicationController
             client_id: client.id,
             user_id: @user.id,
             web_origin: params[:origin],
-            provider_lock: buffer_params[:provider_lock]
+            provider_lock: buffer_params[:provider_lock],
+            bundled: buffer_params[:bundled],
+            bundle_id: buffer_params[:bundle_id]
           )
         else
           @booking = Booking.new(
@@ -2168,7 +2177,9 @@ class BookingsController < ApplicationController
             status_id: Status.find_by(name: 'Reservado').id,
             client_id: client.id,
             web_origin: params[:origin],
-            provider_lock: buffer_params[:provider_lock]
+            provider_lock: buffer_params[:provider_lock],
+            bundled: buffer_params[:bundled],
+            bundle_id: buffer_params[:bundle_id]
           )
         end
       end
@@ -4579,7 +4590,9 @@ class BookingsController < ApplicationController
                   :has_time_discount => service.has_time_discount,
                   :has_sessions => service.has_sessions,
                   :sessions_amount => book_sessions_amount,
-                  :must_be_paid_online => service.must_be_paid_online
+                  :must_be_paid_online => service.must_be_paid_online,
+                  :bundled => bundle.present?,
+                  :bundle_id => bundle.id
                 }
 
                 if !service.online_payable || !service.company.company_setting.online_payment_capable || bundle.present?
@@ -6092,7 +6105,7 @@ class BookingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def booking_params
-      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code, :session_booking_id, :payed_state, :bundled, :bundle_id)
+      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code, :session_booking_id, :payed_state, :bundled, :bundle_id, :bundled_delete)
     end
 
     def booking_buffer_params

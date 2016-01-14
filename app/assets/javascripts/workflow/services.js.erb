@@ -1975,7 +1975,9 @@ function addSession(booking, discount, is_treatment_discount)
 		must_be_paid_online: bookDetails.must_be_paid_online,
 		is_time_discount: bookDetails.has_time_discount,
 		is_treatment_discount: true,
-		service_promo_id: bookDetails.service_promo_id
+		service_promo_id: bookDetails.service_promo_id,
+		bundled: bookDetails.bundled,
+    bundle_id: bookDetails.bundle_id
     };
 
 
@@ -2050,7 +2052,9 @@ function addBooking (booking, book_index, discount, is_time_discount) {
 		sessions_amount: bookDetails.sessions_amount,
 		must_be_paid_online: bookDetails.must_be_paid_online,
 		is_time_discount: bookDetails.has_time_discount,
-		service_promo_id: bookDetails.service_promo_id
+		service_promo_id: bookDetails.service_promo_id,
+		bundled: bookDetails.bundled,
+    bundle_id: bookDetails.bundle_id
     };
 
 
