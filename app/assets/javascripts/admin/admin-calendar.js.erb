@@ -1264,12 +1264,18 @@ function editDrag(event) {
               payedState = ' payed';
             }
 
+            var bundleState = '';
+            if (booking.bundled)
+            {
+              bundleState = ' bundle';
+            }
+
             if (booking.is_session && !booking.user_session_confirmed)
             {
               payedState += ' session';
             }
 
-            originClass += providerLock + statusIcon[booking.status_id] + payedState;
+            originClass += providerLock + statusIcon[booking.status_id] + payedState + bundleState;
             event.className = originClass;
             event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
             event.start = booking.start;
@@ -1347,12 +1353,18 @@ function editDrag(event) {
                 payedState = ' payed';
               }
 
+              var bundleState = '';
+              if (booking.bundled)
+              {
+                bundleState = ' bundle';
+              }
+
               if (booking.is_session && !booking.user_session_confirmed)
               {
                 payedState += ' session';
               }
 
-              originClass += providerLock + statusIcon[booking.status_id] + payedState;
+              originClass += providerLock + statusIcon[booking.status_id] + payedState + bundleState;
               event.className = originClass;
               event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
               event.start = booking.start;
@@ -1459,12 +1471,19 @@ function saveBooking(typeURL, extraURL) {
             {
               payedState = ' payed';
             }
+
+            var bundleState = '';
+            if (booking.bundled)
+            {
+              bundleState = ' bundle';
+            }
+
             if (booking.is_session && !booking.user_session_confirmed)
             {
               payedState += ' session';
             }
 
-            originClass += providerLock + statusIcon[booking.status_id] + payedState;
+            originClass += providerLock + statusIcon[booking.status_id] + payedState + bundleState;
             event.title = booking.first_name+' '+booking.last_name+' - '+booking.service_name;
             event.start = booking.start;
             event.end = booking.end;
@@ -1572,7 +1591,13 @@ function saveBookingBuffer () {
             payedState = ' payed';
           }
 
-          originClass += providerLock + statusIcon[booking.status_id] + payedState;
+          var bundleState = '';
+          if (booking.bundled)
+          {
+            bundleState = ' bundle';
+          }
+
+          originClass += providerLock + statusIcon[booking.status_id] + payedState + bundleState;
           if (booking.is_session && !booking.user_session_confirmed)
           {
             originClass += ' session';
@@ -1651,8 +1676,14 @@ function saveBookingBuffer () {
                   payedState = ' payed';
                 }
 
+                var bundleState = '';
+                if (booking.bundled)
+                {
+                  bundleState = ' bundle';
+                }
+
                 var originClass = 'origin-manual';
-                originClass += providerLock + statusIcon[booking.status_id] + payedState;
+                originClass += providerLock + statusIcon[booking.status_id] + payedState +bundleState;
                 if (booking.is_session && !booking.user_session_confirmed)
                 {
                   originClass += ' session';
