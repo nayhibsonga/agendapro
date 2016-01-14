@@ -22,6 +22,11 @@ class CompanyMailer < ActionMailer::Base
 		plan_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
 		debt_amount = 0
 
+		is_chile = true
+		if company.country.name != "Chile"
+			is_chile = false
+		end
+
 
 		# => Template
 		template_name = 'trial_warning'
@@ -67,6 +72,10 @@ class CompanyMailer < ActionMailer::Base
 				{
 					:name => 'ACTIVATE_URL',
 					:content => select_plan_url
+				},
+				{
+					:name => 'CHILE',
+					:content => is_chile
 				}
 			],
 			:tags => ['invoice']
@@ -101,6 +110,11 @@ class CompanyMailer < ActionMailer::Base
 		current_amount = company.calculate_trial_debt
 		plan_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
 		debt_amount = 0
+
+		is_chile = true
+		if company.country.name != "Chile"
+			is_chile = false
+		end
 
 
 		# => Template
@@ -159,6 +173,10 @@ class CompanyMailer < ActionMailer::Base
 				{
 					:name => 'ACTIVATE_URL',
 					:content => select_plan_url
+				},
+				{
+					:name => 'CHILE',
+					:content => is_chile
 				}
 			],
 			:tags => ['invoice']
@@ -271,6 +289,12 @@ class CompanyMailer < ActionMailer::Base
 		unless company.users.where(role_id: Role.find_by_name('Administrador General')).count > 0
 			return
 		end
+
+		is_chile = true
+		if company.country.name != "Chile"
+			is_chile = false
+		end
+
 		admins = company.users.where(role_id: Role.find_by_name('Administrador General'))
 		admin = admins.first
 
@@ -366,6 +390,10 @@ class CompanyMailer < ActionMailer::Base
 					{
 						:name => 'ACTIVATE_URL',
 						:content => select_plan_url
+					},
+					{
+						:name => 'CHILE',
+						:content => is_chile
 					}
 				],
 				:tags => ['invoice']
@@ -415,6 +443,10 @@ class CompanyMailer < ActionMailer::Base
 					{
 						:name => 'ACTIVATE_URL',
 						:content => select_plan_url
+					},
+					{
+						:name => 'CHILE',
+						:content => is_chile
 					}
 				],
 				:tags => ['invoice']
@@ -605,6 +637,11 @@ class CompanyMailer < ActionMailer::Base
 		template_name = 'online_receipt'
 		template_content = []
 
+		is_chile = true
+		if company.country.name != "Chile"
+			is_chile = false
+		end
+
 		recipients = []
 		admins.each do |user|
 	      recipients << {
@@ -664,6 +701,10 @@ class CompanyMailer < ActionMailer::Base
 				{
 					:name => 'DATE',
 					:content => punto_pagos_confirmation.created_at.strftime('%d/%m/%Y %R')
+				},
+				{
+					:name => 'CHILE',
+					:content => is_chile
 				}
 			],
 			:tags => []
@@ -700,6 +741,11 @@ class CompanyMailer < ActionMailer::Base
 	    if !pay_u_notification.cc_number.nil?
 	    	card_number = "********" + pay_u_notification.cc_number
 	    end
+
+	    is_chile = true
+		if company.country.name != "Chile"
+			is_chile = false
+		end
 
 		# => Template
 		template_name = 'online_receipt'
@@ -760,6 +806,10 @@ class CompanyMailer < ActionMailer::Base
 				{
 					:name => 'DATE',
 					:content => pay_u_notification.created_at.strftime('%d/%m/%Y %R')
+				},
+				{
+					:name => 'CHILE',
+					:content => false
 				}
 			],
 			:tags => []
