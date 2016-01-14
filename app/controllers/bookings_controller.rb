@@ -1718,11 +1718,10 @@ class BookingsController < ApplicationController
         if booking.payed_state
           payedClass = ' payed'
         end
-        bundleClass = '';
-        if (booking.bundled)
-        {
-          bundleClass = ' bundle';
-        }
+        bundleClass = ''
+        if booking.bundled
+          bundleClass = ' bundle'
+        end
         originClass += providerLock + statusIcon[booking.status_id] + payedClass + bundleClass
 
         title = ''
