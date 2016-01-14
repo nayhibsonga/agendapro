@@ -247,14 +247,15 @@ class ClientsController < ApplicationController
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
     mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(:last_name, :first_name).pluck(:email).uniq
 
-    @to = Array.new
     @tmpl = 'basic'
 
     template_selection if can?(:use_email_templates, Client )
 
+    tmp_to = Array.new
     mail_list.each do |email|
-      @to.push(email) if email=~ /([^\s]+)@([^\s]+)/
+      tmp_to.push(email) if email=~ /([^\s]+)@([^\s]+)/
     end
+    @to = tmp_to.join(', ')
   end
 
   def mail_editor
@@ -292,7 +293,7 @@ class ClientsController < ApplicationController
   def send_mail
     # Sumar mails eviados
     current_sent = current_user.company.company_setting.monthly_mails
-    sent_to = params[:to].split(' ')
+    sent_to = params[:to].split(',').each { |mail| mail.strip! }
     sent_now = sent_to.length
     current_sent + sent_now >= 0 ? new_mails = current_sent + sent_now : new_mails = 0
     current_user.company.company_setting.update_attributes :monthly_mails => (new_mails)

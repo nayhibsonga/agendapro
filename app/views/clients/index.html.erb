@@ -1,24 +1,13 @@
 <div class="container-fluid">
   <div class="row" style="margin-top: 15px;">
     <div class="col-md-3">
-      <div class="dropdown btn-pseudo-block">
-        <button type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="clientsDropdownMenu"> Clientes <i class="fa fa-caret-down"></i></button>
-        <ul class="dropdown-menu" aria-labelledby="clientsDropdownMenu">
-          <li><%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path %></li>
-          <li><a id="import_clients" type="button" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</a></li>
-        </ul>
-      </div>
-      <div class="btn-pseudo-block">
-        <% if @from_collection.first %>
-          <% if @monthly_mails_sent < @monthly_mails %>
-            <%= link_to '<i class="fa fa-envelope"></i> Enviar e-mail a este listado'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], attendance: params[:attendance], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-green", id: 'sendMail' %>
-          <% else %>
-            <button class="btn btn-green">Has alcanzado el limite de e-mails.</button>
-          <% end %>
-        <% else %>
-          <a id="sendMail" type="button" class="btn btn-green" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar e-mail a este listado</a>
-        <% end %>
-        <span class="text-green" data-toggle="tooltip" data-placement="bottom" title="Al hacer click en este botón podrás enviar un correo a todos los clientes previamente filtrados por el buscador y los filtros avanzados. En caso de que no selecciones ningún filtro, se le enviará a la lista completa de clientes.">&nbsp;<i class="fa fa-question-circle fa-lg"></i></span>
+      <div class="row">
+        <div class="col-xs-6 col-md-12" style="margin-bottom: 5px;">
+          <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, class: "btn btn-white btn-block" %>
+        </div>
+        <div class="col-xs-6 col-md-12">
+          <a id="import_clients" class="btn btn-white btn-block" type="button" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</a>
+        </div>
       </div>
     </div>
     <div class="col-md-9">
@@ -34,6 +23,22 @@
             <button class="btn btn-green" id="search_btn"><i class="fa fa-search"></i> Buscar</button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-bottom: 15px;">
+    <div class="col-sm-12">
+      <div class="pull-right">
+        <span class="text-green" data-toggle="tooltip" data-placement="bottom" title="Al hacer click en este botón podrás enviar un correo a todos los clientes previamente filtrados por el buscador y los filtros avanzados. En caso de que no selecciones ningún filtro, se le enviará a la lista completa de clientes.">&nbsp;<i class="fa fa-question-circle fa-lg"></i>&nbsp;</span>
+        <% if @from_collection.first %>
+          <% if @monthly_mails_sent < @monthly_mails %>
+            <%= link_to '<i class="fa fa-envelope"></i> Enviar e-mail a este listado'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], attendance: params[:attendance], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-white", id: 'sendMail' %>
+          <% else %>
+            <button class="btn btn-white">Has alcanzado el limite de e-mails.</button>
+          <% end %>
+        <% else %>
+          <a id="sendMail" type="button" class="btn btn-white" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar e-mail a este listado</a>
+        <% end %>
       </div>
     </div>
   </div>

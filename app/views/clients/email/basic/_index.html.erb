@@ -8,7 +8,7 @@
       </div>
       <div class="form-group">
         <%= label_tag :to, 'Para' %><small class="pull-right"> Estas enviando el e-mail a <%= pluralize(@to.length, 'persona') %>.</small>
-        <p class="form-control-static"><%= @to.map(&:inspect).join(', ') %></p>
+        <p class="form-control-static"><%= @to %></p>
         <%= hidden_field_tag :to, @to, :required => true %>
         <span class="help-block"></span>
       </div>
