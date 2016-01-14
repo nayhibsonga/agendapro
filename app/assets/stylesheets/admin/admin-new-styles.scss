@@ -1,3 +1,13 @@
+html, body, .main, #mail-editor-container, #mail-editor, #composing {
+  height: 100%;
+}
+
+.btn-list {
+  border: 1px solid #22c488;
+  color: #22c488;
+  background-color: transparent;
+}
+
 #mail-editor {
   padding: 10px;
 
@@ -9,6 +19,28 @@
       margin-bottom: 0;
       border-bottom: 1px solid #ccc;
     }
+    .input-desc {
+      display: inline-block;
+      position: absolute;
+      line-height: 30px;
+      padding: 0 5px;
+      color: #A9A9A9;
+    }
+    input[type='text'] {
+      width: 100%;
+      &.input-from { padding-left: 35px; }
+      &.input-to { padding-left: 50px; }
+      &.input-subject { padding-left: 60px; }
+    }
+    .complete-list-button {
+      margin: 10px 0;
+      text-align: right;
+    }
+    .total-recipients {
+      @extend .complete-list-button;
+      font-style: italic;
+      color: #A9A9A9;
+    }
   }
 
   #content {
@@ -18,9 +50,26 @@
     border-right: 25px white solid;
   }
 
-  .btn-list {
-    border: green;
-    color: green;
-    background-color: transparent;
+  .no-image-container {
+    background-color: #E6E6E6;
+    height: 300px;
+    text-align: center;
+    border: 1px solid #ccc;
+    position: relative;
+    > div {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+    .file-input {
+      display: none;
+    }
+  }
+
+  .cke_chrome {
+    border: none;
   }
 }

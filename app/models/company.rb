@@ -11,6 +11,7 @@ class Company < ActiveRecord::Base
 	has_many :countries, :through => :company_countries
 
 	has_many :cashiers, dependent: :destroy
+	has_many :email_contents, dependent: :destroy
 
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
 
@@ -370,7 +371,7 @@ class Company < ActiveRecord::Base
 					errors += error
 				end
 				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "ERROR end_trial "+errors)
-			end				
+			end
 
 		end
 	end
@@ -448,7 +449,7 @@ class Company < ActiveRecord::Base
 	# Remind companies that were issued and haven't payed yet
 	# "Block" companies that expired (move them to free plan)
 	#
-	def self.collect_reminder	
+	def self.collect_reminder
 
 		status_activo = PaymentStatus.find_by_name("Activo")
 		status_emitido = PaymentStatus.find_by_name("Emitido")
@@ -487,7 +488,7 @@ class Company < ActiveRecord::Base
 				end
 				company.plan_id = plan_gratis.id
 				company.due_date = DateTime.now
-				
+
 				if company.save
 					DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
 					#Send mail alerting their plan changed

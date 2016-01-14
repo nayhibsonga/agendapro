@@ -24,24 +24,24 @@ class Email::Template < ActiveRecord::Base
   private
 
     def set_defaults
-      self.source = "#{TMPL_DIR}/_#{self.name}"
+      self.source = TMPL_DIR
       self.thumb = "#{IMG_DIR}/#{self.name}.png"
     end
 
     def create_file
-      unless File.exist?(src_fmt)
-        File.open(src_fmt, 'w+') do |f|
+      unless File.exist?(file_name)
+        File.open(file_name, 'w+') do |f|
           f.write(File.read("#{Rails.root}/app/views/#{TMPL_DIR}/base.html.erb"))
         end
       end
     end
 
     def delete_file
-      File.delete(src_fmt) if File.exist?(src_fmt)
+      File.delete(file_name) if File.exist?(file_name)
     end
 
-    def src_fmt
-      File.absolute_path("./app/views/#{self.source}.html.erb")
+    def file_name
+      File.absolute_path("./app/views/#{TMPL_DIR}/_#{self.name}.html.erb")
     end
 
 end

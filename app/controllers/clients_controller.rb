@@ -258,9 +258,10 @@ class ClientsController < ApplicationController
   end
 
   def mail_editor
-    @from = current_user.email
-    @recipients = params[:recipients]
+    from = current_user.email
+    recipients = params[:recipients]
     @tmpl = Email::Template.find(params[:tmpl])
+    @content = Email::Content.find_or_create_by(template: @tmpl, company: current_user.company, from: from, to: recipients.gsub(' ',','))
     render 'clients/email/full/mail_editor'
   end
 
@@ -284,13 +285,8 @@ class ClientsController < ApplicationController
   end
 
   def save_content
-    @updated = Email::Content.generate(params[:id], params.except(:id, :send))
-    send_content if params[:save]
-    render :json, status: @updated ? :ok : :internal_server_error
-  end
-
-  def send_content
-    @id #el del metodo anterior
+    updated = Email::Content.generate(params[:id], params.except(:id))
+    render json: { status: updated ? :ok : :interal_server_error }
   end
 
   def send_mail
@@ -471,9 +467,8 @@ class ClientsController < ApplicationController
 
     def template_selection
       @tmpl = 'full'
-      @templates = Email::Template.all
+      @templates = Email::Template.all.order(id: :asc)
       @saved = []
     end
-
 
 end

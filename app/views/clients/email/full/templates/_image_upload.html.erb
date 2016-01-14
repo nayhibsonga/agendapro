@@ -1,33 +1,21 @@
-<tr>
-    <td valign="top" id="templateHeader" mc:container="header_container" mccontainer="header_container" class="tpl-container dojoDndSource dojoDndTarget dojoDndContainer"><div class="mojoMcContainerEmptyMessage" style="display: none;">Drop Content Blocks Here</div><div class="mojoMcBlock tpl-block dojoDndItem" id="mojo_neapolitan_preview_McBlock_0" widgetid="mojo_neapolitan_preview_McBlock_0">
-        <div class="editedOverlay" style="display:none" data-dojo-attach-point="editedOverlay">
-            <span data-dojo-attach-point="editType"></span> by: <span class="userName" data-dojo-attach-point="editedBy"></span>
-        </div>
+<% if email %>
+  <div>
+    <%= image_tag(content.data["#{img_name}"])  %>
+  </div>
+<% else %>
+  <div ng-show="ec.content.data['<%= img_name %>']">
+    <img src="" ng-src="{{ ec.content.data['<%= img_name %>'] }}">
+  </div>
 
-        <!-- Content of the block will get inserted inside of this -->
-        <div data-dojo-attach-point="containerNode"><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnImageBlock" style="min-width:100%;">
-            <tbody class="mcnImageBlockOuter">
-                <tr>
-                    <td valign="top" style="padding:9px" class="mcnImageBlockInner">
-                        <table align="left" width="100%" border="0" cellpadding="0" cellspacing="0" class="mcnImageContentContainer" style="min-width:100%;">
-                            <tbody><tr>
-                                <td class="mcnImageContent" valign="top" style="padding-right: 9px; padding-left: 9px; padding-top: 0; padding-bottom: 0;">
+  <div ng-hide="ec.content.data['<%= img_name %>']" class="no-image-container">
+    <div>
+        <button ng-click="ec.selectFile($event, '<%= img_name %>')" class="btn btn-green">
+          Seleccionar imagen
+        </button>
+        <input class="file-input" type="file" nv-file-select uploader="ec.uploader"/>
+    </div>
 
-                                    <table style="width:564px;" class="mcpreview-image-uploader"><tr class="mojoImageUploader blockDropTarget" id="dijit__Templated_0" widgetid="dijit__Templated_0"><td><div class="imagePlaceholder">
-                                        <img data-dojo-attach-point="emptyImage" class="mojoImageItemIcon" src="/images/blocks/empty-image-144.png">
-                                        <div data-dojo-attach-point="uploadText"><span>Drop an image here</span><br>or</div>
-                                        <div><input type="button" data-dojo-attach-point="browseBtn" class="button-small p3" value="browse"></div>
-                                    </div>
-                                </td></tr></table>
-
-                            </td>
-                        </tr>
-                    </tbody></table>
-                </td>
-            </tr>
-        </tbody>
-    </table></div>
+  </div>
+<% end %>
 
 
-</div></td>
-</tr>

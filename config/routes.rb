@@ -135,6 +135,7 @@ Agendapro::Application.routes.draw do
       post '/send_mail_client', action: 'send_mail'
       post '/mail_editor', action: 'mail_editor', as: 'mail_editor'
       post "/email_content/upload", action: 'upload_content'
+      post "/mail_editor/save_content", action: 'save_content', as: 'save_content'
     end
 
     # Autocompletar del Booking
