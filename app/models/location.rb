@@ -59,6 +59,8 @@ class Location < ActiveRecord::Base
 
   accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
+  scope :actives, where(active: true)
+
   validates :name, :phone, :company, :district, :email, :presence => true
 
   validate :times_overlap, :time_empty_or_negative, :plan_locations, :outcall_services, :active_countries
@@ -226,7 +228,14 @@ class Location < ActiveRecord::Base
             provider_time.save
           end
 				end
-			end
+      end
+      # Delete days
+      location_days = service_provider.provider_times.pluck(:day_id).delete_if { |time| self.location_times.pluck(:day_id).include? time }
+      provider_days = service_provider.provider_times.where(day_id: location_days)
+      if provider_days.count > 0
+        warnings.add(:base, "El horario del staff "+service_provider.public_name+" se ajusto al horario del local.")
+        provider_days.destroy_all
+      end
 		end
 	end
 
