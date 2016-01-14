@@ -4592,7 +4592,7 @@ class BookingsController < ApplicationController
                   :sessions_amount => book_sessions_amount,
                   :must_be_paid_online => service.must_be_paid_online,
                   :bundled => bundle.present?,
-                  :bundle_id => bundle.id
+                  :bundle_id => bundle.present? ? bundle.id : nil
                 }
 
                 if !service.online_payable || !service.company.company_setting.online_payment_capable || bundle.present?
