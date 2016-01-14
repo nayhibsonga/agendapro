@@ -187,7 +187,8 @@
                         <% logs = @company.billing_logs.where.not(transaction_type_id: -1).order('created_at desc') %>
                         <% logs.each do |log| %>
                           <% punto_pago = PuntoPagosConfirmation.where(:trx_id => log.trx_id, :response => "00").first %>
-                          <% if punto_pago.nil? %>
+                          <% pay_u = PayUNotification.where(:reference_sale => log.trx_id, :state_pol => "4").first %>
+                          <% if punto_pago.blank? && pay_u.blank? %>
                             <% punto_pago_fail = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
                             <tr style="background-color: #fd633f;">
                               
@@ -205,7 +206,7 @@
                               <% end %>
 
                             </tr>
-                          <% else %>
+                          <% elsif punto_pago.present? %>
                             <tr>
                               
                               <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
@@ -214,6 +215,17 @@
                               <td><%= punto_pago.dues_number %></td>
                               <td><%= punto_pago.operation_number %></td>
                               <td><%= punto_pago.authorization_code %></td>
+
+                            </tr>
+                          <% elsif pay_u.present? %>
+                            <tr>
+                              
+                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.payment %></td>
+                              <td><%= log.amount %></td>
+                              <td></td>
+                              <td><%= pay_u.transaction_id %></td>
+                              <td><%= pay_u.reference_sale %></td>
 
                             </tr>
                           <% end %>

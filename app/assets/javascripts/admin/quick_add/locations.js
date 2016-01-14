@@ -269,11 +269,11 @@ function saveLocation (typeURL, extraURL) {
 		    var location_count = $.parseJSON(xhr.responseText).location_count
 		    var errorList = '';
 			for (i in errors) {
-				errorList += '<li>' + errors[i] + '</li>'
+				errorList += '- ' + errors[i] + '\n\n'
 			}
 			swal({
         title: "Error",
-        text: "Se produjeron los siguientes problemas:\n<ul>" + errorList + "</ul>",
+        text: "Se produjeron los siguientes problemas:\n\n" + errorList,
         type: "error",
         html: true
       });

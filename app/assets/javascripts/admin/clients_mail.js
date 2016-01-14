@@ -171,16 +171,6 @@ function animateOut (element) {
 }
 
 function removeData(element) {
-  children = element.find('input[type="checkbox"]');
-  $.each(children, function (i, child) {
-    $(child).prop('checked', false);
-  });
-  children = element.find('input[type="text"]');
-  $.each(children, function (i, child) {
-    $(child).val('');
-  });
-  children = element.find('input[type="hidden"]');
-  $.each(children, function (i, child) {
-    $(child).val('');
-  });
+  element.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
+  element.find('input[type="text"], input[type="hidden"]').val('');
 }

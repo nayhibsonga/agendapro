@@ -86,8 +86,8 @@ bookings_amount.times do
 	random_price = Service.where(id: ServiceStaff.where(service_provider_id: random_provider).pluck(:service_id)).pluck(:price).sample
 
 	b = Booking.new(
-		start: '2015-' + month.to_s + '-' + random_day_str + 'T' + random_hour_str + ':' + random_minute_str + ':00Z',
-		:end => '2015-' + month.to_s + '-' + random_day_str + 'T' + random_hour_end_str + ':' + random_minute_str + ':00Z',
+		start: '2016-' + month.to_s + '-' + random_day_str + 'T' + random_hour_str + ':' + random_minute_str + ':00Z',
+		:end => '2016-' + month.to_s + '-' + random_day_str + 'T' + random_hour_end_str + ':' + random_minute_str + ':00Z',
 		client_id: random_client,
 		service_id: random_service,
 		service_provider_id: random_provider,
