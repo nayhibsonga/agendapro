@@ -9,7 +9,10 @@ class Service < ActiveRecord::Base
 	has_many :tags, :through => :service_tags
 
 	has_many :service_resources, dependent: :destroy
-  	has_many :resources, :through => :service_resources
+  has_many :resources, :through => :service_resources
+
+  has_many :service_bundles, dependent: :destroy
+  has_many :services, through: :service_bundles
 
 	has_many :bookings, dependent: :destroy
 	has_many :service_staffs, dependent: :destroy
@@ -20,11 +23,11 @@ class Service < ActiveRecord::Base
 	has_many :treatment_promos
 
 	has_many :economic_sectors, :through => :company
-  	has_many :economic_sectors_dictionaries, :through => :economic_sectors
+  has_many :economic_sectors_dictionaries, :through => :economic_sectors
 
-  	has_many :mock_bookings
+  has_many :mock_bookings
 
-  	has_many :service_commissions
+  has_many :service_commissions
 
 	mount_uploader :time_promo_photo, TimePromoPhotoUploader
 

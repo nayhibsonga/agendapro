@@ -11,10 +11,12 @@ class ServicesController < ApplicationController
   def index
     if current_user.role_id == Role.find_by_name('Super Admin').id
       @services = Service.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
+      @bundles = Bundle.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
       @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
     else
       @services = Service.where(company_id: current_user.company_id, :active => true).order(:order, :name)
       @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(:order, :name)
+      @bundles = Bundle.where(company_id: current_user.company_id).order(:name)
     end
   end
 
@@ -164,12 +166,27 @@ class ServicesController < ApplicationController
   def location_services
     categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(:order, :name)
     services = Service.where(:active => true).order(:order, :name).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(:order, :name)
+    bundles = Bundle.where(id: ServiceBundle.where(service_id: services.pluck(:id)).pluck(:bundle_id))
 
     services_hash = []
 
     services.each do |service|
-      service_hash = service.attributes.to_options
+      service_hash = service.attributes.merge({'bundle' => false, 'bundle_services' => []}).to_options
       service_hash['service_category_name'] = service.service_category.name
+      services_hash << service_hash
+    end
+
+    bundles.each do |bundle|
+      service_bundles_array = []
+      bundle.service_bundles.each do |service_bundle|
+        bundle_service_providers_array = []
+        service_bundle.service.service_providers.where(active: true, location_id: params[:location]).each do |service_provider|
+          bundle_service_providers_array.push({'id' => service_provider.id, 'public_name' => service_provider.public_name})
+        end
+        service_bundles_array.push(service_bundle.attributes.merge({'service_name' => service_bundle.service.name, 'service_duration' => service_bundle.service.duration, 'service_providers' => bundle_service_providers_array}))
+      end
+      service_hash = bundle.attributes.merge({'bundle' => true, 'duration' => bundle.services.sum(:duration), 'service_bundles' => service_bundles_array }).to_options
+      service_hash['service_category_name'] = bundle.service_category.name
       services_hash << service_hash
     end
 
@@ -186,25 +203,20 @@ class ServicesController < ApplicationController
 
     categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(:order, :name)
     services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
+    bundles = Bundle.where(:id => ServiceBundle.where(service_id: ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).pluck(:bundle_id)).order(:name)
 
     if params[:admin_origin]
       services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
+      bundles = []
     end
 
     service_resources_unavailable = ServiceResource.where(service_id: services)
     if location_resources.any?
-      if location_resources.length > 1
-        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
-      else
-        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
-      end
+      service_resources_unavailable = service_resources_unavailable.where.not(resource_id: location_resources)
     end
     if service_resources_unavailable.any?
-      if service_resources_unavailable.length > 1
-        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
-      else
-        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
-      end
+      services = services.where.not(id: service_resources_unavailable.pluck(:service_id))
+      bundles = bundles.where.not(id: ServiceBundle.where(service_id: service_resources_unavailable.pluck(:service_id)).pluck(:bundle_id))
     end
 
     categorized_services = Array.new
@@ -212,8 +224,14 @@ class ServicesController < ApplicationController
       services_array = Array.new
       services.each do |service|
         if service.service_category_id == category.id
-          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
+          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall, 'bundle' => false })
           services_array.push(serviceJSON)
+        end
+      end
+      bundles.each do |bundle|
+        if bundle.service_category_id == category.id
+          bundleJSON = bundle.attributes.merge({'name_with_small_outcall' => bundle.name, 'bundle' => true, 'duration' => bundle.services.sum(:duration) })
+          services_array.push(bundleJSON)
         end
       end
       service_hash = {
@@ -228,8 +246,15 @@ class ServicesController < ApplicationController
   end
 
   def service_data
+    if (params[:bundle] == "true")
+      bundle = Bundle.find(params[:id])
+      render :json => bundle.attributes.merge({'bundle' => true, 'duration' => bundle.services.sum(:duration), 'services' => bundle.services })
+      return
+    end
+
     service = Service.find(params[:id])
     render :json => service
+    return
   end
 
   def services_data
