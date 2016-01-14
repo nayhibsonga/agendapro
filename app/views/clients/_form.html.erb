@@ -365,7 +365,7 @@
                       <%= attribute.name %>
                     </label>
                     <div class="col-sm-9">
-                      <input type="file" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory %> />
+                      <input type="file" class="form-control file-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory %> />
                       <span class="help-block"><%= attribute.description %></span>
                       <% 
                         if !file_attribute.nil? && !file_attribute.client_file.nil?

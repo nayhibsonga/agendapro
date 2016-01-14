@@ -14,11 +14,19 @@ class Attribute < ActiveRecord::Base
 	has_many :textarea_attributes, dependent: :destroy
 
 	after_create :create_clients_attributes
+	after_save :check_file
 	after_save :generate_slug
 
 	def generate_slug
 		new_slug = self.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').squish.downcase.tr(" ","_").to_s
 		self.update_column(:slug, new_slug)
+	end
+
+	def check_file
+		self.update_column(:show_on_calendar, false)
+		self.update_column(:show_on_workflow, false)
+		self.update_column(:mandatory_on_calendar, false)
+		self.update_column(:mandatory_on_workflow, false)
 	end
 
 	def create_clients_attributes

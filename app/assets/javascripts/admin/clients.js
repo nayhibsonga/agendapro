@@ -217,6 +217,8 @@ $(function() {
     clearValidations("#file_description");
     clearValidations("#new_folder_name");
     clearValidations("#folderSelect");
+    $('#folderSelect').val("select");
+    $('#new_folder_name').show();
     $('#fileUploadModal').modal('show');
   });
 
@@ -231,6 +233,7 @@ $(function() {
     clearValidations("#file_description");
     clearValidations("#new_folder_name");
     clearValidations("#folderSelect");
+    $('#new_folder_name').hide();
     $('#fileUploadModal #folderSelect').val($(this).attr("folder_name"));
     $('#fileUploadModal').modal('show');
   });
@@ -255,6 +258,7 @@ $(function() {
     $('#edit_file_name').val($(this).attr("client_file_name"));
     $('#edit_file_description').val($(this).attr("client_file_description"));
     $('#editFolderSelect').val($(this).attr("client_file_folder"));
+    $('#edit_new_folder_name').hide();
     $('#editFileModal').modal('show');
   });
 
@@ -292,6 +296,52 @@ $(function() {
       var folder_id = e.currentTarget.id.split("_")[2];
       $('#folder_heading_' + folder_id).find('.folder-icons-closed').hide();
       $('#folder_heading_' + folder_id).find('.folder-icons-open').show();
+  });
+
+  $('#folderSelect').on('change', function(){
+    if($(this).val() == "select")
+    {
+      $('#new_folder_name').show();
+    }
+    else
+    {
+      $('#new_folder_name').hide();
+    }
+  });
+
+  $('#editFolderSelect').on('change', function(){
+    if($(this).val() == "select")
+    {
+      $('#edit_new_folder_name').show();
+    }
+    else
+    {
+      $('#edit_new_folder_name').hide();
+    }
+  });
+
+  $('#file').on('change', function(){
+    if(this.files[0].size/1024/1024 > 25)
+    {
+      swal({
+        title: "Tamaño inadecuado",
+        text: "El tamaño máximo de archivos es de 25 MB.",
+        type: "error"
+      });
+      $(this).val("");
+    }
+  });
+
+  $('.file-attribute').on('change', function(){
+    if(this.files[0].size/1024/1024 > 25)
+    {
+      swal({
+        title: "Tamaño inadecuado",
+        text: "El tamaño máximo de archivos es de 25 MB.",
+        type: "error"
+      });
+      $(this).val("");
+    }
   });
 
 });

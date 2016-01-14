@@ -539,6 +539,7 @@ Agendapro::Application.routes.draw do
     post '/change_client_file', :to => 'clients#edit_file'
 
     get '/company_clients_base', :to => 'companies#generate_clients_base'
+    get '/client_bookings_content', :to => 'clients#bookings_content'
 
 
   end

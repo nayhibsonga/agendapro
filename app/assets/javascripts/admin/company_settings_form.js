@@ -369,7 +369,14 @@ $(function () {
   });
 
   $('#attribute_datatype').on('change', function(){
-    
+    if($(this).val() == "file")
+    {
+      $('.attribute-show-option').hide();
+    }
+    else
+    {
+      $('.attribute-show-option').show();
+    }
   });
 
   $('.add_attribute_category_button').on('click', function(e){
@@ -441,10 +448,11 @@ $(function () {
     }
 
     $('#attribute_category_category').val("");
+
     swal({
-        title: "Éxito",
-        text: "Categoría agregada.",
-        type: "success"
+      title: "Éxito",
+      text: "Categoría agregada.",
+      type: "success"
     });
   }).on("ajax:error", function(e, xhr, status, error){
     console.log(xhr.responseText)

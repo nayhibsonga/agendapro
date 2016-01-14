@@ -1510,6 +1510,11 @@ class CompaniesController < ApplicationController
 
 		@company = current_user.company
 
+		if(params[:file].size/1024/1024 > 25)
+	      	redirect_to '/get_company_files', alert: 'Tamaño de archivo no permitido'
+	      	return
+		end
+
 	    file_name = params[:file_name]
 	    folder_name = params[:folder_name]
 	    logger.debug "File name: " + params[:file].original_filename
@@ -1547,10 +1552,10 @@ class CompaniesController < ApplicationController
 
 	    # Save the upload
 	    if @company_file.save
-	    	redirect_to '/get_company_files', success: 'Archivo guardado correctamente'
+	    	redirect_to '/get_company_files', notice: 'Archivo guardado correctamente'
 	    else
-	    	flash[:notice] = 'Error al guardar el archivo'
-	      	#render :new
+	    	obj.delete
+	      	redirect_to '/get_company_files', alert: 'No se pudo guardar el archivo'
 	    end
 
 	end
@@ -1563,8 +1568,7 @@ class CompaniesController < ApplicationController
 
 		#Do nothing if same folder
 		if new_folder_name == @company_file.folder
-			flash[:notice] = 'Archivo movido correctamente'
-			redirect_to '/get_company_files'
+			redirect_to '/get_company_files', notice: 'Archivo movido correctamente'
 			return
 		end
 
@@ -1594,11 +1598,9 @@ class CompaniesController < ApplicationController
 		@company_file.folder = new_folder_name
 		
 		if @company_file.save
-			flash[:notice] = 'Archivo movido correctamente'
-			redirect_to '/get_company_files'
+			redirect_to '/get_company_files', notice: 'Archivo movido correctamente'
 	    else
-	    	flash[:warning] = 'Error al mover el archivo'
-	    	redirect_to '/get_company_files'
+	    	redirect_to '/get_company_files', alert: 'Error al mover el archivo'
 		end
 
 	end
@@ -1650,11 +1652,9 @@ class CompaniesController < ApplicationController
 		end
 		
 		if @company_file.save
-			flash[:notice] = 'Archivo editado correctamente'
-			redirect_to '/get_company_files'
+			redirect_to '/get_company_files', notice: 'Archivo editado correctamente'
 	    else
-	    	flash[:warning] = 'Error al mover el archivo'
-	    	redirect_to '/get_company_files'
+	    	redirect_to '/get_company_files', alert: 'Error al mover el archivo'
 		end
 
 

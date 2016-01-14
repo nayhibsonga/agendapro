@@ -672,8 +672,8 @@
                               <div class="col-sm-12">
                                 <div class="form-group has-feedback">
                                   
-                                    <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_workflow %> />
-                                    <span class="help-block"><%= attribute.description %></span>
+                                    <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.description %>" value="" <%= "required" if attribute.mandatory_on_workflow %> />
+                                    <span class="help-block"></span>
                                     <span class="form-control-feedback"></span>
 
                                 </div>
@@ -692,8 +692,8 @@
                               <div class="col-sm-12">
                                 <div class="form-group has-feedback">
 
-                                  <input type="text" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_workflow %> />
-                                  <span class="help-block"><%= attribute.description %></span>
+                                  <input type="text" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.description %>" value="" <%= "required" if attribute.mandatory_on_workflow %> />
+                                  <span class="help-block"></span>
                                   <span class="form-control-feedback"></span>
                                 </div>
                               </div>
@@ -712,8 +712,8 @@
                               <div class="col-sm-12">
                                 <div class="form-group has-feedback">
 
-                                  <textarea class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" <%= "required" if attribute.mandatory_on_workflow %> /></textarea>
-                                  <span class="help-block"><%= attribute.description %></span>
+                                  <textarea class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.description %>" <%= "required" if attribute.mandatory_on_workflow %> /></textarea>
+                                  <span class="help-block"></span>
                                   <span class="form-control-feedback"></span>
                                 </div>
                               </div>
@@ -736,7 +736,7 @@
                                       <option value="1" selected>Sí</option>
                                       <option value="0">No</option>
                                   </select>
-                                  <span class="help-block"><%= attribute.description %></span>
+                                  <span class="help-block"></span>
                                 </div>
                               </div>
                             </div>
@@ -861,16 +861,14 @@
                       </div>
                     </div>
                     <% end %>
-                    <div class="row" style="margin-top: 20px;">
+                    <!--<div class="row" style="margin-top: 20px;">
                       <div class="col-sm-6">
                         <div class="btn-change btn-prev">
                           <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                         </div>
                       </div>
-                      <!--<div class="col-sm-6" id="reservar1">
-                        <button type="submit" class="submitBtn">Reservar</button>
-                      </div>-->
-                    </div>
+
+                    </div>-->
                   </div>
                 </div>
                 <!-- FIN FORM -->
@@ -1091,6 +1089,23 @@
 
 
               <% end %>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="row" style="margin-top: 20px;">
+                  <div class="col-sm-6">
+                    <div class="btn-change btn-prev">
+                      <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
+                    </div>
+                  </div>
+                  <!--<div class="col-sm-6" id="reservar1">
+                    <button type="submit" class="submitBtn">Reservar</button>
+                  </div>-->
+                </div>
+              </div>
+              <div class="col-sm-6">
+
+              </div>
             </div>
           </div>
         </div>

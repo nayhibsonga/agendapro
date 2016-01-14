@@ -7,7 +7,8 @@
     <div class="col-md-2">
       <button class="btn btn-green" id="addFolderBtn" style="margin-bottom: 3px; width: 140px;"><i class="fa fa-folder-o"></i>&nbsp;Agregar carpeta</button><br />
       <button class="btn btn-green" id="addFileBtn" style="margin-bottom: 3px; width: 140px;"><i class="fa fa-file-o"></i>&nbsp;Agregar archivo</button><br />
-      <%= link_to '<i class="fa fa-caret-left"></i> <span class="hidden-xs">Volver</span>'.html_safe, edit_client_path(@client), :class => "btn btn-orange", :style => "width: 140px;" %>
+      <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Cliente</span>'.html_safe, client_path(@client), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 140px;" %><br />
+      <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar Cliente</span>'.html_safe, edit_client_path(@client), :class => "btn btn-orange", :style => "width: 140px;" %>
     </div>
   </div>
 </div>
@@ -68,7 +69,7 @@
                         if s3_bucket.object(file.full_path).exists?
                       %>
                       <tr class="file-row" file_id="<%= file.id %>">
-                        <td style="width: 20%; text-align: left;"><%= file.name %></td>
+                        <td style="width: 20%; text-align: left;"><i class="fa fa-file"></i>&nbsp;<%= file.name %></td>
                         <td style="width: 20%; text-align: left;"><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
                         <td style="width: 20%; text-align: left;"><%= file.get_size %></td>
                         <td style="width: 40%; text-align: right;">

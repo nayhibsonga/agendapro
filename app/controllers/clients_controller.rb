@@ -43,13 +43,33 @@ class ClientsController < ApplicationController
   # GET /clients/1
   # GET /clients/1.json
   def show
-    @bookings = @client.bookings.where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc).paginate(:page => params[:page], :per_page => 25)
+    
+    @services = Service.where(company_id: @client.company.id).accessible_by(current_ability)
+    @service_providers = ServiceProvider.where(company_id: @client.company.id).accessible_by(current_ability)
+
+  end
+
+  def bookings_content
+
+    @client = Client.find(params[:client_id])
+
+    @from = params[:from].blank? ? Date.today : Date.parse(params[:from])
+    @to = params[:to].blank? ? Date.today : Date.parse(params[:to])
+    @service_ids = params[:service_ids] ? params[:service_ids].split(',') : Service.where(company_id: current_user.company_id).accessible_by(current_ability).pluck(:id)
+    @service_provider_ids = params[:service_provider_ids] ? params[:service_provider_ids].split(',') : ServiceProvider.where(company_id: current_user.company_id).accessible_by(current_ability).pluck(:id)
+    @status_ids = params[:status_ids] ? params[:status_ids].split(',') : Status.all.pluck(:id)
+
+    @bookings = @client.bookings.where(start: @from.beginning_of_day..@to.end_of_day, service_id: @service_ids, service_provider_id: @service_provider_ids, status_id: @status_ids).where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc).paginate(:page => params[:page], :per_page => 25)
+
     @booked = @bookings.where(status: Status.find_by(name: 'Reservado')).count
     @confirmed = @bookings.where(status: Status.find_by(name: 'Confirmado')).count
     @attended = @bookings.where(status: Status.find_by(name: 'Asiste')).count
     @payed = @bookings.where('payment_id is not null').count
     @cancelled = @bookings.where(status: Status.find_by(name: 'Cancelado')).count
     @notAttended = @bookings.where(status: Status.find_by(name: 'No Asiste')).count
+
+    render "_bookings_content", layout: false
+
   end
 
   # GET /clients/new
@@ -446,6 +466,15 @@ class ClientsController < ApplicationController
 
     @client = Client.find(params[:client_id])
 
+    if(params[:file].size/1024/1024 > 25)
+      if upload_origin == "edit_client"
+        redirect_to edit_client_path(id: @client.id), alert: 'Tamaño de archivo no permitido'
+      else
+        redirect_to get_client_files_path(client_id: @client.id), alert: 'Tamaño de archivo no permitido'
+      end
+      return
+    end
+
     file_name = params[:file_name]
     folder_name = params[:folder_name]
     logger.debug "File name: " + params[:file].original_filename
@@ -481,13 +510,17 @@ class ClientsController < ApplicationController
     # Save the upload
     if @client_file.save
       if upload_origin == "edit_client"
-        redirect_to edit_client_path(id: @client.id), success: 'Archivo guardado correctamente'
+        redirect_to edit_client_path(id: @client.id), notice: 'Archivo guardado correctamente'
       else
-        redirect_to get_client_files_path(client_id: @client.id), success: 'Archivo guardado correctamente'
+        redirect_to get_client_files_path(client_id: @client.id), notice: 'Archivo guardado correctamente'
       end
     else
-      flash[:notice] = 'Error al guardar el archivo'
-      #render :new
+      obj.delete
+      if upload_origin == "edit_client"
+        redirect_to edit_client_path(id: @client.id), alert: 'No se pudo guardar el archivo'
+      else
+        redirect_to get_client_files_path(client_id: @client.id), alert: 'No se pudo guardar el archivo'
+      end
     end
 
   end
@@ -503,7 +536,7 @@ class ClientsController < ApplicationController
     s3.put_object(bucket: ENV['S3_BUCKET'], key: full_name)
       #obj = s3_bucket.object(full_name)
 
-    redirect_to get_client_files_path(client_id: @client.id), success: 'Carpeta creada correctamente'
+    redirect_to get_client_files_path(client_id: @client.id), notice: 'Carpeta creada correctamente'
 
   end
 
@@ -517,7 +550,7 @@ class ClientsController < ApplicationController
 
     #Do nothing if same folder
     if new_folder_name == old_folder_name
-      redirect_to get_client_files_path(client_id: @client.id), success: 'Carpeta renombrada correctamente'
+      redirect_to get_client_files_path(client_id: @client.id), notice: 'Carpeta renombrada correctamente'
       return
     end
 
@@ -550,7 +583,7 @@ class ClientsController < ApplicationController
     old_folder = s3_bucket.object(old_folder_path)
     old_folder.delete
 
-    redirect_to get_client_files_path(client_id: @client.id), success: 'Carpeta renombrada correctamente'
+    redirect_to get_client_files_path(client_id: @client.id), notice: 'Carpeta renombrada correctamente'
 
   end
 
@@ -581,7 +614,7 @@ class ClientsController < ApplicationController
       old_folder.delete
     end
 
-    redirect_to get_client_files_path(client_id: @client.id), success: 'Carpeta eliminada correctamente'
+    redirect_to get_client_files_path(client_id: @client.id), notice: 'Carpeta eliminada correctamente'
 
   end
 
@@ -595,8 +628,7 @@ class ClientsController < ApplicationController
 
     #Do nothing if same folder
     if new_folder_name == @client_file.folder
-      flash[:notice] = 'Archivo movido correctamente'
-      redirect_to get_client_files_path(client_id: @client.id)
+      redirect_to get_client_files_path(client_id: @client.id), notice: 'Archivo movido correctamente'
       return
     end
 
@@ -626,11 +658,9 @@ class ClientsController < ApplicationController
     @client_file.folder = new_folder_name
     
     if @client_file.save
-      flash[:notice] = 'Archivo movido correctamente'
-      redirect_to get_client_files_path(client_id: @client.id)
+      redirect_to get_client_files_path(client_id: @client.id), notice: 'Archivo movido correctamente'
       else
-      flash[:warning] = 'Error al mover el archivo'
-      redirect_to get_client_files_path(client_id: @client.id)
+      redirect_to get_client_files_path(client_id: @client.id), alert: 'Error al mover el archivo'
     end
 
   end
@@ -684,11 +714,9 @@ class ClientsController < ApplicationController
     end
     
     if @client_file.save
-      flash[:notice] = 'Archivo editado correctamente'
-      redirect_to get_client_files_path(client_id: @client.id)
+      redirect_to get_client_files_path(client_id: @client.id), notice: 'Archivo editado correctamente'
       else
-        flash[:warning] = 'Error al mover el archivo'
-        redirect_to get_client_files_path(client_id: @client.id)
+        redirect_to get_client_files_path(client_id: @client.id), alert: 'Error al mover el archivo'
     end
 
   end

@@ -20,6 +20,130 @@ class Client < ActiveRecord::Base
   validate :mail_uniqueness, :record_uniqueness, :minimun_info
 
   after_update :client_notification
+  #after_create :create_client_attributes
+
+  def create_client_attributes
+
+    self.company.custom_attributes.each do |attribute|
+
+      if attribute.datatype == "categoric"
+        attribute_category = AttributeCategory.create(attribute_id: attribute.id, category: "Otra")
+      end
+
+      case attribute.datatype
+      when "float"
+        
+        if FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          FloatAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "integer"
+        
+        if IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "text"
+        
+        if TextAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          TextAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "textarea"
+        
+        if TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "boolean"
+        
+        if BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          BooleanAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "date"
+        
+        if DateAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          DateAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "datetime"
+        
+        if DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          DateTimeAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "file"
+        if FileAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          FileAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+      when "categoric"
+        attribute_category = AttributeCategory.create(attribute_id: attribute.id, category: "Otra")
+        if CategoricAttribute.where(attribute_id: attribute.id, client_id: client.id).count == 0
+          CategoricAttribute.create(attribute_id: attribute.id, client_id: client.id, attribute_category_id: attribute_category.id)
+        end
+      end
+
+    end
+
+
+    company = self.company
+    company.clients.each do |client|
+      case self.datatype
+      when "float"
+        
+        if FloatAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          FloatAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "integer"
+        
+        if IntegerAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          IntegerAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "text"
+        
+        if TextAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          TextAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "textarea"
+        
+        if TextareaAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          TextareaAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "boolean"
+        
+        if BooleanAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          BooleanAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "date"
+        
+        if DateAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          DateAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "datetime"
+        
+        if DateTimeAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          DateTimeAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "file"
+        if FileAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          FileAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+      when "categoric"
+        if CategoricAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          CategoricAttribute.create(attribute_id: self.id, client_id: client.id, attribute_category_id: attribute_category.id)
+        end
+      end
+    end
+
+  end
 
   def get_custom_attributes
 

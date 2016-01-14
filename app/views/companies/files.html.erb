@@ -69,7 +69,7 @@
                           if s3_bucket.object(file.full_path).exists?
                         %>
                         <tr class="file-row" file_id="<%= file.id %>">
-                          <td style="width: 20%; text-align: left;"><%= file.name %></td>
+                          <td style="width: 20%; text-align: left;"><i class="fa fa-file"></i>&nbsp;<%= file.name %></td>
                           <td style="width: 20%; text-align: left;"><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
                           <td style="width: 20%; text-align: left;"><%= file.get_size %></td>
                           <td style="width: 40%; text-align: right;">

@@ -329,6 +329,7 @@ class Ability
         can :rut_suggestion, Client
         can :bookings_history, Client
         can :check_sessions, Client
+        can :bookings_content, Client, :company_id => user.company_id
 
         can :booking_payment, Payment
         can :load_payment, Payment
@@ -470,6 +471,7 @@ class Ability
 
         can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
+        can :bookings_content, Client, :company_id => user.company_id
         can :create, Client, :company_id => user.company_id
         can :update, Client, :company_id => user.company_id
         can :destroy, Client, :company_id => user.company_id
@@ -657,6 +659,19 @@ class Ability
 
         can :save_billing_wire_transfer, Plan, :company_id => user.company_id
 
+        can :read, ClientFile, :client => {:company_id => user.company_id}
+        can :create, ClientFile, :client => {:company_id => user.company_id}
+        can :update, ClientFile, :client => {:company_id => user.company_id}
+        can :destroy, ClientFile, :client => {:company_id => user.company_id}
+
+        can :files, Client, :company_id => user.company_id
+        can :upload_file, Client, :company_id => user.company_id
+        can :create_folder, Client, :company_id => user.company_id
+        can :rename_folder, Client, :company_id => user.company_id
+        can :delete_folder, Client, :company_id => user.company_id
+        can :move_file, Client, :company_id => user.company_id
+        can :edit_file, Client, :company_id => user.company_id
+
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
         can :location_users, User, :company_id => user.company_id
@@ -687,6 +702,7 @@ class Ability
 
         can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
+        can :bookings_content, Client, :company_id => user.company_id
         can :create, Client, :company_id => user.company_id
         can :update, Client, :company_id => user.company_id
 
@@ -762,6 +778,19 @@ class Ability
         can :sales_reports, Payment, :company_id => user.company_id
         can :users_report, Payment, :company_id => user.company_id
         can :service_providers_report, Payment, :company_id => user.company_id
+
+        can :read, ClientFile, :client => {:company_id => user.company_id}
+        can :create, ClientFile, :client => {:company_id => user.company_id}
+        can :update, ClientFile, :client => {:company_id => user.company_id}
+        can :destroy, ClientFile, :client => {:company_id => user.company_id}
+
+        can :files, Client, :company_id => user.company_id
+        can :upload_file, Client, :company_id => user.company_id
+        can :create_folder, Client, :company_id => user.company_id
+        can :rename_folder, Client, :company_id => user.company_id
+        can :delete_folder, Client, :company_id => user.company_id
+        can :move_file, Client, :company_id => user.company_id
+        can :edit_file, Client, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff").id
         
