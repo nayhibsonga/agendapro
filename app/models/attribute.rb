@@ -23,10 +23,12 @@ class Attribute < ActiveRecord::Base
 	end
 
 	def check_file
-		self.update_column(:show_on_calendar, false)
-		self.update_column(:show_on_workflow, false)
-		self.update_column(:mandatory_on_calendar, false)
-		self.update_column(:mandatory_on_workflow, false)
+		if self.datatype == "file"
+			self.update_column(:show_on_calendar, false)
+			self.update_column(:show_on_workflow, false)
+			self.update_column(:mandatory_on_calendar, false)
+			self.update_column(:mandatory_on_workflow, false)
+		end
 	end
 
 	def create_clients_attributes
