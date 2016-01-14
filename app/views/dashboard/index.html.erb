@@ -130,7 +130,7 @@
           <div class="panel-heading">
             <ul id="myTab" class="nav nav-pills tab-margin" role="tablist">
               <li class="active"><a href="#summary" role="tab" data-toggle="tab" class="tab_index">Últimas Reservas</a></li>
-              <li><a href="#sessions" role="tab" data-toggle="tab" class="tab_index">Resumen de Sesiones</a></li>
+              <% if current_user.role_id == Role.find_by_name("Administrador General").id || current_user.role_id == Role.find_by_name("Administrador Local").id %><li><a href="#sessions" role="tab" data-toggle="tab" class="tab_index">Resumen de Sesiones</a></li><% end %>
             </ul>
           </div>
           <div class="tab-content">
