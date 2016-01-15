@@ -28,9 +28,15 @@ html, body, .main, #mail-editor-container, #mail-editor, #composing {
     }
     input[type='text'] {
       width: 100%;
-      &.input-from { padding-left: 35px; }
       &.input-to { padding-left: 50px; }
       &.input-subject { padding-left: 60px; }
+    }
+    select.input-from {
+      border-radius: 0;
+      height: 30px;
+      font-size: 17px;
+      padding: 1px 0;
+      padding-left: 35px;
     }
     .complete-list-button {
       margin: 10px 0;
@@ -66,6 +72,16 @@ html, body, .main, #mail-editor-container, #mail-editor, #composing {
     }
     .file-input {
       display: none;
+    }
+    .progress {
+      width: 200px;
+    }
+  }
+  .image-container {
+    background-color: #FFFFFF;
+    text-align: center;
+    > img {
+      max-width: 100%;
     }
   }
 

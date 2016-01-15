@@ -3,16 +3,21 @@
     <%= image_tag(content.data["#{img_name}"])  %>
   </div>
 <% else %>
-  <div ng-show="ec.content.data['<%= img_name %>']">
+  <div ng-show="ec.content.data['<%= img_name %>']" class="image-container">
     <img src="" ng-src="{{ ec.content.data['<%= img_name %>'] }}">
   </div>
 
   <div ng-hide="ec.content.data['<%= img_name %>']" class="no-image-container">
     <div>
-        <button ng-click="ec.selectFile($event, '<%= img_name %>')" class="btn btn-green">
+        <button ng-click="ec.selectFile($event, '<%= img_name %>')" class="btn btn-green" ng-hide="ec.uploader.isUploading">
           Seleccionar imagen
         </button>
         <input class="file-input" type="file" nv-file-select uploader="ec.uploader"/>
+        <div class="progress" ng-show="ec.uploader.isUploading">
+          <div class="progress-bar progress-bar-striped active" role="progressbar" ng-style="{ 'width': ec.uploader.progress + '%' }" style="width: 0%">
+            {{ ec.uploader.progress }}%
+          </div>
+        </div>
     </div>
 
   </div>

@@ -18,7 +18,7 @@
 
         <div>
           <span class="input-desc">De:</span>
-          <input type="text" ng-model="ec.content.from" class="input-from">
+          <%= select_tag :from, options_for_select(@from_collection, @from), {class: 'input-from form-control', required: true, "ng-model" => "ec.content.from"} %>
         </div>
 
         <div class="total-recipients">
@@ -31,7 +31,10 @@
         </div>
 
         <div class="complete-list-button">
-          <%= button_tag('Ver lista completa', class: 'btn btn-list') %>
+          <%= button_tag('Ver lista completa', type: 'button', class: 'btn btn-list', data: {toggle: 'modal', target: '#clientModal'}) %>
+          <!-- <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+            Launch demo modal
+          </button> -->
         </div>
 
         <div>
@@ -55,6 +58,30 @@
   </div>
 
 </div>
+
+<%= content_for :modals do %>
+  <div class="modal fade" id="clientModal" tabindex="-1" role="dialog" aria-labelledby="clientModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="clientModalLabel">Lista de Destinatarios</h4>
+        </div>
+        <div class="modal-body">
+          <p><%= @content.to %></p>
+          <!-- <ul class="list-inline">
+            <% @content.to.split(', ').each do |to| %>
+            <li><%= to%></li>
+            <% end %>
+          </ul> -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <%= content_for :scripts do %>
   <%= javascript_include_tag 'admin/email/editor' %>
