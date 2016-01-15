@@ -1,4 +1,4 @@
-html, body, .main, #mail-editor-container, #mail-editor, #composing {
+html, body, .main, #mail-editor-container, #composing {
   height: 100%;
 }
 
@@ -9,6 +9,7 @@ html, body, .main, #mail-editor-container, #mail-editor, #composing {
 }
 
 #mail-editor {
+  height: auto;
   padding: 10px;
 
   #composing {

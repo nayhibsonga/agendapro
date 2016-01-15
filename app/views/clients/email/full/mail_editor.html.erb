@@ -1,60 +1,76 @@
-<div id="mail-editor-container" ng-app="AgendaProApp">
-  <input type="hidden" id="content-data" name="content-data" value="<%= @content.to_json %>">
-  <div id="mail-editor" class="clearfix" ng-controller="EditorController as ec">
-    <div id="content" class="col-xs-12 col-md-7">
-      <div class="page">
-        <div>
-            <%= render @tmpl.src %>
-        </div>
-      </div>
+<div ng-app="AgendaProApp" ng-controller="EditorController as ec">
+  <div id="loading-page" ng-hide="ec.pageLoaded" style="position: fixed; height: 100%; width: 100%; background-color: #B9B9B9; z-index: 99999999999">
+    <div style="position: relative; height: 100%">
+      <div style="position: absolute; top: 40%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);">
+        <span style="font-size: 32px; color:white; font-weight: bold;">Cargando Contenido ...</span>
 
-      <div>
-        <textarea name="" id="tzt" ng-model="ec.content.data['text1']" cols="30" rows="10"></textarea>
       </div>
     </div>
-
-    <div id="composing" class="col-xs-12 col-md-5">
-      <div class="well">
-
-        <div>
-          <span class="input-desc">De:</span>
-          <input type="text" ng-model="ec.content.from" class="input-from">
-        </div>
-
-        <div class="total-recipients">
-          *Estas enviando el e-mail a <%= @content.to.split(', ').size %> personas.
-        </div>
-
-        <div>
-          <span class="input-desc to">Para:</span>
-          <input type="text" ng-model="ec.content.to" class="input-to" disabled>
-        </div>
-
-        <div class="complete-list-button">
-          <%= button_tag('Ver lista completa', class: 'btn btn-list') %>
-        </div>
-
-        <div>
-          <span class="input-desc subject">Asunto:</span>
-          <input type="text" ng-model="ec.content.subject" class="input-subject">
-        </div>
-
-      </div>
-
-      <div style="height: auto;">
-        <%= cktext_area :editor, 'text1', id: 'text1', cols: 100, ckeditor: {uiColor: '#FFFFFF', height: 350, removePlugins: 'image'}, 'ng-model' => "ec.content.data['text1']", 'custom-ck-editor' => '' %>
-      </div>
-
-      <div style="text-align: right; padding: 10px;">
-        <button class="btn btn-list" ng-click="vm.send_email = false; ec.saveContent('<%= url_for(:save_content) %>')">Guardar</button>
-        <button class="btn btn-green"  ng-click="vm.send_email = true; ec.saveContent('<%= url_for(:save_content) %>');">Guardar y Enviar</button>
-      </div>
-    </div>
-
-
   </div>
 
+  <div class="alert alert-info alert-dismissable fade in">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    {{ vm.notice }}
+  </div>
+
+  <div id="mail-editor-container" >
+    <input type="hidden" id="content-data" name="content-data" value="<%= @content.to_json %>">
+    <div id="mail-editor" class="clearfix" >
+      <div id="content" class="col-xs-12 col-md-7">
+        <div class="page">
+          <div>
+              <%= render @tmpl.src %>
+          </div>
+        </div>
+      </div>
+
+      <div id="composing" class="col-xs-12 col-md-5">
+        <div class="well">
+
+          <div>
+            <span class="input-desc">De:</span>
+            <input type="text" ng-model="ec.content.from" class="input-from">
+          </div>
+
+          <div class="total-recipients">
+            *Estas enviando el e-mail a {{ ec.content.to.split(',').length }} personas.
+          </div>
+
+          <div>
+            <span class="input-desc to">Para:</span>
+            <input type="text" ng-model="ec.content.to" class="input-to" disabled>
+          </div>
+
+          <div class="complete-list-button">
+            <%= button_tag('Ver lista completa', class: 'btn btn-list') %>
+          </div>
+
+          <div>
+            <span class="input-desc subject">Asunto:</span>
+            <input type="text" ng-model="ec.content.subject" class="input-subject">
+          </div>
+
+        </div>
+
+        <div style="height: auto;">
+          <%= cktext_area :editor, 'text1', id: 'text1', cols: 100, ckeditor: {uiColor: '#FFFFFF', height: 350, removePlugins: 'image'}, 'ng-model' => "ec.content.data['text1']", 'custom-ck-editor' => '' %>
+        </div>
+      </div>
+
+      <div class="col-xs-12" style="text-align: right; padding: 10px;margin-bottom: 30px;">
+        <%= link_to 'Volver', :back, class: 'btn btn-default pull-left' %>
+        <button class="btn btn-list" ng-click="ec.send_email = false; ec.saveContent('<%= url_for(:save_content) %>')">Guardar</button>
+        <button class="btn btn-green"  ng-click="ec.send_email = true; ec.saveContent('<%= url_for(:save_content) %>');">Guardar y Enviar</button>
+      </div>
+    </div>
+
+  </div>
 </div>
+
 
 <%= content_for :scripts do %>
   <%= javascript_include_tag 'admin/email/editor' %>

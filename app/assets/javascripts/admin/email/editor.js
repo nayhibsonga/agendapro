@@ -13,21 +13,34 @@
 
   function EditorController($scope, FileUploader, $http) {
     var vm = this;
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     vm.active = '';
     vm.content = JSON.parse(angular.element('#content-data').val());
     vm.uploader = new FileUploader({
       url: '/email_content/upload',
       autoUpload: true,
       headers : {
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        'X-CSRF-TOKEN': csrfToken
       },
       formData: [{id: vm.content.id}]
     });
     vm.activeImage = '';
     vm.send_email = false;
+    vm.pageLoaded = false;
+    vm.notice = '';
 
     vm.selectFile = selectFile;
     vm.saveContent = saveContent;
+
+    ckEditorStatus();
+
+    $scope.$watch(function(){
+      return vm.message;
+    }, function(){
+      setTimeout(function(){
+        angular.element('.alert').show();
+      }, 3000, function(){ vm.message = '' });
+    });
 
     vm.uploader.onCompleteItem = function(fileItem, response, status, headers) {
         if( status == 200 ) {
@@ -43,18 +56,23 @@
     }
 
     function saveContent(url) {
-      console.log(url);
+      $http.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
       return $http.post(url, buildData()).then(function(response){
-        return response;
+        if( vm.send_email ) {
+          location.href = 'compose_mail';
+        } else {
+          vm.notice = 'Guardado';
+        }
       }, ShowError);
     }
 
     function buildData() {
       var content = vm.content;
+      console.log(vm.send_email);
       return {
         id: content.id,
-        send_email: vm.send_email,
         content: {
+          send_email: vm.send_email,
           to: content.to,
           from: content.from,
           subject: content.subject,
@@ -66,6 +84,13 @@
     function ShowError(response) {
       vm.error = response;
       return vm.error;
+    }
+
+    function ckEditorStatus() {
+      CKEDITOR.on('instanceReady',function(){
+         vm.pageLoaded = true;
+         $scope.$apply();
+      });
     }
   }
 
@@ -91,5 +116,7 @@
           }
       };
   }
+
+
 
 })();

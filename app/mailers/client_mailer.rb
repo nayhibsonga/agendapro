@@ -68,6 +68,7 @@ class ClientMailer < Base::CustomMailer
   def send_campaign(id)
     @content = Email::Content.find(id)
     @data = @content.data
+    @email = true;
     mail(
       from: filter_sender(@content.from),
       to: filter_recipient(@content.to),

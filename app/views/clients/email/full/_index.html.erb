@@ -18,8 +18,8 @@
     </div>
 
     <div role="tabpanel" class="tab-pane" id="saved">
-      <% @saved.each do |template| %>
-         <%= render partial: '/clients/email/full/template_list', locals: {template: template} %>
+      <% @saved.each do |content| %>
+         <%= render partial: '/clients/email/full/saved_list', locals: {content: content} %>
       <% end %>
     </div>
 

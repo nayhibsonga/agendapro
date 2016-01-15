@@ -264,11 +264,10 @@ class ClientsController < ApplicationController
     @tmpl = Email::Template.find(params[:tmpl])
     @email = false
     @content = Email::Content.find_or_create_by(template: @tmpl, company: current_user.company, from: from, to: recipients)
-    render 'clients/email/full/mail_editor'
+    render('clients/email/full/mail_editor')
   end
 
   def upload_content
-    raise "ALOO #{params.inspect}"
     if params[:file].present?
       begin
         uploader = EmailContentUploader.new
@@ -288,7 +287,8 @@ class ClientsController < ApplicationController
   end
 
   def save_content
-    updated = Email::Content.generate(params[:id], params.except(:id))
+    content = Email::Content.where(id: params[:id]).first
+    updated = content.update(content_params) if content
     render json: { status: updated ? :ok : :interal_server_error }
   end
 
@@ -471,7 +471,11 @@ class ClientsController < ApplicationController
     def template_selection
       @tmpl = 'full'
       @templates = Email::Template.all.order(id: :asc)
-      @saved = []
+      @saved = Email::Content.includes(:template).of_company(current_user.company)
+    end
+
+    def content_params
+      params.require(:content).permit!
     end
 
 end

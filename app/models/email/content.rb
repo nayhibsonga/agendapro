@@ -10,11 +10,6 @@ class Email::Content < ActiveRecord::Base
 
   scope :of_company, -> (c) { where(company: c) unless c.nil? }
 
-  def self.generate(id, params)
-    content = where(id: id).try(:first)
-    content.update(params) if content
-  end
-
   def generate_sending
     Email::Sending.create(
       sendable_id: self.id,
