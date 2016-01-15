@@ -53,14 +53,14 @@
 
               <div class="col-md-3" style="margin-bottom: 20px;">
 
-                <%= content_tag "div", id: "plan_" + plan.id.to_s, data: { plan_price: plan.plan_countries.find_by(country_id: @company.country.id).price, plan_month_value: (@month_days - @day_number + 1) * plan.plan_countries.find_by(country_id: @company.country.id).price / @month_days } do %>
+                <%= content_tag "div", id: "plan_" + plan.id.to_s, data: { plan_price: plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier, plan_month_value: (@month_days - @day_number + 1) * plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier / @month_days } do %>
 
                 <% end %>
 
-                <% if @company.plan_id == plan.id || (@company.plan.id == Plan.find_by_name("Trial") && plan.plan_countries.find_by(country_id: @company.country.id).price == @price) %>
+                <% if @company.plan_id == plan.id || (@company.plan.id == Plan.find_by_name("Trial") && plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier == @price) %>
                 <div class="plan-box current-plan">
                 <% else %>
-                  <% if @company.service_providers.where(active: true).count > plan.service_providers || @company.locations.where(active: true).count > plan.locations %>
+                  <% if (@company.service_providers.where(active: true).count > plan.service_providers || @company.locations.where(active: true).count > plan.locations) && plan.name == "Personal" %>
                     <div class="plan-box blocked">
                   <% else %>
                     <div class="plan-box change-plan" plan_id="<%= plan.id.to_s %>">
@@ -75,30 +75,54 @@
                       <%= @company.country.currency_code %>
                     </div>
                     <div style="color: #22c488 !important;">
-                      <%= number_to_currency(plan.plan_countries.find_by(country_id: @company.country.id).price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%>
+                      <%= number_to_currency(plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier, {unit: '$', separator: ',', delimiter: '.', precision: 0})%>
                     </div>
                     <div>
                       (+ IVA)
                     </div>
                   </div>
                   <div class="plan-box-detail">
-                    <div>
-                      <% if plan.locations == 1 %>
-                        1 local
+                    <% if plan.custom %>
+                      <div>
+                        <% if plan.locations == 1 %>
+                          1 local
+                        <% else %>
+                          <%= plan.locations.to_s %> locales
+                        <% end %>
+                      </div>
+                      <div>
+                        <% if plan.service_providers == 1 %>
+                          1 prestador
+                        <% else %>
+                          <%= plan.service_providers.to_s %> prestadores
+                        <% end %>
+                      </div>
+                      <div>
+                        <%= plan.monthly_mails.to_s %> emails mensuales
+                      </div>
+                    <% else %>
+                      <% if plan.name == "Personal" %>
+                        <div>
+                            1 local
+                        </div>
+                        <div>
+                            1 prestador
+                        </div>
+                        <div>
+                          <%= plan.monthly_mails.to_s %> emails mensuales
+                        </div>
                       <% else %>
-                        <%= plan.locations.to_s %> locales
+                        <div>
+                            1 local base (+ 0,5 por cada local)
+                        </div>
+                        <div>
+                          Staff ilimitado
+                        </div>
+                        <div>
+                          <%= plan.monthly_mails.to_s %> emails mensuales
+                        </div>
                       <% end %>
-                    </div>
-                    <div>
-                      <% if plan.service_providers == 1 %>
-                        1 prestador
-                      <% else %>
-                        <%= plan.service_providers.to_s %> prestadores
-                      <% end %>
-                    </div>
-                    <div>
-                      <%= plan.monthly_mails.to_s %> emails mensuales
-                    </div>
+                    <% end %>
                   </div>
 
                 </div>
@@ -181,15 +205,33 @@
                       <%= @company.plan.name %>
                     </div>
                     <div>
-                      $<%= @company.plan.plan_countries.find_by_country_id(@company.country.id).price.to_s %> / Mes + IVA
+                      <% if @company.plan.custom %>
+                        $<%= @company.company_plan_setting.base_price.to_s %> / Mes + IVA
+                      <% else %>
+                        $<%= @company.company_plan_setting.base_price * @company.computed_multiplier %> / Mes + IVA
+                      <% end %>
                     </div>
                   </td>
                   <td class="right">
-                    <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.locations.to_s %> locales
-                    <br />
-                    <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.service_providers.to_s %> prestadores
-                    <br />
-                    <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales
+                    <% if @company.plan.custom %>
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.locations.to_s %> locales
+                      <br />
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.service_providers.to_s %> prestadores
+                      <br />
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales
+                    <% elsif @company.plan.name == "Personal" %>
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;1 local
+                      <br />
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;1 prestador
+                      <br />
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales
+                    <% else %>
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;1 local base + 0,5 por cada local extra
+                      <br />
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;Staff ilimitado
+                      <br />
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales
+                    <% end %>
                   </td>
                 </tr>
               </table>
@@ -503,18 +545,28 @@
               </div>
 
               <%
-                downgradeLog = DowngradeLog.where(company_id: @company.id).order('created_at desc').first
-                sales_tax = @company.country.sales_tax
-                month_days = Time.now.days_in_month
-                day_number = Time.now.day
-                old_plan_price = ((month_days - day_number + 1).to_f / month_days.to_f) * downgradeLog.plan.plan_countries.find_by(country_id: @company.country.id).price
+                #downgradeLog = DowngradeLog.where(company_id: @company.id).order('created_at desc').first
+                #sales_tax = @company.country.sales_tax
+                #month_days = Time.now.days_in_month
+                #day_number = Time.now.day
+                #old_plan_price = ((month_days - day_number + 1).to_f / month_days.to_f) * downgradeLog.plan.plan_countries.find_by(country_id: @company.country.id).price
               %>
               <p style="text-align: justify;">
                 Para reactivar tu cuenta, debes cancelar la deuda acumulada al momento de desactivación, más el valor proporcional del plan que tenías para lo que resta del mes presente.
               </p>
-              <p style="text-align: justify;">
+              <!--<p style="text-align: justify;">
                 La deuda que acumulaste alcanza a <%= number_to_currency(downgradeLog.debt, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>. Antes de la desactivación tu plan era el Plan <%= downgradeLog.plan.name %>. El valor de este plan para lo que resta del mes es <%= number_to_currency(old_plan_price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %> (+ IVA). El valor total a cancelar de reactivación asciende a <%= number_to_currency(downgradeLog.debt + old_plan_price * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %> (IVA incluido).
-              </p>
+              </p>-->
+
+              <% if @company.plan.custom %>
+                <p style="text-align: justify;">
+                  La deuda que acumulaste alcanza a <%= number_to_currency(@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>. Antes de la desactivación tu plan era el Plan <%= @company.plan.name %>. El valor de este plan para lo que resta del mes es <%= number_to_currency(@company.company_plan_setting.base_price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %> (+ IVA). El valor total a cancelar de reactivación asciende a <%= number_to_currency(@company.due_amount + @company.company_plan_setting.base_price * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %> (IVA incluido).
+                </p>
+              <% else %>
+                <p style="text-align: justify;">
+                  La deuda que acumulaste alcanza a <%= number_to_currency(@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>. Antes de la desactivación tu plan era el Plan <%= @company.plan.name %>. El valor de este plan para lo que resta del mes es <%= number_to_currency(@company.company_plan_setting.base_price * @company.computed_multiplier, {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %> (+ IVA). El valor total a cancelar de reactivación asciende a <%= number_to_currency(@company.due_amount + @company.company_plan_setting.base_price * @company.computed_multiplier * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %> (IVA incluido).
+                </p>
+              <% end %>
 
               <input type="hidden" id="renovation_amount" value="<%= (downgradeLog.debt + old_plan_price * (1 + sales_tax)).round(0).to_s %>" />
               <input type="hidden" id="renovation_amount_detail" value="<%= number_to_currency(downgradeLog.debt + old_plan_price * (1 + sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0})%> <%= @company.country.currency_code %>" />

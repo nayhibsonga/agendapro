@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160111151011) do
+ActiveRecord::Schema.define(version: 20160115142032) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -349,11 +349,8 @@ ActiveRecord::Schema.define(version: 20160111151011) do
 
   create_table "company_plan_settings", force: true do |t|
     t.integer  "company_id"
-    t.integer  "locations",         default: 1
-    t.integer  "service_providers", default: 1
-    t.integer  "monthly_mails",     default: 0
-    t.boolean  "has_custom_price",  default: false
-    t.float    "custom_price"
+    t.float    "base_price"
+    t.float    "locations_multiplier"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -50,7 +50,23 @@ class PayUController < ApplicationController
       return
     end
     
-    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+    #company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+    price = 0
+    if company.payment_status == PaymentStatus.find_by_name("Trial")
+      if company.locations.count > 1 || company.service_providers.count > 1
+        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+      else
+        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+      end
+    else
+      if company.plan.custom
+        price = company.company_plan_setting.base_price
+      else
+        price = company.company_plan_setting.base_price * company.computed_multiplier
+      end
+    end
+
     # sales_tax = NumericParameter.find_by_name("sales_tax").value
     sales_tax = company.country.sales_tax
     day_number = Time.now.day
@@ -111,7 +127,23 @@ class PayUController < ApplicationController
   def generate_plan_transaction
     plan_id = params[:plan_id].to_i
     company = Company.find(current_user.company_id)
-    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.plan_countries.find_by(country_id: company.country.id).price: price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+    #company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.plan_countries.find_by(country_id: company.country.id).price: price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+    price = 0
+    if company.payment_status == PaymentStatus.find_by_name("Trial")
+      if company.locations.count > 1 || company.service_providers.count > 1
+        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+      else
+        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+      end
+    else
+      if company.plan.custom
+        price = company.company_plan_setting.base_price
+      else
+        price = company.company_plan_setting.base_price * company.computed_multiplier
+      end
+    end
+
     new_plan = Plan.find(plan_id)
     # sales_tax = NumericParameter.find_by_name("sales_tax").value
     sales_tax = company.country.sales_tax
@@ -120,13 +152,13 @@ class PayUController < ApplicationController
     month_days = Time.now.days_in_month
     accepted_plans = Plan.where(custom: false).pluck(:id)
     if accepted_plans.include?(plan_id) && company
-      if company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations 
+      if (company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || !new_plan.custom || new_plan.name != "Personal"
       
         previous_plan_id = company.plan.id
         months_active_left = company.months_active_left
         plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
         due_amount = company.due_amount
-        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
+        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
         plan_month_value = (month_days - day_number + 1)*plan_price/month_days
 
         trx_comp = company.id.to_s + "0" + plan_id.to_s + "0"
@@ -234,7 +266,11 @@ class PayUController < ApplicationController
     #Should have free plan
     previous_plan = company.plan
 
-    price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+    if new_plan.custom
+      price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+    else
+      price = new_plan.plan_countries.find_by(country_id: company.country.id).price  company.computed_multiplier
+    end
 
     sales_tax = company.country.sales_tax
 
@@ -500,6 +536,8 @@ class PayUController < ApplicationController
         company.due_date = nil
         company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
+          company.company_plan_setting.base_price = company.plan.plan_countries.find_by_country_id(company.country.id).price
+          company.company_plan_setting.save
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "OK notification_plan")
           CompanyMailer.pay_u_online_receipt_email(company.id, pay_u_notification.id)
         else

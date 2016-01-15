@@ -51,7 +51,7 @@ class Company < ActiveRecord::Base
 
 	has_one :company_plan_setting
 
-	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
+	scope :collectables, -> { where(active: true, id: 136).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
@@ -67,13 +67,32 @@ class Company < ActiveRecord::Base
 
 	after_create :create_cashier
 
+	after_create :create_plan_setting
+
+	def create_plan_setting
+		CompanyPlanSetting.create(company_id: self.id, base_price: self.plan.plan_countries.find_by(country_id: self.country.id).price, locations_multiplier: NumericParameter.find_by_name("locations_multiplier").value)
+	end
+
+	def computed_multiplier
+		return (1 + (self.locations.where(active:true).count - 1) * self.company_plan_setting.locations_multiplier)
+	end
+
+	def get_storage_occupation
+		
+	end
+
 	def create_cashier
 		cashier = Cashier.create(company_id: self.id, name: "Cajero 1", code: "12345678", active: true)
 	end
 
 	def plan_settings
-		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
-			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/prestadores activos que lo que permite el plan.")
+		#If it's custom, keep locations/service_providers revisions
+		if self.plan.custom
+			if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
+				errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/prestadores activos que lo que permite el plan.")
+			end
+		else
+			#Generate debt change when locations are increased/decreased.
 		end
 	end
 
@@ -350,13 +369,22 @@ class Company < ActiveRecord::Base
 
 		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
 
-			plan_id = Plan.where.not(id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
+			#plan_id = Plan.where.not(id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
+			plan_id = Plan.where(name: "Personal", custom: false).first
+			if self.locations > 1 || self.service_providers > 1
+				plan_id = Plan.where(name: "Normal", custom: false).first
+			end
 
 			sales_tax = company.country.sales_tax
 
 			company.plan_id = plan_id
+			company.company_plan_setting.base_price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
 			company.due_date = Time.now
-			company.due_amount = - 1 * ((day_number - 1).to_f / month_days.to_f) * company.plan.plan_countries.find_by(country_id: company.country.id).price * (1 + sales_tax)
+			#company.due_amount = - 1 * ((day_number - 1).to_f / month_days.to_f) * company.plan.plan_countries.find_by(country_id: company.country.id).price * (1 + sales_tax)
+			company.due_amount = - 1 * ((day_number - 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * company.computed_multiplier
+
+
 			company.months_active_left = 0
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 
@@ -443,9 +471,17 @@ class Company < ActiveRecord::Base
 				company.months_active_left -= 1
 				company.payment_status_id = status_vencido.id
 				if company.due_amount.nil?
-					company.due_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					if company.plan.custom
+						company.due_amount = company.company_plan_setting.base_price * (1 + sales_tax)
+					else
+						company.due_amount = company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+					end
 				else
-					company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					if company.plan.custom 
+						company.due_amount += company.company_plan_setting.base_price * (1 + sales_tax)
+					else
+						company.due_amount += company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+					end
 				end
 				company.due_date = DateTime.now
 				company.save
@@ -473,6 +509,7 @@ class Company < ActiveRecord::Base
 		status_activo = PaymentStatus.find_by_name("Activo")
 		status_emitido = PaymentStatus.find_by_name("Emitido")
 		status_vencido = PaymentStatus.find_by_name("Vencido")
+		status_bloqueado = PaymentStatus.find_by_name("Bloqueado")
 		plan_gratis = Plan.find_by_name("Gratis")
 		chile = Country.find_by_name("Chile")
 
@@ -501,19 +538,30 @@ class Company < ActiveRecord::Base
 				#Block them by changing their plan to free plan
 				#Add their due amount for possible reactivation in the future
 
-				prev_plan_id = company.plan_id
+				#prev_plan_id = company.plan_id
 
-				company.payment_status_id = status_vencido.id
+				company.payment_status_id = status_bloqueado.id
 				if company.due_amount.nil?
-					company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					if company.plan.custom
+						#company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+						company.due_amount = month_prop * company.company_plan_setting.base_price * (1 + sales_tax)
+					else
+						company.due_amount = month_prop * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+					end
 				else
-					company.due_amount += month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					#company.due_amount += month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					if company.plan.custom
+						#company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+						company.due_amount += month_prop * company.company_plan_setting.base_price * (1 + sales_tax)
+					else
+						company.due_amount += month_prop * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+					end
 				end
-				company.plan_id = plan_gratis.id
+				#company.plan_id = plan_gratis.id
 				company.due_date = DateTime.now
 				
 				if company.save
-					DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
+					#DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
 					#Send mail alerting their plan changed
 					CompanyMailer.invoice_email(company.id, message_vencido)
 				end

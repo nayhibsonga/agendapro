@@ -77,13 +77,13 @@
               <% if current_user.role == Role.find_by(name: "Administrador General") || current_user.role == Role.find_by(name: "Administrador Local") %>
 
                 <li class="dropdown <%= 'active' if current_page?(payments_path) or current_page?(sales_cash_path) or current_page?(sales_reports_path) %>">
-                  <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
+                  <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
                     <a href="#" class="dropdown-toggle locked-section" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i><i class="fa fa-lock fa-1 lock-image"></i></a>
                   <% else %>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i></a>
                   <% end %>
                   <ul class="dropdown-menu" role="menu">
-                    <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
+                    <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
                       <li><%= link_to '<i class="fa fa-money"></i>  Recaudaciones<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, payments_path, :class => "locked-section" %></li>
                       <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, sales_reports_path, :class => "locked-section" %></li>
                     <% else %>
@@ -91,7 +91,7 @@
                       <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes'.html_safe, sales_reports_path %></li>
                     <% end %>
                     <% if current_user.company.company_setting.show_cashes %>
-                      <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
+                      <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
                         <li><%= link_to '<i class="fa fa-university"></i> Cajas de Ventas<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, sales_cash_path, :class => "locked-section" %></li>
                       <% else %>
                         <li><%= link_to '<i class="fa fa-university"></i> Cajas de Ventas'.html_safe, sales_cash_path %></li>
@@ -100,7 +100,7 @@
                   </ul>
                 </li>
 
-                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
+                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
                   <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, products_path, :class => "locked-section" %></li>
                 <% else %>
                   <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario', products_path %></li>
@@ -108,13 +108,13 @@
 
               <% elsif current_user.role == Role.find_by(name: "Staff") || current_user.role == Role.find_by(name: "Recepcionista") %>
                 <li class="dropdown <%= 'active' if current_page?(payments_path) or current_page?(sales_cash_path) or current_page?(sales_reports_path) %>">
-                  <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
+                  <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
                     <a href="#" class="dropdown-toggle locked-section" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i><i class="fa fa-lock fa-1 lock-image"></i></a>
                   <% else %>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i></a>
                   <% end %>
                   <ul class="dropdown-menu" role="menu">
-                    <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
+                    <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
                       <li><%= link_to '<i class="fa fa-money"></i>  Recaudaciones<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, payments_path, :class => "locked-section" %></li>
                       <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, sales_reports_path, :class => "locked-section" %></li>
                     <% else %>
@@ -123,7 +123,7 @@
                     <% end %>
                   </ul>
                 </li>
-                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
+                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
                   <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, products_path, :class => "locked-section" %></li>
                 <% else %>
                   <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario', products_path %></li>
@@ -131,7 +131,7 @@
               <% end %>
               <!-- Clientes -->
               <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") and current_user.role != Role.find_by(name: "Super Admin") and current_user.role != Role.find_by(name: "Ventas") %>
-                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
+                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
                   <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, clients_path, :class => "locked-section" %></li>
                 <% else %>
                   <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes', clients_path %></li>
@@ -139,7 +139,7 @@
               <% end %>
               <!-- Reportes -->
               <% if current_user.role == Role.find_by(name: "Administrador General") %>
-                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
+                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
                   <li class="<%= 'active' if current_page?(reports_path) %>"><%= link_to 'Reportes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, reports_path, :class => "locked-section" %></li>
                 <% else %>
                   <li class="<%= 'active' if current_page?(reports_path) %>"><%= link_to 'Reportes', reports_path %></li>

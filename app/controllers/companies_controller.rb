@@ -1,5 +1,5 @@
 class CompaniesController < ApplicationController
-  before_action :verify_is_active, only: [:overview, :workflow]
+  	before_action :verify_is_active, only: [:overview, :workflow]
 	before_action :set_company, only: [:show, :edit, :update, :destroy, :edit_payment]
 	before_action :constraint_locale, only: [:overview, :workflow]
 	before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address, :select_hour, :user_data, :select_promo_hour, :mobile_hours]
@@ -61,7 +61,22 @@ class CompaniesController < ApplicationController
 
 	    		plan_id = @transfer.new_plan
 
-	    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+	    		#company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+	    		price = 0
+			    if company.payment_status == PaymentStatus.find_by_name("Trial")
+			      if company.locations.count > 1 || company.service_providers.count > 1
+			        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			      else
+			        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			      end
+			    else
+			      if company.plan.custom
+			        price = company.company_plan_setting.base_price
+			      else
+			        price = company.company_plan_setting.base_price * company.computed_multiplier
+			      end
+			    end
 
 	    		new_plan = Plan.find(plan_id)
 
@@ -69,13 +84,13 @@ class CompaniesController < ApplicationController
 
 	    		if accepted_plans.include?(plan_id)
 
-	    			if company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations
+	    			if (company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || !new_plan.custom || new_plan.name != "Personal"
 
 	    				previous_plan_id = company.plan.id
 				        months_active_left = company.months_active_left
 				        plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
 				        due_amount = company.due_amount
-				        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
+				        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
 				        previous_plan_price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 				        plan_month_value = (month_days - day_number + 1)*plan_price/month_days
 
@@ -94,6 +109,9 @@ class CompaniesController < ApplicationController
 					            company.due_amount = (new_amount_due).round(0) * (1 + sales_tax)
 
 					            if company.save
+
+					            	company.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+					            	company.company_plan_setting.save
 
 					            	@transfer.approved = true
 					            	@transfer.save
@@ -140,6 +158,10 @@ class CompaniesController < ApplicationController
 						    		end
 
 						    		if mockCompany.save
+
+						    			mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+					            		mockCompany.company_plan_setting.save
+
 						                PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
 
 						                @transfer.approved = true
@@ -197,6 +219,9 @@ class CompaniesController < ApplicationController
 					    		if mockCompany.save
 									PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
 
+									mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+					            	mockCompany.company_plan_setting.save
+
 									@transfer.approved
 									@transfer.save
 
@@ -234,7 +259,22 @@ class CompaniesController < ApplicationController
 
 	    	else
 
-	    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+	    		#company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+	    		price = 0
+			    if company.payment_status == PaymentStatus.find_by_name("Trial")
+			      if company.locations.count > 1 || company.service_providers.count > 1
+			        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			      else
+			        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			      end
+			    else
+			      if company.plan.custom
+			        price = company.company_plan_setting.base_price
+			      else
+			        price = company.company_plan_setting.base_price * company.computed_multiplier
+			      end
+			    end
 
 	    		accepted_amounts = [1,2,3,4,6,9,12]
 	    		if accepted_amounts.include?(@transfer.paid_months)
@@ -312,7 +352,11 @@ class CompaniesController < ApplicationController
 		    #Should have free plan
 		    previous_plan = company.plan
 
-		    price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+		    if new_plan.custom
+		    	price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+		    else
+		    	price = new_plan.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
+		    end
 
 		    plan_month_value = ((month_days - day_number + 1).to_f / month_days.to_f) * price
 		    due_amount = downgradeLog.debt

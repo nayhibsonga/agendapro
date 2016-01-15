@@ -2,6 +2,8 @@ Agendapro::Application.routes.draw do
 
 
 
+  resources :company_plan_settings
+
   resources :attribute_categories
 
   resources :attributes
