@@ -48,9 +48,9 @@ every 1.days, :at => '6:00 am' do
 	runner "StatsCompany.update_stats"
 end
 
-every 1.days, :at => '8 am' do
-  runner "Company.invoice_email"
-end
+# every 1.days, :at => '8 am' do
+#   runner "Company.invoice_email"
+# end
 
 every 1.days, :at => '2:30 am' do
   runner 'Location.stock_reminders'
