@@ -1,0 +1,7 @@
+<div class="text-container" ng-bind="ec.content.data[<%= txt_name %>]">
+  <% if @email %>
+    <%= content.data.text["#{txt_name}"] %>
+  <% else %>
+    {{ ec.content.data[<%= txt_name %>] }}
+  <% end %>
+</div>

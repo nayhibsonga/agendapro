@@ -70,7 +70,7 @@ class ClientMailer < Base::CustomMailer
     @data = @content.data
     @email = true;
     mail(
-      from: filter_sender(@content.from),
+      from: filter_sender("#{@content.company.name.titleize} <#{@content.from}>"),
       to: filter_recipient(@content.to),
       subject: @content.subject,
       template_path: Email::Template::TMPL_DIR,

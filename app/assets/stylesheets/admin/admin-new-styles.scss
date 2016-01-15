@@ -38,6 +38,9 @@ html, body, .main, #mail-editor-container, #composing {
       font-size: 17px;
       padding: 1px 0;
       padding-left: 35px;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
     }
     .complete-list-button {
       margin: 10px 0;

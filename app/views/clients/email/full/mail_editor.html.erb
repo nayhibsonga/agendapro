@@ -25,7 +25,9 @@
           <div>
               <%= render @tmpl.src %>
           </div>
+        </div>
       </div>
+
       <div id="composing" class="col-xs-12 col-md-5">
         <div class="well">
 
@@ -72,16 +74,14 @@
 <%= content_for :modals do %>
   <div class="modal fade" id="clientModal" tabindex="-1" role="dialog" aria-labelledby="clientModalLabel">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
+      <div class="modal-content" style="border-radius: 0;">
+        <div class="modal-header" style="background-color: white;">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="clientModalLabel">Lista de Destinatarios</h4>
+          <h3 class="modal-title" id="clientModalLabel" style="color: #22C488">Lista de Destinatarios</h3>
+          <span>Recibirán el mail todas las personas listadas aquí</span>
         </div>
         <div class="modal-body">
-          <p><%= @content.to %></p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <p><%= @content.to.gsub(", ", " - ") %></p>
         </div>
       </div>
     </div>

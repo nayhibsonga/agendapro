@@ -1,6 +1,6 @@
 <% if @email %>
   <div>
-    <%= image_tag(content.data["#{img_name}"])  %>
+    <%= image_tag(content.data["#{img_name}"], {with: '100%'})  %>
   </div>
 <% else %>
   <div ng-show="ec.content.data['<%= img_name %>']" class="image-container">

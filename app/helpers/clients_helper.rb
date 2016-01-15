@@ -16,4 +16,14 @@ module ClientsHelper
       email: email
     )
   end
+
+  def editor_text(content, txt, email=false)
+    render(
+      '/clients/email/full/templates/text_edit',
+      content: content,
+      txt_name: txt,
+      email: email
+      )
+  end
+
 end
