@@ -3088,7 +3088,6 @@ $(function() {
             '<option data-bundle="' + service.bundle + '" value="' + service.id + '">' + service.name + '</option>'
             );
         });
-        $('#booking_service_id').removeAttr('disabled');
         $('#booking_service_id option[value="' + selectedService + '"]').prop('selected', true);
         modalChange();
         checkClientSessions(true);
