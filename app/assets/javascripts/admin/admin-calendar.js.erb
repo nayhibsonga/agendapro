@@ -747,7 +747,7 @@ function editBookingModal(eventId) {
           $('#booking_service_id').empty();
           $.each(services, function (key, service) {
             $('#booking_service_id').append(
-              '<option value="' + service.id + '">' + service.name + '</option>'
+              '<option data-bundle="' + service.bundle + '" value="' + service.id + '">' + service.name + '</option>'
             );
           });
           $('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
@@ -2414,6 +2414,7 @@ function modalChange() {
       if ($("#booking_service_id").val() == servicesJSON[i].id && $("#booking_service_id").find(':selected').data('bundle') == servicesJSON[i].bundle) {
         price = servicesJSON[i].price;
       }
+      
     }
     $('#booking_price').val(price);
   }
@@ -3085,7 +3086,7 @@ $(function() {
         $('#booking_service_id').empty();
         $.each(services, function (key, service) {
           $('#booking_service_id').append(
-            '<option value="' + service.id + '">' + service.name + '</option>'
+            '<option data-bundle="' + service.bundle + '" value="' + service.id + '">' + service.name + '</option>'
             );
         });
         $('#booking_service_id').removeAttr('disabled');
