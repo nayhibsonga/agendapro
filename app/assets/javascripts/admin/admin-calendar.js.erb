@@ -1105,10 +1105,9 @@ function deleteBooking(eventId, bundled) {
 }
 
 function jsonBooking() {
-  var booking_date = objectToDate($('#datePicker').val());
   var jsBooking = {
-    "start": booking_date.toISOString().slice(0, 10) +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z",
-    "end": booking_date.toISOString().slice(0, 10) +"T"+ $('#bookingEndHour').val() +":"+ $('#bookingEndMinute').val() +":00Z",
+    "start": $('#datePicker').val() +"T"+ $('#bookingStartHour').val() +":"+ $('#bookingStartMinute').val() +":00Z",
+    "end": $('#datePicker').val() +"T"+ $('#bookingEndHour').val() +":"+ $('#bookingEndMinute').val() +":00Z",
     "service_provider_id": parseInt($('#booking_service_provider_id').val()),
     "service_id": parseInt($('#booking_service_id').val()),
     "status_id": parseInt($('#booking_status_id').val()),
@@ -1147,7 +1146,7 @@ function jsonBooking() {
   }
   if ($("#booking_service_id").find(':selected').data('bundle') == true) {
     var jsBookingArray = [];
-    start = new Date(jsBooking['start']);
+    start = new Date(objectToDate($('#datePicker').val()));
     $('#bundle_service_providers .bundle_service').each(function() {
       end = new Date(start.getTime() + parseInt($(this).data('duration'))*60000);
       var newJsBooking = $.extend({}, jsBooking);
@@ -2414,7 +2413,7 @@ function modalChange() {
       if ($("#booking_service_id").val() == servicesJSON[i].id && $("#booking_service_id").find(':selected').data('bundle') == servicesJSON[i].bundle) {
         price = servicesJSON[i].price;
       }
-      
+
     }
     $('#booking_price').val(price);
   }
