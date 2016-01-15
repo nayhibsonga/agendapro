@@ -60,7 +60,7 @@
                 <% if @company.plan_id == plan.id || (@company.plan.id == Plan.find_by_name("Trial") && plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier == @price) %>
                 <div class="plan-box current-plan">
                 <% else %>
-                  <% if (@company.service_providers.where(active: true).count > plan.service_providers || @company.locations.where(active: true).count > plan.locations) && plan.name == "Personal" %>
+                  <% if (@company.service_providers.where(active: true, location_id: @company.locations.where(active: true).pluck(:id)).count > plan.service_providers || @company.locations.where(active: true).count > plan.locations) && plan.name == "Personal" %>
                     <div class="plan-box blocked">
                   <% else %>
                     <div class="plan-box change-plan" plan_id="<%= plan.id.to_s %>">

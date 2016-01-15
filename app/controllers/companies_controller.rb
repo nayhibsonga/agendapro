@@ -84,7 +84,7 @@ class CompaniesController < ApplicationController
 
 	    		if accepted_plans.include?(plan_id)
 
-	    			if (company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || !new_plan.custom || new_plan.name != "Personal"
+	    			if (company.service_providers.where(active: true, location_id: company.locations.where(active: true).pluck(:id)).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || !new_plan.custom || new_plan.name != "Personal"
 
 	    				previous_plan_id = company.plan.id
 				        months_active_left = company.months_active_left
