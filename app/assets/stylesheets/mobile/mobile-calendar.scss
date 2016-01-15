@@ -1,0 +1,181 @@
+@import 'variables';
+
+/*
+  ================================
+  ============ Events ============
+  ================================
+*/
+.fc-event {
+  border-radius: 4px;
+  > .fc-event-inner {
+    border-radius: 4px;
+  }
+}
+
+%icon {
+  font-family: FontAwesome;
+  line-height: 1.42857143;
+  margin-left: 3px;
+  margin-right: 3px;
+  font-size: 1.33em;
+}
+
+/************ Icons ************/
+/********************************
+* Non breakable space unicode   *
+*             \00a0             *
+********************************/
+.origin-web-lock {
+  .fc-event-time:before {
+    @extend %icon;
+    content: "\f0ac \00a0 \f023";
+  }
+}
+.origin-web-unlock {
+  .fc-event-time:before {
+    @extend %icon;
+    content: "\f0ac \00a0 \f09c";
+  }
+}
+.origin-manual-lock {
+  .fc-event-time:before {
+    @extend %icon;
+    content: "\f007 \00a0 \f023";
+  }
+}
+.origin-manual-unlock {
+  .fc-event-time:before {
+    @extend %icon;
+    content: "\f007 \00a0 \f09c";
+  }
+}
+
+/************ Status ************/
+.blocked {
+  border-color: $blocked-text;
+  color: $blocked-text;
+  background-color: $blocked-back;
+  > .fc-event-inner {
+    @extend .blocked;
+    > .fc-event-head {
+      @extend .blocked;
+    }
+  }
+}
+.reserved {
+  border-color: $reserved-text;
+  color: $reserved-text;
+  background-color: $reserved-back;
+  > .fc-event-inner {
+    @extend .reserved;
+    > .fc-event-head {
+      @extend .reserved;
+    }
+  }
+}
+.confirmed {
+  border-color: $confirmed-text;
+  color: $confirmed-text;
+  background-color: $confirmed-back;
+  > .fc-event-inner {
+    @extend .confirmed;
+    > .fc-event-head {
+      @extend .confirmed;
+    }
+  }
+  .fc-event-time:after {
+    @extend %icon;
+    content: "\f00c";
+  }
+}
+.completed {
+  border-color: $completed-text;
+  color: $completed-text;
+  background-color: $completed-back;
+  > .fc-event-inner {
+    @extend .completed;
+    > .fc-event-head {
+      @extend .completed;
+    }
+  }
+  .fc-event-time:after {
+    @extend %icon;
+    content: "\f046";
+  }
+}
+.cancelled {
+  border-color: $cancelled-text;
+  color: $cancelled-text;
+  background-color: $cancelled-back;
+  > .fc-event-inner {
+    @extend .cancelled;
+    > .fc-event-head {
+      @extend .cancelled;
+    }
+  }
+}
+.noshow {
+  border-color: $noshow-text;
+  color: $noshow-text;
+  background-color: $noshow-back;
+  > .fc-event-inner {
+    @extend .noshow;
+    > .fc-event-head {
+      @extend .noshow;
+    }
+  }
+  .fc-event-time:after {
+    @extend %icon;
+    content: "\f00d"
+  }
+}
+.break {
+  border-color: $break-text;
+  color: $break-text;
+  background-color: $break-back;
+  > .fc-event-inner {
+    @extend .break;
+    > .fc-event-head {
+      @extend .break;
+    }
+  }
+}
+.session {
+  border-color: $session-text;
+  color: $session-text;
+  background-color: $session-back;
+  > .fc-event-inner {
+    @extend .session;
+    > .fc-event-head {
+      @extend .session;
+    }
+  }
+}
+.payed,
+.bundle,
+.bundle.payed {
+  > .fc-event-inner:after {
+    font-family: FontAwesome;
+    line-height: 1.42857143;
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    background-color: rgba(50, 50, 50, 0.25);
+    width: 100%;
+  }
+}
+.payed {
+  > .fc-event-inner:after {
+    content: "\f155";
+  }
+}
+.bundle {
+  > .fc-event-inner:after {
+    content: "\f0ae";
+  }
+}
+.bundle.payed {
+  > .fc-event-inner:after {
+    content: "\f155 \00a0 \f0ae";
+  }
+}
