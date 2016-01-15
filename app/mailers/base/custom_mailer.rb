@@ -21,6 +21,6 @@ class Base::CustomMailer < ActionMailer::Base
   end
 
   def filter_sender(email)
-    email.present ? email : "AgendaPro <no-reply@agendapro.cl>"
+    email.present? ? email : "AgendaPro <no-reply@agendapro.cl>"
   end
 end

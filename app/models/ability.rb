@@ -140,7 +140,7 @@ class Ability
         can :mail_editor, Client, :company_id => user.company_id #FIXME
         can :upload_content, Client
         can :save_content, Client
-        can :send_content, Client, company_id: user.company_id
+        can :send_content, Client
 
         can :add_company, Company
 

@@ -1,5 +1,5 @@
 class ClientMailer < Base::CustomMailer
-  helper ClientHelper
+  helper ClientsHelper
 
   def send_client_mail (current_user, clients, subject, content, attachment, from)
     company = Company.find(current_user.company_id)
@@ -66,14 +66,14 @@ class ClientMailer < Base::CustomMailer
   end
 
   def send_campaign(id)
-    content = Email::Content.find(id)
-    @data = content.data
+    @content = Email::Content.find(id)
+    @data = @content.data
     mail(
-      from: filter_sender(content.from),
-      to: filter_mail(content.to),
-      subject: content.subject,
-      template_path: content.template.source,
-      template_name: content.template.name
+      from: filter_sender(@content.from),
+      to: filter_recipient(@content.to),
+      subject: @content.subject,
+      template_path: Email::Template::TMPL_DIR,
+      template_name: "_"+@content.template.name
       )
   end
 end

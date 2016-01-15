@@ -145,8 +145,11 @@ ActiveRecord::Schema.define(version: 20160114002314) do
     t.boolean  "marketplace_origin",     default: false
     t.integer  "treatment_promo_id"
     t.integer  "last_minute_promo_id"
+    t.boolean  "bundled",                default: false
+    t.integer  "bundle_id"
   end
 
+  add_index "bookings", ["bundle_id"], name: "index_bookings_on_bundle_id", using: :btree
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
   add_index "bookings", ["deal_id"], name: "index_bookings_on_deal_id", using: :btree
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
@@ -157,6 +160,20 @@ ActiveRecord::Schema.define(version: 20160114002314) do
   add_index "bookings", ["start"], name: "index_bookings_on_start", using: :btree
   add_index "bookings", ["status_id"], name: "index_bookings_on_status_id", using: :btree
   add_index "bookings", ["user_id"], name: "index_bookings_on_user_id", using: :btree
+
+  create_table "bundles", force: true do |t|
+    t.string   "name",                default: "",   null: false
+    t.decimal  "price",               default: 0.0,  null: false
+    t.integer  "service_category_id"
+    t.integer  "company_id"
+    t.text     "description",         default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "show_price",          default: true
+  end
+
+  add_index "bundles", ["company_id"], name: "index_bundles_on_company_id", using: :btree
+  add_index "bundles", ["service_category_id"], name: "index_bundles_on_service_category_id", using: :btree
 
   create_table "cashiers", force: true do |t|
     t.integer  "company_id"
@@ -1115,6 +1132,7 @@ ActiveRecord::Schema.define(version: 20160114002314) do
     t.integer  "times"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "weeks",         default: 0
   end
 
   create_table "provider_breaks", force: true do |t|
@@ -1339,6 +1357,18 @@ ActiveRecord::Schema.define(version: 20160114002314) do
     t.datetime "updated_at"
     t.boolean  "scheduled_reset",         default: false
   end
+
+  create_table "service_bundles", force: true do |t|
+    t.integer  "service_id"
+    t.integer  "bundle_id"
+    t.integer  "order",      default: 0,   null: false
+    t.decimal  "price",      default: 0.0, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "service_bundles", ["bundle_id"], name: "index_service_bundles_on_bundle_id", using: :btree
+  add_index "service_bundles", ["service_id"], name: "index_service_bundles_on_service_id", using: :btree
 
   create_table "service_categories", force: true do |t|
     t.string   "name",                   null: false

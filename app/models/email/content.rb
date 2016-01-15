@@ -16,7 +16,10 @@ class Email::Content < ActiveRecord::Base
   end
 
   def generate_sending
-    Email::Sending.build
+    Email::Sending.create(
+      sendable_id: self.id,
+      sendable_type: self.class.name
+      )
   end
 
   def sent?

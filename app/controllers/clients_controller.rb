@@ -262,11 +262,13 @@ class ClientsController < ApplicationController
     from = current_user.email
     recipients = params[:recipients]
     @tmpl = Email::Template.find(params[:tmpl])
-    @content = Email::Content.find_or_create_by(template: @tmpl, company: current_user.company, from: from, to: recipients.gsub(' ',','))
+    @email = false
+    @content = Email::Content.find_or_create_by(template: @tmpl, company: current_user.company, from: from, to: recipients)
     render 'clients/email/full/mail_editor'
   end
 
   def upload_content
+    raise "ALOO #{params.inspect}"
     if params[:file].present?
       begin
         uploader = EmailContentUploader.new
