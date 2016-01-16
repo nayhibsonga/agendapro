@@ -1164,6 +1164,12 @@ class CompaniesController < ApplicationController
 			redirect_to workflow_path(:local => params[:location])
 			return
 		end
+		serviceStaffAux = JSON.parse(params[:serviceStaff], symbolize_names: true)
+		if Location.find(params[:location]).company_id != Service.find(serviceStaffAux[0][:service]).company_id
+			flash[:alert] = "Error ingresando los datos."
+			redirect_to workflow_path(:local => params[:location])
+			return
+		end
 
 		@mandatory_discount = false
 		@is_session_booking = false
