@@ -1,6 +1,6 @@
 <div class="text-container">
   <% if @email %>
-    <%= content.data["#{txt_name}"] %>
+    <%= raw(content.data["#{txt_name}"]) %>
   <% else %>
     <h1>TESTING2</h1>
     <div style="min-height: 200px; width: 100%; border: 1px solid #ccc; cursor: pointer;" ng-bind="ec.content.data['<%= txt_name %>']" ng-click="ec.editText('<%= txt_name %>')">
