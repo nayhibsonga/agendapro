@@ -28,19 +28,13 @@
     vm.send_email = false;
     vm.pageLoaded = false;
     vm.notice = '';
+    vm.activeEditor = '';
 
+    vm.editText = editText;
     vm.selectFile = selectFile;
     vm.saveContent = saveContent;
 
-    ckEditorStatus();
-
-    $scope.$watch(function(){
-      return vm.message;
-    }, function(){
-      setTimeout(function(){
-        angular.element('.alert').show();
-      }, 3000, function(){ vm.message = '' });
-    });
+    ckEditorInit();
 
     vm.uploader.onCompleteItem = function(fileItem, response, status, headers) {
         if( status == 200 ) {
@@ -66,12 +60,28 @@
       }, ShowError);
     }
 
+    function editText(name) {
+      if (vm.activeEditor !== '') {
+        CKEDITOR.instances[vm.activeEditor].destroy();
+      }
+      vm.activeEditor = name.replace('text', 'editor');
+      CKEDITOR.appendTo('editorSpace');
+      ckEditorListeners();
+    }
+
+    function ckEditorListeners() {
+      var instance = CKEDITOR.instances[vm.activeEditor];
+      instance.on('change', function() {
+          vm.content.data[vm.activeEditor.replace('editor', 'text')] = instance.getData();
+          $scope.$apply();
+      });
+    }
+
     function buildData() {
       var content = vm.content;
-      console.log(vm.send_email);
       return {
-        id: content.id,
         content: {
+          id: content.id,
           send_email: vm.send_email,
           to: content.to,
           from: content.from,
@@ -92,6 +102,15 @@
          $scope.$apply();
       });
     }
+  }
+
+  function ckEditorInit() {
+    CKEDITOR.config.removePlugins = 'image';
+    CKEDITOR.config.toolbar_mini = [
+      ["Bold",  "Italic",  "Underline",  "Strike",  "-",  "Subscript",  "Superscript"],
+    ];
+    CKEDITOR.config.toolbar = "simple";
+    CKEDITOR.config.uiColor = '#FFFFFF';
   }
 
   function customCkEditor() {

@@ -1,5 +1,5 @@
 <div ng-app="AgendaProApp" ng-controller="EditorController as ec">
-  <div id="loading-page" ng-hide="ec.pageLoaded" style="position: fixed; height: 100%; width: 100%; background-color: #B9B9B9; z-index: 99999999999">
+  <div id="loading-page" style="display: none; position: fixed; height: 100%; width: 100%; background-color: #B9B9B9; z-index: 99999999999">
     <div style="position: relative; height: 100%">
       <div style="position: absolute; top: 40%;
         left: 50%;
@@ -10,11 +10,6 @@
 
       </div>
     </div>
-  </div>
-
-  <div class="alert alert-info alert-dismissable fade in">
-    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    {{ vm.notice }}
   </div>
 
   <div id="mail-editor-container" >
@@ -56,8 +51,8 @@
 
         </div>
 
-        <div style="height: auto;">
-          <%= cktext_area :editor, 'text1', id: 'text1', cols: 100, ckeditor: {uiColor: '#FFFFFF', height: 350, removePlugins: 'image'}, 'ng-model' => "ec.content.data['text1']", 'custom-ck-editor' => '' %>
+        <div id="editorSpace" style="height: auto;">
+          <%# cktext_area :editor, 'text1', id: 'text1', cols: 100, ckeditor: {uiColor: '#FFFFFF', height: 350, removePlugins: 'image'}, 'ng-model' => "ec.content.data['text1']", 'custom-ck-editor' => '' %>
         </div>
       </div>
 

@@ -1,7 +1,9 @@
-<div class="text-container" ng-bind="ec.content.data[<%= txt_name %>]">
+<div class="text-container">
   <% if @email %>
-    <%= content.data.text["#{txt_name}"] %>
+    <%= content.data["#{txt_name}"] %>
   <% else %>
-    {{ ec.content.data[<%= txt_name %>] }}
+    <h1>TESTING2</h1>
+    <div style="min-height: 200px; width: 100%; border: 1px solid #ccc; cursor: pointer;" ng-bind="ec.content.data['<%= txt_name %>']" ng-click="ec.editText('<%= txt_name %>')">
+    </div>
   <% end %>
 </div>

@@ -94,7 +94,7 @@ class ClientsController < ApplicationController
   # POST /clients
   # POST /clients.json
   def create
-    @client = Client.new(client_params)
+    @client = Client.new(klient_params)
     @client.company = Company.find(current_user.company_id)
 
     respond_to do |format|
@@ -120,7 +120,7 @@ class ClientsController < ApplicationController
   # PATCH/PUT /clients/1.json
   def update
     respond_to do |format|
-      if @client.update(client_params)
+      if @client.update(klient_params)
         format.html { redirect_to clients_path, notice: 'Cliente actualizado exitosamente.' }
         format.json { head :no_content }
       else
@@ -288,8 +288,8 @@ class ClientsController < ApplicationController
   end
 
   def save_content
-    content = Email::Content.where(id: params[:id]).first
-    updated = content.update(content_params) if content
+    content = Email::Content.where(id: content_params[:id]).first
+    updated = content.update(content_params.except(:id)) if content
     render json: { status: updated ? :ok : :interal_server_error }
   end
 
@@ -453,7 +453,7 @@ class ClientsController < ApplicationController
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
-    def client_params
+    def klient_params
       params.require(:client).permit(:company_id, :email, :first_name, :last_name, :identification_number, :phone, :address, :district, :city, :age, :gender, :birth_day, :birth_month, :birth_year, :can_book, :record, :second_phone)
     end
 
