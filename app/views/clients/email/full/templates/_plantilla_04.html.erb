@@ -81,7 +81,7 @@
                       <tbody class="mcnImageCardBlockOuter">
                         <tr>
                           <td class="mcnImageCardBlockInner" valign="top" style="padding-top:9px; padding-right:18px; padding-bottom:9px; padding-left:18px;">
-                            <table align="right" border="0" cellpadding="0" cellspacing="0" class="mcnImageCardBottomContent" width="100%" style="background-color: #FFFFFF;">
+                            <table align="right" border="0" cellpadding="0" cellspacing="0" class="mcnImageCardBottomContent" width="100%">
                               <tbody>
                                 <tr>
                                   <td class="mcnImageCardBottomImageContent" align="left" valign="top" style="padding-top:0px; padding-right:0px; padding-bottom:0; padding-left:0px;">
@@ -89,7 +89,7 @@
                                   </td>
                                 </tr>
                                 <tr>
-                                  <td class="mcnTextContent" valign="top" style="padding: 9px 18px; font-family: Helvetica; font-size: 14px; font-weight: normal; text-align: center;" width="246">
+                                  <td class="mcnTextContent" valign="top" style="padding: 9px 18px;color: #000000;font-family: Helvetica;font-size: 14px;font-weight: normal;text-align: center;" width="246">
                                     <%= editor_text @content, 'text3' %>
                                   </td>
                                 </tr>
@@ -110,59 +110,7 @@
             </td>
           </tr>
           <tr>
-            <td valign="top" id="templateFooter">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
-                <tbody class="mcnDividerBlockOuter">
-                  <tr>
-                    <td class="mcnDividerBlockInner" style="min-width: 100%; padding: 10px 18px 25px;">
-                      <table class="mcnDividerContent" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%;border-top-width: 2px;border-top-style: solid;border-top-color: #EEEEEE;">
-                        <tbody>
-                          <tr>
-                            <td>
-                              <span>
-                              </span>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
-                <tbody class="mcnTextBlockOuter">
-                  <tr>
-                    <td valign="top" class="mcnTextBlockInner">
-                      <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;" class="mcnTextContentContainer">
-                        <tbody>
-                          <tr>
-                            <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;">
-                              <em>Copyright © *|CURRENT_YEAR|* *|LIST:COMPANY|*, All rights reserved.</em>
-                              <br>
-                              *|IFNOT:ARCHIVE_PAGE|*
-                              *|LIST:DESCRIPTION|*
-                              <br>
-                              <br>
-                              <strong>Our mailing address is:</strong>
-                              <br>
-                              *|HTML:LIST_ADDRESS_HTML|* *|END:IF|*
-                              <br>
-                              <br>
-                              Want to change how you receive these emails?<br>
-                              You can <a href="*|UPDATE_PROFILE|*">update your preferences</a> or <a href="*|UNSUB|*">unsubscribe from this list</a>
-                              <br>
-                              <br>
-                              *|IF:REWARDS|* *|HTML:REWARDS|*
-                              *|END:IF|*
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
+            <%= render partial: '/clients/email/full/templates/footer' %>
           </tr>
         </table>
         <!--[if gte mso 9]>
