@@ -1,5 +1,5 @@
 class CompaniesController < ApplicationController
-  before_action :verify_is_active, only: [:overview, :workflow]
+  	before_action :verify_is_active, only: [:overview, :workflow]
 	before_action :set_company, only: [:show, :edit, :update, :destroy, :edit_payment]
 	before_action :constraint_locale, only: [:overview, :workflow]
 	before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address, :select_hour, :user_data, :select_promo_hour, :mobile_hours]
@@ -9,6 +9,7 @@ class CompaniesController < ApplicationController
 	layout "admin", except: [:show, :overview, :workflow, :add_company, :select_hour, :user_data, :select_session_hour, :select_promo_hour]
 	load_and_authorize_resource
 
+	respond_to :html, :json, :xls, :csv
 
 	# GET /companies
 	# GET /companies.json
@@ -60,7 +61,22 @@ class CompaniesController < ApplicationController
 
 	    		plan_id = @transfer.new_plan
 
-	    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+	    		#company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+	    		price = 0
+			    if company.payment_status == PaymentStatus.find_by_name("Trial")
+			      if company.locations.count > 1 || company.service_providers.count > 1
+			        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			      else
+			        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			      end
+			    else
+			      if company.plan.custom
+			        price = company.company_plan_setting.base_price
+			      else
+			        price = company.company_plan_setting.base_price * company.computed_multiplier
+			      end
+			    end
 
 	    		new_plan = Plan.find(plan_id)
 
@@ -68,13 +84,13 @@ class CompaniesController < ApplicationController
 
 	    		if accepted_plans.include?(plan_id)
 
-	    			if company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations
+	    			if (company.service_providers.where(active: true, location_id: company.locations.where(active: true).pluck(:id)).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || !new_plan.custom || new_plan.name != "Personal"
 
 	    				previous_plan_id = company.plan.id
 				        months_active_left = company.months_active_left
 				        plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
 				        due_amount = company.due_amount
-				        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
+				        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
 				        previous_plan_price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 				        plan_month_value = (month_days - day_number + 1)*plan_price/month_days
 
@@ -93,6 +109,9 @@ class CompaniesController < ApplicationController
 					            company.due_amount = (new_amount_due).round(0) * (1 + sales_tax)
 
 					            if company.save
+
+					            	company.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+					            	company.company_plan_setting.save
 
 					            	@transfer.approved = true
 					            	@transfer.save
@@ -139,6 +158,10 @@ class CompaniesController < ApplicationController
 						    		end
 
 						    		if mockCompany.save
+
+						    			mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+					            		mockCompany.company_plan_setting.save
+
 						                PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
 
 						                @transfer.approved = true
@@ -196,6 +219,9 @@ class CompaniesController < ApplicationController
 					    		if mockCompany.save
 									PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
 
+									mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+					            	mockCompany.company_plan_setting.save
+
 									@transfer.approved
 									@transfer.save
 
@@ -233,7 +259,22 @@ class CompaniesController < ApplicationController
 
 	    	else
 
-	    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+	    		#company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+	    		price = 0
+			    if company.payment_status == PaymentStatus.find_by_name("Trial")
+			      if company.locations.count > 1 || company.service_providers.count > 1
+			        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			      else
+			        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			      end
+			    else
+			      if company.plan.custom
+			        price = company.company_plan_setting.base_price
+			      else
+			        price = company.company_plan_setting.base_price * company.computed_multiplier
+			      end
+			    end
 
 	    		accepted_amounts = [1,2,3,4,6,9,12]
 	    		if accepted_amounts.include?(@transfer.paid_months)
@@ -311,7 +352,11 @@ class CompaniesController < ApplicationController
 		    #Should have free plan
 		    previous_plan = company.plan
 
-		    price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+		    if new_plan.custom
+		    	price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+		    else
+		    	price = new_plan.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
+		    end
 
 		    plan_month_value = ((month_days - day_number + 1).to_f / month_days.to_f) * price
 		    due_amount = downgradeLog.debt
@@ -1395,6 +1440,283 @@ class CompaniesController < ApplicationController
 	def get_cashiers_by_code
 		@cashier = Cashier.find_by_code(params[:cashier_code])
 		render :json => @cashier
+	end
+
+	#Company files that are not associated against any client
+	def files
+
+		@company = current_user.company
+
+		s3 = Aws::S3::Client.new
+	    resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'companies/' +  @company.id.to_s + '/', delimiter: '/')
+
+	    @s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+	    folders_prefixes = resp.common_prefixes
+	    @folders = []
+
+	    folders_prefixes.each do |folder|
+	      sub_str = folder.prefix[0, folder.prefix.rindex("/")]
+	      @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
+	    end
+
+	end
+
+	#Creates an empty key to late folder
+	#Should be deleted once a file is written to that folder
+	#When deleting all folder files, should be recreated
+	def create_folder
+
+		@company = current_user.company
+
+		full_name = 'companies/' +  @company.id.to_s + '/' + params[:folder_name] + '/'
+
+		#s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+		s3 = Aws::S3::Client.new
+		s3.put_object(bucket: ENV['S3_BUCKET'], key: full_name)
+    	#obj = s3_bucket.object(full_name)
+
+    	redirect_to '/get_company_files', notice: 'Carpeta creada correctamente'
+
+	end
+
+	def rename_folder
+
+		@company = current_user.company
+
+		new_folder_name = params[:new_folder_name]
+		old_folder_name = params[:old_folder_name]
+
+		#Do nothing if same folder
+	    if new_folder_name == old_folder_name
+	      redirect_to '/get_company_files', notice: 'Carpeta renombrada correctamente'
+	      return
+	    end
+
+		s3 = Aws::S3::Client.new
+
+		old_folder_path = 'companies/' +  @company.id.to_s + '/' + old_folder_name + '/'
+		new_folder_path = 'companies/' +  @company.id.to_s + '/' + new_folder_name + '/'
+
+		#Create new folder in case there are no files
+		s3.put_object(bucket: ENV['S3_BUCKET'], key: new_folder_path)
+
+		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+		#Move each object to new folder
+		@company.company_files.where(folder: old_folder_name).each do |company_file|
+			obj = s3_bucket.object(company_file.full_path)
+
+			obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
+
+			obj.move_to({bucket: ENV['S3_BUCKET'], key: new_folder_path + obj_name}, {acl: 'public-read', content_type: content_type})
+
+			company_file.full_path = new_folder_path + obj_name
+			company_file.public_url = obj.public_url
+			company_file.folder = new_folder_name
+			company_file.save
+
+		end
+
+		#Delete old folder
+		old_folder = s3_bucket.object(old_folder_path)
+		old_folder.delete
+
+		redirect_to '/get_company_files', notice: 'Carpeta renombrada correctamente'
+
+	end
+
+	def delete_folder
+
+		@company = current_user.company
+
+		folder_name = params[:folder_name]
+
+		s3 = Aws::S3::Client.new
+
+		folder_path = 'companies/' +  @company.id.to_s + '/' + folder_name + '/'
+
+
+		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+		#Move each object to new folder
+		@company.company_files.where(folder: folder_name).each do |company_file|
+			
+			company_file.destroy
+
+		end
+
+		#Delete old folder
+		old_folder = s3_bucket.object(folder_path)
+		if old_folder.exists?
+			old_folder.delete
+		end
+
+		redirect_to '/get_company_files', notice: 'Carpeta eliminada correctamente'
+
+	end
+
+	def upload_file
+
+		@company = current_user.company
+
+		if(params[:file].size/1024/1024 > 25)
+	      	redirect_to '/get_company_files', alert: 'Tamaño de archivo no permitido'
+	      	return
+		end
+
+	    file_name = params[:file_name]
+	    folder_name = params[:folder_name]
+	    logger.debug "File name: " + params[:file].original_filename
+	    file_extension = params[:file].original_filename[params[:file].original_filename.rindex(".") + 1, params[:file].original_filename.length]
+	    content_type = params[:file].content_type
+
+	    file_description = ""
+	    if !params[:file_description].blank?
+	      file_description = params[:file_description]
+	    end
+
+	    if !params[:new_folder_name].blank? && folder_name == "select"
+	      folder_name = params[:new_folder_name]
+	    end
+
+	    full_name = 'companies/' +  @company.id.to_s + '/' + folder_name + '/' + params[:file].original_filename
+
+	    s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+	    old_obj = s3_bucket.object('companies/' +  @company.id.to_s + '/' + folder_name + '/')
+    	old_obj.delete
+
+	    obj = s3_bucket.object(full_name)
+
+	    if !obj.exists?
+	    	obj.upload_file(params[:file].path(), {acl: 'public-read', content_type: content_type})
+	    else
+	    	full_name = 'companies/' +  @company.id.to_s + '/' + folder_name + '/' + DateTime.now.to_i.to_s + '_' +  params[:file].original_filename
+	    	obj = s3_bucket.object(full_name)
+	    	obj.upload_file(params[:file].path(), {acl: 'public-read', content_type: content_type})
+	    end
+
+	    @company_file = CompanyFile.new(company_id: @company.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description, folder: folder_name)
+
+
+	    # Save the upload
+	    if @company_file.save
+	    	redirect_to '/get_company_files', notice: 'Archivo guardado correctamente'
+	    else
+	    	obj.delete
+	      	redirect_to '/get_company_files', alert: 'No se pudo guardar el archivo'
+	    end
+
+	end
+
+	def move_file
+
+		@company = current_user.company
+		@company_file = CompanyFile.find(params[:company_file_id])
+		new_folder_name = params[:folder_name]
+
+		#Do nothing if same folder
+		if new_folder_name == @company_file.folder
+			redirect_to '/get_company_files', notice: 'Archivo movido correctamente'
+			return
+		end
+
+		new_folder_path = 'companies/' +  @company.id.to_s + '/' + new_folder_name + '/'
+
+		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+		obj = s3_bucket.object(@company_file.full_path)
+
+		obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
+
+		obj.move_to({bucket: ENV['S3_BUCKET'], key: new_folder_path + obj_name}, {acl: 'public-read', content_type: content_type})
+
+		old_folder_path = 'companies/' +  @company.id.to_s + '/' + @company_file.folder + '/'
+    	old_folder_obj = s3_bucket.object(old_folder_path)
+
+    	logger.debug "Path: " + old_folder_path
+    	logger.debug "Exists? " + old_folder_obj.exists?.to_s
+
+    	if !old_folder_obj.exists?
+    		s3 = Aws::S3::Client.new
+			s3.put_object(bucket: ENV['S3_BUCKET'], key: old_folder_path)
+    	end
+
+		@company_file.full_path = new_folder_path + obj_name
+		@company_file.public_url = obj.public_url
+		@company_file.folder = new_folder_name
+		
+		if @company_file.save
+			redirect_to '/get_company_files', notice: 'Archivo movido correctamente'
+	    else
+	    	redirect_to '/get_company_files', alert: 'Error al mover el archivo'
+		end
+
+	end
+
+	def edit_file
+
+		@company = current_user.company
+		@company_file = CompanyFile.find(params[:company_file_id])
+
+		@company_file.name = params[:file_name]
+		@company_file.description = params[:file_description]
+
+		folder_name = params[:folder_name]
+
+		if !params[:new_folder_name].blank? && folder_name == "select"
+	      folder_name = params[:new_folder_name]
+	    end
+
+		if folder_name != @company_file.folder
+
+			new_folder_name = folder_name
+
+			new_folder_path = 'companies/' +  @company.id.to_s + '/' + new_folder_name + '/'
+
+			s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+			obj = s3_bucket.object(@company_file.full_path)
+
+			obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
+
+			obj.move_to({bucket: ENV['S3_BUCKET'], key: new_folder_path + obj_name}, {acl: 'public-read', content_type: content_type})
+
+			old_folder_path = 'companies/' +  @company.id.to_s + '/' + @company_file.folder + '/'
+	    	old_folder_obj = s3_bucket.object(old_folder_path)
+
+	    	logger.debug "Path: " + old_folder_path
+	    	logger.debug "Exists? " + old_folder_obj.exists?.to_s
+
+	    	if !old_folder_obj.exists?
+	    		s3 = Aws::S3::Client.new
+				s3.put_object(bucket: ENV['S3_BUCKET'], key: old_folder_path)
+	    	end
+
+			
+			@company_file.full_path = new_folder_path + obj_name
+			@company_file.public_url = obj.public_url
+			@company_file.folder = new_folder_name
+
+		end
+		
+		if @company_file.save
+			redirect_to '/get_company_files', notice: 'Archivo editado correctamente'
+	    else
+	    	redirect_to '/get_company_files', alert: 'Error al mover el archivo'
+		end
+
+
+	end
+
+
+	def generate_clients_base
+
+		@company = current_user.company
+
+		respond_with(@company)
+
 	end
 
 	private

@@ -1,0 +1,16 @@
+<%= simple_form_for(@client_file) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :client_id %>
+    <%= f.input :name %>
+    <%= f.input :full_path %>
+    <%= f.input :public_url %>
+    <%= f.input :size %>
+    <%= f.input :description %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

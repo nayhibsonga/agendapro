@@ -1,0 +1,29 @@
+<h1>Listing attribute_categories</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Category</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @attribute_categories.each do |attribute_category| %>
+      <tr>
+        <td><%= attribute_category.attribute_id %></td>
+        <td><%= attribute_category.category %></td>
+        <td><%= link_to 'Show', attribute_category %></td>
+        <td><%= link_to 'Edit', edit_attribute_category_path(attribute_category) %></td>
+        <td><%= link_to 'Destroy', attribute_category, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Attribute category', new_attribute_category_path %>

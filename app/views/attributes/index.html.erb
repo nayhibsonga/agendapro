@@ -1,0 +1,35 @@
+<h1>Listing attributes</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Datatype</th>
+      <th>Mandatory</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @attributes.each do |attribute| %>
+      <tr>
+        <td><%= attribute.company_id %></td>
+        <td><%= attribute.name %></td>
+        <td><%= attribute.description %></td>
+        <td><%= attribute.datatype %></td>
+        <td><%= attribute.mandatory %></td>
+        <td><%= link_to 'Show', attribute %></td>
+        <td><%= link_to 'Edit', edit_attribute_path(attribute) %></td>
+        <td><%= link_to 'Destroy', attribute, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Attribute', new_attribute_path %>

@@ -364,6 +364,124 @@ $(function () {
     $('#cashierModal').modal('show');
   });
 
+  $('#new_attribute_button').on('click', function(){
+    $('#attributeModal').modal('show');
+  });
+
+  $('#attribute_datatype').on('change', function(){
+    if($(this).val() == "file")
+    {
+      $('.attribute-show-option').hide();
+    }
+    else
+    {
+      $('.attribute-show-option').show();
+    }
+  });
+
+  $('.add_attribute_category_button').on('click', function(e){
+    var attribute_id = $(e.currentTarget).data('attributeid');
+    $('#existing_categories_subdiv').empty();
+    $('#attribute_category_attribute_id').val(attribute_id)
+    $.ajax({
+      url: '/get_attribute_categories',
+      method: 'get',
+      dataType: 'json',
+      data: {attribute_id: attribute_id},
+      error: function(response){
+        swal({
+            title: "Error",
+            text: "Se produjo un error",
+            type: "error"
+          });
+      },
+      success: function(response){
+        $.each(response, function(i, attribute_category){
+
+          if(attribute_category.category != "Otra")
+          {
+
+            $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + attribute_category.id + '">' + attribute_category.category + '<a style="float: right;" class="btn btn-red btn-xs category-delete" data-confirm="¿Estás seguro de eliminar la categoría?" data-method="delete" data-remote="true" data-type="json" href="/attribute_categories/' + attribute_category.id + '" rel="nofollow"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</a></div>');
+          }
+          else
+          {
+            $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + attribute_category.id + '">' + attribute_category.category + '</div>');
+          }
+
+        });
+      }
+    })
+    $('#attributeCategoryModal').modal('show');
+  });
+
+  $('.edit_attribute_btn').on('click', function(e){
+    var attribute_id = $(e.currentTarget).data('attributeid');
+    $('#editAttributeModal .modal-content').empty();
+    $.ajax({
+      url: '/attribute_edit_form',
+      data: {id: attribute_id},
+      method: 'get',
+      error: function(response){
+        swal({
+          title: "Error",
+          text: "Se produjo un error",
+          type: "error"
+        });
+      },
+      success: function(response){
+        $('#editAttributeModal .modal-content').append(response);
+        $('#editAttributeModal').modal('show');
+      }
+    })
+  });
+
+  $("#attribute_category_form").on("ajax:success", function(e, data, status, xhr){
+    
+    if(data.category != "Otra")
+    {
+
+      $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + data.id + '">' + data.category + '<a style="float: right;" class="btn btn-red btn-xs category-delete" data-confirm="¿Estás seguro de eliminar la categoría?" data-method="delete" data-remote="true" data-type="json" href="/attribute_categories/' + data.id + '" rel="nofollow"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</a></div>');
+    }
+    else
+    {
+      $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + data.id + '">' + data.category + '</div>');
+    }
+
+    $('#attribute_category_category').val("");
+
+    swal({
+      title: "Éxito",
+      text: "Categoría agregada.",
+      type: "success"
+    });
+  }).on("ajax:error", function(e, xhr, status, error){
+    console.log(xhr.responseText)
+    swal({
+      title: "Error",
+      text: "Se produjo un error",
+      type: "error"
+    });
+  });
+
+  $('body').on("ajax:success", ".category-delete", function(e, data, status, xhr){
+    console.log(data);
+    var cat_id = data.id;
+    $('.attribute-category-div[attribute_category_id="' + cat_id + '"]').remove();
+    swal({
+        title: "Éxito",
+        text: "Categoría eliminada.",
+        type: "success"
+    });
+  }).on("ajax:error", function(e, xhr, status, error){
+    console.log(xhr.responseText)
+    swal({
+      title: "Error",
+      text: "Se produjo un error",
+      type: "error"
+    });
+  });
+
+
 });
 
 function uncheckCheckbox (parent) {

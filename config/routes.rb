@@ -1,8 +1,5 @@
 Agendapro::Application.routes.draw do
-
-
-
-
+    
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -18,6 +15,10 @@ Agendapro::Application.routes.draw do
     get 'mandrill/confirm_unsubscribe', :as => 'unsubscribe'
     post "mandrill/unsubscribe"
     get "mandrill/resuscribe"
+
+    resources :company_plan_settings
+    resources :attribute_categories
+    resources :attributes
 
     resources :countries
     resources :regions
@@ -78,6 +79,10 @@ Agendapro::Application.routes.draw do
     resources :favorite_locations, only: [:index, :create, :destroy]
 
     resources :cashiers
+
+    resources :client_files
+
+    resources :company_files
 
     namespace :admin do
       get '', :to => 'dashboard#index', :as => '/'
@@ -511,6 +516,29 @@ Agendapro::Application.routes.draw do
     get '/get_products_for_payment_or_sale', :to => 'payments#get_products_for_payment_or_sale'
     get '/get_product_categories_for_payment_or_sale', :to => 'payments#get_product_categories_for_payment_or_sale'
     get '/get_product_brands_for_payment_or_sale', :to => 'payments#get_product_brands_for_payment_or_sale'
+
+
+    #Client charts and files
+    get '/get_attribute_categories', :to => 'attributes#get_attribute_categories'
+    get '/attribute_edit_form', :to => 'attributes#edit_form'
+    get '/get_company_files', :to => 'companies#files'
+    post '/create_company_folder', :to => 'companies#create_folder'
+    post '/upload_company_file', :to => 'companies#upload_file'
+    post '/rename_company_folder', :to => 'companies#rename_folder'
+    post '/delete_company_folder', :to => 'companies#delete_folder'
+    post '/move_company_file', :to => 'companies#move_file'
+    post '/change_company_file', :to => 'companies#edit_file'
+
+    post '/upload_client_file', :to => 'clients#upload_file'
+    post '/create_client_folder', :to => 'clients#create_folder'
+    get '/get_client_files', :to => 'clients#files'
+    post '/rename_client_folder', :to => 'clients#rename_folder'
+    post '/delete_client_folder', :to => 'clients#delete_folder'
+    post '/move_client_file', :to => 'clients#move_file'
+    post '/change_client_file', :to => 'clients#edit_file'
+
+    get '/company_clients_base', :to => 'companies#generate_clients_base'
+    get '/client_bookings_content', :to => 'clients#bookings_content'
 
 
   end

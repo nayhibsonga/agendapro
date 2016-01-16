@@ -1,0 +1,37 @@
+<h1>Listing company_files</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Name</th>
+      <th>Full path</th>
+      <th>Public url</th>
+      <th>Size</th>
+      <th>Description</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @company_files.each do |company_file| %>
+      <tr>
+        <td><%= company_file.company_id %></td>
+        <td><%= company_file.name %></td>
+        <td><%= company_file.full_path %></td>
+        <td><%= company_file.public_url %></td>
+        <td><%= company_file.size %></td>
+        <td><%= company_file.description %></td>
+        <td><%= link_to 'Show', company_file %></td>
+        <td><%= link_to 'Edit', edit_company_file_path(company_file) %></td>
+        <td><%= link_to 'Destroy', company_file, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Company file', new_company_file_path %>

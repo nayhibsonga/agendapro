@@ -115,6 +115,7 @@ class LocationsController < ApplicationController
   def activate
     @location.active = true
     if @location.save
+      @location.add_due
       redirect_to inactive_locations_path, notice: "Local activado exitosamente."
     else
       redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
@@ -124,6 +125,7 @@ class LocationsController < ApplicationController
   def deactivate
     @location.active = false
     if @location.save
+      @location.substract_due
       redirect_to locations_path, notice: "Local desactivado exitosamente."
     else
       redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
