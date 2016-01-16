@@ -65,7 +65,7 @@
         CKEDITOR.instances[vm.activeEditor].destroy();
       }
       vm.activeEditor = name.replace('text', 'editor');
-      CKEDITOR.appendTo('editorSpace');
+      CKEDITOR.appendTo('editorSpace', null, vm.content.data[name]);
       ckEditorListeners();
     }
 
