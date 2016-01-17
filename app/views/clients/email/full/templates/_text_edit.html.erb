@@ -2,8 +2,8 @@
   <% if @email %>
     <%= raw(content.data["#{txt_name}"]) %>
   <% else %>
-    <h1>TESTING2</h1>
-    <div style="min-height: 200px; width: 100%; border: 1px solid #ccc; cursor: pointer;" ng-bind="ec.content.data['<%= txt_name %>']" ng-click="ec.editText('<%= txt_name %>')">
+    <span style="font-size: 14px; font-style: italic; font-weight: bold;" ng-hide="ec.content.data['<%= txt_name %>']">Click para comenzar a escribir</span>
+    <div style="min-height: 200px; width: 100%; border: 1px solid #ccc; cursor: pointer;" dynamic="ec.content.data['<%= txt_name %>']" ng-click="ec.editText('<%= txt_name %>')">
     </div>
   <% end %>
 </div>
