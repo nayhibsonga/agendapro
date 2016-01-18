@@ -303,7 +303,9 @@ class BookingsController < ApplicationController
           @client.second_phone = buffer_params[:client_second_phone]
           @client.gender = buffer_params[:client_gender]
           if @client.save
-            @client.save_attributes(params[:custom_attributes])
+            if !params[:custom_attributes].blank?
+              @client.save_attributes(params[:custom_attributes])
+            end
             if User.find_by_email(@client.email)
               new_booking_params[:user_id] = User.find_by_email(@client.email).id
             end

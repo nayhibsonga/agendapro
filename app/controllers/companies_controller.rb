@@ -66,9 +66,9 @@ class CompaniesController < ApplicationController
 	    		price = 0
 			    if company.payment_status == PaymentStatus.find_by_name("Trial")
 			      if company.locations.count > 1 || company.service_providers.count > 1
-			        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
 			      else
-			        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
 			      end
 			    else
 			      if company.plan.custom
@@ -264,9 +264,9 @@ class CompaniesController < ApplicationController
 	    		price = 0
 			    if company.payment_status == PaymentStatus.find_by_name("Trial")
 			      if company.locations.count > 1 || company.service_providers.count > 1
-			        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
 			      else
-			        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+			        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
 			      end
 			    else
 			      if company.plan.custom
@@ -470,7 +470,24 @@ class CompaniesController < ApplicationController
 				@bookings << booking
 			end
 		end
-		@company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
+
+		#@company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
+
+		@price = 0
+	    if @company.payment_status == PaymentStatus.find_by_name("Trial")
+	      if @company.locations.count > 1 || @company.service_providers.count > 1
+	        @price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier
+	      else
+	        @price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier
+	      end
+	    else
+	      if @company.plan.custom
+	        @price = @company.company_plan_setting.base_price
+	      else
+	        @price = @company.company_plan_setting.base_price * @company.computed_multiplier
+	      end
+	    end
+
 		@sales_tax = @company.country.sales_tax
 	    @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
 	    @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
@@ -482,7 +499,7 @@ class CompaniesController < ApplicationController
 	    @day_number = Time.now.day
 	    @month_number = Time.now.month
 	    @month_days = Time.now.days_in_month
-		@company.months_active_left > 0 ? @plan_1 = (@company.due_amount + @price).round(0) : @plan_1 = ((@company.due_amount + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
+		@company.months_active_left > 0 ? @plan_1 = (@company.due_amount/(1+@sales_tax) + @price).round(0) : @plan_1 = ((@company.due_amount/(1+@sales_tax) + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
 
 
 	    @plan_2 = (@plan_1 + @price*1).round(0)
@@ -606,6 +623,14 @@ class CompaniesController < ApplicationController
 		if params[:new_promo_commission].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
 			@company.company_setting.promo_commission = params[:new_promo_commission].to_f
 			@company.company_setting.save
+		end
+		if params[:new_base_price].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			@company.company_plan_setting.base_price = params[:new_base_price].to_f
+			@company.company_plan_setting.save
+		end
+		if params[:new_locations_multiplier].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			@company.company_plan_setting.locations_multiplier = params[:new_locations_multiplier].to_f
+			@company.company_plan_setting.save
 		end
 
 		@company.company_setting.online_payment_capable = params[:new_online_payment_capable]

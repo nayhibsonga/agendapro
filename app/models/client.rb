@@ -239,6 +239,10 @@ class Client < ActiveRecord::Base
 
   def save_attributes(params)
 
+    if params.blank?
+      return
+    end
+
     self.company.custom_attributes.each do |attribute|
 
       str_sm = attribute.slug + "_attribute"
@@ -383,6 +387,10 @@ class Client < ActiveRecord::Base
   end
 
   def save_attributes_from_import(params)
+
+    if params.blank?
+      return
+    end
 
     self.company.custom_attributes.each do |attribute|
 

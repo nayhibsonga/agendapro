@@ -55,9 +55,9 @@ class PayUController < ApplicationController
     price = 0
     if company.payment_status == PaymentStatus.find_by_name("Trial")
       if company.locations.count > 1 || company.service_providers.count > 1
-        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
       else
-        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
       end
     else
       if company.plan.custom
@@ -132,9 +132,9 @@ class PayUController < ApplicationController
     price = 0
     if company.payment_status == PaymentStatus.find_by_name("Trial")
       if company.locations.count > 1 || company.service_providers.count > 1
-        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
       else
-        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * company.computed_multiplier
+        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
       end
     else
       if company.plan.custom
