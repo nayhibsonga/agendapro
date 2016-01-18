@@ -137,7 +137,7 @@ class Location < ActiveRecord::Base
   			day_number = DateTime.now.day
     		month_number = DateTime.now.month
     		month_days = DateTime.now.days_in_month
-  			company.due_amount += (month_days - day_number + 1) * company.company_plan_setting.base_price * company.computed_multiplier
+  			company.due_amount += (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * company.computed_multiplier).round(2)
   			company.save
   		end
   	end
@@ -149,7 +149,7 @@ class Location < ActiveRecord::Base
   			day_number = DateTime.now.day
     		month_number = DateTime.now.month
     		month_days = DateTime.now.days_in_month
-  			company.due_amount -= (month_days - day_number + 1) * company.company_plan_setting.base_price * company.computed_multiplier
+  			company.due_amount -= (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * (company.computed_multiplier + company.company_plan_setting.locations_multiplier)).round(2)
   			company.save
   		end
   	end
@@ -183,18 +183,18 @@ class Location < ActiveRecord::Base
 
 	def plan_locations
 		if self.active_changed? && self.active
-			if self.company.locations.where(active:true).count >= self.company.plan.locations && (self.plan.custom || self.plan.name == "Personal")
+			if self.company.locations.where(active:true).count >= self.company.plan.locations && (self.company.plan.custom || self.company.plan.name == "Personal")
 				errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 			end
 		else
-			if self.company.locations.where(active:true).count > self.company.plan.locations && (self.plan.custom || self.plan.name == "Personal")
+			if self.company.locations.where(active:true).count > self.company.plan.locations && (self.company.plan.custom || self.company.plan.name == "Personal")
 				errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 			end
 		end
 	end
 
 	def new_plan_locations
-		if self.company.locations.where(active:true).count >= self.company.plan.locations && (self.plan.custom || self.plan.name == "Personal")
+		if self.company.locations.where(active:true).count >= self.company.plan.locations && (self.company.plan.custom || self.company.plan.name == "Personal")
 			errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 		end
 	end
