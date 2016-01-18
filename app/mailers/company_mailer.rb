@@ -614,6 +614,12 @@ class CompanyMailer < ActionMailer::Base
 	      }
 	    end
 
+	    recipients << {
+	    	:email => 'cuentas@agendapro.cl',
+	    	:name => 'Cuentas AgendaPro',
+	    	:type => 'to'
+	    }
+
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => 'AgendaPro',
