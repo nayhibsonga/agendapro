@@ -209,7 +209,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_premium_plan
-    if current_user.company.plan_id != Plan.where(name: "Premium", custom: false).id
+    if current_user.company.plan_id != Plan.where(name: "Premium", custom: false).first.id && current_user.company.plan_id != Plan.where(name: "Pro", custom: false).first.id
       #redirect_to premium_plan_path(page: source)
       redirect_to select_plan_path, alert: "Para acceder al contenido buscado debes cambiarte al plan Premium."
       return
@@ -217,7 +217,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_pro_plan
-    if current_user.company.plan_id != Plan.where(name: "Pro", custom: false).id
+    if current_user.company.plan_id != Plan.where(name: "Pro", custom: false).first.id
       #redirect_to pro_plan_path(page: source)
       redirect_to select_plan_path, alert: "Para acceder al contenido buscado debes cambiarte al plan Pro."
       return

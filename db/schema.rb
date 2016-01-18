@@ -183,6 +183,14 @@ ActiveRecord::Schema.define(version: 20160115142032) do
   add_index "bookings", ["status_id"], name: "index_bookings_on_status_id", using: :btree
   add_index "bookings", ["user_id"], name: "index_bookings_on_user_id", using: :btree
 
+  create_table "boolean_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.boolean  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "bundles", force: true do |t|
     t.string   "name",                default: "",   null: false
     t.decimal  "price",               default: 0.0,  null: false
@@ -196,14 +204,6 @@ ActiveRecord::Schema.define(version: 20160115142032) do
 
   add_index "bundles", ["company_id"], name: "index_bundles_on_company_id", using: :btree
   add_index "bundles", ["service_category_id"], name: "index_bundles_on_service_category_id", using: :btree
-
-  create_table "boolean_attributes", force: true do |t|
-    t.integer  "attribute_id"
-    t.integer  "client_id"
-    t.boolean  "value"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "cashiers", force: true do |t|
     t.integer  "company_id"
@@ -543,40 +543,6 @@ ActiveRecord::Schema.define(version: 20160115142032) do
   end
 
   add_index "economic_sectors_dictionaries", ["economic_sector_id"], name: "index_economic_sectors_dictionaries_on_economic_sector_id", using: :btree
-
-  create_table "email_contents", force: true do |t|
-    t.integer  "template_id"
-    t.json     "data",        null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "from"
-    t.text     "to"
-    t.string   "subject"
-    t.integer  "company_id"
-    t.string   "name"
-  end
-
-  add_index "email_contents", ["company_id"], name: "index_email_contents_on_company_id", using: :btree
-  add_index "email_contents", ["template_id"], name: "index_email_contents_on_template_id", using: :btree
-
-  create_table "email_sendings", force: true do |t|
-    t.integer  "sendable_id"
-    t.string   "sendable_type"
-    t.datetime "send_date"
-    t.datetime "sent_date"
-    t.string   "status",        default: "pending"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "email_templates", force: true do |t|
-    t.string   "name"
-    t.string   "source"
-    t.string   "thumb"
-    t.boolean  "active",     default: true
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "facebook_pages", force: true do |t|
     t.integer  "company_id"

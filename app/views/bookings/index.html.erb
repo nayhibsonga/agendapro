@@ -399,297 +399,7 @@
                     </div>
                   </div>
                   <% end %>
-                  <% if @company.custom_attributes.count > 0 %>
-                    <div class="row">
-                        <div class="col-md-12">
-                          <div style="font-size: 20px; padding: 10px;">
-                            Datos personalizados del cliente
-                          </div>
-                        </div>
-                    </div>
-                  <% end %>
-
-                  <% @company.custom_attributes.where(show_on_calendar: true).each do |attribute| %>
-
-                    <% if attribute.datatype == "float" %>
-                      <div class="row">
-                        <div class="col-md-12">
-                          <div class="form-group has-feedback">
-                            <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
-                              <%= attribute.name %>
-                            </label>
-                            <div class="col-sm-10">
-                              <input type="number" class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_calendar %> />
-                              <span class="help-block"><%= attribute.description %></span>
-                              <span class="form-control-feedback"></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    <% elsif attribute.datatype == "integer" %>
-                      <div class="row">
-                        <div class="col-md-12">
-                          <div class="form-group has-feedback">
-                            <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
-                              <%= attribute.name %>
-                            </label>
-                            <div class="col-sm-10">
-                              <input type="number" class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_calendar %> />
-                              <span class="help-block"><%= attribute.description %></span>
-                              <span class="form-control-feedback"></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    <% elsif attribute.datatype == "text" %>
-
-                      <div class="row">
-                        <div class="col-md-12">
-                          <div class="form-group has-feedback">
-                            <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
-                              <%= attribute.name %>
-                            </label>
-                            <div class="col-sm-10">
-                              <input type="text" class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_calendar %> />
-                              <span class="help-block"><%= attribute.description %></span>
-                              <span class="form-control-feedback"></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                    <% elsif attribute.datatype == "textarea" %>
-
-                      <div class="row">
-                        <div class="col-md-12">
-                          <div class="form-group has-feedback">
-                            <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
-                              <%= attribute.name %>
-                            </label>
-                            <div class="col-sm-10">
-                              <textarea class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" <%= "required" if attribute.mandatory_on_calendar %> /></textarea>
-                              <span class="help-block"><%= attribute.description %></span>
-                              <span class="form-control-feedback"></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                    <% elsif attribute.datatype == "boolean" %>
-
-                      <div class="row">
-                        <div class="col-md-12">
-                          <div class="form-group has-feedback">
-                            <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
-                              <%= attribute.name %>
-                            </label>
-                            <div class="col-sm-10">
-                              <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
-                                  <option value="1" selected>Sí</option>
-                                  <option value="0">No</option>
-                              </select>
-                              <span class="help-block"><%= attribute.description %></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                    <% elsif attribute.datatype == "date" %>
-
-                      <div class="row">
-                        <div class="col-md-12">
-                          <div class="form-group has-feedback">
-                            <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
-                              <%= attribute.name %>
-                            </label>
-                            <div class="col-sm-10">
-                              <input type="text" class="form-control attribute_datepicker custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_calendar %> />
-                              <span class="help-block"><%= attribute.description %></span>
-                              <span class="form-control-feedback"></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                    <% elsif attribute.datatype == "datetime" %>
-
-                      <div class="row">
-                        <div class="col-md-12">
-                          <div class="form-group">
-                          <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
-                            <%= attribute.name %>
-                          </label>
-                          <div class="col-sm-10">
-                            <div class="col-sm-5">
-                              <input type="text" class="form-control attribute_datepicker custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_calendar %> />
-                            </div>
-                            <div class="col-sm-3">
-                              <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute_hour" id="<%= attribute.slug %>_attribute_hour">
-                                <% 
-                                  for i in 0..23
-                                    str_hour = i.to_s
-                                    if str_hour.length == 1
-                                      str_hour = "0" + str_hour
-                                    end
-
-                                    %>
-                                      <option value="<%= str_hour %>"><%= str_hour %></option>
-                                    <%
-
-                                  end 
-                                %>
-                              </select>
-                            </div>
-                            <div class="col-sm-1">
-                            :
-                            </div>
-                            <div class="col-sm-3">
-                              <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute_minute" id="<%= attribute.slug %>_attribute_minute">
-                                <% 
-                                  for i in 0..59
-                                    str_minute = i.to_s
-                                    if str_minute.length == 1
-                                      str_minute = "0" + str_minute
-                                    end
-
-                                    %>
-                                      <option value="<%= str_minute %>"><%= str_minute %></option>
-                                    <%
-
-                                  end 
-                                %>
-                              </select>
-                            </div>
-                            <span class="help-block"><%= attribute.description %></span>
-                            <span class="form-control-feedback"></span>
-                          </div>
-                        </div>
-                        </div>
-                      </div>
-
-                    <% elsif attribute.datatype == "categoric" %>
-
-                      <div class="row">
-                        <div class="col-md-12">
-                          <div class="form-group has-feedback">
-                          <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
-                            <%= attribute.name %>
-                          </label>
-                          <div class="col-sm-10">
-                            <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
-                              <% attribute.attribute_categories.each do |category| %>
-                                <option value="<%= category.id %>"><%= category.category %></option>
-                              <% end %>
-                            </select>
-                            <span class="help-block"><%= attribute.description %></span>
-                          </div>
-                        </div>
-                        </div>
-                      </div>
-
-                    <% end %>                      
-                  <% end %>
-
-
-                <% end %>
-                </div>
-                <div class="tab-pane" id="client-pane">
-                <%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
-                  <%= f.fields_for :client do |builder| %>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <%= builder.hidden_field :id %>
-                        <div class="form-group">
-                          <%= builder.label :first_name, "Nombre", class: "col-sm-4 control-label" %>
-                          <div class="col-sm-8">
-                            <%= builder.text_field :first_name, class: "form-control" %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= builder.label :last_name, "Apellido", class: "col-sm-4 control-label" %>
-                          <div class="col-sm-8">
-                            <%= builder.text_field :last_name, class: "form-control" %>
-                          </div>
-                        </div>
-                        <% unless @company_setting.client_exclusive || @company_setting.use_identification_number %>
-                        <div class="form-group has-feedback">
-                          <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-sm-4 control-label" %>
-                          <div class="col-sm-8">
-                            <%= builder.text_field :identification_number, class: "form-control" %>
-                            <span class="help-block"></span>
-                            <span class="form-control-feedback"></span>
-                          </div>
-                        </div>
-                        <% end %>
-                        <div class="form-group">
-                          <%= builder.label :birth_day, "Cumpleaños", class: "col-sm-4 control-label" %>
-                          <div class="col-sm-2">
-                            <%= builder.select :birth_day, [['01',1], ['02',2], ['03',3], ['04',4], ['05',5], ['06',6], ['07',7], ['08',8], ['09',9], ['10',10], ['11',11], ['12',12], ['13',13], ['14',14], ['15',15], ['16',16], ['17',17], ['18',18], ['19',19], ['20',20], ['21',21], ['22',22], ['23',23], ['24',24], ['25',25], ['26',26], ['27',27], ['28',28], ['29',29], ['30',30], ['31',31]], {prompt: "Día"}, { class: "form-control date-select"} %>
-                          </div>
-                          <div class="col-sm-3">
-                            <%= builder.select :birth_month, [['Enero',1], ['Febrero',2], ['Marzo',3], ['Abril',4], ['Mayo',5], ['Junio',6], ['Julio',7], ['Agosto',8], ['Septiembre',9], ['Octubre',10], ['Noviembre',11], ['Diciembre',12]], {prompt: "Mes"}, { class: "form-control date-select"} %>
-                          </div>
-                          <div class="col-sm-2">
-                            <%= builder.select :birth_year, options_for_select(Time.now.year.downto(Time.now.year-100).map {|s| ["#{s}", s]}), {prompt: "Año"}, { class: "form-control date-select"} %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= builder.label :age, "Edad", class: "col-sm-4 control-label" %>
-                          <div class="col-sm-8">
-                            <%= builder.number_field :age, class: "form-control" %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= builder.label :gender, "Género", class: "col-sm-4 control-label" %>
-                          <div class="col-sm-8">
-                            <%= builder.select :gender, [['No especificado',0], ['Femenino',1], ['Masculino',2]], { }, { class: "form-control"} %>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <%= builder.label :address, "Dirección", class: "col-sm-4 control-label" %>
-                          <div class="col-sm-8">
-                            <%= builder.text_field :address, class: "form-control" %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= builder.label :district, (I18n.t('district')).capitalize, class: "col-sm-4 control-label" %>
-                          <div class="col-sm-8">
-                            <%= builder.text_field :district, class: "form-control" %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= builder.label :city, "Ciudad", class: "col-sm-4 control-label" %>
-                          <div class="col-sm-8">
-                            <%= builder.text_field :city, class: "form-control" %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= builder.label :second_phone, "Teléfono 2", class: "col-sm-4 control-label" %>
-                          <div class="col-sm-8">
-                            <%= builder.text_field :second_phone, class: "form-control" %>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <%= builder.label :record, "Número de Cliente", class: "col-sm-4 control-label" %>
-                          <div class="col-sm-8">
-                            <%= builder.text_field :record, class: "form-control" %>
-                          </div>
-                        </div>
-                        <% if current_user.role_id != Role.find_by_name("Staff").id %>
-                        <div class="form-group">
-                          <div class="col-sm-8 col-sm-offset-4">
-                            <a href='/clients' class='client_link' target='_blank'>Ir a fichas de clientes...</a>
-                          </div>
-                        </div>
-                        <% end %>
-                      </div>
-                    </div>
-
-                    <!--
-                      Custom attributes that are not to be shown in calendar
-                    -->
+                  <% if @company.is_plan_capable("Premium") %>
                     <% if @company.custom_attributes.count > 0 %>
                       <div class="row">
                           <div class="col-md-12">
@@ -700,7 +410,7 @@
                       </div>
                     <% end %>
 
-                    <% @company.custom_attributes.where(show_on_calendar: false).each do |attribute| %>
+                    <% @company.custom_attributes.where(show_on_calendar: true).each do |attribute| %>
 
                       <% if attribute.datatype == "float" %>
                         <div class="row">
@@ -879,6 +589,300 @@
                         </div>
 
                       <% end %>                      
+                    <% end %>
+                  <% end %>
+
+
+                <% end %>
+                </div>
+                <div class="tab-pane" id="client-pane">
+                <%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
+                  <%= f.fields_for :client do |builder| %>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <%= builder.hidden_field :id %>
+                        <div class="form-group">
+                          <%= builder.label :first_name, "Nombre", class: "col-sm-4 control-label" %>
+                          <div class="col-sm-8">
+                            <%= builder.text_field :first_name, class: "form-control" %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= builder.label :last_name, "Apellido", class: "col-sm-4 control-label" %>
+                          <div class="col-sm-8">
+                            <%= builder.text_field :last_name, class: "form-control" %>
+                          </div>
+                        </div>
+                        <% unless @company_setting.client_exclusive || @company_setting.use_identification_number %>
+                        <div class="form-group has-feedback">
+                          <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-sm-4 control-label" %>
+                          <div class="col-sm-8">
+                            <%= builder.text_field :identification_number, class: "form-control" %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                        <% end %>
+                        <div class="form-group">
+                          <%= builder.label :birth_day, "Cumpleaños", class: "col-sm-4 control-label" %>
+                          <div class="col-sm-2">
+                            <%= builder.select :birth_day, [['01',1], ['02',2], ['03',3], ['04',4], ['05',5], ['06',6], ['07',7], ['08',8], ['09',9], ['10',10], ['11',11], ['12',12], ['13',13], ['14',14], ['15',15], ['16',16], ['17',17], ['18',18], ['19',19], ['20',20], ['21',21], ['22',22], ['23',23], ['24',24], ['25',25], ['26',26], ['27',27], ['28',28], ['29',29], ['30',30], ['31',31]], {prompt: "Día"}, { class: "form-control date-select"} %>
+                          </div>
+                          <div class="col-sm-3">
+                            <%= builder.select :birth_month, [['Enero',1], ['Febrero',2], ['Marzo',3], ['Abril',4], ['Mayo',5], ['Junio',6], ['Julio',7], ['Agosto',8], ['Septiembre',9], ['Octubre',10], ['Noviembre',11], ['Diciembre',12]], {prompt: "Mes"}, { class: "form-control date-select"} %>
+                          </div>
+                          <div class="col-sm-2">
+                            <%= builder.select :birth_year, options_for_select(Time.now.year.downto(Time.now.year-100).map {|s| ["#{s}", s]}), {prompt: "Año"}, { class: "form-control date-select"} %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= builder.label :age, "Edad", class: "col-sm-4 control-label" %>
+                          <div class="col-sm-8">
+                            <%= builder.number_field :age, class: "form-control" %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= builder.label :gender, "Género", class: "col-sm-4 control-label" %>
+                          <div class="col-sm-8">
+                            <%= builder.select :gender, [['No especificado',0], ['Femenino',1], ['Masculino',2]], { }, { class: "form-control"} %>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <%= builder.label :address, "Dirección", class: "col-sm-4 control-label" %>
+                          <div class="col-sm-8">
+                            <%= builder.text_field :address, class: "form-control" %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= builder.label :district, (I18n.t('district')).capitalize, class: "col-sm-4 control-label" %>
+                          <div class="col-sm-8">
+                            <%= builder.text_field :district, class: "form-control" %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= builder.label :city, "Ciudad", class: "col-sm-4 control-label" %>
+                          <div class="col-sm-8">
+                            <%= builder.text_field :city, class: "form-control" %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= builder.label :second_phone, "Teléfono 2", class: "col-sm-4 control-label" %>
+                          <div class="col-sm-8">
+                            <%= builder.text_field :second_phone, class: "form-control" %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= builder.label :record, "Número de Cliente", class: "col-sm-4 control-label" %>
+                          <div class="col-sm-8">
+                            <%= builder.text_field :record, class: "form-control" %>
+                          </div>
+                        </div>
+                        <% if current_user.role_id != Role.find_by_name("Staff").id %>
+                        <div class="form-group">
+                          <div class="col-sm-8 col-sm-offset-4">
+                            <a href='/clients' class='client_link' target='_blank'>Ir a fichas de clientes...</a>
+                          </div>
+                        </div>
+                        <% end %>
+                      </div>
+                    </div>
+
+                    <!--
+                      Custom attributes that are not to be shown in calendar
+                    -->
+                    <% if @company.is_plan_capable("Premium") %>
+                      <% if @company.custom_attributes.count > 0 %>
+                        <div class="row">
+                            <div class="col-md-12">
+                              <div style="font-size: 20px; padding: 10px;">
+                                Datos personalizados del cliente
+                              </div>
+                            </div>
+                        </div>
+                      <% end %>
+
+                      <% @company.custom_attributes.where(show_on_calendar: false).each do |attribute| %>
+
+                        <% if attribute.datatype == "float" %>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group has-feedback">
+                                <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
+                                  <%= attribute.name %>
+                                </label>
+                                <div class="col-sm-10">
+                                  <input type="number" class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_calendar %> />
+                                  <span class="help-block"><%= attribute.description %></span>
+                                  <span class="form-control-feedback"></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        <% elsif attribute.datatype == "integer" %>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group has-feedback">
+                                <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
+                                  <%= attribute.name %>
+                                </label>
+                                <div class="col-sm-10">
+                                  <input type="number" class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_calendar %> />
+                                  <span class="help-block"><%= attribute.description %></span>
+                                  <span class="form-control-feedback"></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        <% elsif attribute.datatype == "text" %>
+
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group has-feedback">
+                                <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
+                                  <%= attribute.name %>
+                                </label>
+                                <div class="col-sm-10">
+                                  <input type="text" class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_calendar %> />
+                                  <span class="help-block"><%= attribute.description %></span>
+                                  <span class="form-control-feedback"></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                        <% elsif attribute.datatype == "textarea" %>
+
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group has-feedback">
+                                <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
+                                  <%= attribute.name %>
+                                </label>
+                                <div class="col-sm-10">
+                                  <textarea class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" <%= "required" if attribute.mandatory_on_calendar %> /></textarea>
+                                  <span class="help-block"><%= attribute.description %></span>
+                                  <span class="form-control-feedback"></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                        <% elsif attribute.datatype == "boolean" %>
+
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group has-feedback">
+                                <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
+                                  <%= attribute.name %>
+                                </label>
+                                <div class="col-sm-10">
+                                  <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
+                                      <option value="1" selected>Sí</option>
+                                      <option value="0">No</option>
+                                  </select>
+                                  <span class="help-block"><%= attribute.description %></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                        <% elsif attribute.datatype == "date" %>
+
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group has-feedback">
+                                <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
+                                  <%= attribute.name %>
+                                </label>
+                                <div class="col-sm-10">
+                                  <input type="text" class="form-control attribute_datepicker custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_calendar %> />
+                                  <span class="help-block"><%= attribute.description %></span>
+                                  <span class="form-control-feedback"></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                        <% elsif attribute.datatype == "datetime" %>
+
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group">
+                              <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
+                                <%= attribute.name %>
+                              </label>
+                              <div class="col-sm-10">
+                                <div class="col-sm-5">
+                                  <input type="text" class="form-control attribute_datepicker custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_calendar %> />
+                                </div>
+                                <div class="col-sm-3">
+                                  <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute_hour" id="<%= attribute.slug %>_attribute_hour">
+                                    <% 
+                                      for i in 0..23
+                                        str_hour = i.to_s
+                                        if str_hour.length == 1
+                                          str_hour = "0" + str_hour
+                                        end
+
+                                        %>
+                                          <option value="<%= str_hour %>"><%= str_hour %></option>
+                                        <%
+
+                                      end 
+                                    %>
+                                  </select>
+                                </div>
+                                <div class="col-sm-1">
+                                :
+                                </div>
+                                <div class="col-sm-3">
+                                  <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute_minute" id="<%= attribute.slug %>_attribute_minute">
+                                    <% 
+                                      for i in 0..59
+                                        str_minute = i.to_s
+                                        if str_minute.length == 1
+                                          str_minute = "0" + str_minute
+                                        end
+
+                                        %>
+                                          <option value="<%= str_minute %>"><%= str_minute %></option>
+                                        <%
+
+                                      end 
+                                    %>
+                                  </select>
+                                </div>
+                                <span class="help-block"><%= attribute.description %></span>
+                                <span class="form-control-feedback"></span>
+                              </div>
+                            </div>
+                            </div>
+                          </div>
+
+                        <% elsif attribute.datatype == "categoric" %>
+
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group has-feedback">
+                              <label for="<%= attribute.slug %>_attribute" class="col-sm-2 control-label">
+                                <%= attribute.name %>
+                              </label>
+                              <div class="col-sm-10">
+                                <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
+                                  <% attribute.attribute_categories.each do |category| %>
+                                    <option value="<%= category.id %>"><%= category.category %></option>
+                                  <% end %>
+                                </select>
+                                <span class="help-block"><%= attribute.description %></span>
+                              </div>
+                            </div>
+                            </div>
+                          </div>
+
+                        <% end %>                      
+                      <% end %>
                     <% end %>
 
                   <% end %>

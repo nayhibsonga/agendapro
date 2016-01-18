@@ -143,275 +143,277 @@
                 </div>
               </div>
 
-              <% @company.custom_attributes.each do |attribute| %>
+              <% if @company.is_plan_capable("Premium") %>
+                <% @company.custom_attributes.each do |attribute| %>
 
-                <% if attribute.datatype == "float" %>
+                  <% if attribute.datatype == "float" %>
 
-                  <% 
-                    float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
-                    float_attribute_value = ""
-                    if !float_attribute.nil? && !float_attribute.value.nil?
-                      float_attribute_value = float_attribute.value
-                    end
-                  %>
-
-                  <div class="form-group has-feedback">
-                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
-                      <%= attribute.name %>
-                    </label>
-                    <div class="col-sm-9">
-                      <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= float_attribute_value %>" <%= "required" if attribute.mandatory %> />
-                      <span class="help-block"><%= attribute.description %></span>
-                      <span class="form-control-feedback"></span>
-                    </div>
-                  </div>
-
-                <% elsif attribute.datatype == "integer" %>
-
-                  <% 
-                    integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
-                    integer_attribute_value = ""
-                    if !integer_attribute.nil? && !integer_attribute.value.nil?
-                      integer_attribute_value = integer_attribute.value
-                    end
-                  %>
-                  
-                  <div class="form-group has-feedback">
-                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
-                      <%= attribute.name %>
-                    </label>
-                    <div class="col-sm-9">
-                      <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= integer_attribute_value %>" <%= "required" if attribute.mandatory %> />
-                      <span class="help-block"><%= attribute.description %></span>
-                      <span class="form-control-feedback"></span>
-                    </div>
-                  </div>
-
-                <% elsif attribute.datatype == "text" %>
-
-                  <% 
-                    text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
-                    text_attribute_value = ""
-                    if !text_attribute.nil? && !text_attribute.value.nil?
-                      text_attribute_value = text_attribute.value
-                    end
-                  %>
-                  
-                  <div class="form-group has-feedback">
-                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
-                      <%= attribute.name %>
-                    </label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= text_attribute_value %>" <%= "required" if attribute.mandatory %> />
-                      <span class="help-block"><%= attribute.description %></span>
-                      <span class="form-control-feedback"></span>
-                    </div>
-                  </div>
-
-                <% elsif attribute.datatype == "textarea" %>
-
-                  <% 
-                    textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
-                    textarea_attribute_value = ""
-                    if !textarea_attribute.nil? && !textarea_attribute.value.nil?
-                      textarea_attribute_value = textarea_attribute.value
-                    end
-                  %>
-                  
-                  <div class="form-group has-feedback">
-                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
-                      <%= attribute.name %>
-                    </label>
-                    <div class="col-sm-9">
-                      <textarea class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" <%= "required" if attribute.mandatory %> /><%= textarea_attribute_value %></textarea>
-                      <span class="help-block"><%= attribute.description %></span>
-                      <span class="form-control-feedback"></span>
-                    </div>
-                  </div>
-
-                <% elsif attribute.datatype == "boolean" %>
-
-                  <% 
-                    boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
-                    boolean_attribute_value = "0"
-                    if !boolean_attribute.nil? && !boolean_attribute.value.nil?
-                      if boolean_attribute_value
-                        boolean_attribute_value = "1"
+                    <% 
+                      float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                      float_attribute_value = ""
+                      if !float_attribute.nil? && !float_attribute.value.nil?
+                        float_attribute_value = float_attribute.value
                       end
-                    end
-                  %>
-                  
-                  <div class="form-group has-feedback">
-                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
-                      <%= attribute.name %>
-                    </label>
-                    <div class="col-sm-9">
-                      <select class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
-                        <% if boolean_attribute_value == "1" %>
-                          <option value="1" selected>Sí</option>
-                          <option value="0">No</option>
-                        <% else %>
-                          <option value="0" selected>No</option>
-                          <option value="1">Sí</option>
-                        <% end %>
-                      </select>
-                      <span class="help-block"><%= attribute.description %></span>
-                    </div>
-                  </div>
+                    %>
 
-                <% elsif attribute.datatype == "date" %>
-
-                  <% 
-                    date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
-                    date_attribute_value = ""
-                    if !date_attribute.nil? && !date_attribute.value.nil?
-                      date_attribute_value = date_attribute.value.strftime('%d/%m/%Y')
-                    end
-                  %>
-                  
-                  <div class="form-group has-feedback">
-                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
-                      <%= attribute.name %>
-                    </label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control attribute_datepicker" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= date_attribute_value %>" <%= "required" if attribute.mandatory %> />
-                      <span class="help-block"><%= attribute.description %></span>
-                      <span class="form-control-feedback"></span>
-                    </div>
-                  </div>
-
-                <% elsif attribute.datatype == "datetime" %>
-
-                  <% 
-                    date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
-                    date_time_attribute_date = ""
-                    date_time_attribute_hour = "00"
-                    date_time_attribute_minute = "00"
-                    if !date_time_attribute.nil? && !date_time_attribute.value.nil?
-                      date_time_attribute_date = date_time_attribute.value.strftime("%d/%m/%Y")
-                      date_time_attribute_hour = date_time_attribute.value.strftime("%H")
-                      date_time_attribute_minute = date_time_attribute.value.strftime("%M")
-                    end
-                  %>
-                  
-                  <div class="form-group">
-                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
-                      <%= attribute.name %>
-                    </label>
-                    <div class="col-sm-9">
-                      <div class="col-sm-5">
-                        <input type="text" class="form-control attribute_datepicker" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= date_time_attribute_date %>" <%= "required" if attribute.mandatory %> />
+                    <div class="form-group has-feedback">
+                      <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                        <%= attribute.name %>
+                      </label>
+                      <div class="col-sm-9">
+                        <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= float_attribute_value %>" <%= "required" if attribute.mandatory %> />
+                        <span class="help-block"><%= attribute.description %></span>
+                        <span class="form-control-feedback"></span>
                       </div>
-                      <div class="col-sm-3">
-                        <select class="form-control" name="<%= attribute.slug %>_attribute_hour" id="<%= attribute.slug %>_attribute_hour">
-                          <% 
-                            for i in 0..23
-                              str_hour = i.to_s
-                              if str_hour.length == 1
-                                str_hour = "0" + str_hour
-                              end
-
-                              if str_hour == date_time_attribute_hour
-                              %>
-                                <option value="<%= str_hour %>" selected><%= str_hour %></option>
-                              <%
-                              else
-                              %>
-                                <option value="<%= str_hour %>"><%= str_hour %></option>
-                              <%
-                              end
-
-                            end 
-                          %>
-                        </select>
-                      </div>
-                      <div class="col-sm-1">
-                      :
-                      </div>
-                      <div class="col-sm-3">
-                        <select class="form-control" name="<%= attribute.slug %>_attribute_minute" id="<%= attribute.slug %>_attribute_minute">
-                          <% 
-                            for i in 0..59
-                              str_minute = i.to_s
-                              if str_minute.length == 1
-                                str_minute = "0" + str_minute
-                              end
-
-                              if str_minute == date_time_attribute_minute
-                              %>
-                                <option value="<%= str_minute %>" selected><%= str_minute %></option>
-                              <%
-                              else
-                              %>
-                                <option value="<%= str_minute %>"><%= str_minute %></option>
-                              <%
-                              end
-
-                            end 
-                          %>
-                        </select>
-                      </div>
-                      <span class="help-block"><%= attribute.description %></span>
-                      <span class="form-control-feedback"></span>
                     </div>
-                  </div>
 
-                <% elsif attribute.datatype == "file" %>
+                  <% elsif attribute.datatype == "integer" %>
 
-                  <% file_attribute = FileAttribute.where(attribute_id: attribute.id, client_id: @client.id).first %>
-
-                  <div class="form-group has-feedback">
-                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
-                      <%= attribute.name %>
-                    </label>
-                    <div class="col-sm-9">
-                      <input type="file" class="form-control file-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory %> />
-                      <span class="help-block"><%= attribute.description %></span>
-                      <% 
-                        if !file_attribute.nil? && !file_attribute.client_file.nil?
-
-                          full_path = file_attribute.client_file.full_path
-                          obj = @s3_bucket.object(full_path)
-
-                          if !obj.content_type.index("image").nil?
-                          %>
-                            <span style="color: #949292; font-size: 14px; margin-top: 5px;">Actual: <br /><img src="<%= obj.public_url %>" width="120px" hegith="120px" /></span>
-                          <%
-                          else
-                          %>
-                            <span style="color: #949292; font-size: 14px; margin-top: 5px;">Actual: <a href="<%= obj.public_url %>"><%= file_attribute.client_file.name %></a>
-                          <% 
-                          end
-
-                        end 
-                      %>
+                    <% 
+                      integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                      integer_attribute_value = ""
+                      if !integer_attribute.nil? && !integer_attribute.value.nil?
+                        integer_attribute_value = integer_attribute.value
+                      end
+                    %>
+                    
+                    <div class="form-group has-feedback">
+                      <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                        <%= attribute.name %>
+                      </label>
+                      <div class="col-sm-9">
+                        <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= integer_attribute_value %>" <%= "required" if attribute.mandatory %> />
+                        <span class="help-block"><%= attribute.description %></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
                     </div>
-                  </div>
 
-                <% elsif attribute.datatype == "categoric" %>
-                  <% 
-                    categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
-                  %>
-                  
-                  <div class="form-group has-feedback">
-                    <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
-                      <%= attribute.name %>
-                    </label>
-                    <div class="col-sm-9">
-                      <select class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
-                        <% attribute.attribute_categories.each do |category| %>
-                          <% if !categoric_attribute.nil? && !categoric_attribute.attribute_category_id.nil? && categoric_attribute.attribute_category_id == category.id %>
-                            <option value="<%= category.id %>" selected><%= category.category %></option>
+                  <% elsif attribute.datatype == "text" %>
+
+                    <% 
+                      text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                      text_attribute_value = ""
+                      if !text_attribute.nil? && !text_attribute.value.nil?
+                        text_attribute_value = text_attribute.value
+                      end
+                    %>
+                    
+                    <div class="form-group has-feedback">
+                      <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                        <%= attribute.name %>
+                      </label>
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= text_attribute_value %>" <%= "required" if attribute.mandatory %> />
+                        <span class="help-block"><%= attribute.description %></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                    </div>
+
+                  <% elsif attribute.datatype == "textarea" %>
+
+                    <% 
+                      textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                      textarea_attribute_value = ""
+                      if !textarea_attribute.nil? && !textarea_attribute.value.nil?
+                        textarea_attribute_value = textarea_attribute.value
+                      end
+                    %>
+                    
+                    <div class="form-group has-feedback">
+                      <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                        <%= attribute.name %>
+                      </label>
+                      <div class="col-sm-9">
+                        <textarea class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" <%= "required" if attribute.mandatory %> /><%= textarea_attribute_value %></textarea>
+                        <span class="help-block"><%= attribute.description %></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                    </div>
+
+                  <% elsif attribute.datatype == "boolean" %>
+
+                    <% 
+                      boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                      boolean_attribute_value = "0"
+                      if !boolean_attribute.nil? && !boolean_attribute.value.nil?
+                        if boolean_attribute_value
+                          boolean_attribute_value = "1"
+                        end
+                      end
+                    %>
+                    
+                    <div class="form-group has-feedback">
+                      <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                        <%= attribute.name %>
+                      </label>
+                      <div class="col-sm-9">
+                        <select class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
+                          <% if boolean_attribute_value == "1" %>
+                            <option value="1" selected>Sí</option>
+                            <option value="0">No</option>
                           <% else %>
-                            <option value="<%= category.id %>"><%= category.category %></option>
+                            <option value="0" selected>No</option>
+                            <option value="1">Sí</option>
                           <% end %>
-                        <% end %>
-                      </select>
-                      <span class="help-block"><%= attribute.description %></span>
+                        </select>
+                        <span class="help-block"><%= attribute.description %></span>
+                      </div>
                     </div>
-                  </div>
-                <% end %>
 
+                  <% elsif attribute.datatype == "date" %>
+
+                    <% 
+                      date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                      date_attribute_value = ""
+                      if !date_attribute.nil? && !date_attribute.value.nil?
+                        date_attribute_value = date_attribute.value.strftime('%d/%m/%Y')
+                      end
+                    %>
+                    
+                    <div class="form-group has-feedback">
+                      <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                        <%= attribute.name %>
+                      </label>
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control attribute_datepicker" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= date_attribute_value %>" <%= "required" if attribute.mandatory %> />
+                        <span class="help-block"><%= attribute.description %></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                    </div>
+
+                  <% elsif attribute.datatype == "datetime" %>
+
+                    <% 
+                      date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                      date_time_attribute_date = ""
+                      date_time_attribute_hour = "00"
+                      date_time_attribute_minute = "00"
+                      if !date_time_attribute.nil? && !date_time_attribute.value.nil?
+                        date_time_attribute_date = date_time_attribute.value.strftime("%d/%m/%Y")
+                        date_time_attribute_hour = date_time_attribute.value.strftime("%H")
+                        date_time_attribute_minute = date_time_attribute.value.strftime("%M")
+                      end
+                    %>
+                    
+                    <div class="form-group">
+                      <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                        <%= attribute.name %>
+                      </label>
+                      <div class="col-sm-9">
+                        <div class="col-sm-5">
+                          <input type="text" class="form-control attribute_datepicker" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="<%= date_time_attribute_date %>" <%= "required" if attribute.mandatory %> />
+                        </div>
+                        <div class="col-sm-3">
+                          <select class="form-control" name="<%= attribute.slug %>_attribute_hour" id="<%= attribute.slug %>_attribute_hour">
+                            <% 
+                              for i in 0..23
+                                str_hour = i.to_s
+                                if str_hour.length == 1
+                                  str_hour = "0" + str_hour
+                                end
+
+                                if str_hour == date_time_attribute_hour
+                                %>
+                                  <option value="<%= str_hour %>" selected><%= str_hour %></option>
+                                <%
+                                else
+                                %>
+                                  <option value="<%= str_hour %>"><%= str_hour %></option>
+                                <%
+                                end
+
+                              end 
+                            %>
+                          </select>
+                        </div>
+                        <div class="col-sm-1">
+                        :
+                        </div>
+                        <div class="col-sm-3">
+                          <select class="form-control" name="<%= attribute.slug %>_attribute_minute" id="<%= attribute.slug %>_attribute_minute">
+                            <% 
+                              for i in 0..59
+                                str_minute = i.to_s
+                                if str_minute.length == 1
+                                  str_minute = "0" + str_minute
+                                end
+
+                                if str_minute == date_time_attribute_minute
+                                %>
+                                  <option value="<%= str_minute %>" selected><%= str_minute %></option>
+                                <%
+                                else
+                                %>
+                                  <option value="<%= str_minute %>"><%= str_minute %></option>
+                                <%
+                                end
+
+                              end 
+                            %>
+                          </select>
+                        </div>
+                        <span class="help-block"><%= attribute.description %></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                    </div>
+
+                  <% elsif attribute.datatype == "file" %>
+
+                    <% file_attribute = FileAttribute.where(attribute_id: attribute.id, client_id: @client.id).first %>
+
+                    <div class="form-group has-feedback">
+                      <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                        <%= attribute.name %>
+                      </label>
+                      <div class="col-sm-9">
+                        <input type="file" class="form-control file-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory %> />
+                        <span class="help-block"><%= attribute.description %></span>
+                        <% 
+                          if !file_attribute.nil? && !file_attribute.client_file.nil?
+
+                            full_path = file_attribute.client_file.full_path
+                            obj = @s3_bucket.object(full_path)
+
+                            if !obj.content_type.index("image").nil?
+                            %>
+                              <span style="color: #949292; font-size: 14px; margin-top: 5px;">Actual: <br /><img src="<%= obj.public_url %>" width="120px" hegith="120px" /></span>
+                            <%
+                            else
+                            %>
+                              <span style="color: #949292; font-size: 14px; margin-top: 5px;">Actual: <a href="<%= obj.public_url %>"><%= file_attribute.client_file.name %></a>
+                            <% 
+                            end
+
+                          end 
+                        %>
+                      </div>
+                    </div>
+
+                  <% elsif attribute.datatype == "categoric" %>
+                    <% 
+                      categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
+                    %>
+                    
+                    <div class="form-group has-feedback">
+                      <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
+                        <%= attribute.name %>
+                      </label>
+                      <div class="col-sm-9">
+                        <select class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
+                          <% attribute.attribute_categories.each do |category| %>
+                            <% if !categoric_attribute.nil? && !categoric_attribute.attribute_category_id.nil? && categoric_attribute.attribute_category_id == category.id %>
+                              <option value="<%= category.id %>" selected><%= category.category %></option>
+                            <% else %>
+                              <option value="<%= category.id %>"><%= category.category %></option>
+                            <% end %>
+                          <% end %>
+                        </select>
+                        <span class="help-block"><%= attribute.description %></span>
+                      </div>
+                    </div>
+                  <% end %>
+
+                <% end %>
               <% end %>
 
               <div class="form-group">
@@ -552,50 +554,54 @@
               </table>
             </div>
           </div>
-          <div class="panel panel-green">
-            <div class="panel-heading">
-              <div class="row">
-                <div class="col-md-6">
-                  Archivos
-                </div>
-                <div class="col-md-6">
-                  <button id="addFileBtn" class="btn btn-default" style="float: right; color: #22c488;">Agregar archivo</button>
+          <% if @company.is_plan_capable("Premium") %>
+            <div class="panel panel-green">
+              <div class="panel-heading">
+                <div class="row">
+                  <div class="col-md-6">
+                    Archivos
+                  </div>
+                  <div class="col-md-6">
+                    <button id="addFileBtn" class="btn btn-default" style="float: right; color: #22c488;">Agregar archivo</button>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="panel-body panel-scrollable" style="max-height: 230px !important;">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Fecha</th>
-                    <th>Tamaño</th>
-                    <th>Opciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @files.each do |file| %>
-                    <% 
-                      s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
-                      if s3_bucket.object(file.full_path).exists?
-                    %>
-                      <tr class="file-row" file_id="<%= file.id %>">
-                        <td><%= file.name %></td>
-                        <td><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
-                        <td><%= file.get_size %></td>
-                        <td>
-                          <button class="btn btn-green btn-xs viewFileBtn" client_file_id="<%= file.id %>"><i class="fa fa-search-plus"></i>&nbsp;Ver</button>
-                          <%= link_to '<i class="fa fa-trash-o"></i>&nbsp;Eliminar'.html_safe, file, method: :delete, :remote => true, data: { confirm: '¿Estás seguro de eliminar el archivo seleccionado?', type: :json }, class: 'btn btn-red btn-xs file-delete' %>
-                        </td>
-                      </tr>
+              <div class="panel-body panel-scrollable" style="max-height: 230px !important;">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Fecha</th>
+                      <th>Tamaño</th>
+                      <th>Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @files.each do |file| %>
+                      <% 
+                        s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+                        if s3_bucket.object(file.full_path).exists?
+                      %>
+                        <tr class="file-row" file_id="<%= file.id %>">
+                          <td><%= file.name %></td>
+                          <td><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
+                          <td><%= file.get_size %></td>
+                          <td>
+                            <button class="btn btn-green btn-xs viewFileBtn" client_file_id="<%= file.id %>"><i class="fa fa-search-plus"></i>&nbsp;Ver</button>
+                            <%= link_to '<i class="fa fa-trash-o"></i>&nbsp;Eliminar'.html_safe, file, method: :delete, :remote => true, data: { confirm: '¿Estás seguro de eliminar el archivo seleccionado?', type: :json }, class: 'btn btn-red btn-xs file-delete' %>
+                          </td>
+                        </tr>
+                      <% end %>
                     <% end %>
-                  <% end %>
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          <% end %>
           <%= link_to '<i class="fa fa-eye"></i> Historial Completo'.html_safe, client_history_path(:id => @client.id), class: "btn btn-white" %>
-          <%= link_to '<i class="fa fa-file-o"></i> Todos los archivos'.html_safe, get_client_files_path(:client_id => @client.id), class: "btn btn-white" %>
+          <% if @company.is_plan_capable("Premium") %>
+            <%= link_to '<i class="fa fa-file-o"></i> Todos los archivos'.html_safe, get_client_files_path(:client_id => @client.id), class: "btn btn-white" %>
+          <% end %>
         </div>
         <% end %>
   </div>
@@ -646,176 +652,178 @@
   </div>
 </div>
 
-<!-- File Upload Modal -->
+<% if @company.is_plan_capable("Premium") %>
+  <!-- File Upload Modal -->
 
-<div class="modal fade fileUploadModal" id="fileUploadModal" tabindex="-1" role="dialog" aria-labelledby="Agregar archivo" aria-hidden="true">
-  <div class="modal-dialog" style="width: auto;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
-        <h3 class="modal-title" id="fileUploadModallTitle" style="line-height: 1.1;">
-          Subir archivo
-        </h3>
-      </div>
-      <div class="modal-body" id="fileUploadModalBody">
-        <div class="row">
-          <div class="col-xs-12">
+  <div class="modal fade fileUploadModal" id="fileUploadModal" tabindex="-1" role="dialog" aria-labelledby="Agregar archivo" aria-hidden="true">
+    <div class="modal-dialog" style="width: auto;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+          <h3 class="modal-title" id="fileUploadModallTitle" style="line-height: 1.1;">
+            Subir archivo
+          </h3>
+        </div>
+        <div class="modal-body" id="fileUploadModalBody">
+          <div class="row">
+            <div class="col-xs-12">
 
-            <%= form_tag upload_client_file_path, multipart: true, class: 'form-horizontal', id: 'client_upload_file_form' do %>
+              <%= form_tag upload_client_file_path, multipart: true, class: 'form-horizontal', id: 'client_upload_file_form' do %>
 
-              <input type="hidden" id="client_id" name="client_id" value="<%= @client.id %>" %>
-              <input type="hidden" id="origin" name="origin" value="edit_client" %>
+                <input type="hidden" id="client_id" name="client_id" value="<%= @client.id %>" %>
+                <input type="hidden" id="origin" name="origin" value="edit_client" %>
 
-              <div class="payment-form-div form-group has-feedback">
-                <label class="col-xs-4 control-label">Archivo</label>
-                <div class="col-xs-8">
-                  <%= file_field_tag :file, :class => 'form-control'  %>
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                <div class="payment-form-div form-group has-feedback">
+                  <label class="col-xs-4 control-label">Archivo</label>
+                  <div class="col-xs-8">
+                    <%= file_field_tag :file, :class => 'form-control'  %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
                 </div>
-              </div>
 
-              <div style="clear: both;">
-              </div>
-
-              <div class="payment-form-div form-group has-feedback">
-                <label class="col-xs-4 control-label">Nombre</label>
-                <div class="col-xs-8">
-                  <input type="text" class="form-control" id="file_name" name="file_name" value="" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                <div style="clear: both;">
                 </div>
-              </div>
 
-              <div style="clear: both;">
-              </div>
-
-              <div class="payment-form-div form-group has-feedback">
-                <label class="col-xs-4 control-label">Descripción</label>
-                <div class="col-xs-8">
-                  <input type="text" class="form-control" id="file_description" name="file_description" value="" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                <div class="payment-form-div form-group has-feedback">
+                  <label class="col-xs-4 control-label">Nombre</label>
+                  <div class="col-xs-8">
+                    <input type="text" class="form-control" id="file_name" name="file_name" value="" />
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
                 </div>
-              </div>
 
-              <div style="clear: both;">
-              </div>
-
-              <div class="payment-form-div form-group has-feedback">
-                <label class="col-xs-4 control-label">Carpeta</label>
-                <div class="col-xs-8">
-                  <select id="folderSelect" class="form-control" name="folder_name">
-                    <option value="select">Nueva carpeta</option>
-                    <% @folders.each do |folder_name| %>
-                      <option value="<%= folder_name %>"><%= folder_name %></option>
-                    <% end %>
-                  </select>
-                  <input type="text" id="new_folder_name" name="new_folder_name" class="form-control" value="" style="margin-top: 10px;" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                <div style="clear: both;">
                 </div>
-              </div>
 
-              <div style="clear: both;">
-              </div>
-
-              <div class="payment-form-div form-group">
-                <label class="col-xs-4 control-label"></label>
-                <div class="col-xs-8">
-                  <button type="submit" class="btn btn-green">Guardar</button>
+                <div class="payment-form-div form-group has-feedback">
+                  <label class="col-xs-4 control-label">Descripción</label>
+                  <div class="col-xs-8">
+                    <input type="text" class="form-control" id="file_description" name="file_description" value="" />
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
                 </div>
-              </div>
 
-              <div style="clear: both;">
-              </div>
+                <div style="clear: both;">
+                </div>
 
-            <% end %>
+                <div class="payment-form-div form-group has-feedback">
+                  <label class="col-xs-4 control-label">Carpeta</label>
+                  <div class="col-xs-8">
+                    <select id="folderSelect" class="form-control" name="folder_name">
+                      <option value="select">Nueva carpeta</option>
+                      <% @folders.each do |folder_name| %>
+                        <option value="<%= folder_name %>"><%= folder_name %></option>
+                      <% end %>
+                    </select>
+                    <input type="text" id="new_folder_name" name="new_folder_name" class="form-control" value="" style="margin-top: 10px;" />
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
 
+                <div style="clear: both;">
+                </div>
+
+                <div class="payment-form-div form-group">
+                  <label class="col-xs-4 control-label"></label>
+                  <div class="col-xs-8">
+                    <button type="submit" class="btn btn-green">Guardar</button>
+                  </div>
+                </div>
+
+                <div style="clear: both;">
+                </div>
+
+              <% end %>
+
+            </div>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- END File Upload Modal -->
+  <!-- END File Upload Modal -->
 
-<!-- View File Modal -->
+  <!-- View File Modal -->
 
-<div class="modal fade fileUploadModal" id="viewFileModal" tabindex="-1" role="dialog" aria-labelledby="Ver archivo" aria-hidden="true">
-  <div class="modal-dialog" style="width: auto;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
-        <h3 class="modal-title" id="viewFileModallTitle" style="line-height: 1.1;">
-          Archivo
-        </h3>
-      </div>
-      <div class="modal-body" id="viewFileModalBody">
-        <div class="row">
-          <div class="col-xs-12">
+  <div class="modal fade fileUploadModal" id="viewFileModal" tabindex="-1" role="dialog" aria-labelledby="Ver archivo" aria-hidden="true">
+    <div class="modal-dialog" style="width: auto;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+          <h3 class="modal-title" id="viewFileModallTitle" style="line-height: 1.1;">
+            Archivo
+          </h3>
+        </div>
+        <div class="modal-body" id="viewFileModalBody">
+          <div class="row">
+            <div class="col-xs-12">
 
-              <div class="payment-form-div form-group">
-                <label class="col-xs-4 control-label">Nombre</label>
-                <div class="col-xs-8">
-                  <div id="view_file_name" class="view_file_content">
+                <div class="payment-form-div form-group">
+                  <label class="col-xs-4 control-label">Nombre</label>
+                  <div class="col-xs-8">
+                    <div id="view_file_name" class="view_file_content">
 
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div style="clear: both;">
-              </div>
+                <div style="clear: both;">
+                </div>
 
-              <div class="payment-form-div form-group">
-                <label class="col-xs-4 control-label">Descripción</label>
-                <div class="col-xs-8">
-                  <div id="view_file_description" class="view_file_content">
+                <div class="payment-form-div form-group">
+                  <label class="col-xs-4 control-label">Descripción</label>
+                  <div class="col-xs-8">
+                    <div id="view_file_description" class="view_file_content">
 
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div style="clear: both;">
-              </div>
-            
-              <div class="payment-form-div form-group">
-                <label class="col-xs-4 control-label">Enlace</label>
-                <div class="col-xs-8">
-                  <div id="view_file_link" class="view_file_content">
+                <div style="clear: both;">
+                </div>
+              
+                <div class="payment-form-div form-group">
+                  <label class="col-xs-4 control-label">Enlace</label>
+                  <div class="col-xs-8">
+                    <div id="view_file_link" class="view_file_content">
 
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div style="clear: both;">
-              </div>
+                <div style="clear: both;">
+                </div>
 
-              <div class="payment-form-div form-group" id="view_file_preview_div">
-                <label class="col-xs-4 control-label">Vista previa</label>
-                <div class="col-xs-8">
-                  <div id="view_file_preview" class="view_file_content">
+                <div class="payment-form-div form-group" id="view_file_preview_div">
+                  <label class="col-xs-4 control-label">Vista previa</label>
+                  <div class="col-xs-8">
+                    <div id="view_file_preview" class="view_file_content">
 
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div style="clear: both;">
-              </div>
+                <div style="clear: both;">
+                </div>
 
+            </div>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+<% end %>
 
 <!-- END View File Modal -->
 
