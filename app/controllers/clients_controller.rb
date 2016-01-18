@@ -308,7 +308,7 @@ class ClientsController < ApplicationController
 
     @tmpl = 'basic'
 
-    template_selection if can?(:use_email_templates, Client )
+    template_selection if current_user.company.is_plan_capable("Premium")
 
     tmp_to = Array.new
     mail_list.each do |email|

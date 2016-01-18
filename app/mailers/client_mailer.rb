@@ -77,6 +77,7 @@ class ClientMailer < Base::CustomMailer
     @data = @content.data
     @email = true
     subject = (Rails.env == 'production' ? @content.subject : "#{@content.subject} (#{recipient})")
+    headers["X-MC-PreserveRecipients"] = "false"
     mail(
       from: filter_sender("#{@content.company.name.titleize} <#{@content.from}>"),
       to: filter_recipient(recipient),
