@@ -78,14 +78,20 @@ class Company < ActiveRecord::Base
 		if name == "Normal"
 			if self.plan.name == "Normal" || self.plan.name == "Premium" || self.plan.name == "Pro"
 				return true
+			else
+				return false
 			end
 		elsif name == "Premium"
 			if self.plan.name == "Premium" || self.plan.name == "Pro"
 				return true
+			else
+				return false
 			end
 		elsif name == "Pro"
 			if self.plan.name == "Pro"
 				return true
+			else
+				return false
 			end
 		else
 			return false

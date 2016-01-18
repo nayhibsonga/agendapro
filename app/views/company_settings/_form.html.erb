@@ -32,6 +32,8 @@
         <li role="presentation"><a id="notifications_link" href="#notifications" role="tab" data-toggle="pill" data-title="Notificaciones" data-description="Configura que e-mails deseas recibir y a que correo.">Notificaciones</a></li>
         <% if current_user.company.is_plan_capable("Premium") %>
           <li role="presentation"><a id="clients_link" href="#clients" role="tab" data-toggle="pill" data-title="Clientes" data-description="Configura campos personalizados y filtros para tus clientes.">Clientes</a></li>
+        <% else %>
+          <li role="presentation"><a id="blocked_clients_link" href="#" class="locked-section">Clientes<i class="fa fa-lock fa-1 lock-image"></i></a></li>
         <% end %>
       </ul>
     </div>
@@ -119,6 +121,18 @@
                   </div>
                   <div class="media-body">
                     <span class="text-green">Clientes:</span> configura campos personalizados y filtros para tus clientes.
+                  </div>
+                </div>
+              </div>
+            <% else %>
+              <!-- blocked_clients_link -->
+              <div class="col-md-6">
+                <div class="media">
+                  <div class="media-left" style="color: #ababab; border: 1px solid #ababab; border-radius: 10px;">
+                    &nbsp;&nbsp;<i class="fa fa-lock fa-3x lock-image"></i>
+                  </div>
+                  <div class="media-body">
+                    <span style="color: #ababab;">&nbsp;Clientes:</span> sección no disponible para tu plan actual.
                   </div>
                 </div>
               </div>

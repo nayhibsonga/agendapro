@@ -155,9 +155,13 @@
                   <li><%= link_to '<i class="fa fa-book fa-fw"></i> Servicios'.html_safe, services_path %></li>
                   <li><%= link_to '<i class="fa fa-money"></i>  Comisiones'.html_safe, commissions_path %></li>
                   <li><%= link_to '<i class="fa fa-cubes fa-fw"></i> Recursos'.html_safe, resources_path %></li>
-                  <li><%= link_to '<i class="fa fa-file fa-fw"></i> Archivos'.html_safe, '/get_company_files' %></li>
                   <% if current_user.role == Role.find_by(name: "Administrador General") %>
                   <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Pagos en línea'.html_safe, '/company_bookings' %></li>
+                  <% end %>
+                  <% if current_user.company.is_plan_capable("Premium") %>
+                    <li><%= link_to '<i class="fa fa-file fa-fw"></i> Archivos'.html_safe, '/get_company_files' %></li>
+                  <% else %>
+                    <li><%= link_to '<i class="fa fa-file fa-fw"></i> Archivos<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, '#', :class => "locked-section" %></li>
                   <% end %>
                 </ul>
               </li>

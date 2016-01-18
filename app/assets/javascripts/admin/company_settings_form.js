@@ -481,6 +481,10 @@ $(function () {
     });
   });
 
+  $('#blocked_clients_link').on('click', function(e){
+    e.preventDefault();
+  });
+
 
 });
 
