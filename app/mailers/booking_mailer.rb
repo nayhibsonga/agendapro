@@ -1,6 +1,4 @@
-class BookingMailer < ActionMailer::Base
-	require 'mandrill'
-	require 'base64'
+class BookingMailer < Base::CustomMailer
 
 	include ActionView::Helpers::NumberHelper
 
@@ -2093,19 +2091,4 @@ class BookingMailer < ActionMailer::Base
 	#Mail de edición de sesión (depende de si es por admin o no)
 	def update_session_booking_mail(booking, is_admin)
 	end
-
-	private
-		def send_mail(template_name, template_content, message)
-			mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-			# => Metadata
-			async = false
-			send_at = DateTime.now
-
-			result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-			rescue Mandrill::Error => e
-				puts "A mandrill error occurred: #{e.class} - #{e.message}"
-				raise
-		end
-
 end

@@ -1,6 +1,4 @@
-class AdminMailer < ActionMailer::Base
-	require 'mandrill'
-	require 'base64'
+class AdminMailer < Base::CustomMailer
 
 	include ActionView::Helpers::NumberHelper
 
@@ -82,19 +80,4 @@ class AdminMailer < ActionMailer::Base
 		send_mail(template_name, template_content, message)
 
 	end
-
-	private
-		def send_mail(template_name, template_content, message)
-			mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-			# => Metadata
-			async = false
-			send_at = DateTime.now
-
-			result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-			rescue Mandrill::Error => e
-				puts "A mandrill error occurred: #{e.class} - #{e.message}"
-				raise
-		end
-
 end

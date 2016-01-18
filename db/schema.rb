@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20160115142032) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "attribute_categories", force: true do |t|
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
   end
 
   create_table "billing_wire_transfers", force: true do |t|
-    t.datetime "payment_date",   default: '2015-12-02 18:34:34'
+    t.datetime "payment_date",   default: '2015-12-30 19:45:40'
     t.float    "amount",         default: 0.0
     t.string   "account_name",   default: ""
     t.string   "account_number", default: ""
@@ -116,8 +116,8 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes"
-    t.text     "company_comment"
+    t.text     "notes",               default: ""
+    t.text     "company_comment",     default: ""
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -145,18 +145,18 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.integer  "client_id"
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
-    t.integer  "max_changes",            default: 2
     t.boolean  "payed",                  default: false
     t.string   "trx_id",                 default: ""
+    t.integer  "max_changes",            default: 2
     t.string   "token",                  default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
-    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
+    t.integer  "payment_id"
     t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
     t.integer  "reminder_group"
@@ -401,17 +401,17 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.boolean  "deal_activate",               default: false
     t.string   "deal_name",                   default: ""
     t.boolean  "deal_overcharge",             default: true
+    t.boolean  "deal_exclusive",              default: false
+    t.integer  "deal_quantity",               default: 0
+    t.integer  "deal_constraint_option",      default: 0
+    t.integer  "deal_constraint_quantity",    default: 0
+    t.boolean  "deal_identification_number",  default: false
     t.boolean  "allows_online_payment",       default: false
     t.string   "account_number",              default: ""
     t.string   "company_rut",                 default: ""
     t.string   "account_name",                default: ""
     t.integer  "account_type",                default: 3
     t.integer  "bank_id"
-    t.boolean  "deal_exclusive",              default: true
-    t.integer  "deal_quantity",               default: 0
-    t.integer  "deal_constraint_option",      default: 0
-    t.integer  "deal_constraint_quantity",    default: 0
-    t.boolean  "deal_identification_number",  default: false
     t.boolean  "deal_required",               default: false,                 null: false
     t.boolean  "online_payment_capable",      default: false
     t.boolean  "allows_optimization",         default: true
@@ -523,18 +523,16 @@ ActiveRecord::Schema.define(version: 20160115142032) do
   end
 
   create_table "economic_sectors", force: true do |t|
-    t.string   "name",                                      null: false
+    t.string   "name",                                    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "show_in_home",              default: true
-    t.boolean  "show_in_company",           default: true
-    t.string   "mobile_preview",            default: ""
-    t.boolean  "marketplace",               default: false
-    t.integer  "marketplace_categories_id"
+    t.boolean  "show_in_home",            default: true
+    t.boolean  "show_in_company",         default: true
+    t.string   "mobile_preview",          default: ""
+    t.boolean  "marketplace",             default: false
     t.integer  "marketplace_category_id"
   end
 
-  add_index "economic_sectors", ["marketplace_categories_id"], name: "index_economic_sectors_on_marketplace_categories_id", using: :btree
   add_index "economic_sectors", ["marketplace_category_id"], name: "index_economic_sectors_on_marketplace_category_id", using: :btree
 
   create_table "economic_sectors_dictionaries", force: true do |t|
@@ -545,6 +543,40 @@ ActiveRecord::Schema.define(version: 20160115142032) do
   end
 
   add_index "economic_sectors_dictionaries", ["economic_sector_id"], name: "index_economic_sectors_dictionaries_on_economic_sector_id", using: :btree
+
+  create_table "email_contents", force: true do |t|
+    t.integer  "template_id"
+    t.json     "data",        null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "from"
+    t.text     "to"
+    t.string   "subject"
+    t.integer  "company_id"
+    t.string   "name"
+  end
+
+  add_index "email_contents", ["company_id"], name: "index_email_contents_on_company_id", using: :btree
+  add_index "email_contents", ["template_id"], name: "index_email_contents_on_template_id", using: :btree
+
+  create_table "email_sendings", force: true do |t|
+    t.integer  "sendable_id"
+    t.string   "sendable_type"
+    t.datetime "send_date"
+    t.datetime "sent_date"
+    t.string   "status",        default: "pending"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "email_templates", force: true do |t|
+    t.string   "name"
+    t.string   "source"
+    t.string   "thumb"
+    t.boolean  "active",     default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "facebook_pages", force: true do |t|
     t.integer  "company_id"
@@ -631,7 +663,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "date",                default: '2015-10-30 21:54:55'
+    t.datetime "date",                default: '2015-11-15 22:20:48'
     t.integer  "user_id"
   end
 
@@ -662,8 +694,8 @@ ActiveRecord::Schema.define(version: 20160115142032) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-    t.integer  "location_id"
-    t.integer  "stock"
+    t.integer  "location_id",                null: false
+    t.integer  "stock",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "stock_limit"
@@ -1035,7 +1067,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.integer  "company_id"
     t.float    "amount",        default: 0.0
     t.boolean  "payed",         default: false
-    t.datetime "payment_date",  default: '2015-11-12 13:16:44'
+    t.datetime "payment_date",  default: '2015-11-15 22:20:48'
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "discount",      default: 0.0
@@ -1384,7 +1416,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
-    t.datetime "date",          default: '2015-10-30 21:54:55'
+    t.datetime "date",          default: '2015-11-15 22:20:48'
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1404,7 +1436,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
-    t.datetime "date",                    default: '2015-10-30 21:54:55'
+    t.datetime "date",                    default: '2015-11-15 22:20:48'
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false

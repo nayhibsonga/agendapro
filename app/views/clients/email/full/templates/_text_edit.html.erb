@@ -1,0 +1,9 @@
+<div class="text-container">
+  <% if @email %>
+    <%= raw(content.data["#{txt_name}"]) %>
+  <% else %>
+    <span style="font-size: 14px; font-style: italic; font-weight: bold;" ng-hide="ec.content.data['<%= txt_name %>']">Click para comenzar a escribir</span>
+    <div style="min-height: 200px; width: 100%; border: 1px solid #ccc; cursor: pointer;" dynamic="ec.content.data['<%= txt_name %>']" ng-click="ec.editText('<%= txt_name %>')">
+    </div>
+  <% end %>
+</div>

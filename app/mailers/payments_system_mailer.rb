@@ -1,9 +1,6 @@
-class PaymentsSystemMailer < ActionMailer::Base
-  require 'mandrill'
+class PaymentsSystemMailer < Base::CustomMailer
 
   def stock_alarm_email(location_product)
-    mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
     # => Template
     template_name = 'Stock Alarm'
     template_content = []
@@ -79,21 +76,11 @@ class PaymentsSystemMailer < ActionMailer::Base
       ]
     }
 
-    # => Metadata
-    async = false
-    send_at = DateTime.now
-
     # => Send mail
-    result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-    rescue Mandrill::Error => e
-      puts "A mandrill error occurred: #{e.class} - #{e.message}"
-      raise
+    send_mail(template_name, template_content, message)
   end
 
   def stock_reminder_email(location, stocks, emails)
-    mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
     # => Template
     template_name = 'Stock Reminder'
     template_content = []
@@ -144,22 +131,11 @@ class PaymentsSystemMailer < ActionMailer::Base
       ]
     }
 
-    # => Metadata
-    async = false
-    send_at = DateTime.now
-
     # => Send mail
-    result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-    rescue Mandrill::Error => e
-      puts "A mandrill error occurred: #{e.class} - #{e.message}"
-      raise
+    send_mail(template_name, template_content, message)
   end
 
   def receipts_email(payment, emails, data)
-
-    mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
     # => Template
     template_name = 'Payment Receipts'
     template_content = []
@@ -215,17 +191,8 @@ class PaymentsSystemMailer < ActionMailer::Base
       ]
     }
 
-    # => Metadata
-    async = false
-    send_at = DateTime.now
-
     # => Send mail
-    result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-    rescue Mandrill::Error => e
-      puts "A mandrill error occurred: #{e.class} - #{e.message}"
-      raise
-
+    send_mail(template_name, template_content, message)
   end
 
 end

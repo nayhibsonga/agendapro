@@ -1,5 +1,5 @@
 Agendapro::Application.routes.draw do
-    
+
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -129,8 +129,7 @@ Agendapro::Application.routes.draw do
     get '/get_direction', :to => 'districts#get_direction'
     # get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
     # get '/minisite', :to => 'company_settings#minisite', :as => 'minisite'
-    get '/compose_mail', :to => 'clients#compose_mail', :as => 'send_mail'
-    post '/send_mail_client', :to => 'clients#send_mail'
+
     get '/get_link', :to => 'companies#get_link', :as => 'get_link'
     post '/change_categories_order', :to => 'service_categories#change_categories_order'
     post '/change_services_order', :to => 'services#change_services_order'
@@ -138,6 +137,21 @@ Agendapro::Application.routes.draw do
     post '/change_providers_order', :to => 'service_providers#change_providers_order'
     post '/change_groups_order', :to => 'provider_groups#change_groups_order'
     get '/confirm_email', :to => 'company_from_emails#confirm_email', :as => 'confirm_email'
+
+    # Mail Composing
+    scope controller: 'clients' do
+      get '/compose_mail', action: 'compose_mail', as: 'send_mail'
+      post '/send_mail_client', action: 'send_mail'
+    end
+
+    # Mail Editor
+    namespace 'email' do
+      scope controller: 'content', path: '/content' do
+        post '/editor', action: 'editor', as: :editor
+        post "/update", action: 'update', as: :update
+        post "/upload", action: 'upload', as: :upload
+      end
+    end
 
     # Autocompletar del Booking
     get '/clients_suggestion', :to => 'clients#suggestion'
@@ -159,14 +173,19 @@ Agendapro::Application.routes.draw do
     get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
     get '/get_session_bookings', :to => 'users#get_session_bookings'
     get '/get_session_summary', :to => 'users#get_session_summary'
-    post '/delete_session_booking', :to => 'bookings#delete_session_booking'
-    post '/validate_session_booking', :to => 'bookings#validate_session_booking'
-    post '/validate_session_form', :to => 'bookings#validate_session_form'
-    get '/validate_session_form', :to => 'bookings#validate_session_form'
-    get '/session_booking_detail', :to => 'bookings#session_booking_detail'
-    get '/book_session_form', :to => 'bookings#book_session_form'
-    post '/update_book_session', :to => 'bookings#update_book_session'
-    get '/sessions_calendar', :to => 'bookings#sessions_calendar'
+
+    scope controller: 'bookings' do
+      post '/delete_session_booking', action: 'delete_session_booking'
+      post '/validate_session_booking', action: 'validate_session_booking'
+      post '/validate_session_form', action: 'validate_session_form'
+      get '/validate_session_form', action: 'validate_session_form'
+      get '/session_booking_detail', action: 'session_booking_detail'
+      get '/book_session_form', action: 'book_session_form'
+      post '/update_book_session', action: 'update_book_session'
+      get '/sessions_calendar', action: 'sessions_calendar'
+    end
+
+
 
     # Add Company from Usuario Registrado
     get '/add_company', :to => 'companies#add_company', :as => 'add_company'
