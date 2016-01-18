@@ -1210,16 +1210,31 @@ class CompaniesController < ApplicationController
 			return
 		end
 		serviceStaffAux = JSON.parse(params[:serviceStaff], symbolize_names: true)
-		if Location.find(params[:location]).company_id != Service.find(serviceStaffAux[0][:service]).company_id
-			flash[:alert] = "Error ingresando los datos."
-			redirect_to workflow_path(:local => params[:location])
-			return
+		serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
+		if serviceStaffAux[0][:bundle]
+			bundle = Bundle.find(serviceStaffAux[0][:service])
+			if Location.find(params[:location]).company_id != bundle.company_id
+				flash[:alert] = "Error ingresando los datos."
+				redirect_to workflow_path(:local => params[:location])
+				return
+			end
+			services = bundle.services.order(:created_at)
+			serviceStaff = []
+			services.each do |service|
+				serviceStaff << { :service => service.id.to_s, :provider => (serviceStaffAux[0][:provider] == "0" || !ServiceStaff.where(service_id: serviceStaffAux[0][:service]).pluck(:service_provider_id).include?(serviceStaffAux[0][:provider].to_i) ? "0" : serviceStaffAux[0][:service]), :bundle => bundle.id }
+			end
+		else
+			if Location.find(params[:location]).company_id != Service.find(serviceStaffAux[0][:service]).company_id
+				flash[:alert] = "Error ingresando los datos."
+				redirect_to workflow_path(:local => params[:location])
+				return
+			end
 		end
 
 		@mandatory_discount = false
 		@is_session_booking = false
 
-		mobile_hours
+		mobile_hours(serviceStaff)
 		render layout: 'workflow'
 
 		rescue ActionView::MissingTemplate => e
@@ -1722,14 +1737,14 @@ class CompaniesController < ApplicationController
 	private
 
 		#Common method to obtain available hours
-		def mobile_hours
+		def mobile_hours(serviceStaff)
 
 		    require 'date'
 
 		    local = Location.find(params[:location])
 		    company_setting = local.company.company_setting
 		    cancelled_id = Status.find_by(name: 'Cancelado').id
-		    serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
+		    # serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
 		    now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 		    session_booking = nil
 
