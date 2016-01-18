@@ -70,6 +70,36 @@ class Company < ActiveRecord::Base
 
 	after_create :create_plan_setting
 
+	def is_plan_capable(name)
+
+		if self.plan.custom
+			return false
+		end
+
+		if name == "Normal"
+			if self.plan.name == "Normal" || self.plan.name == "Premium" || self.plan.name == "Pro"
+				return true
+			else
+				return false
+			end
+		elsif name == "Premium"
+			if self.plan.name == "Premium" || self.plan.name == "Pro"
+				return true
+			else
+				return false
+			end
+		elsif name == "Pro"
+			if self.plan.name == "Pro"
+				return true
+			else
+				return false
+			end
+		else
+			return false
+		end
+		
+	end
+
 	def create_plan_setting
 		CompanyPlanSetting.create(company_id: self.id, base_price: self.plan.plan_countries.find_by(country_id: self.country.id).price, locations_multiplier: NumericParameter.find_by_name("locations_multiplier").value)
 	end

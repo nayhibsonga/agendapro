@@ -31,7 +31,7 @@ class LocationsController < ApplicationController
     @location = Location.new
     @location.company_id = current_user.company_id
     if current_user.role_id != Role.find_by_name("Super Admin").id
-      if current_user.company.locations.where(active:true).count >= current_user.company.plan.locations
+      if current_user.company.locations.where(active:true).count >= current_user.company.plan.locations && (current_user.company.plan.custom || current_user.company.plan.name == "Personal")
         redirect_to locations_path, alert: 'No puedes crear más locales con tu plan actual.'
         return
       end
