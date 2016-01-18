@@ -52,14 +52,13 @@
         </div>
 
         <div id="editorSpace" style="height: auto;">
-          <%# cktext_area :editor, 'text1', id: 'text1', cols: 100, ckeditor: {uiColor: '#FFFFFF', height: 350, removePlugins: 'image'}, 'ng-model' => "ec.content.data['text1']", 'custom-ck-editor' => '' %>
         </div>
       </div>
 
       <div class="col-xs-12" style="text-align: right; padding: 10px;margin-bottom: 30px;">
         <%= link_to 'Volver', :back, class: 'btn btn-default pull-left' %>
-        <button class="btn btn-list" ng-click="ec.send_email = false; ec.saveContent('<%= url_for(:save_content) %>')">Guardar</button>
-        <button class="btn btn-green"  ng-click="ec.send_email = true; ec.saveContent('<%= url_for(:save_content) %>');">Guardar y Enviar</button>
+        <button class="btn btn-list" ng-click="ec.send_email = false; ec.saveContent('<%= url_for(:email_update) %>')">Guardar</button>
+        <button class="btn btn-green"  ng-click="ec.send_email = true; ec.saveContent('<%= url_for(:email_update) %>');">Guardar y Enviar</button>
       </div>
     </div>
 

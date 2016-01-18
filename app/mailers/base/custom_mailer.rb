@@ -17,6 +17,7 @@ class Base::CustomMailer < ActionMailer::Base
   end
 
   def filter_recipient(recipients)
+    return recipients if Rails.env == 'production'
     ENV['EMAIL_FILTER'] || recipients
   end
 

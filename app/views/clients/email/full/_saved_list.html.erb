@@ -4,11 +4,11 @@
   </div>
   <section style="text-align: right;">
     <p style="margin-top: 10px;"><%= content.try(:name) || content.try(:subject) || content.template %></p>
+    <p> Estado: <span style="font-style: italic"><%= content.sent? ? 'Enviado' : 'No enviado' %></span></p>
   </section>
   <section>
-    <%= form_tag(:mail_editor, method: "post") do %>
-      <%= hidden_field_tag(:recipients, content.to) %>
-      <%= hidden_field_tag(:tmpl, content.template.id) %>
+    <%= form_tag(:email_editor, method: "post") do %>
+      <%= hidden_field_tag(:id, content.id) %>
       <%= submit_tag("Modificar", class: 'btn btn-green pull-right') %>
     <% end %>
   </section>

@@ -18,7 +18,7 @@ class Email::Content < ActiveRecord::Base
   end
 
   def sent?
-    self.sendings.sent > 0
+    self.sendings.sent.size > 0
   end
 
   private

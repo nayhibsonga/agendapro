@@ -18,7 +18,7 @@
     vm.active = '';
     vm.content = JSON.parse(angular.element('#content-data').val());
     vm.uploader = new FileUploader({
-      url: '/email_content/upload',
+      url: 'upload',
       autoUpload: true,
       headers : {
         'X-CSRF-TOKEN': csrfToken
@@ -54,7 +54,7 @@
       $http.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
       return $http.post(url, buildData()).then(function(response){
         if( vm.send_email ) {
-          location.href = 'compose_mail';
+          location.href = response.data.url;
         } else {
           vm.notice = 'Guardado';
         }

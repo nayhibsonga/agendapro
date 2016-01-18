@@ -258,41 +258,6 @@ class ClientsController < ApplicationController
     @to = tmp_to.join(', ')
   end
 
-  def mail_editor
-    @from_collection = current_user.company.company_from_email.where(confirmed: true).pluck(:email)
-    @from = current_user.email
-    recipients = params[:recipients]
-    @tmpl = Email::Template.find(params[:tmpl])
-    @email = false
-    @content = Email::Content.find_or_create_by(template: @tmpl, company: current_user.company, from: @from, to: recipients)
-    render 'clients/email/full/mail_editor'
-  end
-
-  def upload_content
-    if params[:file].present?
-      begin
-        uploader = EmailContentUploader.new
-        uploader.store(params[:id], params[:file].tempfile)
-
-        render json: {
-          filename: uploader.file.filename,
-          path: uploader.path,
-          url: uploader.url
-        }.to_json
-      rescue
-        render json: { error: "Error processing file"}, status: :unprocessable_entity
-      end
-    else
-      render json: { error: "No file attached"}, status: :unprocessable_entity
-    end
-  end
-
-  def save_content
-    content = Email::Content.where(id: content_params[:id]).first
-    updated = content.update(content_params.except(:id)) if content
-    render json: { status: updated ? :ok : :interal_server_error }
-  end
-
   def send_mail
     # Sumar mails eviados
     current_sent = current_user.company.company_setting.monthly_mails
@@ -473,10 +438,6 @@ class ClientsController < ApplicationController
       @tmpl = 'full'
       @templates = Email::Template.all.order(id: :asc)
       @saved = Email::Content.includes(:template).of_company(current_user.company)
-    end
-
-    def content_params
-      params.require(:content).permit!
     end
 
 end

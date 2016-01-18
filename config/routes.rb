@@ -133,9 +133,15 @@ Agendapro::Application.routes.draw do
     scope controller: 'clients' do
       get '/compose_mail', action: 'compose_mail', as: 'send_mail'
       post '/send_mail_client', action: 'send_mail'
-      post '/mail_editor', action: 'mail_editor', as: 'mail_editor'
-      post "/email_content/upload", action: 'upload_content'
-      post "/mail_editor/save_content", action: 'save_content', as: 'save_content'
+    end
+
+    # Mail Editor
+    namespace 'email' do
+      scope controller: 'content', path: '/content' do
+        post '/editor', action: 'editor', as: :editor
+        post "/update", action: 'update', as: :update
+        post "/upload", action: 'upload', as: :upload
+      end
     end
 
     # Autocompletar del Booking
