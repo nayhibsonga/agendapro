@@ -1,5 +1,6 @@
 //= require editor/angular.min
 //= require editor/angular-file-upload.min
+//= require editor/toastr.min
 
 (function() {
   'use strict';
@@ -34,8 +35,10 @@
     vm.editText = editText;
     vm.selectFile = selectFile;
     vm.saveContent = saveContent;
+    vm.validContent = validContent;
 
     ckEditorInit();
+    toastrInit();
 
     vm.uploader.onCompleteItem = function(fileItem, response, status, headers) {
         if( status == 200 ) {
@@ -52,13 +55,40 @@
 
     function saveContent(url) {
       $http.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
-      return $http.post(url, buildData()).then(function(response){
-        if( vm.send_email ) {
-          location.href = response.data.url;
-        } else {
-          vm.notice = 'Guardado';
-        }
-      }, ShowError);
+      if( vm.send_email ) {
+        vm.validContent() ? saveAndSend() : showValidationError();
+      } else {
+        quickSave();
+      }
+
+      function saveAndSend() {
+        swal({
+          title: "¿Estás seguro?",
+          text: "Este correo será enviado a todos los destinatarios",
+          type: "info",
+          showCancelButton: true,
+          closeOnConfirm: false,
+          showLoaderOnConfirm: true,
+        }, function(){
+          $http.post(url, buildData()).then(function(response){
+            swal("¡Enviado!", "Serás redireccionado en unos instantes", "success");
+            setTimeout(function(){
+              location.href = response.data.url;
+            }, 3000);
+          }, ShowError);
+        });
+      }
+
+      function quickSave() {
+        toastr.info("Guardando ...");
+        $http.post(url, buildData()).then(function(response){
+          toastr.success("Guardado!");
+        }, ShowError);
+      }
+
+      function showValidationError() {
+        swal("Ooops", "Por favor completa los campos antes de enviar", "warning");
+      }
     }
 
     function editText(name) {
@@ -92,6 +122,13 @@
       }
     }
 
+    function validContent() {
+      return
+        Object.keys(vm.content.data).length > 0 &&
+        vm.content.subject &&
+        vm.content.subject.length > 0;
+    }
+
     function ShowError(response) {
       vm.error = response;
       return vm.error;
@@ -103,6 +140,8 @@
          $scope.$apply();
       });
     }
+
+
   }
 
   function ckEditorInit() {
@@ -150,6 +189,23 @@
     };
   }
 
-
-
+  function toastrInit() {
+    toastr.options = {
+      "closeButton": false,
+      "debug": false,
+      "newestOnTop": false,
+      "progressBar": false,
+      "positionClass": "toast-top-center",
+      "preventDuplicates": true,
+      "onclick": null,
+      "showDuration": "300",
+      "hideDuration": "1000",
+      "timeOut": "2000",
+      "extendedTimeOut": "1000",
+      "showEasing": "swing",
+      "hideEasing": "linear",
+      "showMethod": "fadeIn",
+      "hideMethod": "fadeOut"
+    }
+  }
 })();

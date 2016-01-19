@@ -1,21 +1,8 @@
-<div ng-app="AgendaProApp" ng-controller="EditorController as ec">
-  <div id="loading-page" style="display: none; position: fixed; height: 100%; width: 100%; background-color: #B9B9B9; z-index: 99999999999">
-    <div style="position: relative; height: 100%">
-      <div style="position: absolute; top: 40%;
-        left: 50%;
-        -webkit-transform: translate(-50%, -50%);
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);">
-        <span style="font-size: 32px; color:white; font-weight: bold;">Cargando Contenido ...</span>
-
-      </div>
-    </div>
-  </div>
-
+<div ng-app="AgendaProApp" ng-controller="EditorController as ec" class="ng-app-container">
   <div id="mail-editor-container" >
     <input type="hidden" id="content-data" name="content-data" value="<%= @content.to_json %>">
     <div id="mail-editor" class="clearfix" >
-      <div id="content" class="col-xs-12 col-md-7">
+      <div id="content" class="col-xs-12 col-md-7 pre-scrollable">
         <div class="page">
           <div>
               <%= render @tmpl.src %>
@@ -46,7 +33,7 @@
 
           <div>
             <span class="input-desc subject">Asunto:</span>
-            <input type="text" ng-model="ec.content.subject" class="input-subject">
+            <input type="text" ng-model="ec.content.subject" class="input-subject" required>
           </div>
 
         </div>
@@ -55,10 +42,10 @@
         </div>
       </div>
 
-      <div class="col-xs-12" style="text-align: right; padding: 10px;margin-bottom: 30px;">
+      <div class="col-xs-12" style="text-align: right; padding: 10px;">
         <%= link_to 'Volver', :back, class: 'btn btn-default pull-left' %>
         <button class="btn btn-list" ng-click="ec.send_email = false; ec.saveContent('<%= url_for(:email_update) %>')">Guardar</button>
-        <button class="btn btn-green"  ng-click="ec.send_email = true; ec.saveContent('<%= url_for(:email_update) %>');">Guardar y Enviar</button>
+        <button class="btn btn-green" ng-click="ec.send_email = true; ec.saveContent('<%= url_for(:email_update) %>');">Guardar y Enviar</button>
       </div>
     </div>
 
