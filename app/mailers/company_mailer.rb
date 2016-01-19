@@ -739,7 +739,8 @@ class CompanyMailer < Base::CustomMailer
 				}
 			],
 			:tags => []
-		}send_mail(template_name, template_content, message)
+		}
+		send_mail(template_name, template_content, message)
 	end
 
 end
