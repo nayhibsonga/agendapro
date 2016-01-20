@@ -79,11 +79,11 @@ function loadProviders () {
             loadLocationTime (localId, resources);
           }
           else {
-            if ( $('#providers-selector option:selected').data('resources').length > 0 ) {
+            if ( $('#providers-selector option:selected').data('resources') && $('#providers-selector option:selected').data('resources').length > 0 ) {
               loadLocationTime (localId, $('#providers-selector option:selected').data('resources'));
             }
             else {
-              loadLocationTime (localId, resources);
+              loadProviderTime(parseInt($('#providers-selector').val()));
             }
           }
           return true;
