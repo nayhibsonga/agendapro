@@ -446,6 +446,7 @@ class CompaniesController < ApplicationController
 			@issued_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Emitido').id).order(:company_name)
 			@pac_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Convenio PAC').id).order(:company_name)
 		else
+			@user = User.find_by_email('cuentas@agendapro.cl')
 			if I18n.locale == :es
 				@companies = StatsCompany.all.order(:company_name)
 			else
