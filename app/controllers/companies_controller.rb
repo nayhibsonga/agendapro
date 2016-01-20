@@ -302,7 +302,7 @@ class CompaniesController < ApplicationController
 
 	        			due = sprintf('%.2f', ((plan_1 + price*(@transfer.paid_months-1)*(1+sales_tax))*(1-month_discount)).round(0))
 
-	        			if @transfer.amount.round(0) != due_number
+	        			if @transfer.amount.round(0) != due_number.round(0)
 			    			#Error
 							@json_response[0] = "error"
 							@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
@@ -446,6 +446,7 @@ class CompaniesController < ApplicationController
 			@issued_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Emitido').id).order(:company_name)
 			@pac_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Convenio PAC').id).order(:company_name)
 		else
+			@user = User.find_by_email('cuentas@agendapro.cl')
 			if I18n.locale == :es
 				@companies = StatsCompany.all.order(:company_name)
 			else
