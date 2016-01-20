@@ -323,7 +323,11 @@ $(function() {
     $('#plan_explanation').empty();
     if (months_active_left > 0) {
       if (plan_value_left > (plan_month_value + due_amount)) {
-        var new_active_months_left = Math.floor((plan_value_left * (1 + sales_tax) - plan_month_value * (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax)) );
+
+        var calc_months = (plan_value_left * (1 + sales_tax) - plan_month_value * (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax));
+        console.log("Calc months: " + calc_months);
+
+        var new_active_months_left = Math.floor((plan_value_left * (1 + sales_tax) - plan_month_value * (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax)));
         var new_amount_due = -1 * (((plan_value_left * (1 + sales_tax) - plan_month_value* (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax))) % 1) * plan_price * (1 + sales_tax);
         console.log("New amount due: " + new_amount_due);
         if (new_active_months_left > 0) {
