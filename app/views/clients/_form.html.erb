@@ -545,7 +545,7 @@
                   <% @sessionBookings.each do |session_booking| %>
                   <tr>
                     <td><%= session_booking.service.name %></td>
-                    <td><%= session_booking.bookings.first.location.name %></td>
+                    <td><%= session_booking.bookings.first ? session_booking.bookings.first.location.name : '' %></td>
                     <td><%= session_booking.sessions_taken %></td>
                     <td><%= session_booking.sessions_amount %></td>
                   </tr>
