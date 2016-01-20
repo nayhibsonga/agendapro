@@ -161,9 +161,9 @@
                     <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Pagos en línea'.html_safe, '/company_bookings' %></li>
                     <% end %>
                     <% if current_user.company.is_plan_capable("Premium") %>
-                      <li><%= link_to '<i class="fa fa-file fa-fw"></i> Archivos'.html_safe, '/get_company_files' %></li>
+                      <li><%= link_to '<i class="fa fa-file fa-fw"></i> Repositorio de Archivos'.html_safe, '/get_company_files' %></li>
                     <% else %>
-                      <li><%= link_to '<i class="fa fa-file fa-fw"></i> Archivos<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, '#', :class => "locked-section" %></li>
+                      <li><%= link_to '<i class="fa fa-file fa-fw"></i> Repositorio de Archivos<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, '#', :class => "locked-section" %></li>
                     <% end %>
                   </ul>
                 </li>
@@ -565,9 +565,9 @@
         });
       });
     </script>
-		<!--Start of Crazy Egg Script-->
-		<%= javascript_include_tag 'crazy_egg' %>
-		<!--End of Crazy Egg Script-->
+    <!--Start of Crazy Egg Script-->
+    <%= javascript_include_tag 'crazy_egg' %>
+    <!--End of Crazy Egg Script-->
     <!-- end: JavaScript-->
-	</body>
+  </body>
 </html>

@@ -297,6 +297,7 @@ class ClientsController < ApplicationController
   end
 
   def compose_mail
+    attendance = params[:attendance].blank? || params[:attendance] == 'true'
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
     if [:locations, :providers, :services, :range_from, :range_to].any? {|s| params.key?(s) && !params[s].blank? }
       attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
@@ -305,17 +306,21 @@ class ClientsController < ApplicationController
       mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(:last_name, :first_name).pluck(:email).uniq
     end
 
-    @to = Array.new
+    @tmpl = 'basic'
 
+    template_selection if current_user.company.is_plan_capable("Premium")
+
+    tmp_to = Array.new
     mail_list.each do |email|
-      @to.push(email) if email=~ /([^\s]+)@([^\s]+)/
+      tmp_to.push(email) if email=~ /([^\s]+)@([^\s]+)/
     end
+    @to = tmp_to.join(', ')
   end
 
   def send_mail
     # Sumar mails eviados
     current_sent = current_user.company.company_setting.monthly_mails
-    sent_to = params[:to].split(' ')
+    sent_to = params[:to].split(',').each { |mail| mail.strip! }
     sent_now = sent_to.length
     current_sent + sent_now >= 0 ? new_mails = current_sent + sent_now : new_mails = 0
     current_user.company.company_setting.update_attributes :monthly_mails => (new_mails)
@@ -348,6 +353,7 @@ class ClientsController < ApplicationController
 
       # Close database connection
       ActiveRecord::Base.connection.close
+      Thread.exit
     end
 
     redirect_to '/clients', notice: 'E-mail enviado exitosamente.'
@@ -767,4 +773,11 @@ class ClientsController < ApplicationController
     def sort_direction
       %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
     end
+
+    def template_selection
+      @tmpl = 'full'
+      @templates = Email::Template.all.order(id: :asc)
+      @saved = Email::Content.includes(:template).of_company(current_user.company)
+    end
+
 end

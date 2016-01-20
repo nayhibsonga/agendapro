@@ -11,7 +11,7 @@
     <div class="col-md-12">
       <div style="margin: 10px 0;">
         <%= link_to '<i class="fa fa-list"></i> Categorías de Servicios'.html_safe, service_categories_path, :class => "btn btn-green" %>
-        <% if current_user.company_id == 269 %><%= link_to '<i class="fa fa-sitemap"></i> Nuevo Paquete de Servicios'.html_safe, new_bundle_path, :class => "btn btn-white", style:"margin: 0 10px;" %><% end %>
+        <%= link_to '<i class="fa fa-sitemap"></i> Nuevo Paquete de Servicios'.html_safe, new_bundle_path, :class => "btn btn-white", style:"margin: 0 10px;" if current_user.company.is_plan_capable("Premium") %>
         <%= link_to '<i class="fa fa-minus"></i> Servicios Inactivos'.html_safe, inactive_services_path, :class => "btn btn-white pull-right" %>
         <%= link_to '<i class="fa fa-plus"></i> Nuevo Servicio'.html_safe, new_service_path, :class => "btn btn-green pull-right", style:"margin: 0 10px;" %>
       </div>

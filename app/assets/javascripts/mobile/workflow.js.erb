@@ -25,7 +25,7 @@ function loadServices (localId) {
         var servicesHTML = '';
         $.each(service_hash.services, function (key, service) {
           if (service.bundle == false) {
-            servicesHTML += '<option value="' + service.id + '">' + service.name + '</option>';
+            servicesHTML += '<option data-bundle="' + service.bundle + '" value="' + service.id + '">' + service.name + '</option>';
           }
         });
         $('#service').append(
@@ -127,12 +127,13 @@ function generateDate(date, time) {
 
 $(document).ready(function(){
 
-  $("#selectHourNextBtn").on('click', function(){
-
+  $("#selectHourNextBtn").on('click', function(e){
+    e.preventDefault();
     selects = [];
     selects.push({
       service: $("#service").val(),
-      provider: $("#provider").val()
+      provider: $("#provider").val(),
+      bundle: $("#service").find(':selected').data('bundle')
     });
 
     $("#serviceStaff").val(JSON.stringify(selects));

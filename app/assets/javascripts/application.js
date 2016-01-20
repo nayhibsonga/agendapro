@@ -1,6 +1,7 @@
 //= require bootstrap
 //= require ga
 //= require sweetalert.min
+//= require ckeditor/init
 
 //por defecto:
 //= require jquery_ujs
