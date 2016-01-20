@@ -1151,21 +1151,39 @@ function jsonBooking() {
   }
   if ($("#booking_service_id").find(':selected').data('bundle') == true) {
     var jsBookingArray = [];
-    start = new Date(objectToDate($('#datePicker').val()));
+    var hrs = parseInt($("#bookingStartHour").val());
+    var mins = parseInt($("#bookingStartMinute").val());
     $('#bundle_service_providers .bundle_service').each(function() {
-      end = new Date(start.getTime() + parseInt($(this).data('duration'))*60000);
+      var duration = $(this).data('duration');
+      var extraCharH = '';
+      var extraCharM = '';
+      var hours = parseInt(hrs);
+      var minutes = parseInt(mins) + duration;
+      if (minutes >= 60) {
+        hours += Math.floor(minutes/60);
+        minutes = minutes%60;
+      }
+      if (hours < 10) {
+        extraCharH = '0';
+      }
+      if (minutes < 10) {
+        extraCharM = '0';
+      }
       var newJsBooking = $.extend({}, jsBooking);
       newJsBooking['service_id'] = parseInt($(this).data('id'));
       newJsBooking['service_provider_id'] = parseInt($(this).val());
       newJsBooking['price'] = $(this).data('price');
-      newJsBooking['start'] = start.toISOString();
-      newJsBooking['end'] = end.toISOString();
+      newJsBooking['start'] = $('#datePicker').val() +"T"+ hrs +":"+ mins +":00Z",
+      newJsBooking['end'] = $('#datePicker').val() +"T"+ extraCharH+hours +":"+ extraCharM+minutes +":00Z",
       newJsBooking['bundled'] = true;
       newJsBooking['bundle_id'] = parseInt($('#booking_service_id').val());
 
+
+
       jsBookingArray.push(newJsBooking);
 
-      start = end;
+      hrs = extraCharH+hours;
+      mins = extraCharM+minutes;
     });
     return jsBookingArray;
   }
