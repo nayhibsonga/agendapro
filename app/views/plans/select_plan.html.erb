@@ -420,18 +420,18 @@
                 </div>
               </div>
               <div class="col-md-6">
-                <div class="form-group has-feedback">
+                <div class="form-group has-feedback" <%= "hidden" if @company.country.id != Country.find_by_name("Chile").id %>>
                   <div class="col-md-12">
                     <div class="checkbox">
                       <label>
-                        <%= f.check_box :accept, required: true %> Autorización voluntaria de envío de DTEs por Email
+                        <%= f.check_box :accept %> Autorización voluntaria de envío de DTEs por Email
                       </label>
                       <span class="help-block"></span>
                       <span class="help-block">Acepto el envío electrónico de factura o boleta por mail a: <%= if @billing_info.email then @billing_info.email else "E-MAIL" end %></span>
                     </div>
                   </div>
                 </div>
-                <div class="well well-scrollable">
+                <div class="well well-scrollable" <%= "hidden" if @company.country.id != Country.find_by_name("Chile").id %>>
                   <p class="text-justify">
                     Yo, <mark class="text-uppercase"><%= if @billing_info.contact then @billing_info.contact else "NOMBRE RESPONSABLE" end %></mark>, con domicilio en <mark class="text-uppercase"><%= if @billing_info.address then @billing_info.address else "DIRECCIÓN" end %></mark>, <%= @company.country.name %>, en mi calidad de receptor manual de documentos electrónicos, de conformidad con la Resolución Exenta No. 11/ de fecha 14 de febrero de 2003 del Servicio de Impuestos Internos (agregar link a la información) , que estableció el procedimiento para que contribuyentes autorizados para emitir documentos electrónicos puedan también enviarlos por estos medios a receptores manuales, declaro lo siguiente:
                   </p>
@@ -449,11 +449,17 @@
                   </ul>
                   <p class="text-justify">Nota: La factura se generará automáticamente al confirmarse el pago y los datos de facturación. Si no ingresas información de facturación o no se solicita esta, se generará una boleta a nombre del administrador de la cuenta.</p>
                 </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
                 <div class="form-group">
-                  <div class="col-md-12">
-                    <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                  <div class="col-md-9 col-md-offset-3">
+                    <%= f.submit 'Guardar', :class => 'btn btn-green', :style => "width: 120px;" %>
                   </div>
                 </div>
+              </div>
+              <div class="col-md-6">
               </div>
             </div>
           <% end %>
