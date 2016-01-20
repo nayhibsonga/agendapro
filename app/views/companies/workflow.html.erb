@@ -654,8 +654,8 @@
                                 <div class="col-sm-12">
                                   <div class="form-group has-feedback">
                                     
-                                      <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory_on_workflow %> />
-                                      <span class="help-block"><%= attribute.description %></span>
+                                      <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.description %>" value="" <%= "required" if attribute.mandatory_on_workflow %> />
+                                      <span class="help-block"></span>
                                       <span class="form-control-feedback"></span>
 
                                   </div>
