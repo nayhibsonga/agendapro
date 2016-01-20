@@ -34,9 +34,9 @@
         <% if @user.present? %>
           <%= form_for [:admin, @user], html: {class: "form-horizontal" } do |f| %>
             <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
-              <%= f.label :company_id, "Empresa", class: "col-md-3 control-label" %>
+              <%= f.label :company_id, "Empresa SuperAgente86", class: "col-md-3 control-label" %>
               <div class="col-md-3">
-                <%= f.select :company_id, options_for_select(Company.all.order(:id).map{ |c| ["#{c.id} #{c.name}", c.id] }) %>
+                <%= f.select :company_id, options_for_select(Company.all.order(:id).map{ |c| ["#{c.id} #{c.name}", c.id] }, @user.company_id) %>
               </div>
               <div class="col-md-3">
                 <%= f.submit 'Guardar', :class => 'btn btn-green' %>
