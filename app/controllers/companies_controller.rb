@@ -302,7 +302,7 @@ class CompaniesController < ApplicationController
 
 	        			due = sprintf('%.2f', ((plan_1 + price*(@transfer.paid_months-1)*(1+sales_tax))*(1-month_discount)).round(0))
 
-	        			if @transfer.amount.round(0) != due_number
+	        			if @transfer.amount.round(0) != due_number.round(0)
 			    			#Error
 							@json_response[0] = "error"
 							@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
