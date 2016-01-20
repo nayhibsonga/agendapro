@@ -66,6 +66,136 @@
               <%= telephone_field_tag(:phone, if user_signed_in? then current_user.phone else nil end, :class => "form-control", :placeholder => "Teléfono", :required => true) %>
               <span class="help-block"></span>
             </div>
+
+
+            <!-- CUSTOM ATTRIBUTES START -->
+            <% if @location.company.is_plan_capable("Premium") %>
+              <% @location.company.custom_attributes.where(show_on_workflow: true).each do |attribute| %>
+
+                <% if attribute.datatype == "float" %>
+
+                  <div class="form-group">
+                    
+                      <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" value="" <%= "required" if attribute.mandatory_on_workflow %> />
+                      <span class="help-block"></span>
+
+                  </div>
+
+                <% elsif attribute.datatype == "integer" %>
+
+                  <div class="form-group">
+                    
+                      <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" value="" <%= "required" if attribute.mandatory_on_workflow %> />
+                      <span class="help-block"></span>
+
+                  </div>
+
+                <% elsif attribute.datatype == "text" %>
+
+                  <div class="form-group">
+
+                    <input type="text" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" value="" <%= "required" if attribute.mandatory_on_workflow %> />
+                    <span class="help-block"></span>
+                  </div>
+
+
+                <% elsif attribute.datatype == "textarea" %>
+
+                  <div class="form-group">
+
+                    <textarea class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" <%= "required" if attribute.mandatory_on_workflow %> /></textarea>
+                    <span class="help-block"></span>
+                  </div>
+
+                <% elsif attribute.datatype == "boolean" %>
+
+                  <div class="form-group">
+                    <span><%= attribute.name %></span><br />
+                    <select class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
+                        <option value="1" selected>Sí</option>
+                        <option value="0">No</option>
+                    </select>
+                    <span class="help-block"></span>
+                  </div>
+
+                <% elsif attribute.datatype == "date" %>
+
+                  <div class="form-group">
+
+                    <input type="text" class="form-control attribute_datepicker" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" value="" <%= "required" if attribute.mandatory_on_workflow %> />
+                    <span class="help-block"></span>
+
+                  </div>
+
+                <% elsif attribute.datatype == "datetime" %>
+
+                  <div class="form-group">
+
+                    <div class="col-sm-5">
+                      <input type="text" class="form-control attribute_datepicker" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" value="" <%= "required" if attribute.mandatory_on_workflow %> />
+                    </div>
+                    <div class="col-sm-3">
+                      <select class="form-control" name="<%= attribute.slug %>_attribute_hour" id="<%= attribute.slug %>_attribute_hour">
+                        <% 
+                          for i in 0..23
+                            str_hour = i.to_s
+                            if str_hour.length == 1
+                              str_hour = "0" + str_hour
+                            end
+                            %>
+
+                              <option value="<%= str_hour %>"><%= str_hour %></option>
+
+                            <%
+                          end 
+                        %>
+                      </select>
+                    </div>
+                    <div class="col-sm-1">
+                    :
+                    </div>
+                    <div class="col-sm-3">
+                      <select class="form-control" name="<%= attribute.slug %>_attribute_minute" id="<%= attribute.slug %>_attribute_minute">
+                        <% 
+                          for i in 0..59
+                            str_minute = i.to_s
+                            if str_minute.length == 1
+                              str_minute = "0" + str_minute
+                            end
+                            %>
+                              <option value="<%= str_minute %>"><%= str_minute %></option>
+                            <%
+                          end 
+                        %>
+                      </select>
+                    </div>
+                    <span class="help-block"></span>
+
+                  </div>
+
+                <% elsif attribute.datatype == "categoric" %>
+
+                  <div class="form-group">
+
+                    <span><%= attribute.name %></span><br />
+
+                    <select class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute">
+                      <% attribute.attribute_categories.each do |category| %>
+
+                          <option value="<%= category.id %>"><%= category.category %></option>
+
+                      <% end %>
+                    </select>
+                    <span class="help-block"></span>
+
+                  </div>
+
+                <% end %>                      
+              <% end %>
+            <% end %>
+            <!-- CUSTOM ATTRIBUTES END -->
+
+
           </div>
           <% if @location.company.company_setting.client_exclusive || @location.company.company_setting.use_identification_number %>
           <div class="form-group">

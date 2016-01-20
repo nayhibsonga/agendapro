@@ -504,7 +504,7 @@
                   </div>
                 </td>
               </tr>
-              <tr class="last">
+              <tr>
                 <td class="left">
                   <div class="col-md-6 td-title">
                     Teléfono
@@ -519,6 +519,34 @@
                   </div>
                   <div class="col-md-6">
                     <%= number_to_currency(@plan_1 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
+                  </div>
+                </td>
+              </tr>
+              <tr class="last">
+                <td class="left">
+                  <div class="col-md-6 td-title">
+
+                  </div>
+                  <div class="col-md-6">
+
+                  </div>
+                </td>
+                <td>
+                  <div class="col-md-6 td-title">
+                    <% if @company.due_amount.nil? || @company.due_amount >= 0 %>
+                      Deuda actual:
+                    <% else %>
+                      Monto abonado:
+                    <% end %>
+                  </div>
+                  <div class="col-md-6">
+                    <% if @company.due_amount.nil? %>
+                      <%= number_to_currency(0 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
+                    <% elsif @company.due_amount >= 0 %>
+                      <%= number_to_currency(@company.due_amount , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
+                    <% else %>
+                      <%= number_to_currency(-1 * @company.due_amount , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
+                    <% end %>
                   </div>
                 </td>
               </tr>
