@@ -116,7 +116,7 @@ class PuntoPagosController < ApplicationController
     puts payment_method
     company = Company.find(current_user.company_id)
 
-    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 
     price = 0
     if company.payment_status == PaymentStatus.find_by_name("Trial")
@@ -165,13 +165,13 @@ class PuntoPagosController < ApplicationController
         if months_active_left > 0
           if plan_value_left > (plan_month_value + due_amount) && payment_method == "00"
 
-            new_active_months_left = ((plan_value_left - plan_month_value - due_amount/(1 + sales_tax))/plan_price).floor + 1
+            new_active_months_left = ((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price).floor + 1
 
             # puts "New active months: " +  new_active_months_left.to_s
 
             #new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount / (1 + sales_tax))/plan_price)%1)*plan_price
 
-            new_amount_due = (-1 * (((plan_value_left - plan_month_value - due_amount/(1 + sales_tax))/plan_price) % 1 )) * plan_price * (1 + sales_tax)
+            new_amount_due = (-1 * (((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price) % 1 )) * plan_price * (1 + sales_tax)
 
             # puts "Plan value left: " +  plan_value_left.to_s
             # puts "Plan month value: " + plan_month_value.to_s
@@ -181,9 +181,6 @@ class PuntoPagosController < ApplicationController
             company.plan_id = plan_id
             company.months_active_left = new_active_months_left
             company.due_amount = (new_amount_due).round(0)
-
-            raise ''
-
 
             if company.save
               company.company_plan_setting.base_price = company.plan.plan_countries.find_by_country_id(company.country.id).price
