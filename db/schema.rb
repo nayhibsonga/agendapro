@@ -156,11 +156,11 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.integer  "service_promo_id"
     t.integer  "payment_id"
     t.float    "discount",               default: 0.0
-    t.boolean  "is_booked",              default: true
+    t.integer  "service_promo_id"
     t.integer  "reminder_group"
+    t.boolean  "is_booked",              default: true
     t.float    "list_price",             default: 0.0
     t.integer  "receipt_id"
     t.boolean  "payed_state",            default: false
@@ -423,9 +423,9 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.boolean  "can_edit",                    default: true
     t.boolean  "can_cancel",                  default: true
     t.boolean  "use_identification_number",   default: false
+    t.string   "preset_notes"
     t.boolean  "payment_client_required",     default: true
     t.boolean  "show_cashes",                 default: false
-    t.string   "preset_notes"
     t.boolean  "editable_payment_prices",     default: true
     t.boolean  "mandatory_mock_booking_info", default: false
     t.boolean  "strict_booking",              default: false,                 null: false
@@ -1036,8 +1036,8 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.integer  "quantity",    default: 1,   null: false
     t.integer  "seller_id"
     t.integer  "seller_type"
-    t.integer  "receipt_id"
     t.float    "list_price",  default: 0.0
+    t.integer  "receipt_id"
   end
 
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
@@ -1360,7 +1360,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
 
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
-    t.integer  "country_id"
+    t.integer  "country_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1589,7 +1589,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.boolean  "has_time_discount",           default: false
     t.boolean  "has_last_minute_discount",    default: false
     t.boolean  "time_promo_active",           default: false
-    t.string   "time_promo_photo"
+    t.string   "time_promo_photo",            default: ""
     t.integer  "active_service_promo_id"
     t.boolean  "must_be_paid_online",         default: false
     t.text     "promo_description",           default: ""
