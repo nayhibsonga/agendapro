@@ -44,7 +44,7 @@ function loadProviders () {
             $('#providers-selector').append('<option disabled role=separator>--------</option>');
           }
           $.each(provider_groups, function (key, group) {
-            if (group.location_id == localId) {
+            if (group.location_id == localId && group.resources.length > 0) {
               $('#providers-selector').append('<option value="0" data-resources=\'[' + JSON.stringify(group.resources) + ']\'>' + group.name + '</option>');
             }
           });
@@ -79,7 +79,12 @@ function loadProviders () {
             loadLocationTime (localId, resources);
           }
           else {
-            loadProviderTime(parseInt($('#providers-selector').val()));
+            if ( $('#providers-selector option:selected').data('resources').length > 0 ) {
+              loadLocationTime (localId, $('#providers-selector option:selected').data('resources'));
+            }
+            else {
+              loadLocationTime (localId, resources);
+            }
           }
           return true;
         }
