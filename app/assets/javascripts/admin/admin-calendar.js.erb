@@ -6,7 +6,7 @@ var bundlesJSON;
 var dragInProgress = false;
 var dragUi = null;
 
-var bookingBuffer = []
+var bookingBuffer = [];
 
 function showErrors (xhr) {
   var errors = $.parseJSON(xhr.responseText).errors;
@@ -848,7 +848,7 @@ function editBookingModal(eventId) {
 }
 
 function createBookingModal(date, provider_id) {
-  bookingBuffer = []
+  bookingBuffer = [];
   var localId = parseInt($('#locals-selector').val());
   var date = date || 0;
   var provider_id = provider_id || 0;
@@ -863,31 +863,32 @@ function createBookingModal(date, provider_id) {
   $('#is_prepayed').text("No");
   $('#bundled_service').hide();
 
+  console.log("Entra.");
+
   $.getJSON('/local_providers', {location: localId}, function (providersArray) {
     if (providersArray.length > 0) {
       if (date != 0) {
+
         date_str = date.toISOString();
         dateArray = date.toLocaleDateString().split('/');
-        timeArray = date.toLocaleTimeString().split(':');
+        timeArray = date.split(' ')[4];
 
-        day_str = dateArray[0];
+        var day_str = dateArray[0];
         if(day_str.length == 1)
         {
           day_str = "0" + day_str;
         }
-        month_str = dateArray[1];
+        var month_str = dateArray[1];
         if(month_str.length == 1)
         {
           month_str = "0" + month_str;
         }
-        year_str = dateArray[2];
+        var year_str = dateArray[2];
 
-        //console.log(date);
-        //console.log(date_str);
         //Falta revisar el tema de las fechas, deberían ser contantes en la app
         $('#datePicker').val(day_str+'/'+month_str+'/'+year_str);
-        $('#bookingStartHour option[value="'+timeArray[0]+'"]').attr("selected",true);
-        $('#bookingStartMinute option[value="'+timeArray[1]+'"]').attr("selected",true);
+        $('#bookingStartHour option[value="'+timeArray.split(":")[0]+'"]').attr("selected",true);
+        $('#bookingStartMinute option[value="'+timeArray.split(":")[1]+'"]').attr("selected",true);
         modalChange();
       }
       else {
