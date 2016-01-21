@@ -253,6 +253,15 @@ $(function() {
 
   $('#amount_select').change(function(o) {
 
+    if($(this).val() != "0")
+    {
+      $('#pay_div_payment_method').show();
+    }
+    else
+    {
+      $('#pay_div_payment_method').hide();
+    }
+
     if($('#payBtn').length > 0)
     {
       mp = $('.mp_radio:checked').val();

@@ -595,7 +595,7 @@ class CompanyMailer < Base::CustomMailer
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => 'AgendaPro',
-			:subject => 'Comprobante de pago de cuenta AgendaPro',
+			:subject => 'Comprobante de pago de cuenta AgendaPro ' + company.name,
 			:to => recipients,
 			:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
 			:global_merge_vars => [
