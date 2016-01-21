@@ -122,6 +122,7 @@
     function validContent() {
       return (Object.keys(vm.content.data).length > 0 &&
         angular.isDefined(vm.content.subject) &&
+        angular.isString(vm.content.subject) &&
         vm.content.subject.length > 0);
     }
 
