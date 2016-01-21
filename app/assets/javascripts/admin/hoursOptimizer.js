@@ -575,7 +575,7 @@ $(function () {
   });
 
   $("#optimizerDateSelector").datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,
@@ -591,8 +591,7 @@ $(function () {
     clear: '',
     onSelect: function(newDate){
       $("#pickerSelected").empty();
-      var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
-      $("#pickerSelected").append(prettyDate);
+      $("#pickerSelected").append(newDate);
     },
     beforeShow: function(date) {
       $('#ui-datepicker-div').addClass("customDatepicker");
