@@ -52,7 +52,7 @@ class Company < ActiveRecord::Base
 
 	has_one :company_plan_setting
 
-	scope :collectables, -> { where(active: true, id: 136).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
+	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
