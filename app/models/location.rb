@@ -57,8 +57,6 @@ class Location < ActiveRecord::Base
   mount_uploader :image2, LocationImagesUploader
   mount_uploader :image3, LocationImagesUploader
 
-  accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
-
   scope :actives, where(active: true)
 
   validates :name, :phone, :company, :district, :email, :presence => true

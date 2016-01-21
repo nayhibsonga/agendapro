@@ -28,6 +28,11 @@
 }
 </style>
 
+<%= content_tag "div", id: "id_data", data: { id: @service.id } do %>
+<% end %>
+<%= content_tag "div", id: "service_times_data", data: { service_times: @service.service_times.order(:day_id, :open).to_json } do %>
+<% end %>
+
 <% if @service.has_sessions %>
 	<input type="hidden" id="is_treatment" value="1" />
 <% else %>
