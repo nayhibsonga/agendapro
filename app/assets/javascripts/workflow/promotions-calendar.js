@@ -64,6 +64,7 @@ function PromoCalendar (source, getData) {
 			{
 				bookSummaries.push(data.book_summaries[i]);
 			}
+			window.console.log(bookSummaries);
 			$('.bloque-hora').click(function (e) {
 				var element = $(e.currentTarget);
 				if(element.hasClass('hora-ocupada'))
