@@ -59,8 +59,7 @@ class Location < ActiveRecord::Base
 
   accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
-  scope :actives, where(active: true)
-
+  scope :actives, -> { where(active: true) }
   validates :name, :phone, :company, :district, :email, :presence => true
 
   validate :times_overlap, :time_empty_or_negative, :plan_locations, :outcall_services, :active_countries

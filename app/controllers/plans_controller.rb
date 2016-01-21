@@ -106,7 +106,7 @@ class PlansController < ApplicationController
     puts "Price " + @price.to_s
 
     #@company.months_active_left > 0 ? @plan_1 = (@company.due_amount + @price).round(0) : @plan_1 = ((@company.due_amount + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
-    @plan_1 = (@company.due_amount + @price * (1+@sales_tax)).round(0)
+    @plan_1 = (@company.due_amount + @price * (1 + @sales_tax)).round(0)
 
     if @company.payment_status_id == PaymentStatus.find_by_name("Trial").id
       puts "True"
