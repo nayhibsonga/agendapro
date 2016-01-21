@@ -874,15 +874,13 @@ function createBookingModal(date, provider_id) {
   $('#is_prepayed').text("No");
   $('#bundled_service').hide();
 
-  console.log("Entra.");
-
   $.getJSON('/local_providers', {location: localId}, function (providersArray) {
     if (providersArray.length > 0) {
       if (date != 0) {
 
         date_str = date.toISOString();
         dateArray = date.toLocaleDateString().split('/');
-        timeArray = date.split(' ')[4];
+        timeArray = date.toString().split(' ')[4];
 
         var day_str = dateArray[0];
         if(day_str.length == 1)
