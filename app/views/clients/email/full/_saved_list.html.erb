@@ -1,15 +1,17 @@
 <div class="template-container pull-left" style="width: 200px; height: auto; margin: 0 45px 45px 0;">
   <div class="thumbnail-container" style="border: 1px solid; height: 230px;">
-    <%= image_tag(content.template.thumbnail, style: 'height: 100%; width: 100%;') %>
+    <%= link_to email_editor_path(content) do %>
+      <%= image_tag(content.template.thumbnail, style: 'height: 100%; width: 100%;') %>
+    <% end %>
   </div>
   <section style="text-align: right;">
     <p style="margin-top: 10px;"><%= content.try(:name) || content.try(:subject) || content.template %></p>
     <p> Estado: <span style="font-style: italic"><%= content.sent? ? 'Enviado' : 'No enviado' %></span></p>
   </section>
   <section>
-    <%= form_tag(:email_editor, method: "post") do %>
-      <%= hidden_field_tag(:id, content.id) %>
-      <%= submit_tag("Modificar", class: 'btn btn-green pull-right') %>
+    <%= link_to email_delete_path(content), class: 'btn btn-sm btn-red pull-right btn-delete' do %>
+      <i class="fa fa-trash-o"></i> <span class="hidden-xs">Eliminar</span>
     <% end %>
+    <%= link_to 'Modificar', email_editor_path(content), {class: 'btn btn-sm btn-green pull-right'} %>
   </section>
 </div>

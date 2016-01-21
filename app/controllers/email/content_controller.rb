@@ -1,23 +1,26 @@
 class Email::ContentController < ApplicationController
   layout "admin"
 
-  def new_content
-    @content = Email::Content.find(params[:id])
-    @from = @content.from
-    @tmpl = @content.template
-    render 'clients/email/full/mail_editor'
+  def new
+    content = Email::Content.create(
+      template: Email::Template.find(params[:tmpl]),
+      company: current_user.company,
+      from: current_user.email,
+      to: params[:recipients]
+      )
+    if content.present?
+      redirect_to(action: :editor, id: content.id)
+    else
+      flash[:error] = "Se produjo un error al crear un nuevo Contenido"
+      redirect_to(controller: :clients, action: :compose_mail)
+    end
   end
 
   def editor
+    @content = Email::Content.find(params[:id])
     @from_collection = current_user.company.company_from_email.where(confirmed: true).pluck(:email)
-
-    (new_content if params[:id].present?) and return
-
-    @from = current_user.email
-    recipients = params[:recipients]
-    @tmpl = Email::Template.find(params[:tmpl])
-    @content = Email::Content.create(template: @tmpl, company: current_user.company, from: @from, to: recipients)
-
+    @from = @content.from
+    @tmpl = @content.template
     render 'clients/email/full/mail_editor'
   end
 
@@ -28,6 +31,11 @@ class Email::ContentController < ApplicationController
       status: (updated ? :ok : :interal_server_error),
       url: url_for(:send_mail).to_s
     }
+  end
+
+  def delete
+    content = Email::Content.where(id: delete_params[:id]).first
+    render json: { status: (content.destroy ? :ok : :interal_server_error) }
   end
 
   def upload
@@ -57,6 +65,10 @@ class Email::ContentController < ApplicationController
 
     def upload_params
       params.permit(:id, :file)
+    end
+
+    def delete_params
+      params.permit(:id)
     end
 
 end

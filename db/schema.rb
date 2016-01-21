@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160115142032) do
+ActiveRecord::Schema.define(version: 20160121160901) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "attribute_categories", force: true do |t|
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
   end
 
   create_table "billing_wire_transfers", force: true do |t|
-    t.datetime "payment_date",   default: '2015-11-16 15:12:16'
+    t.datetime "payment_date",   default: '2015-12-30 19:45:40'
     t.float    "amount",         default: 0.0
     t.string   "account_name",   default: ""
     t.string   "account_number", default: ""
@@ -366,8 +366,11 @@ ActiveRecord::Schema.define(version: 20160115142032) do
 
   create_table "company_plan_settings", force: true do |t|
     t.integer  "company_id"
-    t.float    "base_price"
-    t.float    "locations_multiplier"
+    t.integer  "locations",         default: 1
+    t.integer  "service_providers", default: 1
+    t.integer  "monthly_mails",     default: 0
+    t.boolean  "has_custom_price",  default: false
+    t.float    "custom_price"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -398,12 +401,6 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.boolean  "booking_history",             default: true
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
-    t.boolean  "allows_online_payment",       default: false
-    t.string   "account_number",              default: ""
-    t.string   "company_rut",                 default: ""
-    t.string   "account_name",                default: ""
-    t.integer  "account_type",                default: 3
-    t.integer  "bank_id"
     t.boolean  "deal_activate",               default: false
     t.string   "deal_name",                   default: ""
     t.boolean  "deal_overcharge",             default: true
@@ -412,6 +409,12 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
     t.boolean  "deal_identification_number",  default: false
+    t.boolean  "allows_online_payment",       default: false
+    t.string   "account_number",              default: ""
+    t.string   "company_rut",                 default: ""
+    t.string   "account_name",                default: ""
+    t.integer  "account_type",                default: 3
+    t.integer  "bank_id"
     t.boolean  "deal_required",               default: false,                 null: false
     t.boolean  "online_payment_capable",      default: false
     t.boolean  "allows_optimization",         default: true
@@ -546,7 +549,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
 
   create_table "email_contents", force: true do |t|
     t.integer  "template_id"
-    t.json     "data",        null: false
+    t.json     "data",                             null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "from"
@@ -554,6 +557,8 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.string   "subject"
     t.integer  "company_id"
     t.string   "name"
+    t.boolean  "active",            default: true
+    t.datetime "deactivation_date"
   end
 
   add_index "email_contents", ["company_id"], name: "index_email_contents_on_company_id", using: :btree
@@ -663,7 +668,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "date",                default: '2015-10-27 17:17:43'
+    t.datetime "date",                default: '2015-11-15 22:20:48'
     t.integer  "user_id"
   end
 
@@ -1067,7 +1072,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.integer  "company_id"
     t.float    "amount",        default: 0.0
     t.boolean  "payed",         default: false
-    t.datetime "payment_date",  default: '2015-11-10 14:59:37'
+    t.datetime "payment_date",  default: '2015-11-15 22:20:48'
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "discount",      default: 0.0
@@ -1416,7 +1421,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
-    t.datetime "date",          default: '2015-10-23 15:05:22'
+    t.datetime "date",          default: '2015-11-15 22:20:48'
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1436,7 +1441,7 @@ ActiveRecord::Schema.define(version: 20160115142032) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
-    t.datetime "date",                    default: '2015-10-23 13:42:39'
+    t.datetime "date",                    default: '2015-11-15 22:20:48'
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false

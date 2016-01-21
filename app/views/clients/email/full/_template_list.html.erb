@@ -6,7 +6,7 @@
     <p style="margin-top: 10px;"><%= template %></p>
   </section>
   <section>
-    <%= form_tag(:email_editor, method: "post") do %>
+    <%= form_tag(:email_new, method: "post") do %>
       <%= hidden_field_tag(:recipients, @to) %>
       <%= hidden_field_tag(:tmpl, template.id) %>
       <%= submit_tag("Seleccionar", class: 'btn btn-green pull-right') %>
