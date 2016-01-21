@@ -1,7 +1,8 @@
 $(function() {
 
-  var datetime_str = new Date().toLocaleString();
-  var time_str = datetime_str.split(" ")[1].split(":");
+  var datetime_str = new Date().toTimeString();
+  console.log(datetime_str);
+  var time_str = datetime_str.split(" ")[0].split(":");
   var time_hour = time_str[0];
   var time_minute = time_str[1];
 
@@ -324,11 +325,14 @@ $(function() {
     if (months_active_left > 0) {
       if (plan_value_left > (plan_month_value + due_amount)) {
 
+        console.log("Calc 1: " + Math.round((plan_value_left * (1 + sales_tax) - plan_month_value * (1 + sales_tax) - due_amount)));
+        console.log("Calc 2: " + Math.round((plan_price * (1 + sales_tax))));
+
         var calc_months = (plan_value_left * (1 + sales_tax) - plan_month_value * (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax));
         console.log("Calc months: " + calc_months);
 
-        var new_active_months_left = Math.floor((plan_value_left * (1 + sales_tax) - plan_month_value * (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax)));
-        var new_amount_due = -1 * (((plan_value_left * (1 + sales_tax) - plan_month_value* (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax))) % 1) * plan_price * (1 + sales_tax);
+        var new_active_months_left = Math.floor(Math.round(plan_value_left * (1 + sales_tax) - plan_month_value * (1 + sales_tax) - due_amount)/Math.round(plan_price * (1 + sales_tax)));
+        var new_amount_due = -1 * ((Math.round(plan_value_left * (1 + sales_tax) - plan_month_value* (1 + sales_tax) - due_amount)/Math.round(plan_price * (1 + sales_tax))) % 1) * plan_price * (1 + sales_tax);
         console.log("New amount due: " + new_amount_due);
         if (new_active_months_left > 0) {
           $('#plan_explanation').html('Si te cambias a este nuevo Plan, tu cuenta quedará activa por este y ' + new_active_months_left + ' mes(es) más sin pagar más y, además, quedaran abonados $ ' + Math.round((-1 * new_amount_due)) + ' en tu cuenta, para tu próximo pago.');
