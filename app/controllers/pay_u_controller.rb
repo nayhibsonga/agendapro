@@ -174,8 +174,10 @@ class PayUController < ApplicationController
 
         if months_active_left > 0
           if plan_value_left > (plan_month_value + due_amount)
-            new_active_months_left = ((plan_value_left - plan_month_value - due_amount)/plan_price).floor + 1
-            new_amount_due = -1 * (((plan_value_left * (1 + sales_tax) - plan_month_value* (1 + sales_tax) - due_amount)/(plan_price * (1 + sales_tax)))) * plan_price * (1 + sales_tax);
+
+            new_active_months_left = ((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price).floor + 1
+            
+            new_amount_due = (-1 * (((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price) % 1 )) * plan_price * (1 + sales_tax)
 
             company.plan_id = plan_id
             company.months_active_left = new_active_months_left

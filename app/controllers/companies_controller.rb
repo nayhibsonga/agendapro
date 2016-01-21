@@ -85,7 +85,7 @@ class CompaniesController < ApplicationController
 
 	    		if accepted_plans.include?(plan_id)
 
-	    			if (company.service_providers.where(active: true, location_id: company.locations.where(active: true).pluck(:id)).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || !new_plan.custom || new_plan.name != "Personal"
+	    			if (company.service_providers.where(active: true, location_id: company.locations.where(active: true).pluck(:id)).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || (!new_plan.custom && new_plan.name != "Personal")
 
 	    				previous_plan_id = company.plan.id
 				        months_active_left = company.months_active_left
@@ -103,8 +103,10 @@ class CompaniesController < ApplicationController
 				        if months_active_left > 0
 	          				if plan_value_left > (plan_month_value + due_amount)
 
-					            new_active_months_left = ((plan_value_left - plan_month_value - due_amount / (1 + sales_tax) )/plan_price).floor + 1
-					            new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount / (1 + sales_tax))/plan_price)%1)*plan_price
+					            new_active_months_left = ((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price).floor + 1
+					            
+					            new_amount_due = (-1 * (((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price) % 1 )) * plan_price * (1 + sales_tax)
+
 					            company.plan_id = plan_id
 					            company.months_active_left = new_active_months_left
 					            company.due_amount = (new_amount_due).round(0) * (1 + sales_tax)
