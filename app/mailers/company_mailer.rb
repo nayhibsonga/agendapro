@@ -94,7 +94,7 @@ class CompanyMailer < Base::CustomMailer
 		sales_tax = company.country.sales_tax
 
 		current_amount = company.calculate_trial_debt
-		plan_amount = company.company_plan_setting.base_price * company.company_plan_setting.locations_multiplier
+		plan_amount = company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
 		debt_amount = company.due_amount
 
 		is_chile = true
@@ -187,7 +187,7 @@ class CompanyMailer < Base::CustomMailer
 		sales_tax = company.country.sales_tax
 
 		current_amount = company.calculate_trial_debt
-		plan_amount = company.company_plan_setting.base_price * company.company_plan_setting.locations_multiplier
+		plan_amount = company.company_plan_setting.base_price * company.computed_multiplier
 		debt_amount = 0
 
 
@@ -246,7 +246,7 @@ class CompanyMailer < Base::CustomMailer
 
 	#Send invoice_email charging for new month.
 	def invoice_email(company_id, reminder_message)
-		
+
 		current_date = DateTime.now
 		day_number = Time.now.day
 	    month_days = Time.now.days_in_month
@@ -257,7 +257,7 @@ class CompanyMailer < Base::CustomMailer
 			return
 		end
 
-		price = company.company_plan_setting.base_price * company.company_plan_setting.locations_multiplier
+		price = company.company_plan_setting.base_price * company.computed_multiplier
 
 		is_chile = true
 		if company.country.name != "Chile"

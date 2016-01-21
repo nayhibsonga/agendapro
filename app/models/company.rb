@@ -52,7 +52,7 @@ class Company < ActiveRecord::Base
 
 	has_one :company_plan_setting
 
-	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
+	scope :collectables, -> { where(active: true, id: 136).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
@@ -345,12 +345,14 @@ class Company < ActiveRecord::Base
 	def calculate_trial_debt
 
 		sales_tax = self.country.sales_tax
-		current_date = Date.today
-		month_end = current_date.end_of_month
-		debt_proportion = (month_end.day.to_f - current_date.day.to_f + 1)/month_end.day.to_f
+		day_number = Time.now.day
+    	month_number = Time.now.month
+    	month_days = Time.now.days_in_month
+
+		debt_proportion = (month_days - day_number + 1).to_f/month_days.to_f
 
 		#debt = self.plan.plan_countries.find_by(country_id: self.country.id).price.to_f * debt_proportion * ( 1 + sales_tax)
-		debt = self.company_plan_setting.base_price * self.company_plan_setting.locations_multiplier * debt_proportion * (1 + sales_tax) + self.due_amount
+		debt = self.company_plan_setting.base_price * self.computed_multiplier * debt_proportion * (1 + sales_tax)
 
 		return debt
 
@@ -403,25 +405,28 @@ class Company < ActiveRecord::Base
 		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
 
 			#plan_id = Plan.where.not(id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
-			plan_id = Plan.where(name: "Personal", custom: false).first
-			if self.locations > 1 || self.service_providers > 1
-				plan_id = Plan.where(name: "Normal", custom: false).first
+			plan = Plan.where(name: "Personal", custom: false).first
+			if company.locations.where(active: true).count > 1 || company.service_providers.where(location_id: company.locations.where(active: true).pluck(:id), active:true).count > 1
+				plan = Plan.where(name: "Normal", custom: false).first
 			end
 
 			sales_tax = company.country.sales_tax
 
-			company.plan_id = plan_id
-			company.company_plan_setting.base_price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+			company.plan_id = plan.id
+			company.company_plan_setting.base_price = plan.plan_countries.find_by_country_id(company.country.id).price
 
 			company.due_date = Time.now
 			#company.due_amount = - 1 * ((day_number - 1).to_f / month_days.to_f) * company.plan.plan_countries.find_by(country_id: company.country.id).price * (1 + sales_tax)
-			company.due_amount = - 1 * ((day_number - 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * company.computed_multiplier
+			company.due_amount = (- 1 * ((day_number - 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)).round(0)
 
 
 			company.months_active_left = 0
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 
 			if company.save
+
+				company.company_plan_setting.save
+
 				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "OK end_trial")
 
 				#Check if account was used.
