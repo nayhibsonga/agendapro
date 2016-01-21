@@ -349,12 +349,14 @@ class Company < ActiveRecord::Base
 		month_end = current_date.end_of_month
 		debt_proportion = (month_end.day.to_f - current_date.day.to_f + 1)/month_end.day.to_f
 
-		debt = self.plan.plan_countries.find_by(country_id: self.country.id).price.to_f * debt_proportion * ( 1 + sales_tax)
+		#debt = self.plan.plan_countries.find_by(country_id: self.country.id).price.to_f * debt_proportion * ( 1 + sales_tax)
+		debt = self.company_plan_setting.base_price * self.company_plan_setting.locations_multiplier * debt_proportion * (1 + sales_tax) + self.due_amount
 
 		return debt
 
 	end
 
+	#Legacy
 	def calculate_plan_change(new_plan_id)
 
 		current_date = Date.today

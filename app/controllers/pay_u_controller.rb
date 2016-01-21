@@ -152,7 +152,7 @@ class PayUController < ApplicationController
     month_days = Time.now.days_in_month
     accepted_plans = Plan.where(custom: false).pluck(:id)
     if accepted_plans.include?(plan_id) && company
-      if (company.service_providers.where(active: true, location_id: company.locations.where(active: true).pluck(:id)).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || !new_plan.custom || new_plan.name != "Personal"
+      if (company.service_providers.where(active: true, location_id: company.locations.where(active: true).pluck(:id)).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || (!new_plan.custom && new_plan.name != "Personal")
       
         previous_plan_id = company.plan.id
         months_active_left = company.months_active_left
