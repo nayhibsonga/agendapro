@@ -915,8 +915,8 @@
     <% end %>
     $(function(){
 
-      $("#optimizerDateSelector").datepicker({
-        dateFormat: 'dd-mm-yy',
+      /*$("#optimizerDateSelector").datepicker({
+        dateFormat: 'dd/mm/yy',
         autoSize: true,
         firstDay: 1,
         changeMonth: true,
@@ -932,6 +932,7 @@
         clear: '',
         onSelect: function(newDate){
           $("#pickerSelected").empty();
+          console.log(prettyDate);
           var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
           $("#pickerSelected").append(prettyDate);
         },
@@ -939,7 +940,7 @@
           $('#ui-datepicker-div').addClass("customDatepicker");
           $(".customDatepicker .ui-datepicker-calendar").css("width", "214px !important");
         }
-      });
+      });*/
 
       $('.modalOverModal').on('show', function() {
         $('#bookingModal').css('opacity', .5);

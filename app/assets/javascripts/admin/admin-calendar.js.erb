@@ -6,7 +6,7 @@ var bundlesJSON;
 var dragInProgress = false;
 var dragUi = null;
 
-var bookingBuffer = []
+var bookingBuffer = [];
 
 function showErrors (xhr) {
   var errors = $.parseJSON(xhr.responseText).errors;
@@ -848,7 +848,7 @@ function editBookingModal(eventId) {
 }
 
 function createBookingModal(date, provider_id) {
-  bookingBuffer = []
+  bookingBuffer = [];
   var localId = parseInt($('#locals-selector').val());
   var date = date || 0;
   var provider_id = provider_id || 0;
@@ -866,11 +866,27 @@ function createBookingModal(date, provider_id) {
   $.getJSON('/local_providers', {location: localId}, function (providersArray) {
     if (providersArray.length > 0) {
       if (date != 0) {
-        dateArray = date.toString().split(' ');
+
+        var date_str = date.toISOString().split("T")[0].split("-");
+        var dateArray = date.toLocaleDateString().split('/');
+        var timeArray = date.toString().split(' ')[4];
+
+        var day_str = date_str[2];
+        if(day_str.length == 1)
+        {
+          day_str = "0" + day_str;
+        }
+        var month_str = date_str[1];
+        if(month_str.length == 1)
+        {
+          month_str = "0" + month_str;
+        }
+        var year_str = date_str[0];
+
         //Falta revisar el tema de las fechas, deberían ser contantes en la app
-        $('#datePicker').val(dateArray[2]+'/'+dateArray[1]+'/'+dateArray[3]);
-        $('#bookingStartHour option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
-        $('#bookingStartMinute option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
+        $('#datePicker').val(day_str+'/'+month_str+'/'+year_str);
+        $('#bookingStartHour option[value="'+timeArray.split(":")[0]+'"]').attr("selected",true);
+        $('#bookingStartMinute option[value="'+timeArray.split(":")[1]+'"]').attr("selected",true);
         modalChange();
       }
       else {
@@ -2842,7 +2858,7 @@ $(function() {
     }
   });
   $('#datePicker').datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,
@@ -2869,7 +2885,7 @@ $(function() {
   });
 
   $("#dp").datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,
@@ -2892,7 +2908,7 @@ $(function() {
   });
 
   $("#set-date").datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,
