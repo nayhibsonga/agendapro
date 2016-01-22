@@ -4443,38 +4443,54 @@ class BookingsController < ApplicationController
 
           # Horario dentro del horario del provider
           if service_valid
-            providers = []
-            if serviceStaff[serviceStaffPos][:provider] != "0"
-              providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
-              #providers = providers_arr[serviceStaffPos]
-            else
 
-              #Check if providers have same day open
-              #If they do, choose the one with less ocupations to start with
-              #If they don't, choose the one that starts earlier.
-              if service.check_providers_day_times(dateTimePointer)
+            puts service.time_restricted
+            # Service Time Restricted
+            if service.time_restricted
+              service_valid = false
+              service.service_times.where(day_id: dateTimePointer.cwday).each do |times|
+                service_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
+                service_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
 
-                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
-
-                if providers.count == 0
-                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+                if service_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= service_close
+                  service_valid = true
+                  break
                 end
+              end
+            end
 
-                #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
-
+            # Elegible Providers
+            providers = []
+            if service_valid
+              if serviceStaff[serviceStaffPos][:provider] != "0"
+                providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
+                #providers = providers_arr[serviceStaffPos]
               else
 
-                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                #Check if providers have same day open
+                #If they do, choose the one with less ocupations to start with
+                #If they don't, choose the one that starts earlier.
+                if service.check_providers_day_times(dateTimePointer)
 
-                if providers.count == 0
-                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
+                  if providers.count == 0
+                    providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+                  end
+
+                  #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
+                else
+
+                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+
+                  if providers.count == 0
+                    providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                  end
+
+                  #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
                 end
-
-                #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
               end
-
-
-
             end
 
             providers.each do |provider|

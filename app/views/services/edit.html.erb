@@ -52,6 +52,9 @@
 	<div class="col-md-12">
 	  <ul id="myTab" class="nav nav-pills tab-margin" role="tablist">
 	    <li class="active"><a href="#service" role="tab" data-toggle="tab" class="tab_index promotions_tab_index">Servicio</a></li>
+	    <% if @service.company.is_plan_capable("Premium") %>
+	    	<li><a href="#service_times" role="tab" data-toggle="tab" class="tab_index promotions_tab_index">Horario del Servicio</a></li>
+	    <% end %>
 	    <% if @service.company.company_setting.promo_offerer_capable && @service.company.company_setting.online_payment_capable && @service.company.company_setting.allows_online_payment %>
 	    	<li><a href="#promotions" role="tab" data-toggle="tab" class="tab_index promotions_tab_index">Promociones</a></li>
 	    <% end %>
@@ -61,9 +64,9 @@
 
 <div class="tab-content">
 
-    <!-- Inicio Servicio -->
+  <!-- Inicio Servicio -->
 
-    <div class="row tab-pane fade in active" id="service">
+  <div class="row tab-pane fade in active" id="service">
 		<%= render 'form' %>
 	</div>
 
@@ -878,7 +881,22 @@
 		</div>
 	<% end %>
 
-    <!-- Fin Promociones -->
+  <!-- Fin Promociones -->
+
+  <!-- Inicio Horarios -->
+	<% if current_user.company.is_plan_capable("Premium") %>
+		<div class="row tab-pane fade" id="service_times">
+			<div class="container-fluid">
+				<div class="row" style="padding-left: 20px !important;">
+					<div class="col-md-12">
+		        <%= yield :service_times %>
+					</div>
+				</div>
+			</div>
+		</div>
+	<% end %>
+
+  <!-- Fin Horarios -->
 
 </div>
 

@@ -169,7 +169,7 @@ function initialize() {
     });
   }
   else {
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < 8; i++) {
       changeDayStatus(i);
       $('#dayStatusId' + i).prop('checked', true).val(1);
     };
@@ -295,6 +295,11 @@ $(function() {
 	initialize();
 
 	$('#saveService').click(function() {
+    saveService();
+    return false;
+  });
+
+  $('#saveServiceTimes').click(function() {
     saveService();
     return false;
   });

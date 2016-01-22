@@ -99,6 +99,12 @@ class ServicesController < ApplicationController
         new_params = service_params.except(:service_category_id)
       end
     end
+    if new_params[:service_ids].blank?
+      @service.service_staffs.delete_all
+    end
+    if new_params[:resource_ids].blank?
+      @service.service_resources.delete_all
+    end
     if params[:promo_update]
       new_params = service_params
     end
