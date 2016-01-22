@@ -147,9 +147,11 @@ Agendapro::Application.routes.draw do
     # Mail Editor
     namespace 'email' do
       scope controller: 'content', path: '/content' do
-        post '/editor', action: 'editor', as: :editor
+        get '/editor/:id', action: 'editor', as: :editor
+        post '/editor', action: 'new', as: :new
         post "/update", action: 'update', as: :update
         post "/upload", action: 'upload', as: :upload
+        delete "/delete/:id", action: 'delete', as: :delete
       end
     end
 

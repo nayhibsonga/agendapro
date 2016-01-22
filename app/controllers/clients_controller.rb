@@ -45,7 +45,7 @@ class ClientsController < ApplicationController
   # GET /clients/1
   # GET /clients/1.json
   def show
-    
+
     @services = Service.where(company_id: @client.company.id).accessible_by(current_ability)
     @service_providers = ServiceProvider.where(company_id: @client.company.id).accessible_by(current_ability)
 
@@ -308,7 +308,7 @@ class ClientsController < ApplicationController
 
     @tmpl = 'basic'
 
-    template_selection if current_user.company.is_plan_capable("Premium")
+    template_selection if current_user.company.is_plan_capable("Premium") || Rails.env === 'development' && params[:full]
 
     tmp_to = Array.new
     mail_list.each do |email|
@@ -549,7 +549,7 @@ class ClientsController < ApplicationController
   end
 
   def rename_folder
-    
+
     @company = current_user.company
     @client = Client.find(params[:client_id])
 
@@ -611,7 +611,7 @@ class ClientsController < ApplicationController
 
     #Move each object to new folder
     @client.client_files.where(folder: folder_name).each do |client_file|
-      
+
       client_file.destroy
 
     end
@@ -664,7 +664,7 @@ class ClientsController < ApplicationController
     @client_file.full_path = new_folder_path + obj_name
     @client_file.public_url = obj.public_url
     @client_file.folder = new_folder_name
-    
+
     if @client_file.save
       redirect_to get_client_files_path(client_id: @client.id), notice: 'Archivo movido correctamente'
       else
@@ -714,13 +714,13 @@ class ClientsController < ApplicationController
         s3.put_object(bucket: ENV['S3_BUCKET'], key: old_folder_path)
         end
 
-      
+
       @client_file.full_path = new_folder_path + obj_name
       @client_file.public_url = obj.public_url
       @client_file.folder = new_folder_name
 
     end
-    
+
     if @client_file.save
       redirect_to get_client_files_path(client_id: @client.id), notice: 'Archivo editado correctamente'
       else

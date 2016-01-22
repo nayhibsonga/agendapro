@@ -8,7 +8,11 @@ class Email::Content < ActiveRecord::Base
   before_create :empty_json
   after_update :generate_sending, if: :send_email
 
+  validates_presence_of :template, :to, :company
+
   scope :of_company, -> (c) { where(company: c) unless c.nil? }
+  scope :actives, -> { where(active: true) }
+  scope :inactives, -> { where(active: false) }
 
   def generate_sending
     Email::Sending.create(
@@ -19,6 +23,21 @@ class Email::Content < ActiveRecord::Base
 
   def sent?
     self.sendings.sent.size > 0
+  end
+
+  def has_sendings?
+    self.sendings.size > 0
+  end
+
+  def destroy
+    success = false
+    if self.has_sendings?
+      success = self.update(active: false, deactivation_date: Time.now)
+      success = self.sendings.pendings.update_all(status: 'canceled')
+    else
+      success = self.delete
+    end
+    success
   end
 
   private

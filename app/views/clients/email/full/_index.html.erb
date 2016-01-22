@@ -26,6 +26,40 @@
   </div>
 </div>
 
+<%= content_for :scripts do %>
+  <script>
+    $(function(){
+      $(document).on('click', '.btn-delete', function(e, elem){
+        var elem = $(this);
+        e.preventDefault();
+        swal({
+          title: "¿Estás seguro?",
+          text: "Una vez eliminado, no podrás recuperar este Contenido",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Sí",
+          cancelButtonText: "No",
+          closeOnConfirm: false,
+          showLoaderOnConfirm: true
+        }, function(){
+          $.ajax({
+              url: elem.attr('href'),
+              type: 'DELETE',
+              success: function(result) {
+                if(result.status === 'ok'){
+                  $(elem).closest('.template-container').remove();
+                  swal("¡Eliminado!", "Plantilla eliminada con exito", "success");
+                } else {
+                  swal("¡Oops!", "Ha ocurrido un error al eliminar esa plantilla", "error");
+                }
+              }
+          });
+        });
+      });
+    });
+  </script>
+<% end %>
 
 <style>
   #full-container ul {
