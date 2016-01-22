@@ -307,7 +307,9 @@ class Client < ActiveRecord::Base
 
       when "date"
         
-        param_value = param_value.gsub('/', '-')
+        if !param_value.nil?
+          param_value = param_value.gsub('/', '-')
+        end
 
         date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if date_attribute.nil?
@@ -319,9 +321,11 @@ class Client < ActiveRecord::Base
 
       when "datetime"
         
-        param_value = param_value.gsub('/', '-')
-        date_hour = params[attribute.slug + "_attribute_hour"]
-        date_minute = params[attribute.slug + "_attribute_minute"]
+        if !param_value.nil?
+          param_value = param_value.gsub('/', '-')
+          date_hour = params[attribute.slug + "_attribute_hour"]
+          date_minute = params[attribute.slug + "_attribute_minute"]
+        end
 
         complete_datetime = nil
         if !param_value.nil?
@@ -459,7 +463,9 @@ class Client < ActiveRecord::Base
 
       when "date"
         
-        param_value = param_value.gsub('/', '-')
+        if !param_value.blank?
+          param_value = param_value.gsub('/', '-')
+        end
 
         date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if date_attribute.nil?
@@ -471,9 +477,12 @@ class Client < ActiveRecord::Base
 
       when "datetime"
         
-        param_value = param_value.gsub('/', '-')
-        
-        complete_datetime = param_value
+        complete_datetime = nil
+
+        if !param_value.blank?
+          param_value = param_value.gsub('/', '-')     
+          complete_datetime = param_value
+        end
 
         date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if date_time_attribute.nil?
