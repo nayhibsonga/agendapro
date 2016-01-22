@@ -74,6 +74,10 @@ class BillingInfosController < ApplicationController
 
   end
 
+  def super_admin_edit
+
+  end
+
   def super_admin_create
 
     @billing_info = BillingInfo.new(billing_info_params)
@@ -88,6 +92,18 @@ class BillingInfosController < ApplicationController
       end
     end
 
+  end
+
+  def super_admin_update
+    respond_to do |format|
+      if @billing_info.update(billing_info_params)
+        format.html { redirect_to companies_path, notice: 'Datos de facturación actualizados.' }
+        format.json { head :no_content }
+      else
+        format.html { redirect_to companies_path, notice: 'Hubo un problema en la creación de los datos.' }
+        format.json { render json: @billing_info.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   private

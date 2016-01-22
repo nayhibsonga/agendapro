@@ -1,0 +1,76 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Nuevo Billing Info</h2>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <%= form_for @billing_info, url: { action: "super_admin_update" }, :html => {:class => 'form-horizontal tab-margin', :multipart => true} do |f| %>
+        <% if @billing_info.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@billing_info.errors.count, "error") %> no permitió que sea creada:</h2>
+            <ul>
+              <% @billing_info.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <input type="hidden" id="id" name="id" value="<%= @billing_info.id %>" />
+
+        <div class="form-group">
+          <%= f.label :name, 'Razón Social', :class => 'col-md-2 control-label' %>
+          <div class="col-md-5">
+            <%= f.text_field :name, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :rut, 'RUT Empresa', :class => 'col-md-2 control-label' %>
+          <div class="col-md-5">
+            <%= f.text_field :rut, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :sector, 'Giro', :class => 'col-md-2 control-label' %>
+          <div class="col-md-5">
+            <%= f.text_field :sector, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :contact, 'Nombre Responsable', :class => 'col-md-2 control-label' %>
+          <div class="col-md-5">
+            <%= f.text_field :contact, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :address, 'Dirección', :class => 'col-md-2 control-label' %>
+          <div class="col-md-5">
+            <%= f.text_field :address, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :phone, 'Teléfono', :class => 'col-md-2 control-label' %>
+          <div class="col-md-5">
+            <%= f.text_field :phone, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :email, 'E-Mail', :class => 'col-md-2 control-label' %>
+          <div class="col-md-5">
+            <%= f.text_field :email, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-5 col-md-offset-2">
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+            <%= link_to 'Cancelar', companies_path, :class => "btn btn-default" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
