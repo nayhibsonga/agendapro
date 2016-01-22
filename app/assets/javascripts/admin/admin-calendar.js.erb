@@ -2196,6 +2196,7 @@ function createBreakModal(date, providerId) {
   $('#break_repeat option[value="never"]').prop("selected", true);
   $("#break_times").val('');
 
+
   $("#repeat_option_times").prop("checked", true);
   $(".form-repeat-div").show();
 
@@ -2252,6 +2253,7 @@ function createBreakModal(date, providerId) {
     '<button type="button" class="btn btn-green break-button" id="save_break" onClick="saveBreak(\'POST\',\'\')">Guardar</button>'
     );
   $('#break_repeat_weeks_div').hide();
+  $('#form-repeat-options').hide();
   $('#breakModal').modal('show');
 }
 
@@ -2364,6 +2366,15 @@ function editBreakModal(breakId) {
       $('#break_repeat_weeks').val(provider_break_repeat.weeks);
 
       console.log(provider_break_repeat.repeat_type);
+
+      if(provider_break_repeat.repeat_type == "never")
+      {
+        $('#form-repeat-options').hide();
+      }
+      else
+      {
+        $('#form-repeat-options').show();
+      }
 
       if(provider_break_repeat.repeat_type == "xweekly")
       {
@@ -2913,7 +2924,7 @@ $(function() {
   });
 
   $("#dp").datepicker({
-    dateFormat: 'dd/mm/yy',
+    dateFormat: 'dd-mm-yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,
@@ -2936,7 +2947,7 @@ $(function() {
   });
 
   $("#set-date").datepicker({
-    dateFormat: 'dd/mm/yy',
+    dateFormat: 'dd-mm-yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,
@@ -3310,6 +3321,14 @@ $(function() {
     });
 
     $('#break_repeat').on('change', function(){
+      if($(this).val() == "never")
+      {
+        $('#form-repeat-options').hide();
+      }
+      else
+      {
+        $('#form-repeat-options').show();
+      }
       console.log($(this).val());
       if($(this).val() == "xweekly")
       {
