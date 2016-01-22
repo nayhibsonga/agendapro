@@ -121,6 +121,7 @@
               <tbody>
                 <% @trial_companies.each do |company| %>
                   <tr>
+
                     <td><%= link_to company.company_name, controller: "companies", action: "manage_company", id: company.company_id %></td>
                     <td><%= company.last_booking ? l(company.last_booking, format: :short) : "" %></td>
                     <td><%= company.week_bookings %></td>

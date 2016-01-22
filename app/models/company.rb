@@ -407,6 +407,7 @@ class Company < ActiveRecord::Base
 				company.months_active_left -= 1
 
 				if company.months_active_left <= 0
+					company.months_active_left = 0
 					company.payment_status_id = status_emitido.id
 					company.due_date = DateTime.now
 				end
@@ -436,7 +437,7 @@ class Company < ActiveRecord::Base
 				#If it was issued, the company is late 1 month in their payments
 				#Change their status to expired, add to their due and charge them for next month
 
-				company.months_active_left -= 1
+				company.months_active_left = 0
 				company.payment_status_id = status_vencido.id
 				if company.due_amount.nil?
 					company.due_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
