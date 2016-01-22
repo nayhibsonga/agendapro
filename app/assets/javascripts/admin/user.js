@@ -12,10 +12,16 @@ $(function() {
   $('#user_role_id').change(function() {
     if ($("#user_role_id option:selected").text() == "Staff" || $("#user_role_id option:selected").text() == "Staff (sin edición)") {
       $('#locationGroup').addClass('hidden');
+      $('#locationGroup').find('input[type=checkbox]').each(function() {
+        $(this).prop('checked', false);
+      });
       $('#providerGroup').removeClass('hidden');
     } else {
       $('#locationGroup').removeClass('hidden');
       $('#providerGroup').addClass('hidden');
+      $('#providerGroup').find('input[type=checkbox]').each(function() {
+        $(this).prop('checked', false);
+      });
     }
   });
 

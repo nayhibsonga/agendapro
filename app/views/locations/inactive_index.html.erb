@@ -26,7 +26,7 @@
             <tr>
               <td><%= location.name %></td>
               <td>
-                <%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_location_path(:id => location.id), :class => "btn btn-green", data: { confirm: '¿Estás seguro de re-activar el Local seleccionado?' } %>
+                <%= link_to '<i class="fa fa-check"></i> Re-activar'.html_safe, activate_location_path(:id => location.id), method: :patch, :class => "btn btn-green", data: { confirm: '¿Estás seguro de re-activar el Local seleccionado?' } %>
                 <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_location_path(location), :class => "btn btn-orange" %>
               </td>
             </tr>

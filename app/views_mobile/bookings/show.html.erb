@@ -30,7 +30,7 @@
     <div class="col-xs-12">
       <div class="group-btn">
         <%= link_to 'Modificar', edit_booking_path(@booking), class: 'btn btn-lg btn-orange' %>
-        <a type="button" class="btn btn-lg btn-red" data-toggle="modal" data-target="#cancelModal">Cancelar</a>
+        <!-- <a type="button" class="btn btn-lg btn-red" data-toggle="modal" data-target="#cancelModal">Cancelar</a> -->
       </div>
     </div>
   </div>
@@ -67,6 +67,26 @@
             <td>Estado</td>
             <td><%= @booking.status.name %></td>
           </tr>
+          <% if @booking.is_session %>
+            <tr>
+              <td>Sesión</td>
+              <td>
+                <%
+                  session_booking = @booking.session_booking
+                  session_index = 1
+                  Booking.where(:session_booking_id => session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+                    if b.id == @booking.id
+                      break
+                    else
+                    session_index = session_index + 1
+                    end
+                  end
+                  sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s 
+                %>
+                <%= sessions_ratio %>
+              </td>
+            </tr>
+          <% end %>
           <tr>
             <td>Fecha</td>
             <td><%= l @booking.start.to_date, format: :day %></td>
@@ -83,6 +103,7 @@
             <td>Comentario Interno</td>
             <td><%= @booking.company_comment %></td>
           </tr>
+
         </tbody>
       </table>
     </div>

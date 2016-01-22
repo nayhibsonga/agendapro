@@ -9,12 +9,12 @@ class ServiceCategoriesController < ApplicationController
   # GET /service_categories.json
   def index
     if params[:company_id]
-      @service_categories = ServiceCategory.where(:company_id => params[:company_id]).order(order: :asc)
+      @service_categories = ServiceCategory.where(:company_id => params[:company_id]).order(:order, :name)
     else
       if current_user.role_id == Role.find_by_name('Super Admin').id
-        @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id))
+        @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
       else
-        @service_categories = ServiceCategory.where(:company_id => current_user.company_id).order(order: :asc)
+        @service_categories = ServiceCategory.where(:company_id => current_user.company_id).order(:order, :name)
       end
     end
   end
@@ -80,6 +80,7 @@ class ServiceCategoriesController < ApplicationController
       redirect_to service_categories_path, notice: 'No es posible eliminar la categoría "Otros".'
     end
     @services = Service.where(service_category_id: @service_category)
+    @bundles = Bundle.where(service_category_id: @service_category)
     @new_service_category = ServiceCategory.where(company_id: @service_category.company_id, name: "Otros").first
     if @new_service_category.nil?
       @new_service_category = ServiceCategory.create(name: "Otros", company_id: @service_category.company_id)
@@ -88,6 +89,10 @@ class ServiceCategoriesController < ApplicationController
     @services.each do |service|
       service.service_category = @new_service_category
       service.save
+    end
+    @bundles.each do |bundle|
+      bundle.service_category = @new_service_category
+      bundle.save
     end
     @service_category.destroy
     respond_to do |format|
@@ -114,6 +119,27 @@ class ServiceCategoriesController < ApplicationController
       end
     end
     render :json => array_result
+  end
+
+  def location_categories
+
+    location = Location.find(params[:location_id])
+
+    service_categories = ServiceCategory.where(id: Service.where(active: true).where(id: ServiceStaff.where(service_provider_id: ServiceProvider.where(active: true, location_id: location.id).pluck(:id)).pluck(:service_id)).pluck(:service_category_id))
+
+    render :json => service_categories
+
+  end
+
+  def category_services
+
+    location = Location.find(params[:location_id])
+    service_category = ServiceCategory.find(params[:service_category_id])
+
+    services = Service.where(service_category_id: service_category.id, active: true, id: ServiceStaff.where(service_provider_id: ServiceProvider.where(active: true, location_id: location.id).pluck(:id)).pluck(:service_id))
+
+    render :json => services
+
   end
 
   private

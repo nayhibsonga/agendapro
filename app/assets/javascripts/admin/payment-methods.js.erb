@@ -1,0 +1,212 @@
+/*
+var paymentModalState = '';
+var paymentAmount = 0;
+var paymentItems = [];
+var paymentPastBookings = []
+var paymentNewBookings = []
+var paymentProducts = []
+var paymentReceipts = []
+*/
+
+/*
+* Dummy function for compatibility with view of Caja
+*/
+function loadPayments()
+{
+
+}
+
+/*
+*	Legacy
+*/
+function destroyPayment() {
+	$.ajax({
+		type: 'DELETE',
+		url: '/payments/'+$('#payment_id').val() + '.json',
+		dataType: 'json',
+		success: function(payment){
+			// window.console.log(payment);
+			swal('Pago eliminado exitosamente.');
+			$("#delete_payment_button").html('Eliminar Pago');
+			$('#delete_payment_button').attr('disabled', false);
+			$('#bookingModal').modal('hide');
+		},
+		error: function(xhr){
+			var errors = $.parseJSON(xhr.responseText).errors;
+			var errores = '';
+			for (i in errors) {
+				errores += '*' + errors[i] + '\n';
+			}
+			swal({
+				title: "Error",
+				text: "Se produjeron los siguientes errores:\n" + errores,
+				type: "error"
+			});
+			$("#delete_payment_button").html('Eliminar Pago');
+			$('#delete_payment_button').attr('disabled', false);
+		}
+	});
+
+	return false;
+}
+
+/*
+*	Legacy
+*/
+var product_index = 0;
+function get_product_index() {
+	product_index += 1;
+	return product_index;
+}
+
+function checkBookingPayment(booking_id)
+{
+	$.ajax({
+		url: '/check_booking_payment',
+		type: 'get',
+		data: {booking_id: booking_id},
+		dataType: 'json',
+		error: function(response){
+			swal("Ocurrió un error inesperado al cargar la reserva.");
+		},
+		success: function(response){
+			if(response[0] == "yes")
+			{
+
+				$.ajax({
+				    url: '/payment_summary',
+				    method: 'get',
+				    data: {payment_id: response[1].id},
+				    error: function(response){
+
+				    },
+				    success: function(response){
+				      $('#bookingPaymentSummary').empty();
+				      $('#bookingPaymentSummary').append(response);
+				    }
+				});
+
+				$("#paymentBookingId").val(booking_id);
+				$("#bookingPaymentEdit").show();
+				$("#bookingPaymentCreate").hide();
+				$("#editPaymentId").val(response[1].id);
+			}
+			else
+			{
+				$("#paymentBookingId").val(booking_id);
+				$("#bookingPaymentCreate").show();
+				$("#bookingPaymentEdit").hide();
+				$("#editPaymentId").val("");
+			}
+		}
+	});
+}
+
+function loadBookingNewPayment(booking_id)
+{
+	$.ajax({
+		url: '/get_formatted_booking',
+		type: 'get',
+		data: {booking_id: booking_id},
+		dataType: 'json',
+		error: function(response){
+			swal("Ocurrió un error inesperado al cargar la reserva.");
+		},
+		success: function(response){
+
+			booking = response.booking;
+	        booking['item_id'] = paymentItems.length;
+	        booking['item_type'] = 'past_booking';
+
+	        paymentItems.push(booking);
+	        paymentPastBookings.push(booking);
+	        var item_id = paymentItems.length-1;
+	        var past_booking_index = paymentPastBookings.length-1;
+
+	        $("#paymentItemsTable").append(
+	          '<tr class="paymentItemsRow" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1">' +
+	          '<td style="width: 5%; text-align: center; cursor: pointer;"><span class="removePaymentItem" item_id="' + item_id + '" past_booking_index="' + past_booking_index + '" new_booking_index="-1" product_index="-1"><button><i class="fa fa-trash-o fa-lg"></i></button></span></td>' +
+	          '<td style="width: 5%;">' + item_id + '</td>' +
+	          '<td style="width: 24%;"><span>Reserva existente</span></td>' +
+	          '<td style="width: 24%;"><span class="itemName">' + booking.service_name + '</span></td>' +
+	          '<td style="width: 7%;"><span><input type="number" class="form-control itemQuantity" value="1" disabled /></span></td>' +
+	          '<td style="width: 18%;"><div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control itemPrice" value="' + Math.round(booking.list_price * 100)/100 + '" /></div></td>' +
+	          '<td style="width: 18%;"><div class="input-group"><input type="number" class="form-control itemDiscount" value="' + booking.discount + '" /><span class="input-group-addon">%</span></div></td>' +
+	          '</tr>'
+	        );
+
+			if(response.client != null)
+			{
+				$("#set_client").val("1");
+				$("#payment_client_id").val(response.client.id);
+				$("#payment_client_first_name").val(response.client.first_name);
+				$("#payment_client_last_name").val(response.client.last_name);
+				$("#payment_client_name").val(response.client.first_name + " " + response.client.last_name);
+				$("#payment_client_email").val(response.client.email);
+				$("#payment_client_phone").val(response.client.phone);
+				$("#payment_client_gender").val(response.client.gender);
+				$("#payment_location").val(booking.location_id);
+				$(".client-option").show();
+			}
+			else
+			{
+				$("#set_client").val("0");
+			}
+
+			$("#paymentItemsTable").show();
+
+			calculatePaymentTotal();
+
+			$("#paymentItemsList").show();
+			$("#paymentSumDiv").show();
+
+		}
+	});
+}
+
+$("#bookingPaymentCreateBtn").click(function(){
+    paymentItems = [];
+    paymentNewBookings = [];
+    paymentPastBookings = [];
+    paymentProducts = [];
+    loadPaymentIntro(0);
+    $("#bookingModal").modal('hide');
+    loadBookingNewPayment($("#paymentBookingId").val());
+});
+
+$("#bookingPaymentEditBtn").click(function(){
+	$("#bookingModal").modal('hide');
+	editPayment($("#editPaymentId").val());
+});
+
+$("#bookingPaymentDeleteBtn").click(function(){
+	$("#bookingModal").modal('hide');
+	deletePayment($("#editPaymentId").val());
+});
+
+$(function() {
+
+
+	/*
+	* Legacy
+	*/
+	$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+		var target = $(e.target).attr("href");
+		if ((target == '#payments-pane')) {
+			$('#save_booking_button').attr('disabled','disabled');
+		} else {
+			$('#save_booking_button').removeAttr('disabled');
+		}
+	});
+
+	/*
+	* Legacy
+	*/
+	$('#delete_payment_button').click(function() {
+		$('#delete_payment_button').attr('disabled', true);
+		$('#delete_payment_button').html('<i class="fa fa-spinner fa-spin"></i>');
+		destroyPayment();
+	});
+
+
+});

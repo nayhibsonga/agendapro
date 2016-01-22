@@ -1,39 +1,43 @@
 <div class="container container-margin">
-	<div class="row">
-		<div class="col-xs-12">
-			<h3 class="text-center">¡Tu reserva fue agendada!</h3>
-			<div class="pull-center">
-				<%= image_tag 'logos/logo2.png', :alt => 'AgendaPro' %>
-				<% if @company.logo_url %>
-				<div class="vertical-divider"></div>
-				<%= image_tag @company.logo_url.to_s, :alt => @company.name %>
-				<% end %>
-			</div>
-		</div>
-	</div>
-	<div class="row background-grey">
-		<div class="col-xs-12">
-			<h4 class="text-center">Resumen de tu Reserva</h4>
-			<table class="table table-bordered">
-				<tbody>
-					<tr>
-						<td><%= @booking.location.name %></td>
-					</tr>
-					<tr>
-						<td><%= l @booking.start.to_date, format: :long %></td>
-					</tr>
-					<tr>
-						<td><%= l @booking.start, format: :hour %> - <%= l @booking.end, format: :hour %></td>
-					</tr>
-					<tr>
-						<td><%= @booking.service.name %></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<div class="col-xs-12">
-			<%= link_to '<i class="fa fa-caret-left"></i> <span>Reservar otro servicio</span>'.html_safe, root_url, class: 'btn btn-orange btn-lg btn-block' %>
-			<%= link_to 'Modificar', booking_edit_url(confirmation_code: @booking.confirmation_code), class: 'btn btn-green btn-lg btn-block' %>
-		</div>
-	</div>
+  <div class="row">
+    <div class="col-xs-12">
+      <h3 class="text-center">¡Tu reserva fue agendada!</h3>
+      <div class="pull-center">
+        <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro' %>
+        <div class="vertical-divider"></div>
+        <%= image_tag @company.logo.page.url.to_s, :alt => @company.name %>
+      </div>
+    </div>
+  </div>
+  <div class="row background-grey">
+    <div class="col-xs-12">
+      <h4 class="text-center">Resumen de tu Reserva</h4>
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <td><%= @booking.location.name %></td>
+          </tr>
+          <tr>
+            <td><%= l @booking.start.to_date, format: :long %></td>
+          </tr>
+          <tr>
+            <td><%= l @booking.start, format: :hour %> - <%= l @booking.end, format: :hour %></td>
+          </tr>
+          <tr>
+            <td><%= @booking.service.name %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-xs-12">
+      <%= link_to '<i class="fa fa-caret-left"></i> <span>Reservar otro servicio</span>'.html_safe, root_url, class: 'btn btn-orange btn-lg btn-block' %>
+      <%= link_to 'Modificar', booking_edit_url(confirmation_code: @booking.confirmation_code), class: 'btn btn-green btn-lg btn-block' %>
+    </div>
+  </div>
 </div>
+
+<% content_for :scripts do %>
+  <script type="text/javascript">
+    $('.navbar-brand').attr('href', <%= root_url %>);
+  </script>
+<% end %>

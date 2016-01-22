@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @notification_email.company %>
+</p>
+
+<p>
+  <strong>Emails:</strong>
+  <%= @notification_email.emails %>
+</p>
+
+<p>
+  <strong>Notification type:</strong>
+  <%= @notification_email.notification_type %>
+</p>
+
+<p>
+  <strong>Receptor type:</strong>
+  <%= @notification_email.receptor_type %>
+</p>
+
+<%= link_to 'Edit', edit_notification_email_path(@notification_email) %> |
+<%= link_to 'Back', notification_emails_path %>

@@ -4,78 +4,86 @@
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
 
-	<head>
-		<!-- start: Meta -->
-		<meta charset="utf-8">
-		<title><%= @company.name %> - AgendaPro</title>
-		<meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
-		<meta name="author" content="AgendaPro">
-		<meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
-		<%= csrf_meta_tags %>
-		<!-- end: Meta -->
+  <head>
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title><%= @company.name %> - AgendaPro</title>
+    <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+    <meta name="author" content="AgendaPro">
+    <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+    <%= csrf_meta_tags %>
+    <!-- end: Meta -->
 
-		<!-- start: Mobile Specific -->
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<!-- end: Mobile Specific -->
+    <!-- start: Mobile Specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- end: Mobile Specific -->
 
-		<!-- start: CSS -->
-		<%= stylesheet_link_tag "mobile" %>
-		<%= stylesheet_link_tag "mobile/mobile-workflow" %>
-		<%= yield :stylesheets %>
-		<!-- end: CSS -->
+    <!-- start: App Banner -->
+    <meta name="apple-itunes-app" content="app-id=1030031590">
+    <meta name="google-play-app" content="app-id=com.ionicframework.agendapro280846">
+    <!-- end: App Banner -->
 
-		<%= render 'layouts/icons' %>
-	</head>
+    <!-- start: CSS -->
+    <%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
+    <%= stylesheet_link_tag "mobile" %>
+    <%= stylesheet_link_tag "mobile/mobile-workflow" %>
+    <%= yield :stylesheets %>
+    <!-- end: CSS -->
 
-	<body>
-		<!-- start: Header -->
-		<header>
-			<nav class="navbar navbar-default navbar-agendapro navbar-fixed-top" role="navigation">
-				<div class="container">
-					<!-- Brand and toggle get grouped for better mobile display -->
-					<div class="navbar-header">
-						<button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
-							<i class="fa fa-bars"></i>
-						</button>
-						<%=
-							link_to_if params[:action] == 'workflow', '<i class="fa fa-caret-left fa-2x"></i>'.html_safe, request.env['HTTP_REFERER'] || :back, class: "navbar-brand" do
-								link_to '<i class="fa fa-caret-left fa-2x"></i>'.html_safe, '/', class: "navbar-brand"
-							end
-						%>
-						<p class="navbar-text"><%= @company.name %></p>
-					</div>
-					<!-- Collect the nav links, forms, and other content for toggling -->
-					<div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right collapse navbar-collapse" id="navbar-menu">
-						<ul class="nav navbar-nav">
-							<li><%= link_to 'Buscador', root_without_subdomain %></li>
-							<li><%= link_to 'Clientes', root_without_subdomain(anchor: 'clients-target') %></li>
-              <li><%= link_to 'Qué Hacemos', root_without_subdomain(anchor: 'what-we-do-target') %></li>
-              <li><%= link_to 'Contacto', root_without_subdomain(anchor: 'contact-target') %></li>
-							<li class="divider"></li>
-							<% if user_signed_in? %>
+    <%= render 'layouts/icons' %>
+  </head>
+
+  <body>
+    <!-- start: Header -->
+    <header>
+      <nav class="navbar navbar-default navbar-agendapro navbar-fixed-top" role="navigation">
+        <div class="container">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed toggle-menu menu-right push-body" data-toggle="collapse" data-target="#navbar-menu">
+              <i class="fa fa-bars"></i>
+            </button>
+            <%= link_to '<i class="fa fa-caret-left fa-2x"></i>'.html_safe, 'javascript:history.back()', class: "navbar-brand" %>
+            <p class="navbar-text"><%= @company.name %></p>
+          </div>
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right collapse navbar-collapse" id="navbar-menu">
+            <ul class="nav navbar-nav">
+              <li><%= link_to 'Buscador', root_url(subdomain: false) %></li>
+              <li><%= link_to 'Clientes', root_url(subdomain: false, anchor: 'clients-target') %></li>
+              <li><%= link_to 'Qué Hacemos', root_url(subdomain: false, anchor: 'what-we-do-target') %></li>
+              <li class="divider"></li>
+              <% if user_signed_in? %>
               <% if current_user.company_id %>
                 <% if current_user.company_id %>
-                  <li><%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, root_url(subdomain: false) + "dashboard", class: "menu-green" %></li>
+                  <li><%= link_to '<i class="fa fa-dashboard"></i> Panel Empresa'.html_safe, dashboard_url(subdomain: false) , class: "menu-green" %></li>
                 <% end %>
               <% end %>
-              <!-- <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_path, class: "menu-green" %></li> -->
-							<li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_path, class: "menu-green" %></li>
-							<li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_path %></li>
-							<li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_path, method: :delete, class: "menu-orange" %></li>
-              <% else %>
-							<li><%= link_to '<i class="fa fa-user"></i> Regístrate'.html_safe, new_user_registration_path, class: "menu-green" %></li>
-              <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_path, class: "menu-green" %></li>
-              <% end %>
-							<li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
-						</ul>
-					</div>
-				</div>
-			</nav>
-		</header>
-		<!-- end: Header -->
+              <li><%= link_to '<i class="fa fa-calendar"></i> Mi Agenda'.html_safe, my_agenda_url(subdomain: false), class: "menu-green" %></li>
+              <li><%= link_to '<i class="fa fa-user"></i> Editar Perfil'.html_safe, edit_user_registration_url(subdomain: false), class: "menu-green" %></li>
+              <li><%= link_to '<i class="fa fa-question"></i> Tutoriales'.html_safe, tutorials_url(subdomain: false) %></li>
 
-		<!-- start: Alerts -->
+              <% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
+
+                <li><%= link_to '<i class="fa fa-desktop fa-fw"></i> Ver Sitio'.html_safe, url_for(:subdomain => current_user.company.web_address, controller: 'companies', action: 'overview', locale: current_user.company.country.locale) %></li>
+
+              <% end %>
+
+              <li><%= link_to '<i class="fa fa-power-off"></i> Salir'.html_safe, destroy_user_session_url(subdomain: false), method: :delete, class: "menu-orange" %></li>
+              <% else %>
+              <li><%= link_to '<i class="fa fa-user"></i> Regístrate'.html_safe, new_user_registration_url(subdomain: false), class: "menu-green" %></li>
+              <li><%= link_to '<i class="fa fa-calendar-o"></i> Iniciar Sesión'.html_safe, new_user_session_url(subdomain: false), class: "menu-green" %></li>
+              <% end %>
+              <li><%= link_to "Agrega tu Empresa", home_url(subdomain: false), class: "menu-orange" %></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <!-- end: Header -->
+
+    <!-- start: Alerts -->
     <% if notice %>
     <div class="alert alert-info alert-dismissable fade in">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -92,17 +100,17 @@
       <%= alert %>
     </div>
     <% end %>
-		<!-- end: Alerts -->
+    <!-- end: Alerts -->
 
-		<!-- start: content -->
-		<div id="wrapper">
-			<%= yield %>
-		</div>
-		<!-- end: content -->
+    <!-- start: content -->
+    <div id="wrapper">
+      <%= yield %>
+    </div>
+    <!-- end: content -->
 
-		<!-- start: JavaScript-->
-		<%= javascript_include_tag "mobile" %>
-		<%= yield :scripts %>
-		<!-- end: JavaScript-->
-	</body>
+    <!-- start: JavaScript-->
+    <%= javascript_include_tag "mobile" %>
+    <%= yield :scripts %>
+    <!-- end: JavaScript-->
+  </body>
 </html>

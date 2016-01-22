@@ -8,7 +8,7 @@ var hourTitle = "Resultado de la busqueda<br><small>Selecciona una fecha y hora<
 var hourButton = "Ver mas resultados";
 var userTitle = "Datos del cliente";
 var resultsLength = 6;
-var bookings = []
+var bookings = [];
 
 // Functions
 function loadServiceModal () {
@@ -30,6 +30,7 @@ function loadServiceModal () {
     loadService();
   }); // Bind click event
 
+  $('#nextButton').text('Siguiente');
   $('#nextButton').off('click'); // Unbind click event
   $('#nextButton').click(function (e) {
     loadHourModal();
@@ -134,7 +135,7 @@ function loadHourModal () {
     if ($('input[name="hoursRadio"]:checked').val()) {
       loadUserModal();
     } else {
-      alert('Debe seleccionar una hora');
+      swal('Debe seleccionar una hora');
     };
   }); // Bind click event
 }
@@ -152,6 +153,8 @@ function loadHours () {
   });
 
   var start_date = $("#optimizerDateSelector").val();
+
+  bookings = [];
 
   $.getJSON('/optimizer_hours', { local: localId, serviceStaff: JSON.stringify(selects), resultsLength: resultsLength, start_date: start_date, admin: true }, function (hours_array) {
     $('#selectHour > p').remove();
@@ -213,6 +216,9 @@ function loadUserModal () {
   $('#hoursOptimizer #new_booking').show();
   $('#optimizerTitle').html(userTitle);
 
+  $(userForm + '#booking_notes').val($('#calendar-data').data('preset-notes'));
+
+  $('#nextButton').text('Reservar');
   $('#nextButton').off('click'); // Unbind click event
   $('#nextButton').click(function (e) {
     if ($('#hoursOptimizer #new_booking').valid()) {
@@ -378,9 +384,6 @@ function saveBookings () {
             start: booking.start,
             end: booking.end,
             resourceId: booking.service_provider_id,
-            textColor: textColors[booking.status_id],
-            borderColor: textColors[booking.status_id],
-            backgroundColor: backColors[booking.status_id],
             className: originClass,
             title_qtip: booking.first_name+' '+booking.last_name,
             time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
@@ -407,7 +410,7 @@ function saveBookings () {
     },
     error: function(xhr){
       var errors = $.parseJSON(xhr.responseText).errors;
-      var errores = '\u26A0 No se pudo guardar todos los servicios \u26A0 \n\n';
+      var errores = '';
       $.each(errors, function (booking, error) {
         errores += 'Servicio ' + error.booking + '\n';
         for (i in error.errors) {
@@ -417,57 +420,60 @@ function saveBookings () {
       errores += '\n¿Guardar de todos modos?';
       $('#nextButton').removeAttr("disabled");
       $('#small_loader').remove();
-      var result = confirm(errores);
-      if (result) {
-        $.post('/force_create.json', { "bookings": bookingBuffer }, function (bookings) {
-          $('#bookingAlerts').hide();
-          $('#bookingWarnings').empty();
-          var warning = false;
-          $.each(bookings, function (pos, booking) {
-            if (booking.status_id != 5) {
-              var providerLock = '-unlock';
-              if (booking.provider_lock) {
-                providerLock = '-lock';
-              };
-              var originClass = 'origin-manual';
-              originClass += providerLock + statusIcon[booking.status_id];
-              var events = {
-                id: booking.id,
-                title: booking.first_name+' '+booking.last_name+' - '+booking.service_name,
-                allDay: false,
-                start: booking.start,
-                end: booking.end,
-                resourceId: booking.service_provider_id,
-                textColor: textColors[booking.status_id],
-                borderColor: textColors[booking.status_id],
-                backgroundColor: backColors[booking.status_id],
-                className: originClass,
-                title_qtip: booking.first_name+' '+booking.last_name,
-                time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
-                service_qtip: booking.service_name,
-                phone_qtip: booking.phone,
-                email_qtip: booking.email,
-                comment_qtip: booking.company_comment
-              };
-              $('#calendar').fullCalendar('renderEvent', events, true);
-            }
-            if (booking.warnings.length > 0) {
-              var warnings = '';
-              for (i in booking.warnings) {
-                warnings += booking.warnings[i] + '. ';
+      swal({
+        title: "No se pudo guardar todos los servicios",
+        text: errores,
+        type: "warning"
+      },
+      function (isConfirm) {
+        if (isConfirm) {
+          $.post('/force_create.json', { "bookings": bookingBuffer }, function (bookings) {
+            $('#bookingAlerts').hide();
+            $('#bookingWarnings').empty();
+            var warning = false;
+            $.each(bookings, function (pos, booking) {
+              if (booking.status_id != 5) {
+                var providerLock = '-unlock';
+                if (booking.provider_lock) {
+                  providerLock = '-lock';
+                };
+                var originClass = 'origin-manual';
+                originClass += providerLock + statusIcon[booking.status_id];
+                var events = {
+                  id: booking.id,
+                  title: booking.first_name+' '+booking.last_name+' - '+booking.service_name,
+                  allDay: false,
+                  start: booking.start,
+                  end: booking.end,
+                  resourceId: booking.service_provider_id,
+                  className: originClass,
+                  title_qtip: booking.first_name+' '+booking.last_name,
+                  time_qtip: booking.start.substring(11,16) + ' - ' + booking.end.substring(11,16),
+                  service_qtip: booking.service_name,
+                  phone_qtip: booking.phone,
+                  email_qtip: booking.email,
+                  comment_qtip: booking.company_comment
+                };
+                $('#calendar').fullCalendar('renderEvent', events, true);
               }
-              $('#bookingWarnings').append(warnings);
-              warning = true;
-            }
+              if (booking.warnings.length > 0) {
+                var warnings = '';
+                for (i in booking.warnings) {
+                  warnings += booking.warnings[i] + '. ';
+                }
+                $('#bookingWarnings').append(warnings);
+                warning = true;
+              }
+            });
+            if (warning) {
+              $('#bookingAlerts').show();
+            };
+            $('#hoursOptimizer').modal('hide');
           });
-          if (warning) {
-            $('#bookingAlerts').show();
-          };
+        } else{
           $('#hoursOptimizer').modal('hide');
-        });
-      } else {
-        $('#hoursOptimizer').modal('hide');
-      };
+        };
+      });
     }
   });
 }
@@ -545,11 +551,55 @@ $(function () {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
   };
 
+  $(userForm + "#booking_client_identification_number").autocomplete({
+    source: '/clients_rut_suggestion',
+    appendTo: '#hoursOptimizer #new_booking #rut_suggestions',
+    autoFocus: true,
+    minLength: 3,
+    select: function( event, ui ) {
+      event.preventDefault();
+      var client = eval("(" + ui.item.value + ")");
+      setSuggestionData(client);
+      checkEmail();
+    }
+  }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+    return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+  };
+
   $(userForm + "#booking_client_email").on('input',function(e){
     checkEmail();
   });
 
   $(userForm + '#xButton').click(function() {
     resetForm();
+  });
+
+  $("#optimizerDateSelector").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    prevText: 'Atrás',
+    nextText: 'Adelante',
+    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    today: 'Hoy',
+    clear: '',
+    onSelect: function(newDate){
+      $("#pickerSelected").empty();
+      $("#pickerSelected").append(newDate);
+    },
+    beforeShow: function(date) {
+      $('#ui-datepicker-div').addClass("customDatepicker");
+      $(".customDatepicker .ui-datepicker-calendar").css("width", "214px !important");
+    }
+  });
+
+  $(document.body).on('click', '.optimizer-date-span', function(e){
+    $(e.currentTarget).find('input').datepicker('show');
   });
 });

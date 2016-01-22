@@ -13,16 +13,23 @@
     <div class="col-md-2">
       <ul id="myTab" class="nav nav-pills nav-stacked tab-margin" role="tablist">
         <li role="presentation"><a id="company_link" href="#company" role="tab" data-toggle="pill" data-title="Empresa" data-description="Configura el nombre de empresa, descripción, url de tu mini-sitio, logo y política de cancelación.">Empresa</a></li>
-        <li role="presentation"><a id="minisite_link" href="#minisite" role="tab" data-toggle="pill" data-title="Reservas" data-description="Habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu vase de datos puedan reservar.">Reservas</a></li>
+        <li role="presentation"><a id="minisite_link" href="#minisite" role="tab" data-toggle="pill" data-title="Reservas" data-description="Habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.">Reservas</a></li>
         <li role="presentation"><a id="calendar_link" href="#calendar" role="tab" data-toggle="pill" data-title="Calendario" data-description="Controla el tamaño, el tiempo, de cada bloque del horario en la sección calendario.">Calendario</a></li>
         <li role="presentation"><a id="email_link" href="#emails" role="tab" data-toggle="pill" data-title="E-mails" data-description="Configura la dirección desde donde se envían los correos masivos (Remitentes) y la firma de estos.">E-mails</a></li>
         <li role="presentation"><a id="embedded_link" href="#embedded" role="tab" data-toggle="pill" data-title="Facebook / Web" data-description="Agrega una pestaña de reservas a la página de facebook de tu empresa.">Facebook / Web</a></li>
         <% if current_user.company.company_setting.online_payment_capable %>
         <li role="presentation"><a id="payment_link" href="#online-payment" role="tab" data-toggle="pill" data-title="Pago Online" data-description="Habilita el pago en línea, configura si es editable o cancelable una reserva pagada">Pago Online</a></li>
+
+        <% if current_user.company.company_setting.promo_offerer_capable %>
+          <li role="presentation"><a id="promotions_link" href="#promotions" role="tab" data-toggle="pill" data-title="Promociones" data-description="Configura los distintos horarios para ofrecer tus servicios en promoción.">Promociones</a></li>
+        <% end %>
+
         <% end %>
         <% if current_user.company.company_setting.deal_activate %>
         <li role="presentation"><a id="deal_link" href="#deals" role="tab" data-toggle="pill" data-title="Convenios" data-description="Configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.">Convenios</a></li>
         <% end %>
+        <li role="presentation"><a id="cashier_link" href="#cashier" role="tab" data-toggle="pill" data-title="Sistema de Caja" data-description="Configura el sistema de caja y medios de pagos que acepta tu empresa.">Sistema de Caja</a></li>
+        <li role="presentation"><a id="notifications_link" href="#notifications" role="tab" data-toggle="pill" data-title="Notificaciones" data-description="Configura que e-mails deseas recibir y a que correo.">Notificaciones</a></li>
       </ul>
     </div>
     <!-- Panels -->
@@ -51,15 +58,13 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
             <div class="col-md-6">
               <div onclick="$('#minisite_link').click();" class="media">
                 <div class="media-left">
                   <%= image_tag 'admin/2.png', class: 'media-object media-image' %>
                 </div>
                 <div class="media-body">
-                  <span class="text-green">Reservas:</span> habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu vase de datos puedan reservar.
+                  <span class="text-green">Reservas:</span> habilita tu mini-sitio, la opción de aparecer en el Buscador AgendaPro y limitar que sólo las personas en tu base de datos puedan reservar.
                 </div>
               </div>
             </div>
@@ -73,8 +78,6 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
             <div class="col-md-6">
               <div onclick="$('#calendar_link').click();" class="media">
                 <div class="media-left">
@@ -82,6 +85,26 @@
                 </div>
                 <div class="media-body">
                   <span class="text-green">Calendario:</span> controla el tamaño, el tiempo, de cada bloque del horario en la sección calendario.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div onclick="$('#notifications_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/7.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Notificaciones:</span> configura que e-mails deseas recibir y a que correo.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div onclick="$('#cashier_link').click();" class="media">
+                <div class="media-left">
+                  <%= image_tag 'admin/8.png', class: 'media-object media-image' %>
+                </div>
+                <div class="media-body">
+                  <span class="text-green">Sistema de Caja:</span> Configura el sistema de caja y medios de pagos que acepta tu empresa.
                 </div>
               </div>
             </div>
@@ -97,26 +120,36 @@
               </div>
             </div>
             <% end %>
-          </div>
-          <% if current_user.company.company_setting.deal_activate %>
-          <div class="row">
-            <div class="col-md-6">
-              <div onclick="$('#deal_link').click();" class="media">
-                <div class="media-left">
-                  <%= image_tag 'admin/6.png', class: 'media-object media-image' %>
-                </div>
-                <div class="media-body">
-                  <span class="text-green">Convenios:</span> configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.
+            <% if current_user.company.company_setting.online_payment_capable && current_user.company.company_setting.promo_offerer_capable %>
+              <div class="col-md-6">
+                <div onclick="$('#promotions_link').click();" class="media">
+                  <div class="media-left">
+                    <%= image_tag 'admin/icono_promociones.png', class: 'media-object media-image' %>
+                  </div>
+                  <div class="media-body">
+                    <span class="text-green">Promociones:</span> configura los distintos horarios para ofrecer descuentos en tus servicios prepagados en línea.
+                  </div>
                 </div>
               </div>
-            </div>
+            <% end %>
+            <% if current_user.company.company_setting.deal_activate %>
+              <div class="col-md-6">
+                <div onclick="$('#deal_link').click();" class="media">
+                  <div class="media-left">
+                    <%= image_tag 'admin/6.png', class: 'media-object media-image' %>
+                  </div>
+                  <div class="media-body">
+                    <span class="text-green">Convenios:</span> configura el uso de convenios, el tiempo y la cantidad de veces que se pueden usar.
+                  </div>
+                </div>
+              </div>
+            <% end %>
           </div>
-          <% end %>
         </div>
         <!-- Company -->
         <div class="tab-pane" id="company">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-sm-12">
               <%= form_for @company, :html => {:class => 'company-form', :id => 'company-form', :multipart => true} do |f| %>
                 <div class="row">
                   <div class="col-md-6">
@@ -126,11 +159,11 @@
                       <span class="help-block"></span>
                       <span class="form-control-feedback"></span>
                     </div>
-                    <div class="form-group has-feedback">
+                    <div class="form-group has-feedback <%= 'hidden' if @company.activate_i18n %>">
                       <%= f.label :web_address, 'Dirección Sitio AgendaPro' %>
                       <div class="input-group">
-                        <%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
-                        <span class="input-group-addon">.agendapro.cl</span>
+                        <%= f.text_field :web_address, :required => true, :class => 'form-control company-web-address', :placeholder => 'Empresa (requerido)' %>
+                        <span class="input-group-addon">.agendapro<%= @company.country.domain %></span>
                       </div>
                       <span class="help-block"></span>
                       <span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
@@ -142,8 +175,6 @@
                       <%= f.text_area :description, :class => 'form-control', :rows => "7" %>
                     </div>
                   </div>
-                </div>
-                <div class="row">
                   <div class="col-md-3">
                     <div class="form-group has-feedback">
                       <%= f.label :logo, 'Logo Compañía' %>
@@ -158,13 +189,36 @@
                     </div>
                   </div>
                   <div class="col-md-3">
-                    <% if @company.logo_url %>
                     <div class="company-logo">
-                      <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
+                      <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name %>
                     </div>
-                    <% end %>
                   </div>
                 </div>
+                <% if @company.activate_i18n %>
+                <div class="row ">
+                  <div class="form-group has-feedback">
+                    <div class="control-group">
+                      <% Country.all.each do |country| %>
+                        <div class="col-sm-6">
+                          <%= f.fields_for :company_countries, @company.company_countries.find_or_initialize_by(country_id: country.id) do |layer_field| %>
+                            <%= layer_field.hidden_field :country_id, value: country.id.to_s %>
+                            <div class="controls">
+                              <%= layer_field.label :web_address, country.name, class: 'control-label' %>
+                              <div class="input-group">
+                                <span class="input-group-addon"><%= layer_field.check_box :active, checked: ! @company.company_countries.find_by(country_id: country.id).nil?, disabled: @company.country_id == country.id, class: 'company-country-checkbox' %></span>
+                                <%= layer_field.text_field :web_address, class: 'form-control company-web-address', disabled: @company.company_countries.find_by(country_id: country.id).nil?, required: true %>
+                                <span class="input-group-addon">.agendapro<%= country.domain %></span>
+                              </div>
+                              <span class="help-block"></span>
+                            </div>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+                <% end %>
+                <br />
                 <div class="row">
                   <div class="col-md-12">
                     <div class="form-group has-feedback">
@@ -204,6 +258,7 @@
           <div class="row">
             <div class="col-md-12">
               <%= form_for @company_setting, :html => {:class => 'company-form', :id => '#times-form'} do |f| %>
+                <input type="hidden" name="origin" id="origin" value="minisite">
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group">
@@ -233,38 +288,38 @@
                     <div class="form-group">
                       <div class="checkbox">
                         <label>
+                          <%= f.check_box :client_exclusive %> Exclusivo para Clientes
+                        </label>
+                        <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el <%= (I18n.t('ci')).capitalize %>.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
                           <%= f.check_box :activate_notes %> Permitir notas del cliente
                         </label>
                         <span class="help-block">Habilita esta opción para que tus clientes puedan incluir un comentario de texto libre al reservar a través de la página.</span>
                       </div>
                     </div>
                     <div class="form-group">
-                      <div class="checkbox">
-                        <label>
-                          <%= f.check_box :client_exclusive %> Exclusivo para Clientes
-                        </label>
-                        <span class="help-block">Habilita esta opción para que sólo puedan reservar clientes ingresados en la sección Clientes, usando el RUT.</span>
-                      </div>
+                      <%= f.label :preset_notes, 'Notas Predefinidas' %>
+                      <span class="help-block">Un comentario predefinido que aparecera en la sección de notas del cliente</span>
+                      <%= f.text_area :preset_notes, class: 'form-control' %>
                     </div>
                     <div class="form-group">
                       <%= f.label :provider_preference, 'Preferencia Prestador' %>
                       <span class="help-block">Aquí configuras si el cliente puede o debe elegir el prestador con el que se atenderá. Si no se elige, se seleccionará automáticamente al prestador con menos ocupación ese día.</span>
                       <%= f.select :provider_preference, options_for_select([["Cliente puede elegir prestador", 0], ["Cliente debe elegir prestador", 1], ["Cliente no puede elegir prestador", 2]], selected: @company_setting.provider_preference ), {}, {class: "form-control" } %>
                     </div>
+                  </div>
+                  <div class="col-md-6">
                     <div class="form-group">
                       <%= f.label :booking_confirmation_time, 'Recordatorios' %>
                       <span class="help-block">En esta opción defines cuántos días antes de la reserva se envía el recordatorio al cliente..</span>
                       <%= f.select :booking_confirmation_time, options_for_select([["El mismo día", 0], ["1 día antes", 1], ["2 días antes", 2], ["3 días antes", 3]], selected: @company_setting.booking_confirmation_time ), {}, {class: "form-control" } %>
                     </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <%= f.label :booking_configuration_email, 'Notificaciones de Reservas' %>
-                      <span class="help-block">Esta opción define cómo se notifican las reservas al email. Puedes configurar esta opción para cada local y prestador independientemente.</span>
-                      <%= f.select :booking_configuration_email, options_for_select([["Notificación por cada reserva", 0], ["Enviar resumen de reservas diario", 1], ["No notificar reservas por email", 3]], selected: @company_setting.booking_configuration_email ), {}, {class: "form-control" } %>
-                    </div>
                     <div class="form-group has-feedback">
-                      <%= f.label :before_booking, 'Tiempo Mínimo de Reserva:' %>
+                      <%= f.label :before_booking, 'Tiempo Mínimo de Reserva' %>
                       <span class="help-block">Horas mínimas requeridas para que un cliente reserve. No se podrá reservar con menos anticipación.</span>
                       <div class="input-group">
                         <%= f.number_field :before_booking, :in => 1...169, :required => true, :class => 'form-control' %>
@@ -273,7 +328,7 @@
                       <span class="help-block"></span>
                     </div>
                     <div class="form-group">
-                      <%= f.label :after_booking, 'Tiempo Máximo a Futuro:' %>
+                      <%= f.label :after_booking, 'Tiempo Máximo a Futuro' %>
                       <span class="help-block">Tiempo máximo que una persona puede reservar a futuro. No se permiten reservas para más de X meses a futuro.</span>
                       <div class="input-group">
                         <%= f.number_field :after_booking, :in => 1...13, :required => true, :class => 'form-control' %>
@@ -282,7 +337,23 @@
                       <span class="help-block"></span>
                     </div>
                     <div class="form-group">
-                      <%= f.label :before_edit_booking, 'Política de Edición de Reservas:' %>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :can_edit %> Reservas Editables
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tu cliente pueda modificar las reservas que realiza.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :can_cancel %> Reservas Cancelables
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tu cliente pueda cancelar las reservas que realiza.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :before_edit_booking, 'Política de Edición de Reservas' %>
                       <span class="help-block">Horas mínimas requeridas para que un cliente edite o cancele su reserva. No se podrá editar o cancelar reservas con menos anticipación.</span>
                       <div class="input-group">
                         <%= f.number_field :before_edit_booking, :in => 1...169, :required => true, :class => 'form-control' %>
@@ -291,7 +362,7 @@
                       <span class="help-block"></span>
                     </div>
                     <div class="form-group">
-                      <%= f.label :max_changes, 'Ediciones Maximas:' %>
+                      <%= f.label :max_changes, 'Ediciones Maximas' %>
                       <span class="help-block">Cantidad de veces que un cliente puede editar su reserva.</span>
                       <div class="input-group">
                         <%= f.number_field :max_changes, :min => 0, :required => true, :class => 'form-control' %>
@@ -318,6 +389,7 @@
           <div class="row">
             <div class="col-md-12">
               <%= form_for @company_setting, :html => {:class => 'company-form'} do |f| %>
+                <input type="hidden" name="origin" id="origin" value="calendar">
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group">
@@ -352,6 +424,14 @@
                         <span class="help-block">Esta opción te permite poder tomar reservas fuera del horario del prestador, para reservas ingresadas internamente. Si habilitas esta opción podrás hacer reservas en todo el horario visible en la sección <strong>"Calendario"</strong>, puedes extender este habilitando la próxima opción.</span>
                       </div>
                     </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :strict_booking %> Requerir Datos de Contacto
+                          <span class="help-block">Si habilitas esta opción al generar una nueva reserva, desde el calendario, el cliente debe tener asociado, como mínimo, email o teléfono.</span>
+                        </label>
+                      </div>
+                    </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
@@ -359,13 +439,13 @@
                         <label>
                           <%= f.check_box :extended_schedule_bool %> Extender Calendario
                         </label>
-                        <span class="help-block">Habilita esta opción para extender el horario en la sección <strong>"Calendario"</strong>, y así poder tomar reservas antes y/o después de tu horario normal, si la opción anterior así lo permite.</span>
+                        <span class="help-block">Habilita esta opción para extender el horario en la sección <strong>"Calendario"</strong>, y así poder generar reservas internas fuera del horario de apertura de tus locales.</span>
                       </div>
                     </div>
                     <div class="form-group ">
                       <%= f.label :extended_min_hour, 'Horario Calendario Extendido' %>
                       <div>
-                        <%= f.time_select :extended_min_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= f.time_select :extended_max_hour, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+                        <%= f.time_select :extended_min_hour, {minute_step: 15, end_hour: @open_end}, {:class => 'form-control date-select', required: true} %> - <%= f.time_select :extended_max_hour, {minute_step: 15, start_hour: @close_start}, {:class => 'form-control date-select', required: true} %>
                       </div>
                     </div>
                     <div class="form-group">
@@ -374,6 +454,14 @@
                           <%= f.check_box :booking_history %> Historial de Modificaciones de Reservas
                         </label>
                         <span class="help-block">Si activas esta opción, se guardará un historial de modificaciones para cada reserva. Este historial es exclusivamente visible por el Administrador General y el Administrador de Local, para las reservas de el(los) local(es) al que este asociado.</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :use_identification_number %> Usar <%= I18n.t('ci') %> en Reserva
+                        </label>
+                        <span class="help-block">Al activar esta opción, en el dialogo de reserva tendrás, además de los campos por defecto, disponible un campo <%= I18n.t('ci') %>, el que también te permitirá buscar clientes por <%= I18n.t('ci') %>. Además, se exigirá <%= I18n.t('ci') %> a los clientes que reserven en línea.</span>
                       </div>
                     </div>
                     <div class="form-group">
@@ -398,7 +486,7 @@
               <div class="background-grey">
                 <h3 class="text-green">
                   Códigos de Staff
-                  <button class="btn btn-green pull-right" data-toggle="modal" data-target="#staffCode">Agregar código</button>
+                  <button id="NewStaffCode" class="btn btn-green pull-right" data-toggle="modal" data-target="#staffCode">Agregar código</button>
                 </h3>
               </div>
               <table class="table table-hover table-green">
@@ -406,7 +494,7 @@
                   <tr>
                     <th>Staff</th>
                     <th>Código</th>
-                    <th>Eliminar</th>
+                    <th>Opciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -414,7 +502,14 @@
                     <tr>
                       <td><%= staff_code.staff %></td>
                       <td><%= staff_code.code %></td>
-                      <td><%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, staff_code, method: :delete, data: { confirm: '¿Estás seguro de eliminar el remitente seleccionado?' }, class: 'btn btn-red' %></td>
+                      <td>
+                        <button class="btn btn-orange edit_staff_code_button" data-staff="<%= staff_code.staff %>" data-active="<%= staff_code.active %>" data-code="<%= staff_code.code %>" data-id="<%= staff_code.id %>" data-toggle="modal" data-target="#staffCode"><i class="fa fa-pencil"></i></button>
+                        <% if staff_code.active %>
+                          <%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, deactivate_staff_code_path(:id => staff_code.id), method: :patch, data: { confirm: '¿Estás seguro de desactivar el Código seleccionado?' }, class: 'btn btn-red' %>
+                        <% else %>
+                          <%= link_to '<i class="fa fa-check"></i>'.html_safe, activate_staff_code_path(:id => staff_code.id), method: :patch, :class => "btn btn-green", data: { confirm: '¿Estás seguro de re-activar el Código seleccionado?' } %>
+                        <% end %>
+                      </td>
                     </tr>
                   <% end %>
                 </tbody>
@@ -459,6 +554,7 @@
                 <small>Esta es la firma que irá en los e-mails que se le envien a tus clientes.</small>
               </h3>
               <%= form_for @company_setting do |f| %>
+                <input type="hidden" name="origin" id="origin" value="emails">
                 <div class="form-group">
                   <%= f.text_area :signature, :class => 'form-control', :rows => "7" %>
                 </div>
@@ -511,7 +607,7 @@
               </div>
               <h3 class="text-green">¿Quieres desactivar las reservas en línea por Facebook?</h3>
               <p>Para hacerlo debes desactivar las reservas por Facebook apretando el siquiente botón "Desactivar Facebook", y luego debes eliminar la pestaña de tu página de Facebook manualmente, desde las configuraciones de esta.</p>
-              <p><%= link_to "Desactivar Facebook", delete_facebook_pages_path, data: { confirm: '¿Estás seguro de querer desactivar las reservas desde Facebook? Por favor recuerda eliminar la pestaña de tu página de Facebook.' }, class: "btn btn-red" %></p>
+              <p><%= link_to "Desactivar Facebook", delete_facebook_pages_path, method: :delete, data: { confirm: '¿Estás seguro de querer desactivar las reservas desde Facebook? Por favor recuerda eliminar la pestaña de tu página de Facebook.' }, class: "btn btn-red" %></p>
             </div>
           </div>
           <div class="row" style="margin-top: 20px;">
@@ -520,13 +616,13 @@
                 <h3 class="text-green">Agendapro directamente en tu Página Web:</h3>
                 <p>Simplemente pega este código en el archivo de tu página a la que quieres agregar las reservas en línea (si necesitas apoyo, puede pedir ayuda al administrador de tu página web o webmaster, o escribirnos a contacto@agendapro.cl con tus dudas).</p>
               </div>
-              <pre class="pre-scrollable well-white">&lt;iframe src="<%= root_url(subdomain: 'www') %>iframe/overview/<%= @company.secret_code %>" width="810" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;" &gt;&lt;/iframe&gt;</pre>
+              <pre class="pre-scrollable well-white">&lt;iframe src="http://agendapro.co/iframe/overview/<%= @company.secret_code %>" width="810" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;" &gt;&lt;/iframe&gt;</pre>
             </div>
           </div>
           <div class="row">
             <div class="col-md-12">
               <h3 class="text-green">Agrega el botón AgendaPro</h3>
-              <pre class="pre-scrollable">&lt;a class="btn btn-green btn-lg" href="http://<%= @web_address %>.agendapro.cl" target="_blank" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:0;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:10px;padding-bottom:10px;padding-right:16px;padding-left:16px;font-size:18px;line-height:1.33;border-radius:6px;color:#ffffff;background-color:#22c488;border-color:#1ba970;" &gt;Reserva Online&lt;/a&gt;</pre>
+              <pre class="pre-scrollable">&lt;a class="btn btn-green btn-lg" href="http://<%= @web_address %>.agendapro<%= @company.country.domain %>" target="_blank" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:0;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:10px;padding-bottom:10px;padding-right:16px;padding-left:16px;font-size:18px;line-height:1.33;border-radius:6px;color:#ffffff;background-color:#22c488;border-color:#1ba970;" &gt;Reserva Online&lt;/a&gt;</pre>
             </div>
           </div>
         </div>
@@ -536,6 +632,7 @@
           <div class="row">
             <div class="col-md-12">
               <%= form_for @company_setting, :html => {:class => 'company-form', :id => 'online-payment-form'} do |f| %>
+                <input type="hidden" name="origin" id="origin" value="embedded">
                 <%= f.hidden_field :company_id, :value => current_user.company.id %>
                 <div class="row">
                   <!-- Detalles -->
@@ -667,12 +764,135 @@
           </div>
         </div>
         <% end %>
+        <!-- Promociones -->
+        <% if current_user.company.company_setting.online_payment_capable && current_user.company.company_setting.promo_offerer_capable %>
+        <div class="tab-pane" id="promotions">
+          <% if !current_user.company.company_setting.allows_online_payment %>
+            <div class="row">
+              <div class="col-md-12">
+                <label style="color: fd633f;">
+                  Advertencia: No has configurado los pagos en línea. Puedes configurar los horarios de promociones, pero no podrás crearlas hasta que configures el pago en línea.
+                </label>
+              </div>
+            </div>
+          <% end %>
+          <div class="row">
+            <div class="col-md-12">
+              <%= form_for @company_setting, :html => {:class => 'company-form', :id => 'promo-times-form'} do |f| %>
+                <%= f.hidden_field :company_id, :value => current_user.company.id %>
+                <%= f.fields_for :promo_time do |p| %>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= p.check_box :active %> Activar promociones
+                        </label>
+                        <span class="help-block">Activa las promociones para ofrecer descuentos en tus servicios prepagados en línea según el horario de la reserva.</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">
+                    <div class="hour-title">
+                      Mañana
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                      <div class="promo-hour-select has-feedback morning-promo-hour">
+                        <%= p.time_select :morning_start, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= p.time_select :morning_end, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+                        <span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <div class="input-group">
+                        <div class="input-group-addon">Descuento</div>
+                        <% if @company_setting.promo_time.nil? %>
+                          <%= p.select :morning_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }), {}, {class: "form-control"} %>
+                        <% else %>
+                          <%= p.select :morning_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }, @company_setting.promo_time.morning_default), {}, {class: "form-control"} %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">
+                    <div class="hour-title">
+                      Tarde
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="promo-hour-select has-feedback afternoon-promo-hour">
+                      <%= p.time_select :afternoon_start, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= p.time_select :afternoon_end, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+                      <span class="help-block"><label id="afternoon-error" class="error" hidden></label></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <div class="input-group">
+                        <div class="input-group-addon">Descuento</div>
+                        <% if @company_setting.promo_time.nil? %>
+                          <%= p.select :afternoon_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }), {}, {class: "form-control"} %>
+                        <% else %>
+                          <%= p.select :afternoon_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }, @company_setting.promo_time.afternoon_default), {}, {class: "form-control"} %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-2">
+                    <div class="hour-title">
+                      Noche
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="promo-hour-select has-feedback night-promo-hour">
+                      <%= p.time_select :night_start, {minute_step: 15}, {:class => 'form-control date-select', required: true} %> - <%= p.time_select :night_end, {minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+                      <span class="help-block"><label id="night-error" class="error" hidden></label></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <div class="input-group">
+                        <div class="input-group-addon">Descuento</div>
+                        <% if @company_setting.promo_time.nil? %>
+                          <%= p.select :night_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }), {}, {class: "form-control"} %>
+                        <% else %>
+                          <%= p.select :night_default, options_for_select({ "0 %" => "0", "5 %" => "5", "10 %" => "10", "15 %" => "15", "20 %" => "20", "25 %" => "25", "30 %" => "30", "35 %" => "35", "40 %" => "40", "45 %" => "45", "50 %" => "50", "55 %" => "55", "60 %" => "60", "65 %" => "65", "70 %" => "70", "75 %" => "75", "80 %" => "80", "85 %" => "85", "90 %" => "90", "95 %" => "95" }, @company_setting.promo_time.night_default), {}, {class: "form-control"} %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                        <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <% end %>
+        <!-- Fin Promociones -->
         <!-- Deals -->
         <% if current_user.company.company_setting.deal_activate %>
         <div class="tab-pane" id="deals">
           <div class="row">
             <div class="col-md-12">
               <%= form_for @company_setting, :html => {:class => 'company-form'} do |f| %>
+                <input type="hidden" name="origin" id="origin" value="deals">
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group">
@@ -691,9 +911,9 @@
                     <div class="form-group">
                       <div class="checkbox">
                         <label>
-                          <%= f.check_box :deal_identification_number %> Etiqueta es RUT
+                          <%= f.check_box :deal_identification_number %> Etiqueta es <%= (I18n.t('ci')).capitalize %>
                         </label>
-                        <span class="help-block">Si habilitas esta opción, se validará y dará formato al campo ingresado como si fuera RUT (persona o empresa).</span>
+                        <span class="help-block">Si habilitas esta opción, se validará y dará formato al campo ingresado como si fuera <%= (I18n.t('ci')).capitalize %> (persona o empresa).</span>
                       </div>
                     </div>
                     <div class="form-group">
@@ -777,6 +997,372 @@
           </div>
         </div>
         <% end %>
+        <!-- Cashier -->
+        <div class="tab-pane" id="cashier">
+          <div class="row">
+            <div class="col-md-12">
+              <p>Aquí puedes configurar los medios de pago que aceptas y qué campos son obligatorios al registrar el pago de una o varias reservas. El código se refiere a algún registro del medio de pago como código de autorización de tarjetas o número de cheque. Puedes ingresar otro medios de pago, y se podrán elegir siempre y cuando la opción "Otro" esté activa.</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <%= form_for @company_setting, :html => {:class => 'company-form', :id => '#payment-method-form'} do |f| %>
+                <input type="hidden" name="origin" id="origin" value="cashier">
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :show_cashes %> Habilitar caja avanzada
+                    </label>
+                    <span class="help-block">Habilita esta opción para que puedas llevar un balance completo de tus ventas y tu caja chica, incluyendo traspasos, ingresos por pagos de servicios y productos, movimientos varios y cierres de caja configurables.</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :payment_client_required %> Requerir cliente en pago
+                    </label>
+                    <span class="help-block">Habilita esta opción para que al registrar un pago sea obligatorio ingresar un cliente existente o nuevo.</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :receipt_required %> Requerir número de comprobante de pago
+                    </label>
+                    <span class="help-block">Habilita esta opción para que al registrar un pago sea obligatorio ingresar el número de comprobante de pago (número de boleta, factura, etc.).</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :editable_payment_prices %> Permitir edición de precios en pago y reservas
+                    </label>
+                    <span class="help-block">Habilita esta opción para que al registrar una reserva o un pago los precios de los productos y servicios sean editables.</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :mandatory_mock_booking_info %> Requerir información de servicios en pagos
+                    </label>
+                    <span class="help-block">Habilita esta opción para que al añadir un servicio sin reserva a un pago, sea obligatorio ingresar el servicio y el prestador asociado.</span>
+                  </div>
+                </div>
+                <br />
+                <table class="table table-hover table-green">
+                  <thead>
+                    <tr>
+                      <td>Medio de Pago</td>
+                      <td>Activo</td>
+                      <td>Requerir Código</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <% @payment_methods.each do |payment_method| %>
+                    <tr>
+                      <td><%= payment_method.name %></td>
+                      <%= f.fields_for :payment_method_settings, payment_method.payment_method_settings.find_or_initialize_by(company_setting: @company_setting) do |a| %>
+                      <td>
+                        <%= a.hidden_field :company_setting_id, :value => @company_setting.id %>
+                        <%= a.hidden_field :payment_method_id, :value => payment_method.id %>
+                        <% if payment_method.name != "Online" %>
+                          <%= a.check_box :active %>
+                        <% else %>
+                          <%= a.check_box :active, checked: true, disabled: true %>
+                        <% end %>
+                      </td>
+                      <td>
+                      <% if payment_method.name != "Efectivo" && payment_method.name != "Otro" %>
+                        <% if payment_method.name != "Online" %>
+                          <%= a.check_box :number_required %>
+                        <% else %>
+                          <%= a.check_box :number_required, checked: true, disabled: true %>
+                        <% end %>
+                      <% else %>
+                        <%= a.check_box :number_required, checked: false, class: "hidden" %>
+                      <% end %>
+                      </td>
+                      <% end %>
+                    </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                  <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <br />
+          <br />
+          <div class="row">
+            <div class="col-md-12">
+              <div class="background-grey">
+                <h3 class="text-green">
+                  Listado de Medios de Pago (Otros)
+                  <button class="btn btn-green pull-right" id="new_payment_method_button"><i class="fa fa-plus"></i> Agregar Medio de Pago (Otros)</button>
+                </h3>
+              </div>
+              <table class="table table-hover table-green">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Activo</th>
+                    <th>Requerir Código</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @company_payment_methods.each do |company_payment_method| %>
+                    <tr>
+                      <td><%= company_payment_method.name %></td>
+                      <td><%= company_payment_method.active ? "Activo" : "Inactivo" %></td>
+                      <td><%= company_payment_method.number_required ? "Requerido" : "No Requerido" %></td>
+                      <td><button class="btn btn-orange edit_company_payment_button" data-name="<%= company_payment_method.name %>" data-active="<%= company_payment_method.active %>" data-number-required="<%= company_payment_method.number_required %>" data-id="<%= company_payment_method.id %>"><i class="fa fa-pencil"></i> Editar</button>
+                      <% if company_payment_method.payments.count < 1 %>
+                        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, company_payment_method, method: :delete, data: { confirm: '¿Estás seguro de eliminar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
+                      <% else %>
+                        <% if company_payment_method.active %>
+                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_company_payment_method_path(id: company_payment_method.id), method: :patch, data: { confirm: '¿Estás seguro de desactivar el medio de pago seleccionado?' }, class: 'btn btn-red' %>
+                        <% else %>
+                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_company_payment_method_path(id: company_payment_method.id), method: :patch, data: { confirm: '¿Estás seguro de activar el medio de pago seleccionado?' }, class: 'btn btn-green' %>
+                        <% end %>
+                      <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+              <p><strong>Nota:</strong> Si el medio de pago está asociado a algúna reserva, este ya no podrá ser eliminado y sólo podrá ser desactivado.</p>
+            </div>
+          </div>
+
+          <!-- Cashiers -->
+
+          <div class="row" style="margin-top: 40px;">
+            <div class="col-md-12">
+              <div class="background-grey">
+                <h3 class="text-green">
+                  Listado de cajeros
+                  <button class="btn btn-green pull-right" id="new_cashier_button"><i class="fa fa-plus"></i> Agregar cajero</button>
+                </h3>
+              </div>
+              <table class="table table-hover table-green">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Activo</th>
+                    <th>Código</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @cashiers.each do |cashier| %>
+                    <tr>
+                      <td><%= cashier.name %></td>
+                      <td><%= cashier.active ? "Activo" : "Inactivo" %></td>
+                      <td><%= cashier.code %></td>
+                      <td><button class="btn btn-orange edit_cashier_button" data-name="<%= cashier.name %>" data-active="<%= cashier.active %>" data-code="<%= cashier.code %>" data-id="<%= cashier.id %>"><i class="fa fa-pencil"></i> Editar</button>
+
+                        <!-- link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, cashier, method: :delete, data: { confirm: '¿Estás seguro de eliminar el cajero seleccionado?' }, class: 'btn btn-red' -->
+
+                        <% if cashier.active %>
+                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_cashier_path(id: cashier.id), method: :patch, data: { confirm: '¿Estás seguro de desactivar el cajero seleccionado?' }, class: 'btn btn-red' %>
+                        <% else %>
+                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_cashier_path(id: cashier.id), method: :patch, data: { confirm: '¿Estás seguro de activar el cajero seleccionado?' }, class: 'btn btn-green' %>
+                        <% end %>
+
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- End cashiers -->
+
+        </div>
+        <!-- Notifications -->
+        <div class="tab-pane" id="notifications">
+          <div class="row">
+            <div class="col-md-5">
+              <%= form_for @notification_email do |f| %>
+                <%= f.hidden_field :company_id, value: @company.id %>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.label :email, "E-mail de Notificación", class: 'text-green' %>
+                      <%= f.email_field :email, class: "form-control", required: true %>
+                      <span class="help-block">En que dirección desea recibir la notificación.</span>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :receptor_type, "Tipo de Notificación", class: 'text-green' %>
+                      <%= f.select :receptor_type, [['Compañía', 0], ['Local', 1], ['Prestador de Servicio', 2]], {}, {class: 'form-control'} %>
+                      <span class="help-block">Recibir notificaciones sobre eventos de la compañía, locales o prestadores de servicios.</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 hidden" id="local-notification">
+                    <div class="form-group">
+                      <%= f.label :location_ids, @company.name %>
+                      <%= f.collection_check_boxes :location_ids, @company.locations.where(active: true), :id, :name, {}, {class: "check_boxes"} do |b|%>
+                        <div class="checkbox">
+                          <label>
+                            <%= b.check_box %> <%= b.text %>
+                          </label>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                  <div class="col-md-12 hidden" id="provider-notification">
+                    <div class="row">
+                      <% for local in @company.locations.where(active: true) %>
+                      <div class="col-sm-4">
+                        <div class="form-group">
+                          <%= f.label :service_provider_ids, local.name %>
+                          <%= f.collection_check_boxes :service_provider_ids, local.service_providers.where(active: true), :id, :public_name, {}, {class: "check_boxes"} do |b|%>
+                            <div class="checkbox">
+                              <label>
+                                <%= b.check_box %> <%= b.text %>
+                              </label>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group background-green">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <label style="margin: 0;">Cuando recibir la Notificación</label>
+                          <span class="help-block" style="margin: 0;">Sobre cual evento desea recibir la notificación.</span>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :summary %> Resumen diario
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :new %> Nueva reserva manual
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :modified %> Reserva manual modificada
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :confirmed %> Reserva manual confirmada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :canceled %> Reserva manual cancelada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :new_web %> Nueva reserva online
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :modified_web %> Reserva online modificada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :confirmed_web %> Reserva online confirmada
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-sm-4">
+                          <div class="checkbox">
+                            <label>
+                              <%= f.check_box :canceled_web %> Reserva online cancelada
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', edit_company_setting_path(User.find(current_user.id).company.company_setting), :class => "btn btn-default" %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="col-md-7">
+              <div class="background-grey">
+                <h4 class="text-green">Notificaciones Activas</h4>
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>E-mail</th>
+                        <th>Tipo</th>
+                        <th>Notificaciones</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% for notification in @notifications %>
+                      <tr>
+                        <td><%= notification.email %></td>
+                        <td>
+                          <%= notification.receptor_type_text %>
+                        </td>
+                        <td><%= notification.notification_text %></td>
+                        <td style="white-space: nowrap;">
+                          <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_notification_email_path(notification), :class => "btn btn-sm btn-orange" %>
+                          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, notification, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar esta Notificación?' } %>
+                        </td>
+                      </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -822,6 +1408,7 @@
         <%= form_for @staff_code, :html => {:class => 'form-horizontal'} do |f| %>
           <div class="modal-body">
             <%= f.hidden_field :company_id, :value => current_user.company.id %>
+            <%= f.hidden_field :active %>
             <div class="form-group has-feedback">
               <%= f.label :staff, 'Staff', :class => 'control-label col-xs-2' %>
               <div class="col-xs-10">
@@ -853,7 +1440,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title" id="dealLabel">Agregar Convenio</h4>
+          <h4 class="modal-title" id="dealLabel">Convenio</h4>
         </div>
         <%= form_for @deal, :html => {:class => 'form-horizontal'} do |f| %>
           <div class="modal-body">
@@ -899,203 +1486,95 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="payment_method" tabindex="-1" role="dialog" aria-labelledby="paymentMethodLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="paymentMethodLabel">Medio de pago</h4>
+        </div>
+        <%= form_for @company_payment_method, :html => {:class => 'form-horizontal company_payment_method_form'} do |f| %>
+          <div class="modal-body">
+            <%= f.hidden_field :company_id, :value => current_user.company.id %>
+            <div class="form-group has-feedback">
+              <%= f.label :name, 'Nombre', :class => 'control-label col-xs-4' %>
+              <div class="col-xs-8">
+                <%= f.text_field :name, :class => 'form-control', required: true %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-offset-4 col-xs-8">
+                <label>
+                  <%= f.check_box :active %> Activar medio de pago
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-offset-4 col-xs-8">
+                <label>
+                  <%= f.check_box :number_required %> Exigir código al ingresar el pago
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="cashierModal" tabindex="-1" role="dialog" aria-labelledby="cashierModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="cashierModalLabel">Cajero</h4>
+        </div>
+        <%= form_for @cashier, :html => {:class => 'form-horizontal cashier_form', :id => 'cashier_form'} do |f| %>
+          <div class="modal-body">
+            <%= f.hidden_field :company_id, :value => current_user.company.id %>
+            <div class="form-group has-feedback">
+              <%= f.label :name, 'Nombre', :class => 'control-label col-xs-4' %>
+              <div class="col-xs-8">
+                <%= f.text_field :name, :class => 'form-control' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-offset-4 col-xs-8">
+                <label>
+                  <%= f.check_box :active %> Activar cajero
+                </label>
+              </div>
+            </div>
+            <div class="form-group has-feedback">
+              <%= f.label :code, 'Código', :class => 'control-label col-xs-4' %>
+              <div class="col-xs-8">
+                <%= f.text_field :code, :class => 'form-control' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
 <% end %>
 
 <% content_for :scripts do %>
+  <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag "admin/company_settings" %>
-  <script type="text/javascript">
-    
-
-    $(function () {
-      $('#myTab a').click(function (e) {
-        var title = $(this).data('title');
-        var description = $(this).data('description');
-
-        if (title.length > 0 && description.length > 0) {
-          $('#title').html(title);
-          $('#description').html(description);
-        };
-      });
-
-      $('#fromEmail').on('hidden.bs.modal', function (e) {
-        validator.resetForm();
-        $('.has-success').removeClass('has-success');
-        $('.fa.fa-check').removeClass('fa fa-check');
-        $('.has-error').removeClass('has-error');
-        $('.fa.fa-times').removeClass('fa fa-times');
-      });
-
-      $('#staffCode').on('hidden.bs.modal', function (e) {
-        validator.resetForm();
-        $('.has-success').removeClass('has-success');
-        $('.fa.fa-check').removeClass('fa fa-check');
-        $('.has-error').removeClass('has-error');
-        $('.fa.fa-times').removeClass('fa fa-times');
-      });
-
-      if($('#company_setting_allows_online_payment').prop('checked')) {
-        $(".account-info").removeClass("hidden");
-        if($("#company_setting_bank :selected").text() == "Otro") {
-          $("#other-bank").removeClass("hidden");
-          $(".account-data").addClass("hidden");
-        } else {
-          $("#other-bank").addClass("hidden");
-          $(".account-data").removeClass("hidden");
-        }
-      } else {
-        $(".account-info").addClass("hidden");
-        $("#other-bank").addClass("hidden");
-      }
-
-      if($('#company_setting_allows_online_payment').prop('checked')) {
-        $(".account-info").removeClass("hidden");
-
-        if($("#company_setting_bank :selected").text() == "Otro") {
-          $("#other-bank").removeClass("hidden");
-          $(".account-data").addClass("hidden");
-        } else {
-          $("#other-bank").addClass("hidden");
-          $(".account-data").removeClass("hidden");
-        }
-
-        var mod_can = false;
-
-        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
-          $(".cancel-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".cancel-div").addClass('hidden');
-        }
-
-        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
-          $(".modification-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".modification-div").addClass('hidden');
-        }
-
-        if(mod_can) {
-          $('.min-hours-div').removeClass('hidden');
-        } else {
-          $('.min-hours-div').addClass('hidden');
-        }
-      } else {
-        $(".account-info").addClass("hidden");
-        $("#other-bank").addClass("hidden");
-      }
-
-      $("#company_setting_allows_online_payment").change(function(){
-        if($('#company_setting_allows_online_payment').prop('checked')) {
-          $(".account-info").removeClass("hidden");
-          if($("#company_setting_bank :selected").text() == "Otro") {
-            $("#other-bank").removeClass("hidden");
-            $(".account-data").addClass("hidden");
-          } else {
-            $("#other-bank").addClass("hidden");
-            $(".account-data").removeClass("hidden");
-          }
-
-          var mod_can = false;
-
-          if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
-            $(".cancel-div").removeClass('hidden');
-            mod_can = true;
-          } else {
-            $(".cancel-div").addClass('hidden');
-          }
-
-          if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
-            $(".modification-div").removeClass('hidden');
-            mod_can = true;
-          } else {
-            $(".modification-div").addClass('hidden');
-          }
-
-          if(mod_can) {
-            $('.min-hours-div').removeClass('hidden');
-          } else {
-            $('.min-hours-div').addClass('hidden');
-          }
-        } else {
-          $("#other-bank").addClass("hidden");
-          $(".account-info").addClass("hidden");
-        }
-      });
-
-      $("#company_setting_bank").change(function(){
-        if($("#company_setting_bank :selected").text() == "Otro") {
-          $("#other-bank").removeClass("hidden");
-          $(".account-data").addClass("hidden");
-        } else {
-          $("#other-bank").addClass("hidden");
-          $(".account-data").removeClass("hidden");
-        }
-      });
-
-
-      $("#company_setting_online_cancelation_policy_attributes_modifiable").change(function(){
-        var mod_can = false;
-
-        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
-          $(".cancel-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".cancel-div").addClass('hidden');
-        }
-
-        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
-          $(".modification-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".modification-div").addClass('hidden');
-        }
-
-        if(mod_can) {
-          $('.min-hours-div').removeClass('hidden');
-        } else {
-          $('.min-hours-div').addClass('hidden');
-        }
-      });
-
-      $("#company_setting_online_cancelation_policy_attributes_cancelable").change(function(){
-
-        var mod_can = false;
-
-        if($("#company_setting_online_cancelation_policy_attributes_cancelable").prop('checked')) {
-          $(".cancel-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".cancel-div").addClass('hidden');
-        }
-
-        if($("#company_setting_online_cancelation_policy_attributes_modifiable").prop('checked')) {
-          $(".modification-div").removeClass('hidden');
-          mod_can = true;
-        } else {
-          $(".modification-div").addClass('hidden');
-        }
-
-        if(mod_can) {
-          $('.min-hours-div').removeClass('hidden');
-        } else {
-          $('.min-hours-div').addClass('hidden');
-        }
-      });
-
-      $('#company_web_address').on('change', function() {
-        var tmp = $('#company_web_address').val();
-        tmp = tmp.toLowerCase();
-        tmp = tmp.replace(/[áäâà]/gi, 'a'); //special a
-        tmp = tmp.replace(/[éëêè]/gi, 'e'); //Special e
-        tmp = tmp.replace(/[íïîì]/gi, 'i'); //Special i
-        tmp = tmp.replace(/[óöôò]/gi, 'o'); //Special o
-        tmp = tmp.replace(/[úüûù]/gi, 'u'); //Special u
-        tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
-        tmp = tmp.replace(/[^a-z0-9]/gi,'');
-        $('#company_web_address').val(tmp);
-      });
-
-      CKEDITOR.replace(company_setting_signature);
-    });
-  </script>
 <% end %>

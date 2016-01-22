@@ -1,0 +1,60 @@
+<div class="row" id="navegacion-workflow">
+  <div class="col-md-12">
+    <div class="container" style="color: #505050 !important; padding-top: 5px;">
+     <i class="fa fa-clock-o gray-icon">&nbsp;&nbsp;<span style="font-size: 24px !important; margin-top: -5px;">Validar reserva de sesión</span></i>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="container">
+    <div clas="row" id="espacio-workflow">
+      <div class="col-md-12" id="staff-calendar">
+          <% unless params[:id] %>
+            <div class="panel panel-info">
+              <div class="calendar-head">
+                <div class="panel-title" style="padding-left: 10px; font-size: 22px; font-weight: bold;">
+
+                  Valida tu reserva
+
+                </div>
+              </div>
+              <div class="panel-body" style="max-height: 350px; overflow-y: auto;">
+                <p style="padding-left: 10px; padding-top: 8px; color: #505050;">
+                  <% @second_address = @booking.location.second_address.blank? ? '' : ', ' + @booking.location.second_address %>
+
+                  <%= @booking.client.first_name %>, la empresa <%= @booking.location.company.name %> ha agendado o modificado una sesión del servicio <%= @booking.service.name %> por ti, para el día <%= I18n.l(@booking.start.to_datetime) %>, con el prestador <%= @booking.service_provider.public_name %>, <%= if !@booking.location.outcall then ' en ' + @booking.location.address+@second_address+', '+@booking.location.district.name + '.' else " a Domicilio." end %>
+                  <br />
+                  Confirma que deseas reservar esta sesión, o modifícala o cancelala desde el correo enviado. También puedes manejar cualquiera de estas opciones desde tu <%= link_to "Agenda", my_agenda_path %>, entrando con tu usuario AgendaPro. Si aún no tienes cuenta, puedes hacerte una <%= link_to "acá", new_user_session_path %>.
+                </p>
+              </div>
+            </div>
+            <%= form_tag("/validate_session_form", method: "post", role: "form", class: "form-horizontal", id: "edit_form" ) do %>
+              <input type="hidden" name="id" id="id" value="<%= @booking.id %>">
+              <input type="hidden" name="from_mail" id="from_mail" value="1" />
+              <button type="submit" class="submitBtn">Validar Reserva</button>
+            <% end %>
+          <% else %>
+            <div class="panel panel-info">
+              <div class="calendar-head">
+                <div class="panel-title" style="padding-left: 10px; font-size: 22px; font-weight: bold;">
+                      Reserva validada
+                </div>
+              </div>
+              <div class="panel-body">
+                <p style="padding-left: 10px; padding-top: 8px; color: #505050;">
+                  Tu reserva fue validada exitosamente
+                  <br />
+                  Recuerda que puedes manejar tus sesiones desde tu <%= link_to "Agenda", my_agenda_path %>, entrando con tu usuario AgendaPro. Si aún no tienes cuenta, puedes hacerte una <%= link_to "acá", new_user_session_path %>.
+                </p>
+
+              </div>
+            </div>
+          <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= content_tag "div", id: "booking", data: {booking: @booking} do %>
+<% end %>

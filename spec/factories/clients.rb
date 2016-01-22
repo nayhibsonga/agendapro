@@ -6,6 +6,6 @@ FactoryGirl.define do
     email                   'normalclient@agendapro.cl'
     phone                   '+56993215098'
     can_book                true
-    company_id              0
+    company              
   end
 end

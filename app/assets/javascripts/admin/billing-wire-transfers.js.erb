@@ -1,0 +1,127 @@
+function openTransfer(transfer_id)
+{
+  $.ajax({
+    url: '/show_billing_wire_transfer',
+    method: 'get',
+    data: {billing_wire_transfer_id: transfer_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#transferSummaryModalBody').empty();
+      $('#transferSummaryModalBody').append(response);
+      $('#transferSummaryModal').modal('show');
+    }
+  });
+}
+
+function approveTransfer(transfer_id)
+{
+  $.ajax({
+    url: '/approve_billing_wire_transfer',
+    method: 'post',
+    dataType: 'json',
+    data: {billing_wire_transfer_id: transfer_id},
+    error: function(error){
+        $('#transferSummaryModal').modal('hide');
+
+        swal({
+          title: "Error",
+          text: "Se produjeron los siguientes errores:\n" + error,
+          type: "error"
+        },
+        function() {
+          window.location.reload();
+        });
+
+    },
+    success: function(response){
+      if(response[0] == "ok")
+      {
+        $('#transferSummaryModal').modal('hide');
+        swal({
+          title: "Éxito",
+          text: "Aprobación guardada correctamente",
+          type: "success"
+        },
+        function() {
+          window.location.reload();
+        });
+      }  
+      else
+      {
+        $('#transferSummaryModal').modal('hide');
+        swal({
+          title: "Error al aprobar",
+          text: "Se produjeron los siguientes errores:\n" + response[1],
+          type: "error"
+        },
+        function() {
+          window.location.reload();
+        });
+      }
+
+    }
+  });
+}
+
+function deleteTransfer(transfer_id)
+{
+  var delete_confirm = confirm("¿Seguro que quieres eliminar la transferencia?");
+  if(delete_confirm == true)
+  {
+    $.ajax({
+      url: '/delete_billing_wire_transfer',
+      method: 'post',
+      dataType: 'json',
+      data: {billing_wire_transfer_id: transfer_id},
+      error: function(error){
+        swal({
+          title: "Error al eliminar",
+          text: error,
+          type: "error"
+        },
+        function() {
+          window.location.reload();
+        });
+      },
+      success: function(response){
+        if(response[0] == "ok")
+        {
+          swal({
+            title: "Éxito",
+            text: "Aprobación eliminada correctamente",
+            type: "success"
+          },
+          function() {
+            window.location.reload();
+          });
+        }  
+        else
+        {
+          swal({
+            title: "Error al eliminar",
+            text: "Se produjeron los siguientes errores:\n" + response[1],
+            type: "error"
+          },
+          function() {
+            window.location.reload();
+          });
+        }
+
+      }
+    });
+  }
+}
+
+$(document).ready(function(){
+
+  $('#approveTransferBtn').on('click', function(){
+    approveTransfer($('#billing_wire_transfer_id').val());
+  });
+
+  $('#deleteTransferBtn').on('click', function(){
+    deleteTransfer($('#billing_wire_transfer_id').val());
+  });
+
+});

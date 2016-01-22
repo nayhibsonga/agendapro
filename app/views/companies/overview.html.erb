@@ -1,17 +1,11 @@
 <div class="workflow-header">
   <div class="container">
-
-
     <div class="row">
       <% if !@company.description.blank? %>
         <div class="col-xs-5 col-md-4 company-header-left company-header">
           <div class="row">
             <div class="col-xs-4 col-md-3">
-              <% if @company.logo_url %>
-                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
-              <% else %>
-                <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
-              <% end %>
+              <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
             </div>
             <div class="col-xs-8 col-md-9">
               <div class="row">
@@ -28,9 +22,6 @@
                 </div>
               </div>
             </div>
-            <!--<div class="col-md-3">
-
-            </div>-->
           </div>
         </div>
         <div class="col-xs-4 col-md-4 company-header-center company-header">
@@ -39,7 +30,6 @@
           </div>
         </div>
         <div class="col-xs-3 col-md-4 company-header-right company-header">
-
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -65,16 +55,11 @@
           <% end %>
           <div style="clear: both;"></div>
         </div>
-
       <% else %>
         <div class="col-xs-5 col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="row">
             <div class="col-xs-4 col-md-3">
-              <% if @company.logo_url %>
-                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
-              <% else %>
-                <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
-              <% end %>
+              <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
             </div>
             <div class="col-xs-8 col-md-9">
               <div class="row">
@@ -94,7 +79,6 @@
           </div>
         </div>
         <div class="col-xs-7 col-md-8 company-header-center2 company-header">
-
           <% if @selectedLocation %>
             <div id="phone-info">
               <%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
@@ -103,7 +87,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-              <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
                 <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
               </span>
             </div>
@@ -121,33 +105,37 @@
           <div style="clear: both;"></div>
         </div>
       <% end %>
-
     </div>
   </div>
 </div>
 
 <div class="overview-main">
   <div class="container">
-
-    <!--<div class="row" style="margin-top: 20px; color: #979797;">
-      <div class="col-md-6">
-      </div>
-      <div class="col-md-3 dark-gray" style="font-size: 20px;">
-        Selecciona el lugar
-      </div>
-      <div class="col-md-3">
-      </div>
-    </div>-->
-
     <div class="row">
-      <div class="col-xs-6 col-md-6">
+      <div class="col-xs-12 col-md-5">
+        <% if @has_images %>
+        <div id="carousel">
+          <%= image_tag @selectedLocation.image1.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' %>
+          <%= image_tag @selectedLocation.image2.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' %>
+          <%= image_tag @selectedLocation.image3.url.to_s, alt: @selectedLocation.name, class: 'img-responsive' %>
+        </div>
+        <div class="carousel-pager"></div>
+        <% else %>
         <div class="google-maps-empresa">
           <div id="map"></div>
         </div>
         <div id="outcallDistricts" class="well">
         </div>
+        <% end %>
       </div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-xs-6 col-md-4">
+        <% if @has_images %>
+        <div class="google-maps-empresa">
+          <div id="map"></div>
+        </div>
+        <div id="outcallDistricts" class="well">
+        </div>
+        <% end %>
         <h3 style="color: #505050; padding-top: 0px !important; margin-top: 0px !important;">Selecciona el lugar</h3>
         <table class="table table-locals" id="locales-empresa">
           <tbody>
@@ -160,10 +148,9 @@
                     <p>
                       <span class="local-name"><%= local.name %></span><br/>
                       <% @second_address = local.second_address.blank? ? '' : ', ' + local.second_address %>
-                      <span class="local-address" localid="<%= local.id %>"><%= if !local.outcall then local.address+@second_address+', '+local.district.name else "A Domicilio" end %></span>
+                      <span class="local-address" localid="<%= local.id %>"><%= if !local.outcall then local.address+@second_address+', '+local.district.name+', '+local.district.city.name else "A Domicilio" end %></span>
                       <span class="local-phone" localid="<%= local.id %>" hidden><%= local.phone%></span>
                     </p>
-
                   </label>
                 </div>
               </td>
@@ -200,5 +187,6 @@
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "http://maps.google.com/maps/api/js?sensor=false" %>
+  <%= javascript_include_tag 'jquery.carouFredSel-6.2.1'  %>
   <%= javascript_include_tag "workflow/overview.js" %>
 <% end %>

@@ -2,6 +2,7 @@
  *= require bootstrap
  * require bootstrap-theme
  *= require font-awesome.min
+ *= require sweetalert
  */
 
 /*
@@ -359,9 +360,12 @@ fieldset[disabled] .btn-agendapro-orange.active {
 
 /*
   ================================
-  ========== Paginatio ===========
+  ========== Pagination ==========
   ================================
 */
+.pagination {
+  margin: initial;
+}
 .pagination > li > a,
 .pagination > li > span {
 	color: #22c488;
@@ -396,6 +400,9 @@ fieldset[disabled] .btn-agendapro-orange.active {
   right: 5%;
   padding: 10px 15px;
   margin-bottom: 0px;
+  -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.3);
+  box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.3);
 }
 .alert .alert-agendapro {
   position: absolute;

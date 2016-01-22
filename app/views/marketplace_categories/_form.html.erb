@@ -1,0 +1,38 @@
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <div class="col-md-12">
+    </div>
+  </div>
+</div>
+
+<%= form_for @marketplace_category, :html => {:class => 'form-horizontal'} do |f| %>
+  <% if @marketplace_category.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@marketplace_category.errors.count, "error") %> no permitió que la categoría fuera creada:</h2>
+      <ul>
+        <% @marketplace_category.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :name, 'Nombre: ', :class => 'col-md-2 control-label' %>
+    <div class="col-md-4">
+      <%= f.text_field :name, :autofocus => true, :class => 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :show_in_marketplace, 'Mostrar en Marketplace: ', :class => 'col-md-2 control-label' %>
+    <div class="col-md-4">
+       <%= f.check_box :show_in_marketplace %>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="actions col-md-offset-2 col-md-4">
+      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+      <%= link_to 'Cancelar', marketplace_categories_path, class: "btn btn-default" %>
+    </div>
+  </div>
+<% end %>

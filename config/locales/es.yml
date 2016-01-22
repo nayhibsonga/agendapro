@@ -205,3 +205,14 @@ es:
     previous_label: "&#8592;"
     next_label: "&#8594;"
     page_gap: "&hellip;"
+  country:
+    name: 'Latinoamérica'
+    domain: '.co'
+  district: 'comuna'
+  ditricts: 'comunas'
+  ci: 'cédula'
+  plans:
+    personal: 14900
+    normal: 29900
+    premium: 49900
+    pro: 99900

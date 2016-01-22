@@ -1,0 +1,82 @@
+<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
+	<div class="col-md-12 payment_summary_col">
+		<div class="payment_summary_title">
+			Resumen de venta interna
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="row">
+			<label class="control-label col-md-5">
+				Fecha
+			</label>
+			<div class="col-md-7">
+				<%= @internal_sale.date.strftime('%d/%m/%Y %R') %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Cajero
+			</label>
+			<div class="col-md-7">
+				<%= @internal_sale.cashier.name %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Comprador
+			</label>
+			<div class="col-md-7">
+				<% if !@internal_sale.service_provider_id.nil? %>
+					<%= @internal_sale.service_provider.public_name + " (Prestador)" %>
+				<% else %>
+					<%= @internal_sale.user.first_name + " " + @internal_sale.user.last_name + " (Usuario)" %>
+				<% end %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Producto
+			</label>
+			<div class="col-md-7">
+				<%= @internal_sale.product.full_name %>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="row">
+			<label class="control-label col-md-5">
+				Precio
+			</label>
+			<div class="col-md-7">
+				<%= number_to_currency(@internal_sale.list_price.to_s, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Cantidad
+			</label>
+			<div class="col-md-7">
+				<%= @internal_sale.quantity.to_s %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Descuento
+			</label>
+			<div class="col-md-7">
+				<%= @internal_sale.discount.to_s + "%" %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Monto total
+			</label>
+			<div class="col-md-7">
+				<%= number_to_currency(@internal_sale.price * @internal_sale.quantity, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
+			</div>
+		</div>
+	</div>
+</div>

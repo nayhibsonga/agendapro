@@ -22,16 +22,13 @@
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "https://maps.google.com/maps/api/js?sensor=false" %>
-  <%= javascript_include_tag "Alert" %>
 
   <script type="text/javascript">
     function scrollToAnchor(aid){
       var aTag = $("#"+ aid);
       $('html,body').animate({scrollTop: aTag.offset().top},'slow');
     }
-    var my_alert;
     $(function () {
-      my_alert = new Alert();
       var windowheight = $(window).height();
       // $(".content-fill").height(windowheight - 100);
       $('.content-fill').css('min-height', (windowheight) + 'px');
@@ -48,13 +45,15 @@
 <%= render 'new_local' %>
 <%= render 'services' %>
 <%= render 'providers' %>
+<%= render 'configurations' %>
+<%= render 'notifications' %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "validations/validate" %>
   <%= javascript_include_tag "validations/admin/quick-add" %>
 <% end %>
 
-<div id="quick_add_step5" class="container-fluid background-start content-fill below-1 below-2 below-3 below-4"  <%= 'style="display: none;" disabled'.html_safe if @company.service_providers.where(active: true).count < 1 %>>
+<div id="quick_add_step7" class="container-fluid background-start content-fill below-1 below-2 below-3 below-4"  <%= 'style="display: none;" disabled'.html_safe if @company.service_providers.where(active: true).count < 1 || params[:step].nil? || params[:step] < 7 %>>
   <div class="row">
     <div class="col-md-12 content-top">
       <div class="pull-center">
@@ -66,7 +65,11 @@
         <i class="fa fa-check-circle-o"></i>
       </div>
       <h1 class="text-center text-uppercase">Ya estás listo para usar AgendaPro</h1>
-      <h3 class="text-justify step5-text">Tu mini-sitio es <%= link_to root_url(subdomain: @company.web_address), root_url(subdomain: @company.web_address), target: '_blank' %> y podrás modificar toda la información que acabas de ingresar en la sección "Administración". Además puedes configurar muchas cosas de la aplicación en la sección "Configuraciones", te recomendamos partir por ahí.</h3>
+      <% if @referer == "horachic" %>
+        <h3 class="text-justify step5-text">¡Estás listo! Podrás modificar toda la información que acabas de ingresar en la sección "Administración". Además, puedes configurar muchas más cosas de la aplicación en la sección "Configuraciones". Te recomendamos partir por ahí.</h3>
+      <% else %>
+        <h3 class="text-justify step5-text">Tu mini-sitio es <%= link_to url_for(subdomain: @company.web_address, controller: 'companies', action: 'overview'), url_for(subdomain: @company.web_address, controller: 'companies', action: 'overview'), target: '_blank' %> y podrás modificar toda la información que acabas de ingresar en la sección "Administración". Además, puedes configurar muchas cosas de la aplicación en la sección "Configuraciones". Te recomendamos partir por ahí.</h3>
+      <% end %>
     </div>
     <div class="col-md-12 content-bottom">
       <div class="pull-center">

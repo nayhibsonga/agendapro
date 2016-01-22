@@ -1,0 +1,271 @@
+function destroyPayment(payment_id) {
+  $.ajax({
+    type: 'DELETE',
+    url: '/payments/'+ payment_id + '.json',
+    dataType: 'json',
+    success: function(payment){
+      // window.console.log(payment);
+      swal('Pago eliminado exitosamente.');
+      $("#save_payment_button").html('Guardar Pago');
+      $('#save_payment_button').attr('disabled', false);
+      $('#delete_payment_button').attr('disabled', false);
+      $('#payment')
+      loadPayments();
+      $('#newPaymentModal').modal('hide');
+    },
+    error: function(xhr){
+      var errors = $.parseJSON(xhr.responseText).errors;
+      var errores = 'Error\n';
+      for (i in errors) {
+        errores += '*' + errors[i] + '\n';
+      }
+      swal(errores);
+      $("#save_payment_button").html('Guardar Pago');
+      $('#save_payment_button').attr('disabled', false);
+      $('#delete_payment_button').attr('disabled', false);
+    }
+  });
+
+  return false;
+}
+
+function loadPayments(locations, payment_methods) {
+
+    var location_ids = [];
+    var payment_method_ids = [];
+    var payment_selected_items_arr = [];
+    $("#locationMultiSelect option").each(function(){
+      if ($(this).is(':selected'))
+      {
+        location_ids.push($(this).val());
+      }
+    });
+    $("#paymentMethodMultiSelect option").each(function(){
+      if ($(this).is(':selected'))
+      {
+        payment_method_ids.push($(this).val());
+      }
+    });
+
+    /*$("#paymentItemsMultiSelect option").each(function(){
+      if ($(this).is(':selected'))
+      {
+        payment_selected_items_arr.push($(this).val());
+      }
+    });*/
+
+    var locations = location_ids.join();
+    var payment_methods = payment_method_ids.join();
+    var payment_selected_items = payment_selected_items_arr.join();
+
+    $('#render_content').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+    $.ajax({
+        url: '/payments_index_content?from=' + $('#from').val() + '&to=' + $('#to').val() + '&location_ids=' + locations + '&payment_method_ids=' + payment_methods + '&payment_items=' + payment_selected_items,
+        cache: false,
+        success: function(html){
+          $('#render_content').html(html);
+        }
+    });
+
+    return false;
+}
+
+$(function() {
+
+
+  $('#locationMultiSelect').multiselect({
+    includeSelectAllOption: true,
+    selectAllText: 'Todos',
+    buttonContainer: '<div style="margin-top: 5px;"></div>',
+    buttonText: function(options, select) {
+      //console.log(select);
+      if (options.length === 0) {
+          return 'Ninguno';
+      }
+      else if(options.length == select[0].length)
+      {
+        return "Todos";
+      }
+      else if(options.length > 3)
+      {
+        return options.length + " seleccionados";
+      }
+      else {
+        var labels = [];
+        options.each(function() {
+           if ($(this).attr('label') !== undefined) {
+               labels.push($(this).attr('label'));
+           }
+           else {
+               labels.push($(this).html());
+           }
+        });
+        return labels.join(', ') + '';
+      }
+    },
+    onChange: function(option, checked, select){
+      loadPayments();
+    },
+    onInitialized: function(select, container){
+      $('#locationMultiSelect').show();
+    }
+
+  });
+
+  $('#paymentMethodMultiSelect').multiselect({
+    includeSelectAllOption: true,
+    selectAllText: 'Todos',
+    buttonContainer: '<div style="margin-top: 8px;"></div>',
+    buttonText: function(options, select) {
+      //console.log(select);
+      if (options.length === 0) {
+          return 'Ninguno';
+      }
+      else if(options.length == select[0].length)
+      {
+        return "Todos";
+      }
+      else if(options.length > 3)
+      {
+        return options.length + " seleccionados";
+      }
+      else {
+        var labels = [];
+        options.each(function() {
+           if ($(this).attr('label') !== undefined) {
+               labels.push($(this).attr('label'));
+           }
+           else {
+               labels.push($(this).html());
+           }
+        });
+        return labels.join(', ') + '';
+      }
+    },
+    onChange: function(option, checked, select){
+      loadPayments();
+    },
+    onInitialized: function(select, container){
+      $('#paymentMethodMultiSelect').show();
+    }
+  });
+
+  $('#paymentItemsMultiSelect').multiselect({
+    includeSelectAllOption: true,
+    selectAllText: 'Todos',
+    buttonContainer: '<div style="margin-top: 8px;"></div>',
+    buttonText: function(options, select) {
+      //console.log(select);
+      if (options.length === 0) {
+          return 'Ninguno';
+      }
+      else if(options.length == select[0].length)
+      {
+        return "Todos";
+      }
+      else if(options.length > 3)
+      {
+        return options.length + " seleccionados";
+      }
+      else {
+        var labels = [];
+        options.each(function() {
+           if ($(this).attr('label') !== undefined) {
+               labels.push($(this).attr('label'));
+           }
+           else {
+               labels.push($(this).html());
+           }
+        });
+        return labels.join(', ') + '';
+      }
+    },
+    onChange: function(option, checked, select){
+      loadPayments();
+    },
+    onInitialized: function(select, container){
+      $('#paymentItemsMultiSelect').show();
+    }
+  });
+
+
+  $('.payments_select').change(function() {
+    loadPayments();
+    return false;
+  });
+
+  $("#from").datepicker({
+    dateFormat: 'dd-mm-yy',
+    autoSize: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    prevText: 'Atrás',
+    nextText: 'Adelante',
+    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    today: 'Hoy',
+    clear: '',
+    defaultDate: "+1w",
+    changeMonth: true,
+    numberOfMonths: 3,
+    firstDay: 1,
+    onClose: function( selectedDate ) {
+      $("#to").datepicker( "option", "minDate", selectedDate );
+    }
+  });
+  $("#to").datepicker({
+    dateFormat: 'dd-mm-yy',
+    autoSize: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    prevText: 'Atrás',
+    nextText: 'Adelante',
+    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    today: 'Hoy',
+    clear: '',
+    defaultDate: "+1w",
+    changeMonth: true,
+    numberOfMonths: 3,
+    firstDay: 1,
+    onClose: function( selectedDate ) {
+      $( "#from" ).datepicker( "option", "maxDate", selectedDate );
+    }
+  });
+
+  $("#payment_payment_date").datepicker({
+    dateFormat: 'dd-mm-yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
+
+  $("#to").datepicker('setDate', new Date());
+  $("#from").datepicker('setDate', new Date());
+
+  $("#locationMultiSelect").multiselect('selectAll', false);
+  $("#paymentMethodMultiSelect").multiselect('selectAll', false);
+  $("#paymentItemsMultiSelect").multiselect('selectAll', false);
+
+  $('#locationMultiSelect').multiselect('updateButtonText');
+  $('#paymentMethodMultiSelect').multiselect('updateButtonText');
+  $('#paymentItemsMultiSelect').multiselect('updateButtonText');
+
+  loadPayments();
+
+});

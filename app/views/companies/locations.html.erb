@@ -55,6 +55,7 @@
                     <thead>
                       <tr>
                         <th>Empresa</th>
+                        <th>Estado de Pago</th>
                         <th>Plan actual</th>
                         <th>Locales</th>
                         <th>Monto</th>
@@ -64,9 +65,10 @@
                       <% companies.each do |company| %>
                         <tr>
                           <td><%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %></td>
+                          <td><%= company.payment_status.name %></td>
                           <td><%= company.plan.name %></td>
                           <td><%= company.locations.count %></td>
-                          <td>$<%= company.plan.price %></td>
+                          <td>$<%= company.plan.plan_countries.find_by(country_id: company.country.id).price %></td>
                         </tr>
                       <% end %>
                     </tbody>

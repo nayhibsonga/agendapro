@@ -151,7 +151,7 @@ function startLocation () {
 					locationValid(local);
 				}
 				else {
-					my_alert.showAlert('Tienes que seleccionar al menos un día.');
+					swal('Tienes que seleccionar al menos un día.');
 					hideLoad();
 				}
 			});
@@ -176,7 +176,7 @@ function startLocation () {
 					locationValid(local);
 				}
 				else {
-					my_alert.showAlert('Tienes que seleccionar al menos un día.');
+					swal('Tienes que seleccionar al menos un día.');
 					hideLoad();
 				}
 			});
@@ -238,6 +238,10 @@ function saveLocation (typeURL, extraURL) {
 			$('#load_location_spinner').show();
 			$('#location_pills.nav-pills li').removeClass('active');
 			if (typeURL == 'POST') {
+				swal({
+					title: "Local creado exitosamente.",
+					type: "success"
+				});
 				$('#new_location_pill').parent().before('<li><a href="#" id="location_pill_'+result.id+'">'+result.name+'<!--  <button id="location_delete_'+result.id+'" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button> --></a></li>');
 				$('#service_provider_location_id').append('<option value="'+ result.id +'">'+ result.name +'</option>')
 				$('#location_pill_'+result.id).click(function(event){
@@ -248,6 +252,10 @@ function saveLocation (typeURL, extraURL) {
 				});
 			}
 			else {
+				swal({
+					title: "Local modificado exitosamente.",
+					type: "success"
+				});
 				$('#location_pill_'+result.id).html(result.name);
 				$('#service_provider_location_id option[value="'+ result.id +'"]').html(result.name);
 			}
@@ -261,14 +269,14 @@ function saveLocation (typeURL, extraURL) {
 		    var location_count = $.parseJSON(xhr.responseText).location_count
 		    var errorList = '';
 			for (i in errors) {
-				errorList += '<li>' + errors[i] + '</li>'
+				errorList += '- ' + errors[i] + '\n\n'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n\n" + errorList,
+        type: "error",
+        html: true
+      });
 			if (location_count > 0) {
 				$('#next_location_button').attr('disabled', false);
 			}
@@ -308,7 +316,8 @@ function locJSON (ctrl) {
 		"district_ids": districtIds,
 		"latitude": parseFloat($('#location_latitude').val()),
 		"longitude": parseFloat($('#location_longitude').val()),
-		"location_times_attributes": location_times
+		"location_times_attributes": location_times,
+		"email": $("#location_email").val()
 	};
 	return locationJSON;
 }
@@ -409,6 +418,7 @@ function new_location() {
 	$('#update_location_button').attr('name', 'new_location_btn');
 	$('#new_location_pill').parent().addClass('active');
 	$('#load_location_spinner').hide();
+	$('#location_email').val('');
 	initialize('local');
 }
 
@@ -424,6 +434,7 @@ function load_location(id) {
 		$('#location_outcall').prop('checked', location.location.outcall);
 		$('#location_latitude').val(location.location.latitude);
 		$('#location_longitude').val(location.location.longitude);
+		$('#location_email').val(location.location.email);
 		$('#location_address').attr('disabled', false);
 		$('#location_second_address').attr('disabled', false);
 	    var latitude = parseFloat($('#location_latitude').val());

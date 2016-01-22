@@ -1,0 +1,22 @@
+es_CL:
+  number:
+    currency:
+      format:
+        delimiter: '.'
+        format: '%u %n'
+        precision: 0
+        separator: ','
+        significant: false
+        strip_insignificant_zeros: false
+        unit: $
+  country:
+    name: 'Chile'
+    domain: '.cl'
+  district: 'comuna'
+  ditricts: 'comunas'
+  ci: 'RUT'
+  plans:
+    personal: 14900
+    normal: 29900
+    premium: 49900
+    pro: 99900

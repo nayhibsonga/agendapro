@@ -41,12 +41,8 @@
 		<div class="col-xs-12">
 			<div class="box-search">
 				<% if location.company.owned %>
-				<a href="<%= url_for(:host => location.company.web_address + '.' + @domain, :local => location.id, :controller => 'companies', :action => 'overview') %>">
-					<% if location.company.logo_url %>
-					<%= image_tag location.company.logo_url.to_s, :alt => location.company.name %>
-					<% else %>
-					<%= image_tag 'logo_vacio.png', :alt => 'AgendaPro' %>
-					<% end %>
+				<a href="<%= url_for(:subdomain => location.get_web_address, :local => location.id, :controller => 'companies', :action => 'overview', locale: location.get_locale) %>">
+					<%= image_tag location.company.logo.page.url.to_s, :alt => location.company.name %>
 					<div class="description">
 						<h3><%= location.company.name %></h3>
 						<div class="number-pin">
@@ -57,11 +53,7 @@
 				</a>
 				<% else %>
 				<span>
-					<% if location.company.logo_url %>
-					<%= image_tag location.company.logo_url.to_s, :alt => location.company.name %>
-					<% else %>
-					<%= image_tag 'logo_vacio.png', :alt => 'AgendaPro' %>
-					<% end %>
+					<%= image_tag location.company.logo.page.url.to_s, :alt => location.company.name %>
 					<div class="description">
 						<h3><%= location.company.name %></h3>
 						<div class="number-pin">

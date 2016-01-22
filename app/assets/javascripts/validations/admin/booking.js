@@ -30,7 +30,6 @@ $(function() {
 				require_from_group: [4, '.date-select']
 			},
 			'booking[client][identification_number]': {
-				rut: true,
 				minlength: 2
 			},
 			'booking[service_provider_id]': {
@@ -41,13 +40,14 @@ $(function() {
 				remote: '/check_staff_code'
 			},
 			'booking_deal_code': {
-				required: $('#calendar-data').data('deal-required'),
-				rut: $('#calendar-data').data('deal-identification-number')
+				required: $('#calendar-data').data('deal-required')
 			},
 			'booking[service_id]': {
 				required: true
 			},
 			'booking[price]': {
+				required: true,
+				number: true,
 				min: 0
 			},
 
@@ -105,6 +105,30 @@ $(function() {
 			full_name: {
 				required: true,
 				minlength: 3
+			},
+			'booking[client][email]': {
+				required: {
+					depends: function () {
+						var strict_booking = $('#calendar-data').data('strict-booking');
+    				var client_phone = $.trim($('#hoursOptimizer #new_booking #booking_client_phone').val());
+						return (
+							strict_booking && (client_phone == null || client_phone == "")
+						);
+					}
+				},
+				email: true
+			},
+			'booking[client][phone]': {
+				required: {
+					depends: function () {
+						var strict_booking = $('#calendar-data').data('strict-booking');
+    				var client_email = $.trim($('#hoursOptimizer #new_booking #booking_client_email').val());
+						return (
+							strict_booking && (client_email == null || client_email == "")
+						);
+					}
+				},
+				rangelength: [7, 15]
 			}
 		},
 		messages: {
@@ -126,7 +150,7 @@ $(function() {
 		}
 	});
 	$('#booking_client_identification_number').change(function() {
-		var rut_string = $('#booking_client_identification_number').val()
-		$('#booking_client_identification_number').val(rut_format(rut_string));
+		var id_string = $('#booking_client_identification_number').val()
+		$('#booking_client_identification_number').val(identification_number_format(id_string));
 	});
 });

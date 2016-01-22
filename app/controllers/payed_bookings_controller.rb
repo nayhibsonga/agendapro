@@ -18,11 +18,13 @@ class PayedBookingsController < ApplicationController
   		@other_companies_pending_payment = Array.new
 
   		#Comisión que se le cobra a la empresa por el pago en línea
-  		commission = NumericParameter.find_by_name("online_payment_commission").value
+  		#commission = NumericParameter.find_by_name("online_payment_commission").value
+
   		now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 
   		Company.all.each do |company|
   			c_user = User.find_by_company_id(company.id)
+  			commission = company.company_setting.online_payment_commission
   			
   			if !c_user.nil? and c_user.role_id != Role.find_by_name("Super Admin")
   				
@@ -62,6 +64,9 @@ class PayedBookingsController < ApplicationController
   		 					payment_account.account_type = company.company_setting.account_type
   		 				end
   		 				payment_account.amount = payment_account.amount + payed_booking.punto_pagos_confirmation.amount
+  		 				if !payed_booking.bookings.first.service_promo_id.nil?
+  		 					commission = company.company_setting.promo_commission
+  		 				end
   		 				payment_account.company_amount = payment_account.amount*(100-commission)/100		 				
   		 				payed_booking.payment_account = payment_account
   		 				payed_booking.save
@@ -189,10 +194,10 @@ class PayedBookingsController < ApplicationController
 		@payment_account.status = true
 		@payment_account.payed_bookings.each do |payed_booking|
 			payed_booking.transfer_complete = true
-			payed_booking.bookings.each do |booking|
-				booking.status_id = Status.find_by_name("Pagado").id
-				booking.save
-			end
+			# payed_booking.bookings.each do |booking|
+			# 	booking.status_id = Status.find_by_name("Pagado").id
+			# 	booking.save
+			# end
 			payed_booking.save
 		end
 		if @payment_account.save
@@ -226,10 +231,10 @@ class PayedBookingsController < ApplicationController
 			payment_account.status = true
 			payment_account.payed_bookings.each do |payed_booking|
 				payed_booking.transfer_complete = true
-				payed_booking.bookings.each do |booking|
-					booking.status_id = Status.find_by_name("Pagado").id
-					booking.save
-				end
+				# payed_booking.bookings.each do |booking|
+				# 	booking.status_id = Status.find_by_name("Pagado").id
+				# 	booking.save
+				# end
 				payed_booking.save
 			end
 			if payment_account.save
@@ -254,10 +259,10 @@ class PayedBookingsController < ApplicationController
 		@payment_account.status = false
 		@payment_account.payed_bookings.each do |payed_booking|
 			payed_booking.transfer_complete = false
-			payed_booking.bookings.each do |booking|
-				booking.status_id = Status.find_by_name("Pagado").id
-				booking.save
-			end
+			# payed_booking.bookings.each do |booking|
+			# 	booking.status_id = Status.find_by_name("Pagado").id
+			# 	booking.save
+			# end
 			payed_booking.save
 		end
 		if @payment_account.save
@@ -283,10 +288,10 @@ class PayedBookingsController < ApplicationController
 			payment_account.status = false
 			payment_account.payed_bookings.each do |payed_booking|
 				payed_booking.transfer_complete = false
-				payed_booking.bookings.each do |booking|
-					booking.status_id = Status.find_by_name("Pagado").id
-					booking.save
-				end
+				# payed_booking.bookings.each do |booking|
+				# 	booking.status_id = Status.find_by_name("Pagado").id
+				# 	booking.save
+				# end
 				payed_booking.save
 			end
 			if payment_account.save

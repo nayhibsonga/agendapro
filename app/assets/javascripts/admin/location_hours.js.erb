@@ -206,7 +206,6 @@ function initialize() {
   };
 }
 
-
 function changeDayStatus (value) {
   if ($('#dayStatusId'+ value).val() == 0) {
     $('#openHourId'+ value).prop('disabled', false);
@@ -289,10 +288,8 @@ function locJSON() {
     "latitude": parseFloat($('#location_latitude').val()),
     "longitude": parseFloat($('#location_longitude').val()),
     "location_times_attributes": location_times,
-    "email": $('input[name="location[email]"]').val(),
-    "notification": $('#location_notification').prop('checked'),
     "company_id": $('#location_company_id').val(),
-    "booking_configuration_email": $('#location_booking_configuration_email').val(),
+    "email": $('#location_email').val(),
     "online_booking": $('#location_online_booking').prop('checked')
   };
   return locationJSON;
@@ -300,56 +297,55 @@ function locJSON() {
 
 function saveLocation() {
   var locationJSON = locJSON();
-  var locationId = $('#id_data').data('id');
-  if ( $('#title').length > 0 ) {
-    $.ajax({
-      type: "PATCH",
-      url: ' /locations/'+ JSON.stringify(locationId) +'.json',
-      data: { location: locationJSON },
-      dataType: 'json',
-      success: function(){
+  var defaults = {
+    data: { location: locationJSON },
+    dataType: 'json',
+    success: function(location){
+      if (location.warnings.length > 0) {
+        var warnings = '';
+        for (i in location.warnings) {
+          warnings += '- ' + location.warnings[i] + '\n';
+        };
+        swal({
+          title: "Advertencia",
+          text: warnings,
+          type: "warning"
+        }, function() {
+          document.location.href = '/locations/';
+        });
+      } else {
         document.location.href = '/locations/';
-      },
-      error: function(xhr){
-        var errors = $.parseJSON(xhr.responseText).errors;
-        var errorList = '';
-        for (i in errors) {
-          errorList += '<li>' + errors[i] + '</li>'
-        }
-        alertId.showAlert(
-          '<h3>Error</h3>' +
-          '<ul>' +
-            errorList +
-          '</ul>'
-        );
+      };
+    },
+    error: function(xhr){
+      var errors = $.parseJSON(xhr.responseText).errors;
+      var errorList = '';
+      for (i in errors) {
+        errorList += '- ' + errors[i] + '\n\n';
       }
-    });
+      swal({
+        title: "Error",
+        text: "Se produjeron los siguientes errores:\n\n" + errorList,
+        type: "error"
+      });
+    }
+  };
+
+  if ( $('#title').length > 0 ) {
+    var locationId = $('#id_data').data('id');
+    var option = {
+      type: "PATCH",
+      url: '/locations/'+ JSON.stringify(locationId) +'.json'
+    };
   }
   else {
-    var locationJSON = locJSON();
-    $.ajax({
+    var option = {
       type: "POST",
-      url: '/locations.json',
-      data: { "location": locationJSON },
-      dataType: 'json',
-      success: function(){
-        document.location.href = '/locations/';
-      },
-      error: function(xhr){
-        var errors = $.parseJSON(xhr.responseText).errors;
-        var errorList = '';
-        for (i in errors) {
-          errorList += '<li>' + errors[i] + '</li>'
-        }
-        alertId.showAlert(
-          '<h3>Error</h3>' +
-          '<ul>' +
-            errorList +
-          '</ul>'
-        );
-      }
-    });
-  }
+      url: '/locations.json'
+    };
+  };
+  var options = $.extend({}, defaults, option);
+  $.ajax(options);
 }
 
 function changeCountry (country_id) {
@@ -489,9 +485,7 @@ function geolocate (district, address) {
   });
 }
 
-var alertId;
 $(function() {
-  alertId = new Alert();
   createMap();
   initialize();
   $('#saveLocation').click(function() {

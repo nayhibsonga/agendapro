@@ -1,544 +1,408 @@
 <div class="modal fade" id="geolocation-modal" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 class="modal-title">Escribe la ubicación dónde buscar...</h3>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title">Escribe la ubicación dónde buscar...</h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="form-group">
+            <div class="col-xs-12">
+              <div class="input-group input-group-lg">
+                <%= text_field_tag :inputLocalization2, params[:inputLocalization], class: "form-control ", placeholder: "Escribe tu dirección...", required: true %>
+                <span class="input-group-btn">
+                  <button id="geolocate_btn2" class="btn btn-default geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
+                </span>
+              </div>
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col-xs-12">
-                            <div class="input-group input-group-lg">
-                                <%= text_field_tag :inputLocalization2, params[:inputLocalization], class: "form-control ", placeholder: "Escribe tu dirección...", required: true %>
-                                <span class="input-group-btn">
-                                    <button id="geolocate_btn2" class="btn btn-default geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-green" id="modal_search">Buscar</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-green" id="modal_search">Buscar</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 <!-- search -->
 <div class="background fill" style="height: 500px; background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(1..7).to_s+'.png' %>)" id="buscador">
-    <div class="fill">
-        <div class="container container-search fill" id="buscador2" style="height: 500px;">
-            <div class="row vertical-center-row">
-                <div class="col-xs-12">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h1 class="search-text">Busca, Encuentra y Reserva tus <span class="search-text-green">Servicios en</span></h1>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
-                                <input type="hidden" id="latitude" name="latitude" value="-33.413673">
-                                <input type="hidden" id="longitude" name="longitude" value="-70.573426">
-                                <div class="form-group">
-                                    <div class="col-xs-12">
-                                        <div class="input-group input-group-lg">
-                                            <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección...", required: true %>
-                                            <span class="input-group-btn">
-                                                <button id="geolocate_btn" class="btn btn-down form-transparent geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-xs-12">
-                                        <div class="input-group input-group-lg">
-                                            <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo", :required => "true" %>
-                                            <span class="input-group-btn">
-                                                <button id="search_btn" class="btn btn-search btn-lg full-width" type="submit">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i> Buscar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            <% end %>
-                        </div>
-                    </div>
-                </div>
+  <div class="fill">
+    <div class="container container-search fill" id="buscador2" style="height: 500px;">
+      <div class="row vertical-center-row">
+        <div class="col-xs-12">
+          <div class="row">
+            <div class="col-xs-12">
+              <h1 class="search-text">Busca, Encuentra y Reserva tus <span class="search-text-green">Servicios en</span></h1>
             </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <%= form_tag({controller: "searchs", action: "search"}, method: "GET", class: "form-horizontal", id: "search-form") do %>
+                <input type="hidden" id="latitude" name="latitude" value="-33.413673">
+                <input type="hidden" id="longitude" name="longitude" value="-70.573426">
+                <div class="form-group">
+                  <div class="col-xs-12">
+                    <div class="input-group input-group-lg">
+                      <%= text_field_tag :inputLocalization, params[:inputLocalization], class: "form-control form-transparent", placeholder: "Escribe tu dirección...", required: true %>
+                      <span class="input-group-btn">
+                        <button id="geolocate_btn" class="btn btn-down form-transparent geolocate_btn" type="button"><i class="fa fa-crosshairs"></i> Encuéntrame</button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-xs-12">
+                    <div class="input-group input-group-lg">
+                      <%= search_field_tag :inputSearch, params[:inputSearch], class: "form-control input-lg green-placeholder", placeholder: "Ejemplo: Corte de Pelo", :required => "true" %>
+                      <span class="input-group-btn">
+                        <button id="search_btn" class="btn btn-search btn-lg full-width" type="submit">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-search"></i> Buscar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Que puedes encontrar -->
 <div id="clients-target" class="container">
-    <div class="row text-gray">
-        <div class="col-xs-12">
-            <h4 class="text-center text-uppercase">¿Qué puedes encontrar?</h4>
-        </div>
+  <div class="row text-gray">
+    <div class="col-xs-12">
+      <h4 class="text-center text-uppercase">¿Qué puedes encontrar?</h4>
     </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <div id="carousel-what-we-do" class="carousel slide">
-                <!-- Indicators -->
-                <ol class="carousel-indicators">
-                    <li data-target="#carousel-what-we-do" data-slide-to="0" class="active"></li>
-                    <li data-target="#carousel-what-we-do" data-slide-to="1"></li>
-                    <li data-target="#carousel-what-we-do" data-slide-to="2"></li>
-                    <li data-target="#carousel-what-we-do" data-slide-to="3"></li>
-                    <li data-target="#carousel-what-we-do" data-slide-to="4"></li>
-                    <li data-target="#carousel-what-we-do" data-slide-to="5"></li>
-                    <li data-target="#carousel-what-we-do" data-slide-to="6"></li>
-                    <li data-target="#carousel-what-we-do" data-slide-to="7"></li>
-                    <li data-target="#carousel-what-we-do" data-slide-to="8"></li>
-                    <li data-target="#carousel-what-we-do" data-slide-to="9"></li>
-                </ol>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div id="carousel-what-we-do" class="carousel slide">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+          <li data-target="#carousel-what-we-do" data-slide-to="0" class="active"></li>
+          <li data-target="#carousel-what-we-do" data-slide-to="1"></li>
+          <li data-target="#carousel-what-we-do" data-slide-to="2"></li>
+          <li data-target="#carousel-what-we-do" data-slide-to="3"></li>
+          <li data-target="#carousel-what-we-do" data-slide-to="4"></li>
+          <li data-target="#carousel-what-we-do" data-slide-to="5"></li>
+          <li data-target="#carousel-what-we-do" data-slide-to="6"></li>
+          <li data-target="#carousel-what-we-do" data-slide-to="7"></li>
+          <li data-target="#carousel-what-we-do" data-slide-to="8"></li>
+          <li data-target="#carousel-what-we-do" data-slide-to="9"></li>
+        </ol>
 
-                <!-- Wrapper for slides -->
-                <div class="carousel-inner" role="listbox">
-                    <div class="item active pull-center">
-                        <div class="border-box">
-                            <a data-search="spa">
-                                <%= image_tag "search/1spa.png", alt: "Spa" %>
-                                <p>Spa</p>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item pull-center">
-                        <div class="border-box">
-                            <a data-search="peluquería">
-                                <%= image_tag "search/2peluqueria.png", alt: "Peluquerías" %>
-                                <p>Peluquerías</p>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item pull-center">
-                        <div class="border-box">
-                            <a data-search="maquillaje">
-                                <%= image_tag "search/3maquillaje.png", alt: "Maquillaje" %>
-                                <p>Maquillaje</p>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item pull-center">
-                        <div class="border-box">
-                            <a data-search="centro de estética">
-                                <%= image_tag "search/4centrosdeestetica.png", alt: "Clinicas y Centros de Estetica" %>
-                                <p>Centros de Estética</p>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item pull-center">
-                        <div class="border-box">
-                            <a data-search="masaje">
-                                <%= image_tag "search/5masajes.png", alt: "Masajes" %>
-                                <p>Masajes</p>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item pull-center">
-                        <div class="border-box">
-                            <a data-search="manicure">
-                                <%= image_tag "search/6manosypies.png", alt: "Manos y Pies" %>
-                                <p>Manos y Pies</p>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item pull-center">
-                        <div class="border-box">
-                            <a data-search="medicina alternativa">
-                                <%= image_tag "search/7medicinaalternativa.png", alt: "Medicina Alternativa" %>
-                                <p>Medicina Alternativa</p>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item pull-center">
-                        <div class="border-box">
-                            <a data-search="bronceado">
-                                <%= image_tag "search/8bronceados.png", alt: "Bronceados" %>
-                                <p>Bronceados</p>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item pull-center">
-                        <div class="border-box">
-                            <a data-search="tratamiento facial">
-                                <%= image_tag "search/9tratamientosfaciales.png", alt: "Tratamientos Faciales" %>
-                                <p>Tratamientos Faciales</p>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item pull-center">
-                        <div class="border-box">
-                            <a data-search="tratamiento corporal">
-                                <%= image_tag "search/10tratamientoscorporales.png", alt: "Tratamientos Corporales" %>
-                                <p>Tratamientos Corporales</p>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Controls -->
-                <a class="left carousel-control" href="#carousel-what-we-do" role="button" data-slide="prev">
-                    <span class="fa fa-chevron-left" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="right carousel-control" href="#carousel-what-we-do" role="button" data-slide="next">
-                    <span class="fa fa-chevron-right" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+          <div class="item active pull-center">
+            <div class="border-box">
+              <a data-search="spa">
+                <%= image_tag "search/1spa.png", alt: "Spa" %>
+                <p>Spa</p>
+              </a>
             </div>
+          </div>
+          <div class="item pull-center">
+            <div class="border-box">
+              <a data-search="peluquería">
+                <%= image_tag "search/2peluqueria.png", alt: "Peluquerías" %>
+                <p>Peluquerías</p>
+              </a>
+            </div>
+          </div>
+          <div class="item pull-center">
+            <div class="border-box">
+              <a data-search="maquillaje">
+                <%= image_tag "search/3maquillaje.png", alt: "Maquillaje" %>
+                <p>Maquillaje</p>
+              </a>
+            </div>
+          </div>
+          <div class="item pull-center">
+            <div class="border-box">
+              <a data-search="centro de estética">
+                <%= image_tag "search/4centrosdeestetica.png", alt: "Clinicas y Centros de Estetica" %>
+                <p>Centros de Estética</p>
+              </a>
+            </div>
+          </div>
+          <div class="item pull-center">
+            <div class="border-box">
+              <a data-search="masaje">
+                <%= image_tag "search/5masajes.png", alt: "Masajes" %>
+                <p>Masajes</p>
+              </a>
+            </div>
+          </div>
+          <div class="item pull-center">
+            <div class="border-box">
+              <a data-search="manicure">
+                <%= image_tag "search/6manosypies.png", alt: "Manos y Pies" %>
+                <p>Manos y Pies</p>
+              </a>
+            </div>
+          </div>
+          <div class="item pull-center">
+            <div class="border-box">
+              <a data-search="medicina alternativa">
+                <%= image_tag "search/7medicinaalternativa.png", alt: "Medicina Alternativa" %>
+                <p>Medicina Alternativa</p>
+              </a>
+            </div>
+          </div>
+          <div class="item pull-center">
+            <div class="border-box">
+              <a data-search="bronceado">
+                <%= image_tag "search/8bronceados.png", alt: "Bronceados" %>
+                <p>Bronceados</p>
+              </a>
+            </div>
+          </div>
+          <div class="item pull-center">
+            <div class="border-box">
+              <a data-search="tratamiento facial">
+                <%= image_tag "search/9tratamientosfaciales.png", alt: "Tratamientos Faciales" %>
+                <p>Tratamientos Faciales</p>
+              </a>
+            </div>
+          </div>
+          <div class="item pull-center">
+            <div class="border-box">
+              <a data-search="tratamiento corporal">
+                <%= image_tag "search/10tratamientoscorporales.png", alt: "Tratamientos Corporales" %>
+                <p>Tratamientos Corporales</p>
+              </a>
+            </div>
+          </div>
         </div>
+
+        <!-- Controls -->
+        <a class="left carousel-control" href="#carousel-what-we-do" role="button" data-slide="prev">
+          <span class="fa fa-chevron-left" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#carousel-what-we-do" role="button" data-slide="next">
+          <span class="fa fa-chevron-right" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Clientes -->
+<% if @companies.length > 0 %>
 <div class="container">
-    <div class="row text-gray">
-        <div class="col-xs-12">
-            <h4 class="text-center text-uppercase" style="margin-top: 30px;">Algunos de Nuestros Clientes</h4>
-        </div>
+  <div class="row text-gray">
+    <div class="col-xs-12">
+      <h4 class="text-center text-uppercase" style="margin-top: 30px;">Algunos de Nuestros Clientes</h4>
     </div>
-    <div class="row">
-        <div class="col-xs-12 pull-center">
-            <div id="carousel-clients" class="carousel slide" data-ride="carousel" data-interval="1846">
-                <!-- Indicators -->
-                <ol class="carousel-indicators">
-                    <li data-target="#carousel-clients" data-slide-to="0" class="active"></li>
-                    <li data-target="#carousel-clients" data-slide-to="1"></li>
-                    <li data-target="#carousel-clients" data-slide-to="2"></li>
-                    <li data-target="#carousel-clients" data-slide-to="3"></li>
-                    <li data-target="#carousel-clients" data-slide-to="4"></li>
-                    <li data-target="#carousel-clients" data-slide-to="5"></li>
-                    <li data-target="#carousel-clients" data-slide-to="6"></li>
-                    <li data-target="#carousel-clients" data-slide-to="7"></li>
-                    <li data-target="#carousel-clients" data-slide-to="8"></li>
-                    <li data-target="#carousel-clients" data-slide-to="9"></li>
-                    <li data-target="#carousel-clients" data-slide-to="10"></li>
-                    <li data-target="#carousel-clients" data-slide-to="11"></li>
-                    <li data-target="#carousel-clients" data-slide-to="12"></li>
-                    <li data-target="#carousel-clients" data-slide-to="13"></li>
-                    <li data-target="#carousel-clients" data-slide-to="14"></li>
-                    <li data-target="#carousel-clients" data-slide-to="15"></li>
-                    <li data-target="#carousel-clients" data-slide-to="16"></li>
-                    <!-- <li data-target="#carousel-clients" data-slide-to="17"></li> -->
-                </ol>
-
-                <!-- Wrapper for slides -->
-                <div class="carousel-inner" role="listbox">
-                    <div class="item active">
-                        <div>
-                            <a href="http://theboss.agendapro.cl/">
-                                <%= image_tag "search/companies/thebosscolor.png", alt: "The Boss", size: "169x121" %>
-                            </a>
-                        </div>
-                    </div>
-                    <!-- <div class="item">
-                        <div>
-                            <a href="http://miranda.agendapro.cl/">
-                                <%= image_tag "search/companies/mirandacolor.png", alt: "Miranda", size: "121x121" %>
-                            </a>
-                        </div>
-                    </div> -->
-                    <div class="item">
-                        <div>
-                            <a href="http://nutricioncuerpoyalma.agendapro.cl/">
-                                <%= image_tag "search/companies/nutricioncuerpoyalmacolor.png", alt: "Nutrición Cuerpo y Alma", size: "135x121" %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://labanqueta.agendapro.cl/">
-                                <%= image_tag "search/companies/labanquetacolor.png", alt: "La Banqueta", size: "142x121" %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://soloparamunecas.agendapro.cl/">
-                                <%= image_tag "search/companies/soloparamunecascolor.png", alt: "Solo para Muñecas", size: "123x121" %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://captive.agendapro.cl/">
-                                <%= image_tag 'search/companies/captivecolor.png', alt: 'Captive', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://fiercebeauty.agendapro.cl/">
-                                <%= image_tag 'search/companies/fiercebeautycolor.png', alt: 'Fierce Beaty Salon', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://softhair.agendapro.cl/">
-                                <%= image_tag 'search/companies/softhaircolor.png', alt: 'Soft Hair', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://pamelan.agendapro.cl/">
-                                <%= image_tag 'search/companies/pamelancolor.png', alt: 'Pamelan', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://laserbellefemme.agendapro.cl/">
-                                <%= image_tag 'search/companies/laserbellefemmecolor.png', alt: 'Laser Belle Femme', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://estilosurbanos.agendapro.cl/">
-                                <%= image_tag 'search/companies/estilosurbanoscolor.png', alt: 'Estilos Urbanos', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://veronicavergara.agendapro.cl/">
-                                <%= image_tag 'search/companies/veronicavergaracolor.png', alt: 'Veronica Vergara', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://qtis.agendapro.cl/">
-                                <%= image_tag 'search/companies/qtiscolor.png', alt: 'Qtis e.i.r.l.', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://elfoton.agendapro.cl/">
-                                <%= image_tag 'search/companies/elfotoncolor.png', alt: 'El Foton', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://alexletelier.agendapro.cl/">
-                                <%= image_tag 'search/companies/alexleteliercolor.png', alt: 'Alex Letelier', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://esteticadivitiae.agendapro.cl/">
-                                <%= image_tag 'search/companies/esteticadivitiaecolor.png', alt: 'Estetica Divitiae', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://huellas.agendapro.cl/">
-                                <%= image_tag 'search/companies/huellascolor.png', alt: 'Huellas', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div>
-                            <a href="http://lkstudiodebelleza.agendapro.cl/">
-                                <%= image_tag 'search/companies/lkstudiodebellezacolor.png', alt: 'LK Studio de Belleza', size: '123x121' %>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 pull-center">
+      <div id="carousel-clients" class="carousel slide" data-ride="carousel" data-interval="1846">
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+          <% @companies.each_with_index do |company, index| %>
+            <div class="item <%= if index == 0 then 'active' end %>">
+              <div>
+                <a href="http://<%= company.web_address %>.agendapro<%= company.country.domain %>/">
+                  <%= image_tag company.logo.page.url.to_s, alt: company.name, size: "170x170" %>
+                </a>
+              </div>
             </div>
+          <% end %>
         </div>
+      </div>
     </div>
+  </div>
 </div>
+<% end %>
 
 <!-- Que Hacemos -->
 <div id="what-we-do-target" class="background background-repeat" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>); margin-top: 20px;">
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <h3 class="text-center text-uppercase">¿Qué Hacemos?</h3>
-            </div>
-            <div class="col-xs-12">
-                <div class="pull-center">
-                    <div class="box-content">
-                        <%= image_tag "search/search.png", alt: "Busca", height: '84' %>
-                        <p class="text-uppercase">Busca</p>
-                    </div>
-                    <div class="box-content">
-                        <%= image_tag "search/find.png", alt: "Encuentra" %>
-                        <p class="text-uppercase">Encuentra</p>
-                    </div>
-                    <div class="box-content">
-                        <%= image_tag "search/booking.png", alt: "Reserva" %>
-                        <p class="text-uppercase">Reserva</p>
-                    </div>
-                </div>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <h3 class="text-center text-uppercase">¿Qué Hacemos?</h3>
+      </div>
+      <div class="col-xs-12">
+        <div class="pull-center">
+          <div class="box-content">
+            <%= image_tag "search/search.png", alt: "Busca", height: '84' %>
+            <p class="text-uppercase">Busca</p>
+          </div>
+          <div class="box-content">
+            <%= image_tag "search/find.png", alt: "Encuentra" %>
+            <p class="text-uppercase">Encuentra</p>
+          </div>
+          <div class="box-content">
+            <%= image_tag "search/booking.png", alt: "Reserva" %>
+            <p class="text-uppercase">Reserva</p>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Comentarios -->
 <div class="container">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="comments background-light-grey">
-                <div id="carousel-comments" class="carousel slide">
-                    <!-- Indicators -->
-                    <ol class="carousel-indicators">
-                        <li data-target="#carousel-comments" data-slide-to="0" class="active"></li>
-                        <li data-target="#carousel-comments" data-slide-to="1"></li>
-                        <li data-target="#carousel-comments" data-slide-to="2"></li>
-                    </ol>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="comments background-light-grey">
+        <div id="carousel-comments" class="carousel slide">
+          <!-- Indicators -->
+          <ol class="carousel-indicators">
+            <li data-target="#carousel-comments" data-slide-to="0" class="active"></li>
+            <li data-target="#carousel-comments" data-slide-to="1"></li>
+            <li data-target="#carousel-comments" data-slide-to="2"></li>
+          </ol>
 
-                    <!-- Wrapper for slides -->
-                    <div class="carousel-inner" role="listbox">
-                        <div class="item active">
-                            <p align="justify">Estamos con AgendaPro desde sus inicios y la verdad es que no para de sorprendernos. Nuestros clientes reservan sus horas y llegan siempre sin la necesidad de que estemos pendientes. Además, la visibilidad de nuestra peluquería se ha visto aumentada por toda la gente que busca.</p>
-                            <div class="media">
-                                <a href="#" class="media-left">
-                                    <%= image_tag "search/slopez.jpg", class: "img-circle" %>
-                                </a>
-                                <div class="media-body media-middle">
-                                    <h4 class="media-heading">
-                                        Sebastián López</br>
-                                        <small><a href="http://labanqueta.agendapro.cl">La Banqueta Peluquería</a></small>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <p align="justify">Con AgendaPro reservo todas mis horas sin la necesidad de llamar. Ya no pierdo tiempo llamando y esperando que me contesten. Además, con los recordatorios que me envían, siempre me acuerdo de ir. ¡De esta forma no pierdo nunca mis horas!</p>
-                            <div class="media">
-                                <a href="#" class="media-left">
-                                    <%= image_tag "search/minata.png", class: "img-circle" %>
-                                </a>
-                                <div class="media-body media-middle">
-                                    <h4 class="media-heading">
-                                        Minata Rodríguez</br>
-                                        <small><a href="http://minatarodriguez.blogspot.com/" target="blank">Blogger</a></small>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <p align="justify">De los muchos sistemas que he utilizado durante mi trayectoria, AgendaPro ha sido el único que ha logrado realmente ayudarnos como Peluquería a ofrecer un mejor servicio a nuestros clientes.<br />Además, el soporte que entregan y las mejoras constantes, hacen que su servicio sea realmente el mejor disponible.</p>
-                            <div class="media">
-                                <a href="#" class="media-left">
-                                    <%= image_tag "search/sferrer.png", class: "img-circle" %>
-                                </a>
-                                <div class="media-body media-middle">
-                                    <h4 class="media-heading">
-                                        Sebastián Ferrer</br>
-                                        <small><a href="http://theboss.agendapro.cl">The Boss Hair Club & Spa</a></small>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Controls -->
-                    <a class="left carousel-control" href="#carousel-comments" role="button" data-slide="prev">
-                        <span class="fa fa-chevron-left" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="right carousel-control" href="#carousel-comments" role="button" data-slide="next">
-                        <span class="fa fa-chevron-right" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
+          <!-- Wrapper for slides -->
+          <div class="carousel-inner" role="listbox">
+            <div class="item active">
+              <p align="justify">Estamos con AgendaPro desde sus inicios y la verdad es que no para de sorprendernos. Nuestros clientes reservan sus horas y llegan siempre sin la necesidad de que estemos pendientes. Además, la visibilidad de nuestra peluquería se ha visto aumentada por toda la gente que busca.</p>
+              <div class="media">
+                <a href="#" class="media-left">
+                  <%= image_tag "search/slopez.jpg", class: "img-circle" %>
+                </a>
+                <div class="media-body media-middle">
+                  <h4 class="media-heading">
+                    Sebastián López</br>
+                    <small><a href="http://labanqueta.agendapro.cl">La Banqueta Peluquería</a></small>
+                  </h4>
                 </div>
+              </div>
             </div>
+            <div class="item">
+              <p align="justify">Con AgendaPro reservo todas mis horas sin la necesidad de llamar. Ya no pierdo tiempo llamando y esperando que me contesten. Además, con los recordatorios que me envían, siempre me acuerdo de ir. ¡De esta forma no pierdo nunca mis horas!</p>
+              <div class="media">
+                <a href="#" class="media-left">
+                  <%= image_tag "search/minata.png", class: "img-circle" %>
+                </a>
+                <div class="media-body media-middle">
+                  <h4 class="media-heading">
+                    Minata Rodríguez</br>
+                    <small><a href="http://minatarodriguez.blogspot.com/" target="blank">Blogger</a></small>
+                  </h4>
+                </div>
+              </div>
+            </div>
+            <div class="item">
+              <p align="justify">De los muchos sistemas que he utilizado durante mi trayectoria, AgendaPro ha sido el único que ha logrado realmente ayudarnos como Peluquería a ofrecer un mejor servicio a nuestros clientes.<br />Además, el soporte que entregan y las mejoras constantes, hacen que su servicio sea realmente el mejor disponible.</p>
+              <div class="media">
+                <a href="#" class="media-left">
+                  <%= image_tag "search/sferrer.png", class: "img-circle" %>
+                </a>
+                <div class="media-body media-middle">
+                  <h4 class="media-heading">
+                    Sebastián Ferrer</br>
+                    <small><a href="http://theboss.agendapro.cl">The Boss Hair Club & Spa</a></small>
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <a class="left carousel-control" href="#carousel-comments" role="button" data-slide="prev">
+            <span class="fa fa-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="right carousel-control" href="#carousel-comments" role="button" data-slide="next">
+            <span class="fa fa-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Social -->
 <div class="background background-green">
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="pull-center social">
-                    <a href="https://fb.com/agendapro" target="_blank">
-                        <%= image_tag "search/facebook.png", alt: "Facebook" %>
-                    </a>
-                    <a href="https://twitter.com/AgendaPro_CL" target="_blank">
-                        <%= image_tag "search/twitter.png", alt: "Twitter" %>
-                    </a>
-                    <a href="https://instagram.com/agendapro" target="_blank">
-                        <%= image_tag "search/instagram.png", alt: "Instagram" %>
-                    </a>
-                </div>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="pull-center social">
+          <a href="https://fb.com/agendapro" target="_blank">
+            <%= image_tag "search/facebook.png", alt: "Facebook" %>
+          </a>
+          <a href="https://twitter.com/AgendaPro_CL" target="_blank">
+            <%= image_tag "search/twitter.png", alt: "Twitter" %>
+          </a>
+          <a href="https://instagram.com/agendapro" target="_blank">
+            <%= image_tag "search/instagram.png", alt: "Instagram" %>
+          </a>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Contacto -->
 <div id="contact-target" class="container">
-    <div class="row">
-        <div class="col-xs-12">
-            <h3 class="pull-center text-gray">Contáctanos</h3>
-            <%= image_tag "search/mapa_celular.png", width: "100%" %>
-        </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <h3 class="pull-center text-gray">Contáctanos</h3>
+      <%= image_tag "search/mapa_celular.png", width: "100%" %>
     </div>
-    <br />
-    <div class="row">
-        <div class="col-xs-12">
-            <%= form_tag("pcontact", method: "post", id: 'contact' ) do %>
-                <%= hidden_field_tag :inputName %>
-                <%= hidden_field_tag :inputLastname %>
-                <div class="form-group has-feedback">
-                    <label for="full_name" class="label-contacto">Nombre</label>
-                    <input type="text" id="full_name" name="user[full_name]" class="form-control" required>
-                    <span class="help-block"></span>
-                </div>
-                <div class="form-group has-feedback">
-                    <%= label_tag(:inputEmail, 'E-mail', :class => "label-contacto") %>
-                    <%= email_field_tag(:inputEmail, nil, :class => "form-control", :required => true) %>
-                    <span class="help-block"></span>
-                </div>
-                <div class="form-group">
-                    <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
-                    <%= text_field_tag(:inputSubject, nil, :class => "form-control", :required => true) %>
-                    <span class="help-block"></span>
-                </div>
-                <div class="form-group has-feedback">
-                    <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
-                    <%= text_area_tag(:inputMessage, nil, :class => "form-control", :required => true, :rows => 6) %>
-                    <span class="help-block"></span>
-                </div>
-                <button type="submit" class="btn btn-orange pull-right" style="margin-bottom: 10px;"><i class="fa fa-envelope-o"></i> Enviar</button>
-            <% end %>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-xs-12">
+      <%= form_tag("/pcontact", method: "post", id: 'contact' ) do %>
+        <%= hidden_field_tag :inputName %>
+        <%= hidden_field_tag :inputLastname %>
+        <div class="form-group has-feedback">
+          <label for="full_name" class="label-contacto">Nombre</label>
+          <input type="text" id="full_name" name="user[full_name]" class="form-control" required>
+          <span class="help-block"></span>
         </div>
+        <div class="form-group has-feedback">
+          <%= label_tag(:inputEmail, 'E-mail', :class => "label-contacto") %>
+          <%= email_field_tag(:inputEmail, nil, :class => "form-control", :required => true) %>
+          <span class="help-block"></span>
+        </div>
+        <div class="form-group">
+          <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
+          <%= text_field_tag(:inputSubject, nil, :class => "form-control", :required => true) %>
+          <span class="help-block"></span>
+        </div>
+        <div class="form-group has-feedback">
+          <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
+          <%= text_area_tag(:inputMessage, nil, :class => "form-control", :required => true, :rows => 6) %>
+          <span class="help-block"></span>
+        </div>
+        <button type="submit" class="btn btn-orange pull-right" style="margin-bottom: 10px;"><i class="fa fa-envelope-o"></i> Enviar</button>
+      <% end %>
     </div>
+  </div>
 </div>
 <div class="background-grey">
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12 pull-center">
-                <div class="background-box">
-                    <%= image_tag "footer/3.png" %>
-                    <p>(+56 9) 5178 5898</p>
-                </div>
-                <div class="background-box">
-                    <%= image_tag "footer/1.png" %>
-                    <p>Ana María Carrera 5210,
-                        Las Condes, Santiago</p>
-                </div>
-                <div class="background-box">
-                    <%= image_tag "footer/2.png" %>
-                    <p>contacto@agendapro.cl</p>
-                </div>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 pull-center">
+        <div class="background-box">
+          <%= image_tag "footer/3.png" %>
+          <p>(+56 9) 5178 5898</p>
         </div>
+        <div class="background-box">
+          <%= image_tag "footer/1.png" %>
+          <p>Ana María Carrera 5210,
+            Las Condes, Santiago</p>
+        </div>
+        <div class="background-box">
+          <%= image_tag "footer/2.png" %>
+          <p>contacto@agendapro.cl</p>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <% content_for :scripts do %>
@@ -546,32 +410,32 @@
 <%= javascript_include_tag 'validations/home/contact' %>
 <%= javascript_include_tag 'split-name' %>
 <script>
-    $(function() {
-        var windowheight = $(window).height();
-        $("#buscador").height(windowheight);
-        $("#buscador2").height(windowheight);
-        split_name('#full_name', '#inputName', '#inputLastname');
-    });
+  $(function() {
+    var windowheight = $(window).height();
+    $("#buscador").height(windowheight);
+    $("#buscador2").height(windowheight);
+    split_name('#full_name', '#inputName', '#inputLastname');
+  });
 
-    $( window ).resize(function() {
-        var windowheight = $(window).height();
-        $("#buscador").height(windowheight);
-        $("#buscador2").height(windowheight);
-    });
+  $( window ).resize(function() {
+    var windowheight = $(window).height();
+    $("#buscador").height(windowheight);
+    $("#buscador2").height(windowheight);
+  });
 
-    $(document).scroll(function() {
-        if ( $(this).scrollTop()>0) {
-            if(!$('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
-                $('.navbar-agendapro').addClass('navbar-agendapro-white');
-                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>');
-            }
-        }
-        else {
-            if ($('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
-                $('.navbar-agendapro').removeClass('navbar-agendapro-white');
-                $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => '120x41' %>');
-            }
-        }
-    });
+  $(document).scroll(function() {
+    if ( $(this).scrollTop()>0) {
+      if(!$('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
+        $('.navbar-agendapro').addClass('navbar-agendapro-white');
+        $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => '120x41' %>');
+      }
+    }
+    else {
+      if ($('.navbar-agendapro').hasClass('navbar-agendapro-white')) {
+        $('.navbar-agendapro').removeClass('navbar-agendapro-white');
+        $('.navbar-agendapro .navbar-brand').html('<%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => '120x41' %>');
+      }
+    }
+  });
 </script>
 <% end %>

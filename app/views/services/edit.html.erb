@@ -1,3 +1,39 @@
+
+<style type="text/css">
+.hour-title{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  width: 100%;
+  margin-left: 15px;
+  text-align: center;
+  background-color: #eaeaea;
+  color: #505050;
+  border: 1px #ccc solid;
+}
+
+.promo-hour-select{
+  text-align: left;
+}
+
+.time-select{
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.date-select{
+  padding-left: 6px;
+  padding-right: 6px;
+  width: auto;
+  display: inline;
+}
+</style>
+
+<% if @service.has_sessions %>
+	<input type="hidden" id="is_treatment" value="1" />
+<% else %>
+	<input type="hidden" id="is_treatment" value="0" />
+<% end %>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
@@ -7,8 +43,848 @@
   </div>
 </div>
 
-<%= render 'form' %>
+<div class="row">
+	<div class="col-md-12">
+	  <ul id="myTab" class="nav nav-pills tab-margin" role="tablist">
+	    <li class="active"><a href="#service" role="tab" data-toggle="tab" class="tab_index promotions_tab_index">Servicio</a></li>
+	    <% if @service.company.company_setting.promo_offerer_capable && @service.company.company_setting.online_payment_capable && @service.company.company_setting.allows_online_payment %>
+	    	<li><a href="#promotions" role="tab" data-toggle="tab" class="tab_index promotions_tab_index">Promociones</a></li>
+	    <% end %>
+	  </ul>
+	</div>
+</div>
+
+<div class="tab-content">
+
+    <!-- Inicio Servicio -->
+
+    <div class="row tab-pane fade in active" id="service">
+		<%= render 'form' %>
+	</div>
+
+	<!-- Fin Servicio -->
+
+
+	<!-- Inicio Promociones -->
+	<% if @service.company.company_setting.promo_offerer_capable && @service.company.company_setting.online_payment_capable && @service.company.company_setting.allows_online_payment %>
+		<div class="row tab-pane fade" id="promotions">
+			<div class="container-fluid">
+				<div class="row" style="padding-left: 20px !important;">
+					<div class="col-md-12">
+						<h3>Promociones</h3>
+
+							<input type="hidden" id="promo_service_id" value="<%= @service.id %>" />
+							
+							<% if @service.online_payable && @service.check_company_promos && !@service.has_sessions %>
+
+								
+
+								<div class="row">
+									<div class="col-md-12">
+										<label>Descuento en reservas de último minuto</label>
+										<span class="help-block">Activa descuentos para este servicio cuando sea agendado pocas horas antes de su realización.</span>
+
+										<% if !@service.has_sessions %>
+											<div class="form-group">
+												<div style="display: inline !important;">
+							                        <label>
+							                        	<% if @service.has_last_minute_discount %>
+							                        		<input type="checkbox" name="has_last_minute_discount" id="has_last_minute_discount" checked/>
+							                        	<% else %>
+							                          		<input type="checkbox" name="has_last_minute_discount" id="has_last_minute_discount" />
+							                          	<% end %>
+							                        </label>
+							                        <span>Permitir</span>
+						                        	<select name="last_minute_discount" id="last_minute_discount" class="promotions-input">
+						                        		<%
+					                        				last_minute_discount = 0
+					                        				last_minute_hours = 0
+					                        				if !@service.active_last_minute_promo_id.nil?
+
+					                        					last_minute_discount = @service.active_last_minute_promo.discount
+					                        					last_minute_hours = @service.active_last_minute_promo.hours
+
+					                        				end
+					                        			%>
+						                        		<% for i in 0..99 %>
+						                        			
+						                        			<% if last_minute_discount == i %>
+						                        				<option value="<%= i.to_s %>" selected><%= i.to_s %> %</option>
+						                        			<% else %>
+						                        				<option value="<%= i.to_s %>"><%= i.to_s %> %</option>
+						                        			<% end %>
+						                        		<% end %>
+						                        	</select>
+						                        	<span>de descuento en reservas de último minuto hechas hasta</span>
+						                        	<input type="number" name="last_minute_hours" id="last_minute_hours" class="promo-input" value="<%= last_minute_hours %>" style="width: 100px;" />
+						                        	<span>horas antes de la realización del servicio.</span>
+							                    </div>
+											</div>
+										<% else %>
+											<div class="form-group">
+											Este servicio tiene sesiones, por lo que no puede tener promociones de último minuto.
+											</div>
+										<% end %>
+
+									</div>
+								</div>
+
+								<% if !@service.has_sessions %>
+									<div class="row">
+										<div class="col-md-12">
+											<label>En los siguientes locales</label>
+											<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción de último minuto.</span>
+
+											<div class="form-group">
+												
+												<%
+													locations = []
+													@service.service_providers.each do |service_provider|  
+														if !locations.include?(service_provider.location)
+															locations << service_provider.location
+														end
+													end
+												%>
+
+												<% locations.each do |location| %>
+													<div class="checkbox">
+									                    <label>
+									                    	<% if @service.active_service_promo.nil? %>
+									                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
+									                    	<% else %>
+										                    	<% if LastMinutePromoLocation.where(:last_minute_promo_id => @service.active_last_minute_promo_id, :location_id => location.id).count > 0 %>
+										                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
+										                    	<% else %>
+										                    		<input type="checkbox" value="<%= location.id %>" name="last_minute_locations" /> <%= location.name %>
+										                    	<% end %>
+										                    <% end %>
+									                    </label>
+									                </div>
+												<% end %>
+
+											</div>
+
+										</div>
+									</div>
+								<% end %>
+							<% end %>
+
+							<% if @service.online_payable && @service.check_company_promos && !@service.has_sessions %>
+						
+								<div class="row">
+									<div class="col-md-12">
+										<label>Descuentos en horarios bajos</label>
+										<span class="help-block">Activa descuentos para este servicio según la hora de realización.</span>
+
+										<div class="form-group">
+											<div style="display: inline !important;">
+												<div class="checkbox">
+													<label>
+														<% if @service.has_time_discount %>
+							                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" checked />
+							                          	<% else %>
+							                          		<input type="checkbox" id="has_time_discount" name="has_time_discount" />
+							                          	<% end %>
+							                          	Permitir descuento
+							                        </label>
+						                        </div>
+					                        	
+											</div>
+										</div>
+
+										<div class="form-group">
+											<%
+												promo_time = @service.company.company_setting.promo_time
+											%>
+											<table class="promotions-table">
+												<tr>
+													<th class="first-cell">
+
+													</th>
+													<th>
+														Lunes
+													</th>
+													<th>
+														Martes
+													</th>
+													<th>
+														Miércoles
+													</th>
+													<th>
+														Jueves
+													</th>
+													<th>
+														Viernes
+													</th>
+													<th>
+														Sábado
+													</th>
+													<th>
+														Domingo
+													</th>
+												</tr>
+												<tr>
+
+												<% 
+													service_promo = nil
+													if !@service.active_service_promo_id.nil?
+														service_promo = ServicePromo.find(@service.active_service_promo_id)
+													end
+												%>
+													<td class="first-cell">
+														
+
+														<% if service_promo.nil? %>
+															<div class="row">
+											                  <div class="col-md-12">
+											                      Mañana
+											                  </div>
+											                </div>
+											                <div class="row">
+											                  <div class="col-md-12">
+											                      <div class="promo-hour-select has-feedback morning-promo-hour">
+											                        <%= time_select "service_promo", "morning_start", {default: promo_time.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <br />
+											                        <%= time_select "service_promo", "morning_end", {default: promo_time.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+											                        <span class="form-control-feedback"></span>
+											                      </div>               
+											                  </div>
+											                </div>
+										                <% else %>
+
+										                	<div class="row">
+											                  <div class="col-md-12">
+											                      Mañana
+											                  </div>
+											                </div>
+											                <div class="row">
+											                  <div class="col-md-12">
+											                      <div class="promo-hour-select has-feedback morning-promo-hour">
+											                        <%= time_select "service_promo", "morning_start", {default: service_promo.morning_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <br />
+											                        <%= time_select "service_promo", "morning_end", {default: service_promo.morning_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <span class="help-block"><label id="morning-error" class="error" hidden></label></span>
+											                        <span class="form-control-feedback"></span>
+											                      </div>               
+											                  </div>
+											                </div>
+
+										                <% end %>
+
+													</td>
+
+													<%
+														for i in 1..7
+														promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+													%>
+
+														<td>
+															<select id="morning-<%= i.to_s %>" class="promotions-input">
+															<% if promo.nil? %>
+
+																<% for j in 0..19 %>
+																	<% if (j*5) != promo_time.morning_default %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        						<% if promo_time.morning_default >= (j*5) && promo_time.morning_default < ((j+1)*5) %>
+																		<option value="<%= promo_time.morning_default.to_s %> %" selected><%= promo_time.morning_default.to_s + ' %' %></option>
+																	<% end %>
+					                        					<% end %>
+
+															<% else %>
+
+																<% for j in 0..19 %>
+					                        						<% if (j*5) != promo.morning_discount %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        						<% if promo.morning_discount >= (j*5) && promo.morning_discount < ((j+1)*5) %>
+																		<option value="<%= promo.morning_discount.to_s %> %" selected><%= promo.morning_discount.to_s + ' %' %></option>
+																	<% end %>
+					                        					<% end %>
+
+
+															<% end %>
+														</td>
+
+													<% end %>								
+
+												</tr>
+												<tr>
+													<td class="first-cell">
+
+
+														<% if service_promo.nil? %>
+															<div class="row">
+											                  <div class="col-md-12">
+											                      Tarde
+											                  </div>
+											                </div>
+											                <div class="row">
+											                  <div class="col-md-12">
+											                      <div class="promo-hour-select has-feedback afternoon-promo-hour">
+											                        <%= time_select "service_promo", "afternoon_start", {default: promo_time.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <br />
+											                        <%= time_select "service_promo", "afternoon_end", {default: promo_time.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <span class="help-block"><label id="afternoon-error" class="error" hidden></label></span>
+											                        <span class="form-control-feedback"></span>
+											                      </div>               
+											                  </div>
+											                </div>
+										                <% else %>
+
+										                	<div class="row">
+											                  <div class="col-md-12">
+											                      Tarde
+											                  </div>
+											                </div>
+											                <div class="row">
+											                  <div class="col-md-12">
+											                      <div class="promo-hour-select has-feedback afternoon-promo-hour">
+											                        <%= time_select "service_promo", "afternoon_start", {default: service_promo.afternoon_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <br />
+											                        <%= time_select "service_promo", "afternoon_end", {default: service_promo.afternoon_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <span class="help-block"><label id="afternoon-error" class="error" hidden></label></span>
+											                        <span class="form-control-feedback"></span>
+											                      </div>               
+											                  </div>
+											                </div>
+
+										                <% end %>
+
+
+
+													</td>
+
+													<%
+														for i in 1..7
+														promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+													%>
+
+														<td>
+															<select id="afternoon-<%= i.to_s %>" class="promotions-input">
+															<% if promo.nil? %>
+
+																<% for j in 0..19 %>
+																	<% if (j*5) != promo_time.afternoon_default %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        						<% if promo_time.afternoon_default >= (j*5) && promo_time.afternoon_default < ((j+1)*5) %>
+																		<option value="<%= promo_time.afternoon_default.to_s %> %" selected><%= promo_time.afternoon_default.to_s + ' %' %></option>
+																	<% end %>
+					                        					<% end %>
+
+															<% else %>
+
+																<% for j in 0..19 %>
+					                        						<% if (j*5) != promo.afternoon_discount %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        						<% if promo.afternoon_discount >= (j*5) && promo.afternoon_discount < ((j+1)*5) %>
+																		<option value="<%= promo.afternoon_discount.to_s %> %" selected><%= promo.afternoon_discount.to_s + ' %' %></option>
+																	<% end %>
+					                        					<% end %>
+
+
+															<% end %>
+														</td>
+
+													<% end %>
+
+												</tr>
+												<tr>
+													<td class="first-cell">
+														
+														<% if service_promo.nil? %>
+															<div class="row">
+											                  <div class="col-md-12">
+											                      Noche
+											                  </div>
+											                </div>
+											                <div class="row">
+											                  <div class="col-md-12">
+											                      <div class="promo-hour-select has-feedback night-promo-hour">
+											                        <%= time_select "service_promo", "night_start", {default: promo_time.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <br />
+											                        <%= time_select "service_promo", "night_end", {default: promo_time.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <span class="help-block"><label id="night-error" class="error" hidden></label></span>
+											                        <span class="form-control-feedback"></span>
+											                      </div>               
+											                  </div>
+											                </div>
+										                <% else %>
+
+										                	<div class="row">
+											                  <div class="col-md-12">
+											                      Noche
+											                  </div>
+											                </div>
+											                <div class="row">
+											                  <div class="col-md-12">
+											                      <div class="promo-hour-select has-feedback night-promo-hour">
+											                        <%= time_select "service_promo", "night_start", {default: service_promo.night_start, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <br />
+											                        <%= time_select "service_promo", "night_end", {default: service_promo.night_end, minute_step: 15}, {:class => 'form-control date-select', required: true} %>
+											                        <span class="help-block"><label id="night-error" class="error" hidden></label></span>
+											                        <span class="form-control-feedback"></span>
+											                      </div>               
+											                  </div>
+											                </div>
+
+										                <% end %>
+
+													</td>
+													
+													<%
+														for i in 1..7
+														promo = Promo.where(:service_promo_id => @service.active_service_promo_id, :day_id => i).first
+													%>
+
+														<td>
+															<select id="night-<%= i.to_s %>" class="promotions-input">
+															<% if promo.nil? %>
+
+																<% for j in 0..19 %>
+																	<% if (j*5) != promo_time.night_default %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        						<% if promo_time.night_default >= (j*5) && promo_time.night_default < ((j+1)*5) %>
+																		<option value="<%= promo_time.night_default.to_s %> %" selected><%= promo_time.night_default.to_s + ' %' %></option>
+																	<% end %>
+					                        					<% end %>
+
+															<% else %>
+
+																<% for j in 0..19 %>
+					                        						<% if (j*5) != promo.night_discount %>
+					                        							<option value="<%= (j*5).to_s %> %"><%= (j*5).to_s + ' %' %></option>
+					                        						<% end %>
+					                        						<% if promo.night_discount >= (j*5) && promo.night_discount < ((j+1)*5) %>
+																		<option value="<%= promo.night_discount.to_s %> %" selected><%= promo.night_discount.to_s + ' %' %></option>
+																	<% end %>
+					                        					<% end %>
+
+
+															<% end %>
+														</td>
+
+													<% end %>
+
+												</tr>
+											</table>
+										</div>
+
+									</div>
+
+								</div>
+
+
+								<div class="row">
+									<div class="col-md-12">
+										<label>En los siguientes locales</label>
+										<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción por horario.</span>
+
+										<div class="form-group">
+											
+											<%
+												locations = []
+												@service.service_providers.each do |service_provider|  
+													if !locations.include?(service_provider.location)
+														locations << service_provider.location
+													end
+												end
+											%>
+
+											<% locations.each do |location| %>
+												<div class="checkbox">
+								                    <label>
+								                    	<% if Promo.where(:service_promo_id => @service.active_service_promo_id, :location_id => location.id).count > 0 || @service.active_service_promo_id.nil? || @service.service_promos.count == 0 || @service.service_promos.nil? %>
+								                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="locations" /> <%= location.name %>
+								                    	<% else %>
+								                    		<input type="checkbox" value="<%= location.id %>" name="locations" /> <%= location.name %>
+								                    	<% end %>
+								                    </label>
+								                </div>
+											<% end %>
+
+										</div>
+
+									</div>
+								</div>
+
+
+								<div class="row">
+									<div class="col-md-12">
+										<label>Promociones disponibles</label>
+										<span class="help-block">Selecciona el stock de reservas que tendrán descuento.</span>
+
+										<div class="form-group">
+											
+											<div class="checkbox">
+												<label>
+													
+													<% if @service.active_service_promo.nil? %>
+						                          		<input type="checkbox" id="limit_booking" name="limit_booking" checked />
+						                          	<% else %>
+						                          		<% if @service.active_service_promo.limit_booking %>
+						                          			<input type="checkbox" id="limit_booking" name="limit_booking" checked />
+						                          		<% else %>
+						                          			<input type="checkbox" id="limit_booking" name="limit_booking" />
+						                          		<% end %>
+						                          	<% end %>
+						                          		Stock limitado.
+						                          		<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Marca la opción para definir un stock máximo, o desmárcala para definir un stock ilimitado."><i class="fa fa-question-circle fa-lg"></i></span>
+						                        </label>
+					                        </div>
+
+											<% if @service.active_service_promo_id.nil? %>
+												<div>
+													
+
+													<div class="input-group" style="width: 160px !important;">
+									                    <input type="number" id="max_bookings" name="max_bookings" value="" class="form-control" />
+									                    <span class="input-group-addon">Reservas</span>
+		                  							</div>
+
+												
+
+												</div>
+											<% else %>
+												<div>
+													<div class="input-group" style="width: 160px !important;">
+									                    <input type="number" id="max_bookings" name="max_bookings" value="<%= @service.active_promo_left_bookings %>" class="form-control" />
+									                    <span class="input-group-addon">Reservas</span>
+			              							</div>
+			              							<% if @service.active_service_promo.limit_booking %>
+														Quedan <%= @service.active_promo_left_bookings.to_s %> reservas disponibles.
+													<% else %>
+														No hay límite de reservas. Edita la opción "stock limitado" e ingresa el stock de reservas para modificar esta opción.
+													<% end %>
+												</div>
+											<% end %>
+											<div style="clear: both;">
+											</div>
+
+										</div>
+
+										<% if !@service.active_service_promo_id.nil? %>
+											<div class="form-group" style="display: none;">
+												<div style="display: inline !important;">
+													<div class="checkbox">
+														<label>
+															
+								                          	<input type="checkbox" id="reset_on_max_change" name="reset_on_max_change" checked />	
+								                          		Editar el stock.
+								                          	<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Si marcas esta opción, al cambiar el stock disponible el contador de reservas tomadas volverá a 0. Si no la marcas, se mantendrá el contador de reservas tomadas para la promoción."><i class="fa fa-question-circle fa-lg"></i></span>
+
+								                        </label>
+							                        </div>				                        	
+												</div>
+											</div>
+										<% else %>
+											<div style="display: none;">
+												<input type="checkbox" id="reset_on_max_change" name="reset_on_max_change" checked />
+											</div>
+										<% end %>
+
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-12">
+										<label>Fechas</label>
+										<span class="help-block">Selecciona la duración y la fecha límite para reservar.</span>
+
+										<div class="form-group">
+											<div class="row">
+												<div class="col-md-2">
+													Finaliza el:
+												</div>
+												<div class="col-md-3">
+													<% if !service_promo.nil? %>
+														<% 
+															finish_date_arr = service_promo.finish_date.to_s.split(' ')[0].split('-')
+															finish_date = finish_date_arr[2] + '/' + finish_date_arr[1] + '/' + finish_date_arr[0]
+														%>
+														<input type="text" id="finish_date" name="finish_date" class="form-control" value="<%= finish_date %>" />
+													<% else %>
+														<input type="text" id="finish_date" name="finish_date" class="form-control" />
+													<% end %>
+												</div>
+											</div>
+										</div>
+										<br />
+										<div class="form-group">
+											<div class="row">
+												<div class="col-md-2">
+													Admite reservas hasta:
+												</div>
+												<div class="col-md-3">
+													<% if !service_promo.nil? %>
+														<% 
+															book_limit_date_arr = service_promo.book_limit_date.to_s.split(' ')[0].split('-')
+															book_limit_date = book_limit_date_arr[2] + '/' + book_limit_date_arr[1] + '/' + book_limit_date_arr[0]
+														%>
+														<input type="text" id="book_limit_date" name="book_limit_date" class="form-control" value="<%= book_limit_date %>" />
+													<% else %>
+														<input type="text" id="book_limit_date" name="book_limit_date" class="form-control" />
+													<% end %>
+												</div>
+											</div>
+										</div>
+
+									</div>
+								</div>
+
+							
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<button class="btn btn-green promotions-submit">Guardar</button>
+											<%= link_to 'Cancelar', services_path, :class => "btn btn-default" %>
+										</div>
+									</div>
+								</div>
+
+							<% else %>
+
+								<!--
+									For now, make a dummy check so treatment_promos are not shown.
+								-->
+								<% if @service.online_payable && @service.check_company_promos && @service.has_sessions %>
+									
+									<div class="row">
+										<div class="col-md-12">
+											<label>Descuento de tratamiento</label>
+											<span class="help-block">Activa un descuento por pago en línea del tratamiento completo.</span>
+
+											<div class="form-group">
+												<div style="display: inline !important;">
+													<div class="checkbox">
+														<label>
+															<% if @service.has_treatment_promo %>
+								                          		<input type="checkbox" id="has_treatment_promo" name="has_treatment_promo" checked />
+								                          	<% else %>
+								                          		<input type="checkbox" id="has_treatment_promo" name="has_treatment_promo" />
+								                          	<% end %>
+								                          	Permitir descuento
+								                        </label>
+							                        </div>
+						                        	
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-12">
+											<label>En los siguientes locales</label>
+											<span class="help-block">Selecciona los locales que prestan este servicio y lo ofrecerán en promoción por horario.</span>
+
+											<div class="form-group">
+												
+												<%
+													locations = []
+													@service.service_providers.each do |service_provider|  
+														if !locations.include?(service_provider.location)
+															locations << service_provider.location
+														end
+													end
+												%>
+
+												<% locations.each do |location| %>
+													<div class="checkbox">
+									                    <label>
+									                    	<% if @service.active_treatment_promo_id.nil? %>
+									                    		<input type="checkbox" checked="checked" value="<%= location.id %>" name="treatment_locations" /> <%= location.name %>
+									                    	<% else %>
+									                    		<% if TreatmentPromoLocation.where(:treatment_promo_id => @service.active_treatment_promo_id, :location_id => location.id).count > 0 %>
+									                    			<input type="checkbox" checked="checked" value="<%= location.id %>" name="treatment_locations" /> <%= location.name %>
+									                    		<% else %>
+									                    			<input type="checkbox" value="<%= location.id %>" name="treatment_locations" /> <%= location.name %>
+									                    		<% end %>
+									                    	<% end %>
+									                    </label>
+									                </div>
+												<% end %>
+
+											</div>
+
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-12">
+											<label>Descuento</label>
+											<span class="help-block">Selecciona el porcentaje de descuento.</span>
+
+											<div class="form-group">
+												<div class="row">
+													<div class="col-md-1">
+														<% 
+															treatment_discount = 0
+															if !@service.active_treatment_promo.nil?
+																treatment_discount = @service.active_treatment_promo.discount
+															end
+														%>
+														<select id="treatment_discount" name="treatment_discount" class="form-control">
+														<% for i in 0..99 %>
+						                        			<% if treatment_discount == i %>
+						                        				<option value="<%= i.to_s %>" selected><%= i.to_s %> %</option>
+						                        			<% else %>
+						                        				<option value="<%= i.to_s %>"><%= i.to_s %> %</option>
+						                        			<% end %>
+						                        		<% end %>
+						                        		</select>
+													</div>
+												</div>
+											</div>
+
+										</div>
+									</div>
+
+
+									<div class="row">
+										<div class="col-md-12">
+											<label>Promociones disponibles</label>
+											<span class="help-block">Selecciona el stock de reservas que tendrán descuento.</span>
+
+											<div class="form-group">
+												
+												<div class="checkbox">
+													<label>
+
+														<%
+															treatment_limit_booking = false
+															treatment_stock = 0
+
+															if !@service.active_treatment_promo.nil?
+
+																treatment_limit_booking = @service.active_treatment_promo.limit_booking
+																treatment_stock = @service.active_treatment_promo.max_bookings
+
+															end
+
+														%>
+														
+														<% if treatment_limit_booking %>
+							                          		<input type="checkbox" id="treatment_limit_booking" name="treatment_limit_booking" checked />
+							                          	<% else %>
+							                          		<input type="checkbox" id="treatment_limit_booking" name="treatment_limit_booking" />
+							                          	<% end %>
+							                          		Stock limitado.
+							                          		<span style="cursor: pointer;" data-toggle="tooltip" data-placement="bottom" title="Marca la opción para definir un stock máximo, o desmárcala para definir un stock ilimitado."><i class="fa fa-question-circle fa-lg"></i></span>
+							                        </label>
+						                        </div>
+
+												<% if @service.active_treatment_promo.nil? %>
+													<div>
+														
+
+														<div class="input-group" style="width: 160px !important;">
+										                    <input type="number" id="treatment_max_bookings" name="treatment_max_bookings" value="0" class="form-control" />
+										                    <span class="input-group-addon">Reservas</span>
+			                  							</div>
+
+													
+
+													</div>
+												<% else %>
+													<div>
+														<div class="input-group" style="width: 160px !important;">
+										                    <input type="number" id="treatment_max_bookings" name="treatment_max_bookings" value="<%= treatment_stock %>" class="form-control" />
+										                    <span class="input-group-addon">Reservas</span>
+				              							</div>
+				              							<% if treatment_limit_booking %>
+															Quedan <%= treatment_stock.to_s %> reservas disponibles.
+														<% else %>
+															No hay límite de reservas. Edita la opción "stock limitado" e ingresa el stock de reservas para modificar esta opción.
+														<% end %>
+													</div>
+												<% end %>
+												<div style="clear: both;">
+												</div>
+
+											</div>
+
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-12">
+											<label>Fechas</label>
+											<span class="help-block">Selecciona la duración de la promoción.</span>
+
+											<div class="form-group">
+												<div class="row">
+													<div class="col-md-2">
+														Finaliza el:
+													</div>
+													<div class="col-md-3">
+														<% 
+															treatment_finish_date = DateTime.now.strftime('%d/%m/%Y')
+															if !@service.active_treatment_promo.nil?
+																treatment_finish_date = @service.active_treatment_promo.finish_date.strftime('%d/%m/%Y')
+															end
+														%>
+														<input type="text" id="treatment_finish_date" name="treatment_finish_date" class="form-control" value="<%= treatment_finish_date %>" />
+													</div>
+												</div>
+											</div>
+
+										</div>
+									</div>
+
+								
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<button class="btn btn-green promotions-submit">Guardar</button>
+												<%= link_to 'Cancelar', services_path, :class => "btn btn-default" %>
+											</div>
+										</div>
+									</div>
+
+								<% else %>
+
+									<div class="row">
+										<div class="col-md-8">
+											<div class="form-group">
+												<p style="text-aling: justify;">
+													<% if !@service.online_payable %>
+														Este servicio no se puede pagar en línea, por lo que no puedes ofrecerlo en promoción.
+													<% elsif !@service.check_company_promos %>
+														Aún no has configurado las promociones. Entra a Configuraciones, a la sección de Promociones, para configurar el horario y activar las promociones. Si la opción no te aparece, ponte en contacto con nosotros para habilitar las promociones.
+													<% else %>
+														Este servicio corresponde a un tratamiento por sesiones, por lo que no puedes ofrecerlo en promoción por horario o de último minuto. Como alternativa, puedes ofrecerlo con descuento si es prepagado en línea. Para hacerlo, vuelve a la pantalla de edición del servicio, elige una opción de pago en línea, marca la opción de descuento or pago en línea e ingresa el porcentaje de descuento.
+													<% end %>
+												</p>
+											</div>
+										</div>
+									</div>
+
+								<% end %>
+
+							<% end %>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	<% end %>
+
+    <!-- Fin Promociones -->
+
+</div>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "jquery.editable-select" %>
+<% end %>
 
 <% content_for :scripts do %>
+
   <%= javascript_include_tag "service" %>
+  <%= javascript_include_tag "promo/service-promo" %>
+  <%= javascript_include_tag "promo/jquery.editable-select" %>
+
 <% end %>

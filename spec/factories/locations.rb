@@ -12,8 +12,6 @@ FactoryGirl.define do
         order                           0
         outcall                         false
         email                           "iegomez@agendapro.cl"
-        notification                    true
-        booking_configuration_email     0
         second_address                  nil
         online_booking                  true
     end

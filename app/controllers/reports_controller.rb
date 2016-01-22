@@ -3,11 +3,12 @@ class ReportsController < ApplicationController
 	before_action :authenticate_user!
 	before_action :verify_is_admin
 	before_action :quick_add
+	before_action -> (source = "reports") { verify_free_plan source }
 	before_action :set_params
 	layout "admin"
 
 	def index
-		@locations = Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:name)
+		@locations = Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:order, :name)
 	end
 
 	def statuses
@@ -46,7 +47,7 @@ class ReportsController < ApplicationController
 
 	  	render "_location_services", layout: false
 	end
-	
+
 	def provider_services
 		@service_provider = ServiceProvider.find(params[:id])
 

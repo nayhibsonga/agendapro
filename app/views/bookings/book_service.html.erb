@@ -4,11 +4,7 @@
       <% if !@company.description.blank? %>
         <div class="col-md-4 company-header-left company-header">
           <div class="col-md-3">
-            <% if @company.logo_url %>
-              <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
-            <% else %>
-              <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo img-responsive" %>
-            <% end %>
+            <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
           </div>
           <div class="col-md-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
             <%= @company.name %>
@@ -45,11 +41,7 @@
       <% else %>
         <div class="col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="col-md-3">
-            <% if @company.logo_url %>
-              <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
-            <% else %>
-              <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo img-responsive" %>
-            <% end %>
+            <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo img-responsive" %>
           </div>
           <div class="col-md-9" style="color: #949292; font-size: 30px; padding-top: 20px;">
             <%= @company.name %>
@@ -137,35 +129,72 @@
                     <a href="<%= root_url(:host => @url) %>"><span class="light-gray">Agendar nuevamente</span> &nbsp;<i class="fa fa-calendar-o fa-lg light-green"></i></a>
                   </p>
                   <div class="book-subheader dark-gray">Resumen de tu Reserva</div>
-                  <dl class="dl-horizontal book-dl">
-                    <dt class="dark-gray">¿Qué reservaste?</dt>
-                    <dd class="light-gray">
-                      <% @bookings.each do |booking| %>
-                        <p><%= booking.service.name %></p>
+
+                  <% if @has_session_booking %>
+                    <dl class="dl-horizontal book-dl">
+                      <dt class="dark-gray">¿Qué reservaste?</dt>
+                      <dd class="light-gray">
+                        <p><%= @bookings.first.service.name %></p>
+                      </dd>
+
+                      <dt class="dark-gray">¿Dónde?</dt>
+                      <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                      <dd class="light-gray">
+                        <p><%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %></p>
+                      </dd>
+
+                      <dt class="dark-gray">¿Cuántas sesiones?</dt>
+                      <dd class="light-gray">
+                          <p>Reservaste <%= @session_booking.sessions_taken.to_s %> sesiones de un total de <%= @session_booking.service.sessions_amount %></p>
+                      </dd>
+
+                      <dt class="dark-gray">¿Cuándo?</dt>
+                      <dd class="light-gray">
+                        <% @bookings.each do |booking| %>
+                          <% if booking.is_session_booked %>
+                            <p><%= I18n.l(booking.start.to_datetime).capitalize %>, con <%= booking.service_provider.public_name %></p>
+                          <% end %>
+                        <% end %>
+                      </dd>
+
+                        <% if !@bookings.first.notes.blank? %>
+                        <dt class="dark-gray">Notas</dt>
+                        <dd class="light-gray"><p><%= @bookings.first.notes %></p></dd>
+                        <% end %>
+
+                    </dl>
+
+                  <% else %>
+                    <dl class="dl-horizontal book-dl">
+                      <dt class="dark-gray">¿Qué reservaste?</dt>
+                      <dd class="light-gray">
+                        <% @bookings.each do |booking| %>
+                          <p><%= booking.service.name %></p>
+                        <% end %>
+                      </dd>
+                      <dt class="dark-gray">¿Dónde?</dt>
+                      <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
+                      <dd class="light-gray"><p><%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %></p></dd>
+                      <% if @bookings.first.location.company.company_setting.provider_preference != 2 %>
+                      <dt class="dark-gray">¿Con quién?</dt>
+                      <dd class="light-gray">
+                        <% @bookings.each do |booking| %>
+                          <p><%= booking.service_provider.public_name %></p>
+                        <% end %>
+                      </dd>
                       <% end %>
-                    </dd>
-                    <dt class="dark-gray">¿Dónde?</dt>
-                    <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
-                    <dd class="light-gray"><p><%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %></p></dd>
-                    <dt class="dark-gray">¿Con quién?</dt>
-                    <dd class="light-gray">
-                      <% @bookings.each do |booking| %>
-                        <p><%= booking.service_provider.public_name %></p>
-                      <% end %>
-                    </dd>
-                    <dt class="dark-gray">¿Cuándo?</dt>
-                    <dd class="light-gray">
-                      <% @bookings.each do |booking| %>
-                        <p><%= I18n.l(booking.start.to_datetime) %></p>
-                      <% end %>
-                    </dd>
-                    <% @bookings.each do |booking| %>
-                      <% if !booking.notes.blank? %>
-                      <dt class="dark-gray">Notas</dt>
-                      <dd class="light-gray"><p><%= booking.notes %></p></dd>
-                      <% end %>
-                    <% end %>
-                  </dl>
+                      <dt class="dark-gray">¿Cuándo?</dt>
+                      <dd class="light-gray">
+                        <% @bookings.each do |booking| %>
+                          <p><%= I18n.l(booking.start.to_datetime) %></p>
+                        <% end %>
+                      </dd>
+                      <% if !@bookings.first.notes.blank? %>
+                        <dt class="dark-gray">Notas</dt>
+                        <dd class="light-gray"><p><%= @bookings.first.notes %></p></dd>
+                        <% end %>
+                    </dl>
+                  <% end %>
 
                   <div class="book-subheader dark-gray">Tus Datos</div>
                   <dl class="dl-horizontal book-dl">
@@ -198,7 +227,7 @@
         <% else %>
           <% if @try_register %>
             <div class="col-md-5">
-              
+
               <div class="suggest-register" style="height: 100%;">
                 <div class="row">
                   <div class="col-md-12">
@@ -240,7 +269,7 @@
                 </div>
               </div>
 
-              
+
               <div class="suggest-register" style="height: 100%;">
                 <div class="row">
                   <div class="col-md-12">
@@ -258,7 +287,7 @@
 
                       <div class="row">
                         <div class="col-sm-2">
-                          
+
                         </div>
                         <div class="col-sm-8">
                           <div class="has-feedback">
@@ -319,10 +348,10 @@
 
                         </div>
                       </div>
-        
+
                       <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-8">
-                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right' %>
+                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right', onclick: "ga('send', 'event', 'Usuarios', 'Sign-Up Usuarios', 'Registro desde WF');" %>
                         </div>
                       </div>
                     <% end %>
@@ -333,7 +362,7 @@
             </div>
           <% elsif @try_signin %>
             <div class="col-md-5">
-              
+
               <div class="suggest-register" style="height: 100%;">
                 <div class="row">
                   <div class="col-md-12">
@@ -348,7 +377,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="suggest-signin" style="height: 100%;">
                 <div class="row">
                   <div class="col-md-12">
@@ -376,7 +405,7 @@
                     </div>
                     <div class="form-group">
                       <div class="col-sm-offset-4 col-sm-8">
-                        <%= f.submit 'Ingresar', :class => 'btn btn-orange' %>
+                        <%= f.submit 'Ingresar', :class => 'btn btn-orange', onclick: "ga('send', 'event', 'Usuarios', 'Sign-In Usuarios', 'Ingreso desde WF');" %>
                       </div>
                     </div>
                     <div class="form-group">
@@ -470,4 +499,25 @@
   });
 
   </script>
+<% end %>
+
+<% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+<% content_for :head_scripts do %>
+<!-- Facebook Conversion Code for Book - AgendaPro -->
+<script>(function() {
+var _fbq = window._fbq || (window._fbq = []);
+if (!_fbq.loaded) {
+var fbds = document.createElement('script');
+fbds.async = true;
+fbds.src = '//connect.facebook.net/en_US/fbds.js';
+var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(fbds, s);
+_fbq.loaded = true;
+}
+})();
+window._fbq = window._fbq || [];
+window._fbq.push(['track', '6029599037240', {'value':'0.00','currency':'CLP'}]);
+</script>
+<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6029599037240&amp;cd[value]=0.00&amp;cd[currency]=CLP&amp;noscript=1" /></noscript>
+<% end %>
 <% end %>

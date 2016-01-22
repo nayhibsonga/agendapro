@@ -21,7 +21,6 @@ FactoryGirl.define do
 	    provider_overcapacity  true
 	    resource_overcapacity  true
 	    booking_confirmation_time  1
-	    booking_configuration_email  0
 	    max_changes  2
 	    booking_history  false
 	    staff_code  false
@@ -43,6 +42,11 @@ FactoryGirl.define do
 	    deal_required  false
 	    online_payment_capable  true
 	    allows_optimization  true
+	    activate_notes true 
+	    receipt_required false 
+	    online_payment_commission 10.0 
+	    promo_commission 15.0 
+	    promo_offerer_capable false
 
     end
 

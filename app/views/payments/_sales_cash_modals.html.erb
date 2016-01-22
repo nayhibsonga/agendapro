@@ -1,0 +1,274 @@
+<div class="modal fade salesCashModal" id="salesCashModal" tabindex="-1" role="dialog" aria-labelledby="Configuración" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="salesCashModalTitle" style="line-height: 1.1;">Configuración</h3>
+      </div>
+      <div class="modal-body" id="salesCashModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <p>Puedes elegir que tu caja se cierre de manera programada o manual. En cualquiera de los casos, se reiniciará el balance y se generarán reportes para el último período que podrás descargar desde tu panel.</p>
+            <p>Importante: la caja se cerrará a las 00:00 del día que elijas.</p>
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">Cierre programado</label>
+              <div class="col-xs-8">
+                <select class="form-control" id="sales_cash_scheduled_reset" name="sales_cash_scheduled_reset">
+                  <option value="0">No</option>
+                  <option value="1">Sí</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">Frecuencia</label>
+              <div class="col-xs-8">
+                <select class="form-control" id="sales_cash_scheduled_reset_monthly" name="sales_cash_scheduled_reset_monthly">
+                  <option value="1">Mensualmente</option>
+                  <option value="0">Semanalmente</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="clear: both; margin-top: 2px;">
+            </div>
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">Día</label>
+              <div class="col-xs-8">
+                <select class="form-control" id="sales_cash_scheduled_reset_day" name="sales_cash_scheduled_reset_day">
+
+                </select>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <!--<div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">Emails</label>
+              <div class="col-xs-8">
+                <input class="form-control" id="sales_cash_emails" name="sales_cash_emails" value="" />
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div>
+              <span class="help-block">Ingresa los emails a los que quieras enviar el resumen separados por coma: ejemplo1@agendapro.cl, ejemplo2@agendapro.cl, ejemplo3@agendapro.cl</span>
+            </div>
+            -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-green" id="salesCashSaveBtn" aria-label="Siguiente">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade salesCashModal" id="salesCashTransactionModal" tabindex="-1" role="dialog" aria-labelledby="Traspaso" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="salesCashTransactionModalTitle" style="line-height: 1.1;">Traspaso</h3>
+      </div>
+      <div class="modal-body" id="salesCashTransactionModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <input type="hidden" id="sales_cash_transaction_edit" name="sales_cash_transaction_edit" value="0" />
+            <input type="hidden" id="sales_cash_transaction_id" name="sales_cash_transaction_id" value="0" />
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">Tipo</label>
+              <div class="col-xs-8">
+                <select class="form-control" id="sales_cash_transaction_is_internal_transaction" name="sales_cash_transaction_is_internal_transaction">
+                  <option value="1">A caja chica</option>
+                  <option value="0">Externo</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">Monto</label>
+              <div class="col-xs-8">
+                <input type="number" class="form-control" id="sales_cash_transaction_amount" name="sales_cash_transaction_amount" value="0" />
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">N° de comprobante</label>
+              <div class="col-xs-8">
+                <input type="text" class="form-control" id="sales_cash_transaction_receipt_number" name="sales_cash_transaction_receipt_number" value="" />
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">Fecha</label>
+              <div class="col-xs-4">
+                <input type="text" class="form-control" id="sales_cash_transaction_date" name="sales_cash_transaction_date" value="<%= DateTime.now.to_date %>" />
+              </div>
+              <div class="col-xs-4">
+              <%= time_select 'sales_cash', 'transaction_time', {minute_step: 1}, {:class => 'form-control date-select', required: true} %>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">Notas</label>
+              <div class="col-xs-8">
+                <textarea class="form-control" id="sales_cash_transaction_notes" name="sales_cash_transaction_notes"></textarea>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-green" id="salesCashTransactionSaveBtn" aria-label="Siguiente">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade salesCashModal" id="salesCashIncomeModal" tabindex="-1" role="dialog" aria-labelledby="Ingreso" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="salesCashIncomeModalTitle" style="line-height: 1.1;">Ingreso</h3>
+      </div>
+      <div class="modal-body" id="salesCashIncomeModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <input type="hidden" id="sales_cash_income_edit" name="sales_cash_income_edit" value="0" />
+            <input type="hidden" id="sales_cash_income_id" name="sales_cash_income_id" value="0" />
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">Monto</label>
+              <div class="col-xs-8">
+                <input type="number" class="form-control" id="sales_cash_income_amount" name="sales_cash_income_amount" value="0" />
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">Fecha</label>
+              <div class="col-xs-4">
+                <input type="text" class="form-control" id="sales_cash_income_date" name="sales_cash_income_date" value="<%= DateTime.now.to_date %>" />
+              </div>
+              <div class="col-xs-4">
+              <%= time_select 'sales_cash', 'income_time', {minute_step: 1}, {:class => 'form-control date-select', required: true} %>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+            <div class="payment-form-div form-group">
+              <label class="col-xs-4 control-label">Notas</label>
+              <div class="col-xs-8">
+                <textarea class="form-control" id="sales_cash_income_notes" name="sales_cash_income_notes"></textarea>
+              </div>
+            </div>
+
+            <div style="clear: both;">
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-green" id="salesCashIncomeSaveBtn" aria-label="Guardar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade salesCashModal" id="salesCashCloseModal" tabindex="-1" role="dialog" aria-labelledby="Ingreso" aria-hidden="true">
+  <div class="modal-dialog" style="width: auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancelar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="salesCashCloseModalTitle" style="line-height: 1.1;">Cerrar Caja de Ventas</h3>
+      </div>
+      <div class="modal-body" id="salesCashCloseModalBody">
+        <div class="row">
+          <div class="col-xs-12">
+
+            <p>Al cerrar tu Caja de Ventas se reinician las recaudaciones y movimientos generados, quedando el monto de ventas actual en 0. Esto no borra los registros históricos ocurridos, sólo es una forma de cuadrar tu balance. Al cerrar, además, se generarán reportes que podrás descargar con el detalle del último período.</p>
+            
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
+        <button type="button" class="btn btn-green" id="salesCashCloseBtnSave" aria-label="Guardar">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade summaryModal" id="salesCashTransactionSummaryModal" tabindex="-1" role="dialog" aria-labelledby="Resumen de traspaso" aria-hidden="true">
+  <div class="modal-dialog" style="width: 70%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="salesCashTransactionSummaryModalTitle" style="line-height: 1.1;">Resumen de traspaso</h3>
+      </div>
+      <div class="modal-body" id="salesCashTransactionSummaryModalBody">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade summaryModal" id="salesCashIncomeSummaryModal" tabindex="-1" role="dialog" aria-labelledby="Resumen de ingreso" aria-hidden="true">
+  <div class="modal-dialog" style="width: 70%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="salesCashIncomeSummaryModalTitle" style="line-height: 1.1;">Resumen de ingreso</h3>
+      </div>
+      <div class="modal-body" id="salesCashIncomeSummaryModalBody">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+      </div>
+    </div>
+  </div>
+</div>

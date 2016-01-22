@@ -262,8 +262,12 @@ Devise.setup do |config|
   #Bambu
   config.omniauth :facebook, ENV["FACEBOOK_APP_ID"], ENV["FACEBOOK_APP_SECRET"]
 
+  config.omniauth :facebook_marketplace, ENV["MP_FACEBOOK_APP_ID"], ENV["MP_FACEBOOK_APP_SECRET"]
+
   #GOOGLE
   #AgendaPro
   config.omniauth :google_oauth2, ENV["GOOGLE_APP_ID"], ENV["GOOGLE_APP_SECRET"], { }
+
+  config.omniauth :google_oauth2_marketplace, ENV["MP_GOOGLE_APP_ID"], ENV["MP_GOOGLE_APP_SECRET"], { }
 
 end

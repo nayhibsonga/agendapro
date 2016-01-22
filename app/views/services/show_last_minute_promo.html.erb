@@ -1,0 +1,604 @@
+<%= stylesheet_link_tag "search/show-promo" %>
+
+<input type="hidden" id="locationId" value="<%= @location.id %>" />
+<input type="hidden" id="serviceId" value="<%= @service.id %>" />
+<input type="hidden" id="serviceName" value="<%= @service.name %>" />
+<input type="hidden" id="servicePrice" value="<%= @service.price %>" />
+<input type="hidden" id="currentDate" value="<%= DateTime.now.strftime('%d/%m/%Y') %>" />
+<input type="hidden" id="last_minute_discount" value="<%= @last_minute_promo.discount %>" />
+<input type="hidden" id="locationAddress" value="<%= @location.address %>" />
+<input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
+<input type="hidden" id="companyId" value="<%= @location.company.id %>" />
+
+<% if @service.has_sessions %>
+  <input type="hidden" id="hasSessions" value="1" />
+<% else %>
+  <input type="hidden" id="hasSessions" value="0" />
+<% end %>
+
+<% if user_signed_in? %>
+  <input type="hidden" id="user_id" value="<%= current_user.id %>" />
+<% end %>
+
+<div class="main below-navbar">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-sm-9">
+        <div class="promo-title">
+          <%= @service.name %> en <%= @location.name %> de <%= @location.company.name %>
+        </div>
+      </div>
+      <div class="col-sm-3" style="text-align: right;">
+        <div class="promotions-results-subtitle">
+          <%= form_tag({controller: "searchs", action: "last_minute_promotions"}, method: "GET", class: "navbar-form", id: "last-minute-promotions-side-form") do %>
+            <%= hidden_field_tag :latitude, params[:latitude] %>
+            <%= hidden_field_tag :longitude, params[:longitude] %>
+            <%= hidden_field_tag :inputLocalization, params[:inputLocalization] %>
+            <%= hidden_field_tag :inputSearch, params[:inputSearch] %>
+            <button class="promotions-search-btn btn btn-default" type="submit">Volver a promociones de último minuto&nbsp;<i class="fa fa-search"></i></button>
+        <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-6 col-md-6">
+        <div class="promo-price">
+          <div class="col-sm-2">
+          </div>
+          <div class="col-sm-8" style="text-align: right;">
+            <table style="width: 100%;">
+              <tr>
+                <td style="vertical-align: bottom; text-align: right; width: 18%; padding-left: 10px;">
+                  <%= image_tag("promociones/flecha.png", :class => "flecha-icon", :size => "58x116") %>
+                </td>
+                <td style="width: 70%; padding-right: 10px;">
+                  <div style="text-align: right; float: left;">
+                    <span style="color: #b5b5b5; font-size: 36px; text-decoration: line-through;"><%= number_to_currency(@service.price, unit: "$", delimiter: ".") %></span><br />
+                    <%= image_tag "promociones/price_doble.png", :alt => "Promoción", :size => "42x52", :class => "price-icon" %>&nbsp;<span style="color: #22c488; font-size: 58px;"><%= number_to_currency(@service.price*(100-@service.get_last_minute_discount)/100, unit: "", delimiter: ".") %></span><br />
+                    <span style="color: #22c488; font-size: 20px;"><%= @service.get_last_minute_discount %>% de descuento</span><br />
+                    <span>
+                      <button class="btnBook" id="btnPayBook" data-toggle="modal" data-target="#selectProviderModal">Comprar y reservar</button>
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-sm-2">
+          </div>
+          <div style="clear: both;"></div>
+        </div>
+        <div class="social-links">
+          <%
+            share_text = "Promoción de " + @service.name + " con " + @service.get_max_time_discount.to_s + "% de descuento en AgendaPro"
+            share_text = url_encode(share_text)
+          %>
+          <a href="http://twitter.com/intent/tweet?status=<%= share_text %>+<%= url_encode(request.original_url) %>" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag "promociones/twitter_doble.png", :size => "32x32" %></a> &nbsp;&nbsp; <a href="<%= url_encode(request.original_url) %>" id="facebookShare"><%= image_tag "promociones/facebook_doble.png", :size => "32x32" %></a>
+        </div>
+        <div class="details-accordions">
+
+
+
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+
+                <h4 class="panel-title minus">
+
+                  <a role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+
+                    <%= image_tag "promociones/reloj_doble.png", :size => "30x30" %> &nbsp;&nbsp; Horarios de reserva
+
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+
+                    <p style="color: #949292;">Reserva hasta <%= @service.get_last_minute_hours %> horas antes y obtén un <%= @service.get_last_minute_discount %>% de descuento.</p>
+
+
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingThree">
+                <h4 class="panel-title minus">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <%= image_tag "promociones/agendapro_doble.png", :size => "30x30" %> &nbsp;&nbsp;Políticas de la promoción
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                <div class="panel-body">
+                  <h3 style="color: #949292;">Modificación/Cancelación:</h3>
+
+                  <p style="color: #949292;">
+                    No se permite modificar ni cancelar reservas pagadas en promoción.
+                  </p>
+
+                  <p style="color: #949292;">
+                    Si la empresa cancela o modifica sus promociones, se respetarán el precio y horario en que efectuaste tu reserva.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+      <div class="col-xs-6 col-md-6">
+        <div class="promo-image" style="margin-top: 15px;">
+          <%= image_tag @service.time_promo_photo.url.to_s, :alt => "Loader", :size => "554x302", :class => "img-responsive", :id => "promo_photo" %>
+        </div>
+        <div class="promo-description">
+          <%= @service.promo_description.html_safe %>
+        </div>
+        <div class="google-maps-empresa">
+          <h3><%= @service.company.name %></h3>
+          <div id="time-promo-map"></div>
+          <div style="margin-top: 5px; margin-bottom: 5px;">
+            <%= image_tag "promociones/pin.png", :alt => "Dirección", :size => "18x26" %>
+            <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
+          </div>
+          <div>
+            <%= image_tag "promociones/phone.png", :alt => "Teléfono", :size => "18x18" %>
+            <%= @location.phone %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if @relatedPromos.count > 0 %>
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="promo-title">
+            Ofertas relacionadas
+          </div>
+
+          <% i = 1 %>
+          <div class="row">
+          <% @relatedPromos.each do |promo_detail| %>
+            <div class="col-md-4">
+              <%= render :partial => 'searchs/last_minute_service_panel', :locals => { :service => promo_detail[0], :location => promo_detail[1], :i => i} %>
+            </div>
+            <% if i%3 == 0 %>
+              </div>
+              <div class="row">
+            <% end %>
+            <% i = i + 1 %>
+          <% end %>
+          </div>
+
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+</div>
+
+<div class="modal last-minute-promo-modal" id="selectProviderModal" tabindex="-1" role="basic" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close closeBookModal" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reservar</h3>
+      </div>
+      <div class="modal-body">
+
+        <div id="optimizerFirst">
+          <form class="form-horizontal" id="serviceOptimizer">
+              <div class="form-group">
+                <label for="providerOptimizerSelector" class="col-xs-3 control-label">Prestador</label>
+                <div class="col-xs-9">
+                  <select class="form-control" name="providerOptimizerSelector" id="providerOptimizerSelector">
+                    <% if @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).count > 1 %>
+                        <% if @location.company.company_setting.provider_preference != 1 %>
+                            <option value="0">Sin Preferencia</option>
+                        <% end %>
+                    <% end %>
+                    <% if @location.company.company_setting.provider_preference != 2 %>
+                      <% @service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @location.id).order(:order, :public_name).each do |provider| %>
+
+                        <option value="<%= provider.id %>">
+                            <%= provider.public_name %>
+                        </option>
+
+                      <% end %>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="available_dates_select" class="col-xs-3 control-label">Fecha</label>
+                <div class="col-xs-9">
+                  <select id="available_dates_select" name="available_dates_select" class="form-control">
+                    <% @available_dates.each do |available_date| %>
+                      <% if available_date == @selected_date %>
+                        <option value="<%= available_date.strftime('%d/%m/%Y') %>" selected>
+                          <%= available_date.strftime('%d/%m/%Y') %>
+                        </option>
+                      <% else %>
+                        <option value="<%= available_date.strftime('%d/%m/%Y') %>">
+                          <%= available_date.strftime('%d/%m/%Y') %>
+                        </option>
+                      <% end %>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+              <div id="hours-selection-div">
+
+              </div>
+              <input type="hidden" name="service" value="<%= @service.id %>" />
+          </form>
+        </div>
+
+        <div id="hoursList" style="display: none;">
+
+        </div>
+
+
+        <!-- Payment Form -->
+
+          <div id="payment-form-div" hidden>
+            <div class="row" style="margin-left: 0px !important;">
+              <div class="col-md-6">
+                <div class="subtitulos-workflow">Ingresa tus datos &nbsp;<i class="fa fa-file-text-o gray-icon"></i></div>
+              </div>
+            </div>
+            <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
+              <div class="row" style="margin-left: 0px !important;">
+
+
+                <div class="col-md-6">
+                  <!-- INICIO FORM -->
+                  <div id="form-datos">
+                    <div class="datos-heading">
+                      Datos de la reserva
+                    </div>
+                    <div class="panel-body">
+                      <input type="hidden" name="bookings" class="bookings" value="" />
+                      <input type="hidden" name="location" id="location" value="<%= @location.id %>" />
+                      <input type="hidden" name="origin" id="origin" value="true" />
+                      <input type="hidden" name="payment" id="payment" value="1" />
+                      <input type="hidden" name="is_last_minute_promo" id="is_last_minute_promo" value="1" />
+                      <input type="hidden" name="has_sessions" id ="has_sessions" value="0" />
+
+                      <% if user_signed_in? %>
+                      <div id="user-data">
+                        <%= hidden_field_tag :user_id, current_user.id %>
+                        <%= hidden_field_tag :firstName, current_user.first_name %>
+                        <%= hidden_field_tag :lastName, current_user.last_name %>
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            Nombre
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <input type="text" id="full_name" name="full_name" class="form-control light-gray" placeholder="Nombre completo (requerido)" value="<%= current_user.first_name %> <%= current_user.last_name %>">
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6 dark-gray">
+                            Email
+                          </div>
+                          <div class="col-md-6 dark-gray">
+                            Teléfono
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group has-feedback">
+                              <%= email_field_tag(:email, current_user.email, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group has-feedback">
+                              <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <% else %>
+                        <%= hidden_field_tag :firstName %>
+                        <%= hidden_field_tag :lastName %>
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            Nombre
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-6 dark-gray">
+                            Email
+                          </div>
+                          <div class="col-sm-6 dark-gray">
+                            Teléfono
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <div class="form-group has-feedback">
+                              <%= email_field_tag(:email, nil, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="form-group has-feedback">
+                              <%= telephone_field_tag(:phone, nil, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                      <% if @location.company.company_setting.client_exclusive %>
+                        <div class="row">
+                          <div class="col-sm-12 dark-gray">
+                            <%= (I18n.t('ci')).capitalize %>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <div class="form-group has-feedback">
+                              <% if user_signed_in? && Client.where(email: current_user.email, company_id: @location.company.id).count > 0
+                                client = Client.where(email: current_user.email, company_id: @location.company.id).first
+                              %>
+                                <%= text_field_tag(:identification_number, client.identification_number, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
+                              <% else %>
+                                <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
+                              <% end %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      <% elsif @location.company.company_setting.use_identification_number %>
+                        <div class="row">
+                          <div class="col-sm-12 dark-gray">
+                            <%= (I18n.t('ci')).capitalize %>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <div class="form-group has-feedback">
+                              <% if user_signed_in? && Client.where(email: current_user.email, company_id: @location.company.id).count > 0
+                                client = Client.where(email: current_user.email, company_id: @location.company.id).first
+                              %>
+                                <%= text_field_tag(:identification_number, client.identification_number, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize ) %>
+                              <% else %>
+                                <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize) %>
+                              <% end %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                      <% if @location.company.company_setting.deal_activate %>
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            <%= !@location.company.company_setting.deal_name.blank? ? @location.company.company_setting.deal_name : "Convenio" %>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <%= text_field_tag(:deal_code, nil, :class => "form-control light-gray" ) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                      <% if @service.outcall %>
+                      <div id="outcallAddress" class="row form-group has-feedback">
+                        <div class="row">
+                          <div class="col-md-12 dark-gray">
+                            Dirección
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group has-feedback">
+                              <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
+                              <span class="help-block"></span>
+                              <span class="form-control-feedback"></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <% end %>
+                      <% if @location.company.company_setting.activate_notes %>
+                      <div class="row">
+                        <div class="col-md-12 dark-gray">
+                          Comentario
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+                          </div>
+                        </div>
+                      </div>
+                      <% end %>
+                      <% if !user_signed_in? %>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="checkbox">
+                            <label>
+                              <%= check_box_tag :mailing_option, true, class: 'checkbox' %> Quiero recibir promociones a mi email
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <% end %>
+
+                      <!-- MEDIO DE PAGO -->
+
+                        <div class="row">
+                          <div class="col-sm-12 dark-gray" id="payment-way">
+                              <div class="form-group has-feedback">
+                                <span id="payment_title" name="payment_title">Elige el medio de pago</span>
+                                <span class="help-block"></span>
+                                <span class="form-control-feedback"></span>
+                              </div>
+                          </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-6">
+                              <input type="radio" name="mp" value="04" class="mp_radio" id="mp_radio_04" />
+                              <label for="mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" /></label>
+                            </div>
+                            <div class="col-md-6">
+                              <input type="radio" name="mp" value="10" class="mp_radio" id="mp_radio_10" />
+                              <label for="mp_radio_10"><image src="https://www.puntopagos.com/content/mp10.gif" alt="Banco Ripley" class="mp_link" mp = "10" /></label>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                          <div class="col-md-6">
+                            <input type="radio" name="mp" value="07" class="mp_radio" id="mp_radio_07" />
+                            <label for="mp_radio_07"><image src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" /></label>
+                          </div>
+                          <div class="col-md-6">
+                            <input type="radio" name="mp" value="03" class="mp_radio" id="mp_radio_03" />
+                            <label for="mp_radio_03"><image src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" /></label>
+                          </div>
+
+                        </div>
+
+                      <!-- FIN MEDIO DE PAGO -->
+
+                    </div>
+
+                  </div>
+                  <!-- FIN FORM -->
+
+                </div>
+                <div class="col-md-6">
+                  <div id="resumen-reserva">
+                    <div class="resumen-heading">
+                      Resumen de tu Reserva
+                    </div>
+                    <div class="panel-body">
+                      <table class="table">
+                        <tbody id="summary">
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            <% end %>
+          </div>
+
+        <!-- End Payment Form -->
+
+
+        <div class="row" id="loader-div" hidden>
+          <p style="text-align: center; margin-top: 40px;">
+            <%= image_tag "ajax-loader.gif", :alt => "Loader" %>
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+          <!--<a type="button" class="btn btn-green" id="nextBtn">&nbsp;Siguiente</a>-->
+          <a type="button" class="btn promo-back-btn" id="backBtn" style="display: none;" disabled="true">Atrás</a>
+          <a type="button" class="btn hour-selected-btn" id="openPayFormBtn" style="display: none;" disabled="true">Siguiente</a>
+          <a type="button" class="btn hour-selected-btn" id="payBtn" style="display: none;" disabled="true">Pagar</a>
+          <!--<button type="button" class="btn session-btn" id="openOptimizerBtn"><i class="fa fa-calendar-o"></i>&nbsp;Sugerir hora</button>-->
+          <a href="#" class="btn btn-white" class="closeBookModal" data-dismiss="modal">Cerrar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= content_tag "div", id: "clientExclusive", data: {client_exclusive: @location.company.company_setting.client_exclusive} do %>
+<% end %>
+<%= content_tag "div", id: "providerPreference", data: {provider_preference: @location.company.company_setting.provider_preference } do %>
+<% end %>
+<%= content_tag "div", id: "dealCode", data: {deal_identification_number: @location.company.company_setting.deal_identification_number, deal_required: @location.company.company_setting.deal_required } do %>
+<% end %>
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "calendar" %>
+<% end %>
+
+<% content_for :scripts do %>
+
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
+  <%= javascript_include_tag 'validations/home/promo' %>
+  <%= javascript_include_tag 'promo/last-minute-promo' %>
+  <%= javascript_include_tag 'split-name' %>
+
+  <script type="text/javascript">
+
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '<%= ENV["FACEBOOK_APP_ID"] %>',
+          xfbml      : true,
+          version    : 'v2.1'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+
+      document.getElementById('facebookShare').onclick = function(e) {
+        e.preventDefault();
+        var share_url = document.getElementById('facebookShare').href;
+        var share_text = "Promoción de <%= @service.name %> con <%= @service.get_last_minute_discount.to_s %> % de descuento en <%= @service.company.name %>.";
+        var picture_href = $("#promo_photo").get(0).src;
+        console.log(picture_href);
+        FB.ui({
+          display: 'popup',
+          method: 'share',
+          picture: picture_href,
+          name: 'Promoción en AgendaPro',
+          caption: 'AgendaPro',
+          description: share_text,
+          href: share_url
+        }, function(response){});
+      }
+
+
+  </script>
+
+<% end %>

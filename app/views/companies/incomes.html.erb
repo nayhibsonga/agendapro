@@ -5,129 +5,6 @@
     </div>
   </div>
 </div>
-
-<div class="row">
-	<div class="col-md-12">
-		<div class="companies_incomes_header">
-			<h3>Ingresos para el año <%= @year %></h3>
-		</div>
-		<div style="max-height: 320px;" class="scrollable">
-			<table class="companies-table">
-				<tr class="companies-table-header">
-					<th>
-						Empresa
-					</th>
-					<th>
-						Enero
-					</th>
-					<th>
-						Febrero
-					</th>
-					<th>
-						Marzo
-					</th>
-					<th>
-						Abril
-					</th>
-					<th>
-						Mayo
-					</th>
-					<th>
-						Junio
-					</th>
-					<th>
-						Julio	
-					</th>
-					<th>
-						Agosto
-					</th>
-					<th>
-						Septiembre
-					</th>
-					<th>
-						Octubre
-					</th>
-					<th>
-						Noviembre
-					</th>
-					<th>
-						Diciembre
-					</th>
-					<th>
-						Total
-					</th>
-				</tr>
-				<%	@companies.each do |company| %>
-					<% 
-						company_income = 0
-					%>
-					<tr>
-						<td>
-							<%= link_to company.name, controller: "companies", action: "manage_company", id: company.id %>
-						</td>
-						<% for i in 1..12 do %>
-
-							<%
-								month_income = 0
-
-								start_date = DateTime.new(@year, i, 1)
-								end_date = start_date
-								if i < 12	
-									end_date = DateTime.new(@year, i+1, 1)-1.minutes
-								else
-									end_date = DateTime.new(@year+1, 1, 1)-1.minutes
-								end
-								billing_logs = BillingLog.where('company_id = ? and created_at BETWEEN ? and ?', company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id))
-								billing_records = BillingRecord.where('company_id = ? and date BETWEEN ? and ?', company.id, start_date, end_date)
-								
-								billing_logs.each do |bl|
-									month_income = month_income + bl.payment
-									company_income = company_income + bl.payment
-									@incomes[i]['income'] = @incomes[i]['income'] + bl.payment
-									@incomes[13]['income'] = @incomes[13]['income'] + bl.payment
-								end
-
-								billing_records.each do |br|
-									month_income = month_income + br.amount
-									company_income = company_income + br.amount
-									@incomes[i]['income'] = @incomes[i]['income'] + br.amount
-									@incomes[13]['income'] = @incomes[13]['income'] + br.amount
-								end
-							%>
-
-							<td>
-								<%= month_income.to_s %>
-							</td>
-
-						<% end %>
-						<td>
-							<b><%= company_income.to_s %></b>
-						</td>
-					</tr>
-				<% end %>
-				<tr>
-					<td>
-						<b>Total:</b>
-					</td>
-					<% total = 0 %>
-					<% for i in 1..12 %>
-						<td>
-							<b>
-								<%= @incomes[i]['income'].to_s %>
-							</b>
-						</td>
-					<% end %>
-					<td>
-						<b>
-							<%= @incomes[13]['income'].to_s %>
-						</b>
-					</td>
-				</tr>
-			</table>
-		</div>
-	</div>
-</div>
-
 <div class="container-fluid">
   <div class="row">
     <!-- Navegation Tabs -->
@@ -198,6 +75,8 @@
                     end
                     billing_logs = BillingLog.where('company_id = ? and created_at BETWEEN ? and ?', company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id))
                     billing_records = BillingRecord.where('company_id = ? and date BETWEEN ? and ?', company.id, start_date, end_date)
+                    transfers = company.billing_wire_transfers.where(approved: true).where('payment_date BETWEEN ? and ?', start_date, end_date)
+
                     billing_logs.each do |bl|
                       month_income = month_income + bl.payment
                       company_income = company_income + bl.payment
@@ -209,6 +88,12 @@
                       company_income = company_income + br.amount
                       @incomes[i]['income'] = @incomes[i]['income'] + br.amount
                       @incomes[13]['income'] = @incomes[13]['income'] + br.amount
+                    end
+                    transfers.each do |transfer|
+                      month_income = month_income + transfer.amount
+                      company_income = company_income + transfer.amount
+                      @incomes[i]['income'] = @incomes[i]['income'] + transfer.amount
+                      @incomes[13]['income'] = @incomes[13]['income'] + transfer.amount
                     end
                   %>
                   <td><%= month_income.to_s %></td>
@@ -231,7 +116,6 @@
       </div>
     </div>
   </div>
->>>>>>> 7718b9063bade39baf8e2f7fe2efac704b987213
 </div>
 
 <% content_for :scripts do %>

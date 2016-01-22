@@ -1,0 +1,35 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">
+        Medios de Pago
+        <%= link_to '<i class="fa fa-plus"></i> Nuevo Medio de Pago'.html_safe, new_payment_method_path, :class => "btn btn-green pull-right" %>
+      </h2>
+    </div>
+  </div>
+</div>
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-green">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @payment_methods.each do |payment_method| %>
+            <tr>
+              <td><%= payment_method.name %></td>
+              <td>
+                <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_payment_method_path(payment_method), :class => "btn btn-orange" %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, payment_method, :class => "btn btn-red", method: :delete, data: { confirm: '¿Estás seguro?' } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

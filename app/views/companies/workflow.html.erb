@@ -1,3 +1,5 @@
+<input type="hidden" id="after_booking" value="<%= @company.company_setting.after_booking %>" />
+
 <div class="modal fade" id="hoursOptimizer" tabindex="-1" role="dialog" aria-labelledby="optimizador de Horas" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -26,7 +28,7 @@
           <div id="selectHour"></div>
           <%= form_tag '/optimizer_data', method: 'post', role: 'form', class: 'hidden', id: 'userData' do %>
             <input type="hidden" id="local" name="local" value="<%= @location.id %>">
-            <input type="hidden" class="bookings" name="bookings">
+            <!--<input type="hidden" class="bookings" name="bookings">-->
           <% end %>
         </div>
         <div id="hoursDetails"></div>
@@ -47,11 +49,7 @@
         <div class="col-xs-5 col-md-4 company-header-left company-header">
           <div class="row">
             <div class="col-xs-4 col-md-3">
-              <% if @company.logo_url %>
-                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
-              <% else %>
-                <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
-              <% end %>
+              <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
             </div>
             <div class="col-xs-8 col-md-9">
               <div class="row">
@@ -102,11 +100,7 @@
         <div class="col-xs-5 col-md-4 company-header-left company-header" style="border-right: 1px solid #949292;">
           <div class="row">
             <div class="col-xs-4 col-md-3">
-              <% if @company.logo_url %>
-                <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
-              <% else %>
-                <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', :size => "80x80", :class => "company-logo" %>
-              <% end %>
+              <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name, :class => "company-logo" %>
             </div>
             <div class="col-xs-8 col-md-9">
               <div class="row">
@@ -183,55 +177,120 @@
           </div>
         </div>
         <div id="foo4" style="visibility: collapse;">
-          <div class="box-step">
+          <div class="box-step" id="box-step-1">
             <div class="row">
-              <div class="col-sm-3">
-                <div class="services-title dark-gray">
-                  Servicios
+              <div class="col-md-5 col-sm-10 col-sm-offset-1 col-md-offset-0 hidden-sm hidden-xs">
+                <div class="services-title light-green">
+                  Elegir servicio
                 </div>
                 <div class="services-subtitle light-gray">
                   Seleccione un servicio
                 </div>
               </div>
-              <div class="col-sm-3 col-md-4" style="text-align: right;">
-
+              <div class="col-md-3 col-sm-10 col-sm-offset-1 col-md-offset-0 hidden-sm hidden-xs">
+                <div class="services-title light-green">
+                  Detalle
+                </div>
+                <div class="services-subtitle light-gray">
+                  Detalle del servicio
+                </div>
+              </div>
+              <div class="col-md-4 col-sm-10 col-sm-offset-1 col-md-offset-0 hidden-sm hidden-xs">
+                <div class="services-title light-green">
+                  Elegir prestador
+                </div>
+                <div class="services-subtitle light-gray">
+                  Selecciona staff para el servicio
+                </div>
               </div>
               <% if @company.company_setting.allows_optimization %>
-              <div class="col-sm-3" style="text-align: right; color: #505050;">
-                <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
-              </div>
-              <div class="col-sm-3 col-md-2" style="text-align: right;">
-                <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
-              </div>
+                <!--<div class="col-sm-3" style="text-align: right; color: #505050;">
+                  <div class="optimizer-item">
+                    <b>O elige varios servicios y te propondremos los mejores horarios:&nbsp;&nbsp;</b>
+                  </div>
+                </div>
+                <div class="col-sm-3 col-md-2" style="text-align: right;">
+                  <div class="optimizer-item">
+                    <button type="button" id="optimizerOpenBtn" class="btn btn-green" data-toggle="modal" data-target="#hoursOptimizer" style="background: #22c488; color: #ffffff; font-size: 20px;">Elegir servicios</button>
+                  </div>
+                </div>-->
               <% end %>
             </div>
             <div class="row">
-              <div class="col-sm-6">
+
+              <div class="col-sm-10 col-sm-offset-1 col-md-offset-0 visible-sm visible-xs">
+                  <div class="services-title light-green">
+                    Elegir servicio
+                  </div>
+                  <div class="services-subtitle light-gray">
+                    Seleccione un servicio
+                  </div>
+              </div>
+
+              <div class="col-md-5 col-sm-10 col-sm-offset-1 col-md-offset-0">
                 <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
                   <span style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></span>
                 </div>
               </div>
-              <div class="col-sm-6">
-                <div class="descripcion">
-                  <div class="descripcion-header">
-                    Descripción del servicio
+
+              <div class="col-sm-10 col-sm-offset-1 col-md-offset-0 visible-sm visible-xs">
+                <div class="services-title light-green">
+                  Detalle
+                </div>
+                <div class="services-subtitle light-gray">
+                  Detalle del servicio
+                </div>
+              </div>
+
+              <div class="col-md-3 col-sm-10 col-sm-offset-1 col-md-offset-0">
+
+                <div class="panel panel-default">
+                  <input id="selectedServiceId" type="hidden" />
+                  <div id="description-default">
+                    Elige un servicio para revisar sus detalles. Haz click en "Agregar servicio" para agregarlo a tu lista de servicios, y en "Elegir horario" para elegir la hora de tu reserva.
+                  </div>
+                  <div id="description-heading">
                   </div>
                   <div class="descripcion-body">
                     <table class="table">
                       <tbody id="services-description">
                       </tbody>
                     </table>
+                    <div id="description-info" class="light-gray">
+                    </div>
                   </div>
                 </div>
-                <div class="btn-change btn-next" style="margin-top: 10px;">
-                  <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
+                <div>
+                  <button class="btn-add-service" id="new-add-service"><span style="font-size: 18px !important;"><i class="fa fa-plus"></i></span>&nbsp;&nbsp;&nbsp; Agregar servicio</button>
+                </div>
+              </div>
+
+              <div class="col-sm-10 col-sm-offset-1 col-md-offset-0 visible-sm visible-xs">
+                <div class="services-title light-green">
+                  Elegir prestador
+                </div>
+                <div class="services-subtitle light-gray">
+                  Selecciona staff para el servicio
+                </div>
+              </div>
+
+              <div class="col-md-4 col-sm-10 col-sm-offset-1 col-md-offset-0">
+                <div class="row">
+
+                  <div class="col-sm-12" id="selected-services">
+
+                  </div>
+
+                </div>
+                <div class="btn-change btn-next" style="margin-top: 10px;" id="hour-select-div">
+                  <a class="next2 next-btn">Elegir horario <i class="fa fa-chevron-right next-arrow"></i></a>
                 </div>
               </div>
             </div>
           </div>
           <div class="box-step">
             <div class="row staff">
-              <div class="col-md-3 step2-left-col" style="max-height: 346px; overflow-y: hidden;<%= 'display:none;' if @location.company.company_setting.provider_preference == 2 %>">
+              <!--<div class="col-md-3 step2-left-col" style="max-height: 346px; overflow-y: hidden;<%= 'display:none;' if @location.company.company_setting.provider_preference == 2 %>">
                 <div class="staff-wrapper">
                   <span class="subtitulos-workflow">Elige Staff<br /> y Horario &nbsp;</span><span><i class="fa fa-clock-o gray-icon"></i>&nbsp;<i class="fa fa-user gray-icon"></i></span>
                   <div class="sub-workflow dark-gray">Selecciona un staff para ver su horario</div>
@@ -244,8 +303,8 @@
                 </div>
                 <div style="clear: both;">
                 </div>
-              </div>
-              <div class="col-md-<%= @location.company.company_setting.provider_preference == 2 ? '12' : '9' %>" id="staff-calendar">
+              </div>-->
+              <div class="col-md-9" id="staff-calendar">
                 <div class="panel panel-info <%= 'full-margin' if @location.company.company_setting.provider_preference == 2 %>">
                   <div class="calendar-head">
                     <div class="panel-title">
@@ -277,22 +336,107 @@
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="row change-bar">
-              <div class="col-xs-12 col-md-5 col-md-push-2">
-                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>
+              <div class="col-md-3">
+
+                <div id="current-discount-div" style="color: #949292;" hidden>
+                  Descuento a aplicar: <span id="current-discount" style="color: #22c488;">0%</span>
+                </div>
+
+                <!--<div id="changeStaffTitle" style="display: inline; color: #22c488;">
+                    Cambiar prestador
+                </div>
+                <div>
+                  <div class="changeStaff" style="margin-top: 5px;">
+                    <select id="changeProviderSelect" class="form-control">
+
+                    </select>
+                  </div>
+                </div>-->
+
+                <div class="changeStaffPanel" style="margin-bottom: 10px;" style="display: none;">
+                  <!--<div id="changeStaffTitle" style="display: inline;">
+                    <a data-toggle="collapse" href="#staffCollapse" aria-expanded="false" aria-controls="staffCollapse">
+                      Cambiar prestador
+                      <span style="float: right; color: #22c488;"><i class="fa fa-plus-circle" id="openStaffCollapseIcon"></i><i class="fa fa-minus-circle" id="closeStaffCollapseIcon" style="display: none;"></i></span>
+                    </a>
+                  </div>
+                  <div class="collapse" id="staffCollapse">
+                    <div class="changeStaff" style="margin-top: 5px;">
+
+
+                    </div>
+                  </div>-->
+
+                  <div id="changeStaffTitle" style="display: inline; color: #22c488;">
+                      Cambiar prestador
+                  </div>
+                  <div>
+                    <div class="changeStaff" style="margin-top: 5px;">
+                      <select id="changeProviderSelect" class="form-control">
+
+                      </select>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="panel panel-default">
+                  <div id="selected-hour-heading">
+                    Detalle Reserva
+                  </div>
+                  <div id="selected-hour-body">
+
+                  </div>
+                </div>
               </div>
-              <div class="col-xs-4 col-md-2 col-md-pull-5">
+            </div>
+            <!--<div class="row sessions-bar" style="display: none;">
+              <div class="col-xs-12 col-md-2">
+                <a class="btn btn-large btn-green btn-add-session" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()"><i class="fa fa-plus"></i> Agregar Sesión</a>
+              </div>
+              <div class="col-xs-12 col-md-10">
+                Puedes agendar hasta <span id="sessions-left"></span> sesiones más. Las sesiones que no agendes podrán ser agendadas desde tu cuenta AgendaPro o llamando al local elegido.
+              </div>
+            </div>-->
+            <div class="row change-bar">
+              <div class="col-xs-12 col-md-4 col-md-push-3">
+                <p class="p-label"><span class="wf-label label-available">&nbsp;</span> Disponible<span class="wf-label label-past">&nbsp;</span> No Disponible</p><!--<span class="wf-label label-unavailable">&nbsp;</span> Ocupado</p>-->
+              </div>
+              <div class="col-xs-4 col-md-3 col-md-pull-4">
                 <div class="btn-change btn-prev">
                   <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                 </div>
               </div>
               <div class="col-xs-8 col-md-5">
-                <a class="btn btn-large btn-green btn-add-service" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Otro Servicio</a>
+                <!--<a class="btn btn-large btn-green btn-add-service" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewService()"><i class="fa fa-plus"></i> Agregar Otro Servicio</a>-->
+                <a class="btn btn-large btn-green btn-add-session sessions-bar" style="padding: 5px 12px; margin-right: 10px; font-size: 20px;" onclick="addNewSession()" style="display: none;"><i class="fa fa-plus"></i> Agregar Sesión</a>
                 <div class="btn-change btn-next">
                   <a class="next2 next-btn">Siguiente <i class="fa fa-chevron-right next-arrow"></i></a>
                 </div>
               </div>
+            </div>
+            <div class="row sessions-bar">
+              <div class="col-md-9">
+                <div id="sessions-summary">
+                  <div id="sessions-summary-title">
+                    Detalle de reserva&nbsp;&nbsp;
+                    <span id="sessions-summary-subtitle">
+                      Puedes agendar hasta <span id="sessions-left"></span> sesiones más. &nbsp;&nbsp; <span id="sessions-help"><i class="fa fa-question-circle"></i>
+                    </span>
+                  </div>
+                  <div id="sessions-summary-body">
+                    <table>
+                      <tr id="sessions-summary-tr">
+                      <tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div><label id="booking-error" style="color: #fd633f;"></label></div>
+              </div>
+            </div>
+            <div style="clear: both;">
             </div>
           </div>
           <div class="box-step">
@@ -303,7 +447,7 @@
             </div>
             <div class="row" style="margin-left: 0px !important;">
               <%= form_tag("book", method: "post", role: "form", class: "form-horizontal", id: "bookingForm" ) do %>
-              <div class="col-md-6">
+              <div class="col-sm-6">
                 <!-- INICIO FORM -->
                 <div id="form-datos">
                   <div class="datos-heading">
@@ -314,6 +458,9 @@
                     <input type="hidden" name="location" id="location" value="<%= @location.id %>">
                     <input type="hidden" name="origin" id="origin" value="true">
                     <input type="hidden" name="payment" id="payment" value="0">
+                    <input type="hidden" name="has_sessions" id ="has_sessions" value="0" />
+                    <input type="hidden" name="max_discount" id="max_discount" value="0" />
+                    <input type="hidden" name="used_promo_discount" id="used_promo_discount" value="0" />
 
                     <% if user_signed_in? %>
                     <div id="user-data">
@@ -321,12 +468,12 @@
                       <%= hidden_field_tag :firstName, current_user.first_name %>
                       <%= hidden_field_tag :lastName, current_user.last_name %>
                       <div class="row">
-                        <div class="col-md-12 dark-gray">
+                        <div class="col-sm-12 dark-gray">
                           Nombre
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                           <div class="form-group has-feedback">
                             <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
                             <span class="help-block"></span>
@@ -335,22 +482,16 @@
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-6 dark-gray">
-                          Email
-                        </div>
-                        <div class="col-md-6 dark-gray">
-                          Teléfono
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-md-offset-0 col-sm-12 dark-gray">
+                          Email<br />
                           <div class="form-group has-feedback">
                             <%= email_field_tag(:email, current_user.email, :class => "form-control light-gray", :placeholder => "ejemplo@dominio.com (requerido)", :required => true) %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                           </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 col-md-offset-0 col-sm-12 dark-gray">
+                          Teléfono<br />
                           <div class="form-group has-feedback">
                             <%= telephone_field_tag(:phone, current_user.phone, :class => "form-control light-gray", :placeholder => "1122334455 (requerido)", :required => true) %>
                             <span class="help-block"></span>
@@ -358,17 +499,25 @@
                           </div>
                         </div>
                       </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+
+                        </div>
+                        <div class="col-sm-6">
+
+                        </div>
+                      </div>
                     </div>
                     <% else %>
                       <%= hidden_field_tag :firstName %>
                       <%= hidden_field_tag :lastName %>
                       <div class="row">
-                        <div class="col-md-12 dark-gray">
+                        <div class="col-sm-12 dark-gray">
                           Nombre
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                           <div class="form-group has-feedback">
                             <input type="text" id="full_name" name="user[full_name]" class="form-control light-gray" placeholder="Nombre completo (requerido)">
                             <span class="help-block"></span>
@@ -403,14 +552,41 @@
                     <% end %>
                     <% if @location.company.company_setting.client_exclusive %>
                       <div class="row">
-                        <div class="col-md-12 dark-gray">
-                          RUT
+                        <div class="col-sm-12 dark-gray">
+                          <%= (I18n.t('ci')).capitalize %>
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                           <div class="form-group has-feedback">
-                            <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su RUT, debe estar autorizado como cliente" ) %>
+                            <% if user_signed_in? && Client.where(email: current_user.email, company_id: @location.company.id).count > 0
+                              client = Client.where(email: current_user.email, company_id: @location.company.id).first
+                            %>
+                              <%= text_field_tag(:identification_number, client.identification_number, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
+                            <% else %>
+                              <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize + ", debe estar autorizado como cliente" ) %>
+                            <% end %>
+                            <span class="help-block"></span>
+                            <span class="form-control-feedback"></span>
+                          </div>
+                        </div>
+                      </div>
+                    <% elsif @location.company.company_setting.use_identification_number %>
+                      <div class="row">
+                        <div class="col-sm-12 dark-gray">
+                          <%= (I18n.t('ci')).capitalize %>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="form-group has-feedback">
+                            <% if user_signed_in? && Client.where(email: current_user.email, company_id: @location.company.id).count > 0
+                              client = Client.where(email: current_user.email, company_id: @location.company.id).first
+                            %>
+                              <%= text_field_tag(:identification_number, client.identification_number, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize ) %>
+                            <% else %>
+                              <%= text_field_tag(:identification_number, nil, :class => "form-control light-gray", :placeholder => "Escriba su " + (I18n.t('ci')).capitalize) %>
+                            <% end %>
                             <span class="help-block"></span>
                             <span class="form-control-feedback"></span>
                           </div>
@@ -419,12 +595,12 @@
                     <% end %>
                     <% if @location.company.company_setting.deal_activate %>
                       <div class="row">
-                        <div class="col-md-12 dark-gray">
+                        <div class="col-sm-12 dark-gray">
                           <%= !@location.company.company_setting.deal_name.blank? ? @location.company.company_setting.deal_name : "Convenio" %>
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                           <div class="form-group has-feedback">
                             <%= text_field_tag(:deal_code, nil, :class => "form-control light-gray" ) %>
                             <span class="help-block"></span>
@@ -435,12 +611,12 @@
                     <% end %>
                     <div id="outcallAddress" class="row form-group has-feedback">
                       <div class="row">
-                        <div class="col-md-12 dark-gray">
+                        <div class="col-sm-12 dark-gray">
                           Dirección
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12">
                           <div class="form-group has-feedback">
                             <%= text_field_tag(:address, nil, :class => "form-control light-gray", :placeholder => "Escribe la dirección donde se debe realizar el servicio" ) %>
                             <span class="help-block"></span>
@@ -451,21 +627,21 @@
                     </div>
                     <% if @location.company.company_setting.activate_notes %>
                     <div class="row">
-                      <div class="col-md-12 dark-gray">
+                      <div class="col-sm-12 dark-gray">
                         Comentario
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-md-12">
+                      <div class="col-sm-12">
                         <div class="form-group">
-                          <%= text_area_tag(:comment, nil, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
+                          <%= text_area_tag(:comment, @company.company_setting.preset_notes, :class => "form-control light-gray", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario", :rows => 4) %>
                         </div>
                       </div>
                     </div>
                     <% end %>
                     <% if !user_signed_in? %>
                     <div class="row">
-                      <div class="col-md-12">
+                      <div class="col-sm-12">
                         <div class="checkbox">
                           <label>
                             <%= check_box_tag :mailing_option, true, class: 'checkbox' %> Quiero recibir promociones a mi email
@@ -480,9 +656,9 @@
                           <a class="prev2 prev-btn"><i class="fa fa-chevron-left prev-arrow"></i> Anterior</a>
                         </div>
                       </div>
-                      <div class="col-sm-6" id="reservar1">
+                      <!--<div class="col-sm-6" id="reservar1">
                         <button type="submit" class="submitBtn">Reservar</button>
-                      </div>
+                      </div>-->
                     </div>
                   </div>
                 </div>
@@ -564,6 +740,10 @@
                           <input type="radio" name="mp" value="04" class="mp_radio" id="mp_radio_04" />
                           <label for="mp_radio_04"><image src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" /></label>
                         </div>
+                        <div class="col-md-4">
+                          <input type="radio" name="mp" value="10" class="mp_radio" id="mp_radio_10" />
+                          <label for="mp_radio_10"><image src="https://www.puntopagos.com/content/mp10.gif" alt="Banco Ripley" class="mp_link" mp = "10" /></label>
+                        </div>
                         <!-- <div class="col-md-4">
                           <input type="radio" name="mp" value="05" class="mp_radio" id="mp_radio_05" />
                           <label for="mp_radio_05"><image src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" /></label>
@@ -610,33 +790,83 @@
                       <h4 class="modal-title" style="color: #505050 !important;">Política de modificación/cancelación de reservas pagadas en línea.</h4>
                     </div>
                     <div class="modal-body" style="color: #505050 !important;">
-                      <h3>Modificación:</h3>
-                      <% if !@location.company.company_setting.online_cancelation_policy.modifiable %>
-                        <p>La empresa no permite modificar reservas pagadas en línea.</p>
-                      <% else %>
-                        <p>La reserva se puede modificar:</p>
-                        <p>- Hasta <%= @location.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
-                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.modification_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.modification_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
-                        <p>
-                          Si no cumple con alguna de las dos restricciones, no podrá modificar su reserva.
-                          <br />
-                          Además, la empresa permite modificar la reserva un máximo de <%= @location.company.company_setting.max_changes.to_s %> veces.
-                        </p>
-                      <% end %>
 
-                      <h3>Cancelación:</h3>
-                      <% if !@location.company.company_setting.online_cancelation_policy.cancelable %>
-                        <p>La empresa no permite cancelar reservas pagadas en línea.</p>
-                      <% else %>
-                        <p>La reserva se puede cancelar:</p>
-                        <p>- Hasta <%= @location.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
-                        - Hasta <%= @location.company.company_setting.online_cancelation_policy.cancel_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.cancel_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
-                        <p>Si no cumple con alguna de las dos restricciones, no podrá cancelar su reserva.</p>
-                        <br />
-                        <p>
-                          Si cancela su reserva, se le devolverá un 90% del monto cancelado debido a los costos de transacción.
-                        </p>
-                      <% end %>
+                      <div id="online-policy-div">
+                        <h3>Política para reservas pagadas en línea que no están en promoción:</h3>
+                        <% if !@location.company.company_setting.online_cancelation_policy.modifiable %>
+                          <p>La empresa no permite modificar reservas pagadas en línea.</p>
+                        <% else %>
+                          <p>La reserva se puede modificar:</p>
+                          <p>- Hasta <%= @location.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
+                          - Hasta <%= @location.company.company_setting.online_cancelation_policy.modification_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.modification_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
+                          <p>
+                            Si no cumple con alguna de las dos restricciones, no podrá modificar su reserva.
+                            <br />
+                            Además, la empresa permite modificar la reserva un máximo de <%= @location.company.company_setting.max_changes.to_s %> veces.
+                          </p>
+                        <% end %>
+
+                        <% if !@location.company.company_setting.online_cancelation_policy.cancelable %>
+                          <p>La empresa no permite cancelar reservas pagadas en línea.</p>
+                        <% else %>
+                          <p>La reserva se puede cancelar:</p>
+                          <p>- Hasta <%= @location.company.company_setting.online_cancelation_policy.min_hours.to_s %> horas antes del servicio contratado.<br />
+                          - Hasta <%= @location.company.company_setting.online_cancelation_policy.cancel_max.to_s %> <%= TimeUnit.find(@location.company.company_setting.online_cancelation_policy.cancel_unit).unit.to_s.downcase %> desde la fecha en que se efectuó el pago.</p>
+                          <p>Si no cumple con alguna de las dos restricciones, no podrá cancelar su reserva.</p>
+                          <br />
+                          <p>
+                            Si cancela su reserva, se le devolverá un 90% del monto cancelado debido a los costos de transacción.
+                          </p>
+                        <% end %>
+                      </div>
+
+                      <div id="promo-policy">
+                        <h3>Política para reservas en promoción:</h3>
+                          <p>La siguiente política rige para estas reservas: </p>
+                          <p id="promo-bookings-policy">
+
+                          </p>
+                          <p>
+                            La empresa no permite modificar ni cancelar reservas pagadas en promoción.
+                          </p>
+
+                          <p>
+                            Si la empresa cancela o modifica sus promociones, se respetarán el precio y horario en que efectuaste tu reserva.
+                          </p>
+                      </div>
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" id="policyNext">Siguiente</button>
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal -->
+              <!-- FIN MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+
+
+              <!-- MODAL DE EXPLICACIÓN DE SESIONES -->
+
+              <div class="modal fade" id="sessions-explanation" tabindex="-1" role="dialog" aria-labelledby="siginLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" style="color: #505050 !important;">Reserva de sesiones</h4>
+                    </div>
+                    <div class="modal-body" style="color: #505050 !important;">
+
+                      <p style="text-align: justify;">
+                        El servicio que quieres agendar consta de <span id="sessions-explanation-total"></span> sesiones.
+                      </p>
+                      <p style="text-align: justify;">
+                        Haz click sobre un bloque horario para seleccionar el horario de una sesión. Si quieres agendar otra, haz click en el botón "Agregar sesión". La hora seleccionada quedará marcada y podrás elegir una nueva. Cuando hayas seleccionado todas las que quieras, haz click en "Siguiente". Ten en cuenta que sólo debes apretar "Agregar sesión" para bloquear una y poder elegir otra más, por lo que para agendar la última sesión sólo debes hacer click en el bloque horario de preferencia y luego en "Siguiente".
+                      </p>
+                      <p style="text-align: justify;">
+                        No es necesario que agendes todas las sesiones ahora, pero debes agendar al menos la primera. Una vez reservado el servicio, podrás agendar las restantes y modificar las que ya hayas agendado. Esto lo podrás hacer en tu Agenda, ingresando con tu usuario de AgendaPro, o bien llamando al local de la empresa que ofrece el servicio para pedir que agenden tus sesiones. Recomendamos que te hagas una cuenta para poder llevar un manejo más rápido y simple de tus sesiones y otras reservas.
+                      </p>
+
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -644,7 +874,10 @@
                   </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal -->
-              <!-- FIN MODAL POLÍTICA DE MODIFICACIÓN/CANCELACIÓN PAGOS EN LÍNEA -->
+
+
+              <!-- FIN MODAL DE EXPLICACIÓN DE SESIONES -->
+
 
               <% end %>
             </div>
@@ -653,6 +886,10 @@
       </div>
     </div>
   </div>
+</div>
+
+<div id="services-popovers-contents" hidden>
+
 </div>
 
 <%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
@@ -665,20 +902,48 @@
 <% end %>
 <%= content_tag "div", id: "dealCode", data: {deal_identification_number: @location.company.company_setting.deal_identification_number, deal_required: @location.company.company_setting.deal_required } do %>
 <% end %>
+<%= content_tag "div", id: "online_capabilities", data: {online_payment_capable: @online_payment_capable, promo_offerer_capable: @promo_offerer_capable} do %>
+<% end %>
 
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "calendar" %>
 <% end %>
 
 <% content_for :scripts do %>
+  <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
   <%= javascript_include_tag 'workflow/index' %>
   <script type="text/javascript">
+
+    $(function(){
+      $("#selected-services").sortable({
+        revert: true,
+        axis: "y",
+        handle: ".move-service",
+        containment: "#selected-services",
+        scroll: true,
+        stop: function(){
+          aux_added_services = [];
+          $("#selected-services").children().each(function(){
+            var service_id = $(this).attr("service_id");
+            for(i=0; i<added_services.length; i++)
+            {
+              if(added_services[i].id == parseInt(service_id))
+              {
+                aux_added_services.push(added_services[i]);
+              }
+            }
+          });
+          added_services = aux_added_services;
+        }
+      });
+    });
+
     $(function() {
       <% if @location.company.company_setting.deal_identification_number %>
         $('#deal_code').change(function() {
-          var rut_string = $('#deal_code').val()
-          if (rut_string != '') {
-            $('#deal_code').val(rut_format(rut_string));
+          var id_string = $('#deal_code').val()
+          if (id_string != '') {
+            $('#deal_code').val(identification_number_format(id_string));
           }
         });
       <% end %>
@@ -686,6 +951,12 @@
       $(".payBtn").click(function(e){
         e.preventDefault();
         $("#payment").val("1");
+        $('#online-policy').modal('show');
+        //$("#bookingForm").submit();
+      });
+
+      $('#policyNext').click(function(e){
+        $('#online-policy').modal('hide');
         $("#bookingForm").submit();
       });
 
@@ -722,23 +993,157 @@
           clear: '',
           dateFormat: 'yy-mm-dd',
           onSelect: function(newDate){
-            var data = {
+
+            var newProviderSelector = $('#providerOptimizerSelector option[value="' + $('input[name="changeProvider"]:checked').val() + '"]').attr("selected", true);
+
+            if(!$('input[name="changeProvider"]:checked').val())
+            {
+
+            }
+            else
+            {
+
+            }
+
+            var data;
+
+            /* = {
               provider: $('[name="staffRadio"]:checked').val(),
               local: $('#selectedLocal').data('local').id,
               date: newDate,
               service: $('input[name="serviceRadio"]:checked').val(),
+            }*/
+
+            var localId = $('#selectedLocal').data('local').id;;
+            var selects = [];
+            var start_date = $("#optimizerDateSelector").val();
+
+            if (!sessions_service)
+            {
+              $(".selected-service").each(function() {
+                var provider = $(this).find('.selected-service-provider').val();
+                var service_id = $(this).attr("service_id");
+                console.log(provider)
+                selects.push({
+                  service: service_id,
+                  provider: provider
+                });
+              });
+            }
+            else
+            {
+              if(!$('input[name="changeProvider"]:checked').val())
+              {
+                $(".selected-service").each(function() {
+                  var provider = $(this).find('.selected-service-provider').val();
+                  var service_id = $(this).attr("service_id");
+                  console.log(provider)
+                  selects.push({
+                    service: service_id,
+                    provider: provider
+                  });
+                });
+              }
+              else
+              {
+                $(".selected-service").each(function() {
+                  var provider = $('input[name="changeProvider"]:checked').val();
+                  var service_id = $(this).attr("service_id");
+                  console.log(provider)
+                  selects.push({
+                    service: service_id,
+                    provider: provider
+                  });
+                });
+              }
             }
 
-            if (calendar) {
-              calendar.rebuild('/available_hours_week_html', data);
+            data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#datepicker").val()};
+
+            if (promoCalendar) {
+              promoCalendar.rebuild('/promotion_hours', data);
             }
             else {
-              calendar = new Calendar('/available_hours_week_html', data);
+              promoCalendar = new PromoCalendar('/promotion_hours', data);
             }
 
-            $(document).on('hourClick', function (e) {
-              addBooking(e);
-            });
+            /*$(document).on('hourClick', function (e) {
+              selected = true;
+
+              bookSummary = bookSummaries[e.index];
+
+              $("#selected-hour-body").empty();
+
+              for(k=0; k<bookSummary.bookings.length; k++)
+              {
+                bookDetails = bookSummary.bookings[k];
+                console.log(bookDetails);
+                bookDetailsStart = bookDetails.start.split("T")[1].split(":")[0] + ':' + bookDetails.start.split("T")[1].split(":")[1];
+                bookDetailsEnd = bookDetails.end.split("T")[1].split(":")[0] + ':' + bookDetails.end.split("T")[1].split(":")[1];
+
+                bookDetailsDiscountPrice = bookDetails.price;
+
+
+                if(bookDetails.has_discount && bookDetails.has_time_discount)
+                {
+                  if(bookDetails.discount > bookDetails.time_discount)
+                  {
+                    bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
+                    $("#selected-hour-body").append(
+                      '<b>' + bookDetails.service_name + '</b><br />' +
+                      '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+                      '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %>  <strike>' + simple_currency(bookDetails.price) + '</strike>  <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
+                    );
+                  }
+                  else
+                  {
+                    bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
+                    $("#selected-hour-body").append(
+                      '<b>' + bookDetails.service_name + '</b><br />' +
+                      '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %>' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+                      '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> ' + '<span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span>' + ' (' + bookDetails.time_discount + ' % off) <br /></div>'
+                    );
+                  }
+                }
+                else if(bookDetails.has_discount && !bookDetails.has_time_discount)
+                {
+                  bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.discount) / 100;
+                  $("#selected-hour-body").append(
+                      '<b>' + bookDetails.service_name + '</b><br />' +
+                      '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+                      '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.discount + ' % off) <br /></div>'
+                    );
+                }
+                else if(!bookDetails.has_discount && bookDetails.has_time_discount)
+                {
+                  bookDetailsDiscountPrice = bookDetails.price * (100 - bookDetails.time_discount) / 100;
+                  $("#selected-hour-body").append(
+                      '<b>' + bookDetails.service_name + '</b><br />' +
+                      '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+                      '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> <strike>' + simple_currency(bookDetails.price) + '</strike> <span class="light-green"><b>' + simple_currency(bookDetailsDiscountPrice) + '</b></span> (' + bookDetails.time_discount + ' % off) <br /></div>'
+                    );
+                }
+                else
+                {
+                  $("#selected-hour-body").append(
+                    '<b>' + bookDetails.service_name + '</b><br />' +
+                    '<div class="light-gray"><%= image_tag("promociones/reloj.png", class:"promotion-hour-icon", size: "18x18") %> ' + bookDetailsStart + ' - ' + bookDetailsEnd + '<br />' +
+                    '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> ' + simple_currency(bookDetails.price) + '<br /></div>'
+                  );
+                }
+
+
+              }
+              console.log(e);
+              if (sessions_service)
+              {
+                addSession(e);
+              }
+              else
+              {
+                addBooking(e);
+              }
+            });*/
 
             $(function () {
               $('.prev-btn').click(function () {

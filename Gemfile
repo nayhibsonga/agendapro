@@ -38,7 +38,7 @@ gem 'whenever', :require => false
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
 
-group :development do
+group :development, :pagos do
   #mejores errores
   gem 'better_errors'
   #esconde mensajes innecesarios del log
@@ -47,8 +47,9 @@ group :development do
   gem 'binding_of_caller'
   #impresion amigable en consola
   gem 'awesome_print'
-  #Geocoder para el seed
-  gem 'geocoder'
+  #generador de modelo relación-entidad
+  #Descomentar sólo para casos puntuales
+  #gem "rails-erd"
 end
 
 group :development, :test do
@@ -130,6 +131,7 @@ gem 'prawn-table'
 
 # Facebook
 gem "fbgraph"
+gem "fb_graph"
 
 # Advertencias en validaciones
 # gem 'validation_scopes'
@@ -167,3 +169,19 @@ gem 'newrelic_rpm'
 gem 'omniauth'
 gem 'omniauth-google-oauth2'
 gem 'omniauth-facebook'
+
+#Geocoder para localizacion por IP
+gem 'geocoder'
+
+#Gema para CORS API
+gem 'rack-cors'
+
+#Oink para revisión de memoria
+gem "oink"
+
+# CSS Preprocessor
+gem 'sass-rails'
+#gem 'compass-rails'
+
+#Squirm-rails for stored procedures
+#gem "squirm_rails", require: "squirm/rails"

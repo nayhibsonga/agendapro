@@ -1,0 +1,22 @@
+es_VE:
+  number:
+    currency:
+      format:
+        delimiter: '.'
+        format: '%u %n'
+        precision: 0
+        separator: ','
+        significant: false
+        strip_insignificant_zeros: false
+        unit: $
+  country:
+    name: 'Venezuela'
+    domain: '.co/es_VE'
+  district: 'localidad'
+  ditricts: 'localidades'
+  ci: 'cédula'
+  plans:
+    personal: 140
+    normal: 280
+    premium: 470
+    pro: 940

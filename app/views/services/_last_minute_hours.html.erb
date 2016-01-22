@@ -1,0 +1,28 @@
+<% if @available_hours.nil? || @available_hours.count == 0 %>
+	<p>Lo sentimos, no hay bloques disponibles para el día seleccionado.</p>
+<% else %>
+	<p>
+		Horas disponible para el <%= @selected_date %>
+	</p>
+
+	<div class="row hours-row">
+		<% count = 0 %>
+		<% @available_hours.each do |block| %>
+			<div class="col-md-2">
+				<div class="available-hour" provider="<%= block[:provider] %>" provider_name="<%= block[:available_provider] %>" start="<%= block[:hour][:start].to_s %>" end="<%= block[:hour][:end].to_s %>">
+					<%= block[:hour][:start].to_s %> -
+					<%= block[:hour][:end].to_s %><br />
+				</div>
+			</div>
+			<% 
+				count +=1
+				if count%6 == 0
+			%>
+				</div>
+				<div class="row hours-row">
+			<%
+				end
+			%>
+		<% end %>
+	<div>
+<% end %>

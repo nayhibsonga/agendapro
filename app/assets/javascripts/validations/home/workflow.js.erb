@@ -16,12 +16,10 @@ $(function() {
 			},
 			identification_number: {
 				required: true,
-				rut:true,
 				minlength: 2
 			},
 			deal_code: {
-				required: $('#dealCode').data('deal-required'),
-				rut: $('#dealCode').data('deal-identification-number')
+				required: $('#dealCode').data('deal-required')
 			},
 			address: {
 				minlength: 3
@@ -78,26 +76,36 @@ $(function() {
 		}
 	});
 	$('#identification_number').change(function() {
-		var rut_string = $('#identification_number').val()
-		if (rut_string != '') {	
-			$('#identification_number').val(rut_format(rut_string));
-			$.getJSON('/client_loader', {term: $('#identification_number').val(), company_id: $('#selectedLocal').data('local').company_id}, function (client) {
-				if (client != null){	
-					$('#full_name').val(client.first_name+' '+client.last_name);
-					$('#firstName').val(client.first_name);
-					$('#lastName').val(client.last_name);
-				}
-				else {
-					$('#full_name').val('');
-					$('#firstName').val('');
-					$('#lastName').val('');
-				}
-			});
+		if ($('#user_id').val() == '')
+		{
+			var id_string = $('#identification_number').val()
+			if (id_string != '') {	
+				$('#identification_number').val(identification_number_format(id_string));
+				$.getJSON('/client_loader', {term: $('#identification_number').val(), company_id: $('#selectedLocal').data('local').company_id}, function (client) {
+					if (client != null){	
+						$('#full_name').val(client.first_name+' '+client.last_name);
+						$('#firstName').val(client.first_name);
+						$('#lastName').val(client.last_name);
+					}
+					else {
+						$('#full_name').val('');
+						$('#firstName').val('');
+						$('#lastName').val('');
+					}
+				});
+			}
+			else {
+				$('#full_name').val('');
+				$('#firstName').val('');
+				$('#lastName').val('');
+			}
 		}
-		else {
-			$('#full_name').val('');
-			$('#firstName').val('');
-			$('#lastName').val('');
+		else
+		{
+			var id_string = $('#identification_number').val()
+			if (id_string != '') {	
+				$('#identification_number').val(identification_number_format(id_string));
+			}
 		}
 	});
 });

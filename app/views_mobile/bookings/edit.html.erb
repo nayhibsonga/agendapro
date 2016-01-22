@@ -12,6 +12,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-xs-12">
+      <input type="hidden" id="is_edit_modal" value="1" />
       <%= form_for @booking, html: {class: 'form-horizontal', style: 'margin-top: 10px; margin-bottom: 10px;'} do |f| %>
         <%= f.hidden_field :client, value: @booking.client.id %>
         <%= f.hidden_field :location, value: @booking.location.id %>
@@ -40,14 +41,22 @@
             <div class="form-group">
               <%= f.label :service_provider, 'Prestador', class: 'control-label col-xs-3' %>
               <div class="col-xs-9">
-                <%= f.collection_select :service_provider, ServiceProvider.where(location: @booking.location).where(active: true), :id, :public_name, {selected: @booking.service_provider_id}, {class: 'form-control'} %>
+                <% if @booking.is_session %>
+                  <%= f.collection_select :service_provider, ServiceProvider.where(location: @booking.location).where(active: true), :id, :public_name, {selected: @booking.service_provider_id}, {class: 'form-control', disabled: 'disabled'} %>
+                <% else %>
+                  <%= f.collection_select :service_provider, ServiceProvider.where(location: @booking.location).where(active: true), :id, :public_name, {selected: @booking.service_provider_id}, {class: 'form-control'} %>
+                <% end %>
                 <span class="help-block"></span>
               </div>
             </div>
             <div class="form-group">
               <%= f.label :service, 'Servicio', class: 'control-label col-xs-3' %>
               <div class="col-xs-9">
-                <%= f.collection_select :service, @booking.service_provider.services.where(:active => true).order(:name), :id, :name, {selected: @booking.service_id}, {class: 'form-control'} %>
+                <% if @booking.is_session %>
+                  <%= f.collection_select :service, @booking.service_provider.services.where(:active => true).order(:name), :id, :name, {selected: @booking.service_id}, {class: 'form-control', disabled: 'disabled'} %>
+                <% else %>
+                  <%= f.collection_select :service, @booking.service_provider.services.where(:active => true).order(:name), :id, :name, {selected: @booking.service_id}, {class: 'form-control'} %>
+                <% end %>
                 <span class="help-block"></span>
               </div>
             </div>
@@ -111,7 +120,7 @@
             </div>
             <% if @company.company_setting.client_exclusive %>
             <div class="form-group">
-              <%= label_tag :identification_number, "RUT", class: "control-label col-xs-3" %>
+              <%= label_tag :identification_number, (I18n.t('ci')).capitalize, class: "control-label col-xs-3" %>
               <div class="col-xs-9">
                 <%= text_field_tag :identification_number, class: "form-control" %>
               </div>
@@ -132,6 +141,32 @@
               </div>
             </div>
           </div>
+          <% if @booking.is_session %>
+            <div class="form-group" id="sessions-row">
+              <input type="hidden" name="has_sessions" id="has_sessions" value="1" />
+
+                  <%= f.label "sessions-label", "Sesiones", class: "col-xs-3 control-label" %>
+                  <div class="col-xs-9">
+                    <div id="sessions-info">
+                      
+                        Esta reserva corresponde a una sesión de un servicio.
+                      
+                    </div>
+                  </div>
+            </div>
+          <% else %>
+            <div class="form-group" id="sessions-row" hidden>
+              <input type="hidden" name="has_sessions" id="has_sessions" value="0" />
+
+                  <%= f.label "sessions-label", "Sesiones", class: "col-sm-3 control-label" %>
+                  <div class="col-sm-9">
+                    <div id="sessions-info">
+                      
+                    </div>
+                  </div>
+            </div>
+          <% end %>
+
           <button type="submit" class="btn btn-block btn-lg btn-orange" data-id="<%= @booking.id %>" data-url="PATCH" data-loading="Guardando <i class='fa fa-spinner fa-spin'></i>" autocomplete="off">Guardar</button>
           <%= link_to 'Volver', bookings_path, class: 'btn btn-block btn-lg btn-default' %>
         </div>

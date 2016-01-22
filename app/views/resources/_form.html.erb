@@ -26,8 +26,8 @@
             <%= f.label :service_ids, "Servicios", class: "col-md-3 control-label" %>
             <div class="col-md-5">
               <div class="panel-group" id="services-accordion">
-                <% ServiceCategory.where(company_id: current_user.company_id).each do |service_category| %>
-                  <% @services = Service.where(active: true, service_category_id: service_category.id) %>
+                <% ServiceCategory.where(company_id: current_user.company_id).order(:order, :name).each do |service_category| %>
+                  <% @services = Service.where(active: true, service_category_id: service_category.id).order(:order, :name) %>
                   <% if @services.length > 0 %>
                   <div class="panel panel-default">
                     <div class="panel-heading">

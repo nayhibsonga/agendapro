@@ -1,0 +1,301 @@
+function loadProvidersReport()
+{
+	var provider_ids = []
+	$('#render_content').empty();
+
+	if($('[name="person_type"]:checked').val() != "service_provider")
+	{
+		return;
+	}
+
+	$("#serviceProvidersMultiSelect option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	provider_ids.push($(this).val());
+		}
+	});
+
+	if(provider_ids.length == 0)
+	{
+		return;
+	}
+
+	$('#loader-div').show();
+
+	$.ajax({
+		url: 'service_providers_report',
+		data: {service_provider_ids: provider_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
+		type: 'get',
+		error: function(response){
+		  	swal("Error");
+		  	$('#loader-div').hide();
+		},
+		success: function(response){
+
+		  	$('#render_content').append(response);
+		  	$('#loader-div').hide();
+		}
+	});
+}
+
+function loadUsersReport()
+{
+	var user_ids = []
+	$('#render_content').empty();
+
+	if($('[name="person_type"]:checked').val() != "user")
+	{
+		return;
+	}
+
+	$("#usersMultiSelect option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	user_ids.push($(this).val());
+		}
+	});
+
+	if(user_ids.length == 0)
+	{
+		return;
+	}
+
+	$('#loader-div').show();
+
+	$.ajax({
+		url: 'users_report',
+		data: {user_ids: user_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
+		type: 'get',
+		error: function(response){
+		  	swal("Error");
+		  	$('#loader-div').hide();
+		},
+		success: function(response){
+
+		  	$('#render_content').append(response);
+		  	$('#loader-div').hide();
+		}
+	});
+}
+
+function loadCashiersReport()
+{
+	var cashier_ids = []
+	$('#render_content').empty();
+
+	if($('[name="person_type"]:checked').val() != "cashier")
+	{
+		return;
+	}
+
+	$("#cashiersMultiSelect option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	cashier_ids.push($(this).val());
+		}
+	});
+
+	if(cashier_ids.length == 0)
+	{
+		return;
+	}
+
+	$('#loader-div').show();
+
+	$.ajax({
+		url: 'cashiers_report',
+		data: {cashier_ids: cashier_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
+		type: 'get',
+		error: function(response){
+		  	swal("Error");
+		  	$('#loader-div').hide();
+		},
+		success: function(response){
+
+		  	$('#render_content').append(response);
+		  	$('#loader-div').hide();
+		}
+	});
+}
+
+function loadReport()
+{
+	loadProvidersReport();
+	loadUsersReport();
+	loadCashiersReport();
+}
+
+$(document).ready(function(){
+
+
+	$("#reports_start").datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    autoSize: true,
+	    changeYear: true,
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	    prevText: 'Atrás',
+	    nextText: 'Adelante',
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    today: 'Hoy',
+	    clear: '',
+	    defaultDate: "+1w",
+	    changeMonth: true,
+	    numberOfMonths: 3,
+	    firstDay: 1,
+	    onClose: function( selectedDate ) {
+	      //$("#reports_start").datepicker( "option", "minDate", selectedDate );
+	    }
+	});
+	$("#reports_end").datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    autoSize: true,
+	    changeYear: true,
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	    prevText: 'Atrás',
+	    nextText: 'Adelante',
+	    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	    today: 'Hoy',
+	    clear: '',
+	    defaultDate: "+1w",
+	    changeMonth: true,
+	    numberOfMonths: 3,
+	    firstDay: 1,
+	    onClose: function( selectedDate ) {
+	      //$( "#reports_end" ).datepicker( "option", "maxDate", selectedDate );
+	    }
+	});
+
+	$('#reports_start').on('change', function(){
+		loadReport();
+	});
+
+	$('#reports_end').on('change', function(){
+		loadReport();
+	});
+
+
+	$('#serviceProvidersMultiSelect').multiselect({
+	    includeSelectAllOption: true,
+	    selectAllText: 'Todos',
+	    buttonContainer: '<div style="margin-top: 8px;"></div>',
+	    buttonText: function(options, select) {
+
+	      	if (options.length === 0) {
+	        	return 'Ninguno';
+	      	}
+	      	else if(options.length == select[0].length)
+	      	{
+	        	return "Todos";
+	      	}
+	      	else if(options.length > 3)
+	      	{
+	        	return options.length + " seleccionados";
+	      	}
+	      	else {
+	        	var labels = [];
+	        	options.each(function() {
+	           		if ($(this).attr('label') !== undefined) {
+	               		labels.push($(this).attr('label'));
+	           		}
+	           		else {
+	               		labels.push($(this).html());
+	           		}
+	        	});
+	        	return labels.join(', ') + '';
+	      	}
+	    },
+	    onChange: function(option, checked, select){
+	    	loadReport();
+	    },
+	    onInitialized: function(select, container){
+	    	$('#serviceProvidersMultiSelect').show();
+	    }
+	});
+
+	$('#usersMultiSelect').multiselect({
+	    includeSelectAllOption: true,
+	    selectAllText: 'Todos',
+	    buttonContainer: '<div style="margin-top: 8px;"></div>',
+	    buttonText: function(options, select) {
+
+	      	if (options.length === 0) {
+	        	return 'Ninguno';
+	      	}
+	      	else if(options.length == select[0].length)
+	      	{
+	        	return "Todos";
+	      	}
+	      	else if(options.length > 3)
+	      	{
+	        	return options.length + " seleccionados";
+	      	}
+	      	else {
+	        	var labels = [];
+	        	options.each(function() {
+	           		if ($(this).attr('label') !== undefined) {
+	               		labels.push($(this).attr('label'));
+	           		}
+	           		else {
+	               		labels.push($(this).html());
+	           		}
+	        	});
+	        	return labels.join(', ') + '';
+	      	}
+	    },
+	    onChange: function(option, checked, select){
+	    	loadReport();
+	    },
+	    onInitialized: function(select, container){
+	    	$('#usersMultiSelect').show();
+	    }
+	});
+
+	$('#cashiersMultiSelect').multiselect({
+	    includeSelectAllOption: true,
+	    selectAllText: 'Todos',
+	    buttonContainer: '<div style="margin-top: 8px;"></div>',
+	    buttonText: function(options, select) {
+
+	      	if (options.length === 0) {
+	        	return 'Ninguno';
+	      	}
+	      	else if(options.length == select[0].length)
+	      	{
+	        	return "Todos";
+	      	}
+	      	else if(options.length > 3)
+	      	{
+	        	return options.length + " seleccionados";
+	      	}
+	      	else {
+	        	var labels = [];
+	        	options.each(function() {
+	           		if ($(this).attr('label') !== undefined) {
+	               		labels.push($(this).attr('label'));
+	           		}
+	           		else {
+	               		labels.push($(this).html());
+	           		}
+	        	});
+	        	return labels.join(', ') + '';
+	      	}
+	    },
+	    onChange: function(option, checked, select){
+	    	loadReport();
+	    },
+	    onInitialized: function(select, container){
+	    	$('#cashiersMultiSelect').show();
+	    }
+	});
+
+	$('[name="person_type"]').on('change', function(){
+		loadReport();
+	});
+
+});

@@ -29,6 +29,18 @@ function serviceGroup () {
 	}
 }
 
+function serviceSessions() {
+	if($("#service_has_sessions").is(':checked')){
+		$('#service_sessions_amount').closest('.form-group').removeClass('hidden');
+		$('#foo5').trigger('updateSizes');
+		$('#service_sessions_amount').attr('disabled', false);
+	}
+	else{
+		$('#service_sessions_amount').closest('.form-group').addClass('hidden');
+		$('#service_sessions_amount').attr('disabled', true);
+	}
+}
+
 $(function() {
 	$('form input, form select').bind('keypress keydown keyup', function(e){
     	if(e.keyCode == 13) {
@@ -40,11 +52,19 @@ $(function() {
 	$('#service_group_service').click(function (e) {
 		serviceGroup();
 	});
+	$('#service_has_sessions').click(function (e) {
+		serviceSessions();
+	});
 	$('#categoryCheckboxId').click(function (e) {
 		categoryChange();
 	});
 	if ($('#service_group_service').is(':checked')) {
 		$('#service_capacity').closest('.form-group').removeClass('hidden');
+		$('#foo5').trigger('updateSizes');
+	}
+	if ($('#service_has_sessions').is(':checked')) {
+		$('#service_sessions_amount').closest('.form-group').removeClass('hidden');
+		$('#service_sessions_amount').attr('disabled', false);
 		$('#foo5').trigger('updateSizes');
 	}
 	if ($('#service_outcall').prop('checked')) {
@@ -127,11 +147,15 @@ $(function() {
 				},
 				error: function(xhr){
 					var errors = $.parseJSON(xhr.responseText).errors;
-					var errores = 'Error\n';
+					var errores = '';
 					for (i in errors) {
 						errores += '*' + errors[i] + '\n';
 					}
-					alert(errores);
+					swal({
+						title: "Error",
+						text: "Se produjeron los siguientes errores:\n" + errores,
+						type: "error"
+					});
 				},
 			}).always(function () {
 				btn.button('reset');
@@ -161,4 +185,40 @@ $(function() {
 		$('.has-error').removeClass('has-error');
 		$('.fa.fa-times').removeClass('fa fa-times');
 	});
+
+	/*$('#service_online_payable').on('change', function(e){
+		if($(this).prop('checked'))
+		{
+			$('#must_be_paid_div').show();
+		}
+		else
+		{
+			$("#service_must_be_paid_online").prop('checked', false);
+			$("#must_be_paid_div").hide();
+		}
+	});*/
+
+	var radios = $('input[name=online_payable_options]');
+	radios.on('change', function(e) {
+		pay_option = $('input[name=online_payable_options]:checked').val();
+
+		if(pay_option == "no_pay")
+		{
+			$("#service_online_payable").val("0");
+			$("#service_must_be_paid_online").val("0");
+		}
+		else if(pay_option == "may_pay")
+		{
+			$("#service_online_payable").val("1");
+			$("#service_must_be_paid_online").val("0");
+		}
+		else if(pay_option == "must_pay")
+		{
+			$("#service_online_payable").val("1");
+			$("#service_must_be_paid_online").val("1");
+		}
+
+		console.log($('input[name=online_payable_options]:checked').val());
+	});
+
 });

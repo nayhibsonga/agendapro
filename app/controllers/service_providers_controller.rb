@@ -8,12 +8,12 @@ class ServiceProvidersController < ApplicationController
   # GET /service_providers
   # GET /service_providers.json
   def index
-    @locations = Location.where(company_id: current_user.company_id, :active => true).order(order: :asc).accessible_by(current_ability)
-    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability).order(:order)
+    @locations = Location.where(company_id: current_user.company_id, :active => true).order(:order, :name).accessible_by(current_ability)
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => true).accessible_by(current_ability).order(:order, :public_name)
   end
 
   def inactive_index
-    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => false).accessible_by(current_ability)
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, :active => false).accessible_by(current_ability).order(:order, :public_name)
   end
 
   def activate
@@ -59,12 +59,12 @@ class ServiceProvidersController < ApplicationController
     @service_provider.company_id = current_user.company_id
     # @users = User.where(company_id: current_user.company_id)
     # @locations = Location.where(company_id: current_user.company_id)
-    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(:order, :name)
   end
 
   # GET /service_providers/1/edit
   def edit
-    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(name: :asc)
+    @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(:order, :name)
   end
 
   # POST /service_providers
@@ -73,10 +73,11 @@ class ServiceProvidersController < ApplicationController
 
     @service_provider = ServiceProvider.new(service_provider_params)
     @service_provider.company_id = current_user.company_id
-    
+
     respond_to do |format|
       if @service_provider.save
-        format.html { redirect_to service_providers_path, notice: 'Prestador creado exitosamente.' }
+        flash[:notice] = 'Prestador creado exitosamente.'
+        format.html { redirect_to service_providers_path }
         format.json { render :json => @service_provider }
       else
         format.html { render action: 'new' }
@@ -100,9 +101,10 @@ class ServiceProvidersController < ApplicationController
     respond_to do |format|
       if @service_provider.update(service_provider_params)
         @provider_times.destroy_all
-        format.html { redirect_to service_providers_path, notice: 'Prestador actualizado exitosamente.' }
+        flash[:notice] = 'Prestador actualizado exitosamente.'
+        format.html { redirect_to service_providers_path }
         format.json { render :json => @service_provider }
-      else 
+      else
         @provider_times.each do |provider_time|
           provider_time.service_provider_id = @service_provider.id
           provider_time.save
@@ -124,7 +126,7 @@ class ServiceProvidersController < ApplicationController
   end
 
   def location_providers
-    render :json => ServiceProvider.where(:active => true).where('location_id = ?', params[:location]).accessible_by(current_ability).order(:order)
+    render :json => ServiceProvider.where(:active => true).where('location_id = ?', params[:location]).accessible_by(current_ability).order(:order, :public_name)
   end
 
   def provider_time
@@ -134,8 +136,20 @@ class ServiceProvidersController < ApplicationController
 
   def provider_service
     provider = ServiceProvider.find(params[:id])
-    services = provider.services.where(:active => true).order(:name)
-    render :json => services
+    services = provider.services.where(:active => true).order(:order, :name)
+    bundles = Bundle.where(id: ServiceBundle.where(service_id: services.pluck(:id)).pluck(:bundle_id))
+    services_array = Array.new
+    services.each do |service|
+      serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall, 'bundle' => false })
+      services_array.push(serviceJSON)
+    end
+    if params[:bundle] == "true"
+      bundles.each do |bundle|
+        bundleJSON = bundle.attributes.merge({'name_with_small_outcall' => bundle.name, 'bundle' => true, 'duration' => bundle.services.sum(:duration) })
+        services_array.push(bundleJSON)
+      end
+    end
+    render :json => services_array
   end
 
   def available_providers
@@ -145,7 +159,9 @@ class ServiceProvidersController < ApplicationController
       available = true
       service_provider.bookings.each do |booking|
         if (booking.start - Date(params[:end])) * (Date(params[:start]) - booking.end) > 0
-          available = false
+          if !booking.is_session || (booking.is_session && booking.is_session_booked)
+            available = false
+          end
         end
       end
       if available
@@ -191,6 +207,6 @@ class ServiceProvidersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_provider_params
-      params.require(:service_provider).permit(:user_id, :location_id, :public_name, :notification_email, :block_length, :booking_configuration_email, :online_booking, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy], user_attributes: [:email, :password, :confirm_password, :role_id, :company_id, :location_id])
+      params.require(:service_provider).permit(:user_id, :location_id, :public_name, :block_length, :online_booking, :service_ids => [], provider_times_attributes: [:id, :open, :close, :day_id, :service_provider_id, :_destroy], user_attributes: [:email, :password, :confirm_password, :role_id, :company_id, :location_id])
     end
 end

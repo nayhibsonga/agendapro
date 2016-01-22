@@ -2,8 +2,8 @@ class UsersController < ApplicationController
   #before_action :set_user, only: [:show, :edit, :update, :destroy]
   #before_action :set_user, only: [:agenda]
   before_action :authenticate_user!, except: [:check_user_email]
-  before_action :verify_is_super_admin, except: [:new, :agenda, :add_company, :check_user_email]
-  layout "admin", except: [:agenda, :add_company]
+  before_action :verify_is_super_admin, except: [:new, :agenda, :add_company, :check_user_email, :get_session_bookings, :get_session_summary, :location_users]
+  layout "admin", except: [:agenda, :add_company, :get_session_bookings, :get_session_summary]
   load_and_authorize_resource
 
   # GET /users
@@ -79,14 +79,93 @@ class UsersController < ApplicationController
     #@activeBookings = Booking.where(:user_id => params[:id], :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
     #@lastBookings = Booking.where(:user_id => params[:id]).order(updated_at: :desc).limit(10)
     @user = current_user
-    @activeBookings = Booking.where(:user_id => current_user.id, :status_id => Status.find_by(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
-    @lastBookings = Booking.where(:user_id => current_user.id).order(updated_at: :desc).limit(10)
+    @client_ids = Client.where(:email => current_user.email).pluck(:id)
+    @preSessionBookings = SessionBooking.where(:client_id => @client_ids)
+
+    @preSessionBookings.each do |sb|
+      if sb.user_id.nil?
+        sb.user_id = current_user.id
+        sb.save
+      end
+      if sb.bookings.count == 0
+        sb.delete
+      end
+    end
+
+    @preSessionBookings = SessionBooking.where(:client_id => @client_ids)
+
+    @sessionBookings = []
+
+    @preSessionBookings.each do |session_booking|
+
+      include_sb = false
+
+      if session_booking.sessions_taken < session_booking.sessions_amount
+        include_sb = true
+      else
+        session_booking.bookings.each do |booking|
+          if booking.start > DateTime.now
+            include_sb = true
+          end
+        end
+      end
+
+      if include_sb
+        @sessionBookings << session_booking
+      end
+
+    end
+
+    @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids, :status_id => Status.where(:name => ['Reservado', 'Confirmado'])).where("start > ?", DateTime.now).order(:start) 
+    @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids).order(updated_at: :desc).limit(10)
     render :layout => 'results'
   end
 
+  def get_session_bookings
+
+    @sessionBooking = SessionBooking.find(params[:session_booking_id])
+    respond_to do |format|
+      format.html { render :partial => 'get_session_bookings' }
+      format.json { render json: @sessionBooking }
+    end
+
+  end
+
+  def get_session_summary
+
+    @sessionBooking = SessionBooking.find(params[:session_booking_id])
+    respond_to do |format|
+      format.html { render :partial => 'get_session_summary' }
+      format.json { render json: @sessionBooking }
+    end
+
+  end
+
   def check_user_email
-    @user = User.find_by(:email => params[:user][:email])
-    render :json => @user.nil?
+    @users = User.where("email ilike ?", params[:user][:email])
+    render :json => @users.count < 1
+  end
+
+  def delete_session_booking
+    @result = ""
+    session_booking = SessionBooking.find(params[:session_booking_id])
+    if !session_booking.service_promo_id.nil? || session_booking.bookings.first.payed
+      #Forn now, can't delete when payed
+      @result << "payed"
+    end
+    if session_booking.delete
+      @result << "ok"
+    else
+      @result << "error"
+    end
+
+    render :json => @result
+  end
+
+  def location_users
+    location = Location.find(params[:location])
+    @users = User.where(id: UserLocation.where(location_id: location.id).pluck(:user_id)) + location.company.users.where.not(id: UserLocation.where(location_id: location.company.locations.pluck(:id)).pluck(:user_id))
+    render :json => @users
   end
 
   private

@@ -1,4 +1,6 @@
 <%= stylesheet_link_tag "workflow/workflow-style.css" %>
+<input type="hidden" id="after_booking" value="<%= @booking.service.company.company_setting.after_booking %>" />
+
 
 <div class="row" id="navegacion-workflow">
   <div class="col-md-12">
@@ -67,60 +69,4 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag "jquery-ui.min" %>
   <%= javascript_include_tag 'workflow/booking-edit' %>
-  <script type="text/javascript">
-
-    $(function() {
-
-      $("#datepicker").datepicker({
-            dateFormat: 'dd-mm-yy',
-            autoSize: true,
-            firstDay: 1,
-            changeMonth: true,
-            changeYear: true,
-            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-            prevText: 'Atrás',
-            nextText: 'Adelante',
-            dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-            dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-            dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-            today: 'Hoy',
-            clear: '',
-            onSelect: function(newDate){
-
-              var data = {
-                date: newDate,
-                provider: $('#booking').data('booking').service_provider_id,
-                local: $('#booking').data('booking').location_id,
-                service: $('#booking').data('booking').service_id
-              }
-
-              console.log(data);
-
-              calendar.rebuild('/available_hours_week_html', data);
-
-
-              $(document).on('hourClick', function (e) {
-                addBooking(e);
-              });
-
-
-              $(function () {
-                $('#prev').click(function () {
-                  selected = false;
-                });
-                $('#next').click(function () {
-                  selected = false;
-                });
-              });
-
-            }
-        });
-
-        $(document.body).on('click', '.date-span', function(e) {
-          $(e.currentTarget).find('input').datepicker('show');
-        });
-
-      });
-  </script>
 <% end %>

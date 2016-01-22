@@ -1,11 +1,3 @@
-// $('input').on('itemAdded', function(event) {
-//   // event.item: contains the item
-// });
-// $('input').on('beforeItemRemove', function(event) {
-//   // event.item: contains the item
-//   // event.cancel: set to true to prevent the item getting removed
-// });
-
 function saveServiceCategory () {
 	$.ajax({
 	    type: 'POST',
@@ -31,14 +23,14 @@ function saveServiceCategory () {
 		    var errors = $.parseJSON(xhr.responseText).errors;
 		    var errorList = '';
 			for (i in errors) {
-				errorList += '<li>' + errors[i] + '</li>'
+				errorList += '- ' + errors[i] + '\n\n'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n\n" + errorList,
+        type: "error",
+        html: true
+      });
 			$('#update_service_category_button').attr('disabled', false);
 			$('#update_service_category_spinner').hide();
 		}
@@ -60,14 +52,14 @@ function deleteServiceCategory (id) {
 		    var errors = $.parseJSON(xhr.responseText).errors;
 		    var errorList = '';
 			for (i in errors) {
-				errorList += '<li>' + errors[i] + '</li>'
+				errorList += '- ' + errors[i] + '\n\n'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n\n" + errorList,
+        type: "error",
+        html: true
+      });
 			$('#update_service_category_spinner').hide();
 		}
 	});
@@ -77,38 +69,52 @@ function saveService () {
 	$.ajax({
 	    type: 'POST',
 	    url: '/quick_add/service.json',
-	    data: { "service": { "name": $('#service_name').val(), "price": $('#service_price').val(), "duration": $('#service_duration').val(), "service_category_id": $('#service_service_category_id').val() } },
+	    data: {
+	    	"service": {
+	    		"name": $('#service_name').val(),
+	    		"price": $('#service_price').val(),
+	    		"duration": $('#service_duration').val(),
+	    		"service_category_id": $('#service_service_category_id').val(),
+	    		"has_sessions": $('#service_has_sessions').is(':checked'),
+	    		"sessions_amount": $('#service_sessions_amount').val(),
+	    		"description": $('#service_description').val()
+	    	}
+	    },
 	    dataType: 'json',
 	    success: function (result){
-	    	$('#services').append('<tr id="service_'+ result.service.id +'"><td>'+ result.service.name +'</td><td>$ '+ result.service.price.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +'</td><td>'+ result.service.duration +' min.</td><td>'+ result.service_category +'</td><td><button id="service_delete_'+ result.service.id +'" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td></tr>');
+	    	$('#services').append('<tr id="service_'+ result.service.id +'"><td>'+ result.service.name +'</td><td>$ '+ result.service.price.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +'</td><td>'+ result.service.duration +' min.</td><td>'+ result.service_category +'</td><td>' + result.service.description + '</td><td><button id="service_delete_'+ result.service.id +'" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td></tr>');
 
 	    	$('#service_name').val('');
 	    	$('#service_price').val('');
 	    	$('#service_duration').val('');
+	    	$('#service_sessions_amount').val('');
+	    	if ($('#service_has_sessions').is(':checked')) {
+	    		$('#service_has_sessions').click();
+	    	};
 	    	$('#service_delete_'+ result.service.id).click(function() {
 	    		$('#update_service_spinner').show();
-				$('#update_service_button').attr('disabled', true);
+					$('#update_service_button').attr('disabled', true);
 	    		deleteService(result.service.id);
 	    	});
 			service_validation.resetForm();
-		    $('#new_service .form-group').removeClass('has-error has-success');
+		    $('#new_service .form-group').removeClass('has-error has-success has-feedback');
 		    $('#new_service .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
 	    	$('#next_service_button').attr('disabled', false);
 			$('#update_service_button').attr('disabled', false);
 			$('#update_service_spinner').hide();
 		},
 		error: function (xhr){
-		    var errors = $.parseJSON(xhr.responseText).errors;
-		    var errorList = '';
+		  var errors = $.parseJSON(xhr.responseText).errors;
+		  var errorList = '';
 			for (i in errors) {
-				errorList += '<li>' + errors[i] + '</li>'
+				errorList += '- ' + errors[i] + '\n\n'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n\n" + errorList,
+        type: "error",
+        html: true
+      });
 			$('#update_service_button').attr('disabled', false);
 			$('#update_service_spinner').hide();
 		}
@@ -132,14 +138,14 @@ function deleteService (id) {
 		    var errors = $.parseJSON(xhr.responseText).errors;
 		    var errorList = '';
 			for (i in errors) {
-				errorList += '<li>' + errors[i] + '</li>'
+				errorList += '- ' + errors[i] + '\n\n'
 			}
-			my_alert.showAlert(
-				'<h3>Error</h3>' +
-				'<ul>' +
-					errorList +
-				'</ul>'
-			);
+			swal({
+        title: "Error",
+        text: "Se produjeron los siguientes problemas:\n\n" + errorList,
+        type: "error",
+        html: true
+      });
 			$('#update_service_spinner').hide();
 		}
 	});
@@ -175,6 +181,17 @@ $(function() {
 		else {
 			window.console.log("Bad service delete");
 		}
+	});
+
+	$('#service_has_sessions').click(function (e) {
+			if($("#service_has_sessions").is(':checked')){
+				$('#service_sessions_amount').closest('.form-group').removeClass('hidden');
+				$('#service_sessions_amount').attr('disabled', false);
+			}
+			else{
+				$('#service_sessions_amount').closest('.form-group').addClass('hidden');
+				$('#service_sessions_amount').attr('disabled', true);
+			}
 	});
 
 });

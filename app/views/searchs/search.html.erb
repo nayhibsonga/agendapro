@@ -109,7 +109,7 @@
                 <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "img-responsive pull-right" %>
             </div>
             <div class="col-xs-8 col-lg-5 links-footer pull-right">
-                <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', '/Term_y_Cond_AgendaPro122014.pdf', :target => :blank %>
+                <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
             </div>
             <div class="col-xs-12 col-lg-5 copyright-footer">
                 <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
@@ -125,14 +125,10 @@
 <% content_for :scripts do %>
 	<%= javascript_include_tag "jquery-ui.min" %>
 	<%= javascript_include_tag "search/map" %>
-	<%= javascript_include_tag "Alert" %>
 	<script type="text/javascript">
-		myAlert = new Alert();
-
 	    var input2 = document.getElementById('inputLocalization2');
 	    var options = {
-	      types: ['geocode'],
-	      componentRestrictions: {country: 'cl'}
+	      types: ['geocode']
 	    };
 	    var geocoder = new google.maps.Geocoder();
 	    var autocomplete2 = new google.maps.places.Autocomplete(input2, options);
@@ -140,10 +136,10 @@
 	    google.maps.event.addListener(autocomplete2, 'place_changed', function() {
 	        if (autocomplete2.getPlace().geometry) {
 	            $('#inputLocalization').val(autocomplete2.getPlace().formatted_address);
-	            $('#latitude').val(autocomplete2.getPlace().geometry.location.A);
-	            $('#longitude').val(autocomplete2.getPlace().geometry.location.F);
-	            document.cookie = "lat=" + escape(autocomplete2.getPlace().geometry.location.A);
-	            document.cookie = "lng=" + escape(autocomplete2.getPlace().geometry.location.F);
+	            $('#latitude').val(autocomplete2.getPlace().geometry.location.lat());
+	            $('#longitude').val(autocomplete2.getPlace().geometry.location.lng());
+	            document.cookie = "lat=" + escape(autocomplete2.getPlace().geometry.location.lat());
+	            document.cookie = "lng=" + escape(autocomplete2.getPlace().geometry.location.lng());
 	            document.cookie = "formatted_address=" + escape(autocomplete2.getPlace().formatted_address);
 	        }
 	    });
@@ -163,6 +159,7 @@
 	    });
 
 	     function selectFirstResult() {
+	     	console.log("Enters.");
 	        infowindow.close();
 	        $(".pac-container").hide();
 	        var firstResult = $(".pac-container .pac-item:first").text();
@@ -224,28 +221,32 @@
 	                function (error) {
 	                    positioned = true;
 	                    if (error.code == 1) {
-	                        myAlert.showAlert(
-	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
-	                            '<p>No hay permiso, por favor asegúrate permitir la geolicalización automática en tu explorador.</p>'
-	                        );
+	                    	swal({
+	                    		title: "Hubo un error en el proceso de localización",
+	                    		text: "No hay permiso, por favor asegúrate permitir la geolicalización automática en tu explorador.",
+	                    		type: "error"
+	                    	});
 	                    }
 	                    else if (error.code == 2) {
-	                        myAlert.showAlert(
-	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
-	                            '<p>Posición no disponible, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-	                        );
+	                    	swal({
+	                    		title: "Hubo un error en el proceso de localización",
+	                    		text: "Posición no disponible, por favor inténtalo nuevamente o escribe tu ubicación.",
+	                    		type: "error"
+	                    	});
 	                    }
 	                    else if (error.code == 3) {
-	                        myAlert.showAlert(
-	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
-	                            '<p>La consulta tardó mucho, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-	                        );
+	                    	swal({
+	                    		title: "Hubo un error en el proceso de localización",
+	                    		text: "La consulta tardó mucho, por favor inténtalo nuevamente o escribe ttu ubicación.",
+	                    		type: "error"
+	                    	});
 	                    }
 	                    else {
-	                        myAlert.showAlert(
-	                            '<h3>Hubo un error en el proceso de localización.</h3>' +
-	                            '<p>Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación.</p>'
-	                        );
+	                    	swal({
+	                    		title: "Hubo un error en el proceso de localización",
+	                    		text: "Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación.",
+	                    		type: "error"
+	                    	});
 	                    }
 	                    $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
 	                },
@@ -253,19 +254,21 @@
 	            );
 	            setTimeout(function () {
 	                if (!positioned) {
-	                    myAlert.showAlert(
-	                      '<h3>Hubo un error en el proceso de localización.</h3>' +
-	                      '<p>No hubo respuesta, por favor asegúrate permitir la geolicalización automática en tu explorador.</p>'
-	                    );
+	                	swal({
+	                		title: "Hubo un error en el proceso de localización",
+	                		text: "No hubo respuesta, por favor asegúrate permitir ka geolicalización automática en tu explorador.",
+	                		type: "error"
+	                	});
 	                    $('.geolocate_btn').html('<i class="fa fa-crosshairs"></i> Encuéntrame');
 	                }
 	            }, 15000);
 	        }
 	        else {
-	            myAlert.showAlert(
-	              '<h3>Hubo un error en el proceso de localización.</h3>' +
-	              '<p>Este explorador no permite geolocalización automática, por favor escribe tu ubicación.</p>'
-	            );
+	        	swal({
+	        		title: "Hubo un error en el proceso de localización",
+	        		text: "Este explorador no permite geolocalización automática, por favor escribe tu ubicación.",
+	        		type: "error"
+	        	});
 	        }
 	        return;
 	    }

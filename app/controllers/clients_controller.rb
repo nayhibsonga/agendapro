@@ -2,8 +2,11 @@ class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:client_loader]
   before_action :quick_add
+  before_action -> (source = "clients") { verify_free_plan source }, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :new, :edit, :create, :update]
   load_and_authorize_resource
   layout "admin"
+
+  helper_method :sort_column, :sort_direction
 
   # GET /clients
   # GET /clients.json
@@ -11,17 +14,25 @@ class ClientsController < ApplicationController
     if mobile_request?
       @company = current_user.company
     end
-    @locations = Location.where(company_id: current_user.company_id, active: true)
-    @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true)
-    @services = Service.where(company_id: current_user.company_id, active: true)
-    @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).paginate(:page => params[:page], :per_page => 25)
-
     @monthly_mails = current_user.company.plan.monthly_mails
     @monthly_mails_sent = current_user.company.company_setting.monthly_mails
-
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
 
-    @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name)
+    @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
+    @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
+    @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
+
+    if [:locations, :providers, :services, :range_from, :range_to].any? {|s| params.key?(s) && !params[s].blank? }
+      attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
+      @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
+
+      @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction)
+    else
+      @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
+
+      @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction)
+    end
+
     respond_to do |format|
       format.html
       format.csv
@@ -32,6 +43,13 @@ class ClientsController < ApplicationController
   # GET /clients/1
   # GET /clients/1.json
   def show
+    @bookings = @client.bookings.where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc).paginate(:page => params[:page], :per_page => 25)
+    @booked = @bookings.where(status: Status.find_by(name: 'Reservado')).count
+    @confirmed = @bookings.where(status: Status.find_by(name: 'Confirmado')).count
+    @attended = @bookings.where(status: Status.find_by(name: 'Asiste')).count
+    @payed = @bookings.where('payment_id is not null').count
+    @cancelled = @bookings.where(status: Status.find_by(name: 'Cancelado')).count
+    @notAttended = @bookings.where(status: Status.find_by(name: 'No Asiste')).count
   end
 
   # GET /clients/new
@@ -47,9 +65,34 @@ class ClientsController < ApplicationController
 
   # GET /clients/1/edit
   def edit
-    @activeBookings = Booking.where(:client_id => @client).where("start > ?", DateTime.now).order(start: :asc)
-    @lastBookings = Booking.where(:client_id => @client).where("start <= ?", DateTime.now).order(start: :desc)
+    @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client).where("start > ?", DateTime.now).order(start: :asc)
+    @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client).where("start <= ?", DateTime.now).order(start: :desc)
     @next_bookings = Booking
+
+    @preSessionBookings = SessionBooking.where(:client_id => @client)
+
+    @sessionBookings = []
+
+    @preSessionBookings.each do |session_booking|
+
+      include_sb = false
+
+      if session_booking.sessions_taken && session_booking.sessions_amount && session_booking.sessions_taken < session_booking.sessions_amount
+        include_sb = true
+      else
+        session_booking.bookings.each do |booking|
+          if booking.start > DateTime.now
+            include_sb = true
+          end
+        end
+      end
+
+      if include_sb
+        @sessionBookings << session_booking
+      end
+
+    end
+
     @client_comment = ClientComment.new
     @client_comments = ClientComment.where(client_id: @client).order(created_at: :desc)
   end
@@ -65,10 +108,11 @@ class ClientsController < ApplicationController
         format.html { redirect_to clients_path, notice: 'Cliente creado exitosamente.' }
         format.json { render action: 'edit', status: :created, location: @client }
       else
-        format.html { 
+        format.html {
           @activeBookings = Array.new
           @lastBookings = Array.new
           @client_comment = ClientComment.new
+          @sessionBookings = []
           if mobile_request?
             @company = current_user.company
           end
@@ -86,12 +130,36 @@ class ClientsController < ApplicationController
         format.html { redirect_to clients_path, notice: 'Cliente actualizado exitosamente.' }
         format.json { head :no_content }
       else
-        format.html { 
+        format.html {
           @activeBookings = Booking.where(:client_id => @client).where("start > ?", DateTime.now).order(start: :asc)
           @lastBookings = Booking.where(:client_id => @client).where("start <= ?", DateTime.now).order(start: :desc)
           @next_bookings = Booking
           @client_comment = ClientComment.new
           @client_comments = ClientComment.where(client_id: @client).order(created_at: :desc)
+
+          @preSessionBookings = SessionBooking.where(:client_id => @client)
+
+          @sessionBookings = []
+
+          @preSessionBookings.each do |session_booking|
+
+            include_sb = false
+
+            if session_booking.sessions_taken < session_booking.sessions_amount
+              include_sb = true
+            else
+              session_booking.bookings.each do |booking|
+                if booking.start > DateTime.now
+                  include_sb = true
+                end
+              end
+            end
+
+            if include_sb
+              @sessionBookings << session_booking
+            end
+
+          end
           render action: 'edit' }
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
@@ -100,17 +168,41 @@ class ClientsController < ApplicationController
 
   def history
     @client = Client.find(params[:id])
-    @bookings = @client.bookings
+    @bookings = @client.bookings.where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc)
   end
 
   def bookings_history
     client = Client.find(params[:id])
     bookings = []
-    client.bookings.where('start < ?', Time.now).order(start: :desc).limit(10).each do |booking|
+    client.bookings.where('start < ?', Time.now).where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc).limit(10).each do |booking|
       bookings.push( { start: booking.start, service: booking.service.name, provider: booking.service_provider.public_name, status: booking.status.name, notes: booking.notes, comment: booking.company_comment } )
     end
 
     render :json => bookings
+  end
+
+  def check_sessions
+
+    @respArr = []
+    @session_bookings = []
+
+    client = Client.find(params[:id])
+    service = Service.find(params[:service_id])
+    session_bookings = SessionBooking.where(:client_id => client.id, :service_id => service.id)
+
+    session_bookings.each do |session_booking|
+      if session_booking.sessions_amount > session_booking.sessions_taken
+        sessions_hash = session_booking.attributes
+        sessions_hash["sessions_total"] = session_booking.sessions_amount
+        @session_bookings << sessions_hash
+      end
+    end
+
+    @respArr << service
+    @respArr << @session_bookings
+
+    render :json => @respArr
+
   end
 
   def create_comment
@@ -158,20 +250,18 @@ class ClientsController < ApplicationController
 
   def compose_mail
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
-    mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:location]).filter_provider(params[:provider]).filter_service(params[:service]).filter_gender(params[:gender]).filter_birthdate(params[:option]).order(:last_name, :first_name).pluck(:email).uniq
+    if [:locations, :providers, :services, :range_from, :range_to].any? {|s| params.key?(s) && !params[s].blank? }
+      attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
+      mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(:last_name, :first_name).pluck(:email).uniq
+    else
+      mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(:last_name, :first_name).pluck(:email).uniq
+    end
 
     @to = Array.new
 
     mail_list.each do |email|
-      @to.push(email) if email=~ /([^\s]+)@([^\s]+)/ 
+      @to.push(email) if email=~ /([^\s]+)@([^\s]+)/
     end
-    # @to = '';
-    # if params[:to]
-    #   params[:to].each do |mail|
-    #     @to += mail + ', '
-    #   end
-    # end
-    # @to = @to.chomp(', ')
   end
 
   def send_mail
@@ -251,9 +341,9 @@ class ClientsController < ApplicationController
       end
     end
     @clients1 = Client.where(company_id: current_user.company_id).where('first_name ILIKE ANY ( array[:s] )', :s => search_array2).where('last_name ILIKE ANY ( array[:s] )', :s => search_array2).pluck(:id).uniq
-    @clients2 = Client.where(company_id: current_user.company_id).where("CONCAT(first_name, ' ', last_name) ILIKE :s OR first_name ILIKE :s OR last_name ILIKE :s", :s => "%#{params[:term]}%").order(:last_name, :first_name).pluck(:id).uniq
+    @clients2 = Client.where(company_id: current_user.company_id).where("CONCAT(unaccent(first_name), ' ', unaccent(last_name)) ILIKE unaccent(:s) OR unaccent(first_name) ILIKE unaccent(:s) OR unaccent(last_name) ILIKE unaccent(:s)", :s => "%#{params[:term]}%").pluck(:id).uniq
 
-    @clients = Client.where(id: (@clients1 + @clients2).uniq)
+    @clients = Client.where(id: (@clients1 + @clients2).uniq).order(:last_name, :first_name)
 
     @clients_arr = Array.new
     @clients.each do |client|
@@ -281,7 +371,7 @@ class ClientsController < ApplicationController
 
   def rut_suggestion
     search_rut = params[:term].gsub(/[.-]/, "")
-    @clients = Client.where(company_id: current_user.company_id).where("replace(replace(identification_number, '.', ''), '-', '') ILIKE ?", "%#{search_rut}%").uniq
+    @clients = Client.where(company_id: current_user.company_id).where("replace(replace(identification_number, '.', ''), '-', '') ILIKE ?", "%#{search_rut}%").order(:last_name, :first_name).uniq
 
     @clients_arr = Array.new
     @clients.each do |client|
@@ -310,7 +400,16 @@ class ClientsController < ApplicationController
   end
 
   def import
-    message = Client.import(params[:file], current_user.company_id)
+    message = "No se seleccionó archivo."
+    filename_arr = params[:file].original_filename.split(".")
+    if filename_arr.length > 0
+      extension = filename_arr[filename_arr.length - 1]
+      if extension == "csv" || extension == "xls"
+        message = Client.import(params[:file], current_user.company_id)
+      else
+        message = "La extensión del archivo no es correcta. Sólo se pueden importar archivos xls y csv."
+      end
+    end
     redirect_to clients_path, notice: message
   end
 
@@ -330,5 +429,13 @@ class ClientsController < ApplicationController
 
     def client_comment_params
       params.require(:client_comment).permit(:id, :client_id, :comment)
+    end
+
+    def sort_column
+      Client.column_names.include?(params[:sort]) ? params[:sort] : "last_name"
+    end
+
+    def sort_direction
+      %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
     end
 end

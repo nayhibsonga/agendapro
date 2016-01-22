@@ -3,152 +3,141 @@
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="es"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="es"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="es"> <!--<![endif]-->
-	<head>
-		<!-- start: Meta -->
-        <meta charset="utf-8">
-        <title>AgendaPro</title>
-        <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
-        <meta name="author" content="AgendaPro">
-        <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
-        <%= csrf_meta_tags %>
-        <!-- end: Meta -->
+  <head>
+    <!-- start: Meta -->
+    <meta charset="utf-8">
+    <title>AgendaPro</title>
+    <meta name="description" content="AgendaPro - Sistema de agendamiento OnLine para empresas y usuarios.">
+    <meta name="author" content="AgendaPro">
+    <meta name="keyword" content="agendapro, agenda, agenda online, reserva, reserva online">
+    <%= csrf_meta_tags %>
+    <!-- end: Meta -->
 
-        <!-- start: Mobile Specific -->
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <!-- end: Mobile Specific -->
+    <!-- start: Mobile Specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- end: Mobile Specific -->
 
-        <!-- start: CSS -->
-        <%= stylesheet_link_tag "login" %>
-        <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,600italic,700,700italic,300italic" %>
-        <!-- end: CSS -->
+    <!-- start: CSS -->
+    <%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Roboto+Condensed:300", type: "text/css" %>
+    <%= stylesheet_link_tag "login" %>
+    <!-- end: CSS -->
 
-        <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
-        <!-- Begin Inspectlet Embed Code -->
-        <script type="text/javascript" id="inspectletjs">
-        window.__insp = window.__insp || [];
-        __insp.push(['wid', 1883420541]);
-        (function() {
-        function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
-        if (window.attachEvent) window.attachEvent('onload', __ldinsp);
-        else window.addEventListener('load', __ldinsp, false);
-        })();
-        </script>
-        <!-- End Inspectlet Embed Code -->
-        <% end %>
+    <% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+    <!-- Begin Inspectlet Embed Code -->
+    <script type="text/javascript" id="inspectletjs">
+    window.__insp = window.__insp || [];
+    __insp.push(['wid', 1883420541]);
+    (function() {
+    function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+    if (window.attachEvent) window.attachEvent('onload', __ldinsp);
+    else window.addEventListener('load', __ldinsp, false);
+    })();
+    </script>
+    <!-- End Inspectlet Embed Code -->
+    <% end %>
 
-        <!-- start: JavaScript-->
-        <%= javascript_include_tag "home-head" %>
-        <!-- end: JavaScript-->
+    <!-- start: JavaScript-->
+    <%= javascript_include_tag "home-head" %>
+    <!-- end: JavaScript-->
 
-        <%= render 'layouts/icons' %>
-	</head>
+    <%= yield :head_scripts %>
 
-	<body>
-        <%= render 'layouts/modals' %>
-		<!-- start: Header -->
-        <header>
-            <div id="barra-superior">
-                <nav class="navbar navbar-default navbar-fixed-top navbar-home" role="navigation">
-                <div class="container">
-                    <!-- Brand and toggle get grouped for better mobile display -->
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-                            <i class="fa fa-bars"></i>
-                        </button>
-                        <a href="<%= root_without_subdomain %>" class="navbar-brand">
-                            <%= image_tag 'logos/logo2.png', :alt => 'AgendaPro', :size => "127x43" %>
-                        </a>
-                    </div>
-                    <!-- Collect the nav links, forms, and other content for toggling -->
-                    <div class="collapse navbar-collapse" id="navbar">
-                        <ul class="nav navbar-nav navbar-right">
-                            <% if user_signed_in? %>
-                                <%= render 'layouts/home_dropdown' %>
-                            <% else %>
-                                <li><a href="#" data-toggle="modal" data-target="#signin-modal" class="menu-green"><i class="fa fa-user"></i> Inicia Sesión</a></li>
-                                <li><a href="#" data-toggle="modal" data-target="#signup-modal" class="menu-green"><i class="fa fa-pencil-square-o"></i> Regístrate</a></li>
-                                <li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
-                            <% end %>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-            </div>
-            <!-- start: Alerts -->
-            <% if notice %>
-                <div class="alert alert-info alert-dismissable fade in">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <%= notice %>
-                </div>
-            <% end %>
-            <% if alert %>
-                <div class="alert alert-warning alert-dismissable fade in">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <%= alert %>
-                </div>
-            <% end %>
-            <!-- end: Alerts -->
-        </header>
-        <!-- end: Header -->
+    <%= render 'layouts/icons' %>
+  </head>
 
-        <div class="main">
-            <div class="container">
-                <%= yield %>
-            </div>
+  <body>
+    <!-- start: Header -->
+    <header>
+      <div id="barra-superior">
+        <nav class="navbar navbar-default navbar-fixed-top navbar-home" role="navigation">
+        <div class="container">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+              <i class="fa fa-bars"></i>
+            </button>
+            <%= link_to image_tag('logos/logo2.png', :alt => 'AgendaPro', :size => "127x43"), localized_root_url(subdomain: false), class: 'navbar-brand' %>
+          </div>
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="navbar">
+            <ul class="nav navbar-nav navbar-right">
+              <% if user_signed_in? %>
+                <%= render 'layouts/home_dropdown' %>
+              <% else %>
+                <li><%= link_to '<i class="fa fa-user"></i> Inicia Sesión</a>'.html_safe, new_user_session_path, :class => "menu-green" %></li>
+                <li><%= link_to '<i class="fa fa-pencil-square-o"></i> Regístrate</a>'.html_safe, new_user_registration_path(:company => false), :class => "menu-green" %></li>
+                <li><%= link_to "Agrega tu Empresa", home_path, class: "menu-orange" %></li>
+              <% end %>
+            </ul>
+          </div>
         </div>
-
-        <footer>
-            <div class="background-repeat contact-footer" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
-            <div class="container">
-                <div class="row pull-center">
-                    <div class="col-xs-4">
-                        <%= image_tag "footer/1.png", size: "22x29" %>
-                        <p>Ana María Carrera 5210,
-                          Las Condes, Santiago</p>
-                    </div>
-                    <div class="col-xs-4">
-                        <%= image_tag "footer/2.png", size: "24x19" %>
-                        <p>contacto@agendapro.cl</p>
-                    </div>
-                    <div class="col-xs-4">
-                        <%= image_tag "footer/3.png", size: "22x29" %>
-                        <p>(+56 9) 5178 5898</p>
-                    </div>
-                </div>
-                <div class="row footer">
-                    <div class="col-xs-4 col-lg-2 pull-right">
-                        <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "img-responsive pull-right" %>
-                    </div>
-                    <div class="col-xs-8 col-lg-5 links-footer pull-right">
-                        <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', '/Term_y_Cond_AgendaPro122014.pdf', :target => :blank %>
-                    </div>
-                    <div class="col-xs-12 col-lg-5 copyright-footer">
-                        <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
-                    </div>
-                </div>
-            </div>
+      </nav>
+      </div>
+      <!-- start: Alerts -->
+      <% if notice %>
+        <div class="alert alert-info alert-dismissable fade in">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <%= notice %>
         </div>
-        </footer>
+      <% end %>
+      <% if alert %>
+        <div class="alert alert-warning alert-dismissable fade in">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <%= alert %>
+        </div>
+      <% end %>
+      <!-- end: Alerts -->
+    </header>
+    <!-- end: Header -->
 
-		<!-- start: JavaScript-->
-        <%= javascript_include_tag "jquery.browser.min" %>
-        <%= javascript_include_tag "browser-detect" %>
-        <%= javascript_include_tag "login" %>
-        <script>
-          $( "#menu-display" ).click(function() {
-            $( ".nav-pills" ).toggle( "slow" );
-          });
-            $('a').click(function() {
-                $('.alert').hide();
-            });
-        </script>
-        <%= yield :scripts %>
+    <div class="main">
+      <div class="container">
+        <%= yield %>
+      </div>
+    </div>
 
-        <!-- end: JavaScript-->
+    <footer>
+      <div class="background-repeat contact-footer" style="background-image: url(<%= asset_path 'backgrounds/gray-background.png' %>);">
+        <div class="container">
+          <div class="row pull-center">
+            <div class="col-xs-4">
+              <%= image_tag "footer/1.png", size: "22x29" %>
+              <p>Ana María Carrera 5210,
+                Las Condes, Santiago</p>
+            </div>
+            <div class="col-xs-4">
+              <%= image_tag "footer/2.png", size: "24x19" %>
+              <p>contacto@agendapro.cl</p>
+            </div>
+            <div class="col-xs-4">
+              <%= image_tag "footer/3.png", size: "22x29" %>
+              <p>(+56 9) 5178 5898</p>
+            </div>
+          </div>
+          <div class="row footer">
+            <div class="col-xs-4 col-lg-2 pull-right">
+              <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "img-responsive pull-right" %>
+            </div>
+            <div class="col-xs-8 col-lg-5 links-footer pull-right">
+              <%= link_to "Agrega tu Empresa", home_path %> | <%= link_to "Sobre Nosotros", aboutus_path %> | <%= link_to "Tutoriales", tutorials_path %> | <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro072015.pdf'), target: :blank %>
+            </div>
+            <div class="col-xs-12 col-lg-5 copyright-footer">
+              <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
 
-        <!--Start of Crazy Egg Script-->
-        <%= javascript_include_tag 'crazy_egg' %>
-        <!--End of Crazy Egg Script-->
-	</body>
+    <!-- start: JavaScript-->
+    <%= javascript_include_tag "login" %>
+    <%= yield :scripts %>
+
+    <!-- end: JavaScript-->
+
+    <!--Start of Crazy Egg Script-->
+    <%= javascript_include_tag 'crazy_egg' %>
+    <!--End of Crazy Egg Script-->
+  </body>
 </html>

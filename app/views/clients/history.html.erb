@@ -21,7 +21,7 @@
         <tbody>
           <% @bookings.each do |booking| %>
             <tr>
-              <td><%= l booking.start, format: :short %></td>
+              <td><%= l booking.start, format: :long %></td>
               <td><%= booking.service.name %></td>
               <td><%= booking.service_provider.public_name %></td>
               <td><%= booking.status.name %></td>

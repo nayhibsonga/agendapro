@@ -1,21 +1,17 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12 col-sm-2">
-      <% if @company.logo_url %>
-      <%= image_tag @company.logo_url.to_s, :alt => @company.name, class: 'company-logo' %>
-      <% else %>
-      <%= image_tag 'logo_vacio.png', :alt => 'AgendaPro', class: 'company-logo' %>
-      <% end %>
+      <%= image_tag @company.logo.page.url.to_s, :alt => @company.name, class: 'company-logo' %>
       <button class="btn btn-wide btn-green"><i class="fa fa-caret-left"></i> Información</button>
       <button class="btn btn-wide btn-orange hidden">Reservar <i class="fa fa-caret-right"></i></button>
     </div>
     <div class="col-xs-12 col-sm-10">
       <div id="reservar">
-        <%= form_tag("select_hour", method: "post", role: "form") do %>
+        <%= form_tag("select_hour", method: "get", role: "form", id: "selectHourForm") do %>
           <%= hidden_field_tag :location, @location.id %>
           <div class="form-group">
             <%= label_tag :service, 'Selecciona el servicio que quieres' %>
-            <%= select_tag :service, nil, :class => 'form-control' %>
+            <%= select_tag :service, nil, :class => 'form-control', prompt: "Selecciona un Servicio" %>
           </div>
           <div class="form-group" <%= 'style="display:none;"'.html_safe if @company.company_setting.provider_preference == 2 %>>
             <%= label_tag :provider, 'Selecciona al staff' %>
@@ -25,7 +21,9 @@
             <%= label_tag :datepicker, 'Selecciona una fecha' %>
             <%= text_field_tag :datepicker, nil, :disabled => true, :placeholder => 'Selecciona fecha...', :class => 'form-control' %>
           </div>
-          <button type="submit" class="btn btn-green btn-block btn-lg" disabled>Siguiente</button>
+          <input type="hidden" id="serviceStaff" name="serviceStaff" value="" />
+          <input type="hidden" id="hours_type" name="hours_type" value="workflow" />
+          <button type="submit" id="selectHourNextBtn" class="btn btn-green btn-block btn-lg" disabled>Siguiente</button>
         <% end %>
       </div>
       <div id="informacion" class="hidden">
@@ -85,6 +83,11 @@
           </div>
           <ul class="list-group" id="district-body">
             <li class="list-group-item"><%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %></li>
+            <% if @location.outcall %>
+            <% @location.districts.each do |district| %>
+              <li class="list-group-item"><%= district.name %></li>
+            <% end %>
+            <% end %>
           </ul>
         </div>
       </div>
@@ -118,9 +121,6 @@
       }
     });
     loadServices(<%= @location.id %>);
-    <% if @location.outcall %>
-    loadOutcallDistricts(<%= @location.id %>);
-    <% end %>
     loadSchedule(<%= @location.id %>);
   });
 </script>

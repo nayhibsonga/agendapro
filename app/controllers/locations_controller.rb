@@ -1,22 +1,24 @@
 class LocationsController < ApplicationController
-  before_action :set_location, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
+  before_action :set_location, only: [:show, :edit, :update, :destroy, :activate, :deactivate, :sellers]
   before_action :authenticate_user!, except: [:location_data, :location_time, :get_available_time, :location_districts]
-  before_action :quick_add, except: [:location_data, :location_time, :get_available_time, :location_districts]
+  before_action :quick_add, except: [:location_data, :location_time, :get_available_time, :location_districts, :location_products]
   load_and_authorize_resource
   layout "admin", except: [:change_location_order]
 
   # GET /locations
   # GET /locations.json
   def index
-    if current_user.role_id == Role.find_by_name('Super Admin').id
-      @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(order: :asc)
+    if current_user.role == Role.find_by(name: "Super Admin")
+      @companies = Company.where(active: true, owned: true).order(payment_status_id: :desc)
+      # @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(order: :asc)
+      @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
     else
-      @locations = Location.where(company_id: current_user.company_id, :active => true).order(order: :asc).accessible_by(current_ability)
+      @locations = Location.where(company_id: current_user.company_id, :active => true).order(:order, :name).accessible_by(current_ability)
     end
   end
 
   def inactive_index
-    @locations = Location.where(company_id: current_user.company_id, :active => false).order(:name).accessible_by(current_ability)
+    @locations = Location.where(company_id: current_user.company_id, :active => false).order(:order, :name).accessible_by(current_ability)
   end
 
   # GET /locations/1
@@ -50,7 +52,8 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       if @location.save
-        format.html { redirect_to locations_path, notice: 'Local creado exitosamente.' }
+        flash[:notice] = 'Local actualizado exitosamente.'
+        format.html { redirect_to locations_path }
         format.json { render :json => @location }
       else
         format.html { redirect_to locations_path, alert: 'No se pudo guardar el local.' }
@@ -62,24 +65,49 @@ class LocationsController < ApplicationController
   # PATCH/PUT /locations/1
   # PATCH/PUT /locations/1.json
   def update
-    @location_times = Location.find(params[:id]).location_times
-    @location_times.each do |location_time|
-      location_time.location_id = nil
-      location_time.save
-    end
-    @location = Location.find(params[:id])
-    respond_to do |format|
-      if @location.update(location_params)
-        @location_times.destroy_all
-        format.html { redirect_to locations_path, notice: 'Local actualizado exitosamente.' }
-        format.json { render :json => @location }
-      else
-        @location_times.each do |location_time|
-          location_time.location_id = @location.id
-          location_time.save
+    if current_user.role == Role.find_by(name: 'Super Admin')
+      respond_to do |format|
+        if @location.update(location_params)
+          if @location.warnings
+            warnings = @location.warnings.full_messages
+            location = @location.as_json
+            location[:warnings] = warnings
+          end
+          flash[:notice] = 'Local actualizado exitosamente.'
+          format.html { redirect_to locations_path }
+          format.json { render :json => location }
+        else
+          puts @location.errors.full_messages
+          format.html { redirect_to locations_path, alert: 'No se pudo guardar el local.' }
+          format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
         end
-        format.html { redirect_to locations_path, alert: 'No se pudo guardar el local.' }
-        format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
+      end
+    else
+      @location_times = Location.find(params[:id]).location_times
+      @location_times.each do |location_time|
+        location_time.location_id = nil
+        location_time.save
+      end
+      @location = Location.find(params[:id])
+      respond_to do |format|
+        if @location.update(location_params)
+          @location_times.destroy_all
+          if @location.warnings
+            warnings = @location.warnings.full_messages
+            location = @location.as_json
+            location[:warnings] = warnings
+          end
+          flash[:notice] = 'Local actualizado exitosamente.'
+          format.html { redirect_to locations_path }
+          format.json { render :json => location }
+        else
+          @location_times.each do |location_time|
+            location_time.location_id = @location.id
+            location_time.save
+          end
+          format.html { redirect_to locations_path, alert: 'No se pudo guardar el local.' }
+          format.json { render :json => { :errors => @location.errors.full_messages }, :status => 422 }
+        end
       end
     end
   end
@@ -89,7 +117,7 @@ class LocationsController < ApplicationController
     if @location.save
       redirect_to inactive_locations_path, notice: "Local activado exitosamente."
     else
-      redirect_to inactive_locations_path, notice: "No se pudo activar el local ya que el plan actual no lo permite, ¡mejóralo!"
+      redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
     end
   end
 
@@ -98,7 +126,7 @@ class LocationsController < ApplicationController
     if @location.save
       redirect_to locations_path, notice: "Local desactivado exitosamente."
     else
-      redirect_to locations_path, notice: "No se pudo desactivar el local."
+      redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
     end
   end
 
@@ -174,7 +202,7 @@ class LocationsController < ApplicationController
 
         # Variable Data
         day = date.cwday
-        ordered_providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(date) }
+        ordered_providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(date) }
         location_times = local.location_times.where(day_id: day).order(:open)
 
         # time_offset = 0
@@ -530,6 +558,187 @@ class LocationsController < ApplicationController
     render :json => array_result
   end
 
+  def location_products
+
+    @location = Location.find(params[:id])
+    products = Product.where(id: LocationProduct.where(:location_id => @location.id).pluck(:product_id))
+
+    @products = []
+
+    products.each do |product|
+      product_hash = product.attributes.to_options
+      product_hash[:full_name] = product.sku + " " + product.name + " " + product.product_brand.name + " " + product.product_display.name
+      @products << product_hash
+    end
+
+    render :json => @products
+
+  end
+
+  def inventory
+
+    @location = Location.find(params[:id])
+    @location_products = []
+
+    normalized_search = ""
+
+    if !params[:searchInput].blank?
+      search = params[:searchInput].gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '')
+
+      normalized_search = search.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s
+    end
+
+    location_products = nil
+
+    if normalized_search != ""
+      location_products = @location.location_products.search(normalized_search)
+    else
+      location_products = @location.location_products
+    end
+
+    if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+    elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category]).pluck(:id)).order('stock asc')
+    elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+    elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_display_id => params[:display]).pluck(:id)).order('stock asc')
+    else
+      @location_products = location_products.order('stock asc')
+    end
+
+    respond_to do |format|
+      format.html { render :partial => 'inventory' }
+      format.json { render :json => @location_products }
+    end
+
+  end
+
+  def stock_alarm_form
+
+    @location = Location.find(params[:id])
+
+    @stock_alarm_setting = @location.stock_alarm_setting
+
+    if @stock_alarm_setting.nil?
+
+      @stock_alarm_setting = StockAlarmSetting.create(location_id: @location.id)
+
+      stock_setting_email = StockSettingEmail.new
+      stock_setting_email.email = @location.email
+      stock_setting_email.stock_alarm_setting_id = @stock_alarm_setting.id
+      stock_setting_email.save
+      #stock_alarm_setting.save
+    end
+
+    respond_to do |format|
+        format.html { render :partial => 'stock_alarm_form' }
+        format.json { render :json => @locations }
+    end
+  end
+
+  def save_stock_alarm
+
+    @response_array = []
+
+    if params[:stock_alarm_setting_id].blank? || params[:stock_alarm_setting_id] == "0"
+      @response_array << "error"
+      @response_array << "El local que tratas de editar no existe o no tienes los permisos suficientes para hacerlo."
+    else
+      @stock_alarm_setting = StockAlarmSetting.find(params[:stock_alarm_setting_id])
+      if @stock_alarm_setting.nil?
+        @response_array << "error"
+        @response_array << "El local que tratas de editar no existe o no tienes los permisos suficientes para hacerlo."
+      else
+        @stock_alarm_setting.quick_send = params[:quick_send]
+        @stock_alarm_setting.periodic_send = params[:periodic_send]
+        @stock_alarm_setting.has_default_stock_limit = params[:has_default_stock_limit]
+        @stock_alarm_setting.default_stock_limit = params[:default_stock_limit]
+        @stock_alarm_setting.monthly = params[:monthly]
+        @stock_alarm_setting.month_day = params[:month_day]
+        @stock_alarm_setting.week_day = params[:week_day]
+
+        emails = []
+        emails_arr = params[:email].split(",")
+        emails_arr.each do |email|
+          email_str = email.strip
+          if email_str != ""
+            new_stock_setting_email = StockSettingEmail.create(:stock_alarm_setting_id => @stock_alarm_setting.id, :email => email_str)
+            LocationProduct.where(:location_id => @stock_alarm_setting.location_id).each do |location_product|
+              if StockEmail.where(:location_product_id => location_product.id, :email => email_str).count == 0
+                new_stock_email = StockEmail.create(:location_product_id => location_product.id, :email => email_str)
+              end
+            end
+          end
+        end
+
+        if @stock_alarm_setting.save
+          @response_array << "ok"
+          @response_array << @stock_alarm_setting
+        else
+          @response_array << "error"
+          @response_array << "Ocurrió un error inesperado al guardar la configuración."
+        end
+
+      end
+    end
+
+    render :json => @response_array
+
+  end
+
+  def sellers
+
+    @response_array = []
+
+    @location.service_providers.where(active: true).each do |service_provider|
+
+      new_seller ={
+        :id => service_provider.id,
+        :seller_type => 0,
+        :full_name => service_provider.public_name,
+        :role_name => "Prestador"
+      }
+
+      @response_array << new_seller
+
+    end
+
+    @location.users.each do |user|
+
+      new_seller ={
+        :id => user.id,
+        :seller_type => 1,
+        :full_name => user.first_name + " " + user.last_name,
+        :role_name => user.role.name
+      }
+
+      @response_array << new_seller
+
+    end
+
+    @location.company.cashiers.where(active: true).each do |cashier|
+      new_seller ={
+        :id => cashier.id,
+        :seller_type => 2,
+        :full_name => cashier.name,
+        :role_name => "Cajero"
+      }
+
+      @response_array << new_seller
+    end
+
+    render :json => @response_array
+
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_location
@@ -538,6 +747,6 @@ class LocationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def location_params
-      params.require(:location).permit(:name, :address, :second_address, :phone, :outcall, :longitude, :latitude, :company_id, :email, :notification, :booking_configuration_email, :online_booking, :district_id, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
+      params.require(:location).permit(:name, :address, :second_address, :phone, :outcall, :longitude, :latitude, :company_id, :online_booking, :email, :district_id, :image1, :remove_image1, :image2, :remove_image2, :image3, :remove_image3, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
     end
 end

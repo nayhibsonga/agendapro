@@ -1,5 +1,36 @@
 module ApplicationHelper
 
+	def split_name(full_name)
+
+		returnHash = Hash.new
+		nameArray = []
+        nameArray = full_name.to_s.gsub(/\s+/, ' ').split(' ')
+        if nameArray.length == 0
+
+        elsif nameArray.length == 1
+          returnHash[:first_name] = nameArray[0] unless nameArray[0].blank?
+          returnHash[:last_name] = ""
+        elsif nameArray.length == 2
+          returnHash[:first_name] = nameArray[0] unless nameArray[0].blank?
+          returnHash[:last_name] = nameArray[1] unless nameArray[1].blank?
+        elsif nameArray.length == 3
+          returnHash[:first_name] = nameArray[0] unless nameArray[0].blank?
+          returnHash[:last_name] = nameArray[1] + ' ' + nameArray[2]
+        else 
+          returnHash[:first_name] = nameArray[0] + ' ' + nameArray[1]
+          last_name = ''
+          (2..nameArray.length - 1).each do |i|
+            last_name += nameArray[i]+' '
+          end
+          strLen = last_name.length
+          last_name = last_name[0..strLen-1]
+          returnHash[:last_name] = last_name unless last_name.blank?
+        end
+
+        return returnHash
+
+	end
+
 	def int_with_variation(int, past_int)
 		if past_int > 0
 			variation = ((int - past_int)/past_int.to_f).round(2)
@@ -95,15 +126,13 @@ module ApplicationHelper
 		end
 	end
 
-
-
 	# Reporting
 	# Count
 	def booking_count(from, to, status, option, company_id)
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).count
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).count
 		else
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).count
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).count
 		end
 	end
 
@@ -116,10 +145,10 @@ module ApplicationHelper
 			company_id = service.company_id
 		end
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).count
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).count
 		else
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).count
-		end		
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).count
+		end
 	end
 
 	def provider_service_booking_count(from, to, status, option, service_id, provider_id)
@@ -134,10 +163,10 @@ module ApplicationHelper
 			provider_id = ServiceProvider.where(company_id: company_id, active: true)
 		end
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).count
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).count
 		else
-			return Booking.where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).count
-		end		
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).count
+		end
 	end
 
 	def location_service_booking_count(from, to, status, option, service_id, location_id)
@@ -152,10 +181,10 @@ module ApplicationHelper
 			location_id = Location.where(company_id: company_id, active: true)
 		end
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, start: from.beginning_of_day..to.end_of_day).count
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, start: from.beginning_of_day..to.end_of_day).count
 		else
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, created_at: from.beginning_of_day..to.end_of_day).count
-		end			
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, created_at: from.beginning_of_day..to.end_of_day).count
+		end
 	end
 
 	def location_booking_count(from, to, status, option, location_id)
@@ -167,10 +196,10 @@ module ApplicationHelper
 			company_id = location.company_id
 		end
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).count
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).count
 		else
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).count
-		end		
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).count
+		end
 	end
 
 	def provider_booking_count(from, to, status, option, provider_id)
@@ -182,18 +211,18 @@ module ApplicationHelper
 			company_id = provider.company_id
 		end
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).count
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).count
 		else
-			return Booking.where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).count
-		end		
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).count
+		end
 	end
 
 	def status_booking_count(from, to, status, option, company_id)
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).count
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).count
 		else
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).count
-		end	
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).count
+		end
 	end
 
 	# Occupation
@@ -230,11 +259,11 @@ module ApplicationHelper
 			available_time += provider_time.close - provider_time.open
 		end
 		if option == 1
-			Booking.where(status_id: status, service_provider_id: provider_id, start: from.beginning_of_day..to.end_of_day).each do |booking|
+			Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider_id, start: from.beginning_of_day..to.end_of_day).each do |booking|
 				used_time += booking.end - booking.start
 			end
 		else
-			Booking.where(status_id: status, service_provider_id: provider_id, created_at: from.beginning_of_day..to.end_of_day).each do |booking|
+			Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider_id, created_at: from.beginning_of_day..to.end_of_day).each do |booking|
 				used_time += booking.end - booking.start
 			end
 		end
@@ -247,16 +276,16 @@ module ApplicationHelper
 
 	def status_booking_ranking3(from, to, status, option, company_id)
 		if option == 1
-			ranking = Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).group(:service_id).limit(3).order('count_all desc').count
+			ranking = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).group(:service_id).limit(10).order('count_all desc').count
 		else
-			ranking = Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).group(:service_id).limit(3).order('count_all desc').count
+			ranking = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).group(:service_id).limit(10).order('count_all desc').count
 		end
 		top3_count = 0
 		ranking.each do |rank|
 			top3_count += rank[1]
 		end
 		total = status_booking_count(from, to, status, option, company_id)
-		top3 = Hash[ ranking.first(3).map{ |c| [Service.find(c[0]).name,c[1]] } ]
+		top3 = Hash[ ranking.first(10).map{ |c| [Service.find(c[0]).name,c[1]] } ]
 		return top3.merge({ "Otros" => (total - top3_count) })
 	end
 
@@ -269,16 +298,16 @@ module ApplicationHelper
 			company_id = provider.company_id
 		end
 		if option == 1
-			ranking = Booking.where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).group(:service_id).limit(3).order('count_all desc').count
+			ranking = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).group(:service_id).limit(10).order('count_all desc').count
 		else
-			ranking = Booking.where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).group(:service_id).limit(3).order('count_all desc').count
+			ranking = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).group(:service_id).limit(10).order('count_all desc').count
 		end
 		top3_count = 0
 		ranking.each do |rank|
 			top3_count += rank[1]
 		end
 		total = provider_booking_count(from, to, status, option, provider_id)
-		top3 = Hash[ ranking.first(3).map{ |c| [Service.find(c[0]).name,c[1]] } ]
+		top3 = Hash[ ranking.first(10).map{ |c| [Service.find(c[0]).name,c[1]] } ]
 		return top3.merge({ "Otros" => (total - top3_count) })
 	end
 
@@ -291,24 +320,24 @@ module ApplicationHelper
 			company_id = location.company_id
 		end
 		if option == 1
-			ranking = Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).group(:service_id).limit(3).order('count_all desc').count
+			ranking = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).group(:service_id).limit(10).order('count_all desc').count
 		else
-			ranking = Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).group(:service_id).limit(3).order('count_all desc').count
+			ranking = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).group(:service_id).limit(10).order('count_all desc').count
 		end
 		top3_count = 0
 		ranking.each do |rank|
 			top3_count += rank[1]
 		end
 		total = location_booking_count(from, to, status, option, location_id)
-		top3 = Hash[ ranking.first(3).map{ |c| [Service.find(c[0]).name,c[1]] } ]
+		top3 = Hash[ ranking.first(10).map{ |c| [Service.find(c[0]).name,c[1]] } ]
 		return top3.merge({ "Otros" => (total - top3_count) })
 	end
 
 	def status_booking_by_day(from, to, status, option, company_id)
 		if option == 1
-			by_day = Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).group_by_day_of_week(:start, week_start: 1).count
+			by_day = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).group_by_day_of_week(:start, week_start: 1).count
 		else
-			by_day = Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).group_by_day_of_week(:start, week_start: 1).count
+			by_day = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).group_by_day_of_week(:start, week_start: 1).count
 		end
 
 		return Hash[ by_day.map{ |c| [I18n.t(:"date.day_names")[c[0]],c[1]] } ]
@@ -319,10 +348,10 @@ module ApplicationHelper
 		(0..6).each do |i|
 			day_name = I18n.t(:"date.day_names")[i]
 			if option == 1
-				booking_count = Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).where('EXTRACT(DOW from ("start"::timestamptz)) = ?', i).group_by_hour_of_day(:start, format: "%l %P").count
+				booking_count = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).where('EXTRACT(DOW from ("start"::timestamptz)) = ?', i).group_by_hour_of_day(:start, format: "%l %P").count
 				by_hour.push( { :name => day_name, :data => booking_count } )
 			else
-				booking_count = Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).where('EXTRACT(DOW from ("start"::timestamptz)) = ?', i).group_by_hour_of_day(:start, format: "%l %P").count
+				booking_count = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).where('EXTRACT(DOW from ("start"::timestamptz)) = ?', i).group_by_hour_of_day(:start, format: "%l %P").count
 				by_hour.push( { :name => day_name, :data => booking_count } )
 			end
 		end
@@ -342,10 +371,10 @@ module ApplicationHelper
 		(0..6).each do |i|
 			day_name = I18n.t(:"date.day_names")[i]
 			if option == 1
-				booking_count = Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).where('EXTRACT(DOW from ("start"::timestamptz)) = ?', i).group_by_hour_of_day(:start, format: "%l %P").count
+				booking_count = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).where('EXTRACT(DOW from ("start"::timestamptz)) = ?', i).group_by_hour_of_day(:start, format: "%l %P").count
 				by_hour.push( { :name => day_name, :data => booking_count } )
 			else
-				booking_count = Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).where('EXTRACT(DOW from ("start"::timestamptz)) = ?', i).group_by_hour_of_day(:start, format: "%l %P").count
+				booking_count = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).where('EXTRACT(DOW from ("start"::timestamptz)) = ?', i).group_by_hour_of_day(:start, format: "%l %P").count
 				by_hour.push( { :name => day_name, :data => booking_count } )
 			end
 		end
@@ -356,9 +385,9 @@ module ApplicationHelper
 	#Revenue
 	def booking_revenue(from, to, status, option, company_id)
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).sum(:price)
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
 		end
 	end
 
@@ -371,10 +400,10 @@ module ApplicationHelper
 			company_id = service.company_id
 		end
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).sum(:price)
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end		
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).sum(:price)
+		end
 	end
 
 	def provider_service_booking_revenue(from, to, status, option, service_id, provider_id)
@@ -389,10 +418,10 @@ module ApplicationHelper
 			provider_id = ServiceProvider.where(company_id: company_id, active: true)
 		end
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).sum(:price)
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
-			return Booking.where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end		
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider_id, location_id: Location.where(company_id: company_id, active: true), service_id: service, created_at: from.beginning_of_day..to.end_of_day).sum(:price)
+		end
 	end
 
 	def location_service_booking_revenue(from, to, status, option, service_id, location_id)
@@ -407,10 +436,10 @@ module ApplicationHelper
 			location_id = Location.where(company_id: company_id, active: true)
 		end
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, start: from.beginning_of_day..to.end_of_day).sum(:price)
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end			
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location_id, service_id: service, created_at: from.beginning_of_day..to.end_of_day).sum(:price)
+		end
 	end
 
 	def location_booking_revenue(from, to, status, option, location_id)
@@ -422,10 +451,10 @@ module ApplicationHelper
 			company_id = location.company_id
 		end
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).sum(:price)
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end		
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: location, service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
+		end
 	end
 
 	def provider_booking_revenue(from, to, status, option, provider_id)
@@ -437,17 +466,65 @@ module ApplicationHelper
 			company_id = provider.company_id
 		end
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).sum(:price)
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
-			return Booking.where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end		
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider, location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
+		end
 	end
 
 	def status_booking_revenue(from, to, status, option, company_id)
 		if option == 1
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).sum(:price)
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), start: from.beginning_of_day..to.end_of_day).sum(:price)
 		else
-			return Booking.where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
-		end	
+			return Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: ServiceProvider.where(company_id: company_id, active: true), location_id: Location.where(company_id: company_id, active: true), service_id: Service.where(company_id: company_id, active: true), created_at: from.beginning_of_day..to.end_of_day).sum(:price)
+		end
+	end
+
+	def number_to_day(number)
+		case number
+		when 1
+			return "Lunes"
+		when 2
+			return "Martes"
+		when 3
+			return "Miércoles"
+		when 4
+			return "Jueves"
+		when 5
+			return "Viernes"
+		when 6
+			return "Sábado"
+		when 7
+			return "Domingo"
+		end
+	end
+
+	def link_to_remove_fields(name, f)
+    f.hidden_field(:_destroy) + link_to_function(('<i class="fa fa-trash-o"> ' + name + '</i>').html_safe, "remove_fields(this)", class: 'btn btn-red')
+  end
+  
+  def link_to_add_fields(name, f, association)
+    new_object = f.object.class.reflect_on_association(association).klass.new
+    fields = f.fields_for(association, new_object, :child_index => "new_#{association}") do |builder|
+      render(association.to_s.singularize + "_fields", :f => builder)
+    end
+    link_to_function(name, "add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")")
+  end
+
+	def code_to_payment_method(code)
+		case code
+		when "03"
+			return "WebPay"
+		when "04"
+			return "Banco de Chile"
+		when "05"
+			return "Banco BCI"
+		when "06"
+			return "Banco TBanc"
+		when "07"
+			return "BancoEstado"
+		when "16"
+			return "Banco BBVA"
+		end
 	end
 end

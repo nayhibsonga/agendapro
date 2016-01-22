@@ -1,22 +1,54 @@
 <div class="container container-margin">
   <%= form_tag("book", method: "post", role: "form", id: "bookingForm") do %>
+    <% if @service.has_sessions %>
+      <div class="row">
+        <div class="col-xs-12">
+          Este servicio es por sesiones. Se reservará la primera sesión, y luego podrás reservar las restantes ingresando a tu Agenda desde tu cuenta AgendaPro, o llamando al local que ofrece el servicio. El valor del servicio incluye todas las sesiones.
+          <br />
+        </div>
+      </div>
+    <% end %>
     <div class="row">
       <div class="col-xs-12">
-
-          <% hidden_field_tag :service, @service.id %>
-          <% hidden_field_tag :provider, @provider.id %>
-          <% hidden_field_tag :start, @start %>
-          <% hidden_field_tag :end, @end %>
+          <%= hidden_field_tag :service, @service.id %>
+          <%= hidden_field_tag :provider, @provider.id %>
+          <%= hidden_field_tag :start, @start %>
+          <%= hidden_field_tag :end, @end %>
           <%= hidden_field_tag :origin, @origin %>
           <%= hidden_field_tag :location, @location.id %>
-          <% hidden_field_tag :provider_lock, @lock %>
+          <%= hidden_field_tag :provider_lock, @lock %>
+          <%= hidden_field_tag :max_discount, @hour_discount %>
+          <% if @service.has_sessions %>
+            <%= hidden_field_tag :has_sessions, "1" %>
+          <% else %>
+            <%= hidden_field_tag :has_sessions, "0" %>
+          <% end %>
+
+          <%
+            sessions_amount = 0
+            if !@service.sessions_amount.nil?
+              sessions_amount = @service.sessions_amount
+            end
+          %>
 
           <%= hidden_field_tag :bookings, [{
               start: @start,
               end: @end,
               provider: @provider.id,
+              provider_name: @provider.public_name,
               provider_lock: @lock,
-              service: @service.id
+              service: @service.id,
+              service_name: @service.name,
+              online_payable: @online_payable,
+              has_discount: @has_discount,
+              discount: @hour_discount,
+              price: @service.price,
+              show_price: @service.show_price,
+              has_sessions: @service.has_sessions,
+              sessions_amount: sessions_amount,
+              must_be_paid_online: @must_be_paid_online,
+              is_time_discount: @is_time_discount,
+              service_promo_id: @service_promo_id
             }].to_json %>
 
           <%= hidden_field_tag :firstName, if user_signed_in? then current_user.first_name else nil end %>
@@ -35,9 +67,15 @@
               <span class="help-block"></span>
             </div>
           </div>
-          <% if @location.company.company_setting.client_exclusive %>
+          <% if @location.company.company_setting.client_exclusive || @location.company.company_setting.use_identification_number %>
           <div class="form-group">
-            <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => "RUT" ) %>
+            <% if user_signed_in? && Client.where(email: current_user.email, company_id: @location.company.id).count > 0
+              client = Client.where(email: current_user.email, company_id: @location.company.id).first
+            %>
+              <%= text_field_tag(:identification_number, client.identification_number, :class => "form-control", :placeholder => (I18n.t('ci')).capitalize ) %>
+            <% else %>
+              <%= text_field_tag(:identification_number, nil, :class => "form-control", :placeholder => (I18n.t('ci')).capitalize ) %>
+            <% end %>
             <span class="help-block"></span>
           </div>
           <% end %>
@@ -48,7 +86,7 @@
           </div>
           <% end %>
           <div class="form-group">
-            <%= text_area_tag(:comment, nil, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario..", :rows => 4) %>
+            <%= text_area_tag(:comment, @location.company.company_setting.preset_notes, :class => "form-control", :placeholder => "Agrega algún comentario a tu reserva en caso de ser necesario..", :rows => 4) %>
           </div>
       </div>
     </div>
@@ -59,32 +97,40 @@
       <!--
         AGREGAR RESUMEN DE RESERVA
       -->
+
       </div>
     </div>
 
-    <% if @company.company_setting.allows_online_payment && @service.online_payable %>
+    <% if @online_payable %>
       <div class="row">
         <div class="col-xs-6">
           <div class="form-group">
             <button type="submit" class="btn btn-green btn-lg btn-block" id="payBtn">Pagar</button>
           </div>
           <div class="form-group">
-            <% if @service.has_discount %>
-              Precio:&nbsp;<%= number_to_currency((@service.price*(100-@service.discount)/100), unit: "$", separator: ".", delimiter: ",", precision: 0) %>
+            <% if @hour_discount.to_f > 0 %>
+              Precio normal:&nbsp;<strike><%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %></strike><br />
+              Descuento: <%= @hour_discount.to_s %>%<br />
+              Precio final:&nbsp;<%= number_to_currency((@service.price*(100-@hour_discount.to_f)/100), unit: "$", separator: ".", delimiter: ",", precision: 0) %>
+            <% else %>
+              Precio:&nbsp;<%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %>
             <% end %>
           </div>
         </div>
         <div class="col-xs-6">
+
+        <% if !@must_be_paid_online %>
           <div class="form-group">
 
             <button type="submit" class="btn btn-orange btn-lg btn-block" id="submitBtn">Reservar</button>
 
           </div>
           <div class="form-group">
-            <% if @service.has_discount %>
               Precio:&nbsp;<%= number_to_currency(@service.price, unit: "$", separator: ".", delimiter: ",", precision: 0) %>
-            <% end %>
           </div>
+
+        <% end %>
+
         </div>
       </div>
     <% else %>
@@ -112,19 +158,9 @@
           <input type="radio" name="mp" value="04" class="mp_radio" />
           <image class="img-responsive" src="https://www.puntopagos.com/content/mp4.gif" alt="Banco Chile" class="mp_link" mp = "04" />
         </div>
-        <!-- <div class="col-xs-6">
-          <input type="radio" name="mp" value="05" class="mp_radio" />
-          <image class="img-responsive" src="https://www.puntopagos.com/content/mp5.gif" alt="BCI" class="mp_link" mp = "05" />
-        </div> -->
-      </div>
-      <div class="row">
-        <!-- <div class="col-xs-6">
-          <input type="radio" name="mp" value="06" class="mp_radio" />
-          <image class="img-responsive" src="https://www.puntopagos.com/content/mp6.gif" alt="TBanc" class="mp_link" mp = "06" />
-        </div> -->
         <div class="col-xs-6">
-          <input type="radio" name="mp" value="07" class="mp_radio" />
-          <image class="img-responsive" src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" />
+          <input type="radio" name="mp" value="10" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp10.gif" alt="Banco Ripley" class="mp_link" mp = "10" />
         </div>
       </div>
       <div class="row">
@@ -132,6 +168,13 @@
           <input type="radio" name="mp" value="03" class="mp_radio" />
           <image class="img-responsive" src="https://www.puntopagos.com/content/mp3.gif" alt="Webpay Transbank" class="mp_link" mp = "03" />
         </div>
+        <div class="col-xs-6">
+          <input type="radio" name="mp" value="07" class="mp_radio" />
+          <image class="img-responsive" src="https://www.puntopagos.com/content/mp7.gif" alt="Banco Estado" class="mp_link" mp = "07" />
+        </div>
+      </div>
+      <div class="row">
+
         <div class="col-xs-6">
           <input type="radio" name="mp" value="04" style="display: none !important;" class="mp_radio" />
           <image class="img-responsive" style="display: none;" src="https://www.puntopagos.com/content/mp1.gif" alt="Banco Santander" class="mp_link" mp = "01" />
@@ -160,18 +203,13 @@
 
 <% content_for :scripts do %>
 <%= javascript_include_tag 'split-name' %>
+<%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
 <%= javascript_include_tag 'validations/validate' %>
 <%= javascript_include_tag 'validations/home/workflow' %>
 <script type="text/javascript">
   $(function() {
     compose_name('#full_name', '#firstName', '#lastName');
     split_name('#full_name', '#firstName', '#lastName');
-
-
-    $('.volver').click(function () {
-      history.back();
-      return false;
-    });
   });
 
   $(document).ready(function(){

@@ -1,6 +1,8 @@
 class DealsController < ApplicationController
   before_action :set_deal, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
+  before_action :quick_add
+  load_and_authorize_resource
   layout "admin"
 
   # GET /deals
@@ -30,10 +32,10 @@ class DealsController < ApplicationController
 
     respond_to do |format|
       if @deal.save
-        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'Convenio agregado exitosamente.' }
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'deals'), notice: 'Convenio agregado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @deal }
       else
-        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'No se pudo agregar el convenio. Por favor inténtalo nuevamente.' }
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'deals'), notice: 'No se pudo agregar el convenio. Por favor inténtalo nuevamente.' }
         format.json { render json: @deal.errors, status: :unprocessable_entity }
       end
     end
@@ -44,10 +46,10 @@ class DealsController < ApplicationController
   def update
     respond_to do |format|
       if @deal.update(deal_params)
-        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'Convenio agregado exitosamente.' }
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'deals'), notice: 'Convenio agregado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @deal }
       else
-        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'No se pudo agregar el convenio. Por favor inténtalo nuevamente.' }
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'deals'), notice: 'No se pudo agregar el convenio. Por favor inténtalo nuevamente.' }
         format.json { render json: @deal.errors, status: :unprocessable_entity }
       end
     end
@@ -58,7 +60,7 @@ class DealsController < ApplicationController
   def destroy
     @deal.destroy
     respond_to do |format|
-      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'Convenio eliminado exitosamente.' }
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'deals'), notice: 'Convenio eliminado exitosamente.' }
       format.json { head :no_content }
     end
   end

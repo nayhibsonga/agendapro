@@ -1,0 +1,2 @@
+module ProductDisplaysHelper
+end

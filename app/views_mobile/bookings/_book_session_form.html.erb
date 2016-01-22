@@ -1,0 +1,111 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title" id="optimizerTitle" style="line-height: 1.1;">Reserva o edita tu sesión</h3>
+        </div>
+        <div class="modal-body">
+
+	        <div class="row">
+	        	<div class="col-xs-12">
+	        	<%= form_tag("select_hour", method: "post", role: "form") do %>
+	        		<%= hidden_field_tag :location, @booking.location.id %>
+	        		<%= hidden_field_tag :service, @booking.service.id %>
+	        		<%= hidden_field_tag :booking_id, @booking.id %>
+	        		<%= hidden_field_tag :serviceStaff %>
+	        		<!--<%= hidden_field_tag :provider, @booking.service_provider.id %>-->
+
+	        			<div class="form-group" <%= 'style="display:none;"'.html_safe if @booking.location.company.company_setting.provider_preference == 2 %>>
+	        				<select class="form-control" name="provider" id="provider">
+				            	<% if @booking.service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @booking.location.id).count > 1 %>
+		                            <% if @booking.location.company.company_setting.provider_preference != 0 %>
+		                                <option value="0">Sin Preferencia</option>
+		                            <% end %>
+		                        <% end %>
+		                        <% @booking.service.service_providers.where(:active => true, online_booking: true).where('location_id = ?', @booking.location.id).order(:order, :public_name).each do |provider| %>
+		                            <% if @booking.is_session_booked && @booking.service_provider_id == provider.id %>
+		                                <option value="<%= provider.id %>" selected>
+		                                    <%= provider.public_name %>
+		                                </option>
+		                            <% else %>
+		                                <option value="<%= provider.id %>">
+		                                    <%= provider.public_name %>
+		                                </option>
+		                            <% end %>
+		                        <% end %>
+	                        </select>
+			          	</div>
+		            	<div class="form-group">
+				            <%= label_tag :datepicker, 'Selecciona una fecha' %>
+				            <%= text_field_tag :datepicker, nil, :disabled => true, :placeholder => 'Selecciona fecha...', :class => 'form-control' %>
+				        </div>
+
+		        <% end %>
+		        </div>
+		    </div>
+		    <div id="obtained_hours">
+
+		    </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn session-btn btn-green" id="nextButton" disabled>Reservar</button>
+            <button href="#" class="btn" data-dismiss="modal">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<% content_for :stylesheets do %>
+	<%= stylesheet_link_tag "datepicker" %>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag "datepicker" %>
+<% end %>
+
+<script type="text/javascript">
+	$('#datepicker').attr('disabled', false);
+	datepicker('#datepicker', {
+		format: 'dddd d !de mmmm !de yyyy',
+		min: true,
+		klass: {
+		  input: 'datepicker'
+		},
+		onSet: function (context) {
+			var $picker = this;
+			$('#datepicker').val(new Date(context.select));
+			$('#form-date').submit();
+			var service = $("#service").val();
+			var provider = $("#provider").val();
+			var location = $("#location").val();
+			var datepicker = $("#datepicker").val();
+			var booking_id = $("#booking_id").val();
+			var selects = []
+			selects.push({
+				service: service,
+				provider: provider
+			})
+			selects = [];
+		    selects.push({
+		      service: $("#service").val(),
+		      provider: $("#provider").val()
+		    });
+
+		    $("#serviceStaff").val(JSON.stringify(selects));
+
+		    var serviceStaff = $("#serviceStaff").val();
+
+			$.ajax({
+				type: "post",
+				data: {service: service, provider: provider, location: location, datepicker: datepicker, booking_id: booking_id, serviceStaff: serviceStaff},
+				url: "select_session_hour",
+				success: function(response){
+					$("#obtained_hours").empty();
+					$("#obtained_hours").append(response);
+					$("#provider").hide();
+					$picker.close();
+				}
+			});
+		}
+	});
+</script>

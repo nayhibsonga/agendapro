@@ -1,0 +1,970 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+
+    <Worksheet ss:Name="Resumen">
+
+      <Table>
+
+        
+
+        <Row>
+          <Cell><Data ss:Type="String"></Data></Cell>
+          <Cell><Data ss:Type="String">Total ventas de productos, reservas y servicios</Data></Cell>
+          <Cell><Data ss:Type="String">Total comisiones</Data></Cell>
+          <Cell><Data ss:Type="String">Total compras de productos</Data></Cell>
+        </Row>
+
+        <%
+
+          all_incomes_total = 0
+          all_commissions_total = 0
+          all_internal_sales_total = 0
+
+        %>
+
+        <% @service_providers.each do |service_provider| %>
+
+          <%
+            payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).pluck(:id))
+
+            mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).pluck(:id))
+
+            bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).pluck(:id))
+
+            internal_sales = InternalSale.where(service_provider_id: service_provider.id, date: @from.beginning_of_day..@to.end_of_day)
+
+            payment_products_total = 0.0
+            mock_bookings_total = mock_bookings.sum(:price)
+            bookings_total = bookings.sum(:price)
+            internal_sales_total = 0.0
+
+            payment_products_commissions = 0.0
+            mock_bookings_commissions = 0.0
+            bookings_commissions = 0.0
+
+            current_incomes_total = 0
+            current_commissions_total = 0
+            current_internal_sales_total = 0
+
+          %>
+
+          <% payment_products.each do |payment_product| %>
+
+              <%
+
+                payment_products_total += payment_product.quantity * payment_product.price
+                payment_products_commissions += payment_product.quantity * payment_product.product.get_commission
+
+              %>
+          <% end %>
+
+          <% mock_bookings.each do |mock_booking| %>
+              <%
+                mock_bookings_commissions += mock_booking.get_commission
+              %>
+          <% end %>
+
+          <% bookings.each do |booking| %>
+
+              <%
+                bookings_commissions += booking.get_commission
+              %>
+          <% end %>
+
+          <% internal_sales.each do |internal_sale| %>
+
+              <%
+                internal_sales_total += internal_sale.quantity * internal_sale.price
+              %>
+
+          <% end %>
+
+          <%
+
+            all_incomes_total += mock_bookings_total
+            all_incomes_total += bookings_total
+            all_incomes_total += payment_products_total
+
+            all_commissions_total += payment_products_commissions
+            all_commissions_total += bookings_commissions
+            all_commissions_total += mock_bookings_commissions
+
+            all_internal_sales_total += internal_sales_total
+
+            current_incomes_total = mock_bookings_total + bookings_total + payment_products_total
+            current_commissions_total = payment_products_commissions + bookings_commissions + mock_bookings_commissions
+            current_internal_sales_total = internal_sales_total
+
+          %>
+
+          <Row>
+            <Cell><Data ss:Type="String"><%= service_provider.public_name %></Data></Cell>
+            <Cell><Data ss:Type="Number"><%= current_incomes_total.round(2) %></Data></Cell>
+            <Cell><Data ss:Type="Number"><%= current_commissions_total.round(2) %></Data></Cell>
+            <Cell><Data ss:Type="Number"><%= current_internal_sales_total.round(2) %></Data></Cell>
+          </Row>
+
+        <% end %>
+
+        <Row>
+          <Cell><Data ss:Type="String"></Data></Cell>
+        </Row>
+
+        <Row>
+          <Cell><Data ss:Type="String">TOTAL</Data></Cell>
+          <Cell><Data ss:Type="Number"><%= all_incomes_total.round(2) %></Data></Cell>
+          <Cell><Data ss:Type="Number"><%= all_commissions_total.round(2) %></Data></Cell>
+          <Cell><Data ss:Type="Number"><%= all_internal_sales_total.round(2) %></Data></Cell>
+        </Row>
+
+        <Row>
+          <Cell><Data ss:Type="String"></Data></Cell>
+        </Row>
+        
+
+        <Row>
+          <Cell><Data ss:Type="String">Recaudaciones por fecha</Data></Cell>
+        </Row>
+
+        <Row>
+          	<Cell><Data ss:Type="String"></Data></Cell>
+
+	        <% 
+	        	service_provider_totals = []
+	        	sp_index = 0
+	        	@service_providers.order('public_name asc').each do |service_provider|
+	        		service_provider_totals[sp_index] = [0, 0, 0]
+	        		sp_index += 1
+	        %>
+
+	        	<Cell ss:MergeAcross="2"><Data ss:Type="String"><%= service_provider.public_name %></Data></Cell>
+
+	        <% end %>
+
+        	<Cell><Data ss:Type="String"></Data></Cell>
+        	<Cell><Data ss:Type="String"></Data></Cell>
+
+        </Row>
+
+        <Row>
+        	<Cell><Data ss:Type="String">Fecha</Data></Cell>
+
+        	<% @service_providers.order('public_name asc').each do |service_provider| %>
+
+	        	<Cell><Data ss:Type="String">Ventas</Data></Cell>
+        		<Cell><Data ss:Type="String">Comisiones</Data></Cell>
+        		<Cell><Data ss:Type="String">Compras internas</Data></Cell>
+
+	        <% end %>
+
+        	<Cell><Data ss:Type="String">Total ventas</Data></Cell>
+        	<Cell><Data ss:Type="String">Total comisiones</Data></Cell>
+        	<Cell><Data ss:Type="String">Total compras internas</Data></Cell>
+        </Row>
+
+        <%
+        	current_date = @from.to_date
+        	end_date = @to.to_date
+
+        	date_total_sum = 0
+        	date_commissions_total_sum = 0
+        	date_internal_sales_total_sum = 0
+
+        	while current_date <= end_date
+        		date_total = 0
+        		date_commissions_total = 0
+        		date_internal_sales_total = 0
+        		provider_index = 0
+        	%>
+        		<Row>
+        		<Cell><Data ss:Type="String"><%= current_date.strftime('%d/%m/%Y') %></Data></Cell>
+        			<% 
+        				@service_providers.order('public_name asc').each do |service_provider|
+
+				            payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: @location_ids).pluck(:id))
+
+				            mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: @location_ids).pluck(:id))
+
+				            bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: @location_ids).pluck(:id))
+
+				            internal_sales = InternalSale.where(service_provider_id: service_provider.id, date: current_date.beginning_of_day..current_date.end_of_day)
+
+
+				            payment_products_total = 0.0
+				            mock_bookings_total = mock_bookings.sum(:price)
+				            bookings_total = bookings.sum(:price)
+				            internal_sales_total = 0.0
+
+				            payment_products_commissions = 0.0
+				            mock_bookings_commissions = 0.0
+				            bookings_commissions = 0.0
+
+				            current_incomes_total = 0
+				            current_commissions_total = 0
+				            current_internal_sales_total = 0
+
+				          	payment_products.each do |payment_product|
+
+
+				                payment_products_total += payment_product.quantity * payment_product.price
+				                payment_products_commissions += payment_product.quantity * payment_product.product.get_commission
+				            end
+
+
+				           	mock_bookings.each do |mock_booking|		              
+				                mock_bookings_commissions += mock_booking.get_commission
+				            end
+				              
+
+				          	bookings.each do |booking|
+				                bookings_commissions += booking.get_commission
+				            end
+
+				            internal_sales.each do |internal_sale|
+                				internal_sales_total += internal_sale.quantity * internal_sale.price
+          					end
+
+
+				            current_incomes_total = mock_bookings_total + bookings_total + payment_products_total
+				            current_commissions_total = payment_products_commissions + bookings_commissions + mock_bookings_commissions
+
+				            date_total += current_incomes_total
+				            date_commissions_total += current_commissions_total
+				            date_internal_sales_total += internal_sales_total
+
+				            service_provider_totals[provider_index][0] += current_incomes_total
+				            service_provider_totals[provider_index][1] += current_commissions_total
+				            service_provider_totals[provider_index][2] += internal_sales_total
+
+				            %>
+
+				            	<Cell><Data ss:Type="Number"><%= current_incomes_total %></Data></Cell>
+					          	<Cell><Data ss:Type="Number"><%= current_commissions_total %></Data></Cell>
+					          	<Cell><Data ss:Type="Number"><%= internal_sales_total %></Data></Cell>
+
+				            <%
+
+				            provider_index += 1
+
+        				end
+        			%>
+
+        			<Cell><Data ss:Type="Number"><%= date_total %></Data></Cell>
+					<Cell><Data ss:Type="Number"><%= date_commissions_total %></Data></Cell>
+					<Cell><Data ss:Type="Number"><%= date_internal_sales_total %></Data></Cell>
+
+        		</Row>
+        	<%
+        		date_total_sum += date_total
+				date_commissions_total_sum += date_commissions_total
+				date_internal_sales_total_sum += date_internal_sales_total
+        		current_date = current_date + 1.days
+        	end
+        %>
+
+        <Row>
+
+	        <Cell><Data ss:Type="String">Totales</Data></Cell>
+
+	        <% for i in 0..service_provider_totals.count-1 %>
+	        	<Cell><Data ss:Type="Number"><%= service_provider_totals[i][0] %></Data></Cell>
+				<Cell><Data ss:Type="Number"><%= service_provider_totals[i][1] %></Data></Cell>
+				<Cell><Data ss:Type="Number"><%= service_provider_totals[i][2] %></Data></Cell>
+	        <% end %>
+
+	        <Cell><Data ss:Type="Number"><%= date_total_sum %></Data></Cell>
+			<Cell><Data ss:Type="Number"><%= date_commissions_total_sum %></Data></Cell>
+			<Cell><Data ss:Type="Number"><%= date_internal_sales_total_sum %></Data></Cell>
+
+		</Row>
+
+      </Table>
+
+    </Worksheet>
+
+    <Worksheet ss:Name="Producción">
+
+    	<Table>
+
+    		<ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="200"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="200"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+
+	        <Row>
+	          	<Cell><Data ss:Type="String">Fecha</Data></Cell>
+	          	<Cell><Data ss:Type="String">Prestador</Data></Cell>
+	          	<Cell><Data ss:Type="String">Cliente</Data></Cell>
+	          	<Cell><Data ss:Type="String">Tipo</Data></Cell>
+	          	<Cell><Data ss:Type="String">Categoría</Data></Cell>
+	          	<Cell><Data ss:Type="String">Nombre</Data></Cell>
+	          	<Cell><Data ss:Type="String">Monto</Data></Cell>
+	          	<Cell><Data ss:Type="String">Comisión</Data></Cell>
+	          	<Cell><Data ss:Type="String">Medios de pago</Data></Cell>
+	          	<Cell><Data ss:Type="String">Comentario</Data></Cell>
+	          	<Cell><Data ss:Type="String">N° de comprobante</Data></Cell>
+	        </Row>
+
+	        <%
+	        	current_date = @from.to_date
+	        	end_date = @to.to_date
+
+	        	while current_date <= end_date
+
+	        		payments = Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: @location_ids)
+
+	        		payments.each do |payment|
+
+	        			payment_methods_arr = []
+		                payment_methods = ""
+		                payment.payment_transactions.each do |payment_transaction|
+		                  if !payment_transaction.payment_method_id.nil?
+		                    payment_methods_arr << payment_transaction.payment_method.name
+		                  else
+		                    payment_methods_arr << payment_transaction.company_payment_method.name
+		                  end
+		                end
+
+		                if payment_methods_arr.count > 0
+		                  payment_methods = payment_methods_arr.join(", ")
+		                end
+
+		                client_name = "Sin información"
+
+	        			if !payment.client.nil?
+	        				client_name = payment.client.full_name
+	        			end
+
+		        		payment.bookings.order('service_provider_id asc').each do |booking|
+		        			service_name = booking.service.name
+		        			service_category = "Sin información"
+		        			if !booking.service.service_category.nil?
+				                service_category = booking.service.service_category.name
+				            end
+
+		        		%>
+
+	        				<Row>
+					        	<Cell><Data ss:Type="String"><%= current_date.strftime('%d/%m/%Y') %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= booking.service_provider.public_name %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
+					          	<Cell><Data ss:Type="String">Servicio (con reserva)</Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= service_category %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
+					          	<Cell><Data ss:Type="Number"><%= booking.price %></Data></Cell>
+					          	<Cell><Data ss:Type="Number"><%= booking.get_commission %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= booking.receipt.notes %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= booking.receipt.number %></Data></Cell>
+					        </Row>
+
+		        		<%
+		        		end
+
+		        		payment.mock_bookings.order('service_provider_id asc').each do |mock_booking|
+
+		        			service_name = ""
+		        			service_category = ""
+
+			                if mock_booking.service_id.nil?
+			                  service_name = "Sin información"
+			                  service_category = "Sin información"
+			                else
+			                  service_name = mock_booking.service.name
+			                  if !mock_booking.service.service_category.nil?
+			                  	service_category = mock_booking.service.service_category.name
+			                  end
+			                end
+
+			                provider_name = ""
+
+			                if mock_booking.service_provider_id.nil?
+			                 provider_name = "Sin información"
+			                else
+			                  provider_name = mock_booking.service_provider.public_name
+			                end
+
+		        		%>
+
+	        				<Row>
+					        	<Cell><Data ss:Type="String"><%= current_date.strftime('%d/%m/%Y') %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= provider_name %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
+					          	<Cell><Data ss:Type="String">Servicio (sin reserva)</Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= service_category %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
+					          	<Cell><Data ss:Type="Number"><%= mock_booking.price %></Data></Cell>
+					          	<Cell><Data ss:Type="Number"><%= mock_booking.get_commission %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= mock_booking.receipt.notes %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= mock_booking.receipt.number %></Data></Cell>
+					        </Row>
+
+		        		<%
+		        		end
+
+		        		payment.payment_products.where(seller_type: 0).order('seller_id asc').each do |payment_product|
+
+		        			product_category = ""
+		        			product_name = ""
+		        			provider_name = ""
+
+		        			if payment_product.product_id.nil?
+			                  	product_name = "Sin información"
+			                  	product_category = "Sin información"
+			                else
+			                  	product_name = payment_product.product.full_name
+			                  	if !payment_product.product.product_category.nil?
+			                  		product_category = payment_product.product.product_category.name
+			                  	else
+			                  		product_category = "Sin información"
+			                  	end
+			                end
+
+			                provider_name = ""
+
+			                if payment_product.seller_id.nil?
+			                 	provider_name = "Sin información"
+			                else
+			                	provider = ServiceProvider.where(id: payment_product.seller_id).first
+			                	if !provider.nil?
+			                  		provider_name = provider.public_name
+			                  	else
+			                  		provider_name = "Sin información"
+			                  	end
+			                end
+		        		%>
+
+	        				<Row>
+					        	<Cell><Data ss:Type="String"><%= current_date.strftime('%d/%m/%Y') %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= provider_name %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
+					          	<Cell><Data ss:Type="String">Producto</Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= product_category %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= product_name %></Data></Cell>
+					          	<Cell><Data ss:Type="Number"><%= payment_product.price * payment_product.quantity %></Data></Cell>
+					          	<Cell><Data ss:Type="Number"><%= payment_product.product.get_commission * payment_product.quantity %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= payment_product.receipt.notes %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= payment_product.receipt.number %></Data></Cell>
+					        </Row>
+
+		        		<%
+		        		end
+
+		        	end
+
+		        	current_date = current_date + 1.days
+
+	        	end
+
+	        %>
+
+    	</Table>
+
+    </Worksheet>
+
+    <Worksheet ss:Name="Ventas internas">
+
+    	<Table>
+
+    		<ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+	        <ss:Column ss:Width="150"/>
+
+	        <Row>
+              	<Cell><Data ss:Type="String">Fecha</Data></Cell>
+              	<Cell><Data ss:Type="String">Prestador</Data></Cell>
+              	<Cell><Data ss:Type="String">Sku</Data></Cell>
+              	<Cell><Data ss:Type="String">Categoría</Data></Cell>
+              	<Cell><Data ss:Type="String">Marca</Data></Cell>
+              	<Cell><Data ss:Type="String">Nombre</Data></Cell>
+              	<Cell><Data ss:Type="String">Cantidad/Unidad</Data></Cell>
+              	<Cell><Data ss:Type="String">Precio (con dscto.)</Data></Cell>
+              	<Cell><Data ss:Type="String">Cantidad</Data></Cell>
+              	<Cell><Data ss:Type="String">Descuento</Data></Cell>
+              	<Cell><Data ss:Type="String">Monto total</Data></Cell>
+            </Row>
+
+    		<%
+	        	current_date = @from.to_date
+	        	end_date = @to.to_date
+
+	        	while current_date <= end_date
+
+	        		internal_sales = InternalSale.where(location_id: @location_ids, date: current_date.beginning_of_day..current_date.end_of_day).where('service_provider_id is not null')
+
+	        		internal_sales.order('service_provider_id asc').each do |internal_sale|
+	        		%>
+
+	        			<Row>
+			                <Cell><Data ss:Type="String"><%= internal_sale.date.strftime('%d/%m/%Y') %></Data></Cell>
+			                <Cell><Data ss:Type="String"><%= internal_sale.service_provider.public_name %></Data></Cell>
+			                <Cell><Data ss:Type="String"><%= internal_sale.product.sku %></Data></Cell>
+			                <Cell><Data ss:Type="String"><%= internal_sale.product.product_category.name %></Data></Cell>
+			                <Cell><Data ss:Type="String"><%= internal_sale.product.product_brand.name %></Data></Cell>
+			                <Cell><Data ss:Type="String"><%= internal_sale.product.name %></Data></Cell>
+			                <Cell><Data ss:Type="String"><%= internal_sale.product.product_display.name %></Data></Cell>
+			                <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
+			                <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
+			                <Cell><Data ss:Type="String"><%= internal_sale.discount.to_s + "%" %></Data></Cell>
+			                <Cell><Data ss:Type="Number"><%= internal_sale.quantity * internal_sale.price %></Data></Cell>
+			            </Row>
+
+			        <%
+	        		end
+
+	        		current_date = current_date + 1.days
+
+	        	end
+
+	        %>
+
+    	</Table>
+
+    </Worksheet>
+
+    <% @service_providers.each do |service_provider| %>
+
+      <Worksheet ss:Name="<%= service_provider.public_name %> (<%= service_provider.id.to_s %>)">
+
+        <Table>
+
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+            <ss:Column ss:Width="100"/>
+
+            <%
+
+            	provided_services_ids = Service.where(id: ServiceStaff.where(service_provider_id: service_provider.id).pluck(:service_id)).order(:service_category_id).pluck(:id)
+
+            	provided_services_hash = Hash.new
+
+            	provided_services_ids.each do |service_id|
+            		provided_services_hash[service_id] = [0, 0]
+            	end
+
+              	payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).pluck(:id))
+
+              	mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).pluck(:id))
+
+              	bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).pluck(:id))
+
+              	internal_sales = InternalSale.where(service_provider_id: service_provider.id, date: @from.beginning_of_day..@to.end_of_day)
+
+              	payment_products_total = 0.0
+              	mock_bookings_total = mock_bookings.sum(:price)
+              	bookings_total = bookings.sum(:price)
+              	internal_sales_total = 0.0
+
+              	payment_products_commissions = 0.0
+              	mock_bookings_commissions = 0.0
+              	bookings_commissions = 0.0
+
+            %>
+
+            <Row>
+              <Cell><Data ss:Type="String">Productos</Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Fecha de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Cliente</Data></Cell>
+              <Cell><Data ss:Type="String">Sku</Data></Cell>
+              <Cell><Data ss:Type="String">Categoría</Data></Cell>
+              <Cell><Data ss:Type="String">Marca</Data></Cell>
+              <Cell><Data ss:Type="String">Nombre</Data></Cell>
+              <Cell><Data ss:Type="String">Cantidad/Unidad</Data></Cell>
+              <Cell><Data ss:Type="String">Precio</Data></Cell>
+              <Cell><Data ss:Type="String">Cantidad</Data></Cell>
+              <Cell><Data ss:Type="String">Comisión</Data></Cell>
+              <Cell><Data ss:Type="String">Medios de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
+              <Cell><Data ss:Type="String">N° de comprobante</Data></Cell>
+            </Row>
+
+            <% payment_products.each do |payment_product| %>
+
+              <%
+
+                payment_products_total += payment_product.quantity * payment_product.price
+
+                payment_products_commissions += payment_product.quantity * payment_product.product.get_commission
+
+                payment_methods_arr = []
+                payment_methods = ""
+                payment_product.payment.payment_transactions.each do |payment_transaction|
+                  if !payment_transaction.payment_method_id.nil?
+                    payment_methods_arr << payment_transaction.payment_method.name
+                  else
+                    payment_methods_arr << payment_transaction.company_payment_method.name
+                  end
+                end
+
+                if payment_methods_arr.count > 0
+                  payment_methods = payment_methods_arr.join(", ")
+                end
+
+                client_name = "Sin información"
+
+                if !payment_product.payment.client.nil?
+                  client_name = payment_product.payment.client.full_name
+                end
+
+              %>
+
+              <Row>
+                <Cell><Data ss:Type="String"><%= payment_product.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_product.product.sku %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_product.product.product_category.name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_product.product.product_brand.name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_product.product.name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_product.product.product_display.name %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= payment_product.price %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= payment_product.quantity %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= payment_product.product.get_commission * payment_product.quantity %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_product.receipt.notes %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_product.receipt.number %></Data></Cell>
+              </Row>
+            <% end %>
+
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Servicios</Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Fecha de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Cliente</Data></Cell>
+              <Cell><Data ss:Type="String">Categoría</Data></Cell>
+              <Cell><Data ss:Type="String">Servicio</Data></Cell>
+              <Cell><Data ss:Type="String">Precio</Data></Cell>
+              <Cell><Data ss:Type="String">Comisión</Data></Cell>
+              <Cell><Data ss:Type="String">Medios de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
+              <Cell><Data ss:Type="String">N° de comprobante</Data></Cell>
+            </Row>
+
+            <% mock_bookings.each do |mock_booking| %>
+
+              <%
+
+                mock_bookings_commissions += mock_booking.get_commission
+
+                payment_methods_arr = []
+                payment_methods = ""
+                mock_booking.payment.payment_transactions.each do |payment_transaction|
+                  if !payment_transaction.payment_method_id.nil?
+                    payment_methods_arr << payment_transaction.payment_method.name
+                  else
+                    payment_methods_arr << payment_transaction.company_payment_method.name
+                  end
+                end
+
+                if payment_methods_arr.count > 0
+                  payment_methods = payment_methods_arr.join(", ")
+                end
+
+                category_name = ""
+                service_name = ""
+
+                if mock_booking.service_id.nil?
+                  service_name = "Sin información"
+                else
+                  	service_name = mock_booking.service.name
+
+                  	if !mock_booking.service.service_category.nil?
+                  		category_name = mock_booking.service.service_category.name
+                  	end
+
+                  	if provided_services_hash[mock_booking.service_id].nil?
+                  		provided_services_hash[mock_booking.service_id] = [0, 0]
+                  		provided_services_ids << mock_booking.service_id
+                  	end
+
+                  	provided_services_hash[mock_booking.service_id][0] += mock_booking.price
+                	provided_services_hash[mock_booking.service_id][1] += mock_booking.get_commission
+                end
+
+                client_name = "Sin información"
+
+                if !mock_booking.payment.client.nil?
+                  client_name = mock_booking.payment.client.full_name
+                end
+
+              %>
+
+              <Row>
+                <Cell><Data ss:Type="String"><%= mock_booking.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= category_name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= mock_booking.price %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= mock_booking.get_commission %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= mock_booking.receipt.notes %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= mock_booking.receipt.number %></Data></Cell>
+              </Row>
+            <% end %>
+
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Reservas</Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Fecha de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Fecha de reserva</Data></Cell>
+              <Cell><Data ss:Type="String">Cliente</Data></Cell>
+              <Cell><Data ss:Type="String">Categoría</Data></Cell>
+              <Cell><Data ss:Type="String">Servicio</Data></Cell>
+              <Cell><Data ss:Type="String">Precio</Data></Cell>
+              <Cell><Data ss:Type="String">Comisión</Data></Cell>
+              <Cell><Data ss:Type="String">Medios de pago</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
+              <Cell><Data ss:Type="String">N° de comprobante</Data></Cell>
+            </Row>
+
+            <% bookings.each do |booking| %>
+
+              <%
+
+                bookings_commissions += booking.get_commission
+
+                payment_methods_arr = []
+                payment_methods = ""
+                booking.payment.payment_transactions.each do |payment_transaction|
+                  if !payment_transaction.payment_method_id.nil?
+                    payment_methods_arr << payment_transaction.payment_method.name
+                  else
+                    payment_methods_arr << payment_transaction.company_payment_method.name
+                  end
+                end
+
+                if payment_methods_arr.count > 0
+                  payment_methods = payment_methods_arr.join(", ")
+                end
+
+                client_name = "Sin información"
+
+                category_name = ""
+                if !booking.service.service_category.nil?
+                	category_name = booking.service.service_category.name
+                end
+
+                if !booking.client.nil?
+                  client_name = booking.client.full_name
+                end
+
+                if provided_services_hash[booking.service_id].nil?
+              		provided_services_hash[booking.service_id] = [0, 0]
+              		provided_services_ids << booking.service_id
+              	end
+                provided_services_hash[booking.service_id][0] += booking.price
+                provided_services_hash[booking.service_id][1] += booking.get_commission
+
+              %>
+
+              <Row>
+                <Cell><Data ss:Type="String"><%= booking.payment.payment_date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= booking.start.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= client_name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= category_name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= booking.service.name %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= booking.price %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= booking.get_commission %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= booking.receipt.notes %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= booking.receipt.number %></Data></Cell>
+              </Row>
+            <% end %>
+
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Ventas internas (cobros a prestador)</Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Fecha de venta</Data></Cell>
+              <Cell><Data ss:Type="String">Sku</Data></Cell>
+              <Cell><Data ss:Type="String">Categoría</Data></Cell>
+              <Cell><Data ss:Type="String">Marca</Data></Cell>
+              <Cell><Data ss:Type="String">Nombre</Data></Cell>
+              <Cell><Data ss:Type="String">Cantidad/Unidad</Data></Cell>
+              <Cell><Data ss:Type="String">Precio</Data></Cell>
+              <Cell><Data ss:Type="String">Cantidad</Data></Cell>
+              <Cell><Data ss:Type="String">Descuento</Data></Cell>
+              <Cell><Data ss:Type="String">Cobro total</Data></Cell>
+            </Row>
+
+            <% internal_sales.each do |internal_sale| %>
+
+              <%
+                internal_sales_total += internal_sale.quantity * internal_sale.price
+              %>
+
+              <Row>
+                <Cell><Data ss:Type="String"><%= internal_sale.date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.product.sku %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.product.product_category.name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.product.product_brand.name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.product.name %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.product.product_display.name %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= internal_sale.discount.to_s + "%" %></Data></Cell>
+                <Cell><Data ss:Type="Number"><%= internal_sale.quantity * internal_sale.price %></Data></Cell>
+              </Row>
+            <% end %>
+
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
+            	<Cell><Data ss:Type="String">Totales por servicio</Data></Cell>
+            </Row>
+            <Row>
+            	<Cell><Data ss:Type="String">Categoría</Data></Cell>
+            	<Cell><Data ss:Type="String">Servicio</Data></Cell>
+            	<Cell><Data ss:Type="String">Ventas</Data></Cell>
+            	<Cell><Data ss:Type="String">Comisiones</Data></Cell>
+            </Row>
+
+            <% provided_services_ids.each do |ps_id| %>
+            	<%
+            		category_name = ""
+            		service_name = ""
+
+            		service = Service.find(ps_id)
+            		if !service.nil?
+            			service_name = service.name
+            			if !service.service_category.nil?
+	            			category_name = service.service_category.name
+	            		end
+            		end
+            	%>
+            	<Row>
+            		<Cell><Data ss:Type="String"><%= category_name %></Data></Cell>
+	            	<Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
+	            	<Cell><Data ss:Type="Number"><%= provided_services_hash[ps_id][0] %></Data></Cell>
+	            	<Cell><Data ss:Type="Number"><%= provided_services_hash[ps_id][1] %></Data></Cell>
+	            </Row>
+            <% end %>
+
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+
+            <Row>
+              <Cell><Data ss:Type="String">Totales</Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Ventas reservas</Data></Cell>
+              <Cell><Data ss:Type="Number"><%= bookings_total.round(2) %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Comisiones reservas</Data></Cell>
+              <Cell><Data ss:Type="Number"><%= bookings_commissions.round(2) %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Ventas servicios (sin reserva)</Data></Cell>
+              <Cell><Data ss:Type="Number"><%= mock_bookings_total.round(2) %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Comisiones servicios</Data></Cell>
+              <Cell><Data ss:Type="Number"><%= mock_bookings_commissions.round(2) %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Ventas productos</Data></Cell>
+              <Cell><Data ss:Type="Number"><%= payment_products_total.round(2) %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Comisiones productos</Data></Cell>
+              <Cell><Data ss:Type="Number"><%= payment_products_commissions.round(2) %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Compras productos</Data></Cell>
+              <Cell><Data ss:Type="Number"><%= internal_sales_total.round(2) %></Data></Cell>
+            </Row>
+
+            <%
+              sales_total = bookings_total + mock_bookings_total + payment_products_total
+              commissions_total = bookings_commissions + mock_bookings_commissions + payment_products_commissions
+            %>
+
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String"></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Total ventas</Data></Cell>
+              <Cell><Data ss:Type="Number"><%= sales_total.round(2) %></Data></Cell>
+            </Row>
+            <Row>
+              <Cell><Data ss:Type="String">Total comisiones</Data></Cell>
+              <Cell><Data ss:Type="Number"><%= commissions_total.round(2) %></Data></Cell>
+            </Row>
+
+
+        </Table>
+
+      </Worksheet>
+
+    <% end %>
+
+</Workbook>

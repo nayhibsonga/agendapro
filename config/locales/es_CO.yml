@@ -1,0 +1,22 @@
+es_CO:
+  number:
+    currency:
+      format:
+        delimiter: '.'
+        format: '%u%n'
+        precision: 0
+        separator: ','
+        significant: false
+        strip_insignificant_zeros: false
+        unit: $
+  country:
+    name: 'Colombia'
+    domain: '.com.co'
+  district: 'localidad'
+  ditricts: 'localidades'
+  ci: 'cédula'
+  plans:
+    personal: 60000
+    normal: 120000
+    premium: 250000
+    pro: 450000

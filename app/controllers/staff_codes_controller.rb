@@ -1,5 +1,5 @@
 class StaffCodesController < ApplicationController
-  before_action :set_staff_code, only: [:show, :edit, :update, :destroy]
+  before_action :set_staff_code, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
   before_action :authenticate_user!
   layout "admin"
   # load_and_authorize_resource
@@ -31,10 +31,10 @@ class StaffCodesController < ApplicationController
 
     respond_to do |format|
       if @staff_code.save
-        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'Código de empleado agregado exitosamente.' }
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), notice: 'Código de empleado agregado exitosamente.' }
         format.json { render action: 'show', status: :created, location: @staff_code }
       else
-        format.html { redirect_to edit_company_setting_path, notice: 'No se pudo agregar el código. Por favor inténtalo nuevamente.' }
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), notice: 'No se pudo agregar el código. Por favor inténtalo nuevamente.' }
         format.json { render json: @staff_code.errors, status: :unprocessable_entity }
       end
     end
@@ -45,10 +45,14 @@ class StaffCodesController < ApplicationController
   def update
     respond_to do |format|
       if @staff_code.update(staff_code_params)
-        format.html { redirect_to @staff_code, notice: 'Staff code was successfully updated.' }
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), notice: 'Código de empleado modificado exitosamente.' }
         format.json { head :no_content }
       else
-        format.html { render action: 'edit' }
+        alert = 'No se pudo modificar el código. Por favor inténtalo nuevamente.'
+        if !@staff_code.errors[:code].blank?
+          alert += ' El código ya fue asignado a otro empleado.'
+        end
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), alert: alert.html_safe }
         format.json { render json: @staff_code.errors, status: :unprocessable_entity }
       end
     end
@@ -59,14 +63,46 @@ class StaffCodesController < ApplicationController
   def destroy
     @staff_code.destroy
     respond_to do |format|
-      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting), notice: 'Código de empleado eliminado exitosamente.'}
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), notice: 'Código de empleado eliminado exitosamente.'}
       format.json { head :no_content }
     end
   end
 
   def check_staff_code
-    @staff_code = StaffCode.where(code: params[:booking_staff_code], company_id: current_user.company_id).first
+    @staff_code = StaffCode.where(code: params[:booking_staff_code], company_id: current_user.company_id, active: true).first
     render :json => !@staff_code.nil?
+  end
+
+  def get_staff_by_code
+
+    staff_code = StaffCode.where(code: params[:payment_staff_code], company_id: current_user.company_id).first
+
+    return_array = []
+    if staff_code.nil?
+      return_array << "error"
+    else
+      return_array << staff_code
+    end
+
+    render :json => return_array
+  end
+
+  def activate
+    @staff_code.active = true
+    if @staff_code.save
+      redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), notice: "Código activado exitosamente."
+    else
+      redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), alert: @staff_code.errors.full_messages.inspect
+    end
+  end
+
+  def deactivate
+    @staff_code.active = false
+    if @staff_code.save
+      redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), notice: "Código desactivado exitosamente."
+    else
+      redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'calendar'), alert: @staff_code.errors.full_messages.inspect
+    end
   end
 
   private

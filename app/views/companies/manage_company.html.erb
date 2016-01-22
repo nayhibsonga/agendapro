@@ -6,7 +6,10 @@
         <% if @company.payment_status_id != PaymentStatus.find_by_name('Inactivo').id %>
           <%= form_tag({ :controller => 'companies', :action => 'deactivate_company'}, method: "post", class: "pull-right") do %>
             <input type="hidden" name="id" value="<%= @company.id %>" />
+
+          <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
             <button type="submit" class="btn btn-red" id="deactivateBtn">Desactivar</button>
+            <% end %>
           <% end %>
         <% end %>
       </h2>
@@ -17,6 +20,7 @@
   <div class="row">
     <!-- Navegation Tabs -->
     <div class="col-md-2">
+    <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
       <ul class="nav nav-pills nav-stacked tab-margin">
         <li><a id="companies_payments" href="/companies_payments">Estados de pagos</a></li>
         <li><a id="companies_incomes" href="/companies_incomes">Ingresos mensuales</a></li>
@@ -25,13 +29,16 @@
         <li><a id="companies_monthly_bookings" href="/companies_monthly_bookings">Resumen de reservas</a></li>
         <li><%= link_to 'Empresas', companies_path, { :id => "companies" } %></li>
       </ul>
+      <% end %>
     </div>
     <!-- Panels -->
     <div class="col-md-10 left-panel">
       <div class="tab-margin">
         <ul class="nav nav-tabs">
           <li class="active"><a href="/manage_company/<%= @company.id %>">Ver/Manejar</a></li>
+          <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
           <li><a href="/companies/new_payment/<%= @company.id %>">Agregar pago</a></li>
+          <% end %>
         </ul>
         <div class="row">
           <div class="col-md-2">
@@ -40,7 +47,9 @@
               <li><a href="#incomes" role="tab" data-toggle="tab" class="tab_index">Ingresos</a></li>
               <li><a href="#bookings" role="tab" data-toggle="tab" class="tab_index">Reservas</a></li>
               <li><a href="#payments" role="tab" data-toggle= "tab" class="tab_index">Pagos</a></li>
+              <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
               <li><a href="#edit" role="tab" data-toggle="tab" class="tab_index">Edición</a></li>
+              <% end %>
             </ul>
           </div>
           <div class="col-md-10 left-panel">
@@ -63,7 +72,7 @@
                     <% end %>
                   </dd>
                   <dt>Fecha de ingreso</dt>
-                  <dd><%= @company.created_at %></dd>
+                  <dd><%= @company.created_at.strftime('%d/%m/%Y %R') %></dd>
                   <dt>Número de reservas</dt>
                   <dd><%= @bookings.count %></dd>
                   <dt>Estado</dt>
@@ -71,50 +80,41 @@
                   <dt>Plan</dt>
                   <dd><%= @company.plan.name %></dd>
                   <dt>Costo</dt>
-                  <dd><%= @company.plan.price %></dd>
+                  <dd><%= @company.plan.plan_countries.find_by(country_id: @company.country.id).price %></dd>
                   <dt>Locales</dt>
                   <dd><%= @company.locations.where(:active => true).count %></dd>
                   <dt>Última fecha de pago</dt>
                   <dd>
-                    <% bl = BillingLog.where(:company_id => @company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-                    <% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
-                    <% if !bl.nil? && !rec.nil? %>
-                      <%if bl.created_at <= rec.date %>
-                        <%= rec.date %>
-                      <% else %>
-                        <%= bl.created_at %>
-                      <% end %>
-                    <% elsif bl.nil? && !rec.nil? %>
-                      <%= rec.date %>
-                    <% elsif !bl.nil? && rec.nil? %>
-                      <%= bl.created_at %>
-                    <% else %>
-                      No existen pagos
-                    <% end %>
+                    <%= @company.last_payment_detail[0] %>
                   </dd>
                   <dt>Último monto de pago</dt>
                   <dd>
-                    <% bl = BillingLog.where(:company_id => @company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-                    <% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
-                    <% if !bl.nil? && !rec.nil? %>
-                      <% if bl.created_at <= rec.date %>
-                        <%= rec.amount %>
-                      <% else %>
-                        <%= bl.payment %>
-                      <% end %>
-                    <% elsif bl.nil? && !rec.nil? %>
-                      <%= rec.amount %>
-                    <% elsif !bl.nil? && rec.nil? %>
-                      <%= bl.payment %>
-                    <% else %>
-                      No existen pagos
-                    <% end %>
+                    <%= @company.last_payment_detail[1] %>
                   </dd>
                   <dt>Deuda actual</dt>
                   <dd><%= @company.due_amount %></dd>
                   <dt>Meses activos restantes</dt>
                   <dd><%= @company.months_active_left %></dd>
                 </dl>
+                <div class="row">
+                  <h3>Simulador de Pago (IVA incluído), deuda mes anterior: <%= number_to_currency(@plan_1 - @price > 0 ? (@plan_1 - @price) * (1 + @sales_tax) : 0, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></h3>
+                  <dl class="dl-horizontal">
+                    <dt><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %></dt>
+                    <dd value="1"><%= number_to_currency(@plan_1 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></dd>
+                    <dt>2 Meses</dt>
+                    <dd value="2"><%= number_to_currency(@plan_2 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></dd>
+                    <dt>3 Meses</dt>
+                    <dd value="3"><%= number_to_currency(@plan_3 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></dd>
+                    <dt>4 Meses</dt>
+                    <dd value="4"><%= number_to_currency(@plan_4 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_4 * 100, precision: 0) %>% dcto.)</dd>
+                    <dt>6 Meses</dt>
+                    <dd value="6"><%= number_to_currency(@plan_6 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_6 * 100, precision: 0) %>% dcto.)</dd>
+                    <dt>9 Meses</dt>
+                    <dd value="9"><%= number_to_currency(@plan_9 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_9 * 100, precision: 0) %>% dcto.)</dd>
+                    <dt>12 Meses</dt>
+                    <dd value="12"><%= number_to_currency(@plan_12 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %> (<%= number_with_precision(@month_discount_12 * 100, precision: 0) %>% dcto.)</dd>
+                  </dl>
+                </div>
               </div>
               <div class="tab-pane fade" id="incomes">
                 <div class="form-group">
@@ -184,22 +184,139 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <% logs = @company.billing_logs.order('created_at desc') %>
+                        <% logs = @company.billing_logs.where.not(transaction_type_id: -1).order('created_at desc') %>
                         <% logs.each do |log| %>
-                          <tr>
-                            <% punto_pago = PuntoPagosConfirmation.(:response => "00", :trx_id => log.trx_id) %>
-                            <td><%= log.created_at %></td>
-                            <td><%= log.payment %></td>
-                            <td><%= log.amount %></td>
-                            <% if punto_pago.nil? %>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                            <% else %>
+                          <% punto_pago = PuntoPagosConfirmation.where(:trx_id => log.trx_id, :response => "00").first %>
+                          <% pay_u = PayUNotification.where(:reference_sale => log.trx_id, :state_pol => "4").first %>
+                          <% if punto_pago.blank? && pay_u.blank? %>
+                            <% punto_pago_fail = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
+                            <tr style="background-color: #fd633f;">
+                              
+                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.payment %></td>
+                              <td><%= log.amount %></td>
+                              <% if punto_pago_fail.nil? %>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                              <% else %>
+                                <td><%= punto_pago_fail.dues_number %></td>
+                                <td><%= punto_pago_fail.operation_number %></td>
+                                <td><%= punto_pago_fail.authorization_code %></td>
+                              <% end %>
+
+                            </tr>
+                          <% elsif punto_pago.present? %>
+                            <tr>
+                              
+                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.payment %></td>
+                              <td><%= log.amount %></td>
                               <td><%= punto_pago.dues_number %></td>
                               <td><%= punto_pago.operation_number %></td>
                               <td><%= punto_pago.authorization_code %></td>
+
+                            </tr>
+                          <% elsif pay_u.present? %>
+                            <tr>
+                              
+                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.payment %></td>
+                              <td><%= log.amount %></td>
+                              <td></td>
+                              <td><%= pay_u.transaction_id %></td>
+                              <td><%= pay_u.reference_sale %></td>
+
+                            </tr>
+                          <% end %>
+                        <% end %>
+                        
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Cambios de plan en línea</h4>
+                  </div>
+                  <div class="panel-body panel-scrollable">
+                    <table class="table table-green">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Monto</th>
+                          <th>Número de cuotas</th>
+                          <th>Número de operación</th>
+                          <th>Código de autorización</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+
+                        <% plan_logs = @company.plan_logs.where.not(trx_id: nil).where.not(trx_id: "").where('amount > 0').order('created_at desc') %>
+                        <% plan_logs.each do |log| %>
+                          <% punto_pago = PuntoPagosConfirmation.where(:trx_id => log.trx_id, :response => "00").first %>
+                          <% if punto_pago.nil? %>
+                            <% punto_pago_fail = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
+                            <tr style="background-color: #fd633f;">
+                              
+                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.amount.to_s %></td>
+                              <% if punto_pago_fail.nil? %>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                              <% else %>
+                                <td><%= punto_pago_fail.dues_number %></td>
+                                <td><%= punto_pago_fail.operation_number %></td>
+                                <td><%= punto_pago_fail.authorization_code %></td>
+                              <% end %>
+
+                            </tr>
+                          <% else %>
+                            <tr>
+                              
+                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= log.amount.to_s %></td>
+                              <td><%= punto_pago.dues_number %></td>
+                              <td><%= punto_pago.operation_number %></td>
+                              <td><%= punto_pago.authorization_code %></td>
+
+                            </tr>
+                          <% end %>
+                        <% end %>
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Transferencias</h4>
+                  </div>
+                  <div class="panel-body">
+                    <table class="table table-green">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Tipo</th>
+                          <th>Meses pagados/Nuevo plan</th>
+                          <th>Monto</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% transfers = @company.billing_wire_transfers.where(approved: true).order('payment_date desc') %>
+                        <% transfers.each do |transfer| %>
+                          <tr>
+                            <td><%= transfer.payment_date.strftime('%d/%m/%Y %R') %></td>
+                            <% if transfer.change_plan %>
+                              <td>Cambio de plan</td>
+                              <td><%= Plan.find(transfer.new_plan).name %></td>
+                            <% else %>
+                              <td>Pago mensualidad(es)</td>
+                              <td><%= transfer.paid_months.to_s %></td>
                             <% end %>
+                            <td><%= transfer.amount %></td>
                           </tr>
                         <% end %>
                       </tbody>
@@ -225,7 +342,7 @@
                         <% records = @company.billing_records.order('date desc') %>
                         <% records.each do |record| %>
                           <tr>
-                            <td><%= record.date %></td>
+                            <td><%= record.date.strftime('%d/%m/%Y') %></td>
                             <td>
                               <% if !record.transaction_type.nil? %>
                                 <%= record.transaction_type.name %>
@@ -247,6 +364,7 @@
                   </div>
                 </div>
               </div>
+              <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
               <div class="tab-pane fade" id="edit">
                 <%= form_tag({ :controller => 'companies', :action => 'update_company'}, method: "post", class: 'form-horizontal') do %>
                   <input type="hidden" name="id" value="<%= @company.id %>" />
@@ -303,6 +421,86 @@
                     </div>
                   </div>
                   <div class="form-group">
+                    <label class="col-md-2 control-label">Comisión pago en línea</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.company_setting.online_payment_commission %>%</p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" name="new_online_payment_commission" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Comisión promociones</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.company_setting.promo_commission %>%</p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" name="new_promo_commission" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Pago en línea</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static">
+                        <% if @company.company_setting.online_payment_capable %>
+                          Activo
+                        <% else %>
+                          Inactivo
+                        <% end %>
+                      </p>
+                    </div>
+                    <div class="col-md-4">
+                      <select name="new_online_payment_capable" class="form-control">
+                        <% if @company.company_setting.online_payment_capable %>
+                          <option value="1">Activar</option>
+                          <option value="0">Desactivar</option>
+                        <% else %>
+                          <option value="0">Desactivar</option>
+                          <option value="1">Activar</option>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Promociones</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static">
+                        <% if @company.company_setting.promo_offerer_capable %>
+                          Activas
+                        <% else %>
+                          Inactivas
+                        <% end %>
+                      </p>
+                    </div>
+                    <div class="col-md-4">
+                      <select name="new_promo_offerer_capable" class="form-control">
+                        <% if @company.company_setting.promo_offerer_capable %>
+                          <option value="1">Activar</option>
+                          <option value="0">Desactivar</option>
+                        <% else %>
+                          <option value="0">Desactivar</option>
+                          <option value="1">Activar</option>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Ejecutivo Comercial</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static">
+                        <%= @company.sales_user_id && User.find(@company.sales_user_id) ? User.find(@company.sales_user_id).email : "" %>
+                      </p>
+                    </div>
+                    <div class="col-md-4">
+                      <select name="sales_user_id" class="form-control">
+                        <option value="">Sin Asignar</option>
+                        <% User.where(role_id: Role.find_by_name("Ventas").id).each do |user| %>
+                        <option value="<%= user.id %>" <%= 'selected' if @company.sales_user_id == user.id %>><%= user.email %></option>
+                        <% end %>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
                     <div class="col-md-4 col-md-offset-6">
                       <button class="btn btn-green btn-block">Editar</button>
                     </div>
@@ -311,21 +509,10 @@
                   <div class="form-group">
                     <label class="col-md-2 control-label">Última fecha de pago</label>
                     <div class="col-md-4">
-                      <% bl = BillingLog.where(:company_id => @company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-                      <% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
-                      <% if !bl.nil? && !rec.nil? %>
-                        <%if bl.created_at <= rec.date %>
-                          <p class="form-control-static">$<%= rec.amount %> en <%= rec.date %></p>
-                        <% else %>
-                          <p class="form-control-static">$<%= bl.payment %> en <%= bl.created_at %></p>
-                        <% end %>
-                      <% elsif bl.nil? && !rec.nil? %>
-                        <p class="form-control-static">$<%= rec.amount %> en <%= rec.date %></p>
-                      <% elsif !bl.nil? && rec.nil? %>
-                        $<%= bl.payment %> en <%= bl.created_at %>
-                      <% else %>
-                        <p class="form-control-static">No existen pagos</p>
-                      <% end %>
+                      
+
+                        <p class="form-control-static"><%= @company.last_payment_detail[0] %></p>
+                      
                     </div>
                     <div class="col-md-4">
                       <%= link_to "Agregar pago", {controller: "companies", action: "new_payment", id: @company.id}, class: "btn btn-white" %>
@@ -333,504 +520,13 @@
                   </div>
                 <% end %>
               </div>
+              <% end %>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-
-<div class="company-head-name">
-	<div class="row">
-		<div class="col-md-4">
-			<h3><%= @company.name %></h3>
-		</div>
-		<div class="col-md-8">
-			<h3>
-			<% if @company.payment_status_id != PaymentStatus.find_by_name('Inactivo').id %>
-				<%= form_tag({ :controller => 'companies', :action => 'deactivate_company'}, method: "post") do %>
-		    		<input type="hidden" name="id" value="<%= @company.id %>" />
-					<span>
-						<button type="submit" class="btn btn-red" id="deactivateBtn">Desactivar</button>
-					</span>
-				<% end %>
-			<% end %>
-			</h3>
-		</div>
-	</div>
-</div>
-
-<div class="row companies_header">
-	<ul class="nav nav-tabs">
-
-		<li class="active"><a href="/manage_company/<%= @company.id %>">Ver/Manejar</a></li>
-
-		<li><a href="/companies/new_payment/<%= @company.id %>">Agregar pago</a></li>
-
-	</ul>
-</div>
-
-<div class="row well well-white" style="margin-top: 20px;">
-	<ul id="myTab" class="nav nav-tabs" role="tablist">
-	  <li class="active"><a href="#summary" role="tab" data-toggle="tab" class="tab_index">Resumen</a></li>
-	  <li><a href="#incomes" role="tab" data-toggle="tab" class="tab_index">Ingresos</a></li>
-	  <li><a href="#bookings" role="tab" data-toggle="tab" class="tab_index">Reservas</a></li>
-	  <li><a href="#payments" role="tab" data-toggle= "tab" class="tab_index">Pagos</a></li>
-	  <li><a href="#edit" role="tab" data-toggle="tab" class="tab_index">Edición</a></li>
-	</ul>
-	<div id="myTabContent" class="tab-content">
-		<br />
-		<div class="tab-pane active" id="summary">
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Administrador: </label>
-				</div>
-				<div class="col-sm-8">
-					<%
-						c_user = User.find_by_company_id(@company.id)
-						if !c_user.nil? %>
-							<%= c_user.first_name + " " + c_user.last_name %>
-						<% end
-					%>
-				</div>
-			</div>
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Email: </label>
-				</div>
-				<div class="col-sm-8">
-					<%
-						if !c_user.nil? %>
-							<%= c_user.email %>
-						<% end
-					%>
-				</div>
-			</div>
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Fecha de ingreso: </label>
-				</div>
-				<div class="col-sm-8">
-					<%= @company.created_at %>
-				</div>
-			</div>
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Número de reservas: </label>
-				</div>
-				<div class="col-sm-8">
-					<%= @bookings.count %>
-				</div>
-			</div>
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Estado: </label>
-				</div>
-				<div class="col-sm-8">
-					<%= @company.payment_status.name %>
-				</div>
-			</div>
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Plan: </label>
-				</div>
-				<div class="col-sm-8">
-					<%= @company.plan.name %>
-				</div>
-			</div>
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Costo: </label>
-				</div>
-				<div class="col-sm-8">
-					<%= @company.plan.price %>
-				</div>
-			</div>
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Locales: </label>
-				</div>
-				<div class="col-sm-8">
-					<%= @company.locations.where(:active => true).count %>
-				</div>
-			</div>
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Última fecha de pago: </label>
-				</div>
-				<div class="col-sm-8">
-					<% bl = BillingLog.where(:company_id => @company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-					<% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
-					<% if !bl.nil? && !rec.nil? %>
-						<%if bl.created_at <= rec.date %>
-							<%= rec.date %>
-						<% else %>
-							<%= bl.created_at %>
-						<% end %>
-					<% elsif bl.nil? && !rec.nil? %>
-						<%= rec.date %>
-					<% elsif !bl.nil? && rec.nil? %>
-						<%= bl.created_at %>
-					<% else %>
-						No existen pagos
-					<% end %>
-				</div>
-			</div>
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Último monto de pago: </label>
-				</div>
-				<div class="col-sm-8">
-					<% bl = BillingLog.where(:company_id => @company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-					<% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
-					<% if !bl.nil? && !rec.nil? %>
-						<% if bl.created_at <= rec.date %>
-							<%= rec.amount %>
-						<% else %>
-							<%= bl.payment %>
-						<% end %>
-					<% elsif bl.nil? && !rec.nil? %>
-						<%= rec.amount %>
-					<% elsif !bl.nil? && rec.nil? %>
-						<%= bl.payment %>
-					<% else %>
-						No existen pagos
-					<% end %>
-				</div>
-			</div>
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Deuda actual: </label>
-				</div>
-				<div class="col-sm-8">
-					<%= @company.due_amount %>
-				</div>
-			</div>
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-sm-4">
-					<label class="control-label">Meses activos restantes: </label>
-				</div>
-				<div class="col-sm-8">
-					<%= @company.months_active_left %>
-				</div>
-			</div>
-		</div>
-
-		<div class="tab-pane" id="incomes">
-			<div class="form-group">
-				<label class="col-md-2 control-label">
-					Selecciona el año
-				</label>
-				<div class="col-md-2">
-					<select id="year-select" name="year" class="form-control">
-						<% current = DateTime.now.year.to_i %>
-						<% for i in 2014..current do %>
-							<% if i == current %>
-								<option value="<%= i %>" selected><%= i.to_s %></option>
-							<% else %>
-								<option value="<%= i %>"><%= i.to_s %></option>
-							<% end %>
-						<% end %>
-					</select>
-				</div>
-			</div>
-			<div id="year-incomes" style="margin-top: 10px;">
-				<div class="row">
-					<div class="col-md-12">
-						<h3>Ingresos para el año <span id="selected-year"><%= current %></span></h3>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-12">
-						<table class="companies-table">
-
-						</table>
-					</div> 
-				</div>
-			</div>
-		</div>
-
-		<div class="tab-pane" id="bookings">
-			<div class="form-group">
-				<label class="col-md-2 control-label">
-					Selecciona el año
-				</label>
-				<div class="col-md-2">
-					<select id="bookings-year-select" name="year" class="form-control">
-						<% current = DateTime.now.year.to_i %>
-						<% for i in 2014..current do %>
-							<% if i == current %>
-								<option value="<%= i %>" selected><%= i.to_s %></option>
-							<% else %>
-								<option value="<%= i %>"><%= i.to_s %></option>
-							<% end %>
-						<% end %>
-					</select>
-				</div>
-			</div>
-			<div id="year-bookings" style="margin-top: 10px;">
-				<div class="row">
-					<div class="col-md-12">
-						<h3>Reservas para el año <span id="bookings-selected-year"><%= current %></span></h3>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-12">
-						<table class="companies-table">
-
-						</table>
-					</div> 
-				</div>
-			</div>
-		</div>
-
-		<div class="tab-pane" id="payments">
-			<div class="scrollable" style="max-height: 220px;">
-				<h4>Pagos en línea</h4>
-				<table class="companies-table">
-					<tr class="companies-table-header">
-						<th>
-							Fecha
-						</th>
-						<th>
-							Monto
-						</th>
-						<th>
-							Meses
-						</th>
-						<th>
-							Número de cuotas
-						</th>
-						<th>
-							Número de operación
-						</th>
-						<th>
-							Código de autorización
-						</th>
-					</tr>
-
-					<% logs = @company.billing_logs.order('created_at desc') %>
-					<% logs.each do |log| %>
-						
-						<% punto_pago = PuntoPagosConfirmation.where(:response => "00", :trx_id => log.trx_id).first %>
-						<% if !punto_pago.nil? %>
-							<tr>
-								<td>
-									<%= log.created_at %>
-								</td>
-								<td>
-									<%= log.payment %>
-								</td>
-								<td>
-									<%= log.amount %>
-								</td>
-								<% if punto_pago.nil? %>
-									<td></td>
-									<td></td>
-									<td></td>
-								<% else %>
-									<td>
-										<%= punto_pago.dues_number %>
-									</td>
-									<td>
-										<%= punto_pago.operation_number %>
-									</td>
-									<td>
-										<%= punto_pago.authorization_code %>
-									</td>
-								<% end %>
-							</tr>
-						<% end %>
-					<% end %>
-
-				</table>
-			</div>
-
-			<div class="scrollable" style="max-height: 220px;">
-				<h4>Otros pagos</h4>
-				<table class="companies-table">
-					<tr class="companies-table-header">
-						<th>
-							Fecha
-						</th>
-						<th>
-							Tipo
-						</th>
-						<th>
-							Monto
-						</th>
-						<th>
-							Editar
-						</th>
-						<th>
-							Eliminar
-						</th>
-					</tr>
-
-					<% records = @company.billing_records.order('date desc') %>
-					<% records.each do |record| %>
-						<tr>
-							<td>
-								<%= record.date %>
-							</td>
-							<td>
-								<% if !record.transaction_type.nil? %>
-								<%= record.transaction_type.name %>
-								<% end %>
-							</td>
-							<td>
-								<%= record.amount %>
-							</td>
-							<td>
-								<%= link_to 'Editar', '/companies/payment/'+record.id.to_s %>
-							</td>
-							<td>
-								<%= form_tag({ :controller => 'companies', :action => 'delete_payment'}, method: "post") do %>
-						    		<input type="hidden" name="record_id" value="<%= record.id %>" />
-						    		<input type="hidden" name="id" value="<%= @company.id %>" />
-									<span>
-										<button type="submit" class="btn btn-red" id="deletePayment">Eliminar</button>
-									</span>
-								<% end %>
-							</td>
-						</tr>
-					<% end %>
-
-				</table>
-			</div>
-		</div>
-
-		<div class="tab-pane" id="edit">
-
-			<%= form_tag({ :controller => 'companies', :action => 'update_company'}, method: "post") do %>
-
-				<input type="hidden" name="id" value="<%= @company.id %>" />
-				<div class="row" style="margin-top: 10px;">
-
-						<div class="col-sm-3">
-							<label class="control-label">Plan: </label>
-						</div>
-						<div class="col-sm-2">
-							<%= @company.plan.name %>
-						</div>
-						<div class="col-sm-2">
-							<select name="new_plan_id" class="form-control">
-								<% Plan.all.each do |plan| %>
-									<% if plan.id == @company.plan_id %>
-										<option value="<%= plan.id %>" selected><%= plan.name %></option>
-									<% else %>
-										<option value="<%= plan.id %>"><%= plan.name %></option>
-									<% end %>
-								<% end %>
-							</select>
-						</div>
-						<!--<div class="col-sm-2">
-						<button class="btn">Editar</button>
-					</div>-->
-
-				</div>
-			
-			
-				
-				<div class="row" style="margin-top: 10px;">
-
-						<div class="col-sm-3">
-							<label class="control-label">Estado actual: </label>
-						</div>
-						<div class="col-sm-2">
-							<%= @company.payment_status.name %>
-						</div>
-						<div class="col-sm-2">
-							<select name="new_payment_status_id" class="form-control">
-								<% PaymentStatus.all.each do |status| %>
-									<% if status.id == @company.payment_status_id %>
-										<option value="<%= status.id %>" selected><%= status.name %></option>
-									<% else %>
-										<option value="<%= status.id %>"><%= status.name %></option>
-									<% end %>
-								<% end %>
-							</select>
-						</div>
-						<!--<div class="col-sm-2">
-						<button class="btn">Editar</button>
-					</div>-->
-
-				</div>
-
-
-
-				<div class="row" style="margin-top: 10px;">
-					<div class="col-sm-3">
-						<label class="control-label">Meses activos restantes: </label>
-					</div>
-					<div class="col-sm-2">
-						<%= @company.months_active_left %>
-					</div>
-					<div class="col-sm-2">
-						<input type="number" class="form-control" name="new_months_active_left" />
-					</div>
-					<!--<div class="col-sm-2">
-						<button class="btn">Editar</button>
-					</div>-->
-				</div>
-
-				<div class="row" style="margin-top: 10px;">
-					<div class="col-sm-3">
-						<label class="control-label">Deuda actual: </label>
-					</div>
-					<div class="col-sm-2">
-						<%= @company.due_amount %>
-					</div>
-					<div class="col-sm-2">
-						<input type="number" class="form-control" name="new_due_amount" />
-					</div>
-					<!--<div class="col-sm-2">
-						<button class="btn">Editar</button>
-					</div>-->
-				</div>
-
-				<div class="row" style="margin-top: 10px;">
-					<div class="col-sm-2 col-sm-offset-5">
-						<div class="btn-group btn-group-justified">
-			                <div class="btn-group">
-								<button class="btn btn-green">Editar</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			<% end %>
-
-			<div class="row" style="margin-top: 20px;">
-				<div class="col-sm-3">
-					<label class="control-label">Última fecha de pago: </label>
-				</div>
-				<div class="col-sm-2">
-					<% bl = BillingLog.where(:company_id => @company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first %>
-					<% rec = BillingRecord.where(:company_id => @company.id).order('date desc').first %>
-					<% if !bl.nil? && !rec.nil? %>
-						<%if bl.created_at <= rec.date %>
-							$<%= rec.amount %> en <%= rec.date %>
-						<% else %>
-							$<%= bl.payment %> en <%= bl.created_at %>
-						<% end %>
-					<% elsif bl.nil? && !rec.nil? %>
-						$<%= rec.amount %> en <%= rec.date %>
-					<% elsif !bl.nil? && rec.nil? %>
-						$<%= bl.payment %> en <%= bl.created_at %>
-					<% else %>
-						No existen pagos
-					<% end %>
-				</div>
-				<div class="col-sm-2">
-					<%= link_to "Agregar pago", controller: "companies", action: "new_payment", id: @company.id %>
-				</div>
-			</div>
-			
-		</div>
-
-	</div>
-
 </div>
 
 
@@ -882,18 +578,30 @@
 
     $("#deactivateBtn").click(function(e){
       e.preventDefault();
-      var r = confirm("¿Estás seguro que deseas desactivarla?");
-      if (r == true) {
-        $(this).closest("form").submit();
-      }
+      swal({
+        title: "¿Estás seguro que deseas desactivarla?",
+        type: "warning",
+        showCancelButton: true
+      },
+      function (isConfirm) {
+        if (isConfirm) {
+          $('#deactivateBtn').closest("form").submit();
+        };
+      });
     });
 
     $("#deletePayment").click(function(e){
       e.preventDefault();
-      var r = confirm("¿Estás seguro que deseas eliminarlo?");
-      if (r == true) {
-        $(this).closest("form").submit();
-      }
+      swal({
+        title: "¿Estás seguro que deseas eliminarlo?",
+        type: "warning",
+        showCancelButton: true
+      },
+      function (isConfirm) {
+        if (isConfirm) {
+          $('#deactivateBtn').closest("form").submit();
+        };
+      });
     });
 
     $(document).ready(function(){

@@ -1,0 +1,410 @@
+/*
+*= require jquery.qtip
+*/
+
+.qtip {
+	min-width: 150px;
+	max-width: 500px;
+}
+
+table.servicesTable{
+	border: 1px solid #949292;
+	width: 80%;
+}
+
+table.servicesTable tr.tableHeading{
+ 	background-color: #22c498;
+ 	border: none;
+}
+
+table.servicesTable th{
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 7px;
+	padding-right: 7px;
+	color: #fff;
+	width: 33%;
+}
+
+table.servicesTable td{
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 7px;
+	padding-right: 7px;
+	color: #949292;
+}
+
+.commissions-option-btn{
+	width: 120px;
+	border-radius: 3px;
+}
+
+.salesCashModal .modal-dialog{
+	width: 40% !important;
+}
+
+.summaryModal .modal-dialog{
+	width: 50% !important;
+}
+
+.internalSaleModal .modal-dialog{
+	width: 40% !important;
+}
+
+.commissionsModal .modal-dialog{
+	width: 40% !important;
+}
+
+.pettyCashModal .modal-dialog{
+	width: 40% !important;
+}
+
+.multiselect{
+	width: 100% !important;
+}
+
+.service-commission-div{
+	margin-bottom: 10px;
+}
+
+.btn-caja{
+	width: 120px;
+}
+
+#pettyTransactionsSummaryModal .modal-dialog{
+	width: 70% !important;
+}
+
+#pettyTransactionsTable{
+	width: 100%;
+}
+
+#pettyTransactionsTable th, #pettyTransactionsTable td{
+	padding-left: 4px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-right: 4px;
+	text-align: left;
+}
+
+.table-div{
+	max-height: 400px;
+	overflow-y: auto;
+	margin-top: 15px;
+}
+
+.btn-sales-cash{
+	width: 110px;
+}
+
+#sales-cash-title{
+	font-size: 20px;
+	color: #22c488;
+	margin: 4px;
+}
+
+#sales-cash-last-reset-date{
+	font-size: 18px;
+	color: #505050;
+	margin: 4px;
+}
+
+#sales-cash-schedule{
+	font-size: 18px;
+	color: #505050;
+	margin: 4px;
+}
+
+#payment_transactions_table{
+  width: 100%;
+}
+
+#payment_transactions_table input{
+  width: 100%;
+}
+
+#payment_transactions_table th, #payment_transactions_table td{
+  padding-left: 2px;
+  border: none;
+}
+
+#payment_transactions_table td.method_td{
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.cost_td{
+  padding-left: 8px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.change_td{
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+#payment_transactions_table td.method_td input{
+  color: #fff !important;
+  border: 1px solid #d7d7d7 !important;
+  background-color: #d7d7d7;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.sum_td input{
+  color: #22c488 !important;
+  border: 1px solid #22c488 !important;
+  background-color: #fff;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.cost_td input{
+  
+  color: #fff !important;
+  border: 1px solid #22c488 !important;
+  background-color: #22c488;
+  padding-left: 2px;
+  height: 30px;
+}
+
+#payment_transactions_table td.change_td input{
+  
+  color: #fff !important;
+  border: 1px solid #949292 !important;
+  background-color: #949292;
+  padding-left: 2px;
+  height: 30px;
+}
+
+.content_header{
+	background-color: #22c488;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	padding-left: 8px;
+	color: #fff;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.sales_cash_table th{
+	width: 12.5% !important;
+}
+
+.providers_report_table{
+	width: 100%;
+}
+
+.providers_report_table .provider_name_th{
+	color: #fff;
+	text-align: center;
+	background-color: #22c488;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-left: 1px solid #949292;
+	border-right: 1px solid #949292;
+}
+
+.providers_report_table .first_row td{
+	color: #505050;
+	text-align: left;
+	background-color: #d7d7d7;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.providers_report_table .standard_row td{
+	color: #505050;
+	text-align: left;
+	background-color: #fff;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.providers_report_table td.left_td{
+	border-left: 1px solid #949292;
+}
+
+.providers_report_table td.right_td{
+	border-right: 1px solid #949292;
+}
+
+.providers_report_table{
+	border: 1px solid #949292;
+}
+
+.providers_report_table td.left_header_td{
+	border-left: 1px solid #949292;
+}
+
+.providers_report_table td.right_header_td{
+	border-right: 1px solid #949292;
+}
+
+.excel_th{
+	text-align: center;
+}
+
+.payment-summary-table{
+	width: 90%;
+}
+
+.payment-summary-table th{
+	padding: 3px;
+	color: #505050;
+}
+
+.payment-summary-table td{
+	padding: 3px;
+}
+
+.payment_summary_title{
+	background-color: #22C488;
+	color: #fff;
+	font-size: 22px;
+	padding-top: 5px;
+	padding-left: 15px;
+	padding-bottom: 5px;
+}
+
+.payment_summary_subtitle{
+	background-color: #a1a1a1;
+	color: #fff;
+	font-size: 20px;
+	padding-top: 5px;
+	padding-left: 15px;
+	padding-bottom: 5px;
+}
+
+.payment_summary_col{
+	padding: 0px !important;
+}
+
+/*
+*
+* Fix de help blocks
+*
+*/
+
+.salesCashModal .form-control-feedback{
+	top: 10px;
+	right: 15px;
+}
+.internalSaleModal .form-control-feedback{
+	top: 10px;
+	right: 15px;
+}
+.pettyCashModal .form-control-feedback{
+	top: 10px;
+	right: 15px;
+}
+.paymentModal .form-control-feedback{
+	top: 10px;
+	right: 15px;
+}
+
+.alert-payment {
+	padding: 15px;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+.alert-payment h4 {
+	margin-top: 0;
+	color: inherit;
+}
+.alert-payment .alert-link {
+	font-weight: bold;
+}
+.alert-payment > p,
+.alert-payment > ul {
+	margin-bottom: 0;
+}
+.alert-payment > p + p {
+	margin-top: 5px;
+}
+.alert-dismissable {
+	padding-right: 35px;
+}
+.alert-dismissable .close {
+	position: relative;
+	top: -2px;
+	right: -21px;
+	color: #330000;
+	padding-right: 25px;
+}
+
+.alert-payment {
+	color: #a94442;
+	background-color: #ff8888;
+	border-color: #ebccd1;
+	position: fixed !important;
+	top: 0% !important;
+	left: 30% !important;
+	width: 40% !important;
+	z-index: 99999;
+	margin: 35px auto 10px;
+  	padding: 10px 15px;
+  	margin-bottom: 0px;
+  	-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+  	-moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+  	box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+}
+.alert-payment hr {
+	border-top-color: #e4b9c0;
+}
+.alert-payment .alert-link {
+	color: #843534;
+}
+
+
+
+.success-payment {
+	padding: 15px;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+.success-payment h4 {
+	margin-top: 0;
+	color: inherit;
+}
+.success-payment .alert-link {
+	font-weight: bold;
+}
+.success-payment > p,
+.success-payment > ul {
+	margin-bottom: 0;
+}
+.success-payment > p + p {
+	margin-top: 5px;
+}
+
+.success-payment {
+	color: #3c763d;
+	background-color: #a4d491;
+	border-color: #ebccd1;
+	position: fixed !important;
+	top: 0% !important;
+	left: 30% !important;
+	width: 40% !important;
+	z-index: 99999;
+	margin: 35px auto 10px;
+  	padding: 10px 15px;
+  	margin-bottom: 0px;
+  	-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+  	-moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+  	box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
+}
+.success-payment hr {
+	border-top-color: #e4b9c0;
+}
+.success-payment .alert-link {
+	color: #843534;
+}

@@ -19,7 +19,7 @@
 										<dt>¿Cuántos meses pagaste?</dt>
 										<dd><%= number_with_precision(@billing_log.amount, precision: 0) %></dd>
 										<dt>¿Cuánto costó?</dt>
-										<dd><%= number_to_currency(@billing_log.payment, unit: "CLP $", delimiter: ".")%></dd>
+										<dd><%= number_to_currency(@billing_log.payment, unit: "$", delimiter: ".")%></dd>
 										<dt>Código de la Transacción</dt>
 										<dd><%= @billing_log.trx_id %></dd>
 										<dt>¿Dudas o consultas?</dt>
@@ -33,13 +33,14 @@
 										<dt>Plan Nuevo</dt>
 										<dd>Plan <%= Plan.find(@plan_log.new_plan_id).name %></dd>
 										<dt>¿Cuánto costó?</dt>
-										<dd><%= number_to_currency(PuntoPagosConfirmation.find_by_trx_id(@plan_log.trx_id).amount, unit: "CLP $", delimiter: ".")%></dd>
+										<dd><%= number_to_currency(PuntoPagosConfirmation.find_by_trx_id(@plan_log.trx_id).amount, unit: "$", delimiter: ".")%></dd>
 										<dt>Código de la Transacción</dt>
 										<dd><%= @plan_log.trx_id %></dd>
 										<dt>¿Dudas o consultas?</dt>
 										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
 									</dl>
 									<% end %>
+									<% if current_user && @company %>
 									<hr>
 									<h4>Información de la Cuenta</h4>
 									<dl class="dl-horizontal">
@@ -55,15 +56,16 @@
 										<dd><%= @company.months_active_left.to_i %> (Incluyendo mes actual)</dd>
 										<% if @company.due_amount >= 0 %>
 								        <dt>Deuda Actual</dt>
-								        <dd><%= number_to_currency(@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
+								        <dd><%= number_to_currency(@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%></dd>
 								        <% else %>
 								        <dt>Saldo a Favor</dt>
-								        <dd><%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%> CLP</dd>
+								        <dd><%= number_to_currency(-1*@company.due_amount, {:unit => '$', :separator => ',', :delimiter => '.', :precision => 0})%></dd>
 								        <% end %>
+								       <% end %>
 									</dl>
 								<% else %>
 
-									<% if @bookings.first.payed_booking.nil? || @bookings.first.payed_booking.punto_pagos_confirmation.nil? %>
+									<% if @bookings.nil? || @bookings.first.payed_booking.nil? || @bookings.first.payed_booking.punto_pagos_confirmation.nil? %>
 
 
 										<h4>Tu transferencia está siendo procesada.</h4>
@@ -88,32 +90,71 @@
 						                    <a href="<%= root_url(:host => @url) %>"><span class="light-gray">Agendar nuevamente</span> &nbsp;<i class="fa fa-calendar-o fa-lg light-green"></i></a>
 						                </p>
 										<div class="book-subheader dark-gray">Resumen de tu Reserva</div>
-										<dl class="dl-horizontal book-dl">
-											<dt class="dark-gray">¿Qué reservaste?</dt>
-											<dd class="light-gray">
-												<% @bookings.each do |booking| %>
-													<%= booking.service.name %><br />
-												<% end %>
-											</dd>
-											<dt class="dark-gray">¿Dónde?</dt>
-											<dd class="light-gray"><%= @bookings.first.location.address %>, <%= @bookings.first.location.district.name %></dd>
-											<dt class="dark-gray">¿Con quién?</dt>
-											<dd class="light-gray">
-												<% @bookings.each do |booking| %>
-													<%= booking.service_provider.public_name %><br />
-												<% end %>
-											</dd>
-											<dt class="dark-gray">¿Cuándo?</dt>
-											<dd class="light-gray">
-												<% @bookings.each do |booking| %>
-													<%= I18n.l(booking.start.to_datetime) %><br />
-												<% end %>
-											</dd>
-											<% if !@bookings.first.notes.blank? %>
-											<dt class="dark-gray">Notas</dt>
-											<dd class="light-gray"><%= @bookings.first.notes %></dd>
-											<% end %>
-										</dl>
+
+										<% if @has_session_booking %>
+						                    <dl class="dl-horizontal book-dl">
+						                      <dt class="dark-gray">¿Qué reservaste?</dt>
+						                      <dd class="light-gray">
+						                        <p><%= @bookings.first.service.name %></p>
+						                      </dd>
+
+						                      <dt class="dark-gray">¿Dónde?</dt>
+						                      <% @second_address = @bookings.first.location.second_address.blank? ? '' : ', ' + @bookings.first.location.second_address %>
+						                      <dd class="light-gray">
+						                        <p><%= if !@bookings.first.location.outcall then @bookings.first.location.address+@second_address+', '+@bookings.first.location.district.name else "A Domicilio" end %></p>
+						                      </dd>
+
+						                      <dt class="dark-gray">¿Cuántas sesiones?</dt>
+						                      <dd class="light-gray">
+						                          <p>Reservaste <%= @session_booking.sessions_taken.to_s %> sesiones de un total de <%= @session_booking.service.sessions_amount %></p>
+						                      </dd>
+
+						                      <dt class="dark-gray">¿Cuándo?</dt>
+						                      <dd class="light-gray">
+						                        <% @bookings.each do |booking| %>
+						                          <% if booking.is_session_booked %>
+						                            <p><%= I18n.l(booking.start.to_datetime).capitalize %>, con <%= booking.service_provider.public_name %></p>
+						                          <% end %>
+						                        <% end %>
+						                      </dd>
+						                      <% if !@bookings.first.notes.blank? %>
+						                        <dt class="dark-gray">Notas</dt>
+						                        <dd class="light-gray"><p><%= @bookings.first.notes %></p></dd>
+						                      <% end %>
+
+						                    </dl>
+
+						                <% else %>
+
+											<dl class="dl-horizontal book-dl">
+												<dt class="dark-gray">¿Qué reservaste?</dt>
+												<dd class="light-gray">
+													<% @bookings.each do |booking| %>
+														<%= booking.service.name %><br />
+													<% end %>
+												</dd>
+												<dt class="dark-gray">¿Dónde?</dt>
+												<dd class="light-gray"><%= @bookings.first.location.address %>, <%= @bookings.first.location.district.name %></dd>
+												<dt class="dark-gray">¿Con quién?</dt>
+												<dd class="light-gray">
+													<% @bookings.each do |booking| %>
+														<%= booking.service_provider.public_name %><br />
+													<% end %>
+												</dd>
+												<dt class="dark-gray">¿Cuándo?</dt>
+												<dd class="light-gray">
+													<% @bookings.each do |booking| %>
+														<%= I18n.l(booking.start.to_datetime) %><br />
+													<% end %>
+												</dd>
+												<% if !@bookings.first.notes.blank? %>
+							                        <dt class="dark-gray">Notas</dt>
+							                        <dd class="light-gray"><p><%= @bookings.first.notes %></p></dd>
+						                        <% end %>
+											</dl>
+										<% end %>
+
+
 										<div class="book-subheader dark-gray">Comprobante de pago</div>
 										<dl class="dl-horizontal book-dl">
 											<dt class="dark-gray">Comercio</dt>
@@ -124,7 +165,7 @@
 												Total a pagar:
 											</dt>
 											<dd class="light-gray">
-												<%= number_to_currency(@bookings.first.payed_booking.punto_pagos_confirmation.amount, unit: "CLP $", delimiter: ".") %>
+												<%= number_to_currency(@bookings.first.payed_booking.punto_pagos_confirmation.amount, unit: "$", delimiter: ".") %>
 											</dd>
 											<dt class="dark-gray">
 												Número de tarjeta:
@@ -301,7 +342,7 @@
 				        
 				                      <div class="form-group">
 				                        <div class="col-sm-offset-2 col-sm-8">
-				                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right' %>
+				                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right', onclick: "ga('send', 'event', 'Usuarios', 'Sign-Up Usuarios', 'Registro desde Pago');" %>
 				                        </div>
 				                      </div>
 				                    <% end %>
@@ -377,4 +418,27 @@
 		});
 
 	</script>
+<% end %>
+
+<% if ENV["MONITORING_ACTIVATION"] == "TRUE" %>
+<% if @success_page != "billing" or @success_page != "plan" %>
+<% content_for :head_scripts do %>
+<!-- Facebook Conversion Code for Pay - AgendaPro -->
+<script>(function() {
+var _fbq = window._fbq || (window._fbq = []);
+if (!_fbq.loaded) {
+var fbds = document.createElement('script');
+fbds.async = true;
+fbds.src = '//connect.facebook.net/en_US/fbds.js';
+var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(fbds, s);
+_fbq.loaded = true;
+}
+})();
+window._fbq = window._fbq || [];
+window._fbq.push(['track', '6029599081040', {'value':'0.00','currency':'CLP'}]);
+</script>
+<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6029599081040&amp;cd[value]=0.00&amp;cd[currency]=CLP&amp;noscript=1" /></noscript>
+<% end %>
+<% end %>
 <% end %>

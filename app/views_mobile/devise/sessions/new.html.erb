@@ -5,20 +5,18 @@
             <%= form_for resource, :as => resource_name, :url => session_path(resource_name), :html => { class: 'loginform' } do |f| %>
                 <div class="row" style="margin-top: 12px; margin-bottom: 5px;">
                   <div class="col-xs-12">
-                    <span class="login-title">Ingresa con Facebok o Google</span>
+                    <span class="login-title">Ingresa con Facebook o Google</span>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-xs-1">
+                  <div class="col-xs-2">
                   </div>
-                  <div class="col-xs-5">
-                    <%= link_to '<i class="fa fa-facebook"></i> Facebook'.html_safe, social_login_url('facebook'), { :class => "btn btn-block btn-social btn-facebook pull-right" }  %>
-                  </div>
-                  <div class="col-xs-5">
+                  <div class="col-xs-8">
+                    <%= link_to '<i class="fa fa-facebook"></i> Facebook'.html_safe, social_login_url('facebook'), { :class => "btn btn-block btn-social btn-facebook" }  %>
                     <%= link_to '<i class="fa fa-google"></i> Google'.html_safe, social_login_url('google_oauth2'), { :class => "btn btn-block btn-social btn-google-plus" }  %>
                   </div>
-                  <div class="col-xs-1">
-                  </div>          
+                  <div class="col-xs-2">
+                  </div>
                 </div>
                 <div class="row" style="margin-top: 12px; margin-bottom: 5px;">
                   <div class="col-xs-12">

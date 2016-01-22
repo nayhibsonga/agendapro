@@ -11,6 +11,17 @@
     </div>
   <% end %>
 
+  <% if current_user.role == Role.find_by(name: "Super Admin") %>
+  <div class="form-group">
+    <div class="col-md-offset-2 col-md-9">
+      <div class="checkbox">
+        <label>
+          <%= f.check_box :show_in_home %> Mostrar en el inicio
+        </label>
+      </div>
+    </div>
+  </div>
+  <% end %>
   <div class="form-group has-feedback">
     <%= f.label :name, 'Nombre', class: 'control-label col-md-2' %>
     <div class="col-md-9">
@@ -24,7 +35,7 @@
     <div class="col-md-9">
       <div class="input-group">
         <%= f.text_field :web_address, :required => true, :class => 'form-control', :placeholder => 'Empresa (requerido)' %>
-        <span class="input-group-addon">.agendapro.cl</span>
+        <span class="input-group-addon">.agendapro<%= @company.country.domain %></span>
       </div>
       <span class="help-block"></span>
       <span class="help-block">Esta es la página del sitio en AgendaPro. <strong>NO recomendamos editarla.</strong></span>
@@ -49,11 +60,9 @@
       </div>
     </div>
     <div class="col-md-6">
-      <% if @company.logo_url %>
       <div class="company-logo">
-        <%= image_tag @company.logo_url.to_s, :size => "80x80", :alt => @company.name %>
+        <%= image_tag @company.logo.thumb.url.to_s, :size => "80x80", :alt => @company.name %>
       </div>
-      <% end %>
     </div>
   </div>
   <div class="form-group has-feedback">

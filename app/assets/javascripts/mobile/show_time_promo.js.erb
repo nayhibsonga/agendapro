@@ -1,0 +1,48 @@
+
+$(document).ready(function(){
+
+	if($('.economic-sector-btn.active').length)
+	{
+		var x = $('.economic-sector-btn.active').position().left;
+		x = x - $("#economic-sectors-wrapper").width()/2;
+		$('#economic-sectors-row').scrollLeft(x);
+	}
+
+	datepicker('#datepicker', {
+	    format: 'dddd d !de mmmm !de yyyy',
+	    min: true,
+	    klass: {
+	      input: 'datepicker'
+	    },
+	    onSet: function (context) {
+	      $('#openHoursBtn').attr('disabled', false);
+	    }
+  	});
+
+  	$('.economic-sector-btn').on('click', function(e){
+  		if($("#latitude").length && $("#longitude").length && $("#inputLocalization").length)
+		{
+			if($("#latitude").val() != "" && $("#longitude").val() != "" && $("#inputLocalization").val != "")
+			{
+				e.preventDefault();
+				new_href = $(this).attr('href') + '&latitude=' + $("#latitude").val() + '&longitude=' + $('#longitude').val() + '&inputLocalization=' + $('#inputLocalization').val();
+				window.location.href = new_href;
+			}
+		}
+	});
+
+	$("#openHoursBtn").on('click', function(){
+
+	    selects = [];
+	    selects.push({
+	      service: $("#service").val(),
+	      provider: $("#provider").val()
+	    });
+
+	    $("#serviceStaff").val(JSON.stringify(selects));
+
+	    $("#select-promo-hour-form").submit();
+
+	});
+
+});

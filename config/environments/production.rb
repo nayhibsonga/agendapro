@@ -1,4 +1,5 @@
 Agendapro::Application.configure do
+  require "excon"
   # Se setea el host por defecto en production. Ojo de cambiarlo a mano en bambucalendar
   Rails.application.routes.default_url_options[:host] = ENV["DEFAULT_URL_OPTIONS"]
   
@@ -27,6 +28,7 @@ Agendapro::Application.configure do
 
   # Compress JavaScripts and CSS.
   config.assets.js_compressor = :uglifier
+  # config.assets.js_compressor = Uglifier.new(mangle: false)
   # config.assets.css_compressor = :sass
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
@@ -99,5 +101,7 @@ Agendapro::Application.configure do
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
+
+  Excon.defaults[:write_timeout] = 600
 
 end

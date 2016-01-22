@@ -10,7 +10,7 @@
   <div class="row">
     <div class="col-md-12">
       <div class="pull-right text-right" style="margin: 10px 0;">
-        <% if @locations.where(active:true).count < @locations.first.company.plan.locations %>
+        <% if current_user.role != Role.find_by(name: "Super Admin") and @locations.where(active:true).count < current_user.company.plan.locations %>
           <%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-green" unless cannot? :create, Location %>
           <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-white" unless cannot? :destroy, Location %>
         <% else %>
@@ -18,35 +18,28 @@
           <a href="#" class="btn btn-green disabled">Nuevo Local</a>
           <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-white" unless cannot? :destroy, Location %>
         </p>
-          <p>
-            No puedes crear más locales con el plan actual. <%= link_to 'Cambiar mi plan', select_plan_path, :class => "btn btn-white" %>
-          </p>
+        <p>No puedes crear más locales con el plan actual. <%= link_to 'Cambiar mi plan', select_plan_path, :class => "btn btn-white" %></p>
         <% end %>
       </div>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
+      <% if current_user.role != Role.find_by(name: "Super Admin") %>
       <table class="table table-bordered table-green">
         <thead>
           <tr>
             <th>Nombre</th>
-            <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
-            <th>Empresa</th>
-            <% end %>
             <th>Opciones</th>
           </tr>
         </thead>
         <tbody>
           <% @locations.each do |location| %>
-            <tr draggable="true">
+            <tr>
               <td data-location="<%= location.id %>"><%= location.name %></td>
-              <% if current_user.role_id == Role.find_by_name('Super Admin').id %>
-              <td><%= location.company.name %></td>
-              <% end %>
               <td>
                 <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_location_path(location), :class => "btn btn-sm btn-orange" %>
-                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_location_path(:id => location.id), :class => "btn btn-sm btn-red", data: { confirm: '¿Estás seguro de desactivar el Local seleccionado?' } unless cannot? :destroy, location %>
+                <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_location_path(:id => location.id), method: :patch, :class => "btn btn-sm btn-red", data: { confirm: '¿Estás seguro de desactivar el Local seleccionado?' } unless cannot? :destroy, location %>
                 <span class="pull-right">
                   <i class="fa fa-bars"></i>
                 </span>
@@ -55,15 +48,79 @@
           <% end %>
         </tbody>
       </table>
+      <% else %>
+      <div class="panel-group" id="companies" role="tablist" aria-multiselectable="true">
+        <% @companies.each do |company| %>
+        <div class="panel panel-green">
+          <div class="panel-heading" role="tab" id="heading<%= company.id.to_s %>">
+            <h4 class="panel-title">
+              <a href="#collapse<%= company.id.to_s %>" role="button" data-toggle="collapse" data-parent="#companies" aria-expanded="false" aria-controls="collapse<%= company.id.to_s %>"><%= company.name %></a>
+            </h4>
+          </div>
+          <div id="collapse<%= company.id.to_s %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= company.id.to_s %>">
+            <ul class="list-group">
+              <% company.locations.where(active: true).order(:order, :name).each do |location| %>
+              <li class="list-group-item">
+                <%= form_for location, html: {class: "form-horizontal", multipart: true} do |f| %>
+                  <div class="form-group">
+                    <div class="col-md-12">
+                      <h4><%= location.name %></h4>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-md-4">
+                      <div class="text-center" style="min-height: 100px;">
+                        <%= image_tag location.image1.thumb.url.to_s, width: "200", alt: location.name, class: 'img-rounded', style: 'margin: 5px;' %>
+                      </div>
+                      <%= f.file_field :image1, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :remove_image1 %> Quitar Imagen 1
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-center" style="min-height: 100px;">
+                        <%= image_tag location.image2.thumb.url.to_s, width: "200", alt: location.name, class: 'img-rounded', style: 'margin: 5px;' %>
+                      </div>
+                      <%= f.file_field :image2, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :remove_image2 %> Quitar Imagen 2
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-center" style="min-height: 100px;">
+                        <%= image_tag location.image3.thumb.url.to_s, width: "200", alt: location.name, class: 'img-rounded', style: 'margin: 5px;' %>
+                      </div>
+                      <%= f.file_field :image3, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :remove_image3 %> Quitar Imagen 3
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-md-12">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                    </div>
+                  </div>
+                <% end %>
+              </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+        <% end %>
+      </div>
+      <% end %>
     </div>
   </div>
 </div>
 
-<% content_for :stylesheets do %>
-  <%= stylesheet_link_tag "admin/draggable" %>
-<% end %>
-
 <% content_for :scripts do %>
-  <%= javascript_include_tag 'admin/draggable' %>
+  <script>$("#sortable").sortable();</script>
   <%= javascript_include_tag 'admin/location_draggable' %>
 <% end %>

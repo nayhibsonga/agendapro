@@ -1,0 +1,155 @@
+@import 'variables';
+
+section.title {
+  h1, p { text-align: center; }
+}
+
+section.plans {
+  $cols: 4;
+  %border {
+    border-color: $gray;
+    border-style: solid;
+  }
+
+  margin-top: 20px;
+  margin-bottom: 10px;
+
+  .border {
+    @extend %border;
+    border-width: 1px;
+  }
+  .pricing-col {
+    position: relative;
+    min-height: 1px;
+    float: left;
+
+    display: none;
+    padding: 10px 10px;
+    width: 100%;
+    text-align: center;
+
+    &.active {
+      display: initial;
+    }
+  }
+  .pricing-cols, .pricing-description {
+    position: relative;
+    min-height: 1px;
+    float: left;
+  }
+  .pricing-description {
+    padding: 10px 15px;
+    span { color: $light-gray; }
+  }
+  .pricing-header {
+    p { margin-bottom: 0; }
+    .pricing-cols { width: 100%; }
+    .pricing-description {
+      width: 0%;
+    }
+  }
+  .pricing-row {
+    & + .pricing-row { border-top: $gray solid 1px; }
+    p { margin-bottom: 0; }
+    .pricing-cols { width: 30%; }
+    .pricing-description {
+      width: 70%;
+      border-right: $gray solid 1px;
+    }
+  }
+  .pricing-plan {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  .pricing-title {
+    @extend .pricing-plan;
+    @media (max-width: 400px) {
+      font-size: 15px;
+    }
+    display: inline-block;
+    padding: 5px 10px;
+    text-align: center;
+    width: calc((100% / #{$cols}) - (#{$cols} - 1)* 1px);
+    cursor: pointer;
+
+    & + .pricing-title { border-left: $gray solid 1px; }
+    &.active {
+      color: $light-orange;
+    }
+  }
+  .pricing-circle {
+    $size: 120px;
+    @extend %border;
+    border-color: $lighter-gray;
+    border-width: 5px;
+    border-radius: 100%;
+    width: $size;
+    height: $size;
+    margin: 0 auto;
+    padding: 15px 5px;
+    p {
+      font-size: 14px;
+      margin-bottom: 0;
+      &.price {
+        font-size: 27px;
+        font-weight: bold;
+        color: $light-green;
+      }
+    }
+  }
+  .pricing-section, .pricing-icon {
+    color: $light-green;
+  }
+  @media (min-width: 992px) {
+    .pricing-col {
+      display: initial;
+      width: 25%;
+      & + .pricing-col { border-left: $gray solid 1px; }
+    }
+    .pricing-row {
+      .pricing-cols {
+        width: 70%;
+      }
+      .pricing-description {
+        width: 30%;
+      }
+    }
+    .pricing-header {
+      .pricing-cols { width: 70%; }
+      .pricing-description {
+        width: 30%;
+      }
+    }
+    .floating-header {
+      position: fixed;
+      background: white;
+      z-index: 1;
+      top: 60px;
+      width: 940px;
+      @media (min-width: 1200px) {
+        width: 1140px;
+      }
+      -webkit-box-shadow: 0px 10px 10px -5px rgba(50, 50, 50, 0.25);
+      -moz-box-shadow:    0px 10px 10px -5px rgba(50, 50, 50, 0.25);
+      box-shadow:         0px 10px 10px -5px rgba(50, 50, 50, 0.25);
+    }
+    .fill {
+      height: 170px;
+      display: none;
+    }
+  }
+  .border:before,
+  .border:after,
+  .pricing-row:before,
+  .pricing-row:after,
+  .pricing-header:before,
+  .pricing-header:after {
+    display: table;
+    content: " ";
+  }
+  .border:after,
+  .pricing-row:after,
+  .pricing-header:after {
+    clear: both;
+  }
+}

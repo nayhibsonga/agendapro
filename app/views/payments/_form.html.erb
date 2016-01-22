@@ -1,0 +1,21 @@
+<%= simple_form_for(@payment) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.association :company %>
+    <%= f.input :amount %>
+    <%= f.association :receipt_type %>
+    <%= f.input :receipt_number %>
+    <%= f.association :payment_method %>
+    <%= f.input :payment_method_number %>
+    <%= f.association :payment_method_type %>
+    <%= f.input :installments %>
+    <%= f.input :payed %>
+    <%= f.input :payment_date %>
+    <%= f.association :bank %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>
