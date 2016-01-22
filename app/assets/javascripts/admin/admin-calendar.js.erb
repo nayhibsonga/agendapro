@@ -863,27 +863,25 @@ function createBookingModal(date, provider_id) {
   $('#is_prepayed').text("No");
   $('#bundled_service').hide();
 
-  console.log("Entra.");
-
   $.getJSON('/local_providers', {location: localId}, function (providersArray) {
     if (providersArray.length > 0) {
       if (date != 0) {
 
-        date_str = date.toISOString();
-        dateArray = date.toLocaleDateString().split('/');
-        timeArray = date.split(' ')[4];
+        var date_str = date.toISOString().split("T")[0].split("-");
+        var dateArray = date.toLocaleDateString().split('/');
+        var timeArray = date.toString().split(' ')[4];
 
-        var day_str = dateArray[0];
+        var day_str = date_str[2];
         if(day_str.length == 1)
         {
           day_str = "0" + day_str;
         }
-        var month_str = dateArray[1];
+        var month_str = date_str[1];
         if(month_str.length == 1)
         {
           month_str = "0" + month_str;
         }
-        var year_str = dateArray[2];
+        var year_str = date_str[0];
 
         //Falta revisar el tema de las fechas, deberían ser contantes en la app
         $('#datePicker').val(day_str+'/'+month_str+'/'+year_str);
