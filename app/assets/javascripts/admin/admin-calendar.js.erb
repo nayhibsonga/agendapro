@@ -6,7 +6,7 @@ var bundlesJSON;
 var dragInProgress = false;
 var dragUi = null;
 
-var bookingBuffer = []
+var bookingBuffer = [];
 
 function showErrors (xhr) {
   var errors = $.parseJSON(xhr.responseText).errors;
@@ -44,7 +44,7 @@ function loadProviders () {
             $('#providers-selector').append('<option disabled role=separator>--------</option>');
           }
           $.each(provider_groups, function (key, group) {
-            if (group.location_id == localId) {
+            if (group.location_id == localId && group.resources.length > 0) {
               $('#providers-selector').append('<option value="0" data-resources=\'[' + JSON.stringify(group.resources) + ']\'>' + group.name + '</option>');
             }
           });
@@ -79,7 +79,12 @@ function loadProviders () {
             loadLocationTime (localId, resources);
           }
           else {
-            loadProviderTime(parseInt($('#providers-selector').val()));
+            if ( $('#providers-selector option:selected').data('resources') && $('#providers-selector option:selected').data('resources').length > 0 ) {
+              loadLocationTime (localId, $('#providers-selector option:selected').data('resources'));
+            }
+            else {
+              loadProviderTime(parseInt($('#providers-selector').val()));
+            }
           }
           return true;
         }
@@ -843,7 +848,7 @@ function editBookingModal(eventId) {
 }
 
 function createBookingModal(date, provider_id) {
-  bookingBuffer = []
+  bookingBuffer = [];
   var localId = parseInt($('#locals-selector').val());
   var date = date || 0;
   var provider_id = provider_id || 0;
@@ -861,11 +866,27 @@ function createBookingModal(date, provider_id) {
   $.getJSON('/local_providers', {location: localId}, function (providersArray) {
     if (providersArray.length > 0) {
       if (date != 0) {
-        dateArray = date.toString().split(' ');
+
+        var date_str = date.toISOString().split("T")[0].split("-");
+        var dateArray = date.toLocaleDateString().split('/');
+        var timeArray = date.toString().split(' ')[4];s
+
+        var day_str = date_str[2];
+        if(day_str.length == 1)
+        {
+          day_str = "0" + day_str;
+        }
+        var month_str = date_str[1];
+        if(month_str.length == 1)
+        {
+          month_str = "0" + month_str;
+        }
+        var year_str = date_str[0];
+
         //Falta revisar el tema de las fechas, deberían ser contantes en la app
-        $('#datePicker').val(dateArray[2]+'/'+dateArray[1]+'/'+dateArray[3]);
-        $('#bookingStartHour option[value="'+dateArray[4].split(':')[0]+'"]').attr("selected",true);
-        $('#bookingStartMinute option[value="'+dateArray[4].split(':')[1]+'"]').attr("selected",true);
+        $('#datePicker').val(day_str+'/'+month_str+'/'+year_str);
+        $('#bookingStartHour option[value="'+timeArray.split(":")[0]+'"]').attr("selected",true);
+        $('#bookingStartMinute option[value="'+timeArray.split(":")[1]+'"]').attr("selected",true);
         modalChange();
       }
       else {
@@ -1146,21 +1167,39 @@ function jsonBooking() {
   }
   if ($("#booking_service_id").find(':selected').data('bundle') == true) {
     var jsBookingArray = [];
-    start = new Date(objectToDate($('#datePicker').val()));
+    var hrs = parseInt($("#bookingStartHour").val());
+    var mins = parseInt($("#bookingStartMinute").val());
     $('#bundle_service_providers .bundle_service').each(function() {
-      end = new Date(start.getTime() + parseInt($(this).data('duration'))*60000);
+      var duration = $(this).data('duration');
+      var extraCharH = '';
+      var extraCharM = '';
+      var hours = parseInt(hrs);
+      var minutes = parseInt(mins) + duration;
+      if (minutes >= 60) {
+        hours += Math.floor(minutes/60);
+        minutes = minutes%60;
+      }
+      if (hours < 10) {
+        extraCharH = '0';
+      }
+      if (minutes < 10) {
+        extraCharM = '0';
+      }
       var newJsBooking = $.extend({}, jsBooking);
       newJsBooking['service_id'] = parseInt($(this).data('id'));
       newJsBooking['service_provider_id'] = parseInt($(this).val());
       newJsBooking['price'] = $(this).data('price');
-      newJsBooking['start'] = start.toISOString();
-      newJsBooking['end'] = end.toISOString();
+      newJsBooking['start'] = $('#datePicker').val() +"T"+ hrs +":"+ mins +":00Z",
+      newJsBooking['end'] = $('#datePicker').val() +"T"+ extraCharH+hours +":"+ extraCharM+minutes +":00Z",
       newJsBooking['bundled'] = true;
       newJsBooking['bundle_id'] = parseInt($('#booking_service_id').val());
 
+
+
       jsBookingArray.push(newJsBooking);
 
-      start = end;
+      hrs = extraCharH+hours;
+      mins = extraCharM+minutes;
     });
     return jsBookingArray;
   }
@@ -2819,7 +2858,7 @@ $(function() {
     }
   });
   $('#datePicker').datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,
@@ -2846,7 +2885,7 @@ $(function() {
   });
 
   $("#dp").datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,
@@ -2869,7 +2908,7 @@ $(function() {
   });
 
   $("#set-date").datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,
