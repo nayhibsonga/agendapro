@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Attribute:</strong>
+  <%= @attribute_category.attribute_id %>
+</p>
+
+<p>
+  <strong>Category:</strong>
+  <%= @attribute_category.category %>
+</p>
+
+<%= link_to 'Edit', edit_attribute_category_path(@attribute_category) %> |
+<%= link_to 'Back', attribute_categories_path %>

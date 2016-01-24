@@ -1,0 +1,31 @@
+<h1>Listing company_plan_settings</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Base price</th>
+      <th>Locations multiplier</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @company_plan_settings.each do |company_plan_setting| %>
+      <tr>
+        <td><%= company_plan_setting.company_id %></td>
+        <td><%= company_plan_setting.base_price %></td>
+        <td><%= company_plan_setting.locations_multiplier %></td>
+        <td><%= link_to 'Show', company_plan_setting %></td>
+        <td><%= link_to 'Edit', edit_company_plan_setting_path(company_plan_setting) %></td>
+        <td><%= link_to 'Destroy', company_plan_setting, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Company plan setting', new_company_plan_setting_path %>

@@ -2612,23 +2612,6 @@ function openPaymentMailer(payment_id)
 
 
 /*
-* Auxiliary function for validation removal (when going back a step).
-*/
-
-function clearValidations(element)
-{
-  $(element).closest(".payment-form-div").removeClass("has-success")
-  $(element).closest(".payment-form-div").removeClass("has-error")
-
-  $(element).closest(".payment-form-div").find(".form-control").removeClass("valid")
-
-  $(element).closest(".payment-form-div").find(".form-control-feedback").removeClass("fa")
-
-  $(element).closest(".payment-form-div").find(".form-control-feedback").removeClass("fa-check")
-  $(element).closest(".payment-form-div").find(".form-control-feedback").removeClass("fa-times")
-}
-
-/*
 * Reset functions
 * Separated by steps
 */

@@ -36,7 +36,6 @@ $(function() {
 	});
 
 
-	$('input[name="billing_info[accept]"]:hidden').attr('name', 'temp_checkbox');
 	$('#new_billing_info, [id^="edit_billing_info_"]').validate({
 		errorPlacement: function(error, element) {
 			var id = element.attr('id');
@@ -84,7 +83,6 @@ $(function() {
 			$(element).parent().empty()
 		},
 		submitHandler: function(form) {
-			$('input[name="temp_checkbox"]:hidden').attr('name', 'billing_info[accept]');
 			form.submit();
 		}
 	});

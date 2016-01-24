@@ -59,8 +59,7 @@ class Location < ActiveRecord::Base
 
   accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
-  scope :actives, where(active: true)
-
+  scope :actives, -> { where(active: true) }
   validates :name, :phone, :company, :district, :email, :presence => true
 
   validate :times_overlap, :time_empty_or_negative, :plan_locations, :outcall_services, :active_countries
@@ -71,7 +70,8 @@ class Location < ActiveRecord::Base
   end
 
   after_commit :extended_schedule
-  after_create :add_products
+  after_create :add_products, :add_due
+  after_destroy :substract_due
 
   pg_search_scope :search_company_name, :associated_against => {
     :company => :name
@@ -129,6 +129,29 @@ class Location < ActiveRecord::Base
   },
   :ignoring => :accents
 
+  	#Add due if plan is not custom and locations increased by one
+  	def add_due
+  		if !self.company.plan.custom
+  			company = self.company
+  			day_number = DateTime.now.day
+    		month_number = DateTime.now.month
+    		month_days = DateTime.now.days_in_month
+  			company.due_amount += (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * company.computed_multiplier).round(2)
+  			company.save
+  		end
+  	end
+
+  	#Substract due if plan is not custom and locations decreased by one
+  	def substract_due
+  		if !self.company.plan.custom
+  			company = self.company
+  			day_number = DateTime.now.day
+    		month_number = DateTime.now.month
+    		month_days = DateTime.now.days_in_month
+  			company.due_amount -= (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * (company.computed_multiplier + company.company_plan_setting.locations_multiplier)).round(2)
+  			company.save
+  		end
+  	end
 
   	def add_products
   		Product.where(:company_id => self.company.id).each do |product|
@@ -159,18 +182,18 @@ class Location < ActiveRecord::Base
 
 	def plan_locations
 		if self.active_changed? && self.active
-			if self.company.locations.where(active:true).count >= self.company.plan.locations
+			if self.company.locations.where(active:true).count >= self.company.plan.locations && (self.company.plan.custom || self.company.plan.name == "Personal")
 				errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 			end
 		else
-			if self.company.locations.where(active:true).count > self.company.plan.locations
+			if self.company.locations.where(active:true).count > self.company.plan.locations && (self.company.plan.custom || self.company.plan.name == "Personal")
 				errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 			end
 		end
 	end
 
 	def new_plan_locations
-		if self.company.locations.where(active:true).count >= self.company.plan.locations
+		if self.company.locations.where(active:true).count >= self.company.plan.locations && (self.company.plan.custom || self.company.plan.name == "Personal")
 			errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 		end
 	end

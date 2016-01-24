@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @company_plan_setting.company_id %>
+</p>
+
+<p>
+  <strong>Base price:</strong>
+  <%= @company_plan_setting.base_price %>
+</p>
+
+<p>
+  <strong>Locations multiplier:</strong>
+  <%= @company_plan_setting.locations_multiplier %>
+</p>
+
+<%= link_to 'Edit', edit_company_plan_setting_path(@company_plan_setting) %> |
+<%= link_to 'Back', company_plan_settings_path %>

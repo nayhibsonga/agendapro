@@ -6,4 +6,24 @@ module ClientsHelper
     direction = column == sort_column && sort_direction == "asc" ? "desc" : "asc"
     link_to title, params.merge({:sort => column, :direction => direction}), {:class => css_class}
   end
+
+  def editor_image(content, img, email=false)
+    render(
+      '/clients/email/full/templates/image_upload',
+      content: content,
+      img_name: img,
+      exist: content.data.any? && content.data[img].present?,
+      email: email
+    )
+  end
+
+  def editor_text(content, txt, email=false)
+    render(
+      '/clients/email/full/templates/text_edit',
+      content: content,
+      txt_name: txt,
+      email: email
+      )
+  end
+
 end
