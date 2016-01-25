@@ -49,6 +49,23 @@ class ClientsController < ApplicationController
     @services = Service.where(company_id: @client.company.id).accessible_by(current_ability)
     @service_providers = ServiceProvider.where(company_id: @client.company.id).accessible_by(current_ability)
 
+    @start_date = DateTime.now - 2.weeks
+    if @client.bookings.where('start < ?', DateTime.now).count > 0
+      @start_date = @client.bookings.where('start < ?', DateTime.now).order('start desc').first.start
+    end
+
+    @end_date = DateTime.now
+    if @client.bookings.where('start > ?', DateTime.now).count > 0
+      @end_date = @client.bookings.where('start > ?', DateTime.now).order('start desc').first.start
+    end
+
+    @start_date = @start_date.strftime("%d/%m/%Y")
+    @end_date = @end_date.strftime("%d/%m/%Y")
+
+    logger.debug "Dates: "
+    logger.debug @start_date
+    logger.debug @end_date
+
   end
 
   def bookings_content

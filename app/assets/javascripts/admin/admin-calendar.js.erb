@@ -1818,8 +1818,16 @@ function saveBookingBuffer () {
 
 function saveBreak (typeURL, extraURL) {
   var break_service_providers_ids = new Array();
-  $(".providers_check_boxes").each(function(){
+
+  /*$(".providers_check_boxes").each(function(){
     if($(this).prop("checked"))
+    {
+      break_service_providers_ids.push($(this).val());
+    }
+  });*/
+
+  $("#serviceProvidersMultiSelect option").each(function(){
+    if ($(this).is(':selected'))
     {
       break_service_providers_ids.push($(this).val());
     }
@@ -2006,8 +2014,16 @@ function saveBreak (typeURL, extraURL) {
 
 function editRepeatBreak(breakId) {
   var break_service_providers_ids = new Array();
-  $(".providers_check_boxes").each(function(){
+  
+  /*$(".providers_check_boxes").each(function(){
     if($(this).prop("checked"))
+    {
+      break_service_providers_ids.push($(this).val());
+    }
+  });*/
+
+  $("#serviceProvidersMultiSelect option").each(function(){
+    if ($(this).is(':selected'))
     {
       break_service_providers_ids.push($(this).val());
     }
@@ -2110,12 +2126,21 @@ function editRepeatBreak(breakId) {
 
 function deleteRepeatBreak(breakId) {
   var break_service_providers_ids = new Array();
-  $(".providers_check_boxes").each(function(){
+  
+  /*$(".providers_check_boxes").each(function(){
     if($(this).prop("checked"))
     {
       break_service_providers_ids.push($(this).val());
     }
+  });*/
+
+  $("#serviceProvidersMultiSelect option").each(function(){
+    if ($(this).is(':selected'))
+    {
+      break_service_providers_ids.push($(this).val());
+    }
   });
+
   var breakJSON = {
     "service_provider_id": break_service_providers_ids,
     "name": $('#provider_break_name').val(),
@@ -2209,26 +2234,69 @@ function createBreakModal(date, providerId) {
     success: function (providersArray, status, jqXHR) {
       var checkboxes_selector = $("#providers_checkboxes");
       checkboxes_selector.empty();
+      $('#serviceProvidersMultiSelect').empty();
 
       $.each(providersArray, function (key, provider){
-        checkboxes_selector.append(
+        /*checkboxes_selector.append(
           '<div class="checkbox"><label>' +
           '<input class="check_boxes providers_check_boxes" id="provider_break_service_provider_id_' + provider.id + '" name="provider_break[service_provider_id][]" type="checkbox" value="' + provider.id + '"> ' + provider.public_name + ' ' +
           '</label></div>'
-          );
+          );*/
+        $('#serviceProvidersMultiSelect').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+
+      });
+
+      $('#serviceProvidersMultiSelect').multiselect({
+        includeSelectAllOption: true,
+        selectAllText: 'Todos',
+        buttonContainer: '<div style="margin-top: 5px;"></div>',
+        buttonText: function(options, select) {
+          console.log(options);
+          if (options.length === 0) {
+              return 'Ninguno';
+          }
+          else if(options.length == select[0].length)
+          {
+            return "Todos";
+          }
+          else if(options.length > 2)
+          {
+            return options.length + " seleccionados";
+          }
+          else {
+            var labels = [];
+            options.each(function() {
+               if ($(this).attr('label') !== undefined) {
+                   labels.push($(this).attr('label'));
+               }
+               else {
+                   labels.push($(this).html());
+               }
+            });
+            return labels.join(', ') + '';
+          }
+        },
+        onChange: function(option, checked, select){
+          //loadPayments();
+        },
+        onInitialized: function(select, container){
+          $('#serviceProvidersMultiSelect').show();
+        }
+
       });
 
     }
   });
 
   if (parseInt($('#providers-selector').val()) > 0) {
-    $("#provider_break_service_provider_id_" + parseInt($('#providers-selector').val())).prop("checked", true);
-
+    //$("#provider_break_service_provider_id_" + parseInt($('#providers-selector').val())).prop("checked", true);
+    $('#serviceProvidersMultiSelect option[value="' + parseInt($('#providers-selector').val()) + '"]').prop('selected', true);
   }
   if (providerId > 0) {
-
-    $("#provider_break_service_provider_id_" + providerId).prop("checked", true);
+    //$("#provider_break_service_provider_id_" + providerId).prop("checked", true);
+    $('#serviceProvidersMultiSelect option[value="' + providerId + '"]').prop('selected', true);
   }
+  $('#serviceProvidersMultiSelect').multiselect('refresh');
 
   var end_minutes = parseInt($('#provider_break_end_5i').val()) + $('#calendar-data').data('calendar-duration');
   if (end_minutes >= 60) {
@@ -2304,18 +2372,60 @@ function editBreakModal(breakId) {
         var checkboxes_selector = $("#providers_checkboxes");
         checkboxes_selector.empty();
 
+        $('#serviceProvidersMultiSelect').empty();
+
         $.each(providersArray, function(key, provider){
 
-          checkboxes_selector.append(
+          /*checkboxes_selector.append(
             '<div class="checkbox"><label>' +
             '<input class="check_boxes providers_check_boxes" id="provider_break_service_provider_id_' + provider.id + '" name="provider_break[service_provider_id][]" type="checkbox" value="' + provider.id + '"> ' + provider.public_name + ' ' +
             '</label></div>'
-            );
+            );*/
+
+          $('#serviceProvidersMultiSelect').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
 
         });
 
+        $('#serviceProvidersMultiSelect').multiselect({
+          includeSelectAllOption: true,
+          selectAllText: 'Todos',
+          buttonContainer: '<div style="margin-top: 5px;"></div>',
+          buttonText: function(options, select) {
+            console.log(options);
+            if (options.length === 0) {
+                return 'Ninguno';
+            }
+            else if(options.length == select[0].length)
+            {
+              return "Todos";
+            }
+            else if(options.length > 2)
+            {
+              return options.length + " seleccionados";
+            }
+            else {
+              var labels = [];
+              options.each(function() {
+                 if ($(this).attr('label') !== undefined) {
+                     labels.push($(this).attr('label'));
+                 }
+                 else {
+                     labels.push($(this).html());
+                 }
+              });
+              return labels.join(', ') + '';
+            }
+          },
+          onChange: function(option, checked, select){
+            //loadPayments();
+          },
+          onInitialized: function(select, container){
+            $('#serviceProvidersMultiSelect').show();
+          }
 
-        if(break_service_providers != null && break_service_providers.length > 0)
+        });
+
+        /*if(break_service_providers != null && break_service_providers.length > 0)
         {
           for(i = 0; i < break_service_providers.length; i++)
           {
@@ -2332,7 +2442,28 @@ function editBreakModal(breakId) {
         else
         {
           $("#provider_break_service_provider_id_" + parseInt(provider_break.service_provider_id)).prop("checked", true);
+        }*/
+
+        if(break_service_providers != null && break_service_providers.length > 0)
+        {
+          for(i = 0; i < break_service_providers.length; i++)
+          {
+            $('#serviceProvidersMultiSelect option[value="' + parseInt(break_service_providers[i].id) + '"]').prop("selected", true);
+          }
         }
+        else if(group_service_providers != null && group_service_providers.length > 0)
+        {
+          for(i = 0; i < group_service_providers.length; i++)
+          {
+            $('#serviceProvidersMultiSelect option[value="' + parseInt(group_service_providers[i].id) + '"]').prop("selected", true);
+          }
+        }
+        else
+        {
+          $('#serviceProvidersMultiSelect option[value=' + parseInt(provider_break.service_provider_id) + '"]').prop("selected", true);
+        }
+
+        $('#serviceProvidersMultiSelect').multiselect('refresh');
 
       }
     });
