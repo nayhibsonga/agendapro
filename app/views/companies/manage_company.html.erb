@@ -80,7 +80,7 @@
                   <dt>Plan</dt>
                   <dd><%= @company.plan.name %></dd>
                   <dt>Costo</dt>
-                  <dd><%= @company.plan.plan_countries.find_by(country_id: @company.country.id).price %></dd>
+                  <dd><%= @company.company_plan_setting.base_price * @company.computed_multiplier %></dd>
                   <dt>Locales</dt>
                   <dd><%= @company.locations.where(:active => true).count %></dd>
                   <dt>Última fecha de pago</dt>
@@ -400,6 +400,24 @@
                           <% end %>
                         <% end %>
                       </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Precio base</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.company_plan_setting.base_price.to_s %></p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="number" class="form-control" name="new_base_price" value="<%= @company.company_plan_setting.base_price %>" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Multiplicador (locales)</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.company_plan_setting.locations_multiplier.to_s %></p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="number" class="form-control" name="new_locations_multiplier" value="<%= @company.company_plan_setting.locations_multiplier %>" />
                     </div>
                   </div>
                   <div class="form-group">

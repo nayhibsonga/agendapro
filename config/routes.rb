@@ -1,8 +1,5 @@
 Agendapro::Application.routes.draw do
 
-
-
-
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -18,6 +15,10 @@ Agendapro::Application.routes.draw do
     get 'mandrill/confirm_unsubscribe', :as => 'unsubscribe'
     post "mandrill/unsubscribe"
     get "mandrill/resuscribe"
+
+    resources :company_plan_settings
+    resources :attribute_categories
+    resources :attributes
 
     resources :countries
     resources :regions
@@ -79,6 +80,10 @@ Agendapro::Application.routes.draw do
 
     resources :cashiers
 
+    resources :client_files
+
+    resources :company_files
+
     namespace :admin do
       get '', :to => 'dashboard#index', :as => '/'
       resources :users
@@ -124,8 +129,7 @@ Agendapro::Application.routes.draw do
     get '/get_direction', :to => 'districts#get_direction'
     # get '/time_booking_edit', :to => 'company_settings#time_booking_edit', :as => 'time_booking'
     # get '/minisite', :to => 'company_settings#minisite', :as => 'minisite'
-    get '/compose_mail', :to => 'clients#compose_mail', :as => 'send_mail'
-    post '/send_mail_client', :to => 'clients#send_mail'
+
     get '/get_link', :to => 'companies#get_link', :as => 'get_link'
     post '/change_categories_order', :to => 'service_categories#change_categories_order'
     post '/change_services_order', :to => 'services#change_services_order'
@@ -133,6 +137,23 @@ Agendapro::Application.routes.draw do
     post '/change_providers_order', :to => 'service_providers#change_providers_order'
     post '/change_groups_order', :to => 'provider_groups#change_groups_order'
     get '/confirm_email', :to => 'company_from_emails#confirm_email', :as => 'confirm_email'
+
+    # Mail Composing
+    scope controller: 'clients' do
+      get '/compose_mail', action: 'compose_mail', as: 'send_mail'
+      post '/send_mail_client', action: 'send_mail'
+    end
+
+    # Mail Editor
+    namespace 'email' do
+      scope controller: 'content', path: '/content' do
+        get '/editor/:id', action: 'editor', as: :editor
+        post '/editor', action: 'new', as: :new
+        post "/update", action: 'update', as: :update
+        post "/upload", action: 'upload', as: :upload
+        delete "/delete/:id", action: 'delete', as: :delete
+      end
+    end
 
     # Autocompletar del Booking
     get '/clients_suggestion', :to => 'clients#suggestion'
@@ -154,14 +175,19 @@ Agendapro::Application.routes.draw do
     get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
     get '/get_session_bookings', :to => 'users#get_session_bookings'
     get '/get_session_summary', :to => 'users#get_session_summary'
-    post '/delete_session_booking', :to => 'bookings#delete_session_booking'
-    post '/validate_session_booking', :to => 'bookings#validate_session_booking'
-    post '/validate_session_form', :to => 'bookings#validate_session_form'
-    get '/validate_session_form', :to => 'bookings#validate_session_form'
-    get '/session_booking_detail', :to => 'bookings#session_booking_detail'
-    get '/book_session_form', :to => 'bookings#book_session_form'
-    post '/update_book_session', :to => 'bookings#update_book_session'
-    get '/sessions_calendar', :to => 'bookings#sessions_calendar'
+
+    scope controller: 'bookings' do
+      post '/delete_session_booking', action: 'delete_session_booking'
+      post '/validate_session_booking', action: 'validate_session_booking'
+      post '/validate_session_form', action: 'validate_session_form'
+      get '/validate_session_form', action: 'validate_session_form'
+      get '/session_booking_detail', action: 'session_booking_detail'
+      get '/book_session_form', action: 'book_session_form'
+      post '/update_book_session', action: 'update_book_session'
+      get '/sessions_calendar', action: 'sessions_calendar'
+    end
+
+
 
     # Add Company from Usuario Registrado
     get '/add_company', :to => 'companies#add_company', :as => 'add_company'
@@ -511,6 +537,34 @@ Agendapro::Application.routes.draw do
     get '/get_products_for_payment_or_sale', :to => 'payments#get_products_for_payment_or_sale'
     get '/get_product_categories_for_payment_or_sale', :to => 'payments#get_product_categories_for_payment_or_sale'
     get '/get_product_brands_for_payment_or_sale', :to => 'payments#get_product_brands_for_payment_or_sale'
+
+
+    #Client charts and files
+    get '/get_attribute_categories', :to => 'attributes#get_attribute_categories'
+    get '/attribute_edit_form', :to => 'attributes#edit_form'
+    get '/get_company_files', :to => 'companies#files'
+    post '/create_company_folder', :to => 'companies#create_folder'
+    post '/upload_company_file', :to => 'companies#upload_file'
+    post '/rename_company_folder', :to => 'companies#rename_folder'
+    post '/delete_company_folder', :to => 'companies#delete_folder'
+    post '/move_company_file', :to => 'companies#move_file'
+    post '/change_company_file', :to => 'companies#edit_file'
+
+    post '/upload_client_file', :to => 'clients#upload_file'
+    post '/create_client_folder', :to => 'clients#create_folder'
+    get '/get_client_files', :to => 'clients#files'
+    post '/rename_client_folder', :to => 'clients#rename_folder'
+    post '/delete_client_folder', :to => 'clients#delete_folder'
+    post '/move_client_file', :to => 'clients#move_file'
+    post '/change_client_file', :to => 'clients#edit_file'
+
+    get '/company_clients_base', :to => 'companies#generate_clients_base'
+    get '/client_bookings_content', :to => 'clients#bookings_content'
+
+    get '/billing_info_admin_form', :to => 'billing_infos#super_admin_form'
+    get '/billing_info_admin_edit', :to => 'billing_infos#super_admin_edit'
+    post '/billing_info_admin_create', :to => 'billing_infos#super_admin_create'
+    patch '/billing_info_admin_update', :to => 'billing_infos#super_admin_update'
 
 
   end

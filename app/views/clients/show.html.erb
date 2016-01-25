@@ -1,133 +1,110 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-12">
-      <h2 class="text-green">
-        <%= @client.first_name %> <%= @client.last_name %>
-        <small><%= @client.email %></small>
-      </h2>
+    <div class="col-md-10">
+      <div class="col-md-12">
+        <h2 class="text-green">
+          <%= @client.first_name %> <%= @client.last_name %>
+          <small><%= @client.email %></small>
+        </h2>
+      </div>
+      <div class="col-sm-4 col-md-4">
+        <p><strong><%= (I18n.t('ci')).capitalize %>:&nbsp;</strong> <%= if !@client.identification_number.blank? then @client.identification_number else '---' end %></p>
+      </div>
+      <div class="col-sm-4 col-md-4">
+        <p><strong>Teléfono 1:&nbsp;</strong> <%= if !@client.phone.blank? then @client.phone else '---' end %></p>
+      </div>
+      <div class="col-sm-4 col-md-4">
+        <p><strong>Teléfono 2:&nbsp;</strong> <%= if !@client.second_phone.blank? then @client.second_phone else '---' end %></p>
+      </div>
     </div>
-    <div class="col-sm-4 col-md-4">
-      <p><strong><%= (I18n.t('ci')).capitalize %>:&nbsp;</strong> <%= if !@client.identification_number.blank? then @client.identification_number else '---' end %></p>
-    </div>
-    <div class="col-sm-4 col-md-4">
-      <p><strong>Teléfono 1:&nbsp;</strong> <%= if !@client.phone.blank? then @client.phone else '---' end %></p>
-    </div>
-    <div class="col-sm-4 col-md-4">
-      <p><strong>Teléfono 2:&nbsp;</strong> <%= if !@client.second_phone.blank? then @client.second_phone else '---' end %></p>
+    <div class="col-md-2" style="padding-top: 15px;">
+    <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Archivos</span>'.html_safe, get_client_files_path(client_id: @client.id), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 140px;" %><br />
+      <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar Cliente</span>'.html_safe, edit_client_path(@client), :class => "btn btn-orange", :style => "width: 140px;" %>
     </div>
   </div>
+
   <div class="row">
-    <div class="col-xs-4 col-md-2">
-      <div class="well well-sm">
-        <h4 class="text-center"><strong>Reservadas</strong></h4>
-        <p class="text-center text-green" style="font-size: 20px;"><strong><%= @booked %></strong></p>
-      </div>
-    </div>
-    <div class="col-xs-4 col-md-2">
-      <div class="well well-sm">
-        <h4 class="text-center"><strong>Confirmadas</strong></h4>
-        <p class="text-center text-green" style="font-size: 20px;"><strong><%= @confirmed %></strong></p>
-      </div>
-    </div>
-    <div class="col-xs-4 col-md-2">
-      <div class="well well-sm">
-        <h4 class="text-center"><strong>Asistidas</strong></h4>
-        <p class="text-center text-green" style="font-size: 20px;"><strong><%= @attended %></strong></p>
-      </div>
-    </div>
-    <div class="col-xs-4 col-md-2">
-      <div class="well well-sm">
-        <h4 class="text-center"><strong>Pagadas</strong></h4>
-        <p class="text-center text-green" style="font-size: 20px;"><strong><%= @payed %></strong></p>
-      </div>
-    </div>
-    <div class="col-xs-4 col-md-2">
-      <div class="well well-sm">
-        <h4 class="text-center"><strong>Canceladas</strong></h4>
-        <p class="text-center text-green" style="font-size: 20px;"><strong><%= @cancelled %></strong></p>
-      </div>
-    </div>
-    <div class="col-xs-4 col-md-2">
-      <div class="well well-sm">
-        <h4 class="text-center"><strong>No Asistidas</strong></h4>
-        <p class="text-center text-green" style="font-size: 20px;"><strong><%= @notAttended %></strong></p>
+    <div class="col-md-12">
+      <div style="margin-top: 15px; margin-bottom: 25px; padding-top: 10px; padding-bottom: 10px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; font-size: 22px; color: #22c488">
+        Reservas
       </div>
     </div>
   </div>
-  <div class="row">
+
+  <div class="row" style="margin-bottom: 15px;">
     <div class="col-md-12">
-      <div class="table-responsive">
-        <table class="table table-hover table-green">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Local</th>
-              <th>Servicio</th>
-              <th>Prestador</th>
-              <th>Estado</th>
-              <th>Nota Cliente</th>
-              <th>Nota Interna</th>
-              <% if @client.company.company_setting.staff_code %>
-              <th>Último Responsable</th>
-              <% end %>
-            </tr>
-          </thead>
-          <tbody>
-            <% @bookings.each do |booking| %>
-            <%
-              tr_class = ""
-              if booking.start.utc > DateTime.now
-                tr_class = "success"
-                if booking.is_session
-                  tr_class = "info"
-                end
-              end
-              if booking.status == Status.find_by(name: 'Cancelado')
-                tr_class = 'warning'
-              end
-              if booking.status == Status.find_by(name: 'No Asiste')
-                tr_class = 'danger'
-              end
-            %>
-            <tr class="<%= tr_class %>">
-              <td><%= l booking.start, format: :long %></td>
-              <td><%= booking.location.name %></td>
-              <td>
-                <%= booking.service.name %>
-                <% if booking.is_session %>
-                  <%
-                    index = 1
-                    session_index = "Sesión "
-                    session_booking = booking.session_booking
-                    session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
-                      if b.id == booking.id
-                        session_index = session_index + index.to_s
-                        break
-                      end
-                      index = index + 1
-                    end
-                    session_index = session_index + " de " + session_booking.sessions_amount.to_s
-                  %>
-                  <br /><%= "(" + session_index + ")" %>
-                <% end %>
-              </td>
-              <td><%= booking.service_provider.public_name %></td>
-              <td><%= booking.status.name %></td>
-              <td><%= booking.notes %></td>
-              <td><%= booking.company_comment %></td>
-              <% if @client.company.company_setting.staff_code %>
-              <td><%= if booking.booking_histories.count > 0 && booking.booking_histories.order(:created_at).last.staff_code_id && StaffCode.find_by(id: booking.booking_histories.order(:created_at).last.staff_code_id) then StaffCode.find(booking.booking_histories.order(:created_at).last.staff_code_id).staff end %><%= if booking.booking_histories.count > 0 then (' <small>(' + booking.booking_histories.order(:created_at).last.action + ')</small>').html_safe end %></td>
-              <% end %>
-            </tr>
+
+      <div class="row">
+        <label for="from" class="col-sm-1 control-label">Desde:</label>
+        <div class="col-sm-5">
+          <input type="text" id="from" name="from" class="form-control client_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
+        </div>
+        <label for="from" class="col-sm-1 control-label">Hasta:</label>
+        <div class="col-sm-5">
+          <input type="text" id="to" name="to" class="form-control client_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
+        </div>
+        <div style="clear: both;">
+        </div>
+      </div>
+      <div class="row">
+        <label for="serviceMultiSelect" class="col-sm-1 control-label" style="margin-top: 5px;">Servicios:</label>
+        <div class="col-sm-3">
+          
+          <select id="serviceMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
+            <% for service in @services.accessible_by(current_ability) do %>
+              <option value="<%= service.id %>">
+                <%= service.name %>
+              </option>
             <% end %>
-          </tbody>
-        </table>
+          </select>
+
+        </div>
+        
+        <label for="serviceProviderMultiSelect" class="col-sm-1 control-label" style="margin-top: 5px;">Prestadores:</label>
+        <div class="col-sm-3">
+          
+          <select id="serviceProviderMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
+            <% for service_provider in @service_providers.accessible_by(current_ability) do %>
+              <option value="<%= service_provider.id %>">
+                <%= service_provider.public_name %>
+              </option>
+            <% end %>
+          </select>
+
+        </div>
+
+        <label for="statusMultiSelect" class="col-sm-1 control-label" style="margin-top: 5px;">Estado:</label>
+        <div class="col-sm-3">
+          
+          <select id="statusMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
+            <% for status in Status.all do %>
+              <option value="<%= status.id %>">
+                <%= status.name %>
+              </option>
+            <% end %>
+          </select>
+
+        </div>
+
+        <div style="clear: both;">
+        </div>
       </div>
     </div>
+
   </div>
-  <div class="row">
-    <div class="col-md-8">
-      <%= will_paginate @bookings, renderer: BootstrapPagination::Rails %>
-    </div>
+
+  <div id="client_bookings_div">
+    
   </div>
 </div>
+
+<input type="hidden" id="client_id" value="<%= @client.id %>" />
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/bootstrap-multiselect" %>
+  <%= javascript_include_tag "admin/clients-show" %>
+<% end %>

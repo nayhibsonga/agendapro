@@ -63,160 +63,231 @@
             <% end %>
           </div>
           <!-- Collect the nav links, forms, and other content for toggling -->
-          <div class="collapse navbar-collapse" id="navbar">
-            <ul class="nav navbar-nav navbar-right">
-              <!-- Dashboard -->
-              <li class="<%= 'active' if current_page?(dashboard_path) %>"><%= link_to 'Resumen', dashboard_path %></li>
-              <!-- Calendario -->
-              <% if current_user.role == Role.find_by_name("Staff (sin edición)") %>
-              <li class="<%= 'active' if current_page?(fixed_bookings_path) %>"><%= link_to 'Calendario', fixed_bookings_path %></li>
-              <% else %>
-              <li class="<%= 'active' if current_page?(bookings_path) %>"><%= link_to 'Calendario', bookings_path %></li>
-              <% end %>
-              <!-- Caja -->
-              <% if current_user.role == Role.find_by(name: "Administrador General") || current_user.role == Role.find_by(name: "Administrador Local") %>
 
-                <li class="dropdown <%= 'active' if current_page?(payments_path) or current_page?(sales_cash_path) or current_page?(sales_reports_path) %>">
-                  <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
-                    <a href="#" class="dropdown-toggle locked-section" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i><i class="fa fa-lock fa-1 lock-image"></i></a>
-                  <% else %>
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i></a>
-                  <% end %>
-                  <ul class="dropdown-menu" role="menu">
-                    <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
-                      <li><%= link_to '<i class="fa fa-money"></i>  Recaudaciones<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, payments_path, :class => "locked-section" %></li>
-                      <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, sales_reports_path, :class => "locked-section" %></li>
+          <% if current_user.role != Role.find_by(name: "Super Admin") %>
+            <div class="collapse navbar-collapse" id="navbar">
+              <ul class="nav navbar-nav navbar-right">
+                <!-- Dashboard -->
+                <li class="<%= 'active' if current_page?(dashboard_path) %>"><%= link_to 'Resumen', dashboard_path %></li>
+                <!-- Calendario -->
+                <% if current_user.role == Role.find_by_name("Staff (sin edición)") %>
+                <li class="<%= 'active' if current_page?(fixed_bookings_path) %>"><%= link_to 'Calendario', fixed_bookings_path %></li>
+                <% else %>
+                <li class="<%= 'active' if current_page?(bookings_path) %>"><%= link_to 'Calendario', bookings_path %></li>
+                <% end %>
+                <!-- Caja -->
+                <% if current_user.role == Role.find_by(name: "Administrador General") || current_user.role == Role.find_by(name: "Administrador Local") %>
+
+                  <li class="dropdown <%= 'active' if current_page?(payments_path) or current_page?(sales_cash_path) or current_page?(sales_reports_path) %>">
+                    <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
+                      <a href="#" class="dropdown-toggle locked-section" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i><i class="fa fa-lock fa-1 lock-image"></i></a>
                     <% else %>
-                      <li><%= link_to '<i class="fa fa-money"></i>  Recaudaciones'.html_safe, payments_path %></li>
-                      <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes'.html_safe, sales_reports_path %></li>
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i></a>
                     <% end %>
-                    <% if current_user.company.company_setting.show_cashes %>
-                      <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
-                        <li><%= link_to '<i class="fa fa-university"></i> Cajas de Ventas<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, sales_cash_path, :class => "locked-section" %></li>
+                    <ul class="dropdown-menu" role="menu">
+                      <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
+                        <li><%= link_to '<i class="fa fa-money"></i>  Recaudaciones<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, payments_path, :class => "locked-section" %></li>
+                        <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, sales_reports_path, :class => "locked-section" %></li>
                       <% else %>
-                        <li><%= link_to '<i class="fa fa-university"></i> Cajas de Ventas'.html_safe, sales_cash_path %></li>
+                        <li><%= link_to '<i class="fa fa-money"></i>  Recaudaciones'.html_safe, payments_path %></li>
+                        <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes'.html_safe, sales_reports_path %></li>
                       <% end %>
-                    <% end %>
-                  </ul>
-                </li>
+                      <% if current_user.company.company_setting.show_cashes %>
+                        <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
+                          <li><%= link_to '<i class="fa fa-university"></i> Cajas de Ventas<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, sales_cash_path, :class => "locked-section" %></li>
+                        <% else %>
+                          <li><%= link_to '<i class="fa fa-university"></i> Cajas de Ventas'.html_safe, sales_cash_path %></li>
+                        <% end %>
+                      <% end %>
+                    </ul>
+                  </li>
 
-                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
-                  <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, products_path, :class => "locked-section" %></li>
-                <% else %>
-                  <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario', products_path %></li>
-                <% end %>
-
-              <% elsif current_user.role == Role.find_by(name: "Staff") || current_user.role == Role.find_by(name: "Recepcionista") %>
-                <li class="dropdown <%= 'active' if current_page?(payments_path) or current_page?(sales_cash_path) or current_page?(sales_reports_path) %>">
-                  <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
-                    <a href="#" class="dropdown-toggle locked-section" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i><i class="fa fa-lock fa-1 lock-image"></i></a>
+                  <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
+                    <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, products_path, :class => "locked-section" %></li>
                   <% else %>
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i></a>
+                    <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario', products_path %></li>
                   <% end %>
-                  <ul class="dropdown-menu" role="menu">
-                    <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
-                      <li><%= link_to '<i class="fa fa-money"></i>  Recaudaciones<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, payments_path, :class => "locked-section" %></li>
-                      <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, sales_reports_path, :class => "locked-section" %></li>
+
+                <% elsif current_user.role == Role.find_by(name: "Staff") || current_user.role == Role.find_by(name: "Recepcionista") %>
+                  <li class="dropdown <%= 'active' if current_page?(payments_path) or current_page?(sales_cash_path) or current_page?(sales_reports_path) %>">
+                    <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
+                      <a href="#" class="dropdown-toggle locked-section" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i><i class="fa fa-lock fa-1 lock-image"></i></a>
                     <% else %>
-                      <li><%= link_to '<i class="fa fa-money"></i>  Recaudaciones'.html_safe, payments_path %></li>
-                      <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes'.html_safe, sales_reports_path %></li>
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Ventas <i class="fa fa-chevron-down"></i></a>
+                    <% end %>
+                    <ul class="dropdown-menu" role="menu">
+                      <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
+                        <li><%= link_to '<i class="fa fa-money"></i>  Recaudaciones<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, payments_path, :class => "locked-section" %></li>
+                        <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, sales_reports_path, :class => "locked-section" %></li>
+                      <% else %>
+                        <li><%= link_to '<i class="fa fa-money"></i>  Recaudaciones'.html_safe, payments_path %></li>
+                        <li><%= link_to '<i class="fa fa-bar-chart-o"></i>  Reportes'.html_safe, sales_reports_path %></li>
+                      <% end %>
+                    </ul>
+                  </li>
+                  <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
+                    <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, products_path, :class => "locked-section" %></li>
+                  <% else %>
+                    <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario', products_path %></li>
+                  <% end %>
+                <% end %>
+                <!-- Clientes -->
+                <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") and current_user.role != Role.find_by(name: "Super Admin") and current_user.role != Role.find_by(name: "Ventas") %>
+                  <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
+                    <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, clients_path, :class => "locked-section" %></li>
+                  <% else %>
+                    <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes', clients_path %></li>
+                  <% end %>
+                <% end %>
+                <!-- Reportes -->
+                <% if current_user.role == Role.find_by(name: "Administrador General") %>
+                  <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id || current_user.company.payment_status == PaymentStatus.find_by_name("Bloqueado") %>
+                    <li class="<%= 'active' if current_page?(reports_path) %>"><%= link_to 'Reportes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, reports_path, :class => "locked-section" %></li>
+                  <% else %>
+                    <li class="<%= 'active' if current_page?(reports_path) %>"><%= link_to 'Reportes', reports_path %></li>
+                  <% end %>
+                <% end %>
+                <!-- Administracion -->
+                <% if current_user.role == Role.find_by(name: "Super Admin") or current_user.role == Role.find_by(name: "Administrador General") or current_user.role == Role.find_by(name: "Administrador Local") %>
+                <li class="dropdown <%= 'active' if current_page?(locations_path) or current_page?(service_providers_path) or current_page?(services_path) or current_page?(service_categories_path) or current_page?(commissions_path) or current_page?(resources_path) or current_page?("/company_bookings") %>">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Administracion <i class="fa fa-chevron-down"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-home fa-fw"></i> Locales'.html_safe, locations_path %></li>
+                    <li><%= link_to '<i class="fa fa-user fa-fw"></i> Prestadores de Servicios'.html_safe, service_providers_path %></li>
+                    <li><%= link_to '<i class="fa fa-book fa-fw"></i> Servicios'.html_safe, services_path %></li>
+                    <li><%= link_to '<i class="fa fa-money"></i>  Comisiones'.html_safe, commissions_path %></li>
+                    <li><%= link_to '<i class="fa fa-cubes fa-fw"></i> Recursos'.html_safe, resources_path %></li>
+                    <% if current_user.role == Role.find_by(name: "Administrador General") %>
+                    <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Pagos en línea'.html_safe, '/company_bookings' %></li>
+                    <% end %>
+                    <% if current_user.company.is_plan_capable("Premium") %>
+                      <li><%= link_to '<i class="fa fa-file fa-fw"></i> Repositorio de Archivos'.html_safe, '/get_company_files' %></li>
+                    <% else %>
+                      <li><%= link_to '<i class="fa fa-file fa-fw"></i> Repositorio de Archivos<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, '#', :class => "locked-section" %></li>
                     <% end %>
                   </ul>
                 </li>
-                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
-                  <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, products_path, :class => "locked-section" %></li>
-                <% else %>
-                  <li class="<%= 'active' if current_page?(products_path) %>"><%= link_to 'Inventario', products_path %></li>
                 <% end %>
-              <% end %>
-              <!-- Clientes -->
-              <% if current_user.role != Role.find_by(name: "Staff") and current_user.role != Role.find_by(name: "Staff (sin edición)") and current_user.role != Role.find_by(name: "Super Admin") and current_user.role != Role.find_by(name: "Ventas") %>
-                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
-                  <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, clients_path, :class => "locked-section" %></li>
-                <% else %>
-                  <li class="<%= 'active' if current_page?(clients_path) %>"><%= link_to 'Clientes', clients_path %></li>
+                <!-- Super Admin -->
+                <% if current_user.role_id == Role.find_by_name("Super Admin").id || current_user.role_id == Role.find_by_name("Ventas").id %>
+                <li class="<%= 'active' if current_page?("/companies_payments") %>"><%= link_to 'Control de gestión', '/companies_payments' %></li>
+                <!-- General -->
+                <li class="dropdown <%= 'active' if current_page?(admin_users_path) or current_page?(roles_path) or current_page?(payment_statuses_path) or current_page?(statuses_path) or current_page?(plans_path) or current_page?(numeric_parameters_path) or current_page?(payed_bookings_path) or current_page?(banks_path) %>">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">General <i class="fa fa-chevron-down"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-user fa-fw"></i> Usuarios'.html_safe, admin_users_path %></li>
+                    <li><%= link_to '<i class="fa fa-lock fa-fw"></i> Roles'.html_safe, roles_path %></li>
+                    <li><%= link_to '<i class="fa fa-usd fa-fw"></i> Estados de Pago'.html_safe, payment_statuses_path %></li>
+                    <li><%= link_to '<i class="fa fa-check-square-o fa-fw"></i> Estados de Reserva'.html_safe, statuses_path %></li>
+                    <li><%= link_to '<i class="fa fa-cloud fa-fw"></i> Gestión Planes'.html_safe, plans_path %></li>
+                    <li><%= link_to '<i class="fa fa-list-ol fa-fw"></i> Parámetros Numéricos'.html_safe, numeric_parameters_path %></li>
+                    <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Transferencias (pago en línea)'.html_safe, payed_bookings_path %></li>
+                    <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Transferencias (pago plan)'.html_safe, pending_billing_wire_transfers_path %></li>
+                    <li><%= link_to '<i class="fa fa-university fa-fw"></i> Bancos'.html_safe, banks_path %></li>
+                    <li><%= link_to '<i class="fa fa-star fa-fw"></i> Promociones'.html_safe, manage_promotions_path %></li>
+                    <li><%= link_to '<i class="fa fa-list-alt fa-fw"></i> Comprobantes de Pago'.html_safe, receipt_types_path %></li>
+                    <li><%= link_to '<i class="fa fa-money fa-fw"></i> Medio de Pago'.html_safe, payment_methods_path %></li>
+                    <li><%= link_to '<i class="fa fa-credit-card fa-fw"></i> Tipo de Medio de Pago'.html_safe, payment_method_types_path %></li>
+                  </ul>
+                </li>
+                <!-- Lugares -->
+                <li class="dropdown <%= 'active' if current_page?(countries_path) or current_page?(regions_path) or current_page?(cities_path) or current_page?(districts_path) %>">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Lugares <i class="fa fa-chevron-down"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-globe fa-fw"></i> Países'.html_safe, countries_path %></li>
+                    <li><%= link_to '<i class="fa fa-picture-o fa-fw"></i> Regiones'.html_safe, regions_path %></li>
+                    <li><%= link_to '<i class="fa fa-building-o fa-fw"></i> Ciudades'.html_safe, cities_path %></li>
+                    <li><%= link_to '<i class="fa fa-home fa-fw"></i> Comunas'.html_safe, districts_path %></li>
+                  </ul>
+                </li>
+                <!-- Buscador -->
+                <li class="dropdown <%= 'active' if current_page?(countries_path) or current_page?(regions_path) or current_page?(cities_path) or current_page?(districts_path) %>">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Buscador <i class="fa fa-chevron-down"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-usd fa-fw"></i> Sector Ecónomico'.html_safe, economic_sectors_path %></li>
+                    <li><%= link_to '<i class="fa fa-tags fa-fw"></i> Categorías Marketplace'.html_safe, marketplace_categories_path %></li>
+                    <li><%= link_to '<i class="fa fa-tags fa-fw"></i> Tags'.html_safe, tags_path %></li>
+                  </ul>
+                </li>
                 <% end %>
-              <% end %>
-              <!-- Reportes -->
-              <% if current_user.role == Role.find_by(name: "Administrador General") %>
-                <% if current_user.company.plan_id == Plan.find_by_name("Gratis").id %>
-                  <li class="<%= 'active' if current_page?(reports_path) %>"><%= link_to 'Reportes<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, reports_path, :class => "locked-section" %></li>
-                <% else %>
-                  <li class="<%= 'active' if current_page?(reports_path) %>"><%= link_to 'Reportes', reports_path %></li>
+                <%= render 'layouts/home_dropdown' %>
+                <li><a href="#" class="menu-green" data-toggle="modal" data-target="#printingModal"><i class="fa fa-print fa-lg"></i></a></li>
+                <% if current_user.role_id == Role.find_by(name: "Administrador General").id %>
+                <li class="dropdown <%= 'active' if current_page?(edit_company_setting_path(current_user.company.company_setting.id)) or current_page?(admin_users_path) or current_page?(select_plan_path) %>">
+                  <a href="#" class="dropdown-toggle menu-green" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog fa-lg"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-wrench fa-fw"></i> Configuraciones'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting.id) %></li>
+                    <li><%= link_to '<i class="fa fa-sitemap fa-fw"></i> Usuarios'.html_safe, admin_users_path %></li>
+                    <li><%= link_to '<i class="fa fa-dollar fa-fw"></i> Facturación'.html_safe, select_plan_path %></li>
+                  </ul>
+                </li>
                 <% end %>
-              <% end %>
-              <!-- Administracion -->
-              <% if current_user.role == Role.find_by(name: "Super Admin") or current_user.role == Role.find_by(name: "Administrador General") or current_user.role == Role.find_by(name: "Administrador Local") %>
-              <li class="dropdown <%= 'active' if current_page?(locations_path) or current_page?(service_providers_path) or current_page?(services_path) or current_page?(service_categories_path) or current_page?(commissions_path) or current_page?(resources_path) or current_page?("/company_bookings") %>">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Administracion <i class="fa fa-chevron-down"></i></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to '<i class="fa fa-home fa-fw"></i> Locales'.html_safe, locations_path %></li>
-                  <li><%= link_to '<i class="fa fa-user fa-fw"></i> Prestadores de Servicios'.html_safe, service_providers_path %></li>
-                  <li><%= link_to '<i class="fa fa-book fa-fw"></i> Servicios'.html_safe, services_path %></li>
-                  <li><%= link_to '<i class="fa fa-money"></i>  Comisiones'.html_safe, commissions_path %></li>
-                  <li><%= link_to '<i class="fa fa-cubes fa-fw"></i> Recursos'.html_safe, resources_path %></li>
-                  <% if current_user.role == Role.find_by(name: "Administrador General") %>
-                  <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Pagos en línea'.html_safe, '/company_bookings' %></li>
-                  <% end %>
-                </ul>
-              </li>
-              <% end %>
-              <!-- Super Admin -->
-              <% if current_user.role_id == Role.find_by_name("Super Admin").id || current_user.role_id == Role.find_by_name("Ventas").id %>
-              <li class="<%= 'active' if current_page?("/companies_payments") %>"><%= link_to 'Control de gestión', '/companies_payments' %></li>
-              <!-- General -->
-              <li class="dropdown <%= 'active' if current_page?(admin_users_path) or current_page?(roles_path) or current_page?(payment_statuses_path) or current_page?(statuses_path) or current_page?(plans_path) or current_page?(numeric_parameters_path) or current_page?(payed_bookings_path) or current_page?(banks_path) %>">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">General <i class="fa fa-chevron-down"></i></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to '<i class="fa fa-user fa-fw"></i> Usuarios'.html_safe, admin_users_path %></li>
-                  <li><%= link_to '<i class="fa fa-lock fa-fw"></i> Roles'.html_safe, roles_path %></li>
-                  <li><%= link_to '<i class="fa fa-usd fa-fw"></i> Estados de Pago'.html_safe, payment_statuses_path %></li>
-                  <li><%= link_to '<i class="fa fa-check-square-o fa-fw"></i> Estados de Reserva'.html_safe, statuses_path %></li>
-                  <li><%= link_to '<i class="fa fa-cloud fa-fw"></i> Gestión Planes'.html_safe, plans_path %></li>
-                  <li><%= link_to '<i class="fa fa-list-ol fa-fw"></i> Parámetros Numéricos'.html_safe, numeric_parameters_path %></li>
-                  <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Transferencias (pago en línea)'.html_safe, payed_bookings_path %></li>
-                  <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Transferencias (pago plan)'.html_safe, pending_billing_wire_transfers_path %></li>
-                  <li><%= link_to '<i class="fa fa-university fa-fw"></i> Bancos'.html_safe, banks_path %></li>
-                  <li><%= link_to '<i class="fa fa-star fa-fw"></i> Promociones'.html_safe, manage_promotions_path %></li>
-                  <li><%= link_to '<i class="fa fa-list-alt fa-fw"></i> Comprobantes de Pago'.html_safe, receipt_types_path %></li>
-                  <li><%= link_to '<i class="fa fa-money fa-fw"></i> Medio de Pago'.html_safe, payment_methods_path %></li>
-                  <li><%= link_to '<i class="fa fa-credit-card fa-fw"></i> Tipo de Medio de Pago'.html_safe, payment_method_types_path %></li>
-                </ul>
-              </li>
-              <!-- Lugares -->
-              <li class="dropdown <%= 'active' if current_page?(countries_path) or current_page?(regions_path) or current_page?(cities_path) or current_page?(districts_path) %>">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Lugares <i class="fa fa-chevron-down"></i></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to '<i class="fa fa-globe fa-fw"></i> Países'.html_safe, countries_path %></li>
-                  <li><%= link_to '<i class="fa fa-picture-o fa-fw"></i> Regiones'.html_safe, regions_path %></li>
-                  <li><%= link_to '<i class="fa fa-building-o fa-fw"></i> Ciudades'.html_safe, cities_path %></li>
-                  <li><%= link_to '<i class="fa fa-home fa-fw"></i> Comunas'.html_safe, districts_path %></li>
-                </ul>
-              </li>
-              <!-- Buscador -->
-              <li class="dropdown <%= 'active' if current_page?(countries_path) or current_page?(regions_path) or current_page?(cities_path) or current_page?(districts_path) %>">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Buscador <i class="fa fa-chevron-down"></i></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to '<i class="fa fa-usd fa-fw"></i> Sector Ecónomico'.html_safe, economic_sectors_path %></li>
-                  <li><%= link_to '<i class="fa fa-tags fa-fw"></i> Categorías Marketplace'.html_safe, marketplace_categories_path %></li>
-                  <li><%= link_to '<i class="fa fa-tags fa-fw"></i> Tags'.html_safe, tags_path %></li>
-                </ul>
-              </li>
-              <% end %>
-              <%= render 'layouts/home_dropdown' %>
-              <li><a href="#" class="menu-green" data-toggle="modal" data-target="#printingModal"><i class="fa fa-print fa-lg"></i></a></li>
-              <% if current_user.role_id == Role.find_by(name: "Administrador General").id %>
-              <li class="dropdown <%= 'active' if current_page?(edit_company_setting_path(current_user.company.company_setting.id)) or current_page?(admin_users_path) or current_page?(select_plan_path) %>">
-                <a href="#" class="dropdown-toggle menu-green" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog fa-lg"></i></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to '<i class="fa fa-wrench fa-fw"></i> Configuraciones'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting.id) %></li>
-                  <li><%= link_to '<i class="fa fa-sitemap fa-fw"></i> Usuarios'.html_safe, admin_users_path %></li>
-                  <li><%= link_to '<i class="fa fa-dollar fa-fw"></i> Facturación'.html_safe, select_plan_path %></li>
-                </ul>
-              </li>
-              <% end %>
-            </ul>
-          </div>
+              </ul>
+            </div>
+          <% else %>
+            <div class="collapse navbar-collapse" id="navbar">
+              <ul class="nav navbar-nav navbar-right">
+                
+
+                <!-- Super Admin -->
+                <% if current_user.role_id == Role.find_by_name("Super Admin").id || current_user.role_id == Role.find_by_name("Ventas").id %>
+                <li class="<%= 'active' if current_page?("/companies_payments") %>"><%= link_to 'Control de gestión', '/companies_payments' %></li>
+                <!-- General -->
+                <li class="dropdown <%= 'active' if current_page?(admin_users_path) or current_page?(roles_path) or current_page?(payment_statuses_path) or current_page?(statuses_path) or current_page?(plans_path) or current_page?(numeric_parameters_path) or current_page?(payed_bookings_path) or current_page?(banks_path) %>">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">General <i class="fa fa-chevron-down"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-home fa-fw"></i> Locales'.html_safe, locations_path %></li>
+                    <li><%= link_to '<i class="fa fa-user fa-fw"></i> Usuarios'.html_safe, admin_users_path %></li>
+                    <li><%= link_to '<i class="fa fa-lock fa-fw"></i> Roles'.html_safe, roles_path %></li>
+                    <li><%= link_to '<i class="fa fa-usd fa-fw"></i> Estados de Pago'.html_safe, payment_statuses_path %></li>
+                    <li><%= link_to '<i class="fa fa-check-square-o fa-fw"></i> Estados de Reserva'.html_safe, statuses_path %></li>
+                    <li><%= link_to '<i class="fa fa-cloud fa-fw"></i> Gestión Planes'.html_safe, plans_path %></li>
+                    <li><%= link_to '<i class="fa fa-list-ol fa-fw"></i> Parámetros Numéricos'.html_safe, numeric_parameters_path %></li>
+                    <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Transferencias (pago en línea)'.html_safe, payed_bookings_path %></li>
+                    <li><%= link_to '<i class="fa fa-exchange fa-fw"></i> Transferencias (pago plan)'.html_safe, pending_billing_wire_transfers_path %></li>
+                    <li><%= link_to '<i class="fa fa-university fa-fw"></i> Bancos'.html_safe, banks_path %></li>
+                    <li><%= link_to '<i class="fa fa-star fa-fw"></i> Promociones'.html_safe, manage_promotions_path %></li>
+                    <li><%= link_to '<i class="fa fa-list-alt fa-fw"></i> Comprobantes de Pago'.html_safe, receipt_types_path %></li>
+                    <li><%= link_to '<i class="fa fa-money fa-fw"></i> Medio de Pago'.html_safe, payment_methods_path %></li>
+                    <li><%= link_to '<i class="fa fa-credit-card fa-fw"></i> Tipo de Medio de Pago'.html_safe, payment_method_types_path %></li>
+                  </ul>
+                </li>
+                <!-- Lugares -->
+                <li class="dropdown <%= 'active' if current_page?(countries_path) or current_page?(regions_path) or current_page?(cities_path) or current_page?(districts_path) %>">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Lugares <i class="fa fa-chevron-down"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-globe fa-fw"></i> Países'.html_safe, countries_path %></li>
+                    <li><%= link_to '<i class="fa fa-picture-o fa-fw"></i> Regiones'.html_safe, regions_path %></li>
+                    <li><%= link_to '<i class="fa fa-building-o fa-fw"></i> Ciudades'.html_safe, cities_path %></li>
+                    <li><%= link_to '<i class="fa fa-home fa-fw"></i> Comunas'.html_safe, districts_path %></li>
+                  </ul>
+                </li>
+                <!-- Buscador -->
+                <li class="dropdown <%= 'active' if current_page?(countries_path) or current_page?(regions_path) or current_page?(cities_path) or current_page?(districts_path) %>">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Buscador <i class="fa fa-chevron-down"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-usd fa-fw"></i> Sector Ecónomico'.html_safe, economic_sectors_path %></li>
+                    <li><%= link_to '<i class="fa fa-tags fa-fw"></i> Categorías Marketplace'.html_safe, marketplace_categories_path %></li>
+                    <li><%= link_to '<i class="fa fa-tags fa-fw"></i> Tags'.html_safe, tags_path %></li>
+                  </ul>
+                </li>
+                <% end %>
+                <%= render 'layouts/home_dropdown' %>
+                <li><a href="#" class="menu-green" data-toggle="modal" data-target="#printingModal"><i class="fa fa-print fa-lg"></i></a></li>
+                <% if current_user.role_id == Role.find_by(name: "Administrador General").id %>
+                <li class="dropdown <%= 'active' if current_page?(edit_company_setting_path(current_user.company.company_setting.id)) or current_page?(admin_users_path) or current_page?(select_plan_path) %>">
+                  <a href="#" class="dropdown-toggle menu-green" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog fa-lg"></i></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><%= link_to '<i class="fa fa-wrench fa-fw"></i> Configuraciones'.html_safe, edit_company_setting_path(Company.find(current_user.company_id).company_setting.id) %></li>
+                    <li><%= link_to '<i class="fa fa-sitemap fa-fw"></i> Usuarios'.html_safe, admin_users_path %></li>
+                    <li><%= link_to '<i class="fa fa-dollar fa-fw"></i> Facturación'.html_safe, select_plan_path %></li>
+                  </ul>
+                </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
         </div>
       </nav>
       <!-- start: Alerts -->
@@ -494,9 +565,9 @@
         });
       });
     </script>
-		<!--Start of Crazy Egg Script-->
-		<%= javascript_include_tag 'crazy_egg' %>
-		<!--End of Crazy Egg Script-->
+    <!--Start of Crazy Egg Script-->
+    <%= javascript_include_tag 'crazy_egg' %>
+    <!--End of Crazy Egg Script-->
     <!-- end: JavaScript-->
-	</body>
+  </body>
 </html>

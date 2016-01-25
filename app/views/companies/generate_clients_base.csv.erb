@@ -1,0 +1,25 @@
+<%
+
+  require 'csv'
+	allowed_attributes = [["email", "Email del cliente. Debe ser único."], ["first_name", "Nombres del cliente."], ["last_name", "Apellidos del cliente."], ["identification_number", "Rut o CI del cliente. Debe ser único."], ["record", "Número de cliente. Puede ser un número o una palabra seguida de un número."], ["phone", "Teléfono principal del cliente."], ["second_phone", "Teléfono secundario del cliente (oficina, casa, etc.)."], ["address", "Dirección del cliente."], ["district", "Comuna de residencia."], ["city", "Ciudad de residencia."], ["age", "Edad del cliente."], ["gender", "Género del cliente. 1 si es mujer, 2 es hombre."], ["birth_day", "Día del cumpleaños, sin fecha. Del 1 al 31."], ["birth_month", "Mes del cumpleaños, sin fecha. Del 1 al 12."], ["birth_year", "Año de nacimiento."]]
+
+	custom_attributes = []
+
+	@company.custom_attributes.each do |attribute|
+		if attribute.datatype != "file"
+			custom_attributes << [attribute.slug, attribute.description]
+		end
+	end
+
+	header_arr = []
+
+	allowed_attributes.each do |attribute|
+		header_arr << attribute[0]
+	end
+
+	custom_attributes.each do |attribute|
+		header_arr << attribute[0]
+	end
+
+%>
+<%= header_arr.to_csv( row_sep: nil ).html_safe %>

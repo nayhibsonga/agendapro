@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Company:</strong>
+  <%= @company_file.company_id %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @company_file.name %>
+</p>
+
+<p>
+  <strong>Full path:</strong>
+  <%= @company_file.full_path %>
+</p>
+
+<p>
+  <strong>Public url:</strong>
+  <%= @company_file.public_url %>
+</p>
+
+<p>
+  <strong>Size:</strong>
+  <%= @company_file.size %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @company_file.description %>
+</p>
+
+<%= link_to 'Edit', edit_company_file_path(@company_file) %> |
+<%= link_to 'Back', company_files_path %>

@@ -1,0 +1,85 @@
+<center style="background-color: #FAFAFA">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable">
+    <tr>
+      <td align="center" valign="top" id="bodyCell">
+        <!-- BEGIN TEMPLATE // -->
+        <!--[if gte mso 9]>
+        <table align="center" border="0" cellspacing="0" cellpadding="0" width="600" style="width:600px;">
+        <tr>
+        <td align="center" valign="top" width="600" style="width:600px;">
+        <![endif]-->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="templateContainer">
+          <tr>
+            <td valign="top" id="templateHeader">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnImageBlock" style="min-width:100%;">
+                <tbody class="mcnImageBlockOuter">
+                  <tr>
+                    <td valign="top" style="padding:9px" class="mcnImageBlockInner">
+                      <%= editor_image @content, 'image1' %>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top" id="templateBody">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
+                <tbody class="mcnTextBlockOuter">
+                  <tr>
+                    <td valign="top" class="mcnTextBlockInner">
+                      <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;" class="mcnTextContentContainer">
+                        <tbody>
+                          <tr>
+                            <td valign="top" class="mcnTextContent" style="padding:9px;">
+                              <%= editor_text @content, 'text1' %>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnImageBlock" style="min-width:100%;">
+                <tbody class="mcnImageBlockOuter">
+                  <tr>
+                    <td valign="top" style="padding:9px" class="mcnImageBlockInner">
+                      <%= editor_image @content, 'image2' %>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
+                <tbody class="mcnTextBlockOuter">
+                  <tr>
+                    <td valign="top" class="mcnTextBlockInner">
+                      <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;" class="mcnTextContentContainer">
+                        <tbody>
+                          <tr>
+                            <td valign="top" class="mcnTextContent" style="padding:9px;">
+                              <%= editor_text @content, 'text1' %>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <%= render partial: '/clients/email/full/templates/footer' %>
+          </tr>
+        </table>
+        <!--[if gte mso 9]>
+        </td>
+        </tr>
+        </table>
+        <![endif]-->
+        <!-- // END TEMPLATE -->
+      </td>
+    </tr>
+  </table>
+</center>

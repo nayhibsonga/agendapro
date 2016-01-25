@@ -54,6 +54,11 @@ class CompanySettingsController < ApplicationController
     @company_payment_methods = @company.company_payment_methods
     @company_payment_method = CompanyPaymentMethod.new
 
+    @attribute = Attribute.new
+    @attribute_category = AttributeCategory.new
+
+    @attributes = @company.custom_attributes
+
     @notification_email = NotificationEmail.new
     @notifications = NotificationEmail.where(company: @company).order(:receptor_type)
 

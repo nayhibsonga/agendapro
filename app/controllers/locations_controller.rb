@@ -31,7 +31,7 @@ class LocationsController < ApplicationController
     @location = Location.new
     @location.company_id = current_user.company_id
     if current_user.role_id != Role.find_by_name("Super Admin").id
-      if current_user.company.locations.where(active:true).count >= current_user.company.plan.locations
+      if current_user.company.locations.where(active:true).count >= current_user.company.plan.locations && (current_user.company.plan.custom || current_user.company.plan.name == "Personal")
         redirect_to locations_path, alert: 'No puedes crear más locales con tu plan actual.'
         return
       end
@@ -115,6 +115,7 @@ class LocationsController < ApplicationController
   def activate
     @location.active = true
     if @location.save
+      @location.add_due
       redirect_to inactive_locations_path, notice: "Local activado exitosamente."
     else
       redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
@@ -124,6 +125,7 @@ class LocationsController < ApplicationController
   def deactivate
     @location.active = false
     if @location.save
+      @location.substract_due
       redirect_to locations_path, notice: "Local desactivado exitosamente."
     else
       redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
