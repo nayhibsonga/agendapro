@@ -1,4 +1,5 @@
 var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+var hoursChanged = false;
 
 function buildDay (value) {
   $('#localTable').append(
@@ -204,6 +205,10 @@ function initialize() {
       $('#dayStatusId' + i).prop('checked', true).val(1);
     };
   };
+
+  $('#localTable').on('change', function() {
+    hoursChanged = true;
+  });
 }
 
 function changeDayStatus (value) {
@@ -302,14 +307,10 @@ function saveLocation() {
     dataType: 'json',
     success: function(location){
       if (location.warnings.length > 0) {
-        var warnings = '';
-        for (i in location.warnings) {
-          warnings += '- ' + location.warnings[i] + '\n';
-        };
         swal({
-          title: "Advertencia",
-          text: warnings,
-          type: "warning"
+          title: "¡Completado!",
+          text: location.warnings,
+          type: "success"
         }, function() {
           document.location.href = '/locations/';
         });
@@ -345,7 +346,21 @@ function saveLocation() {
     };
   };
   var options = $.extend({}, defaults, option);
-  $.ajax(options);
+
+  if( hoursChanged ) {
+    swal({
+      title: "Advertencia",
+      text: "Los horarios del Staff se ajustarán automáticamente,    ¿Seguro que desea continuar?",
+      type: "warning",
+      showCancelButton: true,
+      showLoaderOnConfirm: true
+    }, function() {
+      setTimeout($.ajax(options), 1500);
+    });
+  } else {
+    $.ajax(options);
+  }
+
 }
 
 function changeCountry (country_id) {

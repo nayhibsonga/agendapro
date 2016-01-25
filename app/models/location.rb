@@ -239,29 +239,29 @@ class Location < ActiveRecord::Base
 	end
 
   def provider_time_in_location_time
+    providers = []
   	self.service_providers.where(active: true).each do |service_provider|
 			service_provider.provider_times.each do |provider_time|
 				provider_time_open = provider_time.open.clone()
 				provider_time_close = provider_time.close.clone()
 				self.location_times.where(day_id: provider_time.day_id).each do |location_time|
-          providers = []
           if (provider_time_open.change(:month => 1, :day => 1, :year => 2000) < location_time.open) || (provider_time_close.change(:month => 1, :day => 1, :year => 2000) > location_time.close)
             providers << service_provider.public_name
             provider_time.open = provider_time_open < location_time.open ? location_time.open : provider_time_open
             provider_time.close = provider_time_close > location_time.close ? location_time.close : provider_time_close
             provider_time.save
           end
-          warnings.add(:base, "El horario de #{providers.join(', ').gsub(/\,(?=[^,]*$)/, ' y')} será ajustado al nuevo horario del local.") if providers.any?
 				end
       end
       # Delete days
       location_days = service_provider.provider_times.pluck(:day_id).delete_if { |time| self.location_times.pluck(:day_id).include? time }
       provider_days = service_provider.provider_times.where(day_id: location_days)
       if provider_days.count > 0
-        warnings.add(:base, "El horario de #{service_provider.public_name} será ajustado al nuevo horario del local.")
+        providers << service_provider.public_name
         provider_days.destroy_all
       end
 		end
+    warnings.add(:base, "El horario de #{providers.join(', ').gsub(/\,(?=[^,]*$)/, ' y')} ha sido ajustado al nuevo horario del local.") if providers.any?
 	end
 
 	def active_countries
