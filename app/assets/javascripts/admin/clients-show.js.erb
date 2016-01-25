@@ -164,7 +164,7 @@ $(function() {
   });
 
   $("#from").datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     changeYear: true,
     monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -185,7 +185,7 @@ $(function() {
     }
   });
   $("#to").datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     changeYear: true,
     monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -211,8 +211,8 @@ $(function() {
     return false;
   });
 
-  $("#to").datepicker('setDate', new Date());
-  $("#from").datepicker('setDate', new Date());
+  //$("#to").datepicker('setDate', new Date());
+  //$("#from").datepicker('setDate', new Date());
 
   $("#serviceMultiSelect").multiselect('selectAll', false);
   $("#serviceProviderMultiSelect").multiselect('selectAll', false);
