@@ -57,8 +57,8 @@ class Location < ActiveRecord::Base
   mount_uploader :image2, LocationImagesUploader
   mount_uploader :image3, LocationImagesUploader
 
-  scope :actives, where(active: true)
-
+  scope :actives, -> { where(active: true) }
+  
   validates :name, :phone, :company, :district, :email, :presence => true
 
   validate :times_overlap, :time_empty_or_negative, :plan_locations, :outcall_services, :active_countries

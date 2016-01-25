@@ -7,10 +7,10 @@
   var app = angular.module('AgendaProApp', ['angularFileUpload']);
 
   app
-    .directive('customCkEditor', customCkEditor)
     .directive('dynamic', dynamic)
     .controller('EditorController', EditorController);
 
+  dynamic.$inject = ['$compile'];
   EditorController.$inject = ['$scope', 'FileUploader', '$http'];
 
   function EditorController($scope, FileUploader, $http) {
@@ -28,14 +28,11 @@
     });
     vm.activeImage = '';
     vm.send_email = false;
-    vm.pageLoaded = false;
-    vm.notice = '';
     vm.activeEditor = '';
 
     vm.editText = editText;
     vm.selectFile = selectFile;
     vm.saveContent = saveContent;
-    vm.validContent = validContent;
 
     ckEditorInit();
     toastrInit();
@@ -44,7 +41,7 @@
         if( status == 200 ) {
           vm.content.data[vm.activeImage] = response.url;
         } else {
-          vm.error = "Error uploading image ".concat(status);
+          toastr.warning("Ocurrió un error al subir la imagen (" + status +")");
         }
     };
 
@@ -56,7 +53,7 @@
     function saveContent(url) {
       $http.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
       if( vm.send_email ) {
-        vm.validContent() ? saveAndSend() : showValidationError();
+        validContent() ? saveAndSend() : showValidationError();
       } else {
         quickSave();
       }
@@ -69,12 +66,12 @@
           showCancelButton: true,
           closeOnConfirm: false,
           showLoaderOnConfirm: true,
-        }, function(){
+        }, function() {
           $http.post(url, buildData()).then(function(response){
             swal("¡Enviado!", "Serás redireccionado en unos instantes", "success");
             setTimeout(function(){
               location.href = response.data.url;
-            }, 3000);
+            }, 2500);
           }, ShowError);
         });
       }
@@ -91,19 +88,19 @@
       }
     }
 
-    function editText(name) {
+    function editText(selectedIndex) {
       if (vm.activeEditor !== '') {
         CKEDITOR.instances[vm.activeEditor].destroy();
       }
-      vm.activeEditor = name.replace('text', 'editor');
-      CKEDITOR.appendTo('editorSpace', null, vm.content.data[name]);
-      ckEditorListeners();
+      CKEDITOR.appendTo('editorSpace', null, vm.content.data[selectedIndex]);
+      vm.activeEditor = Object.keys(CKEDITOR.instances)[0];
+      ckEditorListeners(selectedIndex);
     }
 
-    function ckEditorListeners() {
+    function ckEditorListeners(source) {
       var instance = CKEDITOR.instances[vm.activeEditor];
       instance.on('change', function() {
-          vm.content.data[vm.activeEditor.replace('editor', 'text')] = instance.getData();
+          vm.content.data[source] = instance.getData();
           $scope.$apply();
       });
     }
@@ -123,25 +120,15 @@
     }
 
     function validContent() {
-      return
-        Object.keys(vm.content.data).length > 0 &&
-        vm.content.subject &&
-        vm.content.subject.length > 0;
+      return (Object.keys(vm.content.data).length > 0 &&
+        angular.isDefined(vm.content.subject) &&
+        angular.isString(vm.content.subject) &&
+        vm.content.subject.length > 0);
     }
 
     function ShowError(response) {
-      vm.error = response;
-      return vm.error;
+      toastr.success("Error: " + response.toString());
     }
-
-    function ckEditorStatus() {
-      CKEDITOR.on('instanceReady',function(){
-         vm.pageLoaded = true;
-         $scope.$apply();
-      });
-    }
-
-
   }
 
   function ckEditorInit() {
@@ -151,29 +138,6 @@
     ];
     CKEDITOR.config.toolbar = "simple";
     CKEDITOR.config.uiColor = '#FFFFFF';
-  }
-
-  function customCkEditor() {
-      return {
-          require: '?ngModel',
-          link: function ($scope, elm, attr, ngModel) {
-              var ck = CKEDITOR.instances[elm[0].id];
-
-              ck.on('change', function() {
-                  $scope.$apply(function () {
-                      ngModel.$setViewValue(ck.getData());
-                  });
-              });
-
-              ngModel.$render = function (value) {
-                  ck.setData(ngModel.$modelValue);
-              };
-
-              $scope.$on("$destroy",function() {
-                  ck.destroy();
-              });
-          }
-      };
   }
 
   function dynamic($compile) {

@@ -201,19 +201,50 @@
               <table class="current-plan-table">
                 <tr>
                   <td class="left">
-                    <div style="color: #22c488; font-weight: bold; font-size: 18px;">
-                      <%= @company.plan.name %>
-                    </div>
-                    <div>
-                      <% if @company.plan.custom %>
-                        $<%= @company.company_plan_setting.base_price.to_s %> / Mes + IVA
+                    
+                      <% if @company.plan.name == "Trial" %>
+                        <%
+                          suggested_plan = Plan.where(name: "Personal", custom: false)
+                          if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
+                          suggested_plan = Plan.where(name: "Normal", custom: false).first
+                          end
+                        %>
+                        <div style="color: #22c488; font-weight: bold; font-size: 18px;">
+                          <%= suggested_plan.name %>
+                        </div>
+                        <div>
+                          $<%= (suggested_plan.plan_countries.find_by_country_id(@company.country.id).price * @company.computed_multiplier).to_s %> / Mes + IVA
+                        </div>
+                      <% elsif @company.plan.custom %>
+                        <div style="color: #22c488; font-weight: bold; font-size: 18px;">
+                          <%= @company.plan.name %>
+                        </div>
+                        <div>
+                          $<%= @company.company_plan_setting.base_price.to_s %> / Mes + IVA
+                        </div>
                       <% else %>
-                        $<%= @company.company_plan_setting.base_price * @company.computed_multiplier %> / Mes + IVA
+                        <div style="color: #22c488; font-weight: bold; font-size: 18px;">
+                          <%= @company.plan.name %>
+                        </div>
+                        <div>
+                          $<%= @company.company_plan_setting.base_price * @company.computed_multiplier %> / Mes + IVA
+                        </div>
                       <% end %>
-                    </div>
                   </td>
                   <td class="right">
-                    <% if @company.plan.custom %>
+                    <% if @company.plan.name == "Trial" %>
+                      <%
+                        suggested_plan = Plan.where(name: "Personal", custom: false)
+                        if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
+                        suggested_plan = Plan.where(name: "Normal", custom: false).first
+                        end
+                      %>
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;1 local base + 0,5 por cada local extra
+                      <br />
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;Staff ilimitado
+                      <br />
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= suggested_plan.monthly_mails.to_s %> correos 
+                    <% elsif @company.plan.custom %>
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.locations.to_s %> locales
                       <br />
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.service_providers.to_s %> prestadores
@@ -262,7 +293,7 @@
             </select>
           </div>
 
-          <div id="pay_div_payment_method" style="margin-top: 10px;">
+          <div id="pay_div_payment_method" style="margin-top: 10px; display: none;">
 
             <div class="plan-section-title">
               Selecciona tu método de pago

@@ -94,8 +94,8 @@ class CompanyMailer < Base::CustomMailer
 		sales_tax = company.country.sales_tax
 
 		current_amount = company.calculate_trial_debt
-		plan_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
-		debt_amount = 0
+		plan_amount = company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+		debt_amount = company.due_amount
 
 		is_chile = true
 		if company.country.name != "Chile"
@@ -187,7 +187,7 @@ class CompanyMailer < Base::CustomMailer
 		sales_tax = company.country.sales_tax
 
 		current_amount = company.calculate_trial_debt
-		plan_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
+		plan_amount = company.company_plan_setting.base_price * company.computed_multiplier
 		debt_amount = 0
 
 
@@ -246,14 +246,18 @@ class CompanyMailer < Base::CustomMailer
 
 	#Send invoice_email charging for new month.
 	def invoice_email(company_id, reminder_message)
+
 		current_date = DateTime.now
 		day_number = Time.now.day
 	    month_days = Time.now.days_in_month
 		company = Company.find(company_id)
-	    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+	    #company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 		unless company.users.where(role_id: Role.find_by_name('Administrador General')).count > 0
 			return
 		end
+
+		price = company.company_plan_setting.base_price * company.computed_multiplier
 
 		is_chile = true
 		if company.country.name != "Chile"
@@ -591,7 +595,7 @@ class CompanyMailer < Base::CustomMailer
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => 'AgendaPro',
-			:subject => 'Comprobante de pago de cuenta AgendaPro',
+			:subject => 'Comprobante de pago de cuenta AgendaPro ' + company.name,
 			:to => recipients,
 			:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
 			:global_merge_vars => [
@@ -685,6 +689,12 @@ class CompanyMailer < Base::CustomMailer
 	        :type => 'to'
 	      }
 	    end
+
+	    recipients << {
+	    	:email => 'cuentas@agendapro.cl',
+	    	:name => 'Cuentas AgendaPro',
+	    	:type => 'to'
+	    }
 
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
