@@ -1362,7 +1362,7 @@ ActiveRecord::Schema.define(version: 20160121160901) do
 
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
-    t.integer  "country_id", null: false
+    t.integer  "country_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
