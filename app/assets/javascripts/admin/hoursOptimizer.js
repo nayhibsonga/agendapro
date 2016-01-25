@@ -191,6 +191,7 @@ function loadHours () {
       $('#hoursDetails').append(services_str);
       $('input[type=radio][name="hoursRadio"]').change(function(e){
         // e.preventDefault();
+        $('#hoursDetails').show();
         var pos_num = $(this).val();
         $('.optimizerDetail').each(function(){
           if($(this).attr("pos") != pos_num)
@@ -493,6 +494,7 @@ $(function () {
     bookings = [];
     resetForm();
     loadServiceModal();
+    $('#addButton').show();
     $("#hoursDetails").empty();
     $("#pickerSelectDate").show();
   });
@@ -503,6 +505,7 @@ $(function () {
     $("#pickerSelected").append($("#initialPickerDate").val());
     $("#pickerSelectDate").show();
     $("#hoursDetails").empty();
+    $('#addButton').show();
     $('.has-success').removeClass('has-success');
     $('.fa.fa-check').removeClass('fa fa-check');
     $('.has-error').removeClass('has-error');
@@ -511,9 +514,11 @@ $(function () {
     $('#small_loader').remove();
   });
 
-  $('.optimizerDetailLink').on('click', function(e){
+  $('body').on('click', '.optimizerDetailLink', function(e){
+    console.log("Clicked");
     e.preventDefault();
     var pos_num = $(this).attr('pos');
+    $('#hoursDetails').show();
     $('.optimizerDetail[pos="'+pos_num+'"]').show();
   });
 
