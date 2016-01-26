@@ -11,9 +11,10 @@ function changeLocationStatus(location_id) {
 function saveCategory (typeURL, extraURL) {
 	$('#saveResourceCategryButton').attr('disabled', true);
 	var categoryJSON = { "name": $('#resource_category_name').val() };
-	if (!$('#new_resource_category').valid()) {
+	if (typeURL == 'POST' && !$('#new_resource_category').valid()) {
+		$('#saveResourceCategryButton').attr('disabled', false);
 		return false;
-	} else if (typeURL == 'DELETE') {
+	} else {
 		swal({
       title: "¿Estás seguro?",
       type: "warning",
@@ -160,6 +161,10 @@ $(function() {
 		$('.has-error').removeClass('has-error');
 		$('.fa.fa-times').removeClass('fa fa-times');
 	});
+	$('#saveResourceCategryButton').click(function() {
+		saveCategory('POST', '');
+	});
+
 	$('input.check_boxes').each(function () {
 		var prop = true;
 		$(this).parents('.panel-body').find('input.check_boxes').each( function () {
