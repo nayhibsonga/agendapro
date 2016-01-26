@@ -168,6 +168,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
       if (!bookingModalOpen) {
         bookingModalOpen = true;
         editBookingModal(event.id);
+        $('#popover').hide();
       };
     },
     dayClick: function(date, allDay, jsEvent, view) {
@@ -198,7 +199,6 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
         if (!bookingModalOpen) {
           bookingModalOpen = true;
           createBookingModal(date, resourceId);
-
         };
         $('#popover').hide();
       });
@@ -231,7 +231,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
               'Servicio: ' + event.service_qtip + '<br/>' +
               'Teléfono: ' + event.phone_qtip + '<br/>' +
               'E-mail: ' + event.email_qtip + '<br/>' +
-              'CI: ' + event.identification_number_qtip + '<br/>' +
+              ($('#calendar-data').data('id-number') ? 'CI: ' + event.identification_number_qtip + '<br/>' : '') +
               'Comentario: ' + event.comment_qtip + '<br />' +
               'Pagado: ' + prepayed + '<br />' +
               event.sessions_ratio_qtip
@@ -268,7 +268,7 @@ function loadResourcesCalendar (startTime, endTime, hiddenDays, resourcesArray, 
               'Servicio: ' + event.service_qtip + '<br/>' +
               'Teléfono: ' + event.phone_qtip + '<br/>' +
               'E-mail: ' + event.email_qtip + '<br/>' +
-              'CI: ' + event.identification_number_qtip + '<br/>' +
+              ($('#calendar-data').data('id-number') ? 'CI: ' + event.identification_number_qtip + '<br/>' : '') +
               'Comentario: ' + event.comment_qtip + '<br />' +
               'Pagado: ' + prepayed
              },
@@ -441,7 +441,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
                      'Servicio: ' + event.service_qtip + '<br/>' +
                      'Teléfono: ' + event.phone_qtip + '<br/>' +
                      'E-mail: ' + event.email_qtip + '<br/>' +
-                     'CI: ' + event.identification_number_qtip + '<br/>' +
+                     ($('#calendar-data').data('id-number') ? 'CI: ' + event.identification_number_qtip + '<br/>' : '') +
                      'Comentario: ' + event.comment_qtip + '<br />' +
                      'Pagado: ' + prepayed + '<br />' +
                      event.sessions_ratio_qtip
@@ -478,7 +478,7 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
                      'Servicio: ' + event.service_qtip + '<br/>' +
                      'Teléfono: ' + event.phone_qtip + '<br/>' +
                      'E-mail: ' + event.email_qtip + '<br/>' +
-                     'CI: ' + event.identification_number_qtip + '<br/>' +
+                     ($('#calendar-data').data('id-number') ? 'CI: ' + event.identification_number_qtip + '<br/>' : '') +
                      'Comentario: ' + event.comment_qtip + '<br />' +
                      'Pagado: ' + prepayed
                },
@@ -711,7 +711,7 @@ function editBookingModal(eventId) {
 
       $('#cancelBookingDiv').remove();
       if(booking.bundled)
-      { 
+      {
         window.console.log($('#booking_status_id').closest('.col-md-6'));
         $('#bundled_service').show();
         $("#is_bundle").html("Sí");
@@ -884,7 +884,7 @@ function createBookingModal(date, provider_id) {
         var timeArray = date.toString().split(' ')[4];
 
         var day_str = date_str[2];
-        
+
         if(day_str.length == 1)
         {
           day_str = "0" + day_str;
@@ -2460,7 +2460,7 @@ function editBreakModal(breakId) {
         }
         else
         {
-          $('#serviceProvidersMultiSelect option[value=' + parseInt(provider_break.service_provider_id) + '"]').prop("selected", true);
+          $('#serviceProvidersMultiSelect option[value="' + parseInt(provider_break.service_provider_id) + '"]').prop("selected", true);
         }
 
         $('#serviceProvidersMultiSelect').multiselect('refresh');
@@ -2660,7 +2660,7 @@ function modalChange() {
         $.each(servicesJSON[i].service_bundles, function(key, service) {
           var bundle_services_options = '';
           $.each(service.service_providers, function(key2, service_provider){
-            bundle_services_options += '<option value="' + service_provider.id + '" ' + ($("#booking_service_provider_id").val() == service_provider.id ? 'selected' : '') + '>' + service_provider.public_name + '</option>';  
+            bundle_services_options += '<option value="' + service_provider.id + '" ' + ($("#booking_service_provider_id").val() == service_provider.id ? 'selected' : '') + '>' + service_provider.public_name + '</option>';
           });
           $('#bundle_service_providers').append('<div class="form-group"><label class="col-sm-4 control-label">' + (key + 1) + '. ' + service.service_name + ':</label><div class="col-sm-8"><select class="form-control bundle_service" id="bundle_service_' + service.service_id + '" data-id="' + service.service_id + '" data-duration="' + service.service_duration + '" data-price="' + service.price + '">' + bundle_services_options + '</select></div></div>');
         });
