@@ -36,18 +36,18 @@ class ServiceProvider < ActiveRecord::Base
 
 	def plan_service_providers
 		if self.active_changed? && self.active
-			if self.company.service_providers.where(active:true).count >= self.company.plan.service_providers
+			if self.company.service_providers.where(active:true).count >= self.company.plan.service_providers && (self.company.plan.custom || self.company.plan.name == "Personal")
 				errors.add(:base, "No se pueden agregar más prestadores con el plan actual, ¡mejóralo!.")
 			end
 		else
-			if self.company.locations.where(active:true).count > self.company.plan.locations
+			if self.company.locations.where(active:true).count > self.company.plan.locations && (self.company.plan.custom || self.company.plan.name == "Personal")
 				errors.add(:base, "No se pueden agregar más prestadores con el plan actual, ¡mejóralo!.")
 			end
 		end
 	end
 
 	def new_plan_service_providers
-		if self.company.service_providers.where(active:true).count >= self.company.plan.service_providers
+		if self.company.service_providers.where(active:true).count >= self.company.plan.service_providers && (self.company.plan.custom || self.company.plan.name == "Personal")
 			errors.add(:base, "No se pueden agregar más prestadores con el plan actual, ¡mejóralo!.")
 		end
 	end

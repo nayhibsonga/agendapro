@@ -28,7 +28,7 @@
   </div>
 </div>
 
-<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required, preset_notes: @company_setting.preset_notes, strict_booking: @company_setting.strict_booking } do %>
+<%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required, preset_notes: @company_setting.preset_notes, strict_booking: @company_setting.strict_booking, id_number: @company_setting.use_identification_number } do %>
 <% end %>
 
 <%= content_tag "div", id: "products_data", data: { products: Product.where(company_id: current_user.company_id).to_json } do %>
@@ -526,7 +526,7 @@
                               </div>
                               <div class="col-sm-3">
                                 <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute_hour" id="<%= attribute.slug %>_attribute_hour">
-                                  <% 
+                                  <%
                                     for i in 0..23
                                       str_hour = i.to_s
                                       if str_hour.length == 1
@@ -537,7 +537,7 @@
                                         <option value="<%= str_hour %>"><%= str_hour %></option>
                                       <%
 
-                                    end 
+                                    end
                                   %>
                                 </select>
                               </div>
@@ -546,7 +546,7 @@
                               </div>
                               <div class="col-sm-3">
                                 <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute_minute" id="<%= attribute.slug %>_attribute_minute">
-                                  <% 
+                                  <%
                                     for i in 0..59
                                       str_minute = i.to_s
                                       if str_minute.length == 1
@@ -557,7 +557,7 @@
                                         <option value="<%= str_minute %>"><%= str_minute %></option>
                                       <%
 
-                                    end 
+                                    end
                                   %>
                                 </select>
                               </div>
@@ -588,7 +588,7 @@
                           </div>
                         </div>
 
-                      <% end %>                      
+                      <% end %>
                     <% end %>
                   <% end %>
 
@@ -819,7 +819,7 @@
                                 </div>
                                 <div class="col-sm-3">
                                   <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute_hour" id="<%= attribute.slug %>_attribute_hour">
-                                    <% 
+                                    <%
                                       for i in 0..23
                                         str_hour = i.to_s
                                         if str_hour.length == 1
@@ -830,7 +830,7 @@
                                           <option value="<%= str_hour %>"><%= str_hour %></option>
                                         <%
 
-                                      end 
+                                      end
                                     %>
                                   </select>
                                 </div>
@@ -839,7 +839,7 @@
                                 </div>
                                 <div class="col-sm-3">
                                   <select class="form-control custom-attribute" name="<%= attribute.slug %>_attribute_minute" id="<%= attribute.slug %>_attribute_minute">
-                                    <% 
+                                    <%
                                       for i in 0..59
                                         str_minute = i.to_s
                                         if str_minute.length == 1
@@ -850,7 +850,7 @@
                                           <option value="<%= str_minute %>"><%= str_minute %></option>
                                         <%
 
-                                      end 
+                                      end
                                     %>
                                   </select>
                                 </div>
@@ -881,7 +881,7 @@
                             </div>
                           </div>
 
-                        <% end %>                      
+                        <% end %>
                       <% end %>
                     <% end %>
 
@@ -1016,6 +1016,10 @@
                       </label>
                     </div>
                   <% end %>
+                </div>
+                <div id="providers_multiselect_div">
+                  <select id="serviceProvidersMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
+                  </select>
                 </div>
               </div>
             </div>
@@ -1158,14 +1162,16 @@
               <%= builder.hidden_field :address %>
               <%= builder.hidden_field :district %>
               <%= builder.hidden_field :city %>
-              <div class="form-group has-feedback has-feedback">
-                <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-sm-4 control-label" %>
-                <div class="col-sm-8">
-                  <%= builder.text_field :identification_number, class: "form-control", disabled: @company_setting.client_exclusive %>
-                  <span class="help-block"></span>
-                  <ul id="rut_suggestions"></ul>
+              <% if @company_setting.use_identification_number %>
+                <div class="form-group has-feedback has-feedback">
+                  <%= builder.label :identification_number, (I18n.t('ci')).capitalize, class: "col-sm-4 control-label" %>
+                  <div class="col-sm-8">
+                    <%= builder.text_field :identification_number, class: "form-control", disabled: @company_setting.client_exclusive %>
+                    <span class="help-block"></span>
+                    <ul id="rut_suggestions"></ul>
+                  </div>
                 </div>
-              </div>
+              <% end %>
               <div class="form-group has-feedback">
                 <label for="full_name" class="col-md-4 control-label">Nombre Cliente</label>
                 <div class="col-md-8">
@@ -1351,5 +1357,6 @@
 
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "fullcalendar_css" %>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
   <%= stylesheet_link_tag "admin/admin-calendar" %>
 <% end %>

@@ -49,6 +49,23 @@ class ClientsController < ApplicationController
     @services = Service.where(company_id: @client.company.id).accessible_by(current_ability)
     @service_providers = ServiceProvider.where(company_id: @client.company.id).accessible_by(current_ability)
 
+    @start_date = DateTime.now - 2.weeks
+    if @client.bookings.where('start < ?', DateTime.now).count > 0
+      @start_date = @client.bookings.where('start < ?', DateTime.now).order('start desc').first.start
+    end
+
+    @end_date = DateTime.now
+    if @client.bookings.where('start > ?', DateTime.now).count > 0
+      @end_date = @client.bookings.where('start > ?', DateTime.now).order('start desc').first.start
+    end
+
+    @start_date = @start_date.strftime("%d/%m/%Y")
+    @end_date = @end_date.strftime("%d/%m/%Y")
+
+    logger.debug "Dates: "
+    logger.debug @start_date
+    logger.debug @end_date
+
   end
 
   def bookings_content
@@ -152,13 +169,11 @@ class ClientsController < ApplicationController
         format.json { render action: 'edit', status: :created, location: @client }
       else
         format.html {
+          @company = current_user.company
           @activeBookings = Array.new
           @lastBookings = Array.new
           @client_comment = ClientComment.new
           @sessionBookings = []
-          if mobile_request?
-            @company = current_user.company
-          end
           render action: 'new' }
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
@@ -184,6 +199,7 @@ class ClientsController < ApplicationController
           @next_bookings = Booking
           @client_comment = ClientComment.new
           @client_comments = ClientComment.where(client_id: @client).order(created_at: :desc)
+          @company = current_user.company
 
           @preSessionBookings = SessionBooking.where(:client_id => @client)
 

@@ -629,7 +629,7 @@ class CompanyMailer < Base::CustomMailer
 				},
 				{
 					:name => 'CARD_NUMBER',
-					:content => "********" + punto_pagos_confirmation.card_number
+					:content => "********#{punto_pagos_confirmation.card_number}"
 				},
 				{
 					:name => 'ORDER',
@@ -669,7 +669,7 @@ class CompanyMailer < Base::CustomMailer
 
 	    card_number = ""
 	    if !pay_u_notification.cc_number.nil?
-	    	card_number = "********" + pay_u_notification.cc_number
+	    	card_number = "********#{pay_u_notification.cc_number}"
 	    end
 
 	    is_chile = true

@@ -150,7 +150,7 @@ Agendapro::Application.routes.draw do
         get '/editor/:id', action: 'editor', as: :editor
         post '/editor', action: 'new', as: :new
         post "/update", action: 'update', as: :update
-        post "/upload", action: 'upload', as: :upload
+        post "/editor/upload", action: 'upload', as: :upload
         delete "/delete/:id", action: 'delete', as: :delete
       end
     end

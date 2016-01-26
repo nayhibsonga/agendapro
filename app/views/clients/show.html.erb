@@ -37,11 +37,11 @@
       <div class="row">
         <label for="from" class="col-sm-1 control-label">Desde:</label>
         <div class="col-sm-5">
-          <input type="text" id="from" name="from" class="form-control client_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
+          <input type="text" id="from" name="from" class="form-control client_select" value="<%= @start_date %>">
         </div>
         <label for="from" class="col-sm-1 control-label">Hasta:</label>
         <div class="col-sm-5">
-          <input type="text" id="to" name="to" class="form-control client_select" value="<%= Time.now.strftime("%Y-%m-%d") %>">
+          <input type="text" id="to" name="to" class="form-control client_select" value="<%= @end_date %>">
         </div>
         <div style="clear: both;">
         </div>
