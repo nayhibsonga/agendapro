@@ -105,7 +105,11 @@ class Company < ActiveRecord::Base
 	end
 
 	def computed_multiplier
-		return (1 + (self.locations.where(active:true).count - 1) * self.company_plan_setting.locations_multiplier)
+		return_value = (1 + (self.locations.where(active:true).count - 1) * self.company_plan_setting.locations_multiplier)
+		if return_value < 1
+			return_value = 1
+		end
+		return return_value
 	end
 
 	def get_storage_occupation
