@@ -174,3 +174,15 @@ function removeData(element) {
   element.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
   element.find('input[type="text"], input[type="hidden"]').val('');
 }
+
+function findTrigger() {
+  $('.search-input').keydown(function(event) {
+    console.log("ENTRE: ", event)
+    if (event.keyCode == 13 || event.keyCode == 10) {
+      $('#search_btn').click();
+      return false;
+     }
+  });
+};
+
+findTrigger();
