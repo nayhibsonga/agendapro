@@ -169,13 +169,11 @@ class ClientsController < ApplicationController
         format.json { render action: 'edit', status: :created, location: @client }
       else
         format.html {
+          @company = current_user.company
           @activeBookings = Array.new
           @lastBookings = Array.new
           @client_comment = ClientComment.new
           @sessionBookings = []
-          if mobile_request?
-            @company = current_user.company
-          end
           render action: 'new' }
         format.json { render json: @client.errors, status: :unprocessable_entity }
       end
@@ -201,6 +199,7 @@ class ClientsController < ApplicationController
           @next_bookings = Booking
           @client_comment = ClientComment.new
           @client_comments = ClientComment.where(client_id: @client).order(created_at: :desc)
+          @company = current_user.company
 
           @preSessionBookings = SessionBooking.where(:client_id => @client)
 
