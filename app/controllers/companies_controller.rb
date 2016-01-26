@@ -1971,25 +1971,42 @@ class CompaniesController < ApplicationController
 
 				  # Horario dentro del horario del provider
 					if service_valid
+
+						# Service Time Restricted
+            if service.time_restricted
+              service_valid = false
+              service.service_times.where(day_id: dateTimePointer.cwday).each do |times|
+                service_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
+                service_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
+
+                if service_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= service_close
+                  service_valid = true
+                  break
+                end
+              end
+            end
+
 						providers = []
-						if serviceStaff[serviceStaffPos][:provider] != "0"
-						  providers = providers_arr[serviceStaffPos]
-						else
+						if service_valid
+							if serviceStaff[serviceStaffPos][:provider] != "0"
+							  providers = providers_arr[serviceStaffPos]
+							else
 
-						  #Check if providers have same day open
-						  #If they do, choose the one with less ocupations to start with
-						  #If they don't, choose the one that starts earlier.
-						  if service.check_providers_day_times(dateTimePointer)
+							  #Check if providers have same day open
+							  #If they do, choose the one with less ocupations to start with
+							  #If they don't, choose the one that starts earlier.
+							  if service.check_providers_day_times(dateTimePointer)
 
-						    providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+							    providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
 
-						  else
+							  else
 
-						    providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
-						  end
+							    providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+							  end
 
 
 
+							end
 						end
 
 						providers.each do |provider|

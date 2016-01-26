@@ -4444,7 +4444,6 @@ class BookingsController < ApplicationController
           # Horario dentro del horario del provider
           if service_valid
 
-            puts service.time_restricted
             # Service Time Restricted
             if service.time_restricted
               service_valid = false
