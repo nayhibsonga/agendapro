@@ -2460,7 +2460,7 @@ function editBreakModal(breakId) {
         }
         else
         {
-          $('#serviceProvidersMultiSelect option[value=' + parseInt(provider_break.service_provider_id) + '"]').prop("selected", true);
+          $('#serviceProvidersMultiSelect option[value="' + parseInt(provider_break.service_provider_id) + '"]').prop("selected", true);
         }
 
         $('#serviceProvidersMultiSelect').multiselect('refresh');
