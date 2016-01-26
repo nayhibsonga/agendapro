@@ -115,6 +115,7 @@ function loadHourModal () {
   $('#serviceOptimizer').hide();
   $('#selectHour').empty();
   $('#selectHour').show();
+  $('#hoursDetails').show();
   $('#optimizerTitle').html(hourTitle);
   $('#addButton > span').html(hourButton);
 
