@@ -13,8 +13,6 @@ class Company < ActiveRecord::Base
 	has_many :cashiers, dependent: :destroy
 	has_many :email_contents, dependent: :destroy
 
-	has_many :company_files
-
 	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
 
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
@@ -51,6 +49,10 @@ class Company < ActiveRecord::Base
 	has_many :downgrade_logs
 
 	has_one :company_plan_setting
+
+	has_many :company_files
+
+	has_many :client_files, :through => :clients
 
 	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
@@ -114,6 +116,10 @@ class Company < ActiveRecord::Base
 
 	def get_storage_occupation
 		
+		used_storage = 0
+		used_storage += self.company_files.sum(:size)
+		used_storage += self.client_files.sum(:size)
+
 	end
 
 	def create_cashier

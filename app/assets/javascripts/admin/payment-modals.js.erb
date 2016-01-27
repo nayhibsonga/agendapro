@@ -1007,26 +1007,42 @@ function saveInternalSale()
 
 function deleteInternalSale(internal_sale_id)
 {
-  $.ajax({
-    url: '/delete_internal_sale',
-    type: 'post',
-    data: {internal_sale_id: internal_sale_id},
-    dataType: 'json',
-    error: function(resonse){
-      triggerAlert("Ocurrió un error al eliminar la venta.");
+
+
+  swal(
+    {
+      title: "¿Estás seguro que deseas eliminar la venta?",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar'
     },
-    success: function(response){
-      if(response[0] == "ok")
-      {
-        triggerSuccess("Venta eliminada correctamente.");
+    function (isConfirm) {
+      if (isConfirm) {  
+
+        $.ajax({
+          url: '/delete_internal_sale',
+          type: 'post',
+          data: {internal_sale_id: internal_sale_id},
+          dataType: 'json',
+          error: function(resonse){
+            triggerAlert("Ocurrió un error al eliminar la venta.");
+          },
+          success: function(response){
+            if(response[0] == "ok")
+            {
+              triggerSuccess("Venta eliminada correctamente.");
+            }
+            else
+            {
+              triggerAlert("Ocurrió un error al eliminar la venta.");
+            }
+            loadPayments();
+          }
+        })
       }
-      else
-      {
-        triggerAlert("Ocurrió un error al eliminar la venta.");
-      }
-      loadPayments();
     }
-  })
+  );
 }
 
 function editInternalSale(internal_sale_id)

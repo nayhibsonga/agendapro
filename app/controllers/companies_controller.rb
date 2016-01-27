@@ -1605,7 +1605,7 @@ class CompaniesController < ApplicationController
 
 		@company = current_user.company
 
-		if(params[:file].size/1024/1024 > 25)
+		if(params[:file].size/1000/1000 > 25)
 	      	redirect_to '/get_company_files', alert: 'Tamaño de archivo no permitido'
 	      	return
 		end
