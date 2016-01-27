@@ -15,6 +15,8 @@ class Company < ActiveRecord::Base
 
 	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
 
+	has_many :custom_filters, dependent: :destroy
+
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
 
 	def reject_company_country(attributes)

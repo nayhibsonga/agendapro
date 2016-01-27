@@ -1444,6 +1444,40 @@
                 </table>
               </div>
             </div>
+
+
+            <div class="row" style="margin-top: 40px; margin-bottom: 30px;">
+              <div class="col-md-12">
+                <div class="background-grey">
+                  <h3 class="text-green">
+                    Listado de filtros
+                    <button class="btn btn-green pull-right" id="new_attribute_button"><i class="fa fa-plus"></i> Agregar filtro</button>
+                  </h3>
+                </div>
+                <table class="table table-hover table-green">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @custom_filters.each do |custom_filter| %>
+                      <tr>
+                        <td>
+                          <%= custom_filter.name %>
+                        </td>
+                        <td>
+                          <button class="btn btn-orange edit_filter_btn" data-attributeid="<%= custom_filter.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
+                          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, custom_filter, method: :delete, data: { confirm: '¿Estás seguro de eliminar el filtro seleccionado?' }, class: 'btn btn-red' %>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
         <% end %>
         <!-- End Clients -->
