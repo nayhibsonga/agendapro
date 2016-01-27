@@ -1224,9 +1224,7 @@ class PaymentsController < ApplicationController
     @payment.payment_products.each do |payment_product|
       if payment_product.delete
         location_product = LocationProduct.where(:location_id => @payment.location_id, :product_id => payment_product.product_id).first
-        if location_product.nil?
-          errors << "No existe el producto para el local."
-        else
+        if !location_product.nil?
           location_product.stock = location_product.stock + payment_product.quantity
           location_product.save
         end
@@ -1776,7 +1774,7 @@ class PaymentsController < ApplicationController
     internal_sale = InternalSale.find(params[:internal_sale_id])
     location_product = LocationProduct.where(:location_id => internal_sale.location_id, :product_id => internal_sale.product_id).first
 
-    if internal_sale.nil? || location_product.nil?
+    if internal_sale.nil?
       json_response[0] = "error"
       errors << "Datos ingresados incorrectamente."
       json_response[1] << errors
@@ -1787,8 +1785,10 @@ class PaymentsController < ApplicationController
     quantity = internal_sale.quantity
 
     if internal_sale.delete
-      location_product.stock += quantity
-      location_product.save
+      if !location_product.nil?
+        location_product.stock += quantity
+        location_product.save
+      end
       json_response[0] = "ok"
     else
       json_response[0] = "error"

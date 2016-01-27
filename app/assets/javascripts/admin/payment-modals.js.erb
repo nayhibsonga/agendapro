@@ -2826,10 +2826,14 @@ function editPayment(payment_id)
 
 function deletePayment(payment_id)
 {
-  var r = confirm("¿Estás seguro que deseas eliminar el pago?");
+  //var r = confirm("¿Estás seguro que deseas eliminar el pago?");
+
   swal({
     title: "¿Estás seguro que deseas eliminar el pago?",
-    type: "warning"
+    type: "warning",
+    showCancelButton: true,
+    confirmButtonText: 'Eliminar',
+    cancelButtonText: 'Cancelar'
   },
   function (isConfirm) {
     if (isConfirm) {  
@@ -2838,7 +2842,7 @@ function deletePayment(payment_id)
         type: 'post',
         data: {payment_id: payment_id},
         dataType: 'json',
-        error: function(resonse){
+        error: function(response){
           triggerAlert("Ocurrió un error al eliminar el pago.");
         },
         success: function(response){
@@ -2855,6 +2859,7 @@ function deletePayment(payment_id)
       });
     }
   });
+
 }
 
 function openPaymentSummary(payment_id)
