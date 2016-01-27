@@ -532,4 +532,19 @@ module ApplicationHelper
 		return return_str
 		
 	end
+
+	def bytes_to_text(bytes)
+
+		if bytes < 1000
+			number_to_human(bytes, separator: ',', delimeter: '.', precision: 2) +  " B"
+		elsif bytes < 1000**2
+			number_to_human((bytes.to_f/1000.0), separator: ',', delimeter: '.', precision: 2) +  " KB"
+		elsif bytes < 1000**3
+			number_to_human((bytes.to_f/(1000.0 * 1000.0)), separator: ',', delimeter: '.', precision: 2) +  " MB"
+		else
+			number_to_human((bytes.to_f/(1000.0 * 1000.0 * 1000.0)), separator: ',', delimeter: '.', precision: 2) +  " GB"
+		end
+
+	end
+
 end

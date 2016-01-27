@@ -490,7 +490,7 @@ class ClientsController < ApplicationController
 
     @client = Client.find(params[:client_id])
 
-    if(params[:file].size/1024/1024 > 25)
+    if(params[:file].size/1000/1000 > 25)
       if upload_origin == "edit_client"
         redirect_to edit_client_path(id: @client.id), alert: 'Tamaño de archivo no permitido'
       else
