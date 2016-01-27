@@ -313,7 +313,7 @@ class CompaniesController < ApplicationController
 			    		end
 
 
-	        			BillingLog.create(payment: due, amount: @transfer.paid_months, company_id: company.id, plan_id: company.plan.id, transaction_type_id: -1, trx_id: "")
+	        			BillingLog.create(payment: due, amount: @transfer.paid_months, company_id: company.id, plan_id: company.plan.id, transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id, trx_id: "")
 
 	        			company.months_active_left += @transfer.paid_months
 						company.due_amount = 0.0
@@ -705,7 +705,7 @@ class CompaniesController < ApplicationController
 				end_date = DateTime.new(year+1, 1, 1)-1.minutes
 			end
 
-			billing_logs = BillingLog.where.not(transaction_type_id: -1).where('company_id = ? and created_at BETWEEN ? and ?', @company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id))
+			billing_logs = BillingLog.where.not(transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id).where('company_id = ? and created_at BETWEEN ? and ?', @company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id))
 
 			billing_records = BillingRecord.where('company_id = ? and date BETWEEN ? and ?', @company.id, start_date, end_date)
 

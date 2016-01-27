@@ -666,7 +666,7 @@ class Company < ActiveRecord::Base
 	#response[1] = Last payment amount (or 0 if nil)
 	def last_payment_detail
 
-		bl = BillingLog.where.not(transaction_type_id: -1).where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
+		bl = BillingLog.where.not(transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id).where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
 		rec = BillingRecord.where(:company_id => self.id).order('date desc').first
 		bwt = BillingWireTransfer.where(:company_id => self.id, :approved => true).order('payment_date desc').first
 		pl = PlanLog.where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
