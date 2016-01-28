@@ -104,4 +104,6 @@ Agendapro::Application.configure do
 
   Excon.defaults[:write_timeout] = 600
 
+  Excon.defaults[:ssl_verify_peer] = false
+
 end
