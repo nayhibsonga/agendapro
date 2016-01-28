@@ -25,7 +25,7 @@ class BookingsController < ApplicationController
       json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order, :name) do |provider_group|
         json.name  provider_group.name
         json.location_id provider_group.location_id
-        json.resources provider_group.service_providers.where(active: true).order(:order, :name).accessible_by(current_ability) do |service_provider|
+        json.resources provider_group.service_providers.where(active: true).accessible_by(current_ability).order(:order, :public_name) do |service_provider|
           json.id service_provider.id
           json.name service_provider.public_name
         end
