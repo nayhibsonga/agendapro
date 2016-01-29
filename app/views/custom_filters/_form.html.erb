@@ -69,7 +69,179 @@
 
 		<% elsif attribute.datatype == "datetime" %>
 
+			<div class="form-group has-feedback">
+			  	<label class ='control-label col-xs-3'><%= attribute.name %></label>
+			  	<div class="col-xs-3">
+			  		<select id="attribute_<%= attribute.id %>_option" name="attribute_<%= attribute.id %>_option" class="form-control">
+			  			<option value="equals">Igual a</option>
+			  			<option value="greater">Mayor que</option>
+			  			<option value="greater_equal">Mayor o igual que</option>
+			  			<option value="lower">Menor que</option>
+			  			<option value="lower_equal">Menor o igual que</option>
+			  			<option value="between">Entre</option>
+			  			<option value="out">Fuera de</option>
+			  		</select>
+			  	</div>
+			    <div class="col-xs-3">
+			      	<div>Remote Address:173.255.215.186:80
+Request URL:http://agendapro.co/payment_summary?payment_id=11472
+Request Method:GET
+Status Code:200 OK
+Response Headers
+view source
+Cache-Control:max-age=0, private, must-revalidate
+Connection:keep-alive
+Content-Encoding:gzip
+Content-Type:text/html; charset=utf-8
+Date:Fri, 29 Jan 2016 18:42:17 GMT
+ETag:W/"546a64eb45bf17bdfe35b567723b743d"
+Server:nginx/1.8.0 + Phusion Passenger 5.0.23
+Set-Cookie:_agendapro_session=akZodWlZemRwaU1hWTEwSjY4ZnpXMlJkL1dYT1FPbmpNMVRmWWNhZmtpK0hSMGtjRXhMWmNOcDllcFZjY2tETjVhOVhpV0lYSlJwMkEzbzFSK2pzbzJwRnYwMHI3R2hzL0lCckE4L2RPTFllUW1tdEdsMmp0WFpBMTZ3UWJ1dHRMYmZiZVQ1Mm9rbGlYR05IR1FOL0V0dXpTVXhGaVJMTmxuM1FrS1IvQWlDWEFvT3R2a1paYTdsNkdibHJuQmJiZzV5R1M5RVNnWGg1dk16ak14NHVlQ3QrbmRKV2dCSXVOejJ4RjBRdGh5K3lhRXFKOWR5OHA3ZldWQzNMWVdjTEFYN2hGUy9HUzNURkJ5VkRFL3d3YWc9PS0tTGo4MU10TGFwU1h4eTFSWjZsa1I3QT09--8629fdb521fa34b277dd2af3da0465a0612b3223; domain=agendapro.co; path=/; HttpOnly
+Status:200 OK
+Transfer-Encoding:chunked
+X-Content-Type-Options:nosniff
+X-Frame-Options:SAMEORIGIN
+X-Powered-By:Phusion Passenger 5.0.23
+X-Request-Id:9381e86b-b12c-4a15-853b-6d0ea9bd4496
+X-Runtime:0.431503
+X-UA-Compatible:chrome=1
+X-XSS-Protection:1; mode=block
+Request Headers
+view source
+Accept:*/*
+Accept-Encoding:gzip, deflate, sdch
+Accept-Language:es-419,es;q=0.8,en;q=0.6
+Connection:keep-alive
+Cookie:__insp_uid=1989594646; _gat=1; lat=-33.416361099999996; lng=-70.56838340000002; formatted_address=Domingo%20Bondi%20960%2C%20Las%20Condes%2C%20Las%20Condes%2C%20Regi%F3n%20Metropolitana%2C%20Chile; __insp_wid=1883420541; __insp_nv=false; __insp_ref=d; __insp_targlpu=http%3A%2F%2Fagendapro.co%2F%3Flocale%3Des_CL; __insp_targlpt=AgendaPro; __insp_norec_sess=true; _ga=GA1.2.1767728244.1439567696; __insp_slim=1454092746735; __zlcmid=WDesQrbUmIdHFA; _agendapro_session=ekZodUllbXFQdndJQ3Vaa3hjUTJvYmg2aFU4R1cxZVA0ZGI3S2xnWk1aMDBDbzdtbm9kdXB3Sm9VYkJZUGVvUkNEaFBCNlZoYXBGdnlEOXkwQUVudUxYbk5xTm9IZWprcGg4d3RuVkpYQ2UzUk1Wa3EyNkVFUStQMC9pMEZjVzNaUitncmJuRkpPcHF2RVV5NWl1aVJvZklPOG5xang3ZmpSMmlsUXE3OHlON1N0SkIyVmFJNldWcitGbGFCQi9xcEltaTdFaTNXdnFFekZDd2UwbkNWdTI2aWMwSUw0bS9MMk5CS2pZMWRiV0RMNy9EYTROTnh4YUwxRDJ1TjF4NTdwTHpqMUhOUVQ2dzlLeVBuZFVyQWc9PS0tSXJ6U1RoSEJaUHgwK0ljSS9odXBMZz09--d340065e0d9b3d82dac77ff75e31620388da882b
+Host:agendapro.co
+Referer:http://agendapro.co/es_CL/payments
+User-Agent:Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36
+X-CSRF-Token:zYK0EDVCmmpdiJ1AOy05x5Y8lp4jqqouia9z7iQ6NJs=
+X-Requested-With:XMLHttpRequest
+Query String Parameters
+view source
+view URL encoded
+payment_id:11472
+Name
+￼payment_summary?payment_id=1147
+				      	<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker" />
+				      	<span class="help-block"></span>
+				      	<span class="form-control-feedback"></span>
+				    </div>
+				    <div>
+				    	<table style="width: 100%;">
+				    		<tr>
+						    	<td style="width: 47%">
+							    	<select class="form-control" name="attribute_<%= attribute.id %>_date1_hour" id="attribute_<%= attribute.id %>_date1_hour">
+			                            <% 
+			                              for i in 0..23
+			                                str_hour = i.to_s
+			                                if str_hour.length == 1
+			                                  str_hour = "0" + str_hour
+			                                end
+
+			                                %>
+			                                  <option value="<%= str_hour %>"><%= str_hour %></option>
+			                                <%
+
+			                              end 
+			                            %>
+			                        </select>
+                       			</td>
+                       			<td style="width: 6%; text-align: center;">
+                       				:
+                       			</td>
+                       			<td style="width: 47%">
+							    	<select class="form-control" name="attribute_<%= attribute.id %>_date1_minute" id="attribute_<%= attribute.id %>_date1_minute">
+			                            <% 
+			                              for i in 0..23
+			                                str_minute = i.to_s
+			                                if str_minute.length == 1
+			                                  str_minute = "0" + str_minute
+			                                end
+
+			                                #if str_minute == date_time_attribute_minute
+			                            %>
+
+			                                <option value="<%= str_hour %>"><%= str_hour %></option>
+			                            <%
+
+			                              end 
+			                            %>
+			                        </select>
+                       			</td>
+                       		</tr>
+                       	</table>
+				    </div>
+			    </div>
+			    <div class="col-xs-3">
+			    	<div>
+				      	<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker" />
+				      	<span class="help-block"></span>
+				      	<span class="form-control-feedback"></span>
+			      	</div>
+			      	<div>
+				    	<table style="width: 100%;">
+				    		<tr>
+						    	<td style="width: 47%">
+							    	<select class="form-control" name="attribute_<%= attribute.id %>_date2_hour" id="attribute_<%= attribute.id %>_date2_hour">
+			                            <% 
+			                              for i in 0..23
+			                                str_hour = i.to_s
+			                                if str_hour.length == 1
+			                                  str_hour = "0" + str_hour
+			                                end
+
+			                                %>
+			                                  <option value="<%= str_hour %>"><%= str_hour %></option>
+			                                <%
+
+			                              end 
+			                            %>
+			                        </select>
+                       			</td>
+                       			<td style="width: 6%; text-align: center;">
+                       				:
+                       			</td>
+                       			<td style="width: 47%">
+							    	<select class="form-control" name="attribute_<%= attribute.id %>_date2_minute" id="attribute_<%= attribute.id %>_date2_minute">
+			                            <% 
+			                              for i in 0..23
+			                                str_minute = i.to_s
+			                                if str_minute.length == 1
+			                                  str_minute = "0" + str_minute
+			                                end
+
+			                                #if str_minute == date_time_attribute_minute
+			                            %>
+
+			                                <option value="<%= str_hour %>"><%= str_hour %></option>
+			                            <%
+
+			                              end 
+			                            %>
+			                        </select>
+                       			</td>
+                       		</tr>
+                       	</table>
+				    </div>
+			    </div>
+			</div>
+
 		<% elsif attribute.datatype == "categoric" %>
+
+			<div class="form-group has-feedback">
+			  	<label class ='control-label col-xs-3'><%= attribute.name %></label>
+			  	<div class="col-xs-9">
+			  		<!-- Use multiselect to combine categories -->
+			  		<select class="categoric-multiselect" id="attribute_<%= attribute.id %>_multi_select" multiple="multiple" style="margin-top: 7px;" hidden>
+						<% attribute.attribute_categories.each do |attribute_category| %>
+							<option value="<%= attribute_category.id %>">attribute_category.category</option>
+						<% end %>
+		            </select>
+			  	</div>
+			</div>
+
 
 		<% elsif attribute.datatype == "text" || attribute.datatype == "textarea" %>
 
@@ -79,4 +251,8 @@
 
 	<% end %>
 
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/custom-filter" %>
 <% end %>

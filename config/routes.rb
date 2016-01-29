@@ -1,6 +1,5 @@
 Agendapro::Application.routes.draw do
 
-  resources :custom_filters
 
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
@@ -18,6 +17,7 @@ Agendapro::Application.routes.draw do
     post "mandrill/unsubscribe"
     get "mandrill/resuscribe"
 
+    resources :custom_filters
     resources :company_plan_settings
     resources :attribute_categories
     resources :attributes
@@ -568,6 +568,7 @@ Agendapro::Application.routes.draw do
     post '/billing_info_admin_create', :to => 'billing_infos#super_admin_create'
     patch '/billing_info_admin_update', :to => 'billing_infos#super_admin_update'
 
+    get '/new_filter_form', :to => 'custom_filters#new_filter_form'
 
   end
 

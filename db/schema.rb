@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160127162349) do
+ActiveRecord::Schema.define(version: 20160127191741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -599,9 +599,12 @@ ActiveRecord::Schema.define(version: 20160127162349) do
     t.string   "sendable_type"
     t.datetime "send_date"
     t.datetime "sent_date"
-    t.string   "status",        default: "pending"
+    t.string   "status",           default: "pending"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "total_sendings",   default: 0
+    t.integer  "total_recipients", default: 0
+    t.string   "detail"
   end
 
   create_table "email_templates", force: true do |t|

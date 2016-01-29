@@ -1,0 +1,39 @@
+$(document).ready(function(){
+	$('.attribute-multiselect').multiselect({
+      includeSelectAllOption: true,
+      selectAllText: 'Todos',
+      buttonContainer: '<div style="margin-top: 8px;"></div>',
+      buttonText: function(options, select) {
+
+          if (options.length === 0) {
+            return 'Ninguno';
+          }
+          else if(options.length == select[0].length)
+          {
+            return "Todos";
+          }
+          else if(options.length > 3)
+          {
+            return options.length + " seleccionados";
+          }
+          else {
+            var labels = [];
+            options.each(function() {
+                if ($(this).attr('label') !== undefined) {
+                    labels.push($(this).attr('label'));
+                }
+                else {
+                    labels.push($(this).html());
+                }
+            });
+            return labels.join(', ') + '';
+          }
+      },
+      onChange: function(option, checked, select){
+        //loadReport();
+      },
+      onInitialized: function(select, container){
+        $('.attribute-multiselect').show();
+      }
+  	});
+});

@@ -36,6 +36,14 @@ class CustomFiltersController < ApplicationController
     respond_with(@custom_filter)
   end
 
+  def new_filter_form
+    @custom_filter = CustomFilter.new
+    respond_to do |format|
+      format.html { render :partial => 'form' }
+      format.json { render json: @custom_filter }
+    end
+  end
+
   private
     def set_custom_filter
       @custom_filter = CustomFilter.find(params[:id])

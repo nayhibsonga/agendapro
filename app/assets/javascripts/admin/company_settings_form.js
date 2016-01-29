@@ -485,6 +485,22 @@ $(function () {
     e.preventDefault();
   });
 
+  $('#new_filter_button').on('click', function(){
+    $('#addFilterModal').empty()
+    $.ajax({
+      url: '/new_filter_form',
+      method: 'get',
+      data: {},
+      error: function(response){
+
+      },
+      success: function(response){
+        $('#addFilterModal .modal-content').append(response);
+        $('#addFilterModal').modal('show');
+      }
+    })
+  });
+
 
 });
 
