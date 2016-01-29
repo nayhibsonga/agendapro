@@ -367,16 +367,18 @@
                     </div>
                   </div>-->
 
-                  <div id="changeStaffTitle" style="display: inline; color: #22c488;">
-                      Cambiar prestador
-                  </div>
-                  <div>
-                    <div class="changeStaff" style="margin-top: 5px;">
-                      <select id="changeProviderSelect" class="form-control">
-
-                      </select>
+                  <% if @company.company_setting.provider_preference != 2 %>
+                    <div id="changeStaffTitle" style="display: inline; color: #22c488;">
+                        Cambiar prestador
                     </div>
-                  </div>
+                    <div>
+                      <div class="changeStaff" style="margin-top: 5px;">
+                        <select id="changeProviderSelect" class="form-control">
+
+                        </select>
+                      </div>
+                    </div>
+                  <% end %>
 
                 </div>
 
