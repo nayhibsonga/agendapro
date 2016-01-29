@@ -46,6 +46,23 @@ function loadBookings()
 
 }
 
+function paginatedContent() {
+  $(document).on('click', 'ul.pagination a', function(e) {
+    e.preventDefault();
+    var $elem = $(this);
+    $('#client_bookings_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+    $.ajax({
+        url: $elem.attr('href'),
+        cache: false,
+        success: function(html){
+          $('#client_bookings_div').html(html);
+        }
+    });
+  });
+
+  return false;
+}
+
 $(function() {
 
   $('#serviceMultiSelect').multiselect({
@@ -223,5 +240,6 @@ $(function() {
   $('#statusMultiSelect').multiselect('updateButtonText');
 
   loadBookings();
+  paginatedContent();
 
  });
