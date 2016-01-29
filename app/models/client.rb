@@ -22,6 +22,13 @@ class Client < ActiveRecord::Base
   after_update :client_notification
   #after_create :create_client_attributes
 
+  def get_storage_occupation
+    
+    used_storage = 0
+    used_storage += self.client_files.sum(:size)
+
+  end
+
   def create_client_attributes
 
     self.company.custom_attributes.each do |attribute|

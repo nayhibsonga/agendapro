@@ -29,6 +29,10 @@ class Email::Content < ActiveRecord::Base
     self.sendings.size > 0
   end
 
+  def total_recipients
+    self.sendings.delivered.of_this_month.pluck(:total_recipients).sum
+  end
+
   def destroy
     success = false
     if self.has_sendings?

@@ -587,7 +587,7 @@
                         <tr class="file-row" file_id="<%= file.id %>">
                           <td><%= file.name %></td>
                           <td><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
-                          <td><%= file.get_size %></td>
+                          <td><%= bytes_to_text(file.size) %></td>
                           <td>
                             <button class="btn btn-green btn-xs viewFileBtn" client_file_id="<%= file.id %>"><i class="fa fa-search-plus"></i>&nbsp;Ver</button>
                             <%= link_to '<i class="fa fa-trash-o"></i>&nbsp;Eliminar'.html_safe, file, method: :delete, :remote => true, data: { confirm: '¿Estás seguro de eliminar el archivo seleccionado?', type: :json }, class: 'btn btn-red btn-xs file-delete' %>
@@ -702,7 +702,7 @@
                 <div class="payment-form-div form-group has-feedback">
                   <label class="col-xs-4 control-label">Descripción</label>
                   <div class="col-xs-8">
-                    <input type="text" class="form-control" id="file_description" name="file_description" value="" />
+                    <textarea class="form-control" id="file_description" name="file_description"></textarea>
                     <span class="help-block"></span>
                     <span class="form-control-feedback"></span>
                   </div>

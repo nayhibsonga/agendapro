@@ -184,7 +184,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <% logs = @company.billing_logs.where.not(transaction_type_id: -1).order('created_at desc') %>
+                        <% logs = @company.billing_logs.where.not(transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id).order('created_at desc') %>
                         <% logs.each do |log| %>
                           <% punto_pago = PuntoPagosConfirmation.where(:trx_id => log.trx_id, :response => "00").first %>
                           <% pay_u = PayUNotification.where(:reference_sale => log.trx_id, :state_pol => "4").first %>

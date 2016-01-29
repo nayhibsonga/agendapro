@@ -1363,6 +1363,11 @@ class BookingMailer < Base::CustomMailer
 		template_name = 'Payment'
 		template_content = []
 
+		auth_code = ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
+
 		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
 		client = payed_booking.bookings.first.client
 
@@ -1397,7 +1402,7 @@ class BookingMailer < Base::CustomMailer
 				},
 				{
 					:name => 'AUTHNUMBER',
-					:content => payed_booking.punto_pagos_confirmation.authorization_code
+					:content => auth_code
 				},
 				{
 					:name => 'DATE',
@@ -1425,6 +1430,11 @@ class BookingMailer < Base::CustomMailer
 		# => Template
 		template_name = 'Payment'
 		template_content = []
+
+		auth_code = ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
 
 		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
 		client = payed_booking.bookings.first.client
@@ -1460,7 +1470,7 @@ class BookingMailer < Base::CustomMailer
 				},
 				{
 					:name => 'AUTHNUMBER',
-					:content => payed_booking.punto_pagos_confirmation.authorization_code
+					:content => auth_code
 				},
 				{
 					:name => 'DATE',
@@ -1505,6 +1515,11 @@ class BookingMailer < Base::CustomMailer
 		#email = payed_booking.booking.location.company.company_setting.email
 		client = payed_booking.bookings.first.client
 
+		auth_code = ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
+
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
@@ -1536,7 +1551,7 @@ class BookingMailer < Base::CustomMailer
 				},
 				{
 					:name => 'AUTHNUMBER',
-					:content => payed_booking.punto_pagos_confirmation.authorization_code
+					:content => auth_code
 				},
 				{
 					:name => 'DATE',
@@ -1575,6 +1590,11 @@ class BookingMailer < Base::CustomMailer
 		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
 		#email = payed_booking.booking.location.company.company_setting.email
 		client = payed_booking.bookings.first.client
+
+		auth_code = ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
 
 		message = Hash.new
 
@@ -1622,7 +1642,7 @@ class BookingMailer < Base::CustomMailer
 					},
 					{
 						:name => 'AUTHNUMBER',
-						:content => payed_booking.punto_pagos_confirmation.authorization_code
+						:content => auth_code
 					},
 					{
 						:name => 'DATE',
@@ -1687,7 +1707,7 @@ class BookingMailer < Base::CustomMailer
 					},
 					{
 						:name => 'AUTHNUMBER',
-						:content => payed_booking.punto_pagos_confirmation.authorization_code
+						:content => auth_code
 					},
 					{
 						:name => 'DATE',
@@ -1756,7 +1776,7 @@ class BookingMailer < Base::CustomMailer
 					},
 					{
 						:name => 'AUTHNUMBER',
-						:content => payed_booking.punto_pagos_confirmation.authorization_code
+						:content => auth_code
 					},
 					{
 						:name => 'DATE',

@@ -321,7 +321,7 @@ $(function() {
   });
 
   $('#file').on('change', function(){
-    if(this.files[0].size/1024/1024 > 25)
+    if(this.files[0].size/1000/1000 > 25)
     {
       swal({
         title: "Tamaño inadecuado",
@@ -333,7 +333,7 @@ $(function() {
   });
 
   $('.file-attribute').on('change', function(){
-    if(this.files[0].size/1024/1024 > 25)
+    if(this.files[0].size/1000/1000 > 25)
     {
       swal({
         title: "Tamaño inadecuado",
