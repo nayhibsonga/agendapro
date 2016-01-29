@@ -167,6 +167,7 @@ class BookingsController < ApplicationController
           @booking.session_booking_id = session_booking.id
           @booking.is_session = true
           @booking.is_session_booked = true
+          @booking.payed_state = buffer_params[:payed_state]
 
           #Set list_price to it's service price
           if @booking.service.price != 0
