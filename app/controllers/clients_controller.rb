@@ -29,10 +29,24 @@ class ClientsController < ApplicationController
       @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
 
       @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction)
+
+      logger.debug "Clients:"
+      logger.debug @clients.inspect
+
+      logger.debug "Clients export:"
+      logger.debug @clients_export.inspect
+
     else
       @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
 
       @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction)
+
+      logger.debug "Clients:"
+      logger.debug @clients.inspect
+
+      logger.debug "Clients export:"
+      logger.debug @clients_export.inspect
+      
     end
 
     respond_to do |format|
