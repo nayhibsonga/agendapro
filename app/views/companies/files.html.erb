@@ -64,7 +64,7 @@
                   <% files = @company.company_files.where(folder: folder).order('created_at desc') %>
                   <table class="folder-table">
                       <% files.each do |file| %>
-                        <% 
+                        <%
                           s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
                           if s3_bucket.object(file.full_path).exists?
                         %>
@@ -172,7 +172,7 @@
               <div class="payment-form-div form-group">
                 <label class="col-xs-4 control-label"></label>
                 <div class="col-xs-8">
-                  <button type="submit" class="btn btn-green">Guardar</button>
+                  <button type="submit" class="btn btn-green submit-block">Guardar</button>
                 </div>
               </div>
 
@@ -231,7 +231,7 @@
 
               <div style="clear: both;">
               </div>
-            
+
               <div class="payment-form-div form-group">
                 <label class="col-xs-4 control-label">Enlace</label>
                 <div class="col-xs-8">
@@ -292,7 +292,7 @@
               <div class="payment-form-div form-group">
                 <label class="col-xs-4 control-label"></label>
                 <div class="col-xs-8">
-                  <button type="submit" class="btn btn-green">Guardar</button>
+                  <button type="submit" class="btn btn-green submit-block">Guardar</button>
                 </div>
               </div>
 
@@ -386,7 +386,7 @@
               <div class="payment-form-div form-group">
                 <label class="col-xs-4 control-label"></label>
                 <div class="col-xs-8">
-                  <button type="submit" class="btn btn-green">Guardar</button>
+                  <button type="submit" class="btn btn-green submit-block">Guardar</button>
                 </div>
               </div>
 

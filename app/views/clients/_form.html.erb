@@ -4,7 +4,7 @@
 }
 </style>
 
-<div class="container-fluid">
+<div class="container-fluid" style="margin-bottom: 65px;">
       <div class="row">
         <%= form_for @client, html: {class: "form-horizontal", multipart: true} do |f| %>
           <% if @client.errors.any? %>
@@ -148,7 +148,7 @@
 
                   <% if attribute.datatype == "float" %>
 
-                    <% 
+                    <%
                       float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
                       float_attribute_value = ""
                       if !float_attribute.nil? && !float_attribute.value.nil?
@@ -169,14 +169,14 @@
 
                   <% elsif attribute.datatype == "integer" %>
 
-                    <% 
+                    <%
                       integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
                       integer_attribute_value = ""
                       if !integer_attribute.nil? && !integer_attribute.value.nil?
                         integer_attribute_value = integer_attribute.value
                       end
                     %>
-                    
+
                     <div class="form-group has-feedback">
                       <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
                         <%= attribute.name %>
@@ -190,14 +190,14 @@
 
                   <% elsif attribute.datatype == "text" %>
 
-                    <% 
+                    <%
                       text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
                       text_attribute_value = ""
                       if !text_attribute.nil? && !text_attribute.value.nil?
                         text_attribute_value = text_attribute.value
                       end
                     %>
-                    
+
                     <div class="form-group has-feedback">
                       <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
                         <%= attribute.name %>
@@ -211,14 +211,14 @@
 
                   <% elsif attribute.datatype == "textarea" %>
 
-                    <% 
+                    <%
                       textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
                       textarea_attribute_value = ""
                       if !textarea_attribute.nil? && !textarea_attribute.value.nil?
                         textarea_attribute_value = textarea_attribute.value
                       end
                     %>
-                    
+
                     <div class="form-group has-feedback">
                       <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
                         <%= attribute.name %>
@@ -232,7 +232,7 @@
 
                   <% elsif attribute.datatype == "boolean" %>
 
-                    <% 
+                    <%
                       boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
                       boolean_attribute_value = "0"
                       if !boolean_attribute.nil? && !boolean_attribute.value.nil?
@@ -241,7 +241,7 @@
                         end
                       end
                     %>
-                    
+
                     <div class="form-group has-feedback">
                       <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
                         <%= attribute.name %>
@@ -262,14 +262,14 @@
 
                   <% elsif attribute.datatype == "date" %>
 
-                    <% 
+                    <%
                       date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
                       date_attribute_value = ""
                       if !date_attribute.nil? && !date_attribute.value.nil?
                         date_attribute_value = date_attribute.value.strftime('%d/%m/%Y')
                       end
                     %>
-                    
+
                     <div class="form-group has-feedback">
                       <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
                         <%= attribute.name %>
@@ -283,7 +283,7 @@
 
                   <% elsif attribute.datatype == "datetime" %>
 
-                    <% 
+                    <%
                       date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
                       date_time_attribute_date = ""
                       date_time_attribute_hour = "00"
@@ -294,7 +294,7 @@
                         date_time_attribute_minute = date_time_attribute.value.strftime("%M")
                       end
                     %>
-                    
+
                     <div class="form-group">
                       <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
                         <%= attribute.name %>
@@ -305,7 +305,7 @@
                         </div>
                         <div class="col-sm-3">
                           <select class="form-control" name="<%= attribute.slug %>_attribute_hour" id="<%= attribute.slug %>_attribute_hour">
-                            <% 
+                            <%
                               for i in 0..23
                                 str_hour = i.to_s
                                 if str_hour.length == 1
@@ -322,7 +322,7 @@
                                 <%
                                 end
 
-                              end 
+                              end
                             %>
                           </select>
                         </div>
@@ -331,7 +331,7 @@
                         </div>
                         <div class="col-sm-3">
                           <select class="form-control" name="<%= attribute.slug %>_attribute_minute" id="<%= attribute.slug %>_attribute_minute">
-                            <% 
+                            <%
                               for i in 0..59
                                 str_minute = i.to_s
                                 if str_minute.length == 1
@@ -348,7 +348,7 @@
                                 <%
                                 end
 
-                              end 
+                              end
                             %>
                           </select>
                         </div>
@@ -368,7 +368,7 @@
                       <div class="col-sm-9">
                         <input type="file" class="form-control file-attribute" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" value="" <%= "required" if attribute.mandatory %> />
                         <span class="help-block"><%= attribute.description %></span>
-                        <% 
+                        <%
                           if !file_attribute.nil? && !file_attribute.client_file.nil?
 
                             full_path = file_attribute.client_file.full_path
@@ -381,19 +381,19 @@
                             else
                             %>
                               <span style="color: #949292; font-size: 14px; margin-top: 5px;">Actual: <a href="<%= obj.public_url %>"><%= file_attribute.client_file.name %></a>
-                            <% 
+                            <%
                             end
 
-                          end 
+                          end
                         %>
                       </div>
                     </div>
 
                   <% elsif attribute.datatype == "categoric" %>
-                    <% 
+                    <%
                       categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
                     %>
-                    
+
                     <div class="form-group has-feedback">
                       <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">
                         <%= attribute.name %>
@@ -418,7 +418,7 @@
 
               <div class="form-group">
                 <div class="col-md-6 col-md-offset-3">
-                  <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                  <%= f.submit 'Guardar', :class => 'btn btn-green submit-block' %>
                   <%= link_to 'Cancelar', clients_path, class: "btn btn-default" %>
                 </div>
               </div>
@@ -450,7 +450,7 @@
                       <% if !booking.is_session %>
                         <%= booking.service.name %>
                       <% else %>
-                        <% 
+                        <%
                             index = 1
                             session_index = "Sesión "
                             session_booking = booking.session_booking
@@ -500,7 +500,7 @@
                       <% if !booking.is_session %>
                         <%= booking.service.name %>
                       <% else %>
-                        <% 
+                        <%
                             index = 1
                             session_index = "Sesión "
                             session_booking = booking.session_booking
@@ -580,7 +580,7 @@
                   </thead>
                   <tbody>
                     <% @files.each do |file| %>
-                      <% 
+                      <%
                         s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
                         if s3_bucket.object(file.full_path).exists?
                       %>
@@ -791,7 +791,7 @@
 
                 <div style="clear: both;">
                 </div>
-              
+
                 <div class="payment-form-div form-group">
                   <label class="col-xs-4 control-label">Enlace</label>
                   <div class="col-xs-8">

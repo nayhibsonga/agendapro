@@ -436,7 +436,7 @@ $(function () {
   });
 
   $("#attribute_category_form").on("ajax:success", function(e, data, status, xhr){
-    
+
     if(data.category != "Otra")
     {
 
@@ -485,6 +485,15 @@ $(function () {
     e.preventDefault();
   });
 
+  $('.submit-block').on('click', function() {
+    var $btn = $(this),
+        $form = $btn.closest('form');
+    if( $form.valid() ) {
+      $btn.attr('disabled', true);
+      $form.submit();
+    }
+  });
+
 
 });
 
@@ -493,3 +502,5 @@ function uncheckCheckbox (parent) {
     $(checkbox).prop('checked', false);
   });
 }
+
+

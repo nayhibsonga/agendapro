@@ -5,7 +5,7 @@ class CompanySetting < ActiveRecord::Base
 	has_many :payment_methods, through: :payment_method_settings
 	belongs_to :bank
 	has_one :promo_time
-	
+
 	accepts_nested_attributes_for :online_cancelation_policy
 	accepts_nested_attributes_for :promo_time
 
@@ -16,6 +16,8 @@ class CompanySetting < ActiveRecord::Base
 	after_update :check_payment_accounts
 
 	after_create :build_payment_settings
+
+	DATATYPES = [['Numérico', 'integer'], ['Decimal', 'float'], ['Texto', 'text'], ['Área de texto','textarea'], ['Binario (Sí/No)', 'boolean'], ['Fecha', 'date'], ['Fecha y hora', 'datetime'], ['Categórico', 'categoric'], ['Archivo', 'file']]
 
 	def extended_schedule
 		if self.extended_min_hour >= self.extended_max_hour

@@ -71,7 +71,7 @@
           <% end %>
           <div class="form-group">
             <div class="actions col-md-offset-4 col-md-8">
-              <%= f.submit 'Guardar', :class => "btn btn-green buttonProvider"%>
+              <%= f.submit 'Guardar', :class => "btn btn-green buttonProvider submit-block"%>
               <%= link_to 'Cancelar'.html_safe, service_providers_path, :class => "btn btn-white" %>
             </div>
           </div>
@@ -97,3 +97,17 @@
     </div>
   </div>
 </div>
+<% content_for :scripts do %>
+  <script>
+    $(function() {
+      $('.submit-block').on('click', function() {
+        var $btn = $(this),
+            $form = $btn.closest('form');
+        if( $form.valid() ) {
+          $btn.attr('disabled', true);
+          $form.submit();
+        }
+      });
+    });
+  </script>
+<% end %>

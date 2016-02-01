@@ -186,5 +186,15 @@ $(function() {
 		});
 		$(event.target).parents('.panel').find('input[name="selectServiceCategory"]').prop('checked', prop);
 	});
+
+  $('.submit-block').on('click', function() {
+    var $btn = $(this),
+        $form = $btn.closest('form');
+    if( $form.valid() ) {
+      $btn.attr('disabled', true);
+      $form.submit();
+    }
+  });
+
 	initialize();
 });
