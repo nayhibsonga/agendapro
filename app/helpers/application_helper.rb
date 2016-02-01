@@ -499,21 +499,52 @@ module ApplicationHelper
 		end
 	end
 
+	def link_to_remove_fields(name, f)
+    	f.hidden_field(:_destroy) + link_to_function(('<i class="fa fa-trash-o"> ' + name + '</i>').html_safe, "remove_fields(this)", class: 'btn btn-red')
+  	end
+  
+  	def link_to_add_fields(name, f, association)
+	    new_object = f.object.class.reflect_on_association(association).klass.new
+	    fields = f.fields_for(association, new_object, :child_index => "new_#{association}") do |builder|
+	      render(association.to_s.singularize + "_fields", :f => builder)
+	    end
+	    link_to_function(name, "add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")")
+  	end
+
 	def code_to_payment_method(code)
-		case code
-		when "03"
-			return "WebPay"
-		when "04"
-			return "Banco de Chile"
-		when "05"
-			return "Banco BCI"
-		when "06"
-			return "Banco TBanc"
-		when "07"
-			return "BancoEstado"
-		when "16"
-			return "Banco BBVA"
+
+		return_str = "Sin información"
+
+		if code == "03" || code == "3"
+			return_str = "WebPay"
+		elsif code == "04" || code == "4"
+			return_str = "Banco de Chile"
+		elsif code == "05" || code == "5"
+			return_str = "Banco BCI"
+		elsif code == "06" || code == "6"
+			return_str = "Banco TBanc"
+		elsif code == "07" || code == "7"
+			return_str = "BancoEstado"
+		elsif code == "16"
+			return_str = "Banco BBVA"
 		end
+
+		return return_str
+		
+	end
+
+	def bytes_to_text(bytes)
+
+		if bytes < 1000
+			number_to_human(bytes, separator: ',', delimeter: '.', precision: 2) +  " B"
+		elsif bytes < 1000**2
+			number_to_human((bytes.to_f/1000.0), separator: ',', delimeter: '.', precision: 2) +  " KB"
+		elsif bytes < 1000**3
+			number_to_human((bytes.to_f/(1000.0 * 1000.0)), separator: ',', delimeter: '.', precision: 2) +  " MB"
+		else
+			number_to_human((bytes.to_f/(1000.0 * 1000.0 * 1000.0)), separator: ',', delimeter: '.', precision: 2) +  " GB"
+		end
+
 	end
 
 end

@@ -151,16 +151,32 @@
     }
   }
 }
-.payed {
+.payed,
+.bundle,
+.bundle.payed {
   > .fc-event-inner:after {
     font-family: FontAwesome;
     line-height: 1.42857143;
-    content: "\f155";
     position: absolute;
     bottom: 0;
     text-align: center;
     background-color: rgba(50, 50, 50, 0.25);
     width: 100%;
+  }
+}
+.payed {
+  > .fc-event-inner:after {
+    content: "\f155";
+  }
+}
+.bundle {
+  > .fc-event-inner:after {
+    content: "\f0ae";
+  }
+}
+.bundle.payed {
+  > .fc-event-inner:after {
+    content: "\f155 \00a0 \f0ae";
   }
 }
 
@@ -698,3 +714,14 @@ select[name="serviceOptimizerSelector"] {
     border-color: #e24949;
   }
 }
+
+/*
+  ================================
+  ========= Multi Select =========
+  ================================
+
+.multiselect-container{
+  z-index: 999999;
+}
+
+*/

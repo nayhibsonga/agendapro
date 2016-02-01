@@ -11,6 +11,9 @@ class Company < ActiveRecord::Base
 	has_many :countries, :through => :company_countries
 
 	has_many :cashiers, dependent: :destroy
+	has_many :email_contents, dependent: :destroy, class_name: 'Email::Content'
+
+	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
 
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
 
@@ -31,6 +34,7 @@ class Company < ActiveRecord::Base
 	has_many :service_categories, dependent: :destroy
 	has_many :clients, dependent: :destroy
 	has_one :company_setting, dependent: :destroy
+	has_one :settings, dependent: :destroy, class_name: 'CompanySetting'
 	has_one :billing_info, dependent: :destroy
 	belongs_to :bank
 	has_many :company_from_email, dependent: :destroy
@@ -46,6 +50,10 @@ class Company < ActiveRecord::Base
 	has_many :downgrade_logs
 
 	has_one :company_plan_setting
+
+	has_many :company_files
+
+	has_many :client_files, :through => :clients
 
 	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
@@ -63,13 +71,70 @@ class Company < ActiveRecord::Base
 
 	after_create :create_cashier
 
+	after_create :create_plan_setting
+
+	def is_plan_capable(name)
+
+		if self.plan.custom
+			return false
+		end
+
+		if name == "Normal"
+			if self.plan.name == "Normal" || self.plan.name == "Premium" || self.plan.name == "Pro"
+				return true
+			else
+				return false
+			end
+		elsif name == "Premium"
+			if self.plan.name == "Premium" || self.plan.name == "Pro"
+				return true
+			else
+				return false
+			end
+		elsif name == "Pro"
+			if self.plan.name == "Pro"
+				return true
+			else
+				return false
+			end
+		else
+			return false
+		end
+
+	end
+
+	def create_plan_setting
+		CompanyPlanSetting.create(company_id: self.id, base_price: self.plan.plan_countries.find_by(country_id: self.country.id).price, locations_multiplier: NumericParameter.find_by_name("locations_multiplier").value)
+	end
+
+	def computed_multiplier
+		return_value = (1 + (self.locations.where(active:true).count - 1) * self.company_plan_setting.locations_multiplier)
+		if return_value < 1
+			return_value = 1
+		end
+		return return_value
+	end
+
+	def get_storage_occupation
+
+		used_storage = 0
+		used_storage += self.company_files.sum(:size)
+		used_storage += self.client_files.sum(:size)
+
+	end
+
 	def create_cashier
 		cashier = Cashier.create(company_id: self.id, name: "Cajero 1", code: "12345678", active: true)
 	end
 
 	def plan_settings
-		if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true).count > self.plan.service_providers
-			errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales/prestadores activos que lo que permite el plan.")
+		#If it's custom, keep locations/service_providers revisions
+		if self.plan.custom || self.plan.name == "Personal"
+			if self.locations.where(active: true).count > self.plan.locations || self.service_providers.where(active: true, location_id: self.locations.where(active: true).pluck(:id)).count > self.plan.service_providers
+				errors.add(:base, "El plan no pudo ser cambiado. Tienes más locales y/o prestadores activos que lo que permite el plan.")
+			end
+		else
+			#Generate debt change when locations are increased/decreased.
 		end
 	end
 
@@ -291,16 +356,20 @@ class Company < ActiveRecord::Base
 	def calculate_trial_debt
 
 		sales_tax = self.country.sales_tax
-		current_date = Date.today
-		month_end = current_date.end_of_month
-		debt_proportion = (month_end.day.to_f - current_date.day.to_f + 1)/month_end.day.to_f
+		day_number = Time.now.day
+    	month_number = Time.now.month
+    	month_days = Time.now.days_in_month
 
-		debt = self.plan.plan_countries.find_by(country_id: self.country.id).price.to_f * debt_proportion * ( 1 + sales_tax)
+		debt_proportion = (month_days - day_number + 1).to_f/month_days.to_f
+
+		#debt = self.plan.plan_countries.find_by(country_id: self.country.id).price.to_f * debt_proportion * ( 1 + sales_tax)
+		debt = self.company_plan_setting.base_price * self.computed_multiplier * debt_proportion * (1 + sales_tax)
 
 		return debt
 
 	end
 
+	#Legacy
 	def calculate_plan_change(new_plan_id)
 
 		current_date = Date.today
@@ -346,17 +415,29 @@ class Company < ActiveRecord::Base
 
 		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
 
-			plan_id = Plan.where.not(id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
+			#plan_id = Plan.where.not(id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
+			plan = Plan.where(name: "Personal", custom: false).first
+			if company.locations.where(active: true).count > 1 || company.service_providers.where(location_id: company.locations.where(active: true).pluck(:id), active:true).count > 1
+				plan = Plan.where(name: "Normal", custom: false).first
+			end
 
 			sales_tax = company.country.sales_tax
 
-			company.plan_id = plan_id
+			company.plan_id = plan.id
+			company.company_plan_setting.base_price = plan.plan_countries.find_by_country_id(company.country.id).price
+
 			company.due_date = Time.now
-			company.due_amount = - 1 * ((day_number - 1).to_f / month_days.to_f) * company.plan.plan_countries.find_by(country_id: company.country.id).price * (1 + sales_tax)
+			#company.due_amount = - 1 * ((day_number - 1).to_f / month_days.to_f) * company.plan.plan_countries.find_by(country_id: company.country.id).price * (1 + sales_tax)
+			company.due_amount = (- 1 * ((day_number - 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)).round(0)
+
+
 			company.months_active_left = 0
 			company.payment_status_id = PaymentStatus.find_by_name("Emitido").id
 
 			if company.save
+
+				company.company_plan_setting.save
+
 				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "OK end_trial")
 
 				#Check if account was used.
@@ -375,7 +456,7 @@ class Company < ActiveRecord::Base
 					errors += error
 				end
 				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "ERROR end_trial "+errors)
-			end				
+			end
 
 		end
 	end
@@ -407,6 +488,7 @@ class Company < ActiveRecord::Base
 				company.months_active_left -= 1
 
 				if company.months_active_left <= 0
+					company.months_active_left = 0
 					company.payment_status_id = status_emitido.id
 					company.due_date = DateTime.now
 				end
@@ -431,17 +513,25 @@ class Company < ActiveRecord::Base
 				#Check for use
 
 				#Check if account was used.
-				
+
 
 				#If it was issued, the company is late 1 month in their payments
 				#Change their status to expired, add to their due and charge them for next month
 
-				company.months_active_left -= 1
+				company.months_active_left = 0
 				company.payment_status_id = status_vencido.id
 				if company.due_amount.nil?
-					company.due_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					if company.plan.custom
+						company.due_amount = company.company_plan_setting.base_price * (1 + sales_tax)
+					else
+						company.due_amount = company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+					end
 				else
-					company.due_amount += company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					if company.plan.custom
+						company.due_amount += company.company_plan_setting.base_price * (1 + sales_tax)
+					else
+						company.due_amount += company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+					end
 				end
 				company.due_date = DateTime.now
 				company.save
@@ -464,11 +554,12 @@ class Company < ActiveRecord::Base
 	# Remind companies that were issued and haven't payed yet
 	# "Block" companies that expired (move them to free plan)
 	#
-	def self.collect_reminder	
+	def self.collect_reminder
 
 		status_activo = PaymentStatus.find_by_name("Activo")
 		status_emitido = PaymentStatus.find_by_name("Emitido")
 		status_vencido = PaymentStatus.find_by_name("Vencido")
+		status_bloqueado = PaymentStatus.find_by_name("Bloqueado")
 		plan_gratis = Plan.find_by_name("Gratis")
 		chile = Country.find_by_name("Chile")
 
@@ -497,19 +588,30 @@ class Company < ActiveRecord::Base
 				#Block them by changing their plan to free plan
 				#Add their due amount for possible reactivation in the future
 
-				prev_plan_id = company.plan_id
+				#prev_plan_id = company.plan_id
 
-				company.payment_status_id = status_vencido.id
+				company.payment_status_id = status_bloqueado.id
 				if company.due_amount.nil?
-					company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					if company.plan.custom
+						#company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+						company.due_amount = month_prop * company.company_plan_setting.base_price * (1 + sales_tax)
+					else
+						company.due_amount = month_prop * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+					end
 				else
-					company.due_amount += month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					#company.due_amount += month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					if company.plan.custom
+						#company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+						company.due_amount += month_prop * company.company_plan_setting.base_price * (1 + sales_tax)
+					else
+						company.due_amount += month_prop * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+					end
 				end
-				company.plan_id = plan_gratis.id
+				#company.plan_id = plan_gratis.id
 				company.due_date = DateTime.now
-				
+
 				if company.save
-					DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
+					#DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
 					#Send mail alerting their plan changed
 					CompanyMailer.invoice_email(company.id, message_vencido)
 				end
@@ -571,7 +673,7 @@ class Company < ActiveRecord::Base
 	#response[1] = Last payment amount (or 0 if nil)
 	def last_payment_detail
 
-		bl = BillingLog.where.not(transaction_type_id: -1).where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
+		bl = BillingLog.where.not(transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id).where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
 		rec = BillingRecord.where(:company_id => self.id).order('date desc').first
 		bwt = BillingWireTransfer.where(:company_id => self.id, :approved => true).order('payment_date desc').first
 		pl = PlanLog.where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
@@ -596,7 +698,7 @@ class Company < ActiveRecord::Base
 			date2 = date1
 			date3 = date1
 			date4 = date1
-			
+
 		end
 
 		if !bl.nil?
@@ -637,6 +739,14 @@ class Company < ActiveRecord::Base
 
 		return response_array
 
+	end
+
+	def reached_mailing_limit?
+		self.settings.monthly_mails >= self.plan.monthly_mails
+	end
+
+	def mails_left
+		self.plan.monthly_mails - self.settings.monthly_mails
 	end
 
 end

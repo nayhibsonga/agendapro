@@ -1,0 +1,91 @@
+<div id="full-container" class="col-xs-12">
+
+  <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+        <a href="#templates" aria-controls="templates" role="tab" data-toggle="tab">Plantillas</a>
+      </li>
+      <li role="presentation">
+        <a href="#saved" aria-controls="saved" role="tab" data-toggle="tab">Guardadas</a>
+      </li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="templates">
+      <% @templates.each do |template| %>
+        <%= render partial: '/clients/email/full/template_list', locals: {template: template} %>
+      <% end %>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="saved">
+      <% @saved.each do |content| %>
+         <%= render partial: '/clients/email/full/saved_list', locals: {content: content} %>
+      <% end %>
+    </div>
+
+  </div>
+</div>
+
+<%= content_for :scripts do %>
+  <script>
+    $(function(){
+      $(document).on('click', '.btn-delete', function(e, elem){
+        var elem = $(this);
+        e.preventDefault();
+        swal({
+          title: "¿Estás seguro?",
+          text: "Una vez eliminado, no podrás recuperar este Contenido",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Sí",
+          cancelButtonText: "No",
+          closeOnConfirm: false,
+          showLoaderOnConfirm: true
+        }, function(){
+          $.ajax({
+              url: elem.attr('href'),
+              type: 'DELETE',
+              success: function(result) {
+                if(result.status === 'ok'){
+                  $(elem).closest('.template-container').remove();
+                  swal("¡Eliminado!", "Plantilla eliminada con exito", "success");
+                } else {
+                  swal("¡Oops!", "Ha ocurrido un error al eliminar esa plantilla", "error");
+                }
+              }
+          });
+        });
+      });
+    });
+  </script>
+<% end %>
+
+<style>
+  #full-container ul {
+    border-bottom: 1px solid;
+    margin: 10px 0 30px;
+  }
+
+  #full-container li {
+    margin-right: 20px;
+    list-style: none;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  #full-container li.active {
+    border-bottom: 4px solid darkgray;
+  }
+
+  #full-container li a {
+    color: #555;
+    border: none;
+    padding: 0;
+  }
+
+  #full-container li.active a {
+    color: #22c488;
+  }
+
+</style>

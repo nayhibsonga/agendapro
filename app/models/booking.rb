@@ -25,6 +25,7 @@ class Booking < ActiveRecord::Base
     s.validate after_commit :bookings_resources_warning
     s.validate after_commit :bookings_deal_warning
     s.validate after_commit :provider_in_break_warning
+    s.validate after_update :bundled_booking_warning
   end
 
 
@@ -130,6 +131,13 @@ class Booking < ActiveRecord::Base
         end
       end
       self.delete
+    end
+  end
+
+  def bundled_booking_warning
+    if self.bundled
+      warnings.add(:base, "Esta reserva es parte de un paquete de servicios")
+      return
     end
   end
 
@@ -584,7 +592,7 @@ class Booking < ActiveRecord::Base
   end
 
   def service_staff
-    unless changed_attributes.except("payment_id").empty?
+    unless changed_attributes.except("payment_id", "receipt_id").empty?
       if !self.service_provider.services.include?(self.service)
         errors.add(:base, "El prestador seleccionado no realiza el servicio elegido en la reserva. Por favor agrega el servicio al prestador o elige otro prestador.")
       end
@@ -1508,7 +1516,7 @@ class Booking < ActiveRecord::Base
         @user_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
             '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
             '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.location.company.company_setting.provider_preference == 2 ? "" : book.service_provider.public_name + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + (book.location.company.company_setting.provider_preference == 2 ? "" : book.service_provider.public_name) + '</td>' +
             '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>'
         if bookings[0].location.company.company_setting.can_edit || bookings[0].location.company.company_setting.can_cancel
           @user_table += '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">'

@@ -1,0 +1,77 @@
+<div class="col-md-12">
+  <div class="well">
+    <%= form_tag('/send_mail_client', name: "client_mailer", id: "client_mailer", multipart: true) do %>
+      <div class="form-group">
+        <%= label_tag :from, 'De' %>
+        <%= select_tag :from, options_from_collection_for_select(@from_collection, :email, :email), :class => 'form-control', :required => true %>
+        <span class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <%= label_tag :to, 'Para' %><small class="pull-right"> Estas enviando el e-mail a <%= pluralize(@to.split(',').size, 'persona') %>.</small>
+        <p class="form-control-static"><%= @to %></p>
+        <%= hidden_field_tag :to, @to, :required => true %>
+        <span class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <%= label_tag :subject, 'Asunto' %>
+        <%= text_field_tag :subject, nil, :class => 'form-control', :required => true, :autofocus => true, :placeholder => 'Asunto (requerido)' %>
+        <span class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <%= label_tag :message, 'Mensaje' %>
+        <%= text_area_tag :message, nil, :class => 'form-control', :rows => 8, :required => true, :placeholder => 'Mensaje (requerido)' %>
+        <span class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <%= label_tag :attachment, 'Archivo Adjunto' %>
+        <%= file_field_tag :attachment, :class => 'form-control' %>
+        <span class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <button type="submit" id="btnSendMail" class="btn btn-green" data-loading-text='<i class="fa fa-envelope-o"></i> Enviando...' autocomplete="off"><i class="fa fa-envelope-o"></i><span> Enviar</span></button>
+        <p><small><strong>NOTA:</strong> Todos los e-mails son enviados como copia oculta</small></p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% content_for :stylesheets do %>
+  <style>
+  .form-control-static {
+    max-height: 100px;
+    overflow-y: scroll;
+  }
+  </style>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/client-email' %>
+  <%= javascript_include_tag 'ckeditor/init' %>
+  <script type="text/javascript">
+    $(function () {
+      CKEDITOR.replace(message);
+    });
+    $('#btnSendMail').on('click', function (e) {
+      if ($('#client_mailer').valid()) {
+        var $btn = $(this).button('loading');
+        $("#client_mailer").submit();
+      };
+    });
+    CKEDITOR.on('instanceReady', function () {
+      $.each(CKEDITOR.instances, function (instance) {
+        CKEDITOR.instances[instance].document.on("keyup", CK_jQ);
+        CKEDITOR.instances[instance].document.on("paste", CK_jQ);
+        CKEDITOR.instances[instance].document.on("keypress", CK_jQ);
+        CKEDITOR.instances[instance].document.on("blur", CK_jQ);
+        CKEDITOR.instances[instance].document.on("change", CK_jQ);
+      });
+    });
+
+    function CK_jQ() {
+      for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+      }
+    }
+  </script>
+<% end %>

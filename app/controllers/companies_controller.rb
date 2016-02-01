@@ -1,14 +1,16 @@
 class CompaniesController < ApplicationController
-  before_action :verify_is_active, only: [:overview, :workflow]
+  	before_action :verify_is_active, only: [:overview, :workflow]
 	before_action :set_company, only: [:show, :edit, :update, :destroy, :edit_payment]
 	before_action :constraint_locale, only: [:overview, :workflow]
 	before_action :authenticate_user!, except: [:new, :overview, :workflow, :check_company_web_address, :select_hour, :user_data, :select_promo_hour, :mobile_hours]
 	before_action :quick_add, except: [:new, :overview, :workflow, :add_company, :check_company_web_address, :select_hour, :user_data, :select_promo_hour, :mobile_hours]
 	before_action :verify_is_super_admin, only: [:index, :edit_payment, :new, :edit, :manage, :manage_company, :new_payment, :add_payment, :update_company, :get_year_incomes, :incomes, :locations, :monthly_locations, :deactivate_company]
+	before_action :verify_premium_plan, only: [:files, :create_folder, :rename_folder, :delete_folder, :upload_file, :move_file, :edit_file]
 
 	layout "admin", except: [:show, :overview, :workflow, :add_company, :select_hour, :user_data, :select_session_hour, :select_promo_hour]
 	load_and_authorize_resource
 
+	respond_to :html, :json, :xls, :csv
 
 	# GET /companies
 	# GET /companies.json
@@ -60,7 +62,22 @@ class CompaniesController < ApplicationController
 
 	    		plan_id = @transfer.new_plan
 
-	    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+	    		#company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+	    		price = 0
+			    if company.payment_status == PaymentStatus.find_by_name("Trial")
+			      if company.locations.count > 1 || company.service_providers.count > 1
+			        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
+			      else
+			        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
+			      end
+			    else
+			      if company.plan.custom
+			        price = company.company_plan_setting.base_price
+			      else
+			        price = company.company_plan_setting.base_price * company.computed_multiplier
+			      end
+			    end
 
 	    		new_plan = Plan.find(plan_id)
 
@@ -68,13 +85,13 @@ class CompaniesController < ApplicationController
 
 	    		if accepted_plans.include?(plan_id)
 
-	    			if company.service_providers.where(active: true).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations
+	    			if (company.service_providers.where(active: true, location_id: company.locations.where(active: true).pluck(:id)).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || (!new_plan.custom && new_plan.name != "Personal")
 
 	    				previous_plan_id = company.plan.id
 				        months_active_left = company.months_active_left
 				        plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
 				        due_amount = company.due_amount
-				        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
+				        plan_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
 				        previous_plan_price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 				        plan_month_value = (month_days - day_number + 1)*plan_price/month_days
 
@@ -86,13 +103,18 @@ class CompaniesController < ApplicationController
 				        if months_active_left > 0
 	          				if plan_value_left > (plan_month_value + due_amount)
 
-					            new_active_months_left = ((plan_value_left - plan_month_value - due_amount / (1 + sales_tax) )/plan_price).floor + 1
-					            new_amount_due = -1*(((plan_value_left - plan_month_value - due_amount / (1 + sales_tax))/plan_price)%1)*plan_price
+					            new_active_months_left = ((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price).floor + 1
+					            
+					            new_amount_due = (-1 * (((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price) % 1 )) * plan_price * (1 + sales_tax)
+
 					            company.plan_id = plan_id
 					            company.months_active_left = new_active_months_left
 					            company.due_amount = (new_amount_due).round(0) * (1 + sales_tax)
 
 					            if company.save
+
+					            	company.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+					            	company.company_plan_setting.save
 
 					            	@transfer.approved = true
 					            	@transfer.save
@@ -139,6 +161,10 @@ class CompaniesController < ApplicationController
 						    		end
 
 						    		if mockCompany.save
+
+						    			mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+					            		mockCompany.company_plan_setting.save
+
 						                PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
 
 						                @transfer.approved = true
@@ -196,6 +222,9 @@ class CompaniesController < ApplicationController
 					    		if mockCompany.save
 									PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
 
+									mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+					            	mockCompany.company_plan_setting.save
+
 									@transfer.approved
 									@transfer.save
 
@@ -233,7 +262,22 @@ class CompaniesController < ApplicationController
 
 	    	else
 
-	    		company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+	    		#company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+	    		price = 0
+			    if company.payment_status == PaymentStatus.find_by_name("Trial")
+			      if company.locations.count > 1 || company.service_providers.count > 1
+			        price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
+			      else
+			        price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
+			      end
+			    else
+			      if company.plan.custom
+			        price = company.company_plan_setting.base_price
+			      else
+			        price = company.company_plan_setting.base_price * company.computed_multiplier
+			      end
+			    end
 
 	    		accepted_amounts = [1,2,3,4,6,9,12]
 	    		if accepted_amounts.include?(@transfer.paid_months)
@@ -260,7 +304,7 @@ class CompaniesController < ApplicationController
 
 	        			due = sprintf('%.2f', ((plan_1 + price*(@transfer.paid_months-1)*(1+sales_tax))*(1-month_discount)).round(0))
 
-	        			if @transfer.amount.round(0) != due_number
+	        			if @transfer.amount.round(0) != due_number.round(0)
 			    			#Error
 							@json_response[0] = "error"
 							@json_response[1] = "El monto transferido no es correcto. Transferido: " + @transfer.amount.to_s + " / Precio: " + due_number.to_s
@@ -269,7 +313,7 @@ class CompaniesController < ApplicationController
 			    		end
 
 
-	        			BillingLog.create(payment: due, amount: @transfer.paid_months, company_id: company.id, plan_id: company.plan.id, transaction_type_id: -1, trx_id: "")
+	        			BillingLog.create(payment: due, amount: @transfer.paid_months, company_id: company.id, plan_id: company.plan.id, transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id, trx_id: "")
 
 	        			company.months_active_left += @transfer.paid_months
 						company.due_amount = 0.0
@@ -311,7 +355,11 @@ class CompaniesController < ApplicationController
 		    #Should have free plan
 		    previous_plan = company.plan
 
-		    price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+		    if new_plan.custom
+		    	price = new_plan.plan_countries.find_by(country_id: company.country.id).price
+		    else
+		    	price = new_plan.plan_countries.find_by(country_id: company.country.id).price * company.computed_multiplier
+		    end
 
 		    plan_month_value = ((month_days - day_number + 1).to_f / month_days.to_f) * price
 		    due_amount = downgradeLog.debt
@@ -400,6 +448,7 @@ class CompaniesController < ApplicationController
 			@issued_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Emitido').id).order(:company_name)
 			@pac_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Convenio PAC').id).order(:company_name)
 		else
+			@user = User.find_by_email('cuentas@agendapro.cl')
 			if I18n.locale == :es
 				@companies = StatsCompany.all.order(:company_name)
 			else
@@ -425,7 +474,25 @@ class CompaniesController < ApplicationController
 				@bookings << booking
 			end
 		end
-		@company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
+		
+		# @company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.find_by_name("Normal").plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
+
+		#@company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
+
+		@price = 0
+	    if @company.payment_status == PaymentStatus.find_by_name("Trial")
+	      if @company.locations.count > 1 || @company.service_providers.count > 1
+	        @price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier
+	      else
+	        @price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier
+	      end
+	    else
+	      if @company.plan.custom
+	        @price = @company.company_plan_setting.base_price
+	      else
+	        @price = @company.company_plan_setting.base_price * @company.computed_multiplier
+	      end
+	    end
 		@sales_tax = @company.country.sales_tax
 	    @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
 	    @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
@@ -437,7 +504,7 @@ class CompaniesController < ApplicationController
 	    @day_number = Time.now.day
 	    @month_number = Time.now.month
 	    @month_days = Time.now.days_in_month
-		@company.months_active_left > 0 ? @plan_1 = (@company.due_amount + @price).round(0) : @plan_1 = ((@company.due_amount + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
+		@company.months_active_left > 0 ? @plan_1 = (@company.due_amount/(1+@sales_tax) + @price).round(0) : @plan_1 = ((@company.due_amount/(1+@sales_tax) + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
 
 
 	    @plan_2 = (@plan_1 + @price*1).round(0)
@@ -562,6 +629,14 @@ class CompaniesController < ApplicationController
 			@company.company_setting.promo_commission = params[:new_promo_commission].to_f
 			@company.company_setting.save
 		end
+		if params[:new_base_price].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			@company.company_plan_setting.base_price = params[:new_base_price].to_f
+			@company.company_plan_setting.save
+		end
+		if params[:new_locations_multiplier].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			@company.company_plan_setting.locations_multiplier = params[:new_locations_multiplier].to_f
+			@company.company_plan_setting.save
+		end
 
 		@company.company_setting.online_payment_capable = params[:new_online_payment_capable]
 		@company.company_setting.promo_offerer_capable = params[:new_promo_offerer_capable]
@@ -630,7 +705,7 @@ class CompaniesController < ApplicationController
 				end_date = DateTime.new(year+1, 1, 1)-1.minutes
 			end
 
-			billing_logs = BillingLog.where.not(transaction_type_id: -1).where('company_id = ? and created_at BETWEEN ? and ?', @company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id))
+			billing_logs = BillingLog.where.not(transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id).where('company_id = ? and created_at BETWEEN ? and ?', @company.id, start_date, end_date).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id))
 
 			billing_records = BillingRecord.where('company_id = ? and date BETWEEN ? and ?', @company.id, start_date, end_date)
 
@@ -1164,11 +1239,32 @@ class CompaniesController < ApplicationController
 			redirect_to workflow_path(:local => params[:location])
 			return
 		end
+		serviceStaffAux = JSON.parse(params[:serviceStaff], symbolize_names: true)
+		serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
+		if serviceStaffAux[0][:bundle]
+			bundle = Bundle.find(serviceStaffAux[0][:service])
+			if Location.find(params[:location]).company_id != bundle.company_id
+				flash[:alert] = "Error ingresando los datos."
+				redirect_to workflow_path(:local => params[:location])
+				return
+			end
+			services = bundle.services.order(:created_at)
+			serviceStaff = []
+			services.each do |service|
+				serviceStaff << { :service => service.id.to_s, :provider => (serviceStaffAux[0][:provider] == "0" || !ServiceStaff.where(service_id: serviceStaffAux[0][:service]).pluck(:service_provider_id).include?(serviceStaffAux[0][:provider].to_i) ? "0" : serviceStaffAux[0][:service]), :bundle => bundle.id }
+			end
+		else
+			if Location.find(params[:location]).company_id != Service.find(serviceStaffAux[0][:service]).company_id
+				flash[:alert] = "Error ingresando los datos."
+				redirect_to workflow_path(:local => params[:location])
+				return
+			end
+		end
 
 		@mandatory_discount = false
 		@is_session_booking = false
 
-		mobile_hours
+		mobile_hours(serviceStaff)
 		render layout: 'workflow'
 
 		rescue ActionView::MissingTemplate => e
@@ -1391,17 +1487,294 @@ class CompaniesController < ApplicationController
 		render :json => @cashier
 	end
 
+	#Company files that are not associated against any client
+	def files
+
+		@company = current_user.company
+
+		s3 = Aws::S3::Client.new
+	    resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'companies/' +  @company.id.to_s + '/', delimiter: '/')
+
+	    @s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+	    folders_prefixes = resp.common_prefixes
+	    @folders = []
+
+	    folders_prefixes.each do |folder|
+	      sub_str = folder.prefix[0, folder.prefix.rindex("/")]
+	      @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
+	    end
+
+	end
+
+	#Creates an empty key to late folder
+	#Should be deleted once a file is written to that folder
+	#When deleting all folder files, should be recreated
+	def create_folder
+
+		@company = current_user.company
+
+		full_name = 'companies/' +  @company.id.to_s + '/' + params[:folder_name] + '/'
+
+		#s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+		s3 = Aws::S3::Client.new
+		s3.put_object(bucket: ENV['S3_BUCKET'], key: full_name)
+    	#obj = s3_bucket.object(full_name)
+
+    	redirect_to '/get_company_files', notice: 'Carpeta creada correctamente'
+
+	end
+
+	def rename_folder
+
+		@company = current_user.company
+
+		new_folder_name = params[:new_folder_name]
+		old_folder_name = params[:old_folder_name]
+
+		#Do nothing if same folder
+	    if new_folder_name == old_folder_name
+	      redirect_to '/get_company_files', notice: 'Carpeta renombrada correctamente'
+	      return
+	    end
+
+		s3 = Aws::S3::Client.new
+
+		old_folder_path = 'companies/' +  @company.id.to_s + '/' + old_folder_name + '/'
+		new_folder_path = 'companies/' +  @company.id.to_s + '/' + new_folder_name + '/'
+
+		#Create new folder in case there are no files
+		s3.put_object(bucket: ENV['S3_BUCKET'], key: new_folder_path)
+
+		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+		#Move each object to new folder
+		@company.company_files.where(folder: old_folder_name).each do |company_file|
+			obj = s3_bucket.object(company_file.full_path)
+
+			obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
+
+			obj.move_to({bucket: ENV['S3_BUCKET'], key: new_folder_path + obj_name}, {acl: 'public-read', content_type: content_type})
+
+			company_file.full_path = new_folder_path + obj_name
+			company_file.public_url = obj.public_url
+			company_file.folder = new_folder_name
+			company_file.save
+
+		end
+
+		#Delete old folder
+		old_folder = s3_bucket.object(old_folder_path)
+		old_folder.delete
+
+		redirect_to '/get_company_files', notice: 'Carpeta renombrada correctamente'
+
+	end
+
+	def delete_folder
+
+		@company = current_user.company
+
+		folder_name = params[:folder_name]
+
+		s3 = Aws::S3::Client.new
+
+		folder_path = 'companies/' +  @company.id.to_s + '/' + folder_name + '/'
+
+
+		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+		#Move each object to new folder
+		@company.company_files.where(folder: folder_name).each do |company_file|
+			
+			company_file.destroy
+
+		end
+
+		#Delete old folder
+		old_folder = s3_bucket.object(folder_path)
+		if old_folder.exists?
+			old_folder.delete
+		end
+
+		redirect_to '/get_company_files', notice: 'Carpeta eliminada correctamente'
+
+	end
+
+	def upload_file
+
+		@company = current_user.company
+
+		if(params[:file].size/1000/1000 > 25)
+	      	redirect_to '/get_company_files', alert: 'Tamaño de archivo no permitido'
+	      	return
+		end
+
+	    file_name = params[:file_name]
+	    folder_name = params[:folder_name]
+	    logger.debug "File name: " + params[:file].original_filename
+	    file_extension = params[:file].original_filename[params[:file].original_filename.rindex(".") + 1, params[:file].original_filename.length]
+	    content_type = params[:file].content_type
+
+	    file_description = ""
+	    if !params[:file_description].blank?
+	      file_description = params[:file_description]
+	    end
+
+	    if !params[:new_folder_name].blank? && folder_name == "select"
+	      folder_name = params[:new_folder_name]
+	    end
+
+	    full_name = 'companies/' +  @company.id.to_s + '/' + folder_name + '/' + params[:file].original_filename
+
+	    s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+	    old_obj = s3_bucket.object('companies/' +  @company.id.to_s + '/' + folder_name + '/')
+    	old_obj.delete
+
+	    obj = s3_bucket.object(full_name)
+
+	    if !obj.exists?
+	    	obj.upload_file(params[:file].path(), {acl: 'public-read', content_type: content_type})
+	    else
+	    	full_name = 'companies/' +  @company.id.to_s + '/' + folder_name + '/' + DateTime.now.to_i.to_s + '_' +  params[:file].original_filename
+	    	obj = s3_bucket.object(full_name)
+	    	obj.upload_file(params[:file].path(), {acl: 'public-read', content_type: content_type})
+	    end
+
+	    @company_file = CompanyFile.new(company_id: @company.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description, folder: folder_name)
+
+
+	    # Save the upload
+	    if @company_file.save
+	    	redirect_to '/get_company_files', notice: 'Archivo guardado correctamente'
+	    else
+	    	obj.delete
+	      	redirect_to '/get_company_files', alert: 'No se pudo guardar el archivo'
+	    end
+
+	end
+
+	def move_file
+
+		@company = current_user.company
+		@company_file = CompanyFile.find(params[:company_file_id])
+		new_folder_name = params[:folder_name]
+
+		#Do nothing if same folder
+		if new_folder_name == @company_file.folder
+			redirect_to '/get_company_files', notice: 'Archivo movido correctamente'
+			return
+		end
+
+		new_folder_path = 'companies/' +  @company.id.to_s + '/' + new_folder_name + '/'
+
+		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+		obj = s3_bucket.object(@company_file.full_path)
+
+		obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
+
+		obj.move_to({bucket: ENV['S3_BUCKET'], key: new_folder_path + obj_name}, {acl: 'public-read', content_type: content_type})
+
+		old_folder_path = 'companies/' +  @company.id.to_s + '/' + @company_file.folder + '/'
+    	old_folder_obj = s3_bucket.object(old_folder_path)
+
+    	logger.debug "Path: " + old_folder_path
+    	logger.debug "Exists? " + old_folder_obj.exists?.to_s
+
+    	if !old_folder_obj.exists?
+    		s3 = Aws::S3::Client.new
+			s3.put_object(bucket: ENV['S3_BUCKET'], key: old_folder_path)
+    	end
+
+		@company_file.full_path = new_folder_path + obj_name
+		@company_file.public_url = obj.public_url
+		@company_file.folder = new_folder_name
+		
+		if @company_file.save
+			redirect_to '/get_company_files', notice: 'Archivo movido correctamente'
+	    else
+	    	redirect_to '/get_company_files', alert: 'Error al mover el archivo'
+		end
+
+	end
+
+	def edit_file
+
+		@company = current_user.company
+		@company_file = CompanyFile.find(params[:company_file_id])
+
+		@company_file.name = params[:file_name]
+		@company_file.description = params[:file_description]
+
+		folder_name = params[:folder_name]
+
+		if !params[:new_folder_name].blank? && folder_name == "select"
+	      folder_name = params[:new_folder_name]
+	    end
+
+		if folder_name != @company_file.folder
+
+			new_folder_name = folder_name
+
+			new_folder_path = 'companies/' +  @company.id.to_s + '/' + new_folder_name + '/'
+
+			s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+			obj = s3_bucket.object(@company_file.full_path)
+
+			obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
+
+			obj.move_to({bucket: ENV['S3_BUCKET'], key: new_folder_path + obj_name}, {acl: 'public-read', content_type: content_type})
+
+			old_folder_path = 'companies/' +  @company.id.to_s + '/' + @company_file.folder + '/'
+	    	old_folder_obj = s3_bucket.object(old_folder_path)
+
+	    	logger.debug "Path: " + old_folder_path
+	    	logger.debug "Exists? " + old_folder_obj.exists?.to_s
+
+	    	if !old_folder_obj.exists?
+	    		s3 = Aws::S3::Client.new
+				s3.put_object(bucket: ENV['S3_BUCKET'], key: old_folder_path)
+	    	end
+
+			
+			@company_file.full_path = new_folder_path + obj_name
+			@company_file.public_url = obj.public_url
+			@company_file.folder = new_folder_name
+
+		end
+		
+		if @company_file.save
+			redirect_to '/get_company_files', notice: 'Archivo editado correctamente'
+	    else
+	    	redirect_to '/get_company_files', alert: 'Error al mover el archivo'
+		end
+
+
+	end
+
+
+	def generate_clients_base
+
+		@company = current_user.company
+
+		respond_with(@company)
+
+	end
+
 	private
 
 		#Common method to obtain available hours
-		def mobile_hours
+		def mobile_hours(serviceStaff)
 
 		    require 'date'
 
 		    local = Location.find(params[:location])
 		    company_setting = local.company.company_setting
 		    cancelled_id = Status.find_by(name: 'Cancelado').id
-		    serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
+		    # serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
 		    now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 		    session_booking = nil
 

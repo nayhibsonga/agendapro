@@ -59,13 +59,19 @@ class Location < ActiveRecord::Base
 
   accepts_nested_attributes_for :location_times, :reject_if => :all_blank, :allow_destroy => true
 
+  scope :actives, -> { where(active: true) }
   validates :name, :phone, :company, :district, :email, :presence => true
 
-  validate :times_overlap, :time_empty_or_negative, :provider_time_in_location_time, :plan_locations, :outcall_services, :active_countries
+  validate :times_overlap, :time_empty_or_negative, :plan_locations, :outcall_services, :active_countries
   validate :new_plan_locations, :on => :create
 
+  validation_scope :warnings do |s|
+    s.validate after_commit :provider_time_in_location_time
+  end
+
   after_commit :extended_schedule
-  after_create :add_products
+  after_create :add_products, :add_due
+  after_destroy :substract_due
 
   pg_search_scope :search_company_name, :associated_against => {
     :company => :name
@@ -123,6 +129,29 @@ class Location < ActiveRecord::Base
   },
   :ignoring => :accents
 
+  	#Add due if plan is not custom and locations increased by one
+  	def add_due
+  		if !self.company.plan.custom
+  			company = self.company
+  			day_number = DateTime.now.day
+    		month_number = DateTime.now.month
+    		month_days = DateTime.now.days_in_month
+  			company.due_amount += (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * company.computed_multiplier).round(2)
+  			company.save
+  		end
+  	end
+
+  	#Substract due if plan is not custom and locations decreased by one
+  	def substract_due
+  		if !self.company.plan.custom
+  			company = self.company
+  			day_number = DateTime.now.day
+    		month_number = DateTime.now.month
+    		month_days = DateTime.now.days_in_month
+  			company.due_amount -= (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * (company.computed_multiplier + company.company_plan_setting.locations_multiplier)).round(2)
+  			company.save
+  		end
+  	end
 
   	def add_products
   		Product.where(:company_id => self.company.id).each do |product|
@@ -153,18 +182,18 @@ class Location < ActiveRecord::Base
 
 	def plan_locations
 		if self.active_changed? && self.active
-			if self.company.locations.where(active:true).count >= self.company.plan.locations
+			if self.company.locations.where(active:true).count >= self.company.plan.locations && (self.company.plan.custom || self.company.plan.name == "Personal")
 				errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 			end
 		else
-			if self.company.locations.where(active:true).count > self.company.plan.locations
+			if self.company.locations.where(active:true).count > self.company.plan.locations && (self.company.plan.custom || self.company.plan.name == "Personal")
 				errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 			end
 		end
 	end
 
 	def new_plan_locations
-		if self.company.locations.where(active:true).count >= self.company.plan.locations
+		if self.company.locations.where(active:true).count >= self.company.plan.locations && (self.company.plan.custom || self.company.plan.name == "Personal")
 			errors.add(:base, "No se pueden agregar más locales con el plan actual, ¡mejóralo!.")
 		end
 	end
@@ -210,23 +239,29 @@ class Location < ActiveRecord::Base
 	end
 
   def provider_time_in_location_time
-  	self.service_providers.each do |service_provider|
+    providers = []
+  	self.service_providers.where(active: true).each do |service_provider|
 			service_provider.provider_times.each do |provider_time|
 				provider_time_open = provider_time.open.clone()
 				provider_time_close = provider_time.close.clone()
-				in_location_time = false
-				self.location_times.each do |location_time|
-					if provider_time.day_id == location_time.day_id
-						if (provider_time_open.change(:month => 1, :day => 1, :year => 2000) >= location_time.open) && (provider_time_close.change(:month => 1, :day => 1, :year => 2000) <= location_time.close)
-							in_location_time = true
-						end
-					end
+				self.location_times.where(day_id: provider_time.day_id).each do |location_time|
+          if (provider_time_open.change(:month => 1, :day => 1, :year => 2000) < location_time.open) || (provider_time_close.change(:month => 1, :day => 1, :year => 2000) > location_time.close)
+            providers << service_provider.public_name
+            provider_time.open = provider_time_open < location_time.open ? location_time.open : provider_time_open
+            provider_time.close = provider_time_close > location_time.close ? location_time.close : provider_time_close
+            provider_time.save
+          end
 				end
-				if !in_location_time
-					errors.add(:base, "El horario del staff "+service_provider.public_name+" no es factible para este local, debes cambiarlo antes de poder cambiar el horario del local.")
-				end
-			end
+      end
+      # Delete days
+      location_days = service_provider.provider_times.pluck(:day_id).delete_if { |time| self.location_times.pluck(:day_id).include? time }
+      provider_days = service_provider.provider_times.where(day_id: location_days)
+      if provider_days.count > 0
+        providers << service_provider.public_name
+        provider_days.destroy_all
+      end
 		end
+    warnings.add(:base, "El horario de #{providers.join(', ').gsub(/\,(?=[^,]*$)/, ' y')} ha sido ajustado al nuevo horario del local.") if providers.any?
 	end
 
 	def active_countries
@@ -509,9 +544,9 @@ class Location < ActiveRecord::Base
 		locations = week_locations + month_locations
 
 		locations.each do |location|
-			
+
 			location_products = []
-			
+
 			location.location_products.where('product_id is not null').where('product_id > 0').each do |location_product|
 				if location_product.check_stock_for_reminder
 					if !location_product.product.nil?

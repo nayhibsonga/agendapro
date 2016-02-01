@@ -1,4 +1,5 @@
 var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+var hoursChanged = false;
 
 function buildDay (value) {
   $('#localTable').append(
@@ -204,6 +205,10 @@ function initialize() {
       $('#dayStatusId' + i).prop('checked', true).val(1);
     };
   };
+
+  $('#localTable').on('change', function() {
+    hoursChanged = true;
+  });
 }
 
 function changeDayStatus (value) {
@@ -297,54 +302,65 @@ function locJSON() {
 
 function saveLocation() {
   var locationJSON = locJSON();
-  var locationId = $('#id_data').data('id');
-  if ( $('#title').length > 0 ) {
-    $.ajax({
-      type: "PATCH",
-      url: ' /locations/'+ JSON.stringify(locationId) +'.json',
-      data: { location: locationJSON },
-      dataType: 'json',
-      success: function(){
-        document.location.href = '/locations/';
-      },
-      error: function(xhr){
-        var errors = $.parseJSON(xhr.responseText).errors;
-        var errorList = '';
-        for (i in errors) {
-          errorList += '- ' + errors[i] + '\n\n';
-        }
+  var defaults = {
+    data: { location: locationJSON },
+    dataType: 'json',
+    success: function(location){
+      if (location.warnings.length > 0) {
         swal({
-          title: "Error",
-          text: "Se produjeron los siguientes errores:\n\n" + errorList,
-          type: "error"
+          title: "¡Completado!",
+          text: location.warnings,
+          type: "success"
+        }, function() {
+          document.location.href = '/locations/';
         });
+      } else {
+        document.location.href = '/locations/';
+      };
+    },
+    error: function(xhr){
+      var errors = $.parseJSON(xhr.responseText).errors;
+      var errorList = '';
+      for (i in errors) {
+        errorList += '- ' + errors[i] + '\n\n';
       }
-    });
+      swal({
+        title: "Error",
+        text: "Se produjeron los siguientes errores:\n\n" + errorList,
+        type: "error"
+      });
+    }
+  };
+
+  if ( $('#title').length > 0 ) {
+    var locationId = $('#id_data').data('id');
+    var option = {
+      type: "PATCH",
+      url: '/locations/'+ JSON.stringify(locationId) +'.json'
+    };
   }
   else {
-    var locationJSON = locJSON();
-    $.ajax({
+    var option = {
       type: "POST",
-      url: '/locations.json',
-      data: { "location": locationJSON },
-      dataType: 'json',
-      success: function(){
-        document.location.href = '/locations/';
-      },
-      error: function(xhr){
-        var errors = $.parseJSON(xhr.responseText).errors;
-        var errorList = '';
-        for (i in errors) {
-          errorList += '- ' + errors[i] + '\n\n';
-        }
-        swal({
-          title: "Error",
-          text: "Se produjeron los siguientes errores:\n" + errorList,
-          type: "error"
-        });
-      }
+      url: '/locations.json'
+    };
+  };
+  var options = $.extend({}, defaults, option);
+
+  if( hoursChanged ) {
+    swal({
+      title: "Advertencia",
+      text: "Los horarios del Staff se ajustarán automáticamente,    ¿Seguro que desea continuar?",
+      type: "warning",
+      showCancelButton: true,
+      showLoaderOnConfirm: true
+    }, function() {
+      setTimeout($.ajax(options), 1500);
     });
+  } else {
+    $.ajax(options);
   }
+
 }
 
 function changeCountry (country_id) {

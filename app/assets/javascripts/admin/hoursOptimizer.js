@@ -191,6 +191,7 @@ function loadHours () {
       $('#hoursDetails').append(services_str);
       $('input[type=radio][name="hoursRadio"]').change(function(e){
         // e.preventDefault();
+        $('#hoursDetails').show();
         var pos_num = $(this).val();
         $('.optimizerDetail').each(function(){
           if($(this).attr("pos") != pos_num)
@@ -493,6 +494,7 @@ $(function () {
     bookings = [];
     resetForm();
     loadServiceModal();
+    $('#addButton').show();
     $("#hoursDetails").empty();
     $("#pickerSelectDate").show();
   });
@@ -503,6 +505,7 @@ $(function () {
     $("#pickerSelected").append($("#initialPickerDate").val());
     $("#pickerSelectDate").show();
     $("#hoursDetails").empty();
+    $('#addButton').show();
     $('.has-success').removeClass('has-success');
     $('.fa.fa-check').removeClass('fa fa-check');
     $('.has-error').removeClass('has-error');
@@ -511,9 +514,11 @@ $(function () {
     $('#small_loader').remove();
   });
 
-  $('.optimizerDetailLink').on('click', function(e){
+  $('body').on('click', '.optimizerDetailLink', function(e){
+    console.log("Clicked");
     e.preventDefault();
     var pos_num = $(this).attr('pos');
+    $('#hoursDetails').show();
     $('.optimizerDetail[pos="'+pos_num+'"]').show();
   });
 
@@ -551,20 +556,27 @@ $(function () {
     return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
   };
 
-  $(userForm + "#booking_client_identification_number").autocomplete({
-    source: '/clients_rut_suggestion',
-    appendTo: '#hoursOptimizer #new_booking #rut_suggestions',
-    autoFocus: true,
-    minLength: 3,
-    select: function( event, ui ) {
-      event.preventDefault();
-      var client = eval("(" + ui.item.value + ")");
-      setSuggestionData(client);
-      checkEmail();
+  var idNumberField = $(userForm + "#booking_client_identification_number");
+
+  if( idNumberField ) {
+    idNumberField.autocomplete({
+      source: '/clients_rut_suggestion',
+      appendTo: '#hoursOptimizer #new_booking #rut_suggestions',
+      autoFocus: true,
+      minLength: 3,
+      select: function( event, ui ) {
+        event.preventDefault();
+        var client = eval("(" + ui.item.value + ")");
+        setSuggestionData(client);
+        checkEmail();
+      }
+    });
+    if( idNumberField.data( "ui-autocomplete" ) ) {
+      idNumberField.data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+        return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
+      };
     }
-  }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-    return $( '<li>' ).append( '<a>' + item.label + '<br><span class="auto-desc">' + item.desc + '</span></a>' ).appendTo( ul );
-  };
+  }
 
   $(userForm + "#booking_client_email").on('input',function(e){
     checkEmail();
@@ -575,7 +587,7 @@ $(function () {
   });
 
   $("#optimizerDateSelector").datepicker({
-    dateFormat: 'dd-mm-yy',
+    dateFormat: 'dd/mm/yy',
     autoSize: true,
     firstDay: 1,
     changeMonth: true,
@@ -591,8 +603,7 @@ $(function () {
     clear: '',
     onSelect: function(newDate){
       $("#pickerSelected").empty();
-      var prettyDate = newDate.split("-")[2] + "/" + newDate.split("-")[1] + "/" + newDate.split("-")[0];
-      $("#pickerSelected").append(prettyDate);
+      $("#pickerSelected").append(newDate);
     },
     beforeShow: function(date) {
       $('#ui-datepicker-div').addClass("customDatepicker");

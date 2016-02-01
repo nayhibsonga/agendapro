@@ -24,7 +24,9 @@ function loadServices (localId) {
       if (service_hash.services.length > 0) {
         var servicesHTML = '';
         $.each(service_hash.services, function (key, service) {
-          servicesHTML += '<option value="' + service.id + '">' + service.name + '</option>';
+          if (service.bundle == false) {
+            servicesHTML += '<option data-bundle="' + service.bundle + '" value="' + service.id + '">' + service.name + '</option>';
+          }
         });
         $('#service').append(
           '<optgroup label="' + service_hash.category + '">' + servicesHTML + '</optgroup>'
@@ -125,12 +127,13 @@ function generateDate(date, time) {
 
 $(document).ready(function(){
 
-  $("#selectHourNextBtn").on('click', function(){
-
+  $("#selectHourNextBtn").on('click', function(e){
+    e.preventDefault();
     selects = [];
     selects.push({
       service: $("#service").val(),
-      provider: $("#provider").val()
+      provider: $("#provider").val(),
+      bundle: $("#service").find(':selected').data('bundle')
     });
 
     $("#serviceStaff").val(JSON.stringify(selects));

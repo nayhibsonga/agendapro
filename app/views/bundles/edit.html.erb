@@ -1,0 +1,13 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Editar Paquete de Servicios</h2>
+    </div>
+  </div>
+</div>
+
+<%= render 'form' %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "bundle" %>
+<% end %>

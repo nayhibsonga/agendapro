@@ -1,6 +1,4 @@
-class BookingMailer < ActionMailer::Base
-	require 'mandrill'
-	require 'base64'
+class BookingMailer < Base::CustomMailer
 
 	include ActionView::Helpers::NumberHelper
 
@@ -1365,6 +1363,11 @@ class BookingMailer < ActionMailer::Base
 		template_name = 'Payment'
 		template_content = []
 
+		auth_code = ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
+
 		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
 		client = payed_booking.bookings.first.client
 
@@ -1399,7 +1402,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'AUTHNUMBER',
-					:content => payed_booking.punto_pagos_confirmation.authorization_code
+					:content => auth_code
 				},
 				{
 					:name => 'DATE',
@@ -1427,6 +1430,11 @@ class BookingMailer < ActionMailer::Base
 		# => Template
 		template_name = 'Payment'
 		template_content = []
+
+		auth_code = ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
 
 		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
 		client = payed_booking.bookings.first.client
@@ -1462,7 +1470,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'AUTHNUMBER',
-					:content => payed_booking.punto_pagos_confirmation.authorization_code
+					:content => auth_code
 				},
 				{
 					:name => 'DATE',
@@ -1507,6 +1515,11 @@ class BookingMailer < ActionMailer::Base
 		#email = payed_booking.booking.location.company.company_setting.email
 		client = payed_booking.bookings.first.client
 
+		auth_code = ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
+
 		# => Message
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
@@ -1538,7 +1551,7 @@ class BookingMailer < ActionMailer::Base
 				},
 				{
 					:name => 'AUTHNUMBER',
-					:content => payed_booking.punto_pagos_confirmation.authorization_code
+					:content => auth_code
 				},
 				{
 					:name => 'DATE',
@@ -1577,6 +1590,11 @@ class BookingMailer < ActionMailer::Base
 		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
 		#email = payed_booking.booking.location.company.company_setting.email
 		client = payed_booking.bookings.first.client
+
+		auth_code = ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
 
 		message = Hash.new
 
@@ -1624,7 +1642,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 						:name => 'AUTHNUMBER',
-						:content => payed_booking.punto_pagos_confirmation.authorization_code
+						:content => auth_code
 					},
 					{
 						:name => 'DATE',
@@ -1689,7 +1707,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 						:name => 'AUTHNUMBER',
-						:content => payed_booking.punto_pagos_confirmation.authorization_code
+						:content => auth_code
 					},
 					{
 						:name => 'DATE',
@@ -1758,7 +1776,7 @@ class BookingMailer < ActionMailer::Base
 					},
 					{
 						:name => 'AUTHNUMBER',
-						:content => payed_booking.punto_pagos_confirmation.authorization_code
+						:content => auth_code
 					},
 					{
 						:name => 'DATE',
@@ -2093,19 +2111,4 @@ class BookingMailer < ActionMailer::Base
 	#Mail de edición de sesión (depende de si es por admin o no)
 	def update_session_booking_mail(booking, is_admin)
 	end
-
-	private
-		def send_mail(template_name, template_content, message)
-			mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-			# => Metadata
-			async = false
-			send_at = DateTime.now
-
-			result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-			rescue Mandrill::Error => e
-				puts "A mandrill error occurred: #{e.class} - #{e.message}"
-				raise
-		end
-
 end

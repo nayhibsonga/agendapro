@@ -1,24 +1,13 @@
 <div class="container-fluid">
   <div class="row" style="margin-top: 15px;">
     <div class="col-md-3">
-      <div class="dropdown btn-pseudo-block">
-        <button type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="clientsDropdownMenu"> Clientes <i class="fa fa-caret-down"></i></button>
-        <ul class="dropdown-menu" aria-labelledby="clientsDropdownMenu">
-          <li><%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path %></li>
-          <li><a id="import_clients" type="button" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</a></li>
-        </ul>
-      </div>
-      <div class="btn-pseudo-block">
-        <% if @from_collection.first %>
-          <% if @monthly_mails_sent < @monthly_mails %>
-            <%= link_to '<i class="fa fa-envelope"></i> Enviar e-mail a este listado'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], attendance: params[:attendance], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-green", id: 'sendMail' %>
-          <% else %>
-            <button class="btn btn-green">Has alcanzado el limite de e-mails.</button>
-          <% end %>
-        <% else %>
-          <a id="sendMail" type="button" class="btn btn-green" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar e-mail a este listado</a>
-        <% end %>
-        <span class="text-green" data-toggle="tooltip" data-placement="bottom" title="Al hacer click en este botón podrás enviar un correo a todos los clientes previamente filtrados por el buscador y los filtros avanzados. En caso de que no selecciones ningún filtro, se le enviará a la lista completa de clientes.">&nbsp;<i class="fa fa-question-circle fa-lg"></i></span>
+      <div class="row">
+        <div class="col-xs-6 col-md-12" style="margin-bottom: 5px;">
+          <%= link_to '<i class="fa fa-plus"></i> Nuevo Cliente'.html_safe, new_client_path, class: "btn btn-white btn-block" %>
+        </div>
+        <div class="col-xs-6 col-md-12">
+          <a id="import_clients" class="btn btn-white btn-block" type="button" data-toggle="modal" data-target="#importModal"><i class="fa fa-group"></i> Importar Clientes</a>
+        </div>
       </div>
     </div>
     <div class="col-md-9">
@@ -28,12 +17,31 @@
             <p><strong>Buscar Clientes</strong></p>
           </div>
           <div class="col-xs-6 col-md-7">
-            <%= text_field_tag :search_bar, params[:search], class: "form-control", placeholder: "nombre, apellido, e-mail o RUT..." %>
+            <%= text_field_tag :search_bar, params[:search], class: "form-control search-input", placeholder: "nombre, apellido, e-mail o RUT..." %>
           </div>
           <div class="col-xs-3 col-md-2">
             <button class="btn btn-green" id="search_btn"><i class="fa fa-search"></i> Buscar</button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-bottom: 15px;">
+    <div class="col-sm-12">
+      <div class="pull-right">
+        <span class="text-green" data-toggle="tooltip" data-placement="bottom" title="Al hacer click en este botón podrás enviar un correo a todos los clientes previamente filtrados por el buscador y los filtros avanzados. En caso de que no selecciones ningún filtro, se le enviará a la lista completa de clientes.">&nbsp;<i class="fa fa-question-circle fa-lg"></i>&nbsp;</span>
+        <% if @from_collection.first %>
+          <% if @monthly_mails_sent < @monthly_mails %>
+            <% if Rails.env === 'development' %>
+              <%= link_to '<i class="fa fa-envelope"></i> Email full (DEV)'.html_safe, send_mail_path(params.merge!(full: true)), class: "btn btn-white", id: 'sendMail' %>
+            <% end %>
+            <%= link_to '<i class="fa fa-envelope"></i> Enviar e-mail a este listado'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], attendance: params[:attendance], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-white", id: 'sendMail' %>
+          <% else %>
+            <button class="btn btn-white">Has alcanzado el limite de e-mails.</button>
+          <% end %>
+        <% else %>
+          <a id="sendMail" type="button" class="btn btn-white" data-toggle="modal" data-target="#mailModal"><i class="fa fa-envelope"></i> Enviar e-mail a este listado</a>
+        <% end %>
       </div>
     </div>
   </div>
@@ -277,8 +285,8 @@
     </div>
     <div class="col-sm-4 col-md-3">
       <small class="pull-right">Descargar este listado de clientes:</small><br />
-      <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white pull-right" %>
-      <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_path(format: "xls", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white pull-right" %>
+      <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", attendance: params[:attendance], search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-white pull-right" %>
+      <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_path(format: "xls", attendance: params[:attendance], search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-white pull-right" %>
     </div>
   </div>
 </div>
@@ -337,8 +345,9 @@
           </ul>
           <p>
             Plantillas para importación:
-            <%= link_to '<i class="fa fa-download"></i> Plantilla Excel'.html_safe, '/clients_base.xls', :target => :blank, class: "btn btn-white" %>
-            <%= link_to '<i class="fa fa-download"></i> Plantilla CSV'.html_safe, '/clients_base.csv', :target => :blank, class: "btn btn-white" %>
+
+            <%= link_to '<i class="fa fa-download"></i> Plantilla Excel'.html_safe, '/company_clients_base.xls', :target => :blank, class: "btn btn-white" %>
+            <%= link_to '<i class="fa fa-download"></i> Plantilla CSV'.html_safe, '/company_clients_base.csv', :target => :blank, class: "btn btn-white" %>
           </p>
           <div class="form-group" id="file-group">
             <label for="file" class="control-label col-md-3">Seleccionar Archivo</label>

@@ -1,18 +1,14 @@
-class CompanyMailer < ActionMailer::Base
-	require 'mandrill'
-	require 'base64'
+class CompanyMailer < Base::CustomMailer
 	include ApplicationHelper
 
 	#Send a warning notifying tht trial period ends soon (5 days)
 	def trial_warning(company_id)
 
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
 		current_date = DateTime.now
 		day_number = Time.now.day
 	    month_days = Time.now.days_in_month
 		company = Company.find(company_id)
-	    
+
 		admins = company.users.where(role_id: Role.find_by_name('Administrador General'))
 		admin = admins.first
 
@@ -21,6 +17,11 @@ class CompanyMailer < ActionMailer::Base
 		current_amount = company.calculate_trial_debt
 		plan_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
 		debt_amount = 0
+
+		is_chile = true
+		if company.country.name != "Chile"
+			is_chile = false
+		end
 
 
 		# => Template
@@ -67,40 +68,39 @@ class CompanyMailer < ActionMailer::Base
 				{
 					:name => 'ACTIVATE_URL',
 					:content => select_plan_url
+				},
+				{
+					:name => 'CHILE',
+					:content => is_chile
 				}
 			],
 			:tags => ['invoice']
 		}
 
-		# => Metadata
-		async = false
-		send_at = current_date
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, message)
 	end
 
 	#Send end of trial notification
 	def trial_end(company_id)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
 		current_date = DateTime.now
 		day_number = Time.now.day
 	    month_days = Time.now.days_in_month
 		company = Company.find(company_id)
-	    
+
 		admins = company.users.where(role_id: Role.find_by_name('Administrador General'))
 		admin = admins.first
 
 		sales_tax = company.country.sales_tax
 
 		current_amount = company.calculate_trial_debt
-		plan_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
-		debt_amount = 0
+		plan_amount = company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+		debt_amount = company.due_amount
+
+		is_chile = true
+		if company.country.name != "Chile"
+			is_chile = false
+		end
 
 
 		# => Template
@@ -159,41 +159,35 @@ class CompanyMailer < ActionMailer::Base
 				{
 					:name => 'ACTIVATE_URL',
 					:content => select_plan_url
+				},
+				{
+					:name => 'CHILE',
+					:content => is_chile
 				}
 			],
 			:tags => ['invoice']
 		}
 
-		# => Metadata
-		async = false
-		send_at = current_date
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, message)
 
 	end
 
 	#Send a warning notifying tht trial period ends soon (5 days)
 	def trial_recovery(company_id)
 
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
 		current_date = DateTime.now
 		day_number = Time.now.day
 	    month_days = Time.now.days_in_month
 		company = Company.find(company_id)
-	    
+
 		admins = company.users.where(role_id: Role.find_by_name('Administrador General'))
 		admin = admins.first
 
 		sales_tax = company.country.sales_tax
 
 		current_amount = company.calculate_trial_debt
-		plan_amount = company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f
+		plan_amount = company.company_plan_setting.base_price * company.computed_multiplier
 		debt_amount = 0
 
 
@@ -246,31 +240,30 @@ class CompanyMailer < ActionMailer::Base
 			:tags => ['invoice']
 		}
 
-		# => Metadata
-		async = false
-		send_at = current_date
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, message)
 	end
 
 	#Send invoice_email charging for new month.
 	def invoice_email(company_id, reminder_message)
-		#return
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 
 		current_date = DateTime.now
 		day_number = Time.now.day
 	    month_days = Time.now.days_in_month
 		company = Company.find(company_id)
-	    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+
+	    #company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 		unless company.users.where(role_id: Role.find_by_name('Administrador General')).count > 0
 			return
 		end
+
+		price = company.company_plan_setting.base_price * company.computed_multiplier
+
+		is_chile = true
+		if company.country.name != "Chile"
+			is_chile = false
+		end
+
 		admins = company.users.where(role_id: Role.find_by_name('Administrador General'))
 		admin = admins.first
 
@@ -366,6 +359,10 @@ class CompanyMailer < ActionMailer::Base
 					{
 						:name => 'ACTIVATE_URL',
 						:content => select_plan_url
+					},
+					{
+						:name => 'CHILE',
+						:content => is_chile
 					}
 				],
 				:tags => ['invoice']
@@ -415,6 +412,10 @@ class CompanyMailer < ActionMailer::Base
 					{
 						:name => 'ACTIVATE_URL',
 						:content => select_plan_url
+					},
+					{
+						:name => 'CHILE',
+						:content => is_chile
 					}
 				],
 				:tags => ['invoice']
@@ -422,22 +423,12 @@ class CompanyMailer < ActionMailer::Base
 
 		end
 
-		# => Metadata
-		async = false
-		send_at = current_date
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, message)
 	end
 
 	#Send mail to Nico (or other) warning about a new billing_wire_transfer
 	def new_transfer_email(transfer_id)
-
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		transfer = BillingWireTransfer.find(transfer_id)
 		company = transfer.company
 		admins = company.users.where(role_id: Role.find_by_name('Administrador General'))
@@ -495,23 +486,11 @@ class CompanyMailer < ActionMailer::Base
 			:tags => []
 		}
 
-		# => Metadata
-		async = false
-		send_at = current_date
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
-
-
+		send_mail(template_name, template_content, message)
 	end
 
 	def transfer_receipt_email(transfer_id)
-
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		transfer = BillingWireTransfer.find(transfer_id)
 		company = transfer.company
 		admins = company.users.where(role_id: Role.find_by_name('Administrador General'))
@@ -573,23 +552,11 @@ class CompanyMailer < ActionMailer::Base
 			:tags => []
 		}
 
-		# => Metadata
-		async = false
-		send_at = current_date
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
-
-
+		send_mail(template_name, template_content, message)
 	end
 
 	def online_receipt_email(company_id, punto_pagos_confirmation_id)
-
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		company = Company.find(company_id)
 		admins = company.users.where(role_id: Role.find_by_name('Administrador General'))
 		admin = admins.first
@@ -605,6 +572,16 @@ class CompanyMailer < ActionMailer::Base
 		template_name = 'online_receipt'
 		template_content = []
 
+		is_chile = true
+		if company.country.name != "Chile"
+			is_chile = false
+		end
+
+		auth_code = ""
+		if !punto_pagos_confirmation.authorization_code?
+			auth_code = punto_pagos_confirmation.authorization_code
+		end
+
 		recipients = []
 		admins.each do |user|
 	      recipients << {
@@ -614,10 +591,16 @@ class CompanyMailer < ActionMailer::Base
 	      }
 	    end
 
+	    recipients << {
+	    	:email => 'cuentas@agendapro.cl',
+	    	:name => 'Cuentas AgendaPro',
+	    	:type => 'to'
+	    }
+
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => 'AgendaPro',
-			:subject => 'Comprobante de pago de cuenta AgendaPro',
+			:subject => 'Comprobante de pago de cuenta AgendaPro ' + company.name,
 			:to => recipients,
 			:headers => { 'Reply-To' => 'contacto@agendapro.cl' },
 			:global_merge_vars => [
@@ -651,7 +634,7 @@ class CompanyMailer < ActionMailer::Base
 				},
 				{
 					:name => 'CARD_NUMBER',
-					:content => "********" + punto_pagos_confirmation.card_number
+					:content => "********#{punto_pagos_confirmation.card_number}"
 				},
 				{
 					:name => 'ORDER',
@@ -659,32 +642,25 @@ class CompanyMailer < ActionMailer::Base
 				},
 				{
 					:name => 'AUTH_CODE',
-					:content => punto_pagos_confirmation.authorization_code
+					:content => auth_code
 				},
 				{
 					:name => 'DATE',
 					:content => punto_pagos_confirmation.created_at.strftime('%d/%m/%Y %R')
+				},
+				{
+					:name => 'CHILE',
+					:content => is_chile
 				}
 			],
 			:tags => []
 		}
 
-		# => Metadata
-		async = false
-		send_at = current_date
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
-
+		send_mail(template_name, template_content, message)
 	end
 
 	def pay_u_online_receipt_email(company_id, pay_u_notification_id)
-
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
 		company = Company.find(company_id)
 		admins = company.users.where(role_id: Role.find_by_name('Administrador General'))
 		admin = admins.first
@@ -698,8 +674,13 @@ class CompanyMailer < ActionMailer::Base
 
 	    card_number = ""
 	    if !pay_u_notification.cc_number.nil?
-	    	card_number = "********" + pay_u_notification.cc_number
+	    	card_number = "********#{pay_u_notification.cc_number}"
 	    end
+
+	    is_chile = true
+		if company.country.name != "Chile"
+			is_chile = false
+		end
 
 		# => Template
 		template_name = 'online_receipt'
@@ -712,6 +693,17 @@ class CompanyMailer < ActionMailer::Base
 	        :name => user.full_name,
 	        :type => 'to'
 	      }
+	    end
+
+	    recipients << {
+	    	:email => 'cuentas@agendapro.cl',
+	    	:name => 'Cuentas AgendaPro',
+	    	:type => 'to'
+	    }
+
+	    auth_code = ""
+	    if !pay_u_notification.authorization_code.nil?
+	    	auth_code = pay_u_notification.authorization_code
 	    end
 
 		message = {
@@ -755,27 +747,20 @@ class CompanyMailer < ActionMailer::Base
 				},
 				{
 					:name => 'AUTH_CODE',
-					:content => pay_u_notification.authorization_code
+					:content => auth_code
 				},
 				{
 					:name => 'DATE',
 					:content => pay_u_notification.created_at.strftime('%d/%m/%Y %R')
+				},
+				{
+					:name => 'CHILE',
+					:content => false
 				}
 			],
 			:tags => []
 		}
-
-		# => Metadata
-		async = false
-		send_at = current_date
-
-		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
-
+		send_mail(template_name, template_content, message)
 	end
 
-end	
+end

@@ -5,6 +5,16 @@ class Client < ActiveRecord::Base
   has_many :session_bookings, dependent: :destroy
   has_many :bookings, dependent: :destroy
   has_many :payments, dependent: :destroy
+  has_many :client_files
+  has_many :float_attributes
+  has_many :integer_attributes
+  has_many :text_attributes
+  has_many :textarea_attributes
+  has_many :boolean_attributes
+  has_many :date_attributes
+  has_many :date_time_attributes
+  has_many :file_attributes
+  has_many :categoric_attributes
 
   scope :filter_gender, -> gender { where(gender: gender) if gender.present? }
   scope :filter_status, -> statuses { where(id: Booking.where(status_id: Status.find(statuses)).select(:client_id)) if statuses.present? }
@@ -13,6 +23,500 @@ class Client < ActiveRecord::Base
   validate :mail_uniqueness, :record_uniqueness, :minimun_info
 
   after_update :client_notification
+  #after_create :create_client_attributes
+
+  def get_storage_occupation
+    
+    used_storage = 0
+    used_storage += self.client_files.sum(:size)
+
+  end
+
+  def create_client_attributes
+
+    self.company.custom_attributes.each do |attribute|
+
+      if attribute.datatype == "categoric"
+        attribute_category = AttributeCategory.create(attribute_id: attribute.id, category: "Otra")
+      end
+
+      case attribute.datatype
+      when "float"
+        
+        if FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          FloatAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "integer"
+        
+        if IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "text"
+        
+        if TextAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          TextAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "textarea"
+        
+        if TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "boolean"
+        
+        if BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          BooleanAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "date"
+        
+        if DateAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          DateAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "datetime"
+        
+        if DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          DateTimeAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+
+      when "file"
+        if FileAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
+          FileAttribute.create(attribute_id: attribute.id, client_id: self.id)
+        end
+      when "categoric"
+        attribute_category = AttributeCategory.create(attribute_id: attribute.id, category: "Otra")
+        if CategoricAttribute.where(attribute_id: attribute.id, client_id: client.id).count == 0
+          CategoricAttribute.create(attribute_id: attribute.id, client_id: client.id, attribute_category_id: attribute_category.id)
+        end
+      end
+
+    end
+
+
+    company = self.company
+    company.clients.each do |client|
+      case self.datatype
+      when "float"
+        
+        if FloatAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          FloatAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "integer"
+        
+        if IntegerAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          IntegerAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "text"
+        
+        if TextAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          TextAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "textarea"
+        
+        if TextareaAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          TextareaAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "boolean"
+        
+        if BooleanAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          BooleanAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "date"
+        
+        if DateAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          DateAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "datetime"
+        
+        if DateTimeAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          DateTimeAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+
+      when "file"
+        if FileAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          FileAttribute.create(attribute_id: self.id, client_id: client.id)
+        end
+      when "categoric"
+        if CategoricAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+          CategoricAttribute.create(attribute_id: self.id, client_id: client.id, attribute_category_id: attribute_category.id)
+        end
+      end
+    end
+
+  end
+
+  def get_custom_attributes
+
+    custom_attributes = {}
+
+    self.company.custom_attributes.each do |attribute|
+
+      case attribute.datatype
+      when "float"
+        
+        float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !float_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = float_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = nil
+        end
+
+      when "integer"
+        
+        integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !integer_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = integer_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = nil
+        end
+
+      when "text"
+        
+        text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !text_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = text_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = ""
+        end
+
+      when "textarea"
+        
+        textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !textarea_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = textarea_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = ""
+        end
+
+      when "boolean"
+
+        boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !boolean_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = boolean_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = false
+        end
+
+      when "date"
+        
+        date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !date_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = date_attribute.value
+        else
+          custom_attributes[attribute.slug + "_attribute"] = nil
+        end
+
+      when "datetime"
+
+        datetime_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !datetime_attribute.nil? && !datetime_attribute.value.nil?
+          datetime_val = datetime_attribute.value.strftime("%d/%m/%Y %R")
+          custom_attributes[attribute.slug + "_attribute"] = datetime_val.split(" ")[0]
+          custom_attributes[attribute.slug + "_attribute_hour"] = datetime_val.split(" ")[1].split(":")[0]
+          custom_attributes[attribute.slug + "_attribute_minute"] = datetime_val.split(" ")[1].split(":")[1]
+        else
+          custom_attributes[attribute.slug + "_attribute"] = ""
+          custom_attributes[attribute.slug + "_attribute_hour"] = nil
+          custom_attributes[attribute.slug + "_attribute_minute"] = nil
+        end
+
+      when "categoric"
+
+        categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if !categoric_attribute.nil?
+          custom_attributes[attribute.slug + "_attribute"] = categoric_attribute.attribute_category_id
+        else
+          custom_attributes[attribute.slug + "_attribute"] = attribute.attribute_categories.where(category: "Otra").id
+        end
+
+      end
+
+    end
+
+    return custom_attributes
+
+  end
+
+  def save_attributes(params)
+
+    if params.blank?
+      return
+    end
+
+    self.company.custom_attributes.each do |attribute|
+
+      str_sm = attribute.slug + "_attribute"
+      param_value = params[str_sm]
+
+      case attribute.datatype
+      when "float"
+        
+        float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if float_attribute.nil?
+          float_attribute = FloatAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          float_attribute.value = param_value
+          float_attribute.save
+        end
+
+      when "integer"
+        
+        integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if integer_attribute.nil?
+          IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          integer_attribute.value = param_value
+          integer_attribute.save
+        end
+
+      when "text"
+        
+        text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if text_attribute.nil?
+          TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          text_attribute.value = param_value
+          text_attribute.save
+        end
+
+      when "textarea"
+        
+        textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if textarea_attribute.nil?
+          TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          textarea_attribute.value = param_value
+          textarea_attribute.save
+        end
+
+      when "boolean"
+
+        if param_value == 1 || param_value == "1" || param_value == true
+          param_boolean = true
+        else
+          param_boolean = false
+        end
+
+        boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if boolean_attribute.nil?
+          BooleanAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_boolean)
+        else
+          boolean_attribute.value = param_boolean
+          boolean_attribute.save
+        end
+
+      when "date"
+        
+        if !param_value.nil?
+          param_value = param_value.gsub('/', '-')
+        end
+
+        date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if date_attribute.nil?
+          DateAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          date_attribute.value = param_value
+          date_attribute.save
+        end
+
+      when "datetime"
+        
+        if !param_value.nil?
+          param_value = param_value.gsub('/', '-')
+          date_hour = params[attribute.slug + "_attribute_hour"]
+          date_minute = params[attribute.slug + "_attribute_minute"]
+        end
+
+        complete_datetime = nil
+        if !param_value.nil?
+          complete_datetime = param_value + " " + date_hour + ":" + date_minute + ":00"
+        end
+
+        date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if date_time_attribute.nil?
+          DateTimeAttribute.create(attribute_id: attribute.id, client_id: self.id, value: complete_datetime)
+        else
+          date_time_attribute.value = complete_datetime
+          date_time_attribute.save
+        end
+
+      when "file"
+
+        file_attribute = FileAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+
+        if !param_value.nil?
+
+          file_name = attribute.name
+          folder_name = attribute.slug
+          content_type = param_value.content_type
+
+          file_extension = param_value.original_filename[param_value.original_filename.rindex(".") + 1, param_value.original_filename.length]
+
+          file_description = attribute.description
+
+          full_name = 'companies/' +  self.company_id.to_s + '/clients/' + self.id.to_s + '/' + folder_name + '/' + param_value.original_filename
+
+          s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+          obj = s3_bucket.object(full_name)
+
+          obj.upload_file(param_value.path(), {acl: 'public-read', content_type: content_type})
+
+          client_file = ClientFile.create(client_id: self.id, name: file_name, full_path: full_name, public_url: obj.public_url, size: obj.size, description: file_description)
+
+          if file_attribute.nil?
+            FileAttribute.create(attribute_id: attribute.id, client_id: self.id, client_file_id: client_file.id)
+          else
+            if !file_attribute.client_file.nil?
+              file_attribute.client_file.destroy
+            end
+            file_attribute.client_file_id = client_file.id
+            file_attribute.save
+          end
+
+        end
+
+
+      when "categoric"
+
+        categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if categoric_attribute.nil?
+          CategoricAttribute.create(attribute_id: attribute.id, client_id: self.id, attribute_category_id: param_value)
+        else
+          categoric_attribute.attribute_category_id = param_value
+          categoric_attribute.save
+        end
+
+      end
+
+    end
+
+  end
+
+  def save_attributes_from_import(params)
+
+    if params.blank?
+      return
+    end
+
+    self.company.custom_attributes.each do |attribute|
+
+      str_sm = attribute.slug
+      param_value = params[str_sm]
+
+      case attribute.datatype
+      when "float"
+        
+        float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if float_attribute.nil?
+          float_attribute = FloatAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          float_attribute.value = param_value
+          float_attribute.save
+        end
+
+      when "integer"
+        
+        integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if integer_attribute.nil?
+          IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          integer_attribute.value = param_value
+          integer_attribute.save
+        end
+
+      when "text"
+        
+        text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if text_attribute.nil?
+          TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          text_attribute.value = param_value
+          text_attribute.save
+        end
+
+      when "textarea"
+        
+        textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if textarea_attribute.nil?
+          TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          textarea_attribute.value = param_value
+          textarea_attribute.save
+        end
+
+      when "boolean"
+
+        if param_value == 1 || param_value == "1" || param_value == true
+          param_boolean = true
+        else
+          param_boolean = false
+        end
+
+        boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if boolean_attribute.nil?
+          BooleanAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_boolean)
+        else
+          boolean_attribute.value = param_boolean
+          boolean_attribute.save
+        end
+
+      when "date"
+        
+        if !param_value.blank?
+          param_value = param_value.gsub('/', '-')
+        end
+
+        date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if date_attribute.nil?
+          DateAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
+        else
+          date_attribute.value = param_value
+          date_attribute.save
+        end
+
+      when "datetime"
+        
+        complete_datetime = nil
+
+        if !param_value.blank?
+          param_value = param_value.gsub('/', '-')     
+          complete_datetime = param_value
+        end
+
+        date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if date_time_attribute.nil?
+          DateTimeAttribute.create(attribute_id: attribute.id, client_id: self.id, value: complete_datetime)
+        else
+          date_time_attribute.value = complete_datetime
+          date_time_attribute.save
+        end
+
+      when "categoric"
+
+        categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: self.id).first
+        if categoric_attribute.nil?
+          CategoricAttribute.create(attribute_id: attribute.id, client_id: self.id, attribute_category_id: param_value)
+        else
+          categoric_attribute.attribute_category_id = param_value
+          categoric_attribute.save
+        end
+
+      end
+
+    end
+
+  end
 
   def self.bookings_reminder
 
@@ -119,8 +623,8 @@ class Client < ActiveRecord::Base
         @user_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
             '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
             '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.location.company.company_setting.provider_preference == 2 ? "" : book.service_provider.public_name + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + (book.location.company.company_setting.provider_preference == 2 ? "" : book.service_provider.public_name) + '</td>' +
+            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + (book.notes.blank? ? '' : book.notes) + '</td>' +
             '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' +
               '<a class="btn btn-xs btn-orange" target="_blank" href="' + (book.marketplace_origin ? book.marketplace_url('edit') : helper.booking_edit_url(:confirmation_code => book.confirmation_code) ) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd9610;border-color:#db7400; width: 90%;">Editar</a>' +
               '<a class="btn btn-xs btn-red" target="_blank" href="' + (book.marketplace_origin ? book.marketplace_url('cancel') : helper.booking_cancel_url(:confirmation_code => book.confirmation_code) ) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd633f;border-color:#e55938; width: 90%;">Cancelar</a>' +
@@ -340,6 +844,9 @@ class Client < ActiveRecord::Base
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
     spreadsheet = open_spreadsheet(file)
+
+    company = Company.find(company_id)
+
     if !spreadsheet.nil?
       header = spreadsheet.row(1)
       (2..spreadsheet.last_row).each do |i|
@@ -407,6 +914,74 @@ class Client < ActiveRecord::Base
           row["identification_number"] = row["identification_number"].to_s.chomp('.0')
         end
 
+        custom_params = Hash.new
+        #Check for custom attributes
+        company.custom_attributes.each do |attribute|
+
+          case attribute.datatype
+          when "float"
+            if row[attribute.slug].present?
+              custom_params[attribute.slug] = row[attribute.slug].to_f
+            else
+              custom_params[attribute.slug] = nil
+            end
+          when "integer"
+            if row[attribute.slug].present?
+              custom_params[attribute.slug] = row[attribute.slug].to_i
+            else
+              custom_params[attribute.slug] = nil
+            end
+          when "boolean"
+            if row[attribute.slug].present?
+              if row[attribute.slug].downcase == "sí" || row[attribute.slug].downcase == "si"
+                custom_params[attribute.slug] = true
+              elsif row[attribute.slug] == "1"
+                custom_params[attribute.slug] = true
+              elsif row[attribute.slug].downcase == "no"
+                custom_params[attribute.slug] = false
+              elsif row[attribute.slug].downcase == "0"
+                custom_params[attribute.slug] = false
+              else
+                custom_params[attribute.slug] = false
+              end
+            else
+              custom_params[attribute.slug] = nil
+            end
+          when "text"
+            if row[attribute.slug].present?
+              custom_params[attribute.slug] = row[attribute.slug].to_s.chomp('.0').strip
+            else
+              custom_params[attribute.slug] = ""
+            end
+          when "textarea"
+            if row[attribute.slug].present?
+              custom_params[attribute.slug] = row[attribute.slug].to_s.chomp('.0').strip
+            else
+              custom_params[attribute.slug] = ""
+            end
+          when "date"
+            if row[attribute.slug].present?
+              custom_params[attribute.slug] = row[attribute.slug].to_date rescue nil
+            else
+              custom_params[attribute.slug] = nil
+            end
+          when "datetime"
+            if row[attribute.slug].present?
+              custom_params[attribute.slug] = row[attribute.slug].to_datetime rescue nil
+            else
+              custom_params[attribute.slug] = nil
+            end
+          when "categoric"
+            cat_str = row[attribute.slug].to_s.chomp('.0').strip
+            cat_id = attribute.check_categories(cat_str)
+            custom_params[attribute.slug] = cat_id
+          end
+
+        end
+
+        "Custom params: "
+        puts custom_params.to_s
+
         if row["identification_number"].present? && Client.where(identification_number: row["identification_number"], company_id: company_id).count > 0
           client = Client.where(identification_number: row["identification_number"], company_id: company_id).first
         elsif row["email"].present? && Client.where(email: row["email"], company_id: company_id).count > 0
@@ -421,7 +996,9 @@ class Client < ActiveRecord::Base
         if company_id
           client.company_id = company_id
         end
-        client.save
+        if client.save
+          client.save_attributes_from_import(custom_params)
+        end
       end
       message = "Clientes importados exitosamente."
     else
@@ -436,4 +1013,5 @@ class Client < ActiveRecord::Base
     when ".xlsx" then Roo::Excelx.new(file.path, file_warning: :ignore)
     end
   end
+
 end

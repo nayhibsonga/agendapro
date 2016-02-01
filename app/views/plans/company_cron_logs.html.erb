@@ -48,7 +48,11 @@
               <tbody>
                 <% @company_cron_logs.each do |company_cron_log| %>
                   <tr>
-                    <td><%= Company.find(company_cron_log.company_id).name %></td>
+                    <% if company_cron_log.company_id.nil? || Company.where(id: company_cron_log.company_id).count == 0 %>
+                      <td><%= Sin compañía (error PayU) %></td>
+                    <% else %>
+                      <td><%= Company.find(company_cron_log.company_id).name %></td>
+                    <% end %>
                     <td><%= company_cron_log.action_ref %></td>
                     <td><%= company_cron_log.details %></td>
                     <td><%= l company_cron_log.created_at, format: :short %></td>

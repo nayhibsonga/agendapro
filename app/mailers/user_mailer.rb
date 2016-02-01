@@ -1,9 +1,6 @@
-class UserMailer < ActionMailer::Base
-  require 'mandrill'
+class UserMailer < Base::CustomMailer
 
   def welcome_email(user)
-  	mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
     # => Template
     template_name = user.api_token.present? ? 'User - Marketplace' : 'User'
     template_content = []
@@ -53,16 +50,8 @@ class UserMailer < ActionMailer::Base
       ]
     }
 
-    # => Metadata
-    async = false
-    send_at = DateTime.now
-
     # => Send mail
-    result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-  	rescue Mandrill::Error => e
-    	puts "A mandrill error occurred: #{e.class} - #{e.message}"
-    	raise
+    send_mail(template_name, template_content, message)
   end
 
 end

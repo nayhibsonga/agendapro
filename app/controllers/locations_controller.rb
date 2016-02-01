@@ -31,7 +31,7 @@ class LocationsController < ApplicationController
     @location = Location.new
     @location.company_id = current_user.company_id
     if current_user.role_id != Role.find_by_name("Super Admin").id
-      if current_user.company.locations.where(active:true).count >= current_user.company.plan.locations
+      if current_user.company.locations.where(active:true).count >= current_user.company.plan.locations && (current_user.company.plan.custom || current_user.company.plan.name == "Personal")
         redirect_to locations_path, alert: 'No puedes crear más locales con tu plan actual.'
         return
       end
@@ -68,9 +68,14 @@ class LocationsController < ApplicationController
     if current_user.role == Role.find_by(name: 'Super Admin')
       respond_to do |format|
         if @location.update(location_params)
+          if @location.warnings
+            warnings = @location.warnings.full_messages
+            location = @location.as_json
+            location[:warnings] = warnings
+          end
           flash[:notice] = 'Local actualizado exitosamente.'
           format.html { redirect_to locations_path }
-          format.json { render :json => @location }
+          format.json { render :json => location }
         else
           puts @location.errors.full_messages
           format.html { redirect_to locations_path, alert: 'No se pudo guardar el local.' }
@@ -87,9 +92,14 @@ class LocationsController < ApplicationController
       respond_to do |format|
         if @location.update(location_params)
           @location_times.destroy_all
+          if @location.warnings
+            warnings = @location.warnings.full_messages
+            location = @location.as_json
+            location[:warnings] = warnings
+          end
           flash[:notice] = 'Local actualizado exitosamente.'
           format.html { redirect_to locations_path }
-          format.json { render :json => @location }
+          format.json { render :json => location }
         else
           @location_times.each do |location_time|
             location_time.location_id = @location.id
@@ -105,6 +115,7 @@ class LocationsController < ApplicationController
   def activate
     @location.active = true
     if @location.save
+      @location.add_due
       redirect_to inactive_locations_path, notice: "Local activado exitosamente."
     else
       redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
@@ -114,6 +125,7 @@ class LocationsController < ApplicationController
   def deactivate
     @location.active = false
     if @location.save
+      @location.substract_due
       redirect_to locations_path, notice: "Local desactivado exitosamente."
     else
       redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
@@ -602,7 +614,7 @@ class LocationsController < ApplicationController
       @location_products = location_products.where(:product_id => @location.company.products.where(:product_display_id => params[:display]).pluck(:id)).order('stock asc')
     else
       @location_products = location_products.order('stock asc')
-    end    
+    end
 
     respond_to do |format|
       format.html { render :partial => 'inventory' }
@@ -654,7 +666,7 @@ class LocationsController < ApplicationController
         @stock_alarm_setting.monthly = params[:monthly]
         @stock_alarm_setting.month_day = params[:month_day]
         @stock_alarm_setting.week_day = params[:week_day]
-        
+
         emails = []
         emails_arr = params[:email].split(",")
         emails_arr.each do |email|
