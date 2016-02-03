@@ -67,7 +67,7 @@
             notes = ''
            %>
           <% payment.bookings.each do |booking|
-            bookings_text += "* #{h booking.service.name} con #{h booking.service_provider.public_name} (#{ hbooking.start.strftime('%R %d-%m-%Y')}) #{h number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0)} con #{h booking.discount.to_s}% de descuento<br/>"
+            bookings_text += "* #{h booking.service.name} con #{h booking.service_provider.public_name} (#{h booking.start.strftime('%R %d-%m-%Y')}) #{h number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0)} con #{h booking.discount.to_s}% de descuento<br/>"
           end %>
           <% payment.payment_products.each do |payment_product|
             if payment_product.quantity == 1
