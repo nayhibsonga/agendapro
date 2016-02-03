@@ -2199,6 +2199,10 @@ class BookingsController < ApplicationController
       @booking.max_changes = @company.company_setting.max_changes
       @booking.booking_group = booking_group
 
+      if buffer_params[:bundled] == true || buffer_params[:bundled] == "true"
+        @booking.price = ServiceBundle.find_by(service_id: service.id, bundle_id: buffer_params[:bundle_id]) ? ServiceBundle.find_by(service_id: service.id, bundle_id: buffer_params[:bundle_id]).price : service.price
+      end
+
       if deal
         @booking.deal = deal
       end

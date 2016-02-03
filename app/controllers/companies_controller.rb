@@ -1241,7 +1241,7 @@ class CompaniesController < ApplicationController
 		end
 		serviceStaffAux = JSON.parse(params[:serviceStaff], symbolize_names: true)
 		serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
-		if serviceStaffAux[0][:bundle]
+		if serviceStaffAux[0][:bundle] || serviceStaffAux[0][:bundle] == "true"
 			bundle = Bundle.find(serviceStaffAux[0][:service])
 			if Location.find(params[:location]).company_id != bundle.company_id
 				flash[:alert] = "Error ingresando los datos."
@@ -1286,10 +1286,32 @@ class CompaniesController < ApplicationController
 			return
 		end
 
+		serviceStaffAux = JSON.parse(params[:serviceStaff], symbolize_names: true)
+		serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
+		if serviceStaffAux[0][:bundle] || serviceStaffAux[0][:bundle] == "true"
+			bundle = Bundle.find(serviceStaffAux[0][:service])
+			if Location.find(params[:location]).company_id != bundle.company_id
+				flash[:alert] = "Error ingresando los datos."
+				redirect_to workflow_path(:local => params[:location])
+				return
+			end
+			services = bundle.services.order(:created_at)
+			serviceStaff = []
+			services.each do |service|
+				serviceStaff << { :service => service.id.to_s, :provider => (serviceStaffAux[0][:provider] == "0" || !ServiceStaff.where(service_id: serviceStaffAux[0][:service]).pluck(:service_provider_id).include?(serviceStaffAux[0][:provider].to_i) ? "0" : serviceStaffAux[0][:service]), :bundle => bundle.id }
+			end
+		else
+			if Location.find(params[:location]).company_id != Service.find(serviceStaffAux[0][:service]).company_id
+				flash[:alert] = "Error ingresando los datos."
+				redirect_to workflow_path(:local => params[:location])
+				return
+			end
+		end
+
 		@mandatory_discount = true
 		@is_session_booking = false
 
-		mobile_hours
+		mobile_hours(serviceStaff)
 		render layout: 'workflow'
 
 		rescue ActionView::MissingTemplate => e
@@ -1872,6 +1894,7 @@ class CompaniesController < ApplicationController
 			    @serviceStaff = serviceStaff
 			    @date = Date.parse(params[:datepicker])
 			    @service = Service.find(serviceStaff[0][:service])
+			    @bundle = Bundle.find_by(id: serviceStaff[0][:bundle])
 
 			    @available_time = hours_array
 			    @bookSummaries = book_summaries
@@ -1899,6 +1922,7 @@ class CompaniesController < ApplicationController
 			    @serviceStaff = serviceStaff
 			    @date = Date.parse(params[:datepicker])
 			    @service = Service.find(serviceStaff[0][:service])
+			    @bundle = Bundle.find_by(id: serviceStaff[0][:bundle])
 
 			    @available_time = hours_array
 			    @bookSummaries = book_summaries
@@ -2097,7 +2121,9 @@ class CompaniesController < ApplicationController
 								:has_time_discount => service.has_time_discount,
 								:has_sessions => service.has_sessions,
 								:sessions_amount => book_sessions_amount,
-								:must_be_paid_online => service.must_be_paid_online
+								:must_be_paid_online => service.must_be_paid_online,
+								:bundled => @bundle.present?,
+								:bundle_id => @bundle.present? ? @bundle.id : nil
 				            }
 
 						    if !service.online_payable || !service.company.company_setting.online_payment_capable
@@ -2529,7 +2555,9 @@ class CompaniesController < ApplicationController
 			                has_sessions: bookings[0][:has_sessions],
 			                sessions_amount: bookings[0][:sessions_amount],
 			                group_discount: bookings_group_discount.to_s,
-			                service_promo_id: bookings[0][:service_promo_id]
+			                service_promo_id: bookings[0][:service_promo_id],
+											bundled: bookings[0][:bundled],
+											bundle_id: bookings[0][:bundle_id]
 			            }
 
 				      	book_index = book_index + 1

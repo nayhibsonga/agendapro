@@ -24,9 +24,7 @@ function loadServices (localId) {
       if (service_hash.services.length > 0) {
         var servicesHTML = '';
         $.each(service_hash.services, function (key, service) {
-          if (service.bundle == false) {
-            servicesHTML += '<option data-bundle="' + service.bundle + '" value="' + service.id + '">' + service.name + '</option>';
-          }
+          servicesHTML += '<option data-bundle="' + service.bundle + '" value="' + service.id + '">' + service.name + '</option>';
         });
         $('#service').append(
           '<optgroup label="' + service_hash.category + '">' + servicesHTML + '</optgroup>'
