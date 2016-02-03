@@ -91,7 +91,7 @@
 
           <% payment.receipts.each do |receipt|
             if receipt.notes != ""
-              notes += "#{receipt.notes}<br />".html_safe
+              notes += "#{h receipt.notes}<br />"
             end
           end %>
 
