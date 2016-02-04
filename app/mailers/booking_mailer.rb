@@ -1363,9 +1363,14 @@ class BookingMailer < Base::CustomMailer
 		template_name = 'Payment'
 		template_content = []
 
-		auth_code = ""
+		auth_code = "NA"
 		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
+
+		card_number = "NA"
+		if !payed_booking.punto_pagos_confirmation.card_number.nil? && payed_booking.punto_pagos_confirmation.card_number != ""
+			card_number = payed_booking.punto_pagos_confirmation.card_number
 		end
 
 		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
@@ -1394,7 +1399,7 @@ class BookingMailer < Base::CustomMailer
 				},
 				{
 					:name => 'CARDNUMBER',
-					:content => payed_booking.punto_pagos_confirmation.card_number
+					:content => card_number
 				},
 				{
 					:name => 'PAYORDER',
@@ -1431,9 +1436,14 @@ class BookingMailer < Base::CustomMailer
 		template_name = 'Payment'
 		template_content = []
 
-		auth_code = ""
+		auth_code = "NA"
 		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
+
+		card_number = "NA"
+		if !payed_booking.punto_pagos_confirmation.card_number.nil? && payed_booking.punto_pagos_confirmation.card_number != ""
+			card_number = payed_booking.punto_pagos_confirmation.card_number
 		end
 
 		owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
@@ -1462,7 +1472,7 @@ class BookingMailer < Base::CustomMailer
 				},
 				{
 					:name => 'CARDNUMBER',
-					:content => payed_booking.punto_pagos_confirmation.card_number
+					:content => card_number
 				},
 				{
 					:name => 'PAYORDER',
@@ -1515,9 +1525,14 @@ class BookingMailer < Base::CustomMailer
 		#email = payed_booking.booking.location.company.company_setting.email
 		client = payed_booking.bookings.first.client
 
-		auth_code = ""
+		auth_code = "NA"
 		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
+
+		card_number = "NA"
+		if !payed_booking.punto_pagos_confirmation.card_number.nil? && payed_booking.punto_pagos_confirmation.card_number != ""
+			card_number = payed_booking.punto_pagos_confirmation.card_number
 		end
 
 		# => Message
@@ -1543,7 +1558,7 @@ class BookingMailer < Base::CustomMailer
 				},
 				{
 					:name => 'CARDNUMBER',
-					:content => payed_booking.punto_pagos_confirmation.card_number
+					:content => card_number
 				},
 				{
 					:name => 'PAYORDER',
@@ -1591,9 +1606,14 @@ class BookingMailer < Base::CustomMailer
 		#email = payed_booking.booking.location.company.company_setting.email
 		client = payed_booking.bookings.first.client
 
-		auth_code = ""
+		auth_code = "NA"
 		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
+		end
+
+		card_number = "NA"
+		if !payed_booking.punto_pagos_confirmation.card_number.nil? && payed_booking.punto_pagos_confirmation.card_number != ""
+			card_number = payed_booking.punto_pagos_confirmation.card_number
 		end
 
 		message = Hash.new
@@ -1634,7 +1654,7 @@ class BookingMailer < Base::CustomMailer
 					},
 					{
 						:name => 'CARDNUMBER',
-						:content => payed_booking.punto_pagos_confirmation.card_number
+						:content => card_number
 					},
 					{
 						:name => 'PAYORDER',
@@ -1699,7 +1719,7 @@ class BookingMailer < Base::CustomMailer
 					},
 					{
 						:name => 'CARDNUMBER',
-						:content => payed_booking.punto_pagos_confirmation.card_number
+						:content => card_number
 					},
 					{
 						:name => 'PAYORDER',
@@ -1768,7 +1788,7 @@ class BookingMailer < Base::CustomMailer
 					},
 					{
 						:name => 'CARDNUMBER',
-						:content => payed_booking.punto_pagos_confirmation.card_number
+						:content => card_number
 					},
 					{
 						:name => 'PAYORDER',
