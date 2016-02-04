@@ -1,6 +1,8 @@
 $(function () {
   $('[data-toggle="tooltip"]').tooltip();
 
+  console.log($('#client_filter').serialize());
+
   createDatepicker("#birth_from_display", {
     dateFormat: 'dd M',
     altField: '#birth_from',

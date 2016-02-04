@@ -1,10 +1,12 @@
 class CompanyFile < ActiveRecord::Base
 
+	include ApplicationHelper
+
 	belongs_to :company
 	before_destroy :delete_file
 
 	def get_size
-		return (self.size.to_f / 1000.0).round(0).to_s + " KB"
+		return size
 	end
 
 	def get_extension

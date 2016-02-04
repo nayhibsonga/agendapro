@@ -2,7 +2,7 @@ Agendapro::Application.configure do
   require "excon"
   # Se setea el host por defecto en production. Ojo de cambiarlo a mano en bambucalendar
   Rails.application.routes.default_url_options[:host] = ENV["DEFAULT_URL_OPTIONS"]
-  
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
@@ -64,7 +64,7 @@ Agendapro::Application.configure do
 
   # Precompile additional assets.
   # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
-    
+
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
@@ -74,7 +74,7 @@ Agendapro::Application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default :charset => "utf-8"
-  
+
   config.action_mailer.smtp_settings = {
     :address   => "smtp.mandrillapp.com",
     :port      => 25, # ports 587 and 2525 are also supported with STARTTLS
@@ -82,13 +82,13 @@ Agendapro::Application.configure do
     :user_name => "nrossi@agendapro.cl",
     :password  => "HL4ERbuZZO6rrM2nlVjzZg", # SMTP password is any valid API key
     :authentication => 'login', # Mandrill supports 'plain' or 'login'
-    :domain => 'agendapro.cl', # your domain to identify your server when connecting
+    :domain => 'agendapro.co', # your domain to identify your server when connecting
   }
 
   # config.action_mailer.perform_deliveries = true
   # config.action_mailer.raise_delivery_errors = false
   # config.action_mailer.default :charset => "utf-8"
- 
+
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found).
   config.i18n.fallbacks = true
@@ -103,5 +103,7 @@ Agendapro::Application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   Excon.defaults[:write_timeout] = 600
+
+  Excon.defaults[:ssl_verify_peer] = false
 
 end

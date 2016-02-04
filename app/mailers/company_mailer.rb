@@ -577,6 +577,11 @@ class CompanyMailer < Base::CustomMailer
 			is_chile = false
 		end
 
+		auth_code = ""
+		if !punto_pagos_confirmation.authorization_code?
+			auth_code = punto_pagos_confirmation.authorization_code
+		end
+
 		recipients = []
 		admins.each do |user|
 	      recipients << {
@@ -637,7 +642,7 @@ class CompanyMailer < Base::CustomMailer
 				},
 				{
 					:name => 'AUTH_CODE',
-					:content => punto_pagos_confirmation.authorization_code
+					:content => auth_code
 				},
 				{
 					:name => 'DATE',
@@ -696,6 +701,11 @@ class CompanyMailer < Base::CustomMailer
 	    	:type => 'to'
 	    }
 
+	    auth_code = ""
+	    if !pay_u_notification.authorization_code.nil?
+	    	auth_code = pay_u_notification.authorization_code
+	    end
+
 		message = {
 			:from_email => 'no-reply@agendapro.cl',
 			:from_name => 'AgendaPro',
@@ -737,7 +747,7 @@ class CompanyMailer < Base::CustomMailer
 				},
 				{
 					:name => 'AUTH_CODE',
-					:content => pay_u_notification.authorization_code
+					:content => auth_code
 				},
 				{
 					:name => 'DATE',

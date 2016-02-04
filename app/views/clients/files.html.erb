@@ -3,6 +3,7 @@
     <div class="col-md-10">
       <h2 class="text-green">Archivos del cliente</h2>
       <p>Agrega, revisa y maneja los archivos del cliente <%= @client.full_name %>.</p>
+      <p>Ocupación actual: <%= bytes_to_text(@client.get_storage_occupation) %></p>
     </div>
     <div class="col-md-2">
       <button class="btn btn-green" id="addFolderBtn" style="margin-bottom: 3px; width: 140px;"><i class="fa fa-folder-o"></i>&nbsp;Agregar carpeta</button><br />
@@ -71,7 +72,7 @@
                       <tr class="file-row" file_id="<%= file.id %>">
                         <td style="width: 20%; text-align: left;"><i class="fa fa-file"></i>&nbsp;<%= file.name %></td>
                         <td style="width: 20%; text-align: left;"><%= file.updated_at.strftime("%d/%m/%Y %R") %></td>
-                        <td style="width: 20%; text-align: left;"><%= file.get_size %></td>
+                        <td style="width: 20%; text-align: left;"><%= bytes_to_text(file.size) %></td>
                         <td style="width: 40%; text-align: right;">
                           <button class="btn btn-default btn-xs viewFileBtn" client_file_id="<%= file.id %>"><i class="fa fa-search-plus"></i>&nbsp;Ver</button>
                           <button class="btn btn-green btn-xs moveFileBtn" client_file_id="<%= file.id %>"><i class="fa fa-arrows"></i>&nbsp;Mover</button>
@@ -141,7 +142,7 @@
               <div class="payment-form-div form-group has-feedback">
                 <label class="col-xs-4 control-label">Descripción</label>
                 <div class="col-xs-8">
-                  <input type="text" class="form-control" id="file_description" name="file_description" value="" />
+                  <textarea class="form-control" id="file_description" name="file_description"></textarea>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
@@ -442,7 +443,7 @@
               <div class="payment-form-div form-group has-feedback">
                 <label class="col-xs-4 control-label">Descripción</label>
                 <div class="col-xs-8">
-                  <input type="text" class="form-control" id="edit_file_description" name="file_description" value="" />
+                  <textarea class="form-control" id="edit_file_description" name="file_description"></textarea>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>

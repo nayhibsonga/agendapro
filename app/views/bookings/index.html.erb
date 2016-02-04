@@ -400,7 +400,7 @@
                   </div>
                   <% end %>
                   <% if @company.is_plan_capable("Premium") %>
-                    <% if @company.custom_attributes.count > 0 %>
+                    <% if @company.custom_attributes.where(show_on_calendar: true).count > 0 %>
                       <div class="row">
                           <div class="col-md-12">
                             <div style="font-size: 20px; padding: 10px;">
@@ -693,7 +693,7 @@
                       Custom attributes that are not to be shown in calendar
                     -->
                     <% if @company.is_plan_capable("Premium") %>
-                      <% if @company.custom_attributes.count > 0 %>
+                      <% if @company.custom_attributes.where(show_on_calendar: false).count > 0 %>
                         <div class="row">
                             <div class="col-md-12">
                               <div style="font-size: 20px; padding: 10px;">

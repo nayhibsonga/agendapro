@@ -285,8 +285,8 @@
     </div>
     <div class="col-sm-4 col-md-3">
       <small class="pull-right">Descargar este listado de clientes:</small><br />
-      <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white pull-right" %>
-      <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_path(format: "xls", search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuces: params[:statuces], gender: params[:gender], from: params[:from], to: params[:to]), class: "btn btn-white pull-right" %>
+      <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, clients_path(format: "csv", attendance: params[:attendance], search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-white pull-right" %>
+      <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_path(format: "xls", attendance: params[:attendance], search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-white pull-right" %>
     </div>
   </div>
 </div>

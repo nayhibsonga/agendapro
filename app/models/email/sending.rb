@@ -6,6 +6,7 @@ class Email::Sending < ActiveRecord::Base
   scope :sent, -> { where(status: 'delivered') }
   scope :pendings, -> { where(status: 'pending') }
   scope :canceled, -> { where(status: 'canceled') }
+  scope :of_this_month, -> { where(sent_date: Date.today.beginning_of_month..Date.today.end_of_month) }
 
   def deliver
     ClientEmailWorker.perform(self)

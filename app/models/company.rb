@@ -11,9 +11,7 @@ class Company < ActiveRecord::Base
 	has_many :countries, :through => :company_countries
 
 	has_many :cashiers, dependent: :destroy
-	has_many :email_contents, dependent: :destroy
-
-	has_many :company_files
+	has_many :email_contents, dependent: :destroy, class_name: 'Email::Content'
 
 	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
 
@@ -36,6 +34,7 @@ class Company < ActiveRecord::Base
 	has_many :service_categories, dependent: :destroy
 	has_many :clients, dependent: :destroy
 	has_one :company_setting, dependent: :destroy
+	has_one :settings, dependent: :destroy, class_name: 'CompanySetting'
 	has_one :billing_info, dependent: :destroy
 	belongs_to :bank
 	has_many :company_from_email, dependent: :destroy
@@ -51,6 +50,10 @@ class Company < ActiveRecord::Base
 	has_many :downgrade_logs
 
 	has_one :company_plan_setting
+
+	has_many :company_files
+
+	has_many :client_files, :through => :clients
 
 	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
@@ -97,7 +100,7 @@ class Company < ActiveRecord::Base
 		else
 			return false
 		end
-		
+
 	end
 
 	def create_plan_setting
@@ -113,7 +116,11 @@ class Company < ActiveRecord::Base
 	end
 
 	def get_storage_occupation
-		
+
+		used_storage = 0
+		used_storage += self.company_files.sum(:size)
+		used_storage += self.client_files.sum(:size)
+
 	end
 
 	def create_cashier
@@ -506,7 +513,7 @@ class Company < ActiveRecord::Base
 				#Check for use
 
 				#Check if account was used.
-				
+
 
 				#If it was issued, the company is late 1 month in their payments
 				#Change their status to expired, add to their due and charge them for next month
@@ -520,7 +527,7 @@ class Company < ActiveRecord::Base
 						company.due_amount = company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
 					end
 				else
-					if company.plan.custom 
+					if company.plan.custom
 						company.due_amount += company.company_plan_setting.base_price * (1 + sales_tax)
 					else
 						company.due_amount += company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
@@ -666,7 +673,7 @@ class Company < ActiveRecord::Base
 	#response[1] = Last payment amount (or 0 if nil)
 	def last_payment_detail
 
-		bl = BillingLog.where.not(transaction_type_id: -1).where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
+		bl = BillingLog.where.not(transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id).where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
 		rec = BillingRecord.where(:company_id => self.id).order('date desc').first
 		bwt = BillingWireTransfer.where(:company_id => self.id, :approved => true).order('payment_date desc').first
 		pl = PlanLog.where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
@@ -691,7 +698,7 @@ class Company < ActiveRecord::Base
 			date2 = date1
 			date3 = date1
 			date4 = date1
-			
+
 		end
 
 		if !bl.nil?
@@ -732,6 +739,14 @@ class Company < ActiveRecord::Base
 
 		return response_array
 
+	end
+
+	def reached_mailing_limit?
+		self.settings.monthly_mails >= self.plan.monthly_mails
+	end
+
+	def mails_left
+		self.plan.monthly_mails - self.settings.monthly_mails
 	end
 
 end
