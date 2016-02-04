@@ -257,7 +257,7 @@ function loadStep1 (service_id) {
 			{
 				var oldTop = $(document).scrollTop();
 				sizeFix();
-				$('#foo4').trigger('updateSizes');
+				//$('#foo4').trigger('updateSizes');
 				$(document).scrollTop(oldTop);
 				loadDescription(serviceId, $(event.target).data('bundle'));
 			}
@@ -265,7 +265,7 @@ function loadStep1 (service_id) {
 			{
 				var oldTop = $(document).scrollTop();
 				sizeFix();
-				$('#foo4').trigger('updateSizes');
+				//$('#foo4').trigger('updateSizes');
 				$(document).scrollTop(oldTop);
 				loadDescription(serviceId, $(event.target).data('bundle'));
 				$("#new-add-service").focus();
@@ -275,7 +275,13 @@ function loadStep1 (service_id) {
 		$('.panel-group .panel-default').on('shown.bs.collapse', function (event) {
 			var oldTop = $(document).scrollTop();
 			sizeFix();
-			$('#foo4').trigger('updateSizes');
+			//$('#foo4').trigger('updateSizes');
+			$(document).scrollTop(oldTop);
+		});
+		$('.panel-group .panel-default').on('hidden.bs.collapse', function (event) {
+			var oldTop = $(document).scrollTop();
+			sizeFix();
+			//$('#foo4').trigger('updateSizes');
 			$(document).scrollTop(oldTop);
 		});
 	 	if (categoryCount == 1) {
