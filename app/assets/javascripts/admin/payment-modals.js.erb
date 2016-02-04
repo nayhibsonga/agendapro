@@ -1393,7 +1393,7 @@ function getPayment(payment_id)
 
       }
 
-      if(response.payment.client_id)
+      if(response.payment.client_id == null)
       {
         $("#set_client").val("0");
       }
