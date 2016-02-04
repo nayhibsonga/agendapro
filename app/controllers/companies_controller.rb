@@ -1368,6 +1368,8 @@ class CompaniesController < ApplicationController
 		@origin = params[:origin]
 		@lock = params[:provider_lock]
 
+		@bookings = params[:bookings]
+
 		@has_time_discount = false
 		if params[:has_time_discount] && (params[:has_time_discount] == true || params[:has_time_discount] == "true")
 			@has_time_discount = true
@@ -1799,6 +1801,7 @@ class CompaniesController < ApplicationController
 		    # serviceStaff = JSON.parse(params[:serviceStaff], symbolize_names: true)
 		    now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
 		    session_booking = nil
+			  @bundle = Bundle.find_by(id: serviceStaff[0][:bundle])
 
 		    #if params[:session_booking_id] && params[:session_booking_id] != ""
 		    #  session_booking = SessionBooking.find(params[:session_booking_id])
@@ -1894,7 +1897,6 @@ class CompaniesController < ApplicationController
 			    @serviceStaff = serviceStaff
 			    @date = Date.parse(params[:datepicker])
 			    @service = Service.find(serviceStaff[0][:service])
-			    @bundle = Bundle.find_by(id: serviceStaff[0][:bundle])
 
 			    @available_time = hours_array
 			    @bookSummaries = book_summaries
@@ -1922,7 +1924,6 @@ class CompaniesController < ApplicationController
 			    @serviceStaff = serviceStaff
 			    @date = Date.parse(params[:datepicker])
 			    @service = Service.find(serviceStaff[0][:service])
-			    @bundle = Bundle.find_by(id: serviceStaff[0][:bundle])
 
 			    @available_time = hours_array
 			    @bookSummaries = book_summaries
@@ -2113,7 +2114,7 @@ class CompaniesController < ApplicationController
 								:provider_name => provider.public_name,
 								:provider_lock => serviceStaff[serviceStaffPos][:provider] != "0",
 								:provider_id => provider.id,
-								:price => service.price,
+								:price => @bundle.present? && ServiceBundle.find_by(service_id: service.id, bundle_id: @bundle.id) ? ServiceBundle.find_by(service_id: service.id, bundle_id: @bundle.id).price : service.price,
 								:online_payable => service.online_payable,
 								:has_discount => service.has_discount,
 								:discount => service.discount,
@@ -2592,16 +2593,17 @@ class CompaniesController < ApplicationController
 						end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
 						available_provider: bookings[0][:provider_name],
 						provider: bookings[0][:provider_id],
-		                promo_discount: curr_promo_discount.to_s,
-		                has_time_discount: bookings[0][:has_time_discount],
-		                has_discount: bookings[0][:has_discount],
-		                time_discount: bookings[0][:time_discount],
-			            discount: bookings[0][:discount],
-		                time_diff: hour_time_diff,
-		                has_sessions: bookings[0][:has_sessions],
-		                sessions_amount: bookings[0][:sessions_amount],
-		                group_discount: bookings_group_discount.to_s,
-		                service_promo_id: bookings[0][:service_promo_id]
+            promo_discount: curr_promo_discount.to_s,
+            has_time_discount: bookings[0][:has_time_discount],
+            has_discount: bookings[0][:has_discount],
+            time_discount: bookings[0][:time_discount],
+          discount: bookings[0][:discount],
+            time_diff: hour_time_diff,
+            has_sessions: bookings[0][:has_sessions],
+            sessions_amount: bookings[0][:sessions_amount],
+            group_discount: bookings_group_discount.to_s,
+            service_promo_id: bookings[0][:service_promo_id],
+            bundle: @bundle.present? ? @bundle.id : nil
 		            }
 
 				    book_index = book_index + 1

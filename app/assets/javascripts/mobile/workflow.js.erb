@@ -101,7 +101,7 @@ function loadProviders (localId, serviceId) {
   };
 }
 
-function addBooking (date, start, end, provider, has_time_discount, time_discount, has_discount, discount, service_promo_id) {
+function addBooking (date, start, end, provider, has_time_discount, time_discount, has_discount, discount, service_promo_id, bundle_id, bookings) {
   selected = true;
   $('#start').val(generateDate(date, start));
   $('#end').val(generateDate(date, end));
@@ -111,6 +111,8 @@ function addBooking (date, start, end, provider, has_time_discount, time_discoun
   $("#has_discount").val(has_discount);
   $("#discount").val(discount);
   $("#service_promo_id").val(service_promo_id);
+  $("#bookings").val(JSON.stringify(bookings));
+  $("#bundle").val(bundle_id);
 }
 
 function generateDate(date, time) {
