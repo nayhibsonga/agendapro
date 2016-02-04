@@ -2360,7 +2360,6 @@ function editBreakModal(breakId) {
 
     var localId = parseInt($('#locals-selector').val());
     $.ajax('/local_providers.json', {
-      async: false,
       data: {
         location: localId
       },
@@ -2373,7 +2372,7 @@ function editBreakModal(breakId) {
         checkboxes_selector.empty();
 
         $('#serviceProvidersMultiSelect').empty();
-
+        window.console.log(providersArray);
         $.each(providersArray, function(key, provider){
 
           /*checkboxes_selector.append(
