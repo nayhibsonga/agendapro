@@ -104,7 +104,7 @@ class CompaniesController < ApplicationController
 	          				if plan_value_left > (plan_month_value + due_amount)
 
 					            new_active_months_left = ((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price).floor + 1
-					            
+
 					            new_amount_due = (-1 * (((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price) % 1 )) * plan_price * (1 + sales_tax)
 
 					            company.plan_id = plan_id
@@ -113,7 +113,7 @@ class CompaniesController < ApplicationController
 
 					            if company.save
 
-					            	company.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+					            	company.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
 					            	company.company_plan_setting.save
 
 					            	@transfer.approved = true
@@ -127,7 +127,7 @@ class CompaniesController < ApplicationController
 									@json_response[1] = company
 									render :json => @json_response
 									return
-					              	
+
 					            else
 					              	@json_response[0] = "error"
 									@json_response[1] = company.errors
@@ -162,7 +162,7 @@ class CompaniesController < ApplicationController
 
 						    		if mockCompany.save
 
-						    			mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+						    			mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
 					            		mockCompany.company_plan_setting.save
 
 						                PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
@@ -222,7 +222,7 @@ class CompaniesController < ApplicationController
 					    		if mockCompany.save
 									PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
 
-									mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price 
+									mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
 					            	mockCompany.company_plan_setting.save
 
 									@transfer.approved
@@ -474,7 +474,7 @@ class CompaniesController < ApplicationController
 				@bookings << booking
 			end
 		end
-		
+
 		# @company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.find_by_name("Normal").plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
 
 		#@company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
@@ -1099,6 +1099,8 @@ class CompaniesController < ApplicationController
 
 	##### Workflow #####
 	def overview
+		host = request.host_with_port
+		domain = host[host.index(request.domain)..host.length]
 
 		@company = CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)) ? CompanyCountry.find_by(web_address: request.subdomain, country_id: Country.find_by(locale: I18n.locale.to_s)).company : nil
 		if @company.nil?
@@ -1106,26 +1108,20 @@ class CompaniesController < ApplicationController
 			if @company.nil?
 				flash[:alert] = "No existe la compañia buscada."
 
-				host = request.host_with_port
-				domain = host[host.index(request.domain)..host.length]
-
 				redirect_to root_url(:host => domain)
 				return
 			end
 		end
 
 		if @company.plan_id == Plan.find_by_name("Gratis").id
-      		redirect_to localized_root_path, alert: "Esta compañía no tiene minisitio."
-      		return
-    	end
+  		redirect_to root_url(:host => domain), alert: "Esta compañía no tiene minisitio."
+  		return
+  	end
 
 		@locations = Location.where(:active => true, online_booking: true, district_id: District.where(city_id: City.where(region_id: Region.where(country_id: Country.find_by(locale: I18n.locale.to_s))))).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(:order, :name)
 
 		unless @company.company_setting.activate_workflow && @company.active && @locations.count > 0
 			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
-
-			host = request.host_with_port
-			domain = host[host.index(request.domain)..host.length]
 
 			redirect_to root_url(:host => domain)
 			return
@@ -1138,7 +1134,6 @@ class CompaniesController < ApplicationController
 		end
 
 		# => Domain parser
-		host = request.host_with_port
 		@url = @company.company_countries.find_by(country_id: Country.find_by(locale: I18n.locale.to_s)).web_address + '.' + host[host.index(request.domain)..host.length] + '/' + I18n.locale.to_s
 
 		#Selected local from fase II
@@ -1474,7 +1469,7 @@ class CompaniesController < ApplicationController
         	format.json { render :json => { :errors => errors }, :status => 422 }
         	return
 		end
-		
+
 		@stock_alarm_settings = StockAlarmSetting.where(location_id: current_user.company.locations.where(:active => true).pluck(:id))
 		respond_to do |format|
 	      format.html { render :partial => 'stock_alarm_form' }
@@ -1586,7 +1581,7 @@ class CompaniesController < ApplicationController
 
 		#Move each object to new folder
 		@company.company_files.where(folder: folder_name).each do |company_file|
-			
+
 			company_file.destroy
 
 		end
@@ -1691,7 +1686,7 @@ class CompaniesController < ApplicationController
 		@company_file.full_path = new_folder_path + obj_name
 		@company_file.public_url = obj.public_url
 		@company_file.folder = new_folder_name
-		
+
 		if @company_file.save
 			redirect_to '/get_company_files', notice: 'Archivo movido correctamente'
 	    else
@@ -1739,13 +1734,13 @@ class CompaniesController < ApplicationController
 				s3.put_object(bucket: ENV['S3_BUCKET'], key: old_folder_path)
 	    	end
 
-			
+
 			@company_file.full_path = new_folder_path + obj_name
 			@company_file.public_url = obj.public_url
 			@company_file.folder = new_folder_name
 
 		end
-		
+
 		if @company_file.save
 			redirect_to '/get_company_files', notice: 'Archivo editado correctamente'
 	    else

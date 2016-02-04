@@ -1609,7 +1609,7 @@ class PaymentsController < ApplicationController
 
     products.each do |product|
       product_hash = product.attributes.to_options
-      product_hash[:full_name] = product.sku + " " + product.name + " " + product.product_brand.name + " " + product.product_display.name
+      product_hash[:full_name] = "#{product.sku} #{product.name} #{product.product_brand.name} #{product.product_display.name}"
       @products << product_hash
     end
 
