@@ -1001,9 +1001,10 @@ function loadStep3 () {
 						var booking = booking_buffer[k];
 						var price = booking.price;
 						var discount = booking.discount;
+						var provider_str = $('#providerPreference').data('provider-preference') == 2 ? '' : ' con ' + booking.provider_name;
 
 
-						services_str = services_str + booking.service_name + ' con ' + booking.provider_name + '.<br />';
+						services_str = services_str + booking.service_name + provider_str + '.<br />';
 
 						if(booking.has_discount && discount > 0 && booking.online_payable && booking.show_price)
 						{
@@ -1028,7 +1029,9 @@ function loadStep3 () {
 								}
 								if(booking.is_time_discount)
 								{
-									$('#promo-bookings-policy').append(booking.service_name + ' con ' + booking.provider_name + '.<br />');
+
+									var provider_str = $('#providerPreference').data('provider-preference') == 2 ? '' : ' con ' + booking.provider_name;
+									$('#promo-bookings-policy').append(booking.service_name + provider_str + '.<br />');
 									$('#promo-policy').show();
 								}
 							}
@@ -1288,7 +1291,9 @@ function loadStep3 () {
 
 			for(i = 0; i < sessions_buffer.length; i++)
 			{
-				times_str = times_str + formattedTime(sessions_buffer[i].start) + ' con ' + sessions_buffer[i].provider_name + '.<br />';
+
+				var provider_str = $('#providerPreference').data('provider-preference') == 2 ? '' : ' con ' + sessions_buffer[i].provider_name;
+				times_str = times_str + formattedTime(sessions_buffer[i].start) + provider_str + '.<br />';
 				if(sessions_buffer[i].discount < min_discount)
 				{
 				  	min_discount = sessions_buffer[i].discount;
@@ -1299,7 +1304,8 @@ function loadStep3 () {
 				}
 				if(sessions_buffer[i].is_time_discount && sessions_buffer[i].discount > 0)
 				{
-					$('#promo-bookings-policy').append(formattedTime(sessions_buffer[i].start) + ' con ' + sessions_buffer[i].provider_name + '.<br />');
+					var provider_str = $('#providerPreference').data('provider-preference') == 2 ? '' : ' con ' + sessions_buffer[i].provider_name;
+					$('#promo-bookings-policy').append(formattedTime(sessions_buffer[i].start) + provider_str + '.<br />');
 					$('#promo-policy').show();
 				}
 			}
