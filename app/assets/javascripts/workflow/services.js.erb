@@ -125,7 +125,7 @@ function loadStep1 (service_id) {
 					{
 						servicePrice = '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %>&nbsp;' + simple_currency(service.price);
 					}
-					
+
 					servicesHTML +=
 						'<li class="list-group-item">' +
 							'<div class="radio">' +
@@ -256,28 +256,32 @@ function loadStep1 (service_id) {
 			if ($(window).width() > 1200)
 			{
 				var oldTop = $(document).scrollTop();
-				$('#foo4').trigger('updateSizes');
+				sizeFix();
+				//$('#foo4').trigger('updateSizes');
 				$(document).scrollTop(oldTop);
 				loadDescription(serviceId, $(event.target).data('bundle'));
 			}
 			else
 			{
-
 				var oldTop = $(document).scrollTop();
-				$('#foo4').trigger('updateSizes');
+				sizeFix();
+				//$('#foo4').trigger('updateSizes');
 				$(document).scrollTop(oldTop);
 				loadDescription(serviceId, $(event.target).data('bundle'));
 				$("#new-add-service").focus();
 			}
 		});
 
-		var oldTop = $(document).scrollTop();
-		$('#foo4').trigger('updateSizes');
-		$(document).scrollTop(oldTop);
-
 		$('.panel-group .panel-default').on('shown.bs.collapse', function (event) {
 			var oldTop = $(document).scrollTop();
-			$('#foo4').trigger('updateSizes');
+			sizeFix();
+			//$('#foo4').trigger('updateSizes');
+			$(document).scrollTop(oldTop);
+		});
+		$('.panel-group .panel-default').on('hidden.bs.collapse', function (event) {
+			var oldTop = $(document).scrollTop();
+			sizeFix();
+			//$('#foo4').trigger('updateSizes');
 			$(document).scrollTop(oldTop);
 		});
 	 	if (categoryCount == 1) {
@@ -292,6 +296,11 @@ function loadStep1 (service_id) {
 	 	};
 	});
 
+}
+
+function sizeFix () {
+	var height = $('.bug-fix').height();
+	$('.caroufredsel_wrapper').css('height', height + 100);
 }
 
 var calendar;
