@@ -91,7 +91,7 @@
 
           <% payment.receipts.each do |receipt|
             if receipt.notes != ""
-              notes += "#{simple_format(receipt.notes).squish}"
+              notes += "#{h simple_format(receipt.notes).squish}"
             end
           end %>
 
