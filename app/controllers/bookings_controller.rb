@@ -167,6 +167,7 @@ class BookingsController < ApplicationController
           @booking.session_booking_id = session_booking.id
           @booking.is_session = true
           @booking.is_session_booked = true
+          @booking.payed_state = buffer_params[:payed_state]
 
           #Set list_price to it's service price
           if @booking.service.price != 0
@@ -1469,6 +1470,8 @@ class BookingsController < ApplicationController
         @bookings.each do |booking|
           BookingHistory.create(booking_id: booking.id, action: "Cancelada por Calendario", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: current_user.id, notes: booking.notes, company_comment: booking.company_comment)
           if booking.is_session
+            booking.session_booking.sessions_taken -= 1
+            booking.session_booking.save
             booking.send_session_cancel_mail
           end
         end
@@ -1489,6 +1492,10 @@ class BookingsController < ApplicationController
     @json_response = []
 
     if @booking.save
+
+      @booking.session_booking.sessions_taken -= 1
+      @booking.session_booking.save
+
       @booking.send_session_update_mail
       #respond_to do |format|
       #  format.html { redirect_to bookings_url }

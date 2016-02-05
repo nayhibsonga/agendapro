@@ -772,7 +772,11 @@ class PaymentsController < ApplicationController
       end   
 
     else
-      payment.client_id = nil
+      if params[:client_id].present?
+        client = Client.find(params[:client_id])
+      else
+        payment.client_id = nil
+      end
     end
 
     payment.cashier_id = params[:cashier_id]
@@ -964,7 +968,9 @@ class PaymentsController < ApplicationController
           non_discount_total += past_booking[:list_price]
           discount_total += booking.price
 
-          booking.client_id = client.id
+          if client.present? && client.id.present?
+            booking.client_id = client.id
+          end
 
           @bookings << booking
           booking.payment = payment
@@ -1603,7 +1609,7 @@ class PaymentsController < ApplicationController
 
     products.each do |product|
       product_hash = product.attributes.to_options
-      product_hash[:full_name] = product.sku + " " + product.name + " " + product.product_brand.name + " " + product.product_display.name
+      product_hash[:full_name] = "#{product.sku} #{product.name} #{product.product_brand.name} #{product.product_display.name}"
       @products << product_hash
     end
 

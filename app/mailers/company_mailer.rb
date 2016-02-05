@@ -577,7 +577,7 @@ class CompanyMailer < Base::CustomMailer
 			is_chile = false
 		end
 
-		auth_code = ""
+		auth_code = "NA"
 		if !punto_pagos_confirmation.authorization_code?
 			auth_code = punto_pagos_confirmation.authorization_code
 		end
@@ -672,7 +672,7 @@ class CompanyMailer < Base::CustomMailer
 		day_number = Time.now.day
 	    month_days = Time.now.days_in_month
 
-	    card_number = ""
+	    card_number = "NA"
 	    if !pay_u_notification.cc_number.nil?
 	    	card_number = "********#{pay_u_notification.cc_number}"
 	    end
@@ -701,7 +701,7 @@ class CompanyMailer < Base::CustomMailer
 	    	:type => 'to'
 	    }
 
-	    auth_code = ""
+	    auth_code = "NA"
 	    if !pay_u_notification.authorization_code.nil?
 	    	auth_code = pay_u_notification.authorization_code
 	    end
