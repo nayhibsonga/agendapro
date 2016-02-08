@@ -1,8 +1,6 @@
 $(function () {
   $('[data-toggle="tooltip"]').tooltip();
 
-  console.log($('#client_filter').serialize());
-
   createDatepicker("#birth_from_display", {
     dateFormat: 'dd M',
     altField: '#birth_from',
@@ -36,23 +34,6 @@ $(function () {
     altField: '#range_to'
   });
 
-  $('#addFilter + .dropdown-menu > li > a').click(function (event) {
-    event.preventDefault();
-    menu = $(event.target);
-    menu.parent().addClass('hidden');
-    target = menu.data('target');
-    animateIn($(target));
-  });
-
-  $('.filter-body a').click(function (event) {
-    event.preventDefault();
-    cross = $(event.target).closest('a');
-    animateOut(cross.parents('.form-group'));
-    menu = $(cross.data('target'));
-    menu.parent().removeClass('hidden');
-    removeData(cross.parents('.form-group'));
-  });
-
   $('#search_btn').click(function (e) {
     var data = $('#search_bar').val();
     $('#search').val(data);
@@ -69,8 +50,7 @@ $(function () {
   });
 
   $('#import_button').on('click', function(e){
-    if(!checkFile())
-    {
+    if(!checkFile()) {
       e.preventDefault();
     }
   });
@@ -107,8 +87,7 @@ $(function () {
   });
 });
 
-function checkFile()
-{
+function checkFile() {
   var file_array = $('#file').val().split(".");
   if(file_array.length > 0)
   {
@@ -151,30 +130,6 @@ function createDatepicker (element, options) {
   }
   var settings = $.extend({}, defaults, options);
   $(element).datepicker(settings);
-}
-
-function animateIn (element) {
-  element.removeClass('hidden');
-  height = element.outerHeight();
-  element.detach();
-  element.css({height: 0});
-  $('.filter-body').prepend(element);
-  element.animate({height: height}, 500, function () {
-    element.css("height", "auto");
-  });
-}
-
-function animateOut (element) {
-  height = element.outerHeight();
-  element.animate({height: 0}, 500, function () {
-    element.addClass('hidden');
-    element.css({height: height});
-  });
-}
-
-function removeData(element) {
-  element.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
-  element.find('input[type="text"], input[type="hidden"]').val('');
 }
 
 function findTrigger() {
