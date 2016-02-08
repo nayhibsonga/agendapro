@@ -46,7 +46,7 @@ function deleteComment(id) {
     type: "warning"
   },
   function (isConfirm) {
-    if (isConfirm) {  
+    if (isConfirm) {
       saveComment("DELETE",$('#client_comment_client_id').val(),{"id": id });
     }
   });
@@ -116,6 +116,7 @@ function setAge() {
 
 $(function() {
   $('#new_comment_button').click(function() {
+    $(this).attr('disabled', true);
     createComment();
     return false;
   });
@@ -341,6 +342,15 @@ $(function() {
         type: "error"
       });
       $(this).val("");
+    }
+  });
+
+  $('.submit-block').on('click', function() {
+    var $btn = $(this),
+        $form = $btn.closest('form');
+    if( $form.valid() ) {
+      $btn.attr('disabled', true);
+      $form.submit();
     }
   });
 

@@ -73,7 +73,7 @@ $(function(){
 			}
 			else
 			{
-				
+
 			}
 		});
 
@@ -199,5 +199,14 @@ $(function(){
 			$(this).val("");
 		}
 	});
+
+  $('.submit-block').on('click', function() {
+    var $btn = $(this),
+        $form = $btn.closest('form');
+    if( $form.valid() ) {
+      $btn.attr('disabled', true);
+      $form.submit();
+    }
+  });
 
 });
