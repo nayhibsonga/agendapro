@@ -31,6 +31,11 @@ class BundlesController < ApplicationController
     if current_user.role_id != Role.find_by_name("Super Admin").id
       @bundle.company_id = current_user.company_id
     end
+    i = 0
+    @bundle.service_bundles.each do |service_bundle|
+      service_bundle.order = i
+      i += 1
+    end
     respond_to do |format|
       if @bundle.save
         format.html { redirect_to services_path, notice: 'Paquete de Servicios creado exitosamente.' }
@@ -43,8 +48,14 @@ class BundlesController < ApplicationController
   end
 
   def update
+    @bundle.assign_attributes(bundle_params)
+    i = 0
+    @bundle.service_bundles.each do |service_bundle|
+      service_bundle.order = i
+      i += 1
+    end
     respond_to do |format|
-      if @bundle.update(bundle_params)
+      if @bundle.save
         format.html { redirect_to services_path, notice: 'Paquete de Servicios actualizado exitosamente.' }
         format.json { render :json => @bundle }
       else
@@ -65,6 +76,6 @@ class BundlesController < ApplicationController
     end
 
     def bundle_params
-      params.require(:bundle).permit(:name, :price, :service_category_id, :show_price, :description, service_bundles_attributes: [:id, :service_id, :price, :_destroy])
+      params.require(:bundle).permit(:name, :price, :service_category_id, :show_price, :description, service_bundles_attributes: [:id, :service_id, :price, :order, :_destroy])
     end
 end

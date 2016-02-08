@@ -178,7 +178,7 @@ class ServicesController < ApplicationController
 
     bundles.each do |bundle|
       service_bundles_array = []
-      bundle.service_bundles.each do |service_bundle|
+      bundle.service_bundles.order(:order).each do |service_bundle|
         bundle_service_providers_array = []
         service_bundle.service.service_providers.where(active: true, location_id: params[:location]).each do |service_provider|
           bundle_service_providers_array.push({'id' => service_provider.id, 'public_name' => service_provider.public_name})
@@ -248,7 +248,7 @@ class ServicesController < ApplicationController
   def service_data
     if (params[:bundle] == "true")
       bundle = Bundle.find(params[:id])
-      render :json => bundle.attributes.merge({'bundle' => true, 'duration' => bundle.services.sum(:duration), 'services' => bundle.services })
+      render :json => bundle.attributes.merge({'bundle' => true, 'duration' => bundle.services.sum(:duration), 'services' => bundle.services.includes(:service_bundles).order('service_bundles.order asc') })
       return
     end
 

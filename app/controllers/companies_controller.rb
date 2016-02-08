@@ -1243,7 +1243,7 @@ class CompaniesController < ApplicationController
 				redirect_to workflow_path(:local => params[:location])
 				return
 			end
-			services = bundle.services.order(:created_at)
+			services = bundle.services.includes(:service_bundles).order('service_bundles.order asc')
 			serviceStaff = []
 			services.each do |service|
 				serviceStaff << { :service => service.id.to_s, :provider => (serviceStaffAux[0][:provider] == "0" || !ServiceStaff.where(service_id: serviceStaffAux[0][:service]).pluck(:service_provider_id).include?(serviceStaffAux[0][:provider].to_i) ? "0" : serviceStaffAux[0][:service]), :bundle => bundle.id }
@@ -1290,7 +1290,7 @@ class CompaniesController < ApplicationController
 				redirect_to workflow_path(:local => params[:location])
 				return
 			end
-			services = bundle.services.order(:created_at)
+			services = bundle.services.includes(:service_bundles).order('service_bundles.order asc')
 			serviceStaff = []
 			services.each do |service|
 				serviceStaff << { :service => service.id.to_s, :provider => (serviceStaffAux[0][:provider] == "0" || !ServiceStaff.where(service_id: serviceStaffAux[0][:service]).pluck(:service_provider_id).include?(serviceStaffAux[0][:provider].to_i) ? "0" : serviceStaffAux[0][:service]), :bundle => bundle.id }
