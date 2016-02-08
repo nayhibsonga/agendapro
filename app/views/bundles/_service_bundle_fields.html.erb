@@ -7,5 +7,6 @@
 <div class="col-md-3">
 <%= f.number_field :price, class: "form-control", :min => 0, placeholder: '0 (requerido)' %>
 </div>
+<%= f.hidden_field :order %>
 <%= link_to_remove_fields "Eliminar", f %>
 </div>
