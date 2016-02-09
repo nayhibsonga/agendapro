@@ -24,13 +24,17 @@ def random_client_generator(company, amount=100, gender=nil)
     last_name = surnames.sample
     email = "#{first_name}#{mail_conector.sample}#{last_name}@#{mail_domain.sample}.#{mail_extension.sample}".downcase.gsub(' ', '')
     genre = gender.blank? ? genders.sample : gender
+    birth = rand(80.year.ago..10.year.ago)
 
     c = Client.new(
       company_id: company,
       email: email,
       first_name: first_name,
       last_name: last_name,
-      gender: genre
+      gender: genre,
+      birth_day: birth.mday,
+      birth_month: birth.mon,
+      birth_year: birth.year
     )
 
     if c.save then puts "Cliente guardado" else puts c.errors.full_messages.inspect end
