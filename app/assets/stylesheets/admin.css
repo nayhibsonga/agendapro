@@ -2,5 +2,7 @@
  *= require application
  *= require jquery-ui
  *= require admin/admin-style
+ *= require admin/admin-new-styles
+ *= require editor/toastr.min
  *= require payments.css
  */

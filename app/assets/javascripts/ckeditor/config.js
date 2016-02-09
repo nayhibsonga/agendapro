@@ -54,6 +54,18 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'tools', groups: ['maximize', 'mode'] }
 	];
 
+  CKEDITOR.config.toolbar_email =
+    [
+        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+        ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+        ['NumberedList','BulletedList','-','Outdent','Indent'],
+        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+        ['Link','Unlink'],
+        ['Table','HorizontalRule'],
+        ['Styles','Format','Font','FontSize'],
+        ['TextColor','BGColor']
+    ];
+
 	// Remove some buttons provided by the standard plugins, which are
 	// not needed in the Standard(s) toolbar.
 	config.removeButtons = 'Subscript,Superscript,CreateDiv,Flash,PageBreak,Iframe,ShowBlocks,Smiley';

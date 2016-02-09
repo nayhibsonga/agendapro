@@ -208,7 +208,11 @@
                 <% end %>
               </td>
               <td>
-                <%= internal_sale.product.name %>
+                <% if internal_sale.product.nil? %>
+                  Sin información
+                <% else %>
+                  <%= internal_sale.product.name %>
+                <% end %>
               </td>
               <td>
                 <%= internal_sale.quantity.to_s %>

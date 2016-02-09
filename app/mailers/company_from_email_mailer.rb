@@ -1,10 +1,6 @@
-class CompanyFromEmailMailer < ActionMailer::Base
-	require 'mandrill'
-	require 'base64'
+class CompanyFromEmailMailer < Base::CustomMailer
 
 	def confirm_email (email, current_user)
-		mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
 		company = Company.find(current_user.company_id)
 
 		# => Template
@@ -51,15 +47,7 @@ class CompanyFromEmailMailer < ActionMailer::Base
 			]
 		}
 
-		# => Metadata
-		async = false
-		send_at = DateTime.now
-
 		# => Send mail
-		result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-		rescue Mandrill::Error => e
-			puts "A mandrill error occurred: #{e.class} - #{e.message}"
-			raise
+		send_mail(template_name, template_content, message)
 	end
 end

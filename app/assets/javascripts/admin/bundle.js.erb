@@ -1,0 +1,125 @@
+// function categoryChange() {
+//   if ($('#categoryCheckboxId').val() == 1) {
+//     $('#categoryCheckboxId').val(0);
+//     $('#bundle_service_category_id').prop('disabled', false);
+//     $('#bundle_service_category_id').closest('.form-group').removeClass('hidden');
+//     $('#bundle_service_category_attributes_name').val('');
+//     $('#bundle_service_category_attributes_name').prop('disabled', true);
+//     $('#bundle_service_category_attributes_name').closest('.form-group').addClass('hidden');
+//   }
+//   else if ($('#categoryCheckboxId').val() == 0) {
+//     $('#categoryCheckboxId').val(1);
+//     $('#bundle_service_category_attributes_name').prop('disabled', false);
+//     $('#bundle_service_category_attributes_name').closest('.form-group').removeClass('hidden');
+//     $('#bundle_service_category_id').val('');
+//     $('#bundle_service_category_id').prop('disabled', true);
+//     $('#bundle_service_category_id').closest('.form-group').addClass('hidden');
+//   }
+// }
+
+function remove_fields(link) {
+  $(link).prev("input[type=hidden]").val("1");
+  $(link).closest(".fields").hide();
+}
+
+function add_fields(link, association, content) {
+  var new_id = new Date().getTime();
+  var regexp = new RegExp("new_" + association, "g")
+  $(link).parent().before(content.replace(regexp, new_id));
+  $('[id^=bundle_service_bundles_attributes_][id$=price]').change(function() {
+    var sum = 0;
+    $('[id^=bundle_service_bundles_attributes_][id$=price]').each(function() {
+        sum += Number($(this).val());
+    });
+    $('#bundle_price').val(sum);
+  });
+}
+
+$(function() {
+  $('form input, form select').bind('keypress keydown keyup', function(e){
+      if(e.keyCode == 13) {
+          e.preventDefault();
+        }
+    });
+
+  // $('#service_service_category_attributes_name').prop('disabled', true);
+  // $('#categoryCheckboxId').click(function (e) {
+  //   categoryChange();
+  // });
+
+  $('#saveServiceCategryButton').click(function () {
+    if ($('#new_service_category').valid()) {
+      var btn = $(this)
+      btn.button('loading')
+      $.ajax({
+        type: 'POST',
+        url: '/service_categories.json',
+        data: { "service_category": { "name": $('#service_category_name').val() } },
+        dataType: 'json',
+        success: function(service_category){
+          $('#bundle_service_category_id').append('<option value="'+service_category.id+'">'+service_category.name+'</option>');
+          $('#bundle_service_category_id option[value="'+service_category.id+'"]').prop('selected', true);
+          $('#serviceCategoryModal').modal('hide');
+        },
+        error: function(xhr){
+          var errors = $.parseJSON(xhr.responseText).errors;
+          var errores = '';
+          for (i in errors) {
+            errores += '*' + errors[i] + '\n';
+          }
+          swal({
+            title: "Error",
+            text: "Se produjeron los siguientes errores:\n" + errores,
+            type: "error"
+          });
+        },
+      }).always(function () {
+        btn.button('reset');
+        $('#service_category_name').val('');
+      });
+    };
+  });
+  $('#bundle_company_id').change(function() {
+    $.getJSON('/service_categories', { company_id: $('#service_company_id').val() }, function (service_categories) {
+
+      $('#bundle_service_category_id').find('option').remove().end();
+      $.each(service_categories, function (key, service_category) {
+        $('#bundle_service_category_id').append(
+          '<option value="' + service_category.id + '">' + service_category.name + '</option>'
+        );
+      });
+      $('#region').prepend(
+        '<option></option>'
+      );
+    });
+  });
+
+  $('[id^=bundle_service_bundles_attributes_][id$=price]').change(function() {
+    var sum = 0;
+    $('[id^=bundle_service_bundles_attributes_][id$=price]').each(function() {
+        sum += Number($(this).val());
+    });
+    $('#bundle_price').val(sum);
+  });
+
+  $('#serviceCategoryModal').on('hidden.bs.modal', function (e) {
+    validator.resetForm();
+    $('.has-success').removeClass('has-success');
+    $('.fa.fa-check').removeClass('fa fa-check');
+    $('.has-error').removeClass('has-error');
+    $('.fa.fa-times').removeClass('fa fa-times');
+  });
+
+  /*$('#service_online_payable').on('change', function(e){
+    if($(this).prop('checked'))
+    {
+      $('#must_be_paid_div').show();
+    }
+    else
+    {
+      $("#service_must_be_paid_online").prop('checked', false);
+      $("#must_be_paid_div").hide();
+    }
+  });*/
+
+});

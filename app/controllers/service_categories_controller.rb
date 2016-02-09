@@ -80,6 +80,7 @@ class ServiceCategoriesController < ApplicationController
       redirect_to service_categories_path, notice: 'No es posible eliminar la categoría "Otros".'
     end
     @services = Service.where(service_category_id: @service_category)
+    @bundles = Bundle.where(service_category_id: @service_category)
     @new_service_category = ServiceCategory.where(company_id: @service_category.company_id, name: "Otros").first
     if @new_service_category.nil?
       @new_service_category = ServiceCategory.create(name: "Otros", company_id: @service_category.company_id)
@@ -88,6 +89,10 @@ class ServiceCategoriesController < ApplicationController
     @services.each do |service|
       service.service_category = @new_service_category
       service.save
+    end
+    @bundles.each do |bundle|
+      bundle.service_category = @new_service_category
+      bundle.save
     end
     @service_category.destroy
     respond_to do |format|

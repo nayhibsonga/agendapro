@@ -67,6 +67,45 @@ class BillingInfosController < ApplicationController
     end
   end
 
+  def super_admin_form
+
+    @billing_info = BillingInfo.new
+    @company = Company.find(params[:company_id])
+
+  end
+
+  def super_admin_edit
+
+  end
+
+  def super_admin_create
+
+    @billing_info = BillingInfo.new(billing_info_params)
+
+    respond_to do |format|
+      if @billing_info.save
+        format.html { redirect_to companies_path, notice: 'Datos de facturación creados correctamente..' }
+        format.json { render action: 'show', status: :created, location: @billing_info }
+      else
+        format.html { redirect_to companies_path, notice: 'Hubo un problema en la creación de los datos.' }
+        format.json { render json: @billing_info.errors, status: :unprocessable_entity }
+      end
+    end
+
+  end
+
+  def super_admin_update
+    respond_to do |format|
+      if @billing_info.update(billing_info_params)
+        format.html { redirect_to companies_path, notice: 'Datos de facturación actualizados.' }
+        format.json { head :no_content }
+      else
+        format.html { redirect_to companies_path, notice: 'Hubo un problema en la creación de los datos.' }
+        format.json { render json: @billing_info.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_billing_info
@@ -75,6 +114,6 @@ class BillingInfosController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def billing_info_params
-      params.require(:billing_info).permit(:active, :contact, :name, :rut, :address, :sector, :email, :phone, :accept)
+      params.require(:billing_info).permit(:active, :contact, :name, :rut, :address, :sector, :email, :phone, :accept, :company_id)
     end
 end

@@ -10,7 +10,7 @@
   <div class="row">
     <div class="col-md-12">
       <div class="pull-right text-right" style="margin: 10px 0;">
-        <% if current_user.role != Role.find_by(name: "Super Admin") and @locations.where(active:true).count < current_user.company.plan.locations %>
+        <% if current_user.role != Role.find_by(name: "Super Admin") and (@locations.where(active:true).count < current_user.company.plan.locations || !(current_user.company.plan.custom || current_user.company.plan.name == "Personal")) %>
           <%= link_to '<i class="fa fa-plus"></i> Nuevo Local'.html_safe, new_location_path, :class => "btn btn-green" unless cannot? :create, Location %>
           <%= link_to '<i class="fa fa-minus"></i> Locales Inactivos'.html_safe, inactive_locations_path, :class => "btn btn-white" unless cannot? :destroy, Location %>
         <% else %>

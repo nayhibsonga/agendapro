@@ -1,0 +1,245 @@
+
+function loadBookings()
+{
+	var service_ids = [];
+	var service_provider_ids = [];
+	var status_ids = [];
+
+    $("#serviceMultiSelect option").each(function(){
+      if ($(this).is(':selected'))
+      {
+        service_ids.push($(this).val());
+      }
+    });
+
+    $("#serviceProviderMultiSelect option").each(function(){
+      if ($(this).is(':selected'))
+      {
+        service_provider_ids.push($(this).val());
+      }
+    });
+
+    $("#statusMultiSelect option").each(function(){
+      if ($(this).is(':selected'))
+      {
+        status_ids.push($(this).val());
+      }
+    });
+
+
+    var services = service_ids.join();
+    var service_providers = service_provider_ids.join();
+    var statuses = status_ids.join();
+    var client_id = $('#client_id').val();
+
+    $('#client_bookings_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+
+    $.ajax({
+        url: '/client_bookings_content?client_id=' + client_id + '&from=' + $('#from').val() + '&to=' + $('#to').val() + '&service_ids=' + services + '&service_provider_ids=' + service_providers + '&status_ids=' + statuses,
+        cache: false,
+        success: function(html){
+          $('#client_bookings_div').html(html);
+        }
+    });
+
+    return false;
+
+}
+
+function paginatedContent() {
+  $(document).on('click', 'ul.pagination a', function(e) {
+    e.preventDefault();
+    var $elem = $(this);
+    $('#client_bookings_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+    $.ajax({
+        url: $elem.attr('href'),
+        cache: false,
+        success: function(html){
+          $('#client_bookings_div').html(html);
+        }
+    });
+  });
+
+  return false;
+}
+
+$(function() {
+
+  $('#serviceMultiSelect').multiselect({
+    includeSelectAllOption: true,
+    selectAllText: 'Todos',
+    buttonContainer: '<div style="margin-top: 5px;"></div>',
+    buttonText: function(options, select) {
+      //console.log(select);
+      if (options.length === 0) {
+          return 'Ninguno';
+      }
+      else if(options.length == select[0].length)
+      {
+        return "Todos";
+      }
+      else if(options.length > 3)
+      {
+        return options.length + " seleccionados";
+      }
+      else {
+        var labels = [];
+        options.each(function() {
+           if ($(this).attr('label') !== undefined) {
+               labels.push($(this).attr('label'));
+           }
+           else {
+               labels.push($(this).html());
+           }
+        });
+        return labels.join(', ') + '';
+      }
+    },
+    onChange: function(option, checked, select){
+      loadBookings();
+    },
+    onInitialized: function(select, container){
+      $('#serviceMultiSelect').show();
+    }
+
+  });
+
+  $('#serviceProviderMultiSelect').multiselect({
+    includeSelectAllOption: true,
+    selectAllText: 'Todos',
+    buttonContainer: '<div style="margin-top: 8px;"></div>',
+    buttonText: function(options, select) {
+      //console.log(select);
+      if (options.length === 0) {
+          return 'Ninguno';
+      }
+      else if(options.length == select[0].length)
+      {
+        return "Todos";
+      }
+      else if(options.length > 3)
+      {
+        return options.length + " seleccionados";
+      }
+      else {
+        var labels = [];
+        options.each(function() {
+           if ($(this).attr('label') !== undefined) {
+               labels.push($(this).attr('label'));
+           }
+           else {
+               labels.push($(this).html());
+           }
+        });
+        return labels.join(', ') + '';
+      }
+    },
+    onChange: function(option, checked, select){
+      loadBookings();
+    },
+    onInitialized: function(select, container){
+      $('#serviceProviderMultiSelect').show();
+    }
+  });
+
+  $('#statusMultiSelect').multiselect({
+    includeSelectAllOption: true,
+    selectAllText: 'Todos',
+    buttonContainer: '<div style="margin-top: 8px;"></div>',
+    buttonText: function(options, select) {
+      //console.log(select);
+      if (options.length === 0) {
+          return 'Ninguno';
+      }
+      else if(options.length == select[0].length)
+      {
+        return "Todos";
+      }
+      else if(options.length > 3)
+      {
+        return options.length + " seleccionados";
+      }
+      else {
+        var labels = [];
+        options.each(function() {
+           if ($(this).attr('label') !== undefined) {
+               labels.push($(this).attr('label'));
+           }
+           else {
+               labels.push($(this).html());
+           }
+        });
+        return labels.join(', ') + '';
+      }
+    },
+    onChange: function(option, checked, select){
+      loadBookings();
+    },
+    onInitialized: function(select, container){
+      $('#statusMultiSelect').show();
+    }
+  });
+
+  $("#from").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    prevText: 'Atrás',
+    nextText: 'Adelante',
+    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    today: 'Hoy',
+    clear: '',
+    defaultDate: "+1w",
+    changeMonth: true,
+    numberOfMonths: 3,
+    firstDay: 1,
+    onClose: function( selectedDate ) {
+      $("#to").datepicker( "option", "minDate", selectedDate );
+    }
+  });
+  $("#to").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+    prevText: 'Atrás',
+    nextText: 'Adelante',
+    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+    today: 'Hoy',
+    clear: '',
+    defaultDate: "+1w",
+    changeMonth: true,
+    numberOfMonths: 3,
+    firstDay: 1,
+    onClose: function( selectedDate ) {
+      $( "#from" ).datepicker( "option", "maxDate", selectedDate );
+    }
+  });
+
+  $('.client_select').change(function() {
+    loadBookings();
+    return false;
+  });
+
+  //$("#to").datepicker('setDate', new Date());
+  //$("#from").datepicker('setDate', new Date());
+
+  $("#serviceMultiSelect").multiselect('selectAll', false);
+  $("#serviceProviderMultiSelect").multiselect('selectAll', false);
+  $("#statusMultiSelect").multiselect('selectAll', false);
+
+  $('#serviceMultiSelect').multiselect('updateButtonText');
+  $('#serviceProviderMultiSelect').multiselect('updateButtonText');
+  $('#statusMultiSelect').multiselect('updateButtonText');
+
+  loadBookings();
+  paginatedContent();
+
+ });

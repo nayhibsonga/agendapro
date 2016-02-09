@@ -17,6 +17,17 @@ function loadServices (provider) {
 
 }
 
+function jsonAttributes()
+{
+  var jsAttributes = {};
+  $('.custom-attribute').each(function(){
+    var attribute_name = $(this).attr("name");
+    var attribute_val = $(this).val();
+    jsAttributes[attribute_name] = attribute_val;
+  });
+  return jsAttributes;
+}
+
 function loadServiceData (service_id) {
   $.getJSON('/services/' + service_id, function (service) {
     // Price
@@ -67,10 +78,12 @@ function saveBooking (typeURL, booking_id) {
     JSONData["session_booking_id"] = $('[name="sessions-choice"]:checked').val();
   }
 
-  var bookingJSON = {"bookings": [JSONData]};
+  var bookingJSON = {"bookings": [JSONData], "custom_attributes": attributesJSON };
   if (typeURL != 'POST') {
     bookingJSON = {"booking": JSONData};
   }
+
+  var attributesJSON = jsonAttributes();
 
   $.ajax({
     type: typeURL,
@@ -111,6 +124,7 @@ function validateMail () {
 }
 
 $(function () {
+
   split_name ('#name', '#first_name', '#last_name');
 
   $('#booking_service_provider').change(function (event) {
@@ -156,6 +170,18 @@ $(function () {
     select: function (event, ui) {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
+
+      var custom_attributes = ui.item.custom_attributes;
+
+      for(var key in custom_attributes)
+      {
+        console.log(key);
+        console.log(custom_attributes[key]);
+        $('[name="' + key + '"]').val(custom_attributes[key]);
+      }
+
+      console.log(custom_attributes);
+
       $('#name').val(client.first_name + ' ' + client.last_name);
       $('#name').prop('disabled', true);
       $('#clear').prop('disabled', false);
@@ -209,6 +235,9 @@ $(function () {
   };
 
   $('#clear').click(function (event) {
+    $('.custom-attribute').each(function(){
+      $(this).val('');
+    });
     $(this).prop('disabled', true);
     $('#name').prop('disabled', false);
     $('#booking_client').val('');

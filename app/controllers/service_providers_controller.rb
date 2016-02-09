@@ -126,7 +126,7 @@ class ServiceProvidersController < ApplicationController
   end
 
   def location_providers
-    render :json => ServiceProvider.where(:active => true).where('location_id = ?', params[:location]).accessible_by(current_ability).order(:order, :public_name)
+    render :json => ServiceProvider.actives.where('location_id = ?', params[:location]).accessible_by(current_ability).order(:order, :public_name)
   end
 
   def provider_time
@@ -137,7 +137,19 @@ class ServiceProvidersController < ApplicationController
   def provider_service
     provider = ServiceProvider.find(params[:id])
     services = provider.services.where(:active => true).order(:order, :name)
-    render :json => services
+    bundles = Bundle.where(id: ServiceBundle.where(service_id: services.pluck(:id)).pluck(:bundle_id))
+    services_array = Array.new
+    services.each do |service|
+      serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall, 'bundle' => false })
+      services_array.push(serviceJSON)
+    end
+    if params[:bundle] == "true"
+      bundles.each do |bundle|
+        bundleJSON = bundle.attributes.merge({'name_with_small_outcall' => bundle.name, 'bundle' => true, 'duration' => bundle.services.sum(:duration) })
+        services_array.push(bundleJSON)
+      end
+    end
+    render :json => services_array
   end
 
   def available_providers

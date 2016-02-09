@@ -114,7 +114,7 @@ class PayedBookingsController < ApplicationController
 
   		end
 
-  		@all_pending_transfers = PayedBooking.where(:transfer_complete => false, :canceled => false).order('updated_at DESC').limit(25)
+  		@all_pending_transfers = PayedBooking.where(:transfer_complete => false, :canceled => false).where(id: Booking.where.not(payed_booking_id: nil).pluck(:payed_booking_id)).order('updated_at DESC').limit(25)
 
   		@transfered_payments = PaymentAccount.where(:status => true)
 

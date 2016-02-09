@@ -15,19 +15,31 @@ class BookingsController < ApplicationController
 
     @company = Company.find(current_user.company_id)
     if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
-      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).order(:order, :name)
+      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).ordered
     else
-      @locations = Location.where(:active => true).accessible_by(current_ability).order(:order, :name)
+      @locations = Location.where(:active => true).accessible_by(current_ability).ordered
     end
     @company_setting = @company.company_setting
-    @service_providers = ServiceProvider.where(location_id: @locations).order(:order, :public_name)
+    @service_providers = ServiceProvider.where(location_id: @locations).ordered
     @provider_groups = JbuilderTemplate.encode(view_context) do |json|
       json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order, :name) do |provider_group|
         json.name  provider_group.name
         json.location_id provider_group.location_id
-        json.resources provider_group.service_providers.where(active: true).accessible_by(current_ability) do |service_provider|
+        json.resources provider_group.service_providers.where(active: true).accessible_by(current_ability).order(:order, :public_name) do |service_provider|
           json.id service_provider.id
           json.name service_provider.public_name
+        end
+      end
+    end
+    @provider_available = JbuilderTemplate.encode(view_context) do |json|
+      json.array! @locations.each do |location|
+        json.location location.id
+        json.days Day.all do |day|
+          json.day day.id
+          json.resources ServiceProvider.joins(:provider_times).actives.where(provider_times: {day: day}).where(location: location).order(:order, :public_name) do |provider|
+            json.id provider.id
+            json.name provider.public_name
+          end
         end
       end
     end
@@ -94,7 +106,7 @@ class BookingsController < ApplicationController
     after_book_date = DateTime.now + u.service.company.company_setting.after_booking.months
     after_book_date = I18n.l after_book_date.to_date, format: :day
 
-    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id}
+    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id, :custom_attributes => u.client.get_custom_attributes, :bundled => u.bundled}
     respond_to do |format|
       format.html { }
       format.json { render :json => @booking_json }
@@ -167,6 +179,7 @@ class BookingsController < ApplicationController
           @booking.session_booking_id = session_booking.id
           @booking.is_session = true
           @booking.is_session_booked = true
+          @booking.payed_state = buffer_params[:payed_state]
 
           #Set list_price to it's service price
           if @booking.service.price != 0
@@ -273,6 +286,7 @@ class BookingsController < ApplicationController
           @client.second_phone = buffer_params[:client_second_phone]
           @client.gender = buffer_params[:client_gender]
           @client.save
+          @client.save_attributes(params[:custom_attributes])
           if User.find_by_email(@client.email)
             new_booking_params[:user_id] = User.find_by_email(@client.email).id
           end
@@ -302,6 +316,9 @@ class BookingsController < ApplicationController
           @client.second_phone = buffer_params[:client_second_phone]
           @client.gender = buffer_params[:client_gender]
           if @client.save
+            if !params[:custom_attributes].blank?
+              @client.save_attributes(params[:custom_attributes])
+            end
             if User.find_by_email(@client.email)
               new_booking_params[:user_id] = User.find_by_email(@client.email).id
             end
@@ -316,10 +333,12 @@ class BookingsController < ApplicationController
             if buffer_params[:client_email].empty?
               if Client.where(email: '', company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => buffer_params[:client_first_name]+' '+buffer_params[:client_last_name]).count > 0
                 client = Client.where(email: '', company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).where("CONCAT(first_name, ' ', last_name) = :s", :s => buffer_params[:client_first_name]+' '+buffer_params[:client_last_name]).first
+                client.save_attributes(params[:custom_attributes])
                 @booking.client = client
               else
                 client = Client.new(email: buffer_params[:client_email], identification_number: buffer_params[:client_identification_number], first_name: buffer_params[:client_first_name], last_name: buffer_params[:client_last_name], phone: buffer_params[:client_phone], address: buffer_params[:client_address], district: buffer_params[:client_district], city: buffer_params[:client_city], birth_day: buffer_params[:client_birth_day], birth_month: buffer_params[:client_birth_month], birth_year: buffer_params[:client_birth_year], age: buffer_params[:client_age], record: buffer_params[:client_record], second_phone: buffer_params[:client_second_phone], gender: buffer_params[:client_gender], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id)
                 if client.save
+                  client.save_attributes(params[:custom_attributes])
                   @booking.client = client
                 else
                   @errors << {
@@ -331,10 +350,12 @@ class BookingsController < ApplicationController
             else
               if Client.where(email: buffer_params[:client_email], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).count > 0
                 client = Client.where(email: buffer_params[:client_email], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id).first
+                client.save_attributes(params[:custom_attributes])
                 @booking.client = client
               else
                 client = Client.new(email: buffer_params[:client_email], identification_number: buffer_params[:client_identification_number], first_name: buffer_params[:client_first_name], last_name: buffer_params[:client_last_name], phone: buffer_params[:client_phone], address: buffer_params[:client_address], district: buffer_params[:client_district], city: buffer_params[:client_city], birth_day: buffer_params[:client_birth_day], birth_month: buffer_params[:client_birth_month], birth_year: buffer_params[:client_birth_year], age: buffer_params[:client_age], record: buffer_params[:client_record], second_phone: buffer_params[:client_second_phone], gender: buffer_params[:client_gender], company_id: ServiceProvider.find(buffer_params[:service_provider_id]).company.id)
                 if client.save
+                  client.save_attributes(params[:custom_attributes])
                   @booking.client = client
                 else
                   @errors << {
@@ -506,7 +527,8 @@ class BookingsController < ApplicationController
           :is_session_booked => u.is_session_booked,
           :user_session_confirmed => u.user_session_confirmed,
           :sessions_ratio => sessions_ratio,
-          :payed_state => u.payed_state
+          :payed_state => u.payed_state,
+          :bundled => u.bundled
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -923,7 +945,8 @@ class BookingsController < ApplicationController
           :is_session_booked => u.is_session_booked,
           :user_session_confirmed => u.user_session_confirmed,
           :sessions_ratio => sessions_ratio,
-          :payed_state => u.payed_state
+          :payed_state => u.payed_state,
+          :bundled => u.bundled
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -1417,7 +1440,7 @@ class BookingsController < ApplicationController
 
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
-        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings , :is_session => u.is_session, :is_session_booked => u.is_session_booked, :user_session_confirmed => u.user_session_confirmed, :sessions_ratio => sessions_ratio, :payed_state => u.payed_state}
+        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings , :is_session => u.is_session, :is_session_booked => u.is_session_booked, :user_session_confirmed => u.user_session_confirmed, :sessions_ratio => sessions_ratio, :payed_state => u.payed_state, :bundled => u.bundled}
         BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking_json }
@@ -1444,24 +1467,31 @@ class BookingsController < ApplicationController
     end
     status = @booking.status.id
     is_booked = @booking.is_session_booked
+    @bookings = Booking.where(id: @booking.id)
     if !@booking.is_session
       status = Status.find_by(:name => 'Cancelado').id
+      if booking_params[:bundled_delete] == "true"
+        @bookings = Booking.where(bundle_id: @booking.bundle_id, client_id: @booking.client_id, booking_group: @booking.booking_group)
+      end
     else
       is_booked = false
     end
-    @booking.update(status_id: status, is_session_booked: false)
     # @booking.destroy
     respond_to do |format|
-      if @booking.update(status_id: status)
-        BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, notes: @booking.notes, company_comment: @booking.company_comment)
-        if @booking.is_session
-          @booking.send_session_cancel_mail
+      if @bookings.update_all(status_id: status, is_session_booked: false) >= @bookings.count
+        @bookings.each do |booking|
+          BookingHistory.create(booking_id: booking.id, action: "Cancelada por Calendario", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: current_user.id, notes: booking.notes, company_comment: booking.company_comment)
+          if booking.is_session
+            booking.session_booking.sessions_taken -= 1
+            booking.session_booking.save
+            booking.send_session_cancel_mail
+          end
         end
         format.html { redirect_to bookings_url }
-        format.json { render :json => @booking }
+        format.json { render :json => @bookings.pluck(:id) }
       else
         format.html { redirect_to bookings_url }
-        format.json { render :json => { :errors => @booking.errors.full_messages }, :status => 422 }
+        format.json { render :json => { :errors => "No se puedieron cancelar todas las reservas." }, :status => 422 }
       end
     end
   end
@@ -1474,6 +1504,10 @@ class BookingsController < ApplicationController
     @json_response = []
 
     if @booking.save
+
+      @booking.session_booking.sessions_taken -= 1
+      @booking.session_booking.save
+
       @booking.send_session_update_mail
       #respond_to do |format|
       #  format.html { redirect_to bookings_url }
@@ -1691,8 +1725,6 @@ class BookingsController < ApplicationController
 
   def provider_booking
     statusIcon = [" blocked", " reserved", " confirmed", " completed", " payed", " cancelled", " noshow", " break"]
-    backColors = ["#cacaca", "#77d0fa", "#fbe09f", "#fab5fb", "#adf0d1", "#FAFCAF", "#fbc1b3", "#a6a5a5"]
-    textColors = ["#707070", "#0b587d", "#a78a47", "#8e508f", "#4c8b6e", "#505205", "#a15240", "#737373"]
     if params[:provider] != "0"
       @providers = ServiceProvider.where(:id => params[:provider])
     else
@@ -1718,7 +1750,11 @@ class BookingsController < ApplicationController
         if booking.payed_state
           payedClass = ' payed'
         end
-        originClass += providerLock + statusIcon[booking.status_id] + payedClass
+        bundleClass = ''
+        if booking.bundled
+          bundleClass = ' bundle'
+        end
+        originClass += providerLock + statusIcon[booking.status_id] + payedClass + bundleClass
 
         title = ''
         qtip = ''
@@ -1743,17 +1779,11 @@ class BookingsController < ApplicationController
 
         # Se verifica que existan los datos y en caso contrario, se deja como string vacío para evitar nulos en los Qtips
 
-        if booking.client.phone
-          phone = booking.client.phone
-        end
+        phone = booking.client.phone if booking.client.phone
 
-        if booking.client.email
-          email = booking.client.email
-        end
+        email = booking.client.email if booking.client.email
 
-        if booking.company_comment
-          comment = booking.company_comment
-        end
+        comment = booking.company_comment if booking.company_comment
 
         if booking.payed_state
           prepayed = 'Sí'
@@ -1778,11 +1808,8 @@ class BookingsController < ApplicationController
         end
 
 
-        backColor = backColors[booking.status_id]
-        textColor = textColors[booking.status_id]
         if booking.is_session && booking.is_session_booked && !booking.user_session_confirmed
-          textColor = "#DFDBDB"
-          backColor = "#105E82"
+          originClass += ' session'
         end
 
         event = {
@@ -1792,9 +1819,6 @@ class BookingsController < ApplicationController
           start: booking.start,
           end: booking.end,
           resourceId: booking.service_provider_id,
-          textColor: textColor,
-          borderColor: textColor,
-          backgroundColor: backColor,
           className: originClass,
           title_qtip: qtip,
           time_qtip: booking.start.strftime("%H:%M") + ' - ' + booking.end.strftime("%H:%M"),
@@ -1807,7 +1831,6 @@ class BookingsController < ApplicationController
           sessions_ratio_qtip: sessions_ratio,
           identification_number_qtip: booking.client.identification_number ? booking.client.identification_number : ""
         }
-
 
         events.push(event)
       end
@@ -1827,9 +1850,7 @@ class BookingsController < ApplicationController
         start: provider_break.start,
         end: provider_break.end,
         resourceId: provider_break.service_provider_id,
-        textColor: textColors[7],
-        borderColor: textColors[7],
-        backgroundColor: backColors[7]
+        className: 'break'
       }
       events.push(event)
     end
@@ -1852,9 +1873,7 @@ class BookingsController < ApplicationController
         start: start_date,
         end: end_date,
         resourceId: provider.id,
-        textColor: textColors[0],
-        borderColor: textColors[0],
-        backgroundColor: backColors[0]
+        className: 'blocked'
       }
       provider.provider_times.order(:day_id, :open).each do |provider_time|
         offset = (provider_time.day_id - day_number)
@@ -1873,9 +1892,7 @@ class BookingsController < ApplicationController
           start: time_end,
           end: time_start,
           resourceId: provider.id,
-          textColor: textColors[0],
-          borderColor: textColors[0],
-          backgroundColor: backColors[0]
+          className: 'blocked'
         }
       end
       event[:end] = end_date
@@ -1934,7 +1951,7 @@ class BookingsController < ApplicationController
         client.email = params[:email]
         client.phone = params[:phone]
         if client.save
-
+          client.save_attributes(params)
         else
           @errors << client.errors.full_messages
           render layout: "workflow"
@@ -1954,7 +1971,7 @@ class BookingsController < ApplicationController
           client.phone = params[:phone]
           client.identification_number = params[:identification_number]
           if client.save
-
+            client.save_attributes(params)
           else
             @errors << client.errors.full_messages
             render layout: "workflow"
@@ -1963,7 +1980,7 @@ class BookingsController < ApplicationController
         else
           client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], identification_number: params[:identification_number], company_id: @company.id)
           if client.save
-
+            client.save_attributes(params)
           else
             @errors << client.errors.full_messages
             render layout: "workflow"
@@ -1982,7 +1999,7 @@ class BookingsController < ApplicationController
         client.last_name = params[:lastName]
         client.phone = params[:phone]
         if client.save
-
+          client.save_attributes(params)
         else
           @errors << client.errors.full_messages
           render layout: "workflow"
@@ -1991,7 +2008,7 @@ class BookingsController < ApplicationController
       else
         client = Client.new(email: params[:email], first_name: params[:firstName], last_name: params[:lastName], phone: params[:phone], company_id: @company.id)
         if client.save
-
+          client.save_attributes(params)
         else
           @errors << client.errors.full_messages
           render layout: "workflow"
@@ -2148,7 +2165,9 @@ class BookingsController < ApplicationController
           client_id: client.id,
           user_id: current_user.id,
           web_origin: params[:origin],
-          provider_lock: buffer_params[:provider_lock]
+          provider_lock: buffer_params[:provider_lock],
+          bundled: buffer_params[:bundled],
+          bundle_id: buffer_params[:bundle_id]
         )
       else
         if User.find_by_email(params[:email])
@@ -2164,7 +2183,9 @@ class BookingsController < ApplicationController
             client_id: client.id,
             user_id: @user.id,
             web_origin: params[:origin],
-            provider_lock: buffer_params[:provider_lock]
+            provider_lock: buffer_params[:provider_lock],
+            bundled: buffer_params[:bundled],
+            bundle_id: buffer_params[:bundle_id]
           )
         else
           @booking = Booking.new(
@@ -2177,7 +2198,9 @@ class BookingsController < ApplicationController
             status_id: Status.find_by(name: 'Reservado').id,
             client_id: client.id,
             web_origin: params[:origin],
-            provider_lock: buffer_params[:provider_lock]
+            provider_lock: buffer_params[:provider_lock],
+            bundled: buffer_params[:bundled],
+            bundle_id: buffer_params[:bundle_id]
           )
         end
       end
@@ -2188,6 +2211,10 @@ class BookingsController < ApplicationController
       @booking.discount = service.discount
       @booking.max_changes = @company.company_setting.max_changes
       @booking.booking_group = booking_group
+
+      if buffer_params[:bundled] == true || buffer_params[:bundled] == "true"
+        @booking.price = ServiceBundle.find_by(service_id: service.id, bundle_id: buffer_params[:bundle_id]) ? ServiceBundle.find_by(service_id: service.id, bundle_id: buffer_params[:bundle_id]).price : service.price
+      end
 
       if deal
         @booking.deal = deal
@@ -4286,9 +4313,11 @@ class BookingsController < ApplicationController
     current_gap = 0
 
     services_arr = []
+    bundles_arr = []
     providers_arr = []
     for i in 0..serviceStaff.length-1
       services_arr[i] = Service.find(serviceStaff[i][:service])
+      bundles_arr[i] = Bundle.find_by(id: serviceStaff[i][:bundle_id])
       total_services_duration += services_arr[i].duration
       if serviceStaff[i][:provider] != "0"
         providers_arr[i] = []
@@ -4356,6 +4385,7 @@ class BookingsController < ApplicationController
           service_valid = false
           #service = Service.find(serviceStaff[serviceStaffPos][:service])
           service = services_arr[serviceStaffPos]
+          bundle = bundles_arr[serviceStaffPos]
 
           current_service_providers = ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => service.id).pluck(:service_provider_id))
 
@@ -4430,38 +4460,53 @@ class BookingsController < ApplicationController
 
           # Horario dentro del horario del provider
           if service_valid
-            providers = []
-            if serviceStaff[serviceStaffPos][:provider] != "0"
-              providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
-              #providers = providers_arr[serviceStaffPos]
-            else
 
-              #Check if providers have same day open
-              #If they do, choose the one with less ocupations to start with
-              #If they don't, choose the one that starts earlier.
-              if service.check_providers_day_times(dateTimePointer)
+            # Service Time Restricted
+            if service.time_restricted
+              service_valid = false
+              service.service_times.where(day_id: dateTimePointer.cwday).each do |times|
+                service_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
+                service_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
 
-                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
-
-                if providers.count == 0
-                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+                if service_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= service_close
+                  service_valid = true
+                  break
                 end
+              end
+            end
 
-                #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
-
+            # Elegible Providers
+            providers = []
+            if service_valid
+              if serviceStaff[serviceStaffPos][:provider] != "0"
+                providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
+                #providers = providers_arr[serviceStaffPos]
               else
 
-                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                #Check if providers have same day open
+                #If they do, choose the one with less ocupations to start with
+                #If they don't, choose the one that starts earlier.
+                if service.check_providers_day_times(dateTimePointer)
 
-                if providers.count == 0
-                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
+                  if providers.count == 0
+                    providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+                  end
+
+                  #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
+                else
+
+                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+
+                  if providers.count == 0
+                    providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                  end
+
+                  #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
                 end
-
-                #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
               end
-
-
-
             end
 
             providers.each do |provider|
@@ -4581,14 +4626,16 @@ class BookingsController < ApplicationController
                   :online_payable => service.online_payable,
                   :has_discount => service.has_discount,
                   :discount => service.discount,
-                  :show_price => service.show_price,
+                  :show_price => service.show_price && bundle.blank?,
                   :has_time_discount => service.has_time_discount,
                   :has_sessions => service.has_sessions,
                   :sessions_amount => book_sessions_amount,
-                  :must_be_paid_online => service.must_be_paid_online
+                  :must_be_paid_online => service.must_be_paid_online,
+                  :bundled => bundle.present?,
+                  :bundle_id => bundle.present? ? bundle.id : nil
                 }
 
-                if !service.online_payable || !service.company.company_setting.online_payment_capable
+                if !service.online_payable || !service.company.company_setting.online_payment_capable || bundle.present?
                   bookings.last[:has_discount] = false
                   bookings.last[:has_time_discount] = false
                   bookings.last[:discount] = 0
@@ -6098,10 +6145,10 @@ class BookingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def booking_params
-      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code, :session_booking_id, :payed_state)
+      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code, :session_booking_id, :payed_state, :bundled, :bundle_id, :bundled_delete)
     end
 
     def booking_buffer_params
-      params.permit(bookings: [:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :session_booking_id, :payed_state])
+      params.permit(bookings: [:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :session_booking_id, :payed_state, :bundled, :bundle_id])
     end
 end

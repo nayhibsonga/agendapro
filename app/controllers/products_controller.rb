@@ -3,6 +3,7 @@ class ProductsController < ApplicationController
   before_action :authenticate_user!
   before_action :quick_add
   before_action -> (source = "products") { verify_free_plan source }
+  before_action :verify_blocked_status
   layout "admin"
   load_and_authorize_resource
 

@@ -63,6 +63,9 @@ section.plans {
   }
   .pricing-title {
     @extend .pricing-plan;
+    @media (max-width: 400px) {
+      font-size: 15px;
+    }
     display: inline-block;
     padding: 5px 10px;
     text-align: center;

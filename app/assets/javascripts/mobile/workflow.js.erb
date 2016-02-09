@@ -24,7 +24,7 @@ function loadServices (localId) {
       if (service_hash.services.length > 0) {
         var servicesHTML = '';
         $.each(service_hash.services, function (key, service) {
-          servicesHTML += '<option value="' + service.id + '">' + service.name + '</option>';
+          servicesHTML += '<option data-bundle="' + service.bundle + '" value="' + service.id + '">' + service.name + '</option>';
         });
         $('#service').append(
           '<optgroup label="' + service_hash.category + '">' + servicesHTML + '</optgroup>'
@@ -101,7 +101,7 @@ function loadProviders (localId, serviceId) {
   };
 }
 
-function addBooking (date, start, end, provider, has_time_discount, time_discount, has_discount, discount, service_promo_id) {
+function addBooking (date, start, end, provider, has_time_discount, time_discount, has_discount, discount, service_promo_id, bundle_id, bookings) {
   selected = true;
   $('#start').val(generateDate(date, start));
   $('#end').val(generateDate(date, end));
@@ -111,6 +111,8 @@ function addBooking (date, start, end, provider, has_time_discount, time_discoun
   $("#has_discount").val(has_discount);
   $("#discount").val(discount);
   $("#service_promo_id").val(service_promo_id);
+  $("#bookings").val(JSON.stringify(bookings));
+  $("#bundle").val(bundle_id);
 }
 
 function generateDate(date, time) {
@@ -125,12 +127,13 @@ function generateDate(date, time) {
 
 $(document).ready(function(){
 
-  $("#selectHourNextBtn").on('click', function(){
-
+  $("#selectHourNextBtn").on('click', function(e){
+    e.preventDefault();
     selects = [];
     selects.push({
       service: $("#service").val(),
-      provider: $("#provider").val()
+      provider: $("#provider").val(),
+      bundle: $("#service").find(':selected').data('bundle')
     });
 
     $("#serviceStaff").val(JSON.stringify(selects));

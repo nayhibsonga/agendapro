@@ -112,6 +112,7 @@ gem 'roo'
 # gem 'rmagick'
 gem "mini_magick"
 gem 'carrierwave'
+gem "fog"
 
 # Calendar
 gem 'ri_cal'
@@ -185,3 +186,6 @@ gem 'sass-rails'
 
 #Squirm-rails for stored procedures
 #gem "squirm_rails", require: "squirm/rails"
+
+#Amazon Web Service SDK
+gem 'aws-sdk', '~> 2'

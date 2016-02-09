@@ -11,13 +11,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160105174512) do
+ActiveRecord::Schema.define(version: 20160127191741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
   enable_extension "unaccent"
+
+  create_table "attribute_categories", force: true do |t|
+    t.integer  "attribute_id"
+    t.string   "category"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "attributes", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.text     "description"
+    t.string   "datatype"
+    t.boolean  "mandatory"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "slug",                  default: ""
+    t.boolean  "show_on_calendar",      default: false
+    t.boolean  "show_on_workflow",      default: false
+    t.boolean  "mandatory_on_calendar", default: false
+    t.boolean  "mandatory_on_workflow", default: false
+  end
 
   create_table "banks", force: true do |t|
     t.integer  "code"
@@ -145,8 +167,11 @@ ActiveRecord::Schema.define(version: 20160105174512) do
     t.boolean  "marketplace_origin",     default: false
     t.integer  "treatment_promo_id"
     t.integer  "last_minute_promo_id"
+    t.boolean  "bundled",                default: false
+    t.integer  "bundle_id"
   end
 
+  add_index "bookings", ["bundle_id"], name: "index_bookings_on_bundle_id", using: :btree
   add_index "bookings", ["client_id"], name: "index_bookings_on_client_id", using: :btree
   add_index "bookings", ["deal_id"], name: "index_bookings_on_deal_id", using: :btree
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
@@ -158,11 +183,41 @@ ActiveRecord::Schema.define(version: 20160105174512) do
   add_index "bookings", ["status_id"], name: "index_bookings_on_status_id", using: :btree
   add_index "bookings", ["user_id"], name: "index_bookings_on_user_id", using: :btree
 
+  create_table "boolean_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.boolean  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "bundles", force: true do |t|
+    t.string   "name",                default: "",   null: false
+    t.decimal  "price",               default: 0.0,  null: false
+    t.integer  "service_category_id"
+    t.integer  "company_id"
+    t.text     "description",         default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "show_price",          default: true
+  end
+
+  add_index "bundles", ["company_id"], name: "index_bundles_on_company_id", using: :btree
+  add_index "bundles", ["service_category_id"], name: "index_bundles_on_service_category_id", using: :btree
+
   create_table "cashiers", force: true do |t|
     t.integer  "company_id"
     t.string   "name"
     t.string   "code"
     t.boolean  "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "categoric_attributes", force: true do |t|
+    t.integer  "client_id"
+    t.integer  "attribute_id"
+    t.integer  "attribute_category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -184,6 +239,18 @@ ActiveRecord::Schema.define(version: 20160105174512) do
   end
 
   add_index "client_comments", ["client_id"], name: "index_client_comments_on_client_id", using: :btree
+
+  create_table "client_files", force: true do |t|
+    t.integer  "client_id"
+    t.text     "name"
+    t.text     "full_path"
+    t.text     "public_url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "size",        default: 0
+    t.text     "description", default: ""
+    t.string   "folder",      default: ""
+  end
 
   create_table "clients", force: true do |t|
     t.integer  "company_id"
@@ -264,6 +331,18 @@ ActiveRecord::Schema.define(version: 20160105174512) do
   add_index "company_economic_sectors", ["company_id"], name: "index_company_economic_sectors_on_company_id", using: :btree
   add_index "company_economic_sectors", ["economic_sector_id"], name: "index_company_economic_sectors_on_economic_sector_id", using: :btree
 
+  create_table "company_files", force: true do |t|
+    t.integer  "company_id"
+    t.text     "name"
+    t.text     "full_path"
+    t.text     "public_url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "size",        default: 0
+    t.text     "description", default: ""
+    t.string   "folder",      default: ""
+  end
+
   create_table "company_from_emails", force: true do |t|
     t.string   "email",                      null: false
     t.integer  "company_id"
@@ -287,11 +366,8 @@ ActiveRecord::Schema.define(version: 20160105174512) do
 
   create_table "company_plan_settings", force: true do |t|
     t.integer  "company_id"
-    t.integer  "locations",         default: 1
-    t.integer  "service_providers", default: 1
-    t.integer  "monthly_mails",     default: 0
-    t.boolean  "has_custom_price",  default: false
-    t.float    "custom_price"
+    t.float    "base_price"
+    t.float    "locations_multiplier"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -369,6 +445,22 @@ ActiveRecord::Schema.define(version: 20160105174512) do
     t.string   "formatted_address", default: ""
     t.string   "domain",            default: ""
     t.float    "sales_tax",         default: 0.0, null: false
+  end
+
+  create_table "date_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.date     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "date_time_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.datetime "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "days", force: true do |t|
@@ -452,6 +544,45 @@ ActiveRecord::Schema.define(version: 20160105174512) do
 
   add_index "economic_sectors_dictionaries", ["economic_sector_id"], name: "index_economic_sectors_dictionaries_on_economic_sector_id", using: :btree
 
+  create_table "email_contents", force: true do |t|
+    t.integer  "template_id"
+    t.json     "data",                             null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "from"
+    t.text     "to"
+    t.string   "subject"
+    t.integer  "company_id"
+    t.string   "name"
+    t.boolean  "active",            default: true
+    t.datetime "deactivation_date"
+  end
+
+  add_index "email_contents", ["company_id"], name: "index_email_contents_on_company_id", using: :btree
+  add_index "email_contents", ["template_id"], name: "index_email_contents_on_template_id", using: :btree
+
+  create_table "email_sendings", force: true do |t|
+    t.integer  "sendable_id"
+    t.string   "sendable_type"
+    t.datetime "send_date"
+    t.datetime "sent_date"
+    t.string   "status",           default: "pending"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "total_sendings",   default: 0
+    t.integer  "total_recipients", default: 0
+    t.string   "detail"
+  end
+
+  create_table "email_templates", force: true do |t|
+    t.string   "name"
+    t.string   "source"
+    t.string   "thumb"
+    t.boolean  "active",     default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "facebook_pages", force: true do |t|
     t.integer  "company_id"
     t.string   "facebook_page_id"
@@ -501,6 +632,30 @@ ActiveRecord::Schema.define(version: 20160105174512) do
 
   add_index "favorites", ["location_id"], name: "index_favorites_on_location_id", using: :btree
   add_index "favorites", ["user_id"], name: "index_favorites_on_user_id", using: :btree
+
+  create_table "file_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.integer  "client_file_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "float_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.float    "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "integer_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.integer  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "internal_sales", force: true do |t|
     t.integer  "location_id"
@@ -1307,6 +1462,18 @@ ActiveRecord::Schema.define(version: 20160105174512) do
     t.boolean  "scheduled_reset",         default: false
   end
 
+  create_table "service_bundles", force: true do |t|
+    t.integer  "service_id"
+    t.integer  "bundle_id"
+    t.integer  "order",      default: 0,   null: false
+    t.decimal  "price",      default: 0.0, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "service_bundles", ["bundle_id"], name: "index_service_bundles_on_bundle_id", using: :btree
+  add_index "service_bundles", ["service_id"], name: "index_service_bundles_on_service_id", using: :btree
+
   create_table "service_categories", force: true do |t|
     t.string   "name",                   null: false
     t.integer  "company_id"
@@ -1522,6 +1689,22 @@ ActiveRecord::Schema.define(version: 20160105174512) do
   end
 
   add_index "tags", ["economic_sector_id"], name: "index_tags_on_economic_sector_id", using: :btree
+
+  create_table "text_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "textarea_attributes", force: true do |t|
+    t.integer  "attribute_id"
+    t.integer  "client_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "time_units", force: true do |t|
     t.string   "unit"

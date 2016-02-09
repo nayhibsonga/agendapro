@@ -11,10 +11,12 @@ class ServicesController < ApplicationController
   def index
     if current_user.role_id == Role.find_by_name('Super Admin').id
       @services = Service.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
+      @bundles = Bundle.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
       @service_categories = ServiceCategory.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
     else
       @services = Service.where(company_id: current_user.company_id, :active => true).order(:order, :name)
       @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(:order, :name)
+      @bundles = Bundle.where(company_id: current_user.company_id).order(:name)
     end
   end
 
@@ -84,12 +86,24 @@ class ServicesController < ApplicationController
   # PATCH/PUT /services/1
   # PATCH/PUT /services/1.json
   def update
+    @service_times = Service.find(params[:id]).service_times
+    @service_times.each do |service_time|
+      service_time.service_id = nil
+      service_time.save
+    end
+    @service = Service.find(params[:id])
     if service_params[:service_category_attributes]
       if service_params[:service_category_attributes][:name].nil?
         new_params = service_params.except(:service_category_attributes)
       else
         new_params = service_params.except(:service_category_id)
       end
+    end
+    if new_params[:service_ids].blank?
+      @service.service_staffs.delete_all
+    end
+    if new_params[:resource_ids].blank?
+      @service.service_resources.delete_all
     end
     if params[:promo_update]
       new_params = service_params
@@ -114,9 +128,14 @@ class ServicesController < ApplicationController
             end
           end
           @service.check_online_discount
+          @service_times.destroy_all
           format.html { redirect_to manage_promotions_path, notice: 'Servicio actualizado exitosamente.' }
           format.json { head :no_content }
         else
+          @service_times.each do |service_time|
+            service_time.service_id = @service.id
+            service_time.save
+          end
           format.html { render action: 'manage_service_promotion' }
           format.json { render json: @service.errors, status: :unprocessable_entity }
         end
@@ -132,9 +151,14 @@ class ServicesController < ApplicationController
             end
           end
           @service.check_online_discount
+          @service_times.destroy_all
           format.html { redirect_to services_path, notice: 'Servicio actualizado exitosamente.' }
           format.json { head :no_content }
         else
+          @service_times.each do |service_time|
+            service_time.service_id = @service.id
+            service_time.save
+          end
           format.html { render action: 'edit' }
           format.json { render json: @service.errors, status: :unprocessable_entity }
         end
@@ -164,12 +188,27 @@ class ServicesController < ApplicationController
   def location_services
     categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(:order, :name)
     services = Service.where(:active => true).order(:order, :name).includes(:service_providers).where('service_providers.active = ?', true).where('service_providers.location_id = ?', params[:location]).order(:order, :name)
+    bundles = Bundle.where(id: ServiceBundle.where(service_id: services.pluck(:id)).pluck(:bundle_id))
 
     services_hash = []
 
     services.each do |service|
-      service_hash = service.attributes.to_options
+      service_hash = service.attributes.merge({'bundle' => false, 'bundle_services' => []}).to_options
       service_hash['service_category_name'] = service.service_category.name
+      services_hash << service_hash
+    end
+
+    bundles.each do |bundle|
+      service_bundles_array = []
+      bundle.service_bundles.order(:order).each do |service_bundle|
+        bundle_service_providers_array = []
+        service_bundle.service.service_providers.where(active: true, location_id: params[:location]).each do |service_provider|
+          bundle_service_providers_array.push({'id' => service_provider.id, 'public_name' => service_provider.public_name})
+        end
+        service_bundles_array.push(service_bundle.attributes.merge({'service_name' => service_bundle.service.name, 'service_duration' => service_bundle.service.duration, 'service_providers' => bundle_service_providers_array}))
+      end
+      service_hash = bundle.attributes.merge({'bundle' => true, 'duration' => bundle.services.sum(:duration), 'service_bundles' => service_bundles_array }).to_options
+      service_hash['service_category_name'] = bundle.service_category.name
       services_hash << service_hash
     end
 
@@ -186,25 +225,20 @@ class ServicesController < ApplicationController
 
     categories = ServiceCategory.where(:company_id => Location.find(params[:location]).company_id).order(:order, :name)
     services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
+    bundles = Bundle.where(:id => ServiceBundle.where(service_id: ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).pluck(:bundle_id)).order(:name)
 
     if params[:admin_origin]
       services = Service.where(:active => true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
+      bundles = []
     end
 
     service_resources_unavailable = ServiceResource.where(service_id: services)
     if location_resources.any?
-      if location_resources.length > 1
-        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
-      else
-        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
-      end
+      service_resources_unavailable = service_resources_unavailable.where.not(resource_id: location_resources)
     end
     if service_resources_unavailable.any?
-      if service_resources_unavailable.length > 1
-        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
-      else
-        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
-      end
+      services = services.where.not(id: service_resources_unavailable.pluck(:service_id))
+      bundles = bundles.where.not(id: ServiceBundle.where(service_id: service_resources_unavailable.pluck(:service_id)).pluck(:bundle_id))
     end
 
     categorized_services = Array.new
@@ -212,8 +246,14 @@ class ServicesController < ApplicationController
       services_array = Array.new
       services.each do |service|
         if service.service_category_id == category.id
-          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
+          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall, 'bundle' => false })
           services_array.push(serviceJSON)
+        end
+      end
+      bundles.each do |bundle|
+        if bundle.service_category_id == category.id
+          bundleJSON = bundle.attributes.merge({'name_with_small_outcall' => bundle.name, 'bundle' => true, 'duration' => bundle.services.sum(:duration) })
+          services_array.push(bundleJSON)
         end
       end
       service_hash = {
@@ -228,8 +268,15 @@ class ServicesController < ApplicationController
   end
 
   def service_data
+    if (params[:bundle] == "true")
+      bundle = Bundle.find(params[:id])
+      render :json => bundle.attributes.merge({'bundle' => true, 'duration' => bundle.services.sum(:duration), 'services' => bundle.services.includes(:service_bundles).order('service_bundles.order asc') })
+      return
+    end
+
     service = Service.find(params[:id])
     render :json => service
+    return
   end
 
   def services_data
@@ -1271,6 +1318,6 @@ class ServicesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_params
-      params.require(:service).permit(:name, :price, :show_price, :duration, :outcall, :description, :group_service, :capacity, :waiting_list, :outcall, :online_payable, :must_be_paid_online, :online_booking, :has_discount, :discount, :comission_value, :comission_option, :company_id, :service_category_id, :has_sessions, :sessions_amount, :time_promo_active, :time_promo_photo, :promo_description, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [], :service_provider_ids => [], :resource_ids => [])
+      params.require(:service).permit(:name, :price, :show_price, :duration, :outcall, :description, :group_service, :capacity, :waiting_list, :outcall, :online_payable, :must_be_paid_online, :online_booking, :has_discount, :discount, :comission_value, :comission_option, :company_id, :service_category_id, :has_sessions, :sessions_amount, :time_promo_active, :time_promo_photo, :promo_description, :time_restricted, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [], :service_provider_ids => [], service_times_attributes: [:id, :open, :close, :day_id, :service_id, :_destroy], :resource_ids => [])
     end
 end

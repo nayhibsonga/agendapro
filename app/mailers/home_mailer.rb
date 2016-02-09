@@ -1,17 +1,6 @@
-class HomeMailer < ActionMailer::Base
-  require 'mandrill'
-  #default from: "agendapro@agendapro.cl"
+class HomeMailer < Base::CustomMailer
 
-  # Subject can be set in your I18n file at config/locales/en.yml
-  # with the following lookup:
-  #
-  #   en.home_mailer.contact.subject
-  #
   def contact_mail (contact_info)
-    require 'base64'
-
-    mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
     # => Template
     template_name = 'Contact'
     template_content = []
@@ -69,23 +58,11 @@ class HomeMailer < ActionMailer::Base
       ]
     }
 
-    # => Metadata
-    async = false
-    send_at = DateTime.now
-
     # => Send mail
-    result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-  rescue Mandrill::Error => e
-    puts "A mandrill error occurred: #{e.class} - #{e.message}"
-    raise
+    send_mail(template_name, template_content, message)
   end
 
   def mobile_contact (contact_info)
-    require 'base64'
-
-    mandrill = Mandrill::API.new Agendapro::Application.config.api_key
-
     # => Template
     template_name = 'mobile_contact'
     template_content = []
@@ -134,15 +111,7 @@ class HomeMailer < ActionMailer::Base
       ]
     }
 
-    # => Metadata
-    async = false
-    send_at = DateTime.now
-
     # => Send mail
-    result = mandrill.messages.send_template template_name, template_content, message, async, send_at
-
-    rescue Mandrill::Error => e
-      puts "A mandrill error occurred: #{e.class} - #{e.message}"
-      raise
+    send_mail(template_name, template_content, message)
   end
 end

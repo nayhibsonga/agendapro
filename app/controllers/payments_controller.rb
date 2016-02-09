@@ -2,6 +2,7 @@ class PaymentsController < ApplicationController
   before_action :set_payment, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action -> (source = "payments") { verify_free_plan source }, except: [:load_payment, :client_bookings, :create_new_payment, :update_payment, :receipt_pdf, :payment_pdf, :send_receipts_email, :get_receipts, :get_intro_info, :save_intro_info, :check_booking_payment, :get_formatted_booking, :delete_payment, :commissions, :service_commissions, :provider_commissions, :set_default_commission, :set_provider_default_commissions, :set_commissions, :summary]
+  before_action :verify_blocked_status, except: [:load_payment, :client_bookings, :create_new_payment, :update_payment, :receipt_pdf, :payment_pdf, :send_receipts_email, :get_receipts, :get_intro_info, :save_intro_info, :check_booking_payment, :get_formatted_booking, :delete_payment, :commissions, :service_commissions, :provider_commissions, :set_default_commission, :set_provider_default_commissions, :set_commissions, :summary]
   layout "admin"
   load_and_authorize_resource
 
@@ -771,7 +772,11 @@ class PaymentsController < ApplicationController
       end   
 
     else
-      payment.client_id = nil
+      if params[:client_id].present?
+        client = Client.find(params[:client_id])
+      else
+        payment.client_id = nil
+      end
     end
 
     payment.cashier_id = params[:cashier_id]
@@ -963,7 +968,9 @@ class PaymentsController < ApplicationController
           non_discount_total += past_booking[:list_price]
           discount_total += booking.price
 
-          booking.client_id = client.id
+          if client.present? && client.id.present?
+            booking.client_id = client.id
+          end
 
           @bookings << booking
           booking.payment = payment
@@ -1223,9 +1230,7 @@ class PaymentsController < ApplicationController
     @payment.payment_products.each do |payment_product|
       if payment_product.delete
         location_product = LocationProduct.where(:location_id => @payment.location_id, :product_id => payment_product.product_id).first
-        if location_product.nil?
-          errors << "No existe el producto para el local."
-        else
+        if !location_product.nil?
           location_product.stock = location_product.stock + payment_product.quantity
           location_product.save
         end
@@ -1604,7 +1609,7 @@ class PaymentsController < ApplicationController
 
     products.each do |product|
       product_hash = product.attributes.to_options
-      product_hash[:full_name] = product.sku + " " + product.name + " " + product.product_brand.name + " " + product.product_display.name
+      product_hash[:full_name] = "#{product.sku} #{product.name} #{product.product_brand.name} #{product.product_display.name}"
       @products << product_hash
     end
 
@@ -1775,7 +1780,7 @@ class PaymentsController < ApplicationController
     internal_sale = InternalSale.find(params[:internal_sale_id])
     location_product = LocationProduct.where(:location_id => internal_sale.location_id, :product_id => internal_sale.product_id).first
 
-    if internal_sale.nil? || location_product.nil?
+    if internal_sale.nil?
       json_response[0] = "error"
       errors << "Datos ingresados incorrectamente."
       json_response[1] << errors
@@ -1786,8 +1791,10 @@ class PaymentsController < ApplicationController
     quantity = internal_sale.quantity
 
     if internal_sale.delete
-      location_product.stock += quantity
-      location_product.save
+      if !location_product.nil?
+        location_product.stock += quantity
+        location_product.save
+      end
       json_response[0] = "ok"
     else
       json_response[0] = "error"

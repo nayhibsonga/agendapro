@@ -11,8 +11,9 @@
     <div class="col-md-12">
       <div style="margin: 10px 0;">
         <%= link_to '<i class="fa fa-list"></i> Categorías de Servicios'.html_safe, service_categories_path, :class => "btn btn-green" %>
+        <%= link_to '<i class="fa fa-sitemap"></i> Nuevo Paquete de Servicios'.html_safe, new_bundle_path, :class => "btn btn-white", style:"margin: 0 10px;" if current_user.company.is_plan_capable("Premium") %>
         <%= link_to '<i class="fa fa-minus"></i> Servicios Inactivos'.html_safe, inactive_services_path, :class => "btn btn-white pull-right" %>
-        <%= link_to '<i class="fa fa-plus"></i> Nuevo Servicio'.html_safe, new_service_path, :class => "btn btn-green pull-right",  style:"margin: 0 10px;" %>
+        <%= link_to '<i class="fa fa-plus"></i> Nuevo Servicio'.html_safe, new_service_path, :class => "btn btn-green pull-right", style:"margin: 0 10px;" %>
       </div>
     </div>
   </div>
@@ -47,6 +48,22 @@
                       <td>
                         <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_service_path(service), :class => "btn btn-sm btn-orange" %>
                         <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, deactivate_service_path(:id => service.id), method: :patch, :class => "btn btn-sm btn-red", data: { confirm: '¿Estás seguro de desactivar el Servicio seleccionado?' } unless cannot? :destroy, service %>
+                        <span class="pull-right">
+                          <i class="fa fa-bars"></i>
+                        </span>
+                      </td>
+                    </tr>
+                    <% end %>
+                  <% end %>
+                  <% @bundles.each do |bundle| %>
+                    <% if bundle.service_category_id == service_category.id %>
+                    <tr data-resource="services">
+                      <td data-service="<%= bundle.id %>"><%= bundle.name %> <small>(paquete)</small></td>
+                      <td>$<%= bundle.price.to_i %></td>
+                      <td><%= bundle.services.sum(:duration) %> min</td>
+                      <td>
+                        <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_bundle_path(bundle), :class => "btn btn-sm btn-orange" %>
+                        <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, bundle, method: :delete, :class => "btn btn-sm btn-red", data: { confirm: '¿Estás seguro de eliminar el paquete de servicios seleccionado? Esta acción no se puede deshacer' } unless cannot? :destroy, bundle %>
                         <span class="pull-right">
                           <i class="fa fa-bars"></i>
                         </span>

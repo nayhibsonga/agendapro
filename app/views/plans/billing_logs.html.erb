@@ -44,7 +44,11 @@
                     <td><%= billing_log.payment %></td>
                     <td><%= billing_log.amount %></td>
                     <td><%= Plan.find(billing_log.plan_id).name %></td>
-                    <td><%= TransactionType.find(billing_log.transaction_type_id).name %></td>
+                    <% if billing_log.transaction_type_id > 0 %>
+                      <td><%= TransactionType.find(billing_log.transaction_type_id).name %></td>
+                    <% else %>
+                      <td>Sin información</td>
+                    <% end %>
                     <td><%= billing_log.token %></td>
                     <td><%= billing_log.trx_id %></td>
                     <td><%= l billing_log.created_at, format: :short %></td>
