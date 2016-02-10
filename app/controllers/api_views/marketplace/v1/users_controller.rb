@@ -71,8 +71,8 @@ module ApiViews
 
 		    timezone = CustomTimezone.from_clients(@client_ids)
 
-		    @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids, :status_id => Status.where(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now + timezone.offset.hours).order(:start)
-		    @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where("start <= ?", DateTime.now + timezone.offset.hours).where(:client_id => @client_ids).order(updated_at: :desc).limit(10)
+		    @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids, :status_id => Status.where(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now + timezone.offset).order(:start)
+		    @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where("start <= ?", DateTime.now + timezone.offset).where(:client_id => @client_ids).order(updated_at: :desc).limit(10)
 		  end
 
 		  def favorites

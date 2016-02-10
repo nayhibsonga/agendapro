@@ -218,9 +218,9 @@ class PaymentsController < ApplicationController
 
       timezone = CustomTimezone.from_company(@location.company)
 
-      @elegible_bookings = Booking.where.not(is_session: true, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where(start: (Time.now + timezone.offset.hours).beginning_of_day..(Time.now + timezone.offset.hours).end_of_day).order(:start)
+      @elegible_bookings = Booking.where.not(is_session: true, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where(start: (Time.now + timezone.offset).beginning_of_day..(Time.now + timezone.offset).end_of_day).order(:start)
       @past_bookings = Booking.where.not(is_session: true, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where.not(id: @elegible_bookings).order(start: :desc).limit(100).pluck(:id)
-      @elegible_sessions = Booking.where.not(is_session: false, session_booking_id: nil, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where(start: (Time.now + timezone.offset.hours).beginning_of_day..(Time.now + timezone.offset.hours).end_of_day).order(:start)
+      @elegible_sessions = Booking.where.not(is_session: false, session_booking_id: nil, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where(start: (Time.now + timezone.offset).beginning_of_day..(Time.now + timezone.offset).end_of_day).order(:start)
       @past_sessions = Booking.where.not(is_session: false, session_booking_id: nil, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where.not(id: @elegible_sessions).order(start: :desc).limit(100).pluck(:id)
     else
 
@@ -2115,8 +2115,8 @@ class PaymentsController < ApplicationController
     @sales_cash.cash = 0.0
 
     timezone = CustomTimezone.from_sales_cash(@sales_cash)
-    start_date = @sales_cash.last_reset_date + timezone.offset.hours
-    end_date = DateTime.now + timezone.offset.hours
+    start_date = @sales_cash.last_reset_date + timezone.offset
+    end_date = DateTime.now + timezone.offset
 
     @sales_cash_transactions = SalesCashTransaction.where(sales_cash_id: @sales_cash.id, open: true, date: start_date..end_date)
 
@@ -2215,8 +2215,8 @@ class PaymentsController < ApplicationController
     @sales_cash = @sales_cash_log.sales_cash
 
     timezone = CustomTimezone.from_sales_cash(@sales_cash)
-    start_date = @sales_cash_log.start_date + timezone.offset.hours
-    end_date = @sales_cash_log.end_date + timezone.offset.hours
+    start_date = @sales_cash_log.start_date + timezone.offset
+    end_date = @sales_cash_log.end_date + timezone.offset
 
     @sales_cash_transactions = SalesCashTransaction.where(sales_cash_id: @sales_cash.id, open: false, date: start_date..end_date)
 
@@ -2241,7 +2241,7 @@ class PaymentsController < ApplicationController
     @sales_cash = SalesCash.find(params[:sales_cash_id])
 
     timezone = CustomTimezone.from_sales_cash(@sales_cash)
-    start_date = @sales_cash.last_reset_date + timezone.offset.hours
+    start_date = @sales_cash.last_reset_date + timezone.offset
     end_date = DateTime.now
 
     @sales_cash_transactions = SalesCashTransaction.where(sales_cash_id: @sales_cash.id, open: true, date: start_date..end_date)

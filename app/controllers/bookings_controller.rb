@@ -1668,7 +1668,7 @@ class BookingsController < ApplicationController
         end
       end
       timezone = CustomTimezone.from_booking_history(booking_history)
-      bookings.push( { action: booking_history.action, created: booking_history.created_at, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code, notes: booking_history.notes, company_comment: booking_history.company_comment, time_offset: timezone.offset } )
+      bookings.push( { action: booking_history.action, created: booking_history.created_at, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code, notes: booking_history.notes, company_comment: booking_history.company_comment, time_offset: timezone.offseti } )
     end
     render :json => bookings
   end
@@ -3274,7 +3274,7 @@ class BookingsController < ApplicationController
     status_cancelado = Status.find_by_name('Cancelado')
 
     timezone = CustomTimezone.from_company(@company)
-    if DateTime.now + timezone.offset.hours > @booking.start || @booking.status_id == status_cancelado.id
+    if DateTime.now + timezone.offset > @booking.start || @booking.status_id == status_cancelado.id
         redirect_to confirm_error_path(:id => @booking.id)
         return
     end
@@ -3305,7 +3305,7 @@ class BookingsController < ApplicationController
 
     timezone = CustomTimezone.from_company(@company)
     @bookings.each do |b|
-      if DateTime.now + timezone.offset.hours > b.start || b.status_id == status_cancelado.id
+      if DateTime.now + timezone.offset > b.start || b.status_id == status_cancelado.id
 
           if b.status_id == status_cancelado.id
             reason = "fue cancelada."

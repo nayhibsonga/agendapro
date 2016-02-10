@@ -123,7 +123,7 @@ class PlansController < ApplicationController
 
     timezone = CustomTimezone.from_company(@company)
     @billing_wire_transfer = BillingWireTransfer.new
-    @billing_wire_transfer.payment_date = DateTime.now + timezone.offset.hours
+    @billing_wire_transfer.payment_date = DateTime.now + timezone.offset
     @billing_wire_transfer.account_name = nil
     @billing_wire_transfer.account_number = nil
     @billing_wire_transfer.bank_id = nil

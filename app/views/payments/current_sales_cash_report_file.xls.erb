@@ -41,7 +41,7 @@
             </Row>
             <Row>
               <Cell><Data ss:Type="String">Apertura</Data></Cell>
-              <Cell><Data ss:Type="String"><%= (@sales_cash.last_reset_date + CustomeTimezone.from_sales_cash(@sales_cash).offset.hours).strftime('%d/%m/%Y %R') %></Data></Cell>
+              <Cell><Data ss:Type="String"><%= (@sales_cash.last_reset_date + CustomeTimezone.from_sales_cash(@sales_cash).offset).strftime('%d/%m/%Y %R') %></Data></Cell>
             </Row>
             <Row>
               <Cell><Data ss:Type="String">Fecha actual</Data></Cell>

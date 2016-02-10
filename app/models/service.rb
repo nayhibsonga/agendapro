@@ -691,7 +691,7 @@ class Service < ActiveRecord::Base
 		limit_date = DateTime.new(now.year, now.mon, now.mday, day_close.hour, day_close.min)
 
 		timezone = CustomTimezone.from_company(local.company)
-		last_minute_limit = DateTime.now + last_minute_promo.hours.hours + timezone.offset.hours
+		last_minute_limit = DateTime.now + last_minute_promo.hours.hours + timezone.offset
 
 		while (dateTimePointer < limit_date && dateTimePointer < last_minute_limit)
 

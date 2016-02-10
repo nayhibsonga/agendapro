@@ -2,11 +2,12 @@ class CustomTimezone
   DEFAULT_TIMEZONE_NAME = 'CLT'
   DEFAULT_TIMEZONE_OFFSET = -3
 
-  attr_accessor :name, :offset
+  attr_accessor :name, :offset, :offseti
 
   def initialize(*args)
     @name = args.first || DEFAULT_TIMEZONE_NAME
-    @offset = args.second || DEFAULT_TIMEZONE_OFFSET
+    @offset = (args.second || DEFAULT_TIMEZONE_OFFSET).hours
+    @offseti = args.second || DEFAULT_TIMEZONE_OFFSET
   end
 
   class << self

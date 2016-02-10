@@ -520,7 +520,7 @@ class Client < ActiveRecord::Base
     canceled_status = Status.find_by_name("Cancelado")
     bookings = Array.new
     #Send all services from same client (each company has diferent clients)
-    Client.where(id: Booking.where(:start => CustomTimezone.first_timezone.offset.hours.ago...(96.hours + CustomTimezone.last_timezone.offset.hours).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
+    Client.where(id: Booking.where(:start => CustomTimezone.first_timezone.offset.ago...(96.hours + CustomTimezone.last_timezone.offset).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
 
       #Send a reminder for each location
       client.company.locations.each do |location|
@@ -530,13 +530,13 @@ class Client < ActiveRecord::Base
 
         timezone = CustomTimezone.from_company(client.company)
 
-        potential_bookings = client.bookings.where(:start => timezone.offset.hours.ago...(96.hours + timezone.offset.hours).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
+        potential_bookings = client.bookings.where(:start => timezone.offset.ago...(96.hours + timezone.offset).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
 
         potential_bookings.each do |booking|
 
           booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
 
-          if ((booking_confirmation_time.days + timezone.offset.hours).from_now..(booking_confirmation_time.days + 1.days + timezone.offset.hours).from_now).cover?(booking.start) && booking.send_mail
+          if ((booking_confirmation_time.days + timezone.offset).from_now..(booking_confirmation_time.days + 1.days + timezone.offset).from_now).cover?(booking.start) && booking.send_mail
 
             if booking.is_session
               if booking.is_session_booked and booking.user_session_confirmed
@@ -655,7 +655,7 @@ class Client < ActiveRecord::Base
         end
         if !valid
           timezone = CustomTimezone.from_company(self.company)
-          Booking.where('bookings.start >= ?', Time.now + timezone.offset.hours).where(client_id: self.id).each do |booking|
+          Booking.where('bookings.start >= ?', Time.now + timezone.offset).where(client_id: self.id).each do |booking|
             if booking.send_mail
               booking.send_mail = false
               booking.save
