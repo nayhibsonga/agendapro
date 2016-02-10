@@ -42,5 +42,15 @@ class CustomTimezone
                booking.client
       slef.from_company(entity.company)
     end
+
+    def first_timezone
+      country = Country.all.order(:timezone_offset).first
+      CustomTimezone.new(country.timezone_name, country.timezone_offset)
+    end
+
+    def last_timezone
+      country = Country.all.order(:timezone_offset).last
+      CustomTimezone.new(country.timezone_name, country.timezone_offset)
+    end
   end
 end

@@ -721,9 +721,9 @@ class Booking < ActiveRecord::Base
   end
 
   def self.booking_reminder
-    timezone = CustomTimezone.from_booking(self)
-    where(:start => timezone.offset.hours.ago...(96.hours + timezone.offset.hours).from_now).each do |booking|
+    where(:start => CustomTimezone.first_timezone.offset.hours.ago...(96.hours + CustomTimezone.last_timezone.offset.hours).from_now).each do |booking|
       unless booking.status == Status.find_by(:name => "Cancelado")
+        timezone = CustomTimezone.from_booking(booking)
         booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
         if ((booking_confirmation_time.days + timezone.offset.hours).from_now..(booking_confirmation_time.days + 1.days + timezone.offset.hours).from_now).cover?(booking.start)
           if booking.send_mail
