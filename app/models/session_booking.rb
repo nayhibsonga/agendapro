@@ -165,7 +165,8 @@ class SessionBooking < ActiveRecord::Base
 
 			@data[:companies] = @companies
 
-		if bookings.order(:start).first.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+    timezone = CustomTimezone.from_company(bookings[0])
+		if bookings.order(:start).first.start > Time.now + timezone.offset.hours
 			BookingMailer.sessions_booking_mail(@data)
 		end
 	end

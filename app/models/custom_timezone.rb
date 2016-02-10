@@ -32,7 +32,15 @@ class CustomTimezone
     end
 
     def from_sales_cash(sales_cash)
-      from_company(sales_cash.location.company)
+      self.from_company(sales_cash.location.company)
+    end
+
+    def from_booking(booking)
+      entity = booking.service_provider ||
+               booking.service ||
+               booking.location ||
+               booking.client
+      slef.from_company(entity.company)
     end
   end
 end

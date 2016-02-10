@@ -45,7 +45,7 @@ class Service < ActiveRecord::Base
 
 	after_save :check_treatment_promo
 
-	pg_search_scope :search, 
+	pg_search_scope :search,
 	:against => :name,
 	:associated_against => {
 		:service_category => :name,
@@ -137,7 +137,7 @@ class Service < ActiveRecord::Base
 		discount = 0
 
 		if self.has_time_discount && !self.active_service_promo_id.nil?
-			
+
 			service_promo = ServicePromo.find(self.active_service_promo_id)
 			service_promo.promos.each do |promo|
 				if promo.morning_discount > discount
@@ -238,7 +238,7 @@ class Service < ActiveRecord::Base
 			end
 		else
 			if self.has_time_discount && !self.active_service_promo_id.nil?
-				
+
 				service_promo = ServicePromo.find(self.active_service_promo_id)
 				service_promo.promos.each do |promo|
 					if promo.morning_discount > discount
@@ -300,7 +300,7 @@ class Service < ActiveRecord::Base
 	# 	puts "DTP: " + dateTimePointer.to_s
 	# 	puts "Open: " + open.to_s
 	# 	puts "Close: " + close.to_s
-	# 	puts "Limit: " + limit.to_s	
+	# 	puts "Limit: " + limit.to_s
 
 	# 	total_services_duration = 0
 
@@ -320,11 +320,11 @@ class Service < ActiveRecord::Base
  #      	dateTimePointerEnd = dateTimePointer
 
 	# 	if provider_id.nil? || provider_id == "0" || provider_id == 0
-			
+
 	# 		puts "Sin preferencia"
 
 	# 		while dateTimePointer < limit
-				
+
 	# 			min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => self.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
 
 	# 	        # logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
@@ -338,7 +338,7 @@ class Service < ActiveRecord::Base
 	# 	        end
 
 	# 	        #Uncomment for overlaping hours
-          
+
 	# 	        if !self.company.company_setting.allows_optimization && last_check
 	# 	        	dateTimePointer = dateTimePointer - self.duration.minutes + first_service.company.company_setting.calendar_duration.minutes
 	# 	        end
@@ -383,7 +383,7 @@ class Service < ActiveRecord::Base
 
 	# 	            # Cross Booking
 	# 	            if service_valid
-		              
+
 	# 	            	if !self.group_service
 	# 	                  if Booking.where(service_provider_id: service_provider.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + self.duration.minutes).count > 0
 	# 	                    service_valid = false
@@ -460,7 +460,7 @@ class Service < ActiveRecord::Base
 	# 		puts service_provider.public_name
 
 	# 		while dateTimePointer < limit && dateTimePointer < close
-				
+
 	# 			service_valid = false
 
 	# 			#Check dtp + duration isn't out of location time
@@ -582,7 +582,6 @@ class Service < ActiveRecord::Base
 	# end
 
 	def self.get_last_minute_available_hours(location, serviceStaffArr, datepicker, last_minute_promo)
-
 		require 'date'
 
 		available_hours = []
@@ -591,82 +590,82 @@ class Service < ActiveRecord::Base
 			return available_hours
 		end
 
-	    local = Location.find(location)
-	    company_setting = local.company.company_setting
-	    cancelled_id = Status.find_by(name: 'Cancelado').id
-	    serviceStaff = serviceStaffArr
-	    now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
-	    session_booking = nil
+		local = Location.find(location)
+		company_setting = local.company.company_setting
+		cancelled_id = Status.find_by(name: 'Cancelado').id
+		serviceStaff = serviceStaffArr
+		now = DateTime.new(DateTime.now.year, DateTime.now.mon, DateTime.now.mday, DateTime.now.hour, DateTime.now.min)
+		session_booking = nil
 
-	    if datepicker and datepicker != ""
-	      if datepicker.to_datetime > now
-	        now = datepicker.to_datetime
-	      end
-	    end
+		if datepicker and datepicker != ""
+			if datepicker.to_datetime > now
+				now = datepicker.to_datetime
+			end
+		end
 
-	    date = Date.parse(datepicker)
+		date = Date.parse(datepicker)
 
-	    #logger.debug "now: " + now.to_s
+    #logger.debug "now: " + now.to_s
 
-	    days_ids = [1,2,3,4,5,6,7]
-	    index = days_ids.find_index(now.cwday)
-	    ordered_days = days_ids[index, days_ids.length] + days_ids[0, index]
+    days_ids = [1,2,3,4,5,6,7]
+    index = days_ids.find_index(now.cwday)
+    ordered_days = days_ids[index, days_ids.length] + days_ids[0, index]
 
-	    book_index = 0
-	    book_summaries = []
+    book_index = 0
+    book_summaries = []
 
-	    total_hours_array = []
+    total_hours_array = []
 
-	    loop_times = 0
+    loop_times = 0
 
-	    max_time_diff = 0
+    max_time_diff = 0
 
-	    #Save first service and it's providers for later use
+    #Save first service and it's providers for later use
 
-	    first_service = Service.find(serviceStaff[0][:service])
-	    first_providers = []
-	    if serviceStaff[0][:provider] != "0"
-	      first_providers << ServiceProvider.find(serviceStaff[0][:provider])
-	    else
-	      first_providers = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(:order, :public_name)
-	    end
+    first_service = Service.find(serviceStaff[0][:service])
+    first_providers = []
+    if serviceStaff[0][:provider] != "0"
+    	first_providers << ServiceProvider.find(serviceStaff[0][:provider])
+    else
+    	first_providers = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(:order, :public_name)
+    end
 
-	    #Look for services and providers and save them for later use.
-	    #Also, save total services duration
+    #Look for services and providers and save them for later use.
+    #Also, save total services duration
 
-	    total_services_duration = 0
+    total_services_duration = 0
 
-	    #False if last tried block allocation failed.
-	    #Used for searching gaps. They should be looked for only if last block culd be allocated,
-	    #because if not, then there isn't anyway that coming back in time cause correct allocation.
-	    last_check = false
+    #False if last tried block allocation failed.
+    #Used for searching gaps. They should be looked for only if last block culd be allocated,
+    #because if not, then there isn't anyway that coming back in time cause correct allocation.
+    last_check = false
 
-	    #Checks if the block being allocated is from a gap
-	    is_gap_hour = false
+    #Checks if the block being allocated is from a gap
+    is_gap_hour = false
 
-	    #Holds current_gap to sum a day's total gap and adjust calendar's height
-	    current_gap = 0
+    #Holds current_gap to sum a day's total gap and adjust calendar's height
+    current_gap = 0
 
-	    services_arr = []
-	    providers_arr = []
-	    for i in 0..serviceStaff.length-1
-	      services_arr[i] = Service.find(serviceStaff[i][:service])
-	      total_services_duration += services_arr[i].duration
-	      if serviceStaff[i][:provider] != "0"
-	        providers_arr[i] = []
-	        providers_arr[i] << ServiceProvider.find(serviceStaff[i][:provider])
-	      else
-	        providers_arr[i] = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true)
-	      end
-	    end
+    services_arr = []
+    providers_arr = []
+    for i in 0..serviceStaff.length-1
+      services_arr[i] = Service.find(serviceStaff[i][:service])
+      total_services_duration += services_arr[i].duration
+      if serviceStaff[i][:provider] != "0"
+        providers_arr[i] = []
+        providers_arr[i] << ServiceProvider.find(serviceStaff[i][:provider])
+      else
+        providers_arr[i] = ServiceProvider.where(id: first_service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true)
+      end
+    end
 
-	    #providers_arr = []
-	    #for i
-	    hours_array = []
+    #providers_arr = []
+    #for i
+    hours_array = []
 
-	    after_date = DateTime.now + company_setting.after_booking.months
+    after_date = DateTime.now + company_setting.after_booking.months
 
-	    day = now.cwday
+    day = now.cwday
 		dtp = local.location_times.where(day_id: day).order(:open).first
 
 		if dtp.nil?
@@ -691,7 +690,8 @@ class Service < ActiveRecord::Base
 		day_close = local.location_times.where(day_id: day).order(:close).first.close
 		limit_date = DateTime.new(now.year, now.mon, now.mday, day_close.hour, day_close.min)
 
-		last_minute_limit = DateTime.now + last_minute_promo.hours.hours -  eval(ENV["TIME_ZONE_OFFSET"])
+		timezone = CustomTimezone.from_company(local.company)
+		last_minute_limit = DateTime.now + last_minute_promo.hours.hours + timezone.offset.hours
 
 		while (dateTimePointer < limit_date && dateTimePointer < last_minute_limit)
 
@@ -733,15 +733,15 @@ class Service < ActiveRecord::Base
 			  #To deattach continous services, just delete the serviceStaffPos condition
 
 			  if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization && last_check
-	            dateTimePointer = dateTimePointer - total_services_duration.minutes + first_service.company.company_setting.calendar_duration.minutes
-	          end
+			  	dateTimePointer = dateTimePointer - total_services_duration.minutes + first_service.company.company_setting.calendar_duration.minutes
+			  end
 
 			  if serviceStaffPos == 0 && !first_service.company.company_setting.allows_optimization
 			    #Calculate offset
 			    offset_diff = (dateTimePointer-day_open_time)*24*60
 			    offset_rem = offset_diff % first_service.company.company_setting.calendar_duration
 			    if offset_rem != 0
-			      dateTimePointer = dateTimePointer + (first_service.company.company_setting.calendar_duration - offset_rem).minutes
+			    	dateTimePointer = dateTimePointer + (first_service.company.company_setting.calendar_duration - offset_rem).minutes
 			    end
 			  end
 
@@ -749,16 +749,16 @@ class Service < ActiveRecord::Base
 			  service_sum = service.duration.minutes
 
 			  if service_valid
-			    service_valid = false
-			    local.location_times.where(day_id: dateTimePointer.cwday).each do |times|
-			      location_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
-			      location_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
+			  	service_valid = false
+			  	local.location_times.where(day_id: dateTimePointer.cwday).each do |times|
+			  		location_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
+			  		location_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
 
-			      if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
-			        service_valid = true
-			        break
-			      end
-			    end
+			  		if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
+			  			service_valid = true
+			  			break
+			  		end
+			  	end
 			  end
 
 			  # Horario dentro del horario del provider
@@ -825,8 +825,8 @@ class Service < ActiveRecord::Base
 					    else
 
 					    	if Booking.where(service_provider_id: provider.id).where.not(service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count > 0
-					        	service_valid = false
-					      	end
+					    		service_valid = false
+					    	end
 
 					      if Booking.where(service_provider_id: provider.id, service_id: service.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + service.duration.minutes).count >= service.capacity
 					        service_valid = false
@@ -873,29 +873,29 @@ class Service < ActiveRecord::Base
 					    end
 
 					    bookings << {
-							:service => service.id,
-							:provider => provider.id,
-							:start => dateTimePointer,
-							:end => dateTimePointer + service.duration.minutes,
-							:service_name => service.name,
-							:provider_name => provider.public_name,
-							:provider_lock => serviceStaff[serviceStaffPos][:provider] != "0",
-							:provider_id => provider.id,
-							:price => service.price,
-							:online_payable => service.online_payable,
-							:has_discount => false,
-							:discount => last_minute_promo.discount,
-							:show_price => service.show_price,
-							:has_time_discount => false,
-							:has_sessions => service.has_sessions,
-							:sessions_amount => book_sessions_amount,
-							:must_be_paid_online => service.must_be_paid_online
-			            }
+					    	:service => service.id,
+					    	:provider => provider.id,
+					    	:start => dateTimePointer,
+					    	:end => dateTimePointer + service.duration.minutes,
+					    	:service_name => service.name,
+					    	:provider_name => provider.public_name,
+					    	:provider_lock => serviceStaff[serviceStaffPos][:provider] != "0",
+					    	:provider_id => provider.id,
+					    	:price => service.price,
+					    	:online_payable => service.online_payable,
+					    	:has_discount => false,
+					    	:discount => last_minute_promo.discount,
+					    	:show_price => service.show_price,
+					    	:has_time_discount => false,
+					    	:has_sessions => service.has_sessions,
+					    	:sessions_amount => book_sessions_amount,
+					    	:must_be_paid_online => service.must_be_paid_online
+					    }
 
 					    bookings.last[:has_discount] = false
-						bookings.last[:has_time_discount] = false
-						bookings.last[:discount] = last_minute_promo.discount
-						bookings.last[:time_discount] = 0
+					    bookings.last[:has_time_discount] = false
+					    bookings.last[:discount] = last_minute_promo.discount
+					    bookings.last[:time_discount] = 0
 
 
 					    if service.active_service_promo_id.nil?
@@ -932,279 +932,279 @@ class Service < ActiveRecord::Base
 					end
 				end
 
-			  	if !service_valid
+				if !service_valid
 
 
-				    #Reset gap_hour
-				    is_gap_hour = false
+			    #Reset gap_hour
+			    is_gap_hour = false
 
-				    #First, check if there's a gap. If so, back dateTimePointer to (blocking_start - total_duration)
-				    #This way, you can give two options when there are gaps.
+			    #First, check if there's a gap. If so, back dateTimePointer to (blocking_start - total_duration)
+			    #This way, you can give two options when there are gaps.
 
-				    #Assume there is no gap
-				    time_gap = 0
+			    #Assume there is no gap
+			    time_gap = 0
 
-				    if first_service.company.company_setting.allows_optimization && last_check
+			    if first_service.company.company_setting.allows_optimization && last_check
 
-				      if first_providers.count > 1
+			    	if first_providers.count > 1
 
-				        first_providers.each do |first_provider|
+			    		first_providers.each do |first_provider|
 
-				          book_gaps = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.start asc')
+			    			book_gaps = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.start asc')
 
-				          break_gaps = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.start asc')
+			    			break_gaps = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.start asc')
 
-				          provider_time_gap = first_provider.provider_times.where(day_id: dateTimePointer.cwday).order('close asc').first
+			    			provider_time_gap = first_provider.provider_times.where(day_id: dateTimePointer.cwday).order('close asc').first
 
-				          if !provider_time_gap.nil?
+			    			if !provider_time_gap.nil?
 
-				            provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time_gap.close.hour, provider_time_gap.close.min)
+			    				provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time_gap.close.hour, provider_time_gap.close.min)
 
-				            if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
-				              gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
-				              if gap_diff > time_gap
-				                time_gap = gap_diff
-				              end
-				            end
+			    				if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
+			    					gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
+			    					if gap_diff > time_gap
+			    						time_gap = gap_diff
+			    					end
+			    				end
 
-				          end
+			    			end
 
-				          if book_gaps.count > 0
-				            gap_diff = (book_gaps.first.start - dateTimePointer)/60
-				            if gap_diff != 0
-				              if gap_diff > time_gap
-				                time_gap = gap_diff
-				              end
-				            end
-				          end
+			    			if book_gaps.count > 0
+			    				gap_diff = (book_gaps.first.start - dateTimePointer)/60
+			    				if gap_diff != 0
+			    					if gap_diff > time_gap
+			    						time_gap = gap_diff
+			    					end
+			    				end
+			    			end
 
-				          if break_gaps.count > 0
-				            gap_diff = (break_gaps.first.start - dateTimePointer)/60
-				            if gap_diff != 0
-				              if gap_diff > time_gap
-				                time_gap = gap_diff
-				              end
-				            end
-				          end
+			    			if break_gaps.count > 0
+			    				gap_diff = (break_gaps.first.start - dateTimePointer)/60
+			    				if gap_diff != 0
+			    					if gap_diff > time_gap
+			    						time_gap = gap_diff
+			    					end
+			    				end
+			    			end
 
-				        end
+			    		end
 
-				      else
+			    	else
 
-				        #Get nearest blocking start and check the gap.
-				        #Blocking can come from provider time day end.
+			        #Get nearest blocking start and check the gap.
+			        #Blocking can come from provider time day end.
 
-				        first_provider = first_providers.first
+			        first_provider = first_providers.first
 
-				        book_gaps = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.start asc')
+			        book_gaps = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.start asc')
 
-				        break_gaps = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.start asc')
+			        break_gaps = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.start asc')
 
-				        provider_time_gap = first_provider.provider_times.where(day_id: dateTimePointer.cwday).order('close asc').first
+			        provider_time_gap = first_provider.provider_times.where(day_id: dateTimePointer.cwday).order('close asc').first
 
-				        if !provider_time_gap.nil?
+			        if !provider_time_gap.nil?
 
-				          provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time_gap.close.hour, provider_time_gap.close.min)
+			        	provider_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, provider_time_gap.close.hour, provider_time_gap.close.min)
 
-				          if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
-				            gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
-				            if gap_diff > time_gap
-				              time_gap = gap_diff
-				            end
-				          end
+			        	if dateTimePointer < provider_close && provider_close < (dateTimePointer + total_services_duration.minutes)
+			        		gap_diff = ((provider_close - dateTimePointer)*24*60).to_f
+			        		if gap_diff > time_gap
+			        			time_gap = gap_diff
+			        		end
+			        	end
 
-				        end
+			        end
 
-				        if book_gaps.count > 0
-				          gap_diff = (book_gaps.first.start - dateTimePointer)/60
-				          if gap_diff != 0
-				            if gap_diff > time_gap
-				              time_gap = gap_diff
-				            end
-				          end
-				        end
+			        if book_gaps.count > 0
+			        	gap_diff = (book_gaps.first.start - dateTimePointer)/60
+			        	if gap_diff != 0
+			        		if gap_diff > time_gap
+			        			time_gap = gap_diff
+			        		end
+			        	end
+			        end
 
-				        if break_gaps.count > 0
-				          gap_diff = (break_gaps.first.start - dateTimePointer)/60
-				          if gap_diff != 0
-				            if gap_diff > time_gap
-				              time_gap = gap_diff
-				            end
-				          end
-				        end
+			        if break_gaps.count > 0
+			        	gap_diff = (break_gaps.first.start - dateTimePointer)/60
+			        	if gap_diff != 0
+			        		if gap_diff > time_gap
+			        			time_gap = gap_diff
+			        		end
+			        	end
+			        end
 
-				      end
+			      end
 
-				    end
+			    end
 
-				    #Check for providers' bookings and breaks that include current dateTimePointer
-				    #If any, jump to the nearest end
-				    #Else, it's gotta be a resource issue or dtp is outside providers' time, so just add service duration as always
-				    #Last part could be optimized to jump to the nearest open provider's time
+			    #Check for providers' bookings and breaks that include current dateTimePointer
+			    #If any, jump to the nearest end
+			    #Else, it's gotta be a resource issue or dtp is outside providers' time, so just add service duration as always
+			    #Last part could be optimized to jump to the nearest open provider's time
 
-				    #Time check must be an overlap of (dtp - dtp+service_duration) with booking/break (start - end)
+			    #Time check must be an overlap of (dtp - dtp+service_duration) with booking/break (start - end)
 
-				    smallest_diff = first_service.duration
-				    #logger.debug "Defined smallest_diff: " + smallest_diff.to_s
-
-
-				    #Only do this when there is no gap
-				    if first_service.company.company_setting.allows_optimization && time_gap == 0
-
-				      if first_providers.count > 1
-
-				        first_providers.each do |first_provider|
+			    smallest_diff = first_service.duration
+			    #logger.debug "Defined smallest_diff: " + smallest_diff.to_s
 
 
-				          book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
+			    #Only do this when there is no gap
+			    if first_service.company.company_setting.allows_optimization && time_gap == 0
 
-				          if book_blockings.count > 0
+			    	if first_providers.count > 1
 
-				            book_diff = (book_blockings.first.end - dateTimePointer)/60
-				            if book_diff < smallest_diff
-				              smallest_diff = book_diff
+			    		first_providers.each do |first_provider|
 
-				            end
-				          else
-				            break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
 
-				            if break_blockings.count > 0
-				              break_diff = (break_blockings.first.end - dateTimePointer)/60
-				              if break_diff < smallest_diff
-				                smallest_diff = break_diff
+			    			book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
 
-				              end
-				            end
-				          end
+			    			if book_blockings.count > 0
 
-				        end
+			    				book_diff = (book_blockings.first.end - dateTimePointer)/60
+			    				if book_diff < smallest_diff
+			    					smallest_diff = book_diff
 
-				      else
+			    				end
+			    			else
+			    				break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
 
-				        first_provider = first_providers.first
+			    				if break_blockings.count > 0
+			    					break_diff = (break_blockings.first.end - dateTimePointer)/60
+			    					if break_diff < smallest_diff
+			    						smallest_diff = break_diff
 
-				        book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
+			    					end
+			    				end
+			    			end
 
-				        if book_blockings.count > 0
-				          book_diff = (book_blockings.first.end - dateTimePointer)/60
-				          if book_diff < smallest_diff
-				            smallest_diff = book_diff
-				          end
-				        else
-				          break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
+			    		end
 
-				          if break_blockings.count > 0
-				            break_diff = (break_blockings.first.end - dateTimePointer)/60
-				            if break_diff < smallest_diff
-				              smallest_diff = break_diff
-				            end
-				          end
-				        end
+			    	else
 
-				      end
+			    		first_provider = first_providers.first
 
-				      if smallest_diff == 0
-				        smallest_diff = first_service.duration
-				      end
+			    		book_blockings = first_provider.bookings.where.not('(bookings.end <= ? or bookings.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('bookings.end asc')
 
-				    else
+			    		if book_blockings.count > 0
+			    			book_diff = (book_blockings.first.end - dateTimePointer)/60
+			    			if book_diff < smallest_diff
+			    				smallest_diff = book_diff
+			    			end
+			    		else
+			    			break_blockings = first_provider.provider_breaks.where.not('(provider_breaks.end <= ? or provider_breaks.start >= ?)', dateTimePointer, dateTimePointer + first_service.duration.minutes).order('provider_breaks.end asc')
 
-				      smallest_diff = first_service.company.company_setting.calendar_duration
+			    			if break_blockings.count > 0
+			    				break_diff = (break_blockings.first.end - dateTimePointer)/60
+			    				if break_diff < smallest_diff
+			    					smallest_diff = break_diff
+			    				end
+			    			end
+			    		end
 
-				    end
+			    	end
 
-				    if first_service.company.company_setting.allows_optimization && time_gap > 0
-				      dateTimePointer = (dateTimePointer + time_gap.minutes) - total_services_duration.minutes
-				      is_gap_hour = true
-				      current_gap = time_gap
-				    else
-				      current_gap = 0
-				      dateTimePointer += smallest_diff.minutes
-				    end
+			    	if smallest_diff == 0
+			    		smallest_diff = first_service.duration
+			    	end
 
-				    serviceStaffPos = 0
-				    bookings = []
+			    else
 
-				    last_check = false
+			    	smallest_diff = first_service.company.company_setting.calendar_duration
 
-				  end
-				end
+			    end
+
+			    if first_service.company.company_setting.allows_optimization && time_gap > 0
+			    	dateTimePointer = (dateTimePointer + time_gap.minutes) - total_services_duration.minutes
+			    	is_gap_hour = true
+			    	current_gap = time_gap
+			    else
+			    	current_gap = 0
+			    	dateTimePointer += smallest_diff.minutes
+			    end
+
+			    serviceStaffPos = 0
+			    bookings = []
+
+			    last_check = false
+
+			  end
+			end
 
 			if bookings.length == serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
 
-			  has_time_discount = false
-			  bookings_group_discount = 0
-			  bookings_group_total_price = 0
-			  bookings_group_computed_price = 0
+				has_time_discount = false
+				bookings_group_discount = 0
+				bookings_group_total_price = 0
+				bookings_group_computed_price = 0
 
-			  bookings.each do |b|
+				bookings.each do |b|
 
-			  	b[:has_time_discount] = false
-			  	b[:has_discount] = false
-			  	b[:time_discount] = 0
-			  	b[:discount] = last_minute_promo.discount
+					b[:has_time_discount] = false
+					b[:has_discount] = false
+					b[:time_discount] = 0
+					b[:discount] = last_minute_promo.discount
 
-			  end
+				end
 
-			  status = "available"
+				status = "available"
 
-			  hour_time_diff = ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f
+				hour_time_diff = ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f
 
-			  if hour_time_diff > max_time_diff
-			    max_time_diff = hour_time_diff
-			  end
+				if hour_time_diff > max_time_diff
+					max_time_diff = hour_time_diff
+				end
 
-			  curr_promo_discount = 0
+				curr_promo_discount = 0
 
-			  if bookings.length == 1
-			    curr_promo_discount = bookings[0][:time_discount]
-			  end
+				if bookings.length == 1
+					curr_promo_discount = bookings[0][:time_discount]
+				end
 
-			  if true
+				if true
 
-			  	hour = {
-			  		:start => bookings[0][:start].strftime("%H:%M"),
-			  		:end => bookings[bookings.length-1][:end].strftime("%H:%M")
-				}
+					hour = {
+						:start => bookings[0][:start].strftime("%H:%M"),
+						:end => bookings[bookings.length-1][:end].strftime("%H:%M")
+					}
 
 			  	#I18n.l(bookings[0][:start].to_datetime, format: :hour) + ' - ' + I18n.l(bookings[bookings.length - 1][:end].to_datetime, format: :hour) + ' Hrs'
 
-			    new_hour = {
-					index: book_index,
-					date: date,
-					full_date: I18n.l(bookings[0][:start].to_date, format: :day),
-					hour: hour,
-					bookings: bookings,
-					status: status,
-					start_block: bookings[0][:start].strftime("%H:%M"),
-					end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
-					available_provider: bookings[0][:provider_name],
-					provider: bookings[0][:provider_id],
-	                promo_discount: 0,
-	                has_time_discount: bookings[0][:has_time_discount],
-	                has_discount: bookings[0][:has_discount],
-	                time_discount: bookings[0][:time_discount],
-		            discount: bookings[0][:discount],
-	                time_diff: hour_time_diff,
-	                has_sessions: bookings[0][:has_sessions],
-	                sessions_amount: bookings[0][:sessions_amount],
-	                group_discount: last_minute_promo.discount,
-	                service_promo_id: 0
-	            }
+			  	new_hour = {
+			  		index: book_index,
+			  		date: date,
+			  		full_date: I18n.l(bookings[0][:start].to_date, format: :day),
+			  		hour: hour,
+			  		bookings: bookings,
+			  		status: status,
+			  		start_block: bookings[0][:start].strftime("%H:%M"),
+			  		end_block: bookings[bookings.length-1][:end].strftime("%H:%M"),
+			  		available_provider: bookings[0][:provider_name],
+			  		provider: bookings[0][:provider_id],
+			  		promo_discount: 0,
+			  		has_time_discount: bookings[0][:has_time_discount],
+			  		has_discount: bookings[0][:has_discount],
+			  		time_discount: bookings[0][:time_discount],
+			  		discount: bookings[0][:discount],
+			  		time_diff: hour_time_diff,
+			  		has_sessions: bookings[0][:has_sessions],
+			  		sessions_amount: bookings[0][:sessions_amount],
+			  		group_discount: last_minute_promo.discount,
+			  		service_promo_id: 0
+			  	}
 
-			    book_index = book_index + 1
-			    book_summaries << new_hour
+			  	book_index = book_index + 1
+			  	book_summaries << new_hour
 
-			    should_add = true
+			  	should_add = true
 
-			    if should_add
-			      if !hours_array.include?(new_hour)
+			  	if should_add
+			  		if !hours_array.include?(new_hour)
 
-			        hours_array << new_hour
-			        total_hours_array << new_hour
+			  			hours_array << new_hour
+			  			total_hours_array << new_hour
 
-			      end
-			    end
+			  		end
+			  	end
 
 			  end
 
@@ -1212,9 +1212,9 @@ class Service < ActiveRecord::Base
 
 		end
 
-	    available_time = hours_array
+		available_time = hours_array
 
-	    return available_time
+		return available_time
 
 	end
 

@@ -642,7 +642,8 @@ class Booking < ActiveRecord::Base
     end
     if !self.id.nil?
       if self.trx_id == ""
-        if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+        timezone = CustomTimezone.from_booking(self)
+        if self.start > Time.now + timezone.offset.hours
           if self.status != Status.find_by(:name => "Cancelado")
             if self.booking_group.nil?
               BookingMailer.book_service_mail(self)
@@ -667,7 +668,8 @@ class Booking < ActiveRecord::Base
 
   def send_session_update_mail
     if !self.id.nil?
-      if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+      timezone = CustomTimezone.from_booking(self)
+      if self.start > Time.now + timezone.offset.hours
         if !self.is_session_booked
           if changed_attributes['is_session_booked']
             BookingMailer.cancel_booking(self)
@@ -697,7 +699,8 @@ class Booking < ActiveRecord::Base
     if self.is_session
       return
     end
-    if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+    timezone = CustomTimezone.from_booking(self)
+    if self.start > Time.now + timezone.offset.hours
       if self.status == Status.find_by(:name => "Cancelado")
         if changed_attributes['status_id']
           BookingMailer.cancel_booking(self)
@@ -718,10 +721,11 @@ class Booking < ActiveRecord::Base
   end
 
   def self.booking_reminder
-    where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).each do |booking|
+    timezone = CustomTimezone.from_booking(self)
+    where(:start => timezone.offset.hours.ago...(96.hours + timezone.offset.hours).from_now).each do |booking|
       unless booking.status == Status.find_by(:name => "Cancelado")
         booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
-        if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start)
+        if ((booking_confirmation_time.days + timezone.offset.hours).from_now..(booking_confirmation_time.days + 1.days + timezone.offset.hours).from_now).cover?(booking.start)
           if booking.send_mail
             if booking.is_session
               if booking.is_session_booked and booking.user_session_confirmed
@@ -1623,7 +1627,8 @@ class Booking < ActiveRecord::Base
 
       @data[:company] = @company
 
-    if bookings.order(:start).first.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
+    timezone = CustomTimezone.from_booking(self)
+    if bookings.order(:start).first.start > Time.now + timezone.offset.hours
       BookingMailer.multiple_booking_mail(@data)
       # logger.debug @data.inspect
     end

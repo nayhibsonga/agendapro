@@ -23,7 +23,7 @@ class Client < ActiveRecord::Base
   #after_create :create_client_attributes
 
   def get_storage_occupation
-    
+
     used_storage = 0
     used_storage += self.client_files.sum(:size)
 
@@ -39,43 +39,43 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         if FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           FloatAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "integer"
-        
+
         if IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "text"
-        
+
         if TextAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           TextAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "textarea"
-        
+
         if TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "boolean"
-        
+
         if BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           BooleanAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "date"
-        
+
         if DateAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           DateAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "datetime"
-        
+
         if DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           DateTimeAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
@@ -98,43 +98,43 @@ class Client < ActiveRecord::Base
     company.clients.each do |client|
       case self.datatype
       when "float"
-        
+
         if FloatAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           FloatAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "integer"
-        
+
         if IntegerAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           IntegerAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "text"
-        
+
         if TextAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           TextAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "textarea"
-        
+
         if TextareaAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           TextareaAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "boolean"
-        
+
         if BooleanAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           BooleanAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "date"
-        
+
         if DateAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           DateAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "datetime"
-        
+
         if DateTimeAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           DateTimeAttribute.create(attribute_id: self.id, client_id: client.id)
         end
@@ -160,7 +160,7 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !float_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = float_attribute.value
@@ -169,7 +169,7 @@ class Client < ActiveRecord::Base
         end
 
       when "integer"
-        
+
         integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !integer_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = integer_attribute.value
@@ -178,7 +178,7 @@ class Client < ActiveRecord::Base
         end
 
       when "text"
-        
+
         text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !text_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = text_attribute.value
@@ -187,7 +187,7 @@ class Client < ActiveRecord::Base
         end
 
       when "textarea"
-        
+
         textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !textarea_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = textarea_attribute.value
@@ -205,7 +205,7 @@ class Client < ActiveRecord::Base
         end
 
       when "date"
-        
+
         date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !date_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = date_attribute.value
@@ -257,7 +257,7 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if float_attribute.nil?
           float_attribute = FloatAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -267,7 +267,7 @@ class Client < ActiveRecord::Base
         end
 
       when "integer"
-        
+
         integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if integer_attribute.nil?
           IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -277,7 +277,7 @@ class Client < ActiveRecord::Base
         end
 
       when "text"
-        
+
         text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if text_attribute.nil?
           TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -287,7 +287,7 @@ class Client < ActiveRecord::Base
         end
 
       when "textarea"
-        
+
         textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if textarea_attribute.nil?
           TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -313,7 +313,7 @@ class Client < ActiveRecord::Base
         end
 
       when "date"
-        
+
         if !param_value.nil?
           param_value = param_value.gsub('/', '-')
         end
@@ -327,7 +327,7 @@ class Client < ActiveRecord::Base
         end
 
       when "datetime"
-        
+
         if !param_value.nil?
           param_value = param_value.gsub('/', '-')
           date_hour = params[attribute.slug + "_attribute_hour"]
@@ -413,7 +413,7 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if float_attribute.nil?
           float_attribute = FloatAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -423,7 +423,7 @@ class Client < ActiveRecord::Base
         end
 
       when "integer"
-        
+
         integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if integer_attribute.nil?
           IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -433,7 +433,7 @@ class Client < ActiveRecord::Base
         end
 
       when "text"
-        
+
         text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if text_attribute.nil?
           TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -443,7 +443,7 @@ class Client < ActiveRecord::Base
         end
 
       when "textarea"
-        
+
         textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if textarea_attribute.nil?
           TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -469,7 +469,7 @@ class Client < ActiveRecord::Base
         end
 
       when "date"
-        
+
         if !param_value.blank?
           param_value = param_value.gsub('/', '-')
         end
@@ -483,11 +483,11 @@ class Client < ActiveRecord::Base
         end
 
       when "datetime"
-        
+
         complete_datetime = nil
 
         if !param_value.blank?
-          param_value = param_value.gsub('/', '-')     
+          param_value = param_value.gsub('/', '-')
           complete_datetime = param_value
         end
 
@@ -528,13 +528,15 @@ class Client < ActiveRecord::Base
         bookings = Array.new
         single_booking = Booking.new
 
-        potential_bookings = client.bookings.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
+        timezone = CustomTimezone.from_company(client.company)
+
+        potential_bookings = client.bookings.where(:start => timezone.offset.hours.ago...(96.hours + timezone.offset.hours).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
 
         potential_bookings.each do |booking|
 
           booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
 
-          if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start) && booking.send_mail
+          if ((booking_confirmation_time.days + timezone.offset.hours).from_now..(booking_confirmation_time.days + 1.days + timezone.offset.hours).from_now).cover?(booking.start) && booking.send_mail
 
             if booking.is_session
               if booking.is_session_booked and booking.user_session_confirmed
@@ -652,7 +654,8 @@ class Client < ActiveRecord::Base
           valid = true
         end
         if !valid
-          Booking.where('bookings.start >= ?', Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where(client_id: self.id).each do |booking|
+          timezone = CustomTimezone.from_company(self.company)
+          Booking.where('bookings.start >= ?', Time.now + timezone.offset.hours).where(client_id: self.id).each do |booking|
             if booking.send_mail
               booking.send_mail = false
               booking.save
