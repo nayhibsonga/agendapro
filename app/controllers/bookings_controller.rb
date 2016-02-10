@@ -35,6 +35,7 @@ class BookingsController < ApplicationController
     @booking = Booking.new
     @provider_break = ProviderBreak.new
     @payment = Payment.new
+    @timezone = CustomTimezone.from_company(@company)
   end
 
   def fixed_index

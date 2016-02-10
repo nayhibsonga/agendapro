@@ -1032,13 +1032,13 @@
             <div class="form-group">
               <%= f.label :start, "Inicio", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
-                <%= f.datetime_select :start, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
+                <%= f.datetime_select :start, {default: @timezone.offset.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
             <div class="form-group">
               <%= f.label :end, "Fin", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
-                <%= f.datetime_select :end, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
+                <%= f.datetime_select :end, {default: @timezone.offset.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
             <div class="form-group form-repeat-div">
@@ -1110,7 +1110,7 @@
                 </div>
                 <div>
                   <%= radio_button_tag :repeat_option, 'date_end', false %>&nbsp;El&nbsp;
-                  <%= datetime_select "provider_break_repeat", "repeat_end", {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
+                  <%= datetime_select "provider_break_repeat", "repeat_end", {default: @timezone.offset.hours.ago, :minute_step => 5}, {class: "form-control date-select"} %>
                 </div>
               </div>
             </div>

@@ -43,7 +43,7 @@
           <div class="col-md-3">
             <div class="square-highlight">
               <h2 class="text-green">
-                <% occupation = booking_occupation(Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
+                <% occupation = booking_occupation(Time.now.beginning_of_day - 7.days + @timezone.offset.hours, Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
                 <%= number_to_percentage occupation * 100, precision: 1, strip_insignificant_zeros: true %>
               </h2>
               <p data-toggle="tooltip" title="Ocupación estimada de la agenda los prestadores. Se calcula dividiendo la cantidad de horas reservadas sobre la cantidad de horas disponibles por horario." data-placement="top" role="button">
@@ -59,7 +59,7 @@
           <div class="col-md-3">
             <div class="square-highlight">
               <h2 class="text-green">
-                <% incomes = booking_revenue(Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
+                <% incomes = booking_revenue(Time.now.beginning_of_day - 7.days + @timezone.offset.hours, Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
                 <%= number_to_currency incomes %>
               </h2>
               <p data-toggle="tooltip" title="La suma de los precios de todas las reservas y sesiones agendadas. No considera pagos ingresados o no ingresados." data-placement="top" role="button">
