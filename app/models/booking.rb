@@ -751,12 +751,13 @@ class Booking < ActiveRecord::Base
     else
       address = "A domicilio"
     end
+    timezone = CustomTimezone.from_booking(self)
     event = RiCal.Calendar do |cal|
       cal.event do |event|
         event.summary = self.service.name + ' en ' + self.location.company.name
         event.description = "Datos de tu reserva:\n- Fecha: " + date + "\n- Servicio: " + self.service.name + "\n- Prestador: " + self.service_provider.public_name + "\n- Lugar: " + address + ".\nNOTA: por favor asegúrate que el calendario de tu celular esté en la zona horario correcta. En caso contrario, este recordatorio podría quedar guardado para otra hora."
-        event.dtstart =  self.start.strftime('%Y%m%dT%H%M%S')
-        event.dtend = self.end.strftime('%Y%m%dT%H%M%S')
+        event.dtstart =  Time.parse(self.start.strftime('%Y%m%dT%H%M%S') + ' ' + timezone.name)
+        event.dtend = Time.parse(self.end.strftime('%Y%m%dT%H%M%S') + ' ' + timezone.name)
         event.location = self.location.get_full_address
         event.add_attendee self.client.email
         event.alarm do

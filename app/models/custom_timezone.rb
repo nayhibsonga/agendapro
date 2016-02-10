@@ -41,7 +41,7 @@ class CustomTimezone
                booking.service ||
                booking.location ||
                booking.client
-      slef.from_company(entity.company)
+      self.from_company(entity.company)
     end
 
     def first_timezone
