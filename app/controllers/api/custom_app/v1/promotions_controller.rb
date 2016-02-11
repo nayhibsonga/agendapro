@@ -73,25 +73,25 @@ module Api
 
       def show
       	@service = Service.find(params[:id])
-	    @location = Location.find(params[:location_id])
+		    @location = Location.find(params[:location_id])
 
-	    #Check existance of promo
-	    if !@service.has_time_discount || @service.service_promos.nil? || @service.active_service_promo_id.nil?
-	      render json: { errors: "No existen promociones para el servicio buscado." }, status: 422
-	      return
-	    end
+		    #Check existance of promo
+		    if !@service.has_time_discount || @service.service_promos.nil? || @service.active_service_promo_id.nil?
+		      render json: { errors: "No existen promociones para el servicio buscado." }, status: 422
+		      return
+		    end
 
-	    #Check promo has stock
-	    if @service.active_service_promo.max_bookings < 1 && @service.active_service_promo.limit_booking
-	      render json: { errors: "No queda stock para la promoción buscada." }, status: 422
-	      return
-	    end
+		    #Check promo has stock
+		    if @service.active_service_promo.max_bookings < 1 && @service.active_service_promo.limit_booking
+		      render json: { errors: "No queda stock para la promoción buscada." }, status: 422
+		      return
+		    end
 
-	    #Check promo hasn't expired
-	    if DateTime.now > @service.active_service_promo.finish_date || DateTime.now > @service.active_service_promo.book_limit_date
-	      render json: { errors: "La promoción buscada ya expiró." }, status: 422
-	      return
-	    end
+		    #Check promo hasn't expired
+		    if DateTime.now > @service.active_service_promo.finish_date || DateTime.now > @service.active_service_promo.book_limit_date
+		      render json: { errors: "La promoción buscada ya expiró." }, status: 422
+		      return
+		    end
       end
   	end
   end

@@ -20,9 +20,11 @@ json.promotions do
     json.location_id result[1].id
     json.company_name result[0].company.name
     json.service_name result[0].name
+    json.promo_description result[0].promo_description.html_safe
     json.normal_price number_to_currency(result[0].price, currency: '$ ', separator: '.', delimeter: ',', precision: 0)
     json.min_price number_to_currency(result[0].price*(100-result[0].get_max_time_discount)/100, currency: '$ ', separator: '.', delimeter: ',', precision: 0)
     json.max_discount '-' + result[0].get_max_time_discount.to_s + '%'
     json.promo_photo result[0].time_promo_photo ? request.protocol + request.host_with_port + result[0].time_promo_photo.url : ""
+    json.url request.protocol + request.host_with_port + '/show_time_promo?id=' + result[0].id.to_s + '&location_id=' + result[1].id.to_s
   end
 end
