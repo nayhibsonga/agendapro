@@ -467,10 +467,14 @@
 
                         %>
 
-                        <%= booking.service.name %><br /><%= "(" + session_index + ")" %>
+                        <%= booking.service.name %>
+                        <br />
+                        <span class="label label-session"><%= "(#{session_index})" %></span>
                       <% end %>
                     </td>
-                    <td><%= booking.status.name %></td>
+                    <td>
+                      <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
+                    </td>
                   </tr>
                   <% end %>
                 </tbody>
@@ -517,10 +521,14 @@
 
                         %>
 
-                        <%= booking.service.name %><br /><%= "(" + session_index + ")" %>
+                        <%= booking.service.name %>
+                        <br />
+                        <span class="label label-session"><%= "(#{session_index})" %></span>
                       <% end %>
                     </td>
-                    <td><%= booking.status.name %></td>
+                    <td>
+                      <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
+                    </td>
                   </tr>
                   <% end %>
                 </tbody>
