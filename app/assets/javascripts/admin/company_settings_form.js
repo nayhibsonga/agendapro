@@ -485,15 +485,25 @@ $(function () {
     e.preventDefault();
   });
 
-  $('.submit-block').on('click', function() {
+  var $btn = $('.submit-block');
+
+  function blockSubmit(e) {
+    e.preventDefault();
     var $btn = $(this),
         $form = $btn.closest('form');
-    if( $form.valid() ) {
-      $btn.attr('disabled', true);
-      $form.submit();
-    }
-  });
 
+    $form.find(':input').on('change', function(){
+      $btn.attr('disabled', false);
+    });
+
+    if( $form.valid() ) {
+      $btn.unbind('click', blockSubmit).click().attr('disabled', true);
+    } else {
+      $btn.attr('disabled', false);
+    }
+  }
+
+  $btn.click(blockSubmit);
 
 });
 

@@ -60,6 +60,7 @@ function saveCategory (typeURL, extraURL) {
 					}
 				});
       };
+      $('#saveResourceCategryButton').attr('disabled', false);
     });
 	};
 }
@@ -88,6 +89,7 @@ function saveResource (typeURL, extraURL) {
 	    	resource_locations.push({ "location_id": $(this).val(), "quantity": $('#resource_location_ids_quantity_'+$(this).val()).val() });
 		}
 	});
+	$('.submit-block').attr('disabled', true);
 	var resourceJSON = { "name": $('#resource_name').val(), "resource_category_id": $('#resource_resource_category_id').val(), "service_ids": resource_services, "resource_locations_attributes": resource_locations };
 	$.ajax({
 		type: typeURL,
@@ -109,6 +111,7 @@ function saveResource (typeURL, extraURL) {
 				type: "error",
 				html: true
 			});
+			$('.submit-block').attr('disabled', false);
 		}
 	});
 }
@@ -191,15 +194,6 @@ $(function() {
 		});
 		$(event.target).parents('.panel').find('input[name="selectServiceCategory"]').prop('checked', prop);
 	});
-
-  $('.submit-block').on('click', function() {
-    var $btn = $(this),
-        $form = $btn.closest('form');
-    if( $form.valid() ) {
-      $btn.attr('disabled', true);
-      $form.submit();
-    }
-  });
 
 	initialize();
 });
