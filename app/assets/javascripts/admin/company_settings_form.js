@@ -436,7 +436,7 @@ $(function () {
   });
 
   $("#attribute_category_form").on("ajax:success", function(e, data, status, xhr){
-    
+
     if(data.category != "Otra")
     {
 
@@ -485,6 +485,25 @@ $(function () {
     e.preventDefault();
   });
 
+  var $btn = $('.submit-block');
+
+  function blockSubmit(e) {
+    e.preventDefault();
+    var $btn = $(this),
+        $form = $btn.closest('form');
+
+    $form.find(':input').on('change', function(){
+      $btn.attr('disabled', false);
+    });
+
+    if( $form.valid() ) {
+      $btn.unbind('click', blockSubmit).click().attr('disabled', true);
+    } else {
+      $btn.attr('disabled', false);
+    }
+  }
+
+  $btn.click(blockSubmit);
 
 });
 
@@ -493,3 +512,5 @@ function uncheckCheckbox (parent) {
     $(checkbox).prop('checked', false);
   });
 }
+
+

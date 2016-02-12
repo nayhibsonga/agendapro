@@ -15,12 +15,12 @@ class BookingsController < ApplicationController
 
     @company = Company.find(current_user.company_id)
     if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
-      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).order(:order, :name)
+      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).ordered
     else
-      @locations = Location.where(:active => true).accessible_by(current_ability).order(:order, :name)
+      @locations = Location.where(:active => true).accessible_by(current_ability).ordered
     end
     @company_setting = @company.company_setting
-    @service_providers = ServiceProvider.where(location_id: @locations).order(:order, :public_name)
+    @service_providers = ServiceProvider.where(location_id: @locations).ordered
     @provider_groups = JbuilderTemplate.encode(view_context) do |json|
       json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order, :name) do |provider_group|
         json.name  provider_group.name
@@ -28,6 +28,18 @@ class BookingsController < ApplicationController
         json.resources provider_group.service_providers.where(active: true).accessible_by(current_ability).order(:order, :public_name) do |service_provider|
           json.id service_provider.id
           json.name service_provider.public_name
+        end
+      end
+    end
+    @provider_available = JbuilderTemplate.encode(view_context) do |json|
+      json.array! @locations.each do |location|
+        json.location location.id
+        json.days Day.all do |day|
+          json.day day.id
+          json.resources ServiceProvider.joins(:provider_times).actives.where(provider_times: {day: day}).where(location: location).order(:order, :public_name) do |provider|
+            json.id provider.id
+            json.name provider.public_name
+          end
         end
       end
     end
@@ -93,7 +105,7 @@ class BookingsController < ApplicationController
 
     after_book_date = DateTime.now + u.service.company.company_setting.after_booking.months
     after_book_date = I18n.l after_book_date.to_date, format: :day
-    
+
     @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id, :custom_attributes => u.client.get_custom_attributes, :bundled => u.bundled}
     respond_to do |format|
       format.html { }
@@ -1767,17 +1779,11 @@ class BookingsController < ApplicationController
 
         # Se verifica que existan los datos y en caso contrario, se deja como string vacío para evitar nulos en los Qtips
 
-        if booking.client.phone
-          phone = booking.client.phone
-        end
+        phone = booking.client.phone if booking.client.phone
 
-        if booking.client.email
-          email = booking.client.email
-        end
+        email = booking.client.email if booking.client.email
 
-        if booking.company_comment
-          comment = booking.company_comment
-        end
+        comment = booking.company_comment if booking.company_comment
 
         if booking.payed_state
           prepayed = 'Sí'
@@ -4454,38 +4460,53 @@ class BookingsController < ApplicationController
 
           # Horario dentro del horario del provider
           if service_valid
-            providers = []
-            if serviceStaff[serviceStaffPos][:provider] != "0"
-              providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
-              #providers = providers_arr[serviceStaffPos]
-            else
 
-              #Check if providers have same day open
-              #If they do, choose the one with less ocupations to start with
-              #If they don't, choose the one that starts earlier.
-              if service.check_providers_day_times(dateTimePointer)
+            # Service Time Restricted
+            if service.time_restricted
+              service_valid = false
+              service.service_times.where(day_id: dateTimePointer.cwday).each do |times|
+                service_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
+                service_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
 
-                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
-
-                if providers.count == 0
-                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+                if service_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= service_close
+                  service_valid = true
+                  break
                 end
+              end
+            end
 
-                #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
-
+            # Elegible Providers
+            providers = []
+            if service_valid
+              if serviceStaff[serviceStaffPos][:provider] != "0"
+                providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
+                #providers = providers_arr[serviceStaffPos]
               else
 
-                providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                #Check if providers have same day open
+                #If they do, choose the one with less ocupations to start with
+                #If they don't, choose the one that starts earlier.
+                if service.check_providers_day_times(dateTimePointer)
 
-                if providers.count == 0
-                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
+                  if providers.count == 0
+                    providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :desc).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+                  end
+
+                  #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_occupation(dateTimePointer) }
+
+                else
+
+                  providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true, online_booking: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+
+                  if providers.count == 0
+                    providers = ServiceProvider.where(id: service.service_providers.pluck(:id), location_id: local.id, active: true).order(order: :asc).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
+                  end
+
+                  #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
                 end
-
-                #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
               end
-
-
-
             end
 
             providers.each do |provider|
