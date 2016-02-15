@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20160127191741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "attribute_categories", force: true do |t|
@@ -1610,6 +1610,18 @@ ActiveRecord::Schema.define(version: 20160127191741) do
   add_index "service_tags", ["service_id"], name: "index_service_tags_on_service_id", using: :btree
   add_index "service_tags", ["tag_id"], name: "index_service_tags_on_tag_id", using: :btree
 
+  create_table "service_times", force: true do |t|
+    t.time     "open",       null: false
+    t.time     "close",      null: false
+    t.integer  "service_id"
+    t.integer  "day_id",     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "service_times", ["day_id"], name: "index_service_times_on_day_id", using: :btree
+  add_index "service_times", ["service_id"], name: "index_service_times_on_service_id", using: :btree
+
   create_table "services", force: true do |t|
     t.string   "name",                                        null: false
     t.float    "price",                       default: 0.0
@@ -1644,6 +1656,7 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.boolean  "has_treatment_promo",         default: false
     t.integer  "active_treatment_promo_id"
     t.integer  "active_last_minute_promo_id"
+    t.boolean  "time_restricted",             default: false
   end
 
   add_index "services", ["company_id"], name: "index_services_on_company_id", using: :btree
