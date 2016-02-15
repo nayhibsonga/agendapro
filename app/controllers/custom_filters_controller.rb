@@ -1,7 +1,7 @@
 class CustomFiltersController < ApplicationController
   before_action :set_custom_filter, only: [:show, :edit, :update, :destroy]
 
-  respond_to :html
+  respond_to :html, :json
 
   def index
     @custom_filters = CustomFilter.all
@@ -22,8 +22,10 @@ class CustomFiltersController < ApplicationController
 
   def create
     @custom_filter = CustomFilter.new(custom_filter_params)
-    @custom_filter.save
-    respond_with(@custom_filter)
+    flash[:notice] = "Filtro creado." if @custom_filter.save && @custom_filter.create_filters
+    respond_with(@custom_filter) do |format|
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+    end
   end
 
   def update

@@ -487,7 +487,7 @@ $(function () {
 
 
   $('#new_filter_button').on('click', function(){
-    $('#addFilterModal').empty()
+    $('#addFilterModal .modal-dialog').empty()
     $.ajax({
       url: '/new_filter_form',
       method: 'get',
@@ -496,7 +496,7 @@ $(function () {
 
       },
       success: function(response){
-        $('#addFilterModal .modal-content').append(response);
+        $('#addFilterModal .modal-dialog').append(response);
         $('#addFilterModal').modal('show');
       }
     })

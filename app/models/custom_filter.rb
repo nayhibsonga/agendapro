@@ -8,4 +8,10 @@ class CustomFilter < ActiveRecord::Base
 	has_many :text_custom_filters
 	has_many :boolean_custom_filters
 
+	def create_filters
+
+		
+
+	end
+
 end
