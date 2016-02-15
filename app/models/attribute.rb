@@ -1,6 +1,7 @@
 class Attribute < ActiveRecord::Base
 
 	belongs_to :company
+	belongs_to :attribute_group
 
 	has_many :attribute_categories, dependent: :destroy
 	has_many :float_attributes, dependent: :destroy
