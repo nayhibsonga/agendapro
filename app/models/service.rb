@@ -5,6 +5,8 @@ class Service < ActiveRecord::Base
 	belongs_to :company
 	belongs_to :service_category
 
+  has_many :service_times, dependent: :destroy
+
 	has_many :service_tags, dependent: :destroy
 	has_many :tags, :through => :service_tags
 
@@ -37,11 +39,13 @@ class Service < ActiveRecord::Base
 
 	accepts_nested_attributes_for :service_category, :reject_if => :all_blank, :allow_destroy => true
 
+  accepts_nested_attributes_for :service_times, :reject_if => :all_blank, :allow_destroy => true
+
 	validates :name, :duration, :company, :service_category, :presence => true
 	validates :duration, numericality: { greater_than_or_equal_to: 5, :less_than_or_equal_to => 1439 }
 	validates :price, numericality: { greater_than_or_equal_to: 0 }
 
-	validate :group_service_capacity, :outcall_providers
+	validate :group_service_capacity, :outcall_providers, :times_overlap, :time_empty_or_negative
 
 	after_save :check_treatment_promo
 
@@ -119,6 +123,28 @@ class Service < ActiveRecord::Base
 			end
 			if outcall
 				errors.add(:base, "Un servicio no a domicilio no puede estar asociado a un local a domicilio.")
+			end
+		end
+	end
+
+	def times_overlap
+    self.service_times.each do |service_time1|
+			self.service_times.each do |service_time2|
+				if (service_time1 != service_time2)
+					if(service_time1.day_id == service_time2.day_id)
+						if (service_time1.open - service_time2.close) * (service_time2.open - service_time1.close) >= 0
+				      		errors.add(:base, "Existen bloques horarios sobrepuestos para el día "+service_time1.day.name+".")
+			    	end
+		    	end
+		    end
+			end
+		end
+  end
+
+  def time_empty_or_negative
+  	self.service_times.each do |service_time|
+			if service_time.open >= service_time.close
+				errors.add(:base, "El horario del día "+service_time.day.name+" es vacío o negativo.")
 			end
 		end
 	end

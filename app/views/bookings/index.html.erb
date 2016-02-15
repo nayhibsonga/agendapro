@@ -37,6 +37,8 @@
 <%= content_tag "div", id: "groups_data", data: { provider_groups: @provider_groups } do %>
 <% end %>
 
+<%= content_tag :div, nil, id: "provider_available", data: { provider_available: @provider_available } %>
+
 <% content_for :calendar do %>
   <div class="container-fluid">
     <div class="row">

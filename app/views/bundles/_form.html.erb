@@ -87,7 +87,7 @@
             <h3>Servicios</h3>
             <p>Debes detallar los servicios que integran el paquete, en orden, y el precio de cada servicio dentro del paquete y la suma de todos será el precio final del paquete. Con esto se calcularan las comisiones, si las tienes configuradas, en los reportes correspondientes.</p>
             <div class="well">
-              <%= f.fields_for :service_bundles do |builder| %>
+              <%= f.fields_for :service_bundles, @bundle.service_bundles.sort_by(&:order) do |builder| %>
                 <%= render "service_bundle_fields", :f => builder %>
               <% end %>
               <p><%= link_to_add_fields "Agregar Servicio", f, :service_bundles %></p>

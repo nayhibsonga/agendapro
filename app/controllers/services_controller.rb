@@ -86,12 +86,24 @@ class ServicesController < ApplicationController
   # PATCH/PUT /services/1
   # PATCH/PUT /services/1.json
   def update
+    @service_times = Service.find(params[:id]).service_times
+    @service_times.each do |service_time|
+      service_time.service_id = nil
+      service_time.save
+    end
+    @service = Service.find(params[:id])
     if service_params[:service_category_attributes]
       if service_params[:service_category_attributes][:name].nil?
         new_params = service_params.except(:service_category_attributes)
       else
         new_params = service_params.except(:service_category_id)
       end
+    end
+    if new_params[:service_ids].blank?
+      @service.service_staffs.delete_all
+    end
+    if new_params[:resource_ids].blank?
+      @service.service_resources.delete_all
     end
     if params[:promo_update]
       new_params = service_params
@@ -116,9 +128,14 @@ class ServicesController < ApplicationController
             end
           end
           @service.check_online_discount
+          @service_times.destroy_all
           format.html { redirect_to manage_promotions_path, notice: 'Servicio actualizado exitosamente.' }
           format.json { head :no_content }
         else
+          @service_times.each do |service_time|
+            service_time.service_id = @service.id
+            service_time.save
+          end
           format.html { render action: 'manage_service_promotion' }
           format.json { render json: @service.errors, status: :unprocessable_entity }
         end
@@ -134,9 +151,14 @@ class ServicesController < ApplicationController
             end
           end
           @service.check_online_discount
+          @service_times.destroy_all
           format.html { redirect_to services_path, notice: 'Servicio actualizado exitosamente.' }
           format.json { head :no_content }
         else
+          @service_times.each do |service_time|
+            service_time.service_id = @service.id
+            service_time.save
+          end
           format.html { render action: 'edit' }
           format.json { render json: @service.errors, status: :unprocessable_entity }
         end
@@ -178,7 +200,7 @@ class ServicesController < ApplicationController
 
     bundles.each do |bundle|
       service_bundles_array = []
-      bundle.service_bundles.each do |service_bundle|
+      bundle.service_bundles.order(:order).each do |service_bundle|
         bundle_service_providers_array = []
         service_bundle.service.service_providers.where(active: true, location_id: params[:location]).each do |service_provider|
           bundle_service_providers_array.push({'id' => service_provider.id, 'public_name' => service_provider.public_name})
@@ -248,7 +270,7 @@ class ServicesController < ApplicationController
   def service_data
     if (params[:bundle] == "true")
       bundle = Bundle.find(params[:id])
-      render :json => bundle.attributes.merge({'bundle' => true, 'duration' => bundle.services.sum(:duration), 'services' => bundle.services })
+      render :json => bundle.attributes.merge({'bundle' => true, 'duration' => bundle.services.sum(:duration), 'services' => bundle.services.includes(:service_bundles).order('service_bundles.order asc') })
       return
     end
 
@@ -1296,6 +1318,6 @@ class ServicesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def service_params
-      params.require(:service).permit(:name, :price, :show_price, :duration, :outcall, :description, :group_service, :capacity, :waiting_list, :outcall, :online_payable, :must_be_paid_online, :online_booking, :has_discount, :discount, :comission_value, :comission_option, :company_id, :service_category_id, :has_sessions, :sessions_amount, :time_promo_active, :time_promo_photo, :promo_description, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [], :service_provider_ids => [], :resource_ids => [])
+      params.require(:service).permit(:name, :price, :show_price, :duration, :outcall, :description, :group_service, :capacity, :waiting_list, :outcall, :online_payable, :must_be_paid_online, :online_booking, :has_discount, :discount, :comission_value, :comission_option, :company_id, :service_category_id, :has_sessions, :sessions_amount, :time_promo_active, :time_promo_photo, :promo_description, :time_restricted, service_category_attributes: [:name, :company_id, :id],  :tag_ids => [], :service_provider_ids => [], service_times_attributes: [:id, :open, :close, :day_id, :service_id, :_destroy], :resource_ids => [])
     end
 end

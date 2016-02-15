@@ -8,7 +8,7 @@
 # 3 => start_hour (don't worry about 1 digit hours, script does it. For example, if you want to start at 09:00, just write 9 in hour)
 # 4 => end_hour (same as above)
 # 5 => month (from 1 to 12)
-# 6 => status [0|1|2|3|4|5|6](0 to use random)
+# 6 => status [0|1|2|3|5|6](0 to use random)
 # 7 => web_origin [0|false|true](0 to use random)
 # 8 => payed [0|false|true](0 to use random)
 
@@ -28,7 +28,7 @@ web_origin = ARGV[7]
 payed = ARGV[8]
 
 #Generals
-statuses = [1, 2, 3, 4, 5, 6]
+statuses = [1, 2, 3, 5, 6]
 booleans = [false, true]
 rdn_status = false
 rdn_origin = false
@@ -96,6 +96,7 @@ bookings_amount.times do
 		send_mail: false,
 		web_origin: web_origin,
     payed: payed,
+    payed_state: payed,
     price: random_price
 	)
 

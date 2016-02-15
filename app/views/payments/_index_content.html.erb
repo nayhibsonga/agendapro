@@ -67,40 +67,39 @@
             notes = ''
            %>
           <% payment.bookings.each do |booking|
-            bookings_text += '* ' + booking.service.name + ' con ' + booking.service_provider.public_name + ' (' + booking.start.strftime('%R %d-%m-%Y') + ') ' + number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + booking.discount.to_s + '% de descuento<br/>'
+            bookings_text += "* #{h booking.service.name} con #{h booking.service_provider.public_name} (#{h booking.start.strftime('%R %d-%m-%Y')}) #{h number_to_currency(booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0)} con #{h booking.discount.to_s}% de descuento<br/>"
           end %>
           <% payment.payment_products.each do |payment_product|
             if payment_product.quantity == 1
-              products_text += '* ' + payment_product.product.name + ' ' + number_to_currency(payment_product.price * payment_product.quantity, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' (1 unidad con ' + payment_product.discount.to_s + '% de descuento)<br/>'
+              products_text += "* #{h payment_product.product.name} #{h number_to_currency(payment_product.price * payment_product.quantity, currency: ' $', separator: ',', delimeter: '.', precision: 0)} (1 unidad con #{h payment_product.discount.to_s}% de descuento)<br/>"
             else
-              products_text += '* ' + payment_product.product.name + ' ' + number_to_currency(payment_product.price * payment_product.quantity, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' (' + payment_product.quantity.to_s + ' unidades con ' + payment_product.discount.to_s + '% de descuento)<br/>'
+              products_text += "* #{h payment_product.product.name} #{h number_to_currency(payment_product.price * payment_product.quantity, currency: ' $', separator: ',', delimeter: '.', precision: 0)} (#{h payment_product.quantity.to_s} unidades con #{h payment_product.discount.to_s}% de descuento)<br/>"
             end
           end %>
           <% payment.mock_bookings.each do |mock_booking|
             if mock_booking.service_id.nil? && mock_booking.service_provider_id.nil?
-              mock_bookings_text += '* ' + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + mock_booking.discount.to_s + '% de descuento<br/>'
+              mock_bookings_text += "* #{h number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0)} con #{h mock_booking.discount.to_s}% de descuento<br/>"
             elsif !mock_booking.service_id.nil? && mock_booking.service_provider_id.nil?
-              mock_bookings_text += '* ' + mock_booking.service.name + " sin prestador " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + mock_booking.discount.to_s + '% de descuento<br/>'
+              mock_bookings_text += "* #{h mock_booking.service.name} sin prestador #{h number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0)} con #{h mock_booking.discount.to_s}% de descuento<br/>"
             elsif mock_booking.service_id.nil? && !mock_booking.service_provider_id.nil?
-              mock_bookings_text += '* ' + " servicio por definir con " + mock_booking.service_provider.public_name + " " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + mock_booking.discount.to_s + '% de descuento<br/>'
+              mock_bookings_text += "* servicio por definir con #{h mock_booking.service_provider.public_name} #{h number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0)} con #{h mock_booking.discount.to_s}% de descuento<br/>"
             else
-              mock_bookings_text += '* ' + mock_booking.service.name + " con " + mock_booking.service_provider.public_name + " " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + mock_booking.discount.to_s + '% de descuento<br/>'
+              mock_bookings_text += "* #{h mock_booking.service.name} con #{h mock_booking.service_provider.public_name} #{h number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0)} con #{h mock_booking.discount.to_s}% de descuento<br/>"
             end
               
           end %>
 
           <% payment.receipts.each do |receipt|
             if receipt.notes != ""
-              notes += receipt.notes + '<br />'
+              notes += "#{simple_format(h(receipt.notes)).squish}"
             end
           end %>
 
           <% qtip_text = ''
-          if bookings_text != '' then qtip_text += '<strong>Reservas:</strong><br/>' + bookings_text + '<br/>' end
-          if mock_bookings_text != '' then qtip_text += '<strong>Servicios:</strong><br/>' + mock_bookings_text + '<br/>' end
-          if products_text != '' then qtip_text += '<strong>Productos:</strong><br/>' + products_text + '<br/>' end
-          if notes != '' then qtip_text += '<strong>Comentarios:</strong><br/>' + notes + '<br/>' 
-          end %>
+          if bookings_text != '' then qtip_text += "<strong>Reservas:</strong><br/>#{bookings_text}<br/>" end
+          if mock_bookings_text != '' then qtip_text += "<strong>Servicios:</strong><br/>#{mock_bookings_text}<br/>" end
+          if products_text != '' then qtip_text += "<strong>Productos:</strong><br/>#{products_text}<br/>" end
+          if notes != '' then qtip_text += "<strong>Comentarios:</strong><br/>#{notes}<br/>" end %>
           <script type="text/javascript">
             $('#payment_details_button_<%= payment.id %>').qtip({
                show: {

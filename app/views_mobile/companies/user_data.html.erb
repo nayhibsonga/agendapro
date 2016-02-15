@@ -31,25 +31,7 @@
             end
           %>
 
-          <%= hidden_field_tag :bookings, [{
-              start: @start,
-              end: @end,
-              provider: @provider.id,
-              provider_name: @provider.public_name,
-              provider_lock: @lock,
-              service: @service.id,
-              service_name: @service.name,
-              online_payable: @online_payable,
-              has_discount: @has_discount,
-              discount: @hour_discount,
-              price: @service.price,
-              show_price: @service.show_price,
-              has_sessions: @service.has_sessions,
-              sessions_amount: sessions_amount,
-              must_be_paid_online: @must_be_paid_online,
-              is_time_discount: @is_time_discount,
-              service_promo_id: @service_promo_id
-            }].to_json %>
+          <%= hidden_field_tag :bookings, @bookings %>
 
           <%= hidden_field_tag :firstName, if user_signed_in? then current_user.first_name else nil end %>
           <%= hidden_field_tag :lastName, if user_signed_in? then current_user.last_name else nil end %>
@@ -389,7 +371,7 @@
       </div>
     </div>
 
-    <% if @online_payable %>
+    <% if @online_payable && params[:bundle].blank? %>
       <div class="row">
         <div class="col-xs-6">
           <div class="form-group">
