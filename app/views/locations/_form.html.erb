@@ -25,7 +25,8 @@
             <%= f.label :address, "Dirección", class: "col-md-3 control-label" %>
             <div class="col-md-9">
               <div class="input-group">
-                <%= f.text_field :address, class: "form-control", placeholder: 'Dirección (requerido)' %>
+                <%= text_field_tag :address, @location.try(:full_address), class: "form-control", placeholder: 'Dirección (requerido)' %>
+                <%= f.hidden_field :address %>
                 <span class="input-group-btn">
                   <button class="btn btn-default" id="geolocate" type="button"><i class="fa fa-crosshairs"></i></button>
                 </span>

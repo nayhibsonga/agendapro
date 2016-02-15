@@ -28,7 +28,7 @@ $(function() {
 			'location[district_id]': {
 				required: true
 			},
-			'location[address]': {
+			'address': {
 				required: true
 			},
 			'location[phone]': {

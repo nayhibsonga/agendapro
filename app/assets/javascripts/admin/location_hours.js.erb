@@ -1,5 +1,6 @@
 var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 var hoursChanged = false;
+var address = $('#address');
 
 function buildDay (value) {
   $('#localTable').append(
@@ -292,10 +293,7 @@ function setMarker (latLng) {
 }
 
 function setCenter (latLng, zoom) {
-  zoom = typeof zoom != "undefine" ? zoom : 15;
-  // if (!$('#error').hasClass('hide')) {
-  //   $('#error').addClass('hide');
-  // };
+  zoom = typeof zoom != "undefined" ? zoom : 17;
   if (marker) {
     marker.setMap(null);
   };
@@ -303,12 +301,11 @@ function setCenter (latLng, zoom) {
   map.setCenter(latLng);
   map.setZoom(zoom);
   setMarker(latLng);
-  $('#saveLocation').attr('disabled', false);
 }
 
 /*** Google Places ***/
 function places() {
-  var input = document.getElementById('location_address');
+  var input = document.getElementById('address');
   var options = {
     types: ['geocode']
   };
@@ -318,13 +315,13 @@ function places() {
 
   google.maps.event.addListener(autocomplete, 'place_changed', function() {
     if (autocomplete.getPlace().geometry) {
-      $('#location_latitude').val(autocomplete.getPlace().geometry.location.lat());
-      $('#location_longitude').val(autocomplete.getPlace().geometry.location.lng());
+      setLatLng(autocomplete.getPlace().geometry.location);
+      setAddress(autocomplete.getPlace());
       setCenter(autocomplete.getPlace().geometry.location);
     }
   });
 
-  $("#location_address").focusin(function () {
+  $("#address").focusin(function () {
     $(document).bind("keypress.key1", function(e) {
       if (e.which == 13) {
         e.preventDefault();
@@ -332,7 +329,7 @@ function places() {
       }
     });
   });
-  $("#location_address").focusout(function () {
+  $("#address").focusout(function () {
     if(!$(".pac-container").is(":focus") && !$(".pac-container").is(":visible")) {
       selectFirstResult();
     }
@@ -345,20 +342,14 @@ function places() {
     var firstResult = $(".pac-container .pac-item:first").text();
     geocoder.geocode({"address":firstResult }, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        var lat = results[0].geometry.location.lat(),
-        lng = results[0].geometry.location.lng(),
-        placeName = results[0].address_components[0].long_name,
-        latlng = new google.maps.LatLng(lat, lng);
 
-        $('#location_latitude').val(lat);
-        $('#location_longitude').val(lng);
-
-        $("#location_address").val(results[0].formatted_address);
-
-        setCenter(latlng);
+        setLatLng(results[0].geometry.location);
+        setAddress(results[0]);
+        setCenter(results[0].geometry.location);
       }
       else {
         $("#location_address").val('');
+        $("#address").val('');
       }
     });
   }
@@ -376,12 +367,14 @@ function places() {
           geocoder.geocode({'latLng': latlng}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
               if (results[0]) {
-                $('#location_address').val(results[0].formatted_address);
+                setAddress(results[0]);
               } else {
-                $('#location_address').val(position.coords.latitude+', '+position.coords.longitude);
+                $('#location_address').val(position.coords.latitude + ', ' + position.coords.longitude);
+                $('#address').val(position.coords.latitude + ', ' + position.coords.longitude);
               }
             } else {
               $('#location_address').val(position.coords.latitude+', '+position.coords.longitude);
+              $('#address').val(position.coords.latitude+', '+position.coords.longitude);
             }
             setCenter(latlng);
             $('#geolocate').html('<i class="fa fa-crosshairs"></i>');
@@ -390,34 +383,16 @@ function places() {
         },
         function (error) {
           positioned = true;
-          if (error.code == 1) {
-            swal({
-              title: "Hubo un error en el proceso de localización",
-              text: "No hay permiso, por favor asegúrate permitir la geolicalización automática en tu explorador.",
-              type: "error"
-            });
-          }
-          else if (error.code == 2) {
-            swal({
-              title: "Hubo un error en el proceso de localización",
-              text: "Posición no disponible, por favor inténtalo nuevamente o escribe tu ubicación.",
-              type: "error"
-            });
-          }
-          else if (error.code == 3) {
-            swal({
-              title: "Hubo un error en el proceso de localización",
-              text: "La consulta tardó mucho, por favor inténtalo nuevamente o escribe tu ubicación.",
-              type: "error"
-            });
-          }
-          else {
-            swal({
-              title: "Hubo un error en el proceso de localización",
-              text: "Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación.",
-              type: "error"
-            });
-          }
+          var errorMessage = {
+            1: "No hay permiso, por favor asegúrate permitir la geolicalización automática en tu explorador.",
+            2: "Posición no disponible, por favor inténtalo nuevamente o escribe tu ubicación.",
+            3: "La consulta tardó mucho, por favor inténtalo nuevamente o escribe tu ubicación."
+          }[error.code] || "Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación."
+          swal({
+            title: "Hubo un error en el proceso de localización",
+            text: errorMessage,
+            type: "error"
+          });
           $('#geolocate').html('<i class="fa fa-crosshairs"></i>');
         },
         {timeout: 10000}
@@ -443,6 +418,16 @@ function places() {
     return;
   }
 
+  function setLatLng(location) {
+    $('#location_latitude').val(location.lat());
+    $('#location_longitude').val(location.lng());
+  }
+
+  function setAddress(geobject) {
+    $("#address").val(geobject.formatted_address);
+    $("#location_address").val(JSON.stringify(geobject.address_components));
+  }
+
   $('#geolocate').click(function() {
     geolocate();
   });
@@ -450,8 +435,8 @@ function places() {
 
 $(function() {
   createMap();
-  initialize();
   places();
+  initialize();
   $('#saveLocation').click(function() {
     saveLocation();
     return false;

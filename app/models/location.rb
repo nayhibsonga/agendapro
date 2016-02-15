@@ -617,5 +617,20 @@ class Location < ActiveRecord::Base
 		return top4
 	end
 
+  def short_address
+    address = read_attribute(:address)
+    "#{address[1]["long_name"]} #{address[0]["long_name"]}, #{address[2]["long_name"]}"
+  end
+
+  def long_address
+    address = read_attribute(:address)
+    "#{address[1]["long_name"]} #{address[0]["long_name"]}, #{address[2]["long_name"]}, #{address[4]["long_name"]}, #{address[6]["long_name"]}"
+  end
+
+  def full_address
+    address = read_attribute(:address)
+    "#{address[1]["long_name"]} #{address[0]["long_name"]}, #{address[2]["long_name"]}, #{address[3]["long_name"]}, #{address[4]["long_name"]}, #{address[5]["long_name"]}, #{address[6]["long_name"]}"
+  end
+
 end
 
