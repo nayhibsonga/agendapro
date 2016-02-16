@@ -6,7 +6,7 @@
 <input type="hidden" id="servicePrice" value="<%= @service.price %>" />
 <input type="hidden" id="currentDate" value="<%= DateTime.now.strftime('%d/%m/%Y') %>" />
 <input type="hidden" id="last_minute_discount" value="<%= @last_minute_promo.discount %>" />
-<input type="hidden" id="locationAddress" value="<%= @location.address %>" />
+<input type="hidden" id="locationAddress" value="<%= @location.short_address %>" />
 <input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
 <input type="hidden" id="companyId" value="<%= @location.company.id %>" />
 
@@ -143,7 +143,7 @@
           <div id="time-promo-map"></div>
           <div style="margin-top: 5px; margin-bottom: 5px;">
             <%= image_tag "promociones/pin.png", :alt => "Dirección", :size => "18x26" %>
-            <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
+            <%= if !@location.outcall then @location.short_address else "A Domicilio" end %>
           </div>
           <div>
             <%= image_tag "promociones/phone.png", :alt => "Teléfono", :size => "18x18" %>
@@ -492,7 +492,7 @@
                                 <div class="row">
                                   <div class="col-sm-12">
                                     <div class="form-group has-feedback">
-                                      
+
                                         <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.description %>" value="<%= attribute_value %>" <%= "required" if attribute.mandatory_on_workflow %> />
                                         <span class="help-block"></span>
                                         <span class="form-control-feedback"></span>
@@ -528,7 +528,7 @@
                                 <div class="row">
                                   <div class="col-sm-12">
                                     <div class="form-group has-feedback">
-                                      
+
                                         <input type="number" class="form-control" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.description %>" value="<%= attribute_value %>" <%= "required" if attribute.mandatory_on_workflow %> />
                                         <span class="help-block"></span>
                                         <span class="form-control-feedback"></span>
@@ -727,7 +727,7 @@
                                       </div>
                                       <div class="col-sm-3">
                                         <select class="form-control" name="<%= attribute.slug %>_attribute_hour" id="<%= attribute.slug %>_attribute_hour">
-                                          <% 
+                                          <%
                                             for i in 0..23
                                               str_hour = i.to_s
                                               if str_hour.length == 1
@@ -738,7 +738,7 @@
                                                 <option value="<%= str_hour %>" <%= "selected" if str_hour == attr_hour %> ><%= str_hour %></option>
 
                                               <%
-                                            end 
+                                            end
                                           %>
                                         </select>
                                       </div>
@@ -747,7 +747,7 @@
                                       </div>
                                       <div class="col-sm-3">
                                         <select class="form-control" name="<%= attribute.slug %>_attribute_minute" id="<%= attribute.slug %>_attribute_minute">
-                                          <% 
+                                          <%
                                             for i in 0..59
                                               str_minute = i.to_s
                                               if str_minute.length == 1
@@ -756,7 +756,7 @@
                                               %>
                                                 <option value="<%= str_minute %>" <%= "selected" if str_minute == attr_minute %> ><%= str_minute %></option>
                                               <%
-                                            end 
+                                            end
                                           %>
                                         </select>
                                       </div>
@@ -810,11 +810,11 @@
                                 </div>
                               </div>
 
-                            <% end %>                      
+                            <% end %>
                           <% end %>
                         </div>
                       <% end %>
-                      
+
                       <% if !user_signed_in? %>
                       <div class="row">
                         <div class="col-md-12">

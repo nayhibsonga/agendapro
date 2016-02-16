@@ -489,24 +489,6 @@ class Location < ActiveRecord::Base
 		return self.district.city.region.country.locale
 	end
 
-	def get_full_address
-		full_address = self.address
-		full_address += " " + self.second_address if !self.second_address.blank?
-		full_address += ", " + self.district.name
-		full_address += ", " + self.district.city.name
-		return full_address
-	end
-
-	def get_full_address_country
-		full_address = self.address
-		full_address += " " + self.second_address if !self.second_address.blank?
-		full_address += ", " + self.district.name
-		full_address += ", " + self.district.city.name
-		full_address += ", " + self.district.city.region.name
-		full_address += ", " + self.district.city.region.country.name
-		return full_address
-	end
-
 	def opened_days_zero_index
 		opened_days = []
 		self.location_times.each do |location_time|
@@ -632,6 +614,30 @@ class Location < ActiveRecord::Base
     address = "#{location_address.route} #{location_address.street_number}, #{location_address.district}, #{location_address.administrative_area}, #{location_address.city}, #{location_address.region}, #{location_address.country}"
     if address.length <= 5
       ""
+    end
+  end
+
+  def short_address_with_second_address
+    if self.second_address.present?
+      "#{self.short_address} - #{self.second_address}"
+    else
+      "#{self.short_address}"
+    end
+  end
+
+  def long_address_with_second_address
+    if self.second_address.present?
+      "#{self.long_address} - #{self.second_address}"
+    else
+      "#{self.long_address}"
+    end
+  end
+
+  def full_address_with_second_address
+    if self.second_address.present?
+      "#{self.full_address} - #{self.second_address}"
+    else
+      "#{self.full_address}"
     end
   end
 

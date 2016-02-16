@@ -93,7 +93,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
+                <%= if !@location.outcall then @location.short_address else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -124,7 +124,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %>
+                <%= if !@location.outcall then @location.short_address else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -159,7 +159,7 @@
                 <% else %>
                   <h3> No fue posible guardar todos los servicios. </h3>
                 <% end %>
-                              
+
                 <% if false %>
                   <% if @are_session_booking %>
                     <p> A continuación te presentamos el resumen y las opciones de reserva. </p>
@@ -228,7 +228,7 @@
                           <% end %>
                         </dd>
                         <dt class="dark-gray">Lugar</dt>
-                        <dd class="light-gray"><%= @location.address %>, <%= @location.district.name %></dd>
+                        <dd class="light-gray"><%= @location.short_address %>, <%= @location.district.name %></dd>
                         <dt class="dark-gray">Prestadores</dt>
                         <dd class="light-gray">
                           <% @bookings.each do |booking| %>
@@ -342,7 +342,7 @@
                             <p><%= @bookings.first.service.name %></p>
                         </dd>
                         <dt class="dark-gray">Lugar</dt>
-                        <dd class="light-gray"><%= @location.address %>, <%= @location.district.name %></dd>
+                        <dd class="light-gray"><%= @location.short_address %></dd>
                         <dt class="dark-gray">Prestadores</dt>
                         <dd class="light-gray">
                             <p><%= @bookings.first.service_provider.public_name %></p>
@@ -448,7 +448,7 @@
       var src = $('img.book-center-error').attr('src');
       src = src.replace('cross', 'icono_reserva2');
       $('img.book-center-error').attr('src', src);
-      
+
     });
   });
 </script>

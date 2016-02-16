@@ -26,7 +26,7 @@ class Client < ActiveRecord::Base
   #after_create :create_client_attributes
 
   def get_storage_occupation
-    
+
     used_storage = 0
     used_storage += self.client_files.sum(:size)
 
@@ -42,43 +42,43 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         if FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           FloatAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "integer"
-        
+
         if IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "text"
-        
+
         if TextAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           TextAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "textarea"
-        
+
         if TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "boolean"
-        
+
         if BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           BooleanAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "date"
-        
+
         if DateAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           DateAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "datetime"
-        
+
         if DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           DateTimeAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
@@ -101,43 +101,43 @@ class Client < ActiveRecord::Base
     company.clients.each do |client|
       case self.datatype
       when "float"
-        
+
         if FloatAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           FloatAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "integer"
-        
+
         if IntegerAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           IntegerAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "text"
-        
+
         if TextAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           TextAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "textarea"
-        
+
         if TextareaAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           TextareaAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "boolean"
-        
+
         if BooleanAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           BooleanAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "date"
-        
+
         if DateAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           DateAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "datetime"
-        
+
         if DateTimeAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           DateTimeAttribute.create(attribute_id: self.id, client_id: client.id)
         end
@@ -163,7 +163,7 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !float_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = float_attribute.value
@@ -172,7 +172,7 @@ class Client < ActiveRecord::Base
         end
 
       when "integer"
-        
+
         integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !integer_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = integer_attribute.value
@@ -181,7 +181,7 @@ class Client < ActiveRecord::Base
         end
 
       when "text"
-        
+
         text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !text_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = text_attribute.value
@@ -190,7 +190,7 @@ class Client < ActiveRecord::Base
         end
 
       when "textarea"
-        
+
         textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !textarea_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = textarea_attribute.value
@@ -208,7 +208,7 @@ class Client < ActiveRecord::Base
         end
 
       when "date"
-        
+
         date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !date_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = date_attribute.value
@@ -260,7 +260,7 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if float_attribute.nil?
           float_attribute = FloatAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -270,7 +270,7 @@ class Client < ActiveRecord::Base
         end
 
       when "integer"
-        
+
         integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if integer_attribute.nil?
           IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -280,7 +280,7 @@ class Client < ActiveRecord::Base
         end
 
       when "text"
-        
+
         text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if text_attribute.nil?
           TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -290,7 +290,7 @@ class Client < ActiveRecord::Base
         end
 
       when "textarea"
-        
+
         textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if textarea_attribute.nil?
           TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -316,7 +316,7 @@ class Client < ActiveRecord::Base
         end
 
       when "date"
-        
+
         if !param_value.nil?
           param_value = param_value.gsub('/', '-')
         end
@@ -330,7 +330,7 @@ class Client < ActiveRecord::Base
         end
 
       when "datetime"
-        
+
         if !param_value.nil?
           param_value = param_value.gsub('/', '-')
           date_hour = params[attribute.slug + "_attribute_hour"]
@@ -416,7 +416,7 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if float_attribute.nil?
           float_attribute = FloatAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -426,7 +426,7 @@ class Client < ActiveRecord::Base
         end
 
       when "integer"
-        
+
         integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if integer_attribute.nil?
           IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -436,7 +436,7 @@ class Client < ActiveRecord::Base
         end
 
       when "text"
-        
+
         text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if text_attribute.nil?
           TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -446,7 +446,7 @@ class Client < ActiveRecord::Base
         end
 
       when "textarea"
-        
+
         textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if textarea_attribute.nil?
           TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -472,7 +472,7 @@ class Client < ActiveRecord::Base
         end
 
       when "date"
-        
+
         if !param_value.blank?
           param_value = param_value.gsub('/', '-')
         end
@@ -486,11 +486,11 @@ class Client < ActiveRecord::Base
         end
 
       when "datetime"
-        
+
         complete_datetime = nil
 
         if !param_value.blank?
-          param_value = param_value.gsub('/', '-')     
+          param_value = param_value.gsub('/', '-')
           complete_datetime = param_value
         end
 
@@ -610,7 +610,7 @@ class Client < ActiveRecord::Base
 
     # USER
       @user = {}
-      @user[:where] = bookings[0].location.address + ', ' + bookings[0].location.district.name
+      @user[:where] = bookings[0].location.short_address
       @user[:phone] = bookings[0].location.phone
       @user[:name] = bookings[0].client.first_name
       @user[:send_mail] = bookings[bookings.length - 1].send_mail

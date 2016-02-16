@@ -82,7 +82,7 @@
             <h3 class="panel-title">Dirección</h3>
           </div>
           <ul class="list-group" id="district-body">
-            <li class="list-group-item"><%= if !@location.outcall then @location.address+', '+@location.district.name else "A Domicilio" end %></li>
+            <li class="list-group-item"><%= if !@location.outcall then @location.short_address else "A Domicilio" end %></li>
             <% if @location.outcall %>
             <% @location.districts.each do |district| %>
               <li class="list-group-item"><%= district.name %></li>

@@ -32,7 +32,7 @@
 								<% end %>
 							</div>
 							<div class="data-local-search col-md-8">
-								<p><%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.</p>
+								<p><%= if !location.outcall then location.short_address else "A Domicilio" end %>.</p>
 								<p>Tel: <%= location.phone %></p>
 							</div>
 						</div>
@@ -47,7 +47,7 @@
 								<% end %>
 							</div>
 							<div class="data-local-search col-md-8">
-								<p>                                                    
+								<p>
 									<% if location.company.description.blank? %>
 									<p>No hay descripción para esta empresa.</p>
 									<% else %>
