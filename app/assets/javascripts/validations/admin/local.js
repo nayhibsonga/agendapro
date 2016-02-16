@@ -2,7 +2,7 @@ $(function() {
 	$('#new_location, [id^="edit_location_"]').validate({
 		errorPlacement: function(error, element) {
 			var id = element.attr('id');
-			if (id == "location_address") {
+			if (id == "address") {
 				error.appendTo(element.parent().next());
 			} else {
 				error.appendTo(element.next());

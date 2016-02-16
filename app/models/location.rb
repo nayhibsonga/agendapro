@@ -618,18 +618,18 @@ class Location < ActiveRecord::Base
 	end
 
   def short_address
-    address = read_attribute(:address)
-    "#{address[1]["long_name"]} #{address[0]["long_name"]}, #{address[2]["long_name"]}"
+    location_address = LocationAddress.new read_attribute(:address)
+    "#{location_address.route} #{location_address.street_number}, #{location_address.district}"
   end
 
   def long_address
-    address = read_attribute(:address)
-    "#{address[1]["long_name"]} #{address[0]["long_name"]}, #{address[2]["long_name"]}, #{address[4]["long_name"]}, #{address[6]["long_name"]}"
+    location_address = LocationAddress.new read_attribute(:address)
+    "#{location_address.route} #{location_address.street_number}, #{location_address.district}, #{location_address.city}, #{location_address.country}"
   end
 
   def full_address
-    address = read_attribute(:address)
-    "#{address[1]["long_name"]} #{address[0]["long_name"]}, #{address[2]["long_name"]}, #{address[3]["long_name"]}, #{address[4]["long_name"]}, #{address[5]["long_name"]}, #{address[6]["long_name"]}"
+    location_address = LocationAddress.new read_attribute(:address)
+    "#{location_address.route} #{location_address.street_number}, #{location_address.district}, #{location_address.administrative_area}, #{location_address.city}, #{location_address.region}, #{location_address.country}"
   end
 
 end
