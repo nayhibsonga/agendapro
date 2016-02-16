@@ -1,7 +1,10 @@
 class AttributeGroupsController < ApplicationController
   before_action :set_attribute_group, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
+  layout "admin"
+  load_and_authorize_resource
 
-  respond_to :html
+  respond_to :html, :json
 
   def index
     @attribute_groups = AttributeGroup.all
@@ -23,17 +26,24 @@ class AttributeGroupsController < ApplicationController
   def create
     @attribute_group = AttributeGroup.new(attribute_group_params)
     @attribute_group.save
-    respond_with(@attribute_group)
+    flash[:notice] = "Campo creado." if @attribute_group.save
+    respond_with(@attribute_group) do |format|
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+    end
   end
 
   def update
-    @attribute_group.update(attribute_group_params)
-    respond_with(@attribute_group)
+    flash[:notice] = "Campo editado." if @attribute_group.update(attribute_group_params)
+    respond_with(@attribute_group) do |format|
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+    end
   end
 
   def destroy
-    @attribute_group.destroy
-    respond_with(@attribute_group)
+    flash[:notice] = "Campo eliminado." if @attribute_group.destroy
+    respond_with(@attribute_group) do |format|
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+    end
   end
 
   private

@@ -52,6 +52,7 @@ class AttributesController < ApplicationController
   end
 
   def edit_form
+    @attribute_groups = @attribute.company.attribute_groups.order(name: :asc)
     respond_to do |format|
         format.html { render :partial => 'edit_attribute' }
       end
@@ -63,6 +64,6 @@ class AttributesController < ApplicationController
     end
 
     def attribute_params
-      params.require(:attribute).permit(:company_id, :name, :description, :datatype, :mandatory, :show_on_calendar, :mandatory_on_calendar, :show_on_workflow, :mandatory_on_workflow)
+      params.require(:attribute).permit(:company_id, :name, :description, :datatype, :mandatory, :show_on_calendar, :mandatory_on_calendar, :show_on_workflow, :mandatory_on_workflow, :attribute_group_id, :order)
     end
 end

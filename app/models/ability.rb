@@ -397,6 +397,12 @@ class Ability
         can :update, AttributeCategory, :company_id => user.company_id
         can :destroy, AttributeCategory, :company_id => user.company_id
 
+        can :show, AttributeGroup, :company_id => user.company_id
+        can :create, AttributeGroup, :company_id => user.company_id
+        can :update, AttributeGroup, :company_id => user.company_id
+        can :destroy, AttributeGroup, :company_id => user.company_id
+        can :edit_form, AttributeGroup, :company_id => user.company.id
+
         can :show, ClientFile, :client => {:company_id => user.company_id}
         can :create, ClientFile, :client => {:company_id => user.company_id}
         can :update, ClientFile, :client => {:company_id => user.company_id}

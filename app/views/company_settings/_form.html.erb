@@ -1397,6 +1397,49 @@
         <% if current_user.company.is_plan_capable("Premium") %>
           <div class="tab-pane" id="clients">
 
+            <!-- Attributes Groups -->
+
+            <div class="row" style="margin-top: 40px;">
+              <div class="col-md-12">
+                <div class="background-grey">
+                  <h3 class="text-green">
+                    Listado de categorías de campos
+                    <button class="btn btn-green pull-right" id="new_attribute_group_button"><i class="fa fa-plus"></i> Agregar categoría</button>
+                  </h3>
+                </div>
+                <table class="table table-hover table-green">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Orden</th>
+                      <th>Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @attribute_groups.each do |attribute_group| %>
+                      <tr>
+                        <td>
+                          <%= attribute_group.name %>
+                        </td>
+                        <td>
+                          <%= attribute_group.order.to_s %>
+                        </td>
+                        <td>
+                          <button class="btn btn-orange edit_attribute_group_btn" data-attributegroupid="<%= attribute_group.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
+                          <% if attribute_group.name != "Otros" %>
+                            <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, attribute_group, method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo seleccionado?' }, class: 'btn btn-red' %>
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- End Attributes Groups -->
+
+            <!-- Attributes -->
             <div class="row" style="margin-top: 40px;">
               <div class="col-md-12">
                 <div class="background-grey">
@@ -1408,16 +1451,21 @@
                 <table class="table table-hover table-green">
                   <thead>
                     <tr>
+                      <th>Categoría</th>
                       <th>Nombre</th>
                       <th>Descripción</th>
                       <th>Tipo</th>
                       <th>Obligatorio</th>
+                      <th>Orden</th>
                       <th>Opciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     <% @attributes.each do |attribute| %>
                       <tr>
+                        <td>
+                          <%= attribute.attribute_group.name %>
+                        </td>
                         <td>
                           <%= attribute.name %>
                         </td>
@@ -1429,6 +1477,9 @@
                         </td>
                         <td>
                           <%= attribute.mandatory_to_text %>
+                        </td>
+                        <td>
+                          <%= attribute.order.to_s %>
                         </td>
                         <td>
                           <!--<button class="btn btn-orange edit_attribute_button" data-name="<%= attribute.name %>" data-mandatory="<%= attribute.mandatory %>" data-name="<%= attribute.name %>" data-datatype="<%= attribute.datatype %>" data-description="<%= attribute.description %>" data-id="<%= attribute.id %>"><i class="fa fa-pencil"></i> Editar</button>-->
@@ -1444,6 +1495,8 @@
                 </table>
               </div>
             </div>
+            <!-- End Attributes -->
+
           </div>
         <% end %>
         <!-- End Clients -->
@@ -1669,6 +1722,14 @@
             <div class="modal-body">
               <%= f.hidden_field :company_id, :value => current_user.company.id %>
               <div class="form-group has-feedback">
+                <%= f.label :attribute_group_id, 'Categoría', :class => 'control-label col-xs-4' %>
+                <div class="col-xs-8">
+                  <%= f.select :attribute_group_id, options_for_select(@attribute_groups.map{ |c| ["#{c.name}", c.id] }), {}, { class: 'form-control', required: true } %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
                 <%= f.label :name, 'Nombre', :class => 'control-label col-xs-4' %>
                 <div class="col-xs-8">
                   <%= f.text_field :name, { class: 'form-control', required: true }%>
@@ -1688,6 +1749,14 @@
                 <%= f.label :datatype, 'Tipo', :class => 'control-label col-xs-4' %>
                 <div class="col-xs-8">
                   <%= f.select :datatype, CompanySetting::DATATYPES, {}, { class: 'form-control' } %>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :order, 'Orden', :class => 'control-label col-xs-4' %>
+                <div class="col-xs-8">
+                  <%= f.number_field :order, value: 0, class: 'form-control', required: true  %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
                 </div>
               </div>
               <div class="form-group">
@@ -1748,7 +1817,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title" id="attributeCategoryModalLabel">Cajero</h4>
+            <h4 class="modal-title" id="attributeCategoryModalLabel">Categoría</h4>
           </div>
 
             <div class="modal-body">
@@ -1786,6 +1855,47 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="attributeGroupModal" tabindex="-1" role="dialog" aria-labelledby="attributeGroupModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <%= form_for @attribute_group, :html => {:class => 'form-horizontal attribute_group_form', :id => 'attribute_group_form'} do |f| %>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              <h4 class="modal-title" id="attributeGroupModalLabel">Categoría</h4>
+            </div>
+
+            <div class="modal-body">
+
+              <%= f.hidden_field :company_id, :value => current_user.company.id %>
+              <div class="form-group has-feedback">
+                <%= f.label :name, 'Categoría', :class => 'control-label col-xs-4' %>
+                <div class="col-xs-8">
+                  <%= f.text_field :name, { class: 'form-control', required: true } %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <%= f.label :order, 'Orden', :class => 'control-label col-xs-4' %>
+                <div class="col-xs-8">
+                  <%= f.number_field :order, value: @attribute_group_otros.get_greatest_order + 1, class: 'form-control', required: true  %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              <%= f.submit 'Guardar', :class => 'btn btn-green submit-block' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
   <% end %>
 
 <% end %>
