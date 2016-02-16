@@ -140,6 +140,7 @@ function initialize() {
     setCenter(new google.maps.LatLng(latitude, longitude), 17);
   }
   else {
+    $('#saveLocation').attr('disabled', true);
     for (var i = 0; i < 6; i++) {
       changeDayStatus(i);
       $('#dayStatusId' + i).prop('checked', true).val(1);
@@ -330,19 +331,17 @@ function places() {
     });
   });
   $("#address").focusout(function () {
-    if(!$(".pac-container").is(":focus") && !$(".pac-container").is(":visible")) {
-      selectFirstResult();
-    }
+    selectFirstResult();
     $(document).unbind("keypress.key1");
   });
 
   function selectFirstResult() {
+    $('#saveLocation').attr('disabled', true);
     infowindow.close();
     $(".pac-container").hide();
     var firstResult = $(".pac-container .pac-item:first").text();
     geocoder.geocode({"address":firstResult }, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-
         setLatLng(results[0].geometry.location);
         setAddress(results[0]);
         setCenter(results[0].geometry.location);
@@ -354,6 +353,7 @@ function places() {
     });
   }
   function geolocate() {
+    $('#saveLocation').attr('disabled', true);
     if (navigator.geolocation) {
       $('#geolocate').html('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>');
       var positioned = false;
@@ -366,15 +366,10 @@ function places() {
           var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
           geocoder.geocode({'latLng': latlng}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-              if (results[0]) {
-                setAddress(results[0]);
-              } else {
-                $('#location_address').val(position.coords.latitude + ', ' + position.coords.longitude);
-                $('#address').val(position.coords.latitude + ', ' + position.coords.longitude);
-              }
+              setAddress(results[0]);
             } else {
-              $('#location_address').val(position.coords.latitude+', '+position.coords.longitude);
-              $('#address').val(position.coords.latitude+', '+position.coords.longitude);
+              $('#location_address').val('');
+              $('#address').val('');
             }
             setCenter(latlng);
             $('#geolocate').html('<i class="fa fa-crosshairs"></i>');
@@ -426,6 +421,7 @@ function places() {
   function setAddress(geobject) {
     $("#address").val(geobject.formatted_address);
     $("#location_address").val(JSON.stringify(geobject.address_components));
+    $('#saveLocation').attr('disabled', false);
   }
 
   $('#geolocate').click(function() {

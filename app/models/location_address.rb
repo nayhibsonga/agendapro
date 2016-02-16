@@ -2,7 +2,7 @@ class LocationAddress
   attr_reader :street_number, :route, :district, :administrative_area, :city, :region, :country
 
   def initialize(args)
-    @address = args
+    @address = args || []
     @street_number = get_street_number
     @route = get_route
     @district = get_locality
