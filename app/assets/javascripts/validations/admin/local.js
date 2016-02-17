@@ -16,16 +16,7 @@ $(function() {
 				required: true,
 				minlength: 3
 			},
-			'country': {
-				required: true
-			},
-			'region': {
-				required: true
-			},
-			'city': {
-				required: true
-			},
-			'location[district_id]': {
+			'location[outcall_places]': {
 				required: true
 			},
 			'address': {

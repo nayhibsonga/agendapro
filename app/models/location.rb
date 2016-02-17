@@ -12,8 +12,11 @@ class Location < ActiveRecord::Base
 
   has_many :bookings, dependent: :destroy
 
+  #############################
+  # Remover despues de generar la migracion
   has_many :location_outcall_districts, dependent: :destroy
   has_many :districts, :through => :location_outcall_districts
+  #############################
 
   has_many :resource_locations, dependent: :destroy
   has_many :resources, :through => :resource_locations
@@ -612,7 +615,7 @@ class Location < ActiveRecord::Base
   def full_address
     location_address = LocationAddress.new read_attribute(:address)
     address = "#{location_address.route} #{location_address.street_number}, #{location_address.district}, #{location_address.administrative_area}, #{location_address.city}, #{location_address.region}, #{location_address.country}"
-    address.length <= 5 ? "" : address
+    address.length <= 11 ? "" : address
   end
 
   def short_address_with_second_address

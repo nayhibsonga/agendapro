@@ -1,6 +1,5 @@
 var days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 var hoursChanged = false;
-var address = $('#address');
 
 function buildDay (value) {
   $('#localTable').append(
@@ -127,13 +126,7 @@ function initialize() {
       $('#closeMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
     });
     if ($('#location_outcall').prop('checked')) {
-      $('#location_address').attr('disabled', true);
-      $('#location_second_address').attr('disabled', true);
-      $('#districtsCheckboxes').removeClass('hidden');
-      var locationDistrictsData = $('#location_districts_data').data('location-districts');
-      $.each(locationDistrictsData, function(index,locationDistrict) {
-        $('.districtActive[value="'+locationDistrict.id+'"]').prop('checked',true);
-      });
+      $('#location_outcall_places').closest(".form-group").toggle();
     }
     var latitude = parseFloat($('#location_latitude').val());
     var longitude = parseFloat($('#location_longitude').val());
@@ -181,22 +174,13 @@ function locJSON() {
     var location_time = {"open":"2000-01-01T"+ $('#openHourId'+enabledDays[i]).val() +":"+ $('#openMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#closeHourId'+enabledDays[i]).val() +":"+ $('#closeMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
     location_times.push(location_time);
   }
-  var districtIds = [];
-  if ($('#location_outcall').prop('checked')) {
-    $(".districtActive:checked").each(
-        function() {
-          districtIds.push($(this).val());
-        }
-    );
-  }
   var locationJSON  = {
     "name": $('#location_name').val(),
     "address": $('#location_address').val(),
     "second_address": $('#location_second_address').val(),
     "phone": $('#location_phone').val(),
-    "district_id": $('#location_district_id').val(),
     "outcall": $('#location_outcall').prop('checked'),
-    "district_ids": districtIds,
+    "outcall_places": $('#location_outcall_places').val(),
     "latitude": parseFloat($('#location_latitude').val()),
     "longitude": parseFloat($('#location_longitude').val()),
     "location_times_attributes": location_times,
@@ -439,21 +423,6 @@ $(function() {
   });
 
   $('#location_outcall').change(function() {
-    $('#location_outcall').parents('.form-group').removeClass('has-error has-success');
-    $('#location_outcall').parents('.form-group').find('.help-block').empty();
-    $('#location_outcall').parents('.form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check')
-    if (!$('#location_outcall').prop('checked')) {
-      $('#location_address').attr('disabled', false);
-      $('#location_second_address').attr('disabled', false);
-      $('#location_district_ids').val('');
-      $('#districtsCheckboxes').addClass('hidden');
-    }
-    else {
-      $('#location_address').attr('disabled', true);
-      $('#location_address').val('');
-      $('#location_second_address').attr('disabled', true);
-      $('#location_second_address').val('');
-      $('#districtsCheckboxes').removeClass('hidden');
-    }
+    $('#location_outcall_places').closest(".form-group").toggle();
   });
 });
