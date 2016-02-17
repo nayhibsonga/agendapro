@@ -368,6 +368,10 @@ $(function () {
     $('#attributeModal').modal('show');
   });
 
+  $('#new_attribute_group_button').on('click', function(){
+    $('#attributeGroupModal').modal('show');
+  });
+
   $('#attribute_datatype').on('change', function(){
     if($(this).val() == "file")
     {
@@ -480,6 +484,7 @@ $(function () {
       type: "error"
     });
   });
+
 
   $('#blocked_clients_link').on('click', function(e){
     e.preventDefault();

@@ -1,6 +1,7 @@
 class Attribute < ActiveRecord::Base
 
 	belongs_to :company
+	belongs_to :attribute_group
 
 	has_many :attribute_categories, dependent: :destroy
 	has_many :float_attributes, dependent: :destroy
@@ -14,8 +15,35 @@ class Attribute < ActiveRecord::Base
 	has_many :textarea_attributes, dependent: :destroy
 
 	after_create :create_clients_attributes
-	after_save :check_file
-	after_save :generate_slug
+	after_save :check_file, :generate_slug, :rearrange
+
+	def rearrange
+
+		#Check order isn't past current gratest order
+		greatest_order = ::Attribute.where(company_id: self.company_id, attribute_group_id: self.attribute_group_id).maximum(:order)
+		if greatest_order.nil?
+			greatest_order = 0
+		end
+		if self.order.nil? || self.order > greatest_order + 1
+			self.update_column(:order, greatest_order + 1)
+		end
+
+		#Check if order exists and rearrange
+		if ::Attribute.where(company_id: self.company_id, attribute_group_id: self.attribute_group_id, order: self.order).where.not(id: self.id).count > 0
+			later_attributes = ::Attribute.where(company_id: self.company_id, attribute_group_id: self.attribute_group_id).where('attributes.order >= ?', self.order).where.not(id: self.id)
+			later_attributes.each do |att|
+				att.update_column(:order, att.order + 1)
+			end
+		end
+	end
+
+	def get_greatest_order
+		greatest_order = ::Attribute.where(company_id: self.company_id, attribute_group_id: self.attribute_group_id).maximum(:order)
+		if greatest_order.nil?
+			greatest_order = 0
+		end
+		return greatest_order
+	end
 
 	def generate_slug
 		new_slug = self.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').squish.downcase.tr(" ","_").to_s

@@ -256,6 +256,11 @@ class Client < ActiveRecord::Base
     self.company.custom_attributes.each do |attribute|
 
       str_sm = attribute.slug + "_attribute"
+
+      if !params.keys.include?(str_sm)
+        next
+      end
+
       param_value = params[str_sm]
 
       case attribute.datatype
