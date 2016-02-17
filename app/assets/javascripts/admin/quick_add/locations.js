@@ -428,7 +428,7 @@ function load_location(id) {
     $('#new_location .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
 	$.getJSON('/quick_add/load_location/'+id, {}, function (location) {
 		$('#location_name').val(location.location.name);
-		$('#location_address').val(location.location.address);
+		$('#location_address').val(location.location.full_address);
 		$('#location_second_address').val(location.location.second_address);
 		$('#location_phone').val(location.location.phone);
 		$('#location_outcall').prop('checked', location.location.outcall);

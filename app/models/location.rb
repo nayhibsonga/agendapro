@@ -612,9 +612,7 @@ class Location < ActiveRecord::Base
   def full_address
     location_address = LocationAddress.new read_attribute(:address)
     address = "#{location_address.route} #{location_address.street_number}, #{location_address.district}, #{location_address.administrative_area}, #{location_address.city}, #{location_address.region}, #{location_address.country}"
-    if address.length <= 5
-      ""
-    end
+    address.length <= 5 ? "" : address
   end
 
   def short_address_with_second_address

@@ -7,7 +7,6 @@
 <input type="hidden" id="currentDate" value="<%= DateTime.now.strftime('%d/%m/%Y') %>" />
 <input type="hidden" id="last_minute_discount" value="<%= @last_minute_promo.discount %>" />
 <input type="hidden" id="locationAddress" value="<%= @location.short_address %>" />
-<input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
 <input type="hidden" id="companyId" value="<%= @location.company.id %>" />
 
 <% if @service.has_sessions %>

@@ -66,7 +66,7 @@ class QuickAddController < ApplicationController
 
 	def load_location
 		@location = Location.find(params[:id])
-		render json: {location: @location, location_times: @location.location_times, location_districts: @location.location_outcall_districts, country_id: @location.district.city.region.country.id, region_id: @location.district.city.region.id, city_id: @location.district.city.id}
+		render json: {location: @location.as_json(methods: :full_address), location_times: @location.location_times, location_districts: @location.location_outcall_districts, country_id: @location.district.city.region.country.id, region_id: @location.district.city.region.id, city_id: @location.district.city.id}
 	end
 
 	# def location_valid

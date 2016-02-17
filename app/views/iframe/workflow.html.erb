@@ -247,7 +247,7 @@
                   <div class="collapse" id="staffCollapse">
                     <div class="changeStaff" style="margin-top: 5px;">
 
-                      
+
                     </div>
                   </div>
                 </div>
@@ -373,10 +373,10 @@
                       </div>
                       <div class="row">
                         <div class="col-sm-6">
-                          
+
                         </div>
                         <div class="col-sm-6">
-                          
+
                         </div>
                       </div>
                     </div>
@@ -737,7 +737,7 @@
 
 </div>
 
-<%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
+<%= content_tag "div", id: "selectedLocal", data: {local: @location.as_json(methods: :short_address, except: [:address])} do %>
 <% end %>
 <%= content_tag "div", id: "clientExclusive", data: {client_exclusive: @location.company.company_setting.client_exclusive} do %>
 <% end %>
@@ -914,7 +914,7 @@
 
             /*$(document).on('hourClick', function (e) {
               selected = true;
-    
+
               bookSummary = bookSummaries[e.index];
 
               $("#selected-hour-body").empty();
@@ -928,7 +928,7 @@
 
                 bookDetailsDiscountPrice = bookDetails.price;
 
-                
+
                 if(bookDetails.has_discount && bookDetails.has_time_discount)
                 {
                   if(bookDetails.discount > bookDetails.time_discount)
@@ -976,7 +976,7 @@
                     '<%= image_tag("promociones/etiqueta.png", class:"promotion-hour-icon", size: "18x18") %> ' + simple_currency(bookDetails.price) + '<br /></div>'
                   );
                 }
-                
+
 
               }
               console.log(e);
