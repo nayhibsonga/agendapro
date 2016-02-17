@@ -21,7 +21,10 @@ class Attribute < ActiveRecord::Base
 
 		#Check order isn't past current gratest order
 		greatest_order = ::Attribute.where(company_id: self.company_id, attribute_group_id: self.attribute_group_id).maximum(:order)
-		if self.order > greatest_order + 1
+		if greatest_order.nil?
+			greatest_order = 0
+		end
+		if self.order.nil? || self.order > greatest_order + 1
 			self.update_column(:order, greatest_order + 1)
 		end
 

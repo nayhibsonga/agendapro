@@ -1448,51 +1448,68 @@
                     <button class="btn btn-green pull-right" id="new_attribute_button"><i class="fa fa-plus"></i> Agregar campo</button>
                   </h3>
                 </div>
-                <table class="table table-hover table-green">
-                  <thead>
-                    <tr>
-                      <th>Categoría</th>
-                      <th>Nombre</th>
-                      <th>Descripción</th>
-                      <th>Tipo</th>
-                      <th>Obligatorio</th>
-                      <th>Orden</th>
-                      <th>Opciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% @attributes.each do |attribute| %>
-                      <tr>
-                        <td>
-                          <%= attribute.attribute_group.name %>
-                        </td>
-                        <td>
-                          <%= attribute.name %>
-                        </td>
-                        <td>
-                          <%= attribute.description %>
-                        </td>
-                        <td>
-                          <%= attribute.datatype_to_text %>
-                        </td>
-                        <td>
-                          <%= attribute.mandatory_to_text %>
-                        </td>
-                        <td>
-                          <%= attribute.order.to_s %>
-                        </td>
-                        <td>
-                          <!--<button class="btn btn-orange edit_attribute_button" data-name="<%= attribute.name %>" data-mandatory="<%= attribute.mandatory %>" data-name="<%= attribute.name %>" data-datatype="<%= attribute.datatype %>" data-description="<%= attribute.description %>" data-id="<%= attribute.id %>"><i class="fa fa-pencil"></i> Editar</button>-->
-                          <button class="btn btn-orange edit_attribute_btn" data-attributeid="<%= attribute.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
-                          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, attribute, method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo seleccionado?' }, class: 'btn btn-red' %>
-                          <% if attribute.datatype == "categoric" %>
-                            <button class="btn btn-green add_attribute_category_button" data-attributeid="<%= attribute.id %>"><i class="fa fa-bars"></i>&nbsp;Categorías</button>
-                          <% end %>
-                        </td>
-                      </tr>
-                    <% end %>
-                  </tbody>
-                </table>
+
+                <div class="panel-group" id="groupsAccordion" style="margin-top: 5px;">
+
+                  <% @attribute_groups.each do |attribute_group| %>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title" data-toggle="collapse" data-parent="#groupsAccordion" href="#collapse-group-<%= attribute_group.id %>">
+                          <a><%= attribute_group.name %></a>
+                        </h4>
+                      </div>
+                      <div id="collapse-group-<%= attribute_group.id %>" class="panel-collapse collapse<% if @attribute_groups.count == 1%> in<% end %>">
+
+
+                        <table class="table table-hover table-green">
+                          <thead>
+                            <tr>
+                              <th>Categoría</th>
+                              <th>Nombre</th>
+                              <th>Descripción</th>
+                              <th>Tipo</th>
+                              <th>Obligatorio</th>
+                              <th>Orden</th>
+                              <th>Opciones</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% attribute_group.custom_attributes.order(:order).order(:name).each do |attribute| %>
+                              <tr>
+                                <td>
+                                  <%= attribute.attribute_group.name %>
+                                </td>
+                                <td>
+                                  <%= attribute.name %>
+                                </td>
+                                <td>
+                                  <%= attribute.description %>
+                                </td>
+                                <td>
+                                  <%= attribute.datatype_to_text %>
+                                </td>
+                                <td>
+                                  <%= attribute.mandatory_to_text %>
+                                </td>
+                                <td>
+                                  <%= attribute.order.to_s %>
+                                </td>
+                                <td>
+                                  <!--<button class="btn btn-orange edit_attribute_button" data-name="<%= attribute.name %>" data-mandatory="<%= attribute.mandatory %>" data-name="<%= attribute.name %>" data-datatype="<%= attribute.datatype %>" data-description="<%= attribute.description %>" data-id="<%= attribute.id %>"><i class="fa fa-pencil"></i> Editar</button>-->
+                                  <button class="btn btn-orange edit_attribute_btn" data-attributeid="<%= attribute.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
+                                  <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, attribute, method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo seleccionado?' }, class: 'btn btn-red' %>
+                                  <% if attribute.datatype == "categoric" %>
+                                    <button class="btn btn-green add_attribute_category_button" data-attributeid="<%= attribute.id %>"><i class="fa fa-bars"></i>&nbsp;Categorías</button>
+                                  <% end %>
+                                </td>
+                              </tr>
+                            <% end %>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
               </div>
             </div>
             <!-- End Attributes -->

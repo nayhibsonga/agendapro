@@ -1,6 +1,6 @@
 class AttributeGroup < ActiveRecord::Base
 	belongs_to :company
-	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
+	has_many :custom_attributes, foreign_key: 'attribute_group_id', class_name: 'Attribute'
 
 	after_save :rearrange
 
@@ -8,7 +8,12 @@ class AttributeGroup < ActiveRecord::Base
 
 		#Check order isn't past current gratest order
 		greatest_order = AttributeGroup.where(company_id: self.company_id).maximum(:order)
-		if self.order > greatest_order + 1
+		
+		if greatest_order.nil?
+			greatest_order = 0
+		end
+
+		if self.order.nil? || self.order > greatest_order + 1
 			self.update_column(:order, greatest_order + 1)
 		end
 
@@ -26,7 +31,10 @@ class AttributeGroup < ActiveRecord::Base
 	end
 
 	def get_attributes_greatest_order
-		greatest_order = self.custom_attributes.maximun(:order)
+		if self.custom_attributes.count < 1
+			return 0
+		end
+		greatest_order = self.custom_attributes.maximum(:order)
 		if greatest_order.nil?
 			greatest_order = 0
 		end

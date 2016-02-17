@@ -1,7 +1,5 @@
 Agendapro::Application.routes.draw do
 
-  resources :attribute_groups
-
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -21,6 +19,7 @@ Agendapro::Application.routes.draw do
     resources :company_plan_settings
     resources :attribute_categories
     resources :attributes
+    resources :attribute_groups
 
     resources :countries
     resources :regions
@@ -551,6 +550,7 @@ Agendapro::Application.routes.draw do
     post '/delete_company_folder', :to => 'companies#delete_folder'
     post '/move_company_file', :to => 'companies#move_file'
     post '/change_company_file', :to => 'companies#edit_file'
+    post '/client_update_attributes', :to => 'clients#update_custom_attributes'
 
     post '/upload_client_file', :to => 'clients#upload_file'
     post '/create_client_folder', :to => 'clients#create_folder'
