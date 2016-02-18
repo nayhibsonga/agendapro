@@ -9,34 +9,33 @@ $(function() {
 		window.console.log('prevented');
 	}).validate({
 		errorPlacement: function(error, element) {
-			error.appendTo(element.next());
+			var id = element.attr('id');
+      if (id == "address") {
+        error.appendTo(element.parent().next());
+      } else {
+        error.appendTo(element.next());
+      }
 		},
 		rules: {
 			'location[name]': {
-				required: true,
-				minlength: 3
-			},
-			'country': {
-				required: true
-			},
-			'region': {
-				required: true
-			},
-			'city': {
-				required: true
-			},
-			'location[district_id]': {
-				required: true
-			},
-			'location[address]': {
-				required: true,
-				minlength: 3
-			},
-			'location[phone]': {
-				required: true,
-				minlength: 8,
-				maxlength: 12
-			}
+        required: true,
+        minlength: 3
+      },
+      'address': {
+        required: true,
+        minlength: 3
+      },
+      'location[outcall_places]': {
+        required: true
+      },
+      'location[phone]': {
+        required: true,
+        minlength: 8,
+        maxlength: 12
+      },
+      'location[email]': {
+        email: true
+      }
 		},
 		highlight: function(element) {
 			$(element).closest('.form-group').removeClass('has-success has-feedback').addClass('has-error has-feedback');

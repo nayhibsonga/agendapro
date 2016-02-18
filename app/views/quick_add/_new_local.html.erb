@@ -37,43 +37,15 @@
               </div>
             </div>
             <div class="form-group has-feedback">
-              <%= label_tag :country, "País: ", class: "col-sm-3 control-label" %>
-              <div class="col-sm-9">
-                <%= select_tag :country, options_from_collection_for_select(Country.where(id: current_user.company.country).order(:name), :id, :name), class: "form-control", include_blank: true %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= label_tag :region, "Región: ", class: "col-sm-3 control-label" %>
-              <div class="col-sm-9">
-                <%= select_tag :region, options_from_collection_for_select(Region.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= label_tag :city, "Ciudad: ", class: "col-sm-3 control-label" %>
-              <div class="col-sm-9">
-                <%= select_tag :city, options_from_collection_for_select(City.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= f.label :district, (I18n.t('district')).capitalize + ": ", class: "col-sm-3 control-label" %>
-              <div class="col-sm-9">
-                <%= f.collection_select :district_id, District.all, :id, :name, {}, { class: "form-control", :disabled => true }%>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
               <%= f.label :address, "Dirección: ", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
-                <%= f.text_field :address, class: "form-control" %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
+                <div class="input-group">
+                  <%= text_field_tag :address, @location.try(:full_address), class: "form-control", placeholder: 'Dirección (requerido)' %>
+                  <%= f.hidden_field :address %>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" id="geolocate" type="button"><i class="fa fa-crosshairs"></i></button>
+                  </span>
+                </div>
               </div>
             </div>
             <div class="form-group has-feedback">
@@ -82,12 +54,23 @@
                 <%= f.text_field :second_address, class: "form-control", placeholder: 'Oficina D, Local 22' %>
                 <span class="help-block"></span>
                 <span class="form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-9 col-sm-offset-3">
                 <div class="checkbox">
                   <label>
-                    <%= f.check_box :outcall %> Sin Dirección (sólo servicios a domicilio).
+                    <%= f.check_box :outcall %> Sólo servicios a domicilio.
                   </label>
                 </div>
-                <div id="districtsCheckboxes" class='hidden'></div>
+              </div>
+            </div>
+            <div class="form-group has-feedback" hidden="true">
+              <%= f.label :outcall_places, "Lugares que atienden", class: "col-sm-3 control-label" %>
+              <div class="col-sm-9">
+                <%= f.text_area :outcall_places, class: "form-control", placeholder: "Sector San Carlos\r\nBario Lastareas" %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
               </div>
             </div>
             <div class="form-group has-feedback">
@@ -118,7 +101,6 @@
         <div class="col-md-6">
           <div style="margin-bottom:10px;">
             <h4 style="margin-bottom: 0; margin-top: 0;">¿Aquí se ubica tu local? <small class="hide"><i class="fa fa-spinner fa-spin"></i></small></h4>
-            <span class="hide" id="error">Hubo un error ubicando tu local</span>
             <span>Puedes dar click en el mapa para cambiar la ubicación</span>
             <div id="map" style="height:100px;"></div>
           </div>
@@ -140,9 +122,16 @@
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "admin/quick_add/locations" %>
-  <script type="text/javascript">
   <% if @company.economic_sectors.count > 0 %>
-    initializeStep2();
-  <% end %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $(window).load(function() {
+        initializeStep2();
+        $('#fieldset_step2').show();
+        $('#fieldset_step2').attr('disabled', false);
+        scrollToAnchor("fieldset_step2");
+      });
+    });
   </script>
+  <% end %>
 <% end %>

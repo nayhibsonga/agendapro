@@ -1,6 +1,7 @@
 function initializeStep2 () {
 	$('#fieldset_step2').removeAttr('disabled');
 	createMap();
+	places();
 	initialize('local');
 }
 
@@ -128,113 +129,15 @@ function changeDayStatus (value, ctrl) {
 	}
 }
 
-function startLocation () {
-	if (!$('#new_location').valid()) {
-		return false;
-	};
-	if ((!$('#location_outcall').prop('checked')) && ($('#location_address').val() != '') && ($('#location_district_id').val() != '')) {
-		$.getJSON('/get_direction', {id: $('#location_district_id').val()}, function (direction) {
-			var geolocation = $('#location_address').val() + ', ' + direction;
-			var geoString = JSON.stringify(geolocation);
-			var geocoder = new google.maps.Geocoder();
-			geocoder.geocode( { "address" : geoString }, function (results, status) {
-				if (status == google.maps.GeocoderStatus.OK) {
-					$('#location_latitude').val(results[0].geometry.location.lat());
-					$('#location_longitude').val(results[0].geometry.location.lng());
-				}
-				// Al menos un dia seleccionado
-				var bool = false;
-				for(var i = 1; i < 8; ++i) {
-					bool = bool || $('#localdayStatusId'+ i).is(':checked');
-				}
-				if (bool) {
-					locationValid(local);
-				}
-				else {
-					swal('Tienes que seleccionar al menos un día.');
-					hideLoad();
-				}
-			});
-		});
-	}
-	else if ($('#location_outcall').prop('checked') && $('#location_district_id').val() != '') {
-		$.getJSON('/get_direction', {id: $('#location_district_id').val()}, function (direction) {
-			var geolocation = direction;
-			var geoString = JSON.stringify(geolocation);
-			var geocoder = new google.maps.Geocoder();
-			geocoder.geocode( { "address" : geoString }, function (results, status) {
-				if (status == google.maps.GeocoderStatus.OK) {
-					$('#location_latitude').val(results[0].geometry.location.lat());
-					$('#location_longitude').val(results[0].geometry.location.lng());
-				}
-				// Al menos un dia seleccionado
-				var bool = false;
-				for(var i = 1; i < 8; ++i) {
-					bool = bool || $('#localdayStatusId'+ i).is(':checked');
-				}
-				if (bool) {
-					locationValid(local);
-				}
-				else {
-					swal('Tienes que seleccionar al menos un día.');
-					hideLoad();
-				}
-			});
-		});
-	}
-}
-
-// // Validations
-// function locationValid (ctrl) {
-// 	var locationJSON = locJSON(ctrl);
-// 	$.ajax({
-// 	    type: "POST",
-// 	    url: '/quick_add/location_valid.json',
-// 	    data: { "location": locationJSON },
-// 	    dataType: 'json',
-// 	    success: function (result){
-// 	    	if ($.parseJSON(result.valid)) {
-// 	    		saveLocation(ctrl);
-// 	    	}
-// 	    	else {
-// 	    		var errors = result.errors;
-// 	    		var errorList = '';
-// 				for (i in errors) {
-// 					errorList += '<li>' + errors[i] + '</li>'
-// 				}
-// 				my_alert.showAlert(
-// 					'<h3>Error</h3>' +
-// 					'<ul>' +
-// 						errorList +
-// 					'</ul>'
-// 				);
-// 	    	}
-// 		},
-// 		error: function (xhr){
-// 		    var errors = $.parseJSON(xhr.responseText).errors;
-// 		    var errorList = '';
-// 			for (i in errors) {
-// 				errorList += '<li>' + errors[i] + '</li>'
-// 			}
-// 			my_alert.showAlert(
-// 				'<h3>Error</h3>' +
-// 				'<ul>' +
-// 					errorList +
-// 				'</ul>'
-// 			);
-// 			hideLoad();
-// 		}
-// 	});
-// }
-
 function saveLocation (typeURL, extraURL) {
+  console.log("saveLocation")
 	var locationJSON = locJSON('local');
 	$.ajax({
-	    type: typeURL,
-	    url: '/quick_add/location'+extraURL+'.json',
-	    data: { "location": locationJSON },
-	    dataType: 'json',
-	    success: function (result){
+		type: typeURL,
+		url: '/quick_add/location'+extraURL+'.json',
+		data: { "location": locationJSON },
+		dataType: 'json',
+		success: function (result){
 			$('#load_location_spinner').show();
 			$('#location_pills.nav-pills li').removeClass('active');
 			if (typeURL == 'POST') {
@@ -262,21 +165,21 @@ function saveLocation (typeURL, extraURL) {
 			$('#update_location_spinner').hide();
 			$('#update_location_button').attr('disabled', false);
 			$('#next_location_button').attr('disabled', false);
-	    	new_location();
+			new_location();
 		},
 		error: function (xhr){
-		    var errors = $.parseJSON(xhr.responseText).errors;
-		    var location_count = $.parseJSON(xhr.responseText).location_count
-		    var errorList = '';
+			var errors = $.parseJSON(xhr.responseText).errors;
+			var location_count = $.parseJSON(xhr.responseText).location_count
+			var errorList = '';
 			for (i in errors) {
 				errorList += '- ' + errors[i] + '\n\n'
 			}
 			swal({
-        title: "Error",
-        text: "Se produjeron los siguientes problemas:\n\n" + errorList,
-        type: "error",
-        html: true
-      });
+				title: "Error",
+				text: "Se produjeron los siguientes problemas:\n\n" + errorList,
+				type: "error",
+				html: true
+			});
 			if (location_count > 0) {
 				$('#next_location_button').attr('disabled', false);
 			}
@@ -298,22 +201,13 @@ function locJSON (ctrl) {
 		var location_time = {"open":"2000-01-01T"+ $('#' + ctrl + 'openHourId'+enabledDays[i]).val() +":"+ $('#' + ctrl + 'openMinuteId'+enabledDays[i]).val() +":00Z","close":"2000-01-01T"+ $('#' + ctrl + 'closeHourId'+enabledDays[i]).val() +":"+ $('#' + ctrl + 'closeMinuteId'+enabledDays[i]).val() +":00Z","day_id":parseInt(enabledDays[i])};
 		location_times.push(location_time);
 	}
-	var districtIds = [];
-	if ($('#location_outcall').prop('checked')) {
-		$(".districtActive:checked").each(
-		    function() {
-		    	districtIds.push($(this).val());
-		    }
-		);
-	}
 	var locationJSON  = {
 		"name": $('#location_name').val(),
 		"address": $('#location_address').val(),
 		"second_address": $('#location_second_address').val(),
 		"phone": $('#location_phone').val(),
-		"district_id": $('#location_district_id').val(),
 		"outcall": $('#location_outcall').prop('checked'),
-		"district_ids": districtIds,
+		"outcall_places": $('#location_outcall_places'),
 		"latitude": parseFloat($('#location_latitude').val()),
 		"longitude": parseFloat($('#location_longitude').val()),
 		"location_times_attributes": location_times,
@@ -322,128 +216,48 @@ function locJSON (ctrl) {
 	return locationJSON;
 }
 
-function changeCountry (country_id) {
-	$.getJSON('/country_regions', {country_id: country_id}, function (regions) {
-		if (regions.length) {
-			$('#region').empty();
-			$.each(regions, function (key, region) {
-				$('#region').append(
-					'<option value="' + region.id + '">' + region.name + '</option>'
-				);
-			});
-			$('#region').prepend(
-				'<option></option>'
-			);
-
-			$('#region').change(function (event) {
-				$('#city').attr('disabled', true);
-				$('#location_district_id').attr('disabled', true);
-				var region_id = $(event.target).val();
-				changeRegion(region_id);
-			});
-			$('#region').attr('disabled', false);
-		};
-	});
-}
-
-function changeRegion (region_id) {
-	$.getJSON('/region_cities', {region_id: region_id}, function (cities) {
-		if (cities.length) {
-			$('#city').empty();
-			$.each(cities, function (key, city) {
-				$('#city').append(
-					'<option value="' + city.id + '">' + city.name + '</option>'
-				);
-			});
-			$('#city').prepend(
-				'<option></option>'
-			);
-
-			$('#city').change(function (event) {
-				$('#location_district_id').attr('disabled', true);
-				var city_id = $(event.target).val();
-				changeCity(city_id);
-			});
-			$('#city').attr('disabled', false);
-		};
-	});
-}
-
-function changeCity (city_id) {
-	$.getJSON('/city_districs', {city_id: city_id}, function (districts) {
-		if (districts.length) {
-			$('#location_district_id').empty();
-			$('#districtsCheckboxes').empty();
-			$('#districtsCheckboxes').html('<div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">Comunas que atiendes</h3></div><div id="districtsPanel" class="panel-body"></div></div>');
-			$.each(districts, function (key, district) {
-				$('#location_district_id').append(
-					'<option value="' + district.id + '">' + district.name + '</option>'
-				);
-				$('#districtsPanel').append(
-					'<input type="checkbox" value="' + district.id + '" class="districtActive"/> ' + district.name + '<br />'
-				);
-			});
-			$('#location_district_id').attr('disabled', false);
-			var oldTop = $(document).scrollTop();
-			$('#foo5').trigger('updateSizes');
-			$(document).scrollTop(oldTop);
-		};
-	});
-}
-
 function new_location() {
 	location_validation.resetForm();
-    $('#new_location .form-group').removeClass('has-error has-success');
-    $('#new_location .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
-	$('#location_name').val('');
-	$('#location_address').val('');
-	$('#location_second_address').val('');
-	$('#location_phone').val('');
-	$('#location_district_id').val('');
+	$('#new_location .form-group').removeClass('has-error has-success');
+	$('#new_location .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
+	$('#location_name,\
+		#address,\
+		#location_address,\
+		#location_second_address,\
+		#location_phone,\
+		#location_latitude,\
+		#location_longitude,\
+		#location_outcall_places,\
+		#location_email').val('');
 	$('#location_outcall').prop('checked', false);
-	$('#location_latitude').val('');
-	$('#location_longitude').val('');
-	$('#location_address').attr('disabled', false);
-	$('#location_second_address').attr('disabled', false);
-	$('#location_district_ids').val('');
-	$('#districtsCheckboxes').addClass('hidden');
-	$('#country option[value=""]').prop('selected', true);
-	$('#region option[value=""]').prop('selected', true);
-	$('#region').attr('disabled', true);
-	$('#city option[value=""]').prop('selected', true);
-	$('#city').attr('disabled', true);
-	$('#location_district_id option[value=""]').prop('selected', true);
-	$('#location_district_id').attr('disabled', true);
-	$('#districtsCheckboxes').empty();
+	$('#location_outcall_places').closest(".form-group").hide();
 	$('#update_location_button').attr('name', 'new_location_btn');
 	$('#new_location_pill').parent().addClass('active');
 	$('#load_location_spinner').hide();
-	$('#location_email').val('');
 	initialize('local');
 }
 
 function load_location(id) {
 	location_validation.resetForm();
-    $('#new_location .form-group').removeClass('has-error has-success');
-    $('#new_location .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
+	$('#new_location .form-group').removeClass('has-error has-success');
+	$('#new_location .form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check');
 	$.getJSON('/quick_add/load_location/'+id, {}, function (location) {
 		$('#location_name').val(location.location.name);
-		$('#location_address').val(location.location.full_address);
+		$('#address').val(location.location.full_address);
+		$('#location_address').val(location.location.address);
 		$('#location_second_address').val(location.location.second_address);
 		$('#location_phone').val(location.location.phone);
 		$('#location_outcall').prop('checked', location.location.outcall);
+		$('#location_outcall_places').val(location.location.outcall_places);
 		$('#location_latitude').val(location.location.latitude);
 		$('#location_longitude').val(location.location.longitude);
 		$('#location_email').val(location.location.email);
-		$('#location_address').attr('disabled', false);
-		$('#location_second_address').attr('disabled', false);
-	    var latitude = parseFloat($('#location_latitude').val());
-	    var longitude = parseFloat($('#location_longitude').val());
-	    setCenter(new google.maps.LatLng(latitude, longitude), 17);
-	    $('select.time-select').attr('disabled', true);
-	    $('#localTable input:checkbox').prop('checked', false);
+		var latitude = parseFloat($('#location_latitude').val());
+		var longitude = parseFloat($('#location_longitude').val());
+		setCenter(new google.maps.LatLng(latitude, longitude), 17);
+		$('select.time-select').attr('disabled', true);
+		$('#localTable input:checkbox').prop('checked', false);
 		$.each(location.location_times, function(index,locationTime) {
-			window.console.log()
 			var value = locationTime.day_id;
 			$('#localdayStatusId'+ value).prop('checked', true);
 			$('#localdayStatusId'+ value).val(1);
@@ -465,79 +279,13 @@ function load_location(id) {
 			$('#localopenMinuteId'+ value +' option[value="'+openTime[1]+'"]').attr("selected",true);
 			$('#localcloseHourId'+ value +' option[value="'+closeTime[0]+'"]').attr("selected",true);
 			$('#localcloseMinuteId'+ value +' option[value="'+closeTime[1]+'"]').attr("selected",true);
-	    });
-		$('#country option[value="'+location.country_id+'"]').attr("selected",true);
-	    $.getJSON('/country_regions', {country_id: location.country_id}, function (regions) {
-	      if (regions.length > 0) {
-	        $('#region').empty();
-	        $.each(regions, function (key, region) {
-	          $('#region').append(
-	            '<option value="' + region.id + '">' + region.name + '</option>'
-	          );
-	        });
-	        $('#region').prepend(
-	          '<option></option>'
-	        );
-	        $('#region').attr('disabled', false);
-	        $('#region option[value="'+location.region_id+'"]').attr("selected",true);
-	        $('#region').change(function (event) {
-	          $('#city').attr('disabled', true);
-	          $('#city').val('');
-	          $('#location_district_id').attr('disabled', true);
-	          $('#location_district_id').val('');
-	          var region_id = $(event.target).val();
-	          changeRegion(region_id);
-	        });
-	        $.getJSON('/region_cities', {region_id: location.region_id}, function (cities) {
-	          if (cities.length) {
-	            $('#city').empty();
-	            $.each(cities, function (key, city) {
-	              $('#city').append(
-	                '<option value="' + city.id + '">' + city.name + '</option>'
-	              );
-	            });
-	            $('#city').prepend(
-	              '<option></option>'
-	            );
-	            $('#city').attr('disabled', false);
-	            $('#city option[value="'+location.city_id+'"]').attr("selected",true);
-	            $('#city').change(function (event) {
-	              $('#location_district_id').attr('disabled', true);
-	              $('#location_district_id').val('');
-	              var city_id = $(event.target).val();
-	              changeCity(city_id);
-	            });
-	            $.getJSON('/city_districs', {city_id: location.city_id}, function (districts) {
-	              if (districts.length) {
-	                $('#location_district_id').empty();
-	                $('#districtsCheckboxes').html('<div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">Comunas que atiendes</h3></div><div id="districtsPanel" class="panel-body"></div></div>');
-	                $.each(districts, function (key, district) {
-	                  $('#location_district_id').append(
-	                    '<option value="' + district.id + '">' + district.name + '</option>'
-	                  );
-	                  $('#districtsPanel').append(
-	                    '<input type="checkbox" value="' + district.id + '" class="districtActive"/> ' + district.name + '<br />'
-	                  );
-	                });
-	                $('#location_district_id').attr('disabled', false);
-	                $('#location_district_id option[value="'+location.location.district_id+'"]').attr("selected",true);
-	                if (location.location.outcall) {
-	                  $('#location_address').attr('disabled', true);
-	                  $('#location_second_address').attr('disabled', true);
-	                  $('#districtsCheckboxes').removeClass('hidden');
-	                  $.each(location.location_districts, function(index,locationDistrict) {
-	                    $('.districtActive[value="'+locationDistrict.district_id+'"]').prop('checked',true);
-	                  });
-	                }
-	              };
-				$('#location_pill_'+id).parent().addClass('active');
-				$('#load_location_spinner').hide();
-				$('#update_location_button').attr('name', 'edit_location_btn_'+id);
-	            });
-	          };
-	        });
-	      };
-	    });
+		});
+		$('#location_pill_'+id).parent().addClass('active');
+		$('#load_location_spinner').hide();
+		$('#update_location_button').attr('name', 'edit_location_btn_'+id);
+		if ($('#location_outcall').prop('checked')) {
+      $('#location_outcall_places').closest(".form-group").toggle();
+    }
 	});
 }
 
@@ -565,9 +313,7 @@ function setMarker (latLng) {
 }
 
 function setCenter (latLng, zoom) {
-  if (!$('#error').hasClass('hide')) {
-    $('#error').addClass('hide');
-  };
+	zoom = typeof zoom != "undefined" ? zoom : 17;
   if (marker) {
     marker.setMap(null);
   };
@@ -575,81 +321,136 @@ function setCenter (latLng, zoom) {
   map.setCenter(latLng);
   map.setZoom(zoom);
   setMarker(latLng);
-  $('#location_latitude').val(latLng.lat());
-  $('#location_longitude').val(latLng.lng());
-  $('h4 small').addClass('hide');
 }
+/*** Google Places ***/
+function places() {
+  var input = document.getElementById('address');
+  var options = {
+    types: ['geocode']
+  };
+  var geocoder = new google.maps.Geocoder();
+  var autocomplete = new google.maps.places.Autocomplete(input, options);
+  var infowindow = new google.maps.InfoWindow();
 
-function geolocate (district, address) {
-  $('h4 small').removeClass('hide');
-  $.getJSON('/get_direction', { id: district }, function (direction) {
-    var geolocation = direction;
-    var zoom = 15;
-    if (!$('#location_outcall').prop('checked')) {
-      geolocation = $('#location_address').val() + ', ' + geolocation;
-      zoom = 17;
-    };
-    var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ "address": JSON.stringify(geolocation) }, function (results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        setCenter(results[0].geometry.location, zoom);
-      } else {
-        $('h4 small').addClass('hide');
-        $('#error').removeClass('hide');
-        map.setZoom(12);
-        if (marker) {
-          marker.setMap(null);
-        };
-      };
+  google.maps.event.addListener(autocomplete, 'place_changed', function() {
+    if (autocomplete.getPlace().geometry) {
+      setLatLng(autocomplete.getPlace().geometry.location);
+      setAddress(autocomplete.getPlace());
+      setCenter(autocomplete.getPlace().geometry.location);
+    }
+  });
+
+  $("#address").focusin(function () {
+    $(document).bind("keypress.key1", function(e) {
+      if (e.which == 13) {
+        e.preventDefault();
+        selectFirstResult();
+      }
     });
+  });
+  $("#address").focusout(function () {
+    selectFirstResult();
+    $(document).unbind("keypress.key1");
+  });
+
+  function selectFirstResult() {
+    $('#update_location_button').attr('disabled', true);
+    infowindow.close();
+    $(".pac-container").hide();
+    var firstResult = $(".pac-container .pac-item:first").text();
+    geocoder.geocode({"address":firstResult }, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        setLatLng(results[0].geometry.location);
+        setAddress(results[0]);
+        setCenter(results[0].geometry.location);
+      }
+      else {
+        $("#location_address").val('');
+        $("#address").val('');
+      }
+    });
+  }
+  function geolocate() {
+    $('#update_location_button').attr('disabled', true);
+    if (navigator.geolocation) {
+      $('#geolocate').html('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>');
+      var positioned = false;
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          positioned = true;
+          $('#location_latitude').val(position.coords.latitude);
+          $('#location_longitude').val(position.coords.longitude);
+
+          var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+          geocoder.geocode({'latLng': latlng}, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+              setAddress(results[0]);
+            } else {
+              $('#location_address').val('');
+              $('#address').val('');
+            }
+            setCenter(latlng);
+            $('#geolocate').html('<i class="fa fa-crosshairs"></i>');
+            return false;
+          });
+        },
+        function (error) {
+          positioned = true;
+          var errorMessage = {
+            1: "No hay permiso, por favor asegúrate permitir la geolicalización automática en tu explorador.",
+            2: "Posición no disponible, por favor inténtalo nuevamente o escribe tu ubicación.",
+            3: "La consulta tardó mucho, por favor inténtalo nuevamente o escribe tu ubicación."
+          }[error.code] || "Error desconocido, por favor inténtalo nuevamente o escribe tu ubicación."
+          swal({
+            title: "Hubo un error en el proceso de localización",
+            text: errorMessage,
+            type: "error"
+          });
+          $('#geolocate').html('<i class="fa fa-crosshairs"></i>');
+        },
+        {timeout: 10000}
+      );
+      setTimeout(function () {
+        if (!positioned) {
+          swal({
+            title: "Hubo un error en el proceso de localización",
+            text: "No hubo respuesta, por favor asegúrate permitir la geolicalización automática en tu explorador.",
+            type: "error"
+          });
+          $('#geolocate').html('<i class="fa fa-crosshairs"></i>');
+        }
+      }, 15000);
+    }
+    else {
+      swal({
+        title: "Hubo un error en el proceso de la localización",
+        text: "Este explorador ni permite geolocalización automática, por favor escribe tu ubicación.",
+        type: "error"
+      });
+    }
+    return;
+  }
+
+  function setLatLng(location) {
+    $('#location_latitude').val(location.lat());
+    $('#location_longitude').val(location.lng());
+  }
+
+  function setAddress(geobject) {
+    $("#address").val(geobject.formatted_address);
+    $("#location_address").val(JSON.stringify(geobject.address_components));
+    $('#update_location_button').attr('disabled', false);
+  }
+
+  $('#geolocate').click(function() {
+    geolocate();
   });
 }
 
 $(function() {
+
 	$('#location_outcall').change(function() {
-		$('#location_outcall').parents('.form-group').removeClass('has-error has-success');
-		$('#location_outcall').parents('.form-group').find('.help-block').empty();
-		$('#location_outcall').parents('.form-group').find('.form-control-feedback').removeClass('fa fa-times fa-check')
-		if (!$('#location_outcall').prop('checked')) {
-			$('#location_address').attr('disabled', false);
-			$('#location_second_address').attr('disabled', false);
-			$('#location_district_ids').val('');
-			$('#districtsCheckboxes').addClass('hidden');
-		}
-		else {
-			$('#location_address').attr('disabled', true);
-			$('#location_second_address').attr('disabled', true);
-			$('#location_address').val('');
-			$('#location_second_address').val('');
-			$('#districtsCheckboxes').removeClass('hidden');
-		}
-	});
-
-	$('#country').change(function (event) {
-		$('#region').attr('disabled', true);
-		$('#city').attr('disabled', true);
-		$('#location_district_id').attr('disabled', true);
-		var country_id = $(event.target).val();
-		changeCountry(country_id);
-	});
-	$('#location_district_id, #location_address, #location_outcall').change(function (eve) {
-		var district = $('#location_district_id').val();
-		var address = $('#location_address').val();
-		if (district != '') {
-		  if ($('#location_outcall').prop('checked') || address.length > 0) {
-		    geolocate(district, address);
-		  };
-		};
-	});
-
-	$('#location_district_id, #location_address, #location_outcall').change(function (eve) {
-		var district = $('#location_district_id').val();
-		var address = $('#location_address').val();
-		if (district != '') {
-		  if ($('#location_outcall').prop('checked') || address.length > 0) {
-		    geolocate(district, address);
-		  };
-		};
+		$('#location_outcall_places').closest(".form-group").toggle();
 	});
 
 	$('#location_pills.nav-pills li a').click(function(event) {
@@ -668,23 +469,6 @@ $(function() {
 			}
 		}
 	});
-
-	// $('#update_location_button').click(function(event) {
-	// 	$('#update_location_spinner').show();
-	// 	$('#update_location_button').attr('disabled', true);
-	// 	$('#next_location_button').attr('disabled', true);
-	// 	if(event.target.name == 'new_location_btn') {
-	// 		saveLocation('POST','');
-	// 	}
-	// 	else {
-	// 		if (parseInt(event.target.name.split("edit_location_btn_")[1]) > 0) {
-	// 			saveLocation('PATCH', '/'+parseInt(event.target.name.split("edit_location_btn_")[1]));
-	// 		}
-	// 		else {
-	// 			window.console.log("Bad location update");
-	// 		}
-	// 	}
-	// });
 
 	$('#next_location_button').click(function(){
 		$('#fieldset_step3').show();
