@@ -85,7 +85,7 @@
             <p><%= if !@location.outcall then @location.short_address else "A Domicilio" end %></p>
             <% if @location.outcall %>
             <p>Lugares que atiende:</p>
-            <p><%= @location.outcall_places %></p>
+            <pre><%= @location.outcall_places %></pre>
             <% end %>
           </div>
         </div>

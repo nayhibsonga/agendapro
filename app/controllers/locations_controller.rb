@@ -149,7 +149,7 @@ class LocationsController < ApplicationController
 
   def location_districts
     location = Location.find(params[:id])
-    render :json => { :districts => location.outcall_places, :country => location.district.city.region.country.name, :region => location.district.city.region.name, :city => location.district.city.name }
+    render :json => { :districts => location.outcall_places }
   end
 
   def location_time
