@@ -58,6 +58,25 @@ class AttributesController < ApplicationController
       end
   end
 
+  def rearrange
+
+    json_response = []
+    json_response[0] = "ok"
+
+    @company = Company.find_by_id(params[:company_id])
+    rearrangement = params[:rearrangement]
+
+    for i in 0..rearrangement.length - 1
+      attribute = Attribute.find(rearrangement[i])
+      if !attribute.update_column(:order, i + 1)
+        json_response[0] = "error"
+      end
+    end
+
+    render :json => json_response
+
+  end
+
   private
     def set_attribute      
       @attribute = Attribute.find(params[:id])

@@ -46,6 +46,26 @@ class AttributeGroupsController < ApplicationController
     end
   end
 
+  def rearrange
+
+    json_response = []
+    json_response[0] = "ok"
+
+    @company = Company.find_by_id(params[:company_id])
+    rearrangement = params[:rearrangement]
+    logger.debug rearrangement.inspect
+
+    for i in 0..rearrangement.length-1
+      attribute_group = AttributeGroup.find(rearrangement[i])
+      if !attribute_group.update_column(:order, i+1)
+        json_response[0] = "error"
+      end
+    end
+
+    render :json => json_response
+
+  end
+
   private
     def set_attribute_group
       @attribute_group = AttributeGroup.find(params[:id])

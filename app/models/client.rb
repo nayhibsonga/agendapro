@@ -305,7 +305,7 @@ class Client < ActiveRecord::Base
         end
 
       when "boolean"
-
+        logger.debug "Boolean: " + param_value
         if param_value == 1 || param_value == "1" || param_value == true
           param_boolean = true
         else
