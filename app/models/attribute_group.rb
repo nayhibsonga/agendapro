@@ -13,7 +13,7 @@ class AttributeGroup < ActiveRecord::Base
 			greatest_order = 0
 		end
 
-		if self.order.nil? || self.order == 0 || self.order > greatest_order + 1
+		if self.order.nil? || self.order < 1 || self.order > greatest_order + 1
 			self.update_column(:order, greatest_order + 1)
 		end
 

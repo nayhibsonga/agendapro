@@ -496,6 +496,7 @@
 
                           <% elsif attribute.datatype == "boolean" %>
 
+
                             <%
                               boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
                               boolean_attribute_value = "0"
@@ -505,6 +506,7 @@
                                 end
                               end
                             %>
+
 
                             <div class="form-group has-feedback">
                               <label for="<%= attribute.slug %>_attribute" class="col-sm-3 control-label">

@@ -99,7 +99,7 @@
 </div>
 <% content_for :scripts do %>
   <script>
-    $(function() {
+    /*$(function() {
       var $btn = $('.submit-block'),
           $form = $btn.closest('form'),
           BtnBehaviour = {
@@ -135,7 +135,7 @@
 
         if( $form.valid() ) {
           BtnBehaviour.unbind();
-          $btn.click();
+          $form.submit();
           BtnBehaviour.disable();
         } else {
           BtnBehaviour.enable();
@@ -144,6 +144,19 @@
 
       BtnBehaviour.bind();
 
+    });*/
+    $(function(){
+      $(".submit-block").on('click', function(e){
+        e.preventDefault();
+        if($(this).closest('form').valid())
+        {
+          $(this).attr("disabled", true);
+        }
+        else
+        {
+          $(this).attr("disabled", false);
+        }
+      });
     });
   </script>
 <% end %>
