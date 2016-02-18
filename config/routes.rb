@@ -568,6 +568,9 @@ Agendapro::Application.routes.draw do
     post '/billing_info_admin_create', :to => 'billing_infos#super_admin_create'
     patch '/billing_info_admin_update', :to => 'billing_infos#super_admin_update'
 
+    post '/rearrange_attributes', :to => 'attributes#rearrange'
+    post '/rearrange_attribute_groups', :to => 'attribute_groups#rearrange'
+
 
   end
 

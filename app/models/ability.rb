@@ -135,6 +135,9 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
+        can :rearrange, Attribute, :company_id => user.company_id
+        can :rearrange, AttributeGroup, :company_id => user.company_id
+
         can :select_plan, Plan
         can :use_email_templates, Client #FIXME
         can :mail_editor, Client, :company_id => user.company_id #FIXME
@@ -447,6 +450,9 @@ class Ability
 
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
+
+        can :rearrange, Attribute, :company_id => user.company_id
+        can :rearrange, AttributeGroup, :company_id => user.company_id
 
         can :upload_file, Client
 

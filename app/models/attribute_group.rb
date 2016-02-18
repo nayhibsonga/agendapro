@@ -7,13 +7,13 @@ class AttributeGroup < ActiveRecord::Base
 	def rearrange
 
 		#Check order isn't past current gratest order
-		greatest_order = AttributeGroup.where(company_id: self.company_id).maximum(:order)
+		greatest_order = AttributeGroup.where(company_id: self.company_id).where.not(id: self.id).maximum(:order).maximum(:order)
 		
 		if greatest_order.nil?
 			greatest_order = 0
 		end
 
-		if self.order.nil? || self.order > greatest_order + 1
+		if self.order.nil? || self.order == 0 || self.order > greatest_order + 1
 			self.update_column(:order, greatest_order + 1)
 		end
 
@@ -27,7 +27,11 @@ class AttributeGroup < ActiveRecord::Base
 	end
 
 	def get_greatest_order
-		return AttributeGroup.where(company_id: self.company_id).maximum(:order)
+		greatest_order = AttributeGroup.where(company_id: self.company_id).maximum(:order)
+		if greatest_order.nil?
+			greatest_order = 0
+		end
+		return greatest_order
 	end
 
 	def get_attributes_greatest_order

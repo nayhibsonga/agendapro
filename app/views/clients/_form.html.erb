@@ -500,7 +500,7 @@
                               boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: @client.id).first
                               boolean_attribute_value = "0"
                               if !boolean_attribute.nil? && !boolean_attribute.value.nil?
-                                if boolean_attribute_value
+                                if boolean_attribute.value == true
                                   boolean_attribute_value = "1"
                                 end
                               end
