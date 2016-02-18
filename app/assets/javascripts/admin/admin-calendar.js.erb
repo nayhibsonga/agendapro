@@ -3005,6 +3005,14 @@ $(function() {
       {
         console.log(key);
         console.log(custom_attributes[key]);
+        if(custom_attributes[key] == false)
+        {
+          custom_attributes[key] = "0";
+        }
+        else if(custom_attributes[key] == true)
+        {
+          custom_attributes[key] = "1";
+        }
         $('[name="' + key + '"]').val(custom_attributes[key]);
       }
 
