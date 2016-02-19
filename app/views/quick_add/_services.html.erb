@@ -37,24 +37,28 @@
         <div class="col-sm-12 text-center">
           <h2 class="text-center">¿Cuáles son los servicios que ofreces?</h2>
           <table id="services" class="table">
-            <tr>
-              <th>Nombre</th>
-              <th>Precio</th>
-              <th>Duración</th>
-              <th>Categoría</th>
-              <th>Descripción</th>
-              <th></th>
-            </tr>
-            <% @company.services.where(active: true).each do |service| %>
-            <tr id="service_<%= service.id %>">
-              <td><%= service.name %></td>
-              <td><%= number_to_currency(service.price, currency: '$ ', separator: ',', delimeter: '.', precision: 0) %></td>
-              <td><%= service.duration %> min.</td>
-              <td><%= service.service_category.name %></td>
-              <td><%= service.description %></td>
-              <td><button id="service_delete_<%= service.id %>" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td>
-            </tr>
-            <% end %>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Duración</th>
+                <th>Categoría</th>
+                <th>Descripción</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @company.services.where(active: true).each do |service| %>
+              <tr id="service_<%= service.id %>">
+                <td><%= service.name %></td>
+                <td><%= number_to_currency(service.price, currency: '$ ', separator: ',', delimeter: '.', precision: 0) %></td>
+                <td><%= service.duration %> min.</td>
+                <td><%= service.service_category.name %></td>
+                <td><%= service.description %></td>
+                <td><button id="service_delete_<%= service.id %>" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td>
+              </tr>
+              <% end %>
+            </tbody>
           </table>
         </div>
         <div class="col-sm-12 text-center">

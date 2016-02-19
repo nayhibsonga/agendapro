@@ -47,6 +47,7 @@ function deleteServiceCategory (id) {
       $('#service_service_category_id option[value="'+ result.id +'"]').remove();
       $('#update_service_category_button').attr('disabled', false);
       $('#update_service_category_spinner').hide();
+      loadServices();
     },
     error: function (xhr){
       var errors = $.parseJSON(xhr.responseText).errors;
@@ -62,6 +63,15 @@ function deleteServiceCategory (id) {
       });
       $('#update_service_category_spinner').hide();
     }
+  });
+}
+
+function loadServices() {
+  $.getJSON('/quick_add/list_services', {}, function (services) {
+    $('#services>tbody').empty();
+    $.each(services, function (key, service) {
+      $('#services>tbody').append('<tr id="service_'+ service.service.id +'"><td>'+ service.service.name +'</td><td>$ '+ service.service.price.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +'</td><td>'+ service.service.duration +' min.</td><td>'+ service.service_category +'</td><td>' + service.service.description + '</td><td><button id="service_delete_'+ service.service.id +'" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td></tr>');
+    });
   });
 }
 
@@ -82,7 +92,7 @@ function saveService () {
     },
     dataType: 'json',
     success: function (result){
-      $('#services').append('<tr id="service_'+ result.service.id +'"><td>'+ result.service.name +'</td><td>$ '+ result.service.price.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +'</td><td>'+ result.service.duration +' min.</td><td>'+ result.service_category +'</td><td>' + result.service.description + '</td><td><button id="service_delete_'+ result.service.id +'" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td></tr>');
+      $('#services>tbody').append('<tr id="service_'+ result.service.id +'"><td>'+ result.service.name +'</td><td>$ '+ result.service.price.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +'</td><td>'+ result.service.duration +' min.</td><td>'+ result.service_category +'</td><td>' + result.service.description + '</td><td><button id="service_delete_'+ result.service.id +'" class="btn btn-danger btn-xs service-delete-btn"><i class="fa fa-trash-o"></i></button></td></tr>');
 
       $('#service_name,\
         #service_price,\
