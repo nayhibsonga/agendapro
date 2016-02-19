@@ -7,7 +7,7 @@ class AttributeGroup < ActiveRecord::Base
 	def rearrange
 
 		#Check order isn't past current gratest order
-		greatest_order = AttributeGroup.where(company_id: self.company_id).where.not(id: self.id).maximum(:order).maximum(:order)
+		greatest_order = AttributeGroup.where(company_id: self.company_id).where.not(id: self.id).maximum(:order)
 		
 		if greatest_order.nil?
 			greatest_order = 0
