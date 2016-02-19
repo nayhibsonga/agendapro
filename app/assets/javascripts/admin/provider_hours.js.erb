@@ -315,6 +315,8 @@ function saveProvider(method,extraURL) {
         text: "Se produjeron los siguientes errores:\n\n" + errorList,
         type: "error"
       });
+
+      $('.buttonProvider').attr("disabled", false);
     }
   });
 }

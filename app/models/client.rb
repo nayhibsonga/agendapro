@@ -25,6 +25,18 @@ class Client < ActiveRecord::Base
   after_update :client_notification
   #after_create :create_client_attributes
 
+  def get_birth_date
+    if self.birth_day.nil? || self.birth_month.nil?
+      return "---"
+    elsif self.birth_year.nil?
+      return self.birth_day.to_s + "/" + self.birth_month.to_s
+    end
+
+    #Unnecesary, just in case we wanted to change birthday format
+    birth_date = Date.new(self.birth_year, self.birth_month, self.birth_day)
+    return birth_date.strftime("%d/%m/%Y")
+  end
+
   def get_storage_occupation
     
     used_storage = 0
