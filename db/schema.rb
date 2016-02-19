@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20160127191741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "attribute_categories", force: true do |t|
@@ -191,14 +191,6 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.datetime "updated_at"
   end
 
-  create_table "boolean_custom_filters", force: true do |t|
-    t.integer  "custom_filter_id"
-    t.integer  "attribute_id"
-    t.boolean  "option"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "bundles", force: true do |t|
     t.string   "name",                default: "",   null: false
     t.decimal  "price",               default: 0.0,  null: false
@@ -226,14 +218,6 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.integer  "client_id"
     t.integer  "attribute_id"
     t.integer  "attribute_category_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "categoric_custom_filters", force: true do |t|
-    t.integer  "custom_filter_id"
-    t.integer  "attribute_id"
-    t.string   "categories_ids"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -463,27 +447,10 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.float    "sales_tax",         default: 0.0, null: false
   end
 
-  create_table "custom_filters", force: true do |t|
-    t.integer  "company_id"
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "date_attributes", force: true do |t|
     t.integer  "attribute_id"
     t.integer  "client_id"
     t.date     "value"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "date_custom_filters", force: true do |t|
-    t.integer  "custom_filter_id"
-    t.integer  "attribute_id"
-    t.datetime "date1"
-    t.datetime "date2"
-    t.string   "option"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -847,16 +814,6 @@ ActiveRecord::Schema.define(version: 20160127191741) do
 
   add_index "notification_providers", ["notification_email_id"], name: "index_notification_providers_on_notification_email_id", using: :btree
   add_index "notification_providers", ["service_provider_id"], name: "index_notification_providers_on_service_provider_id", using: :btree
-
-  create_table "numeric_custom_filters", force: true do |t|
-    t.integer  "custom_filter_id"
-    t.integer  "attribute_id"
-    t.float    "value1"
-    t.float    "value2"
-    t.string   "option"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "numeric_parameters", force: true do |t|
     t.string   "name"
@@ -1408,7 +1365,7 @@ ActiveRecord::Schema.define(version: 20160127191741) do
 
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
-    t.integer  "country_id", null: false
+    t.integer  "country_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -1750,14 +1707,6 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.integer  "attribute_id"
     t.integer  "client_id"
     t.text     "value"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "text_custom_filters", force: true do |t|
-    t.integer  "custom_filter_id"
-    t.integer  "attribute_id"
-    t.text     "text"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
