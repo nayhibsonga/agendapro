@@ -204,7 +204,7 @@
                     
                       <% if @company.plan.name == "Trial" %>
                         <%
-                          suggested_plan = Plan.where(name: "Personal", custom: false)
+                          suggested_plan = Plan.where(name: "Personal", custom: false).first
                           if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
                           suggested_plan = Plan.where(name: "Normal", custom: false).first
                           end
