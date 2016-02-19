@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160127191741) do
+ActiveRecord::Schema.define(version: 20160215160611) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,14 @@ ActiveRecord::Schema.define(version: 20160127191741) do
   create_table "attribute_categories", force: true do |t|
     t.integer  "attribute_id"
     t.string   "category"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "attribute_groups", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.integer  "order"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -39,6 +47,8 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.boolean  "show_on_workflow",      default: false
     t.boolean  "mandatory_on_calendar", default: false
     t.boolean  "mandatory_on_workflow", default: false
+    t.integer  "attribute_group_id"
+    t.integer  "order"
   end
 
   create_table "banks", force: true do |t|
@@ -461,6 +471,8 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.string   "formatted_address", default: ""
     t.string   "domain",            default: ""
     t.float    "sales_tax",         default: 0.0, null: false
+    t.string   "timezone_name"
+    t.float    "timezone_offset"
   end
 
   create_table "custom_filters", force: true do |t|

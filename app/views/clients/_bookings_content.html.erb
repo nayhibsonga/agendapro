@@ -64,18 +64,17 @@
               <% if booking.is_session %>
                 <%
                   index = 1
-                  session_index = "Sesión "
+                  session_index = ""
                   session_booking = booking.session_booking
                   session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
                     if b.id == booking.id
-                      session_index = session_index + index.to_s
+                      session_index = "Sesión #{index}"
                       break
                     end
                     index = index + 1
                   end
-                  session_index = session_index + " de " + session_booking.sessions_amount.to_s
+                  session_index = "#{session_index} de #{session_booking.sessions_amount}"
                 %>
-                <br />
                 <span class="label label-session"><%= "(#{session_index})" %></span>
               <% end %>
             </td>

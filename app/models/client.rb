@@ -256,6 +256,11 @@ class Client < ActiveRecord::Base
     self.company.custom_attributes.each do |attribute|
 
       str_sm = attribute.slug + "_attribute"
+
+      if !params.keys.include?(str_sm)
+        next
+      end
+
       param_value = params[str_sm]
 
       case attribute.datatype
@@ -300,7 +305,7 @@ class Client < ActiveRecord::Base
         end
 
       when "boolean"
-
+        logger.debug "Boolean: " + param_value
         if param_value == 1 || param_value == "1" || param_value == true
           param_boolean = true
         else
