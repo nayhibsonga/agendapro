@@ -18,7 +18,9 @@ class ServiceProvidersController < ApplicationController
 
   def activate
     @service_provider.active = true
-    @service_provider.save
+    unless @service_provider.save
+      flash[:alert] = "El horario del prestador no coincide con el horario del local"
+    end
     redirect_to inactive_service_providers_path
   end
 
