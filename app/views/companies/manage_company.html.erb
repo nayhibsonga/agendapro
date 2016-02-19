@@ -50,6 +50,7 @@
               <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
               <li><a href="#edit" role="tab" data-toggle="tab" class="tab_index">Edición</a></li>
               <% end %>
+              <li><a href="#billing-info" role="tab" data-toggle="tab" class="tab_index">Facturación</a></li>
             </ul>
           </div>
           <div class="col-md-10 left-panel">
@@ -165,6 +166,17 @@
                     </div>
                   </div>
                 </div>
+              </div>
+              <div class="tab-pane fade" id="billing-info">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Facturación</h4>
+                  </div>
+                  <div class="panel-body panel-scrollable">
+                    <p>En desarrollo</p>
+                  </div>
+                </div>
+              </div>
               </div>
               <div class="tab-pane fade" id="payments">
                 <div class="panel panel-default">
