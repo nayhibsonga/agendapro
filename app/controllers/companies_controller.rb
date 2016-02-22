@@ -498,6 +498,7 @@ class CompaniesController < ApplicationController
 	        @price = @company.company_plan_setting.base_price * @company.computed_multiplier
 	      end
 	    end
+	    
 		@sales_tax = @company.country.sales_tax
 	    @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
 	    @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
