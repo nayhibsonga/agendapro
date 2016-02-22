@@ -799,7 +799,17 @@ class CompaniesController < ApplicationController
 
 		# @companies = Company.where(active: true).where.not(payment_status_id: PaymentStatus.find_by_name('Inactivo').id).order(:name)
 
+		@filter = "all"
 		@companies = Company.all.order(:name)
+		if(!params[:filter].blank?)
+			if params[:filter] == "active"
+				@filter = "active"
+				@companies = @companies.where(active: true)
+			elsif params[:filter] == "inactive"
+				@filter = "inactive"
+				@companies.where(active: false)
+			end
+		end
 
 		@year = DateTime.now.year.to_i
 		if params[:year]
