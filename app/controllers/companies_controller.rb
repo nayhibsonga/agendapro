@@ -476,7 +476,7 @@ class CompaniesController < ApplicationController
 		end
 
 		@billing_info = BillingInfo.new
-		if !@company.billing_info_id.nil?
+		if BillingInfo.where(company_id: @company.id).count > 0
 			@billing_info = @company.billing_info
 		end
 
