@@ -14,6 +14,7 @@ class Company < ActiveRecord::Base
 	has_many :email_contents, dependent: :destroy, class_name: 'Email::Content'
 
 	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
+	has_many :attribute_groups
 
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
 

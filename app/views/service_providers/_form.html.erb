@@ -99,13 +99,62 @@
 </div>
 <% content_for :scripts do %>
   <script>
-    $(function() {
-      $('.submit-block').on('click', function() {
-        var $btn = $(this),
-            $form = $btn.closest('form');
+    /*$(function() {
+      var $btn = $('.submit-block'),
+          $form = $btn.closest('form'),
+          BtnBehaviour = {
+            bind: function() {
+              $btn.click(blockSubmit);
+            },
+            unbind: function() {
+              $btn.unbind('click', blockSubmit);
+            },
+            enable: function() {
+              $btn.attr('disabled', false);
+              BtnBehaviour.bind();
+              FormBehaviour.unbind();
+            },
+            disable: function() {
+              $btn.attr('disabled', true);
+              FormBehaviour.bind();
+            }
+          },
+          FormBehaviour = {
+            bind: function() {
+              $('.main :input').not($btn).on('change.custom', function(){
+                BtnBehaviour.enable();
+              });
+            },
+            unbind: function() {
+              $('.main :input').not($btn).unbind('change.custom');
+            }
+          }
+
+      function blockSubmit(e) {
+        e.preventDefault();
+
         if( $form.valid() ) {
-          $btn.attr('disabled', true);
+          BtnBehaviour.unbind();
           $form.submit();
+          BtnBehaviour.disable();
+        } else {
+          BtnBehaviour.enable();
+        }
+      }
+
+      BtnBehaviour.bind();
+
+    });*/
+    $(function(){
+      $(".submit-block").on('click', function(e){
+        e.preventDefault();
+        if($(this).closest('form').valid())
+        {
+          $(this).attr("disabled", true);
+        }
+        else
+        {
+          $(this).attr("disabled", false);
         }
       });
     });

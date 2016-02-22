@@ -1,4 +1,6 @@
 module ClientsHelper
+  STATUS_CLASS = ["blocked", "reserved", "confirmed", "completed", "payed", "cancelled", "noshow", "session"]
+
   def sortable (column, title = nil)
     puts params
     title ||= column.titleize
@@ -24,6 +26,10 @@ module ClientsHelper
       txt_name: txt,
       email: email
       )
+  end
+
+  def label_class(booking)
+    "label-#{STATUS_CLASS[booking.status_id]}"
   end
 
 end

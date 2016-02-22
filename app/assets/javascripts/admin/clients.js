@@ -345,12 +345,14 @@ $(function() {
     }
   });
 
-  $('.submit-block').on('click', function() {
+  $('.submit-block').on('click', function(e) {
     var $btn = $(this),
         $form = $btn.closest('form');
     if( $form.valid() ) {
       $btn.attr('disabled', true);
       $form.submit();
+    } else {
+      e.preventDefault();
     }
   });
 

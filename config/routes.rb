@@ -19,6 +19,7 @@ Agendapro::Application.routes.draw do
     resources :company_plan_settings
     resources :attribute_categories
     resources :attributes
+    resources :attribute_groups
 
     resources :countries
     resources :regions
@@ -90,22 +91,20 @@ Agendapro::Application.routes.draw do
     end
 
     # Quick Add
-    get '/quick_add', :to => 'quick_add#quick_add', :as => 'quick_add'
-    get '/quick_add/load_location/:id', :to => 'quick_add#load_location'
-      # Validation
-    # post '/quick_add/location_valid', :to => 'quick_add#location_valid'
-    # post '/quick_add/services_valid', :to => 'quick_add#services_valid'
-    # post '/quick_add/service_provider_valid', :to => 'quick_add#service_provider_valid'
-      # POST
-    post '/quick_add/location', :to => 'quick_add#create_location'
-    patch '/quick_add/location/:id', :to => 'quick_add#update_location'
-    post '/quick_add/service_category', :to => 'quick_add#create_service_category'
-    delete '/quick_add/service_category/:id', :to => 'quick_add#delete_service_category'
-    post '/quick_add/service', :to => 'quick_add#create_service'
-    delete '/quick_add/service/:id', :to => 'quick_add#delete_service'
-    post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
-    delete '/quick_add/service_provider/:id', :to => 'quick_add#delete_service_provider'
-    patch '/quick_add/update_company', :to => 'quick_add#update_company'
+    scope controller: 'quick_add' do
+        get '/quick_add', action: 'quick_add', as: 'quick_add'
+        get '/quick_add/load_location/:id', action: 'load_location'
+        post '/quick_add/location', action: 'create_location'
+        patch '/quick_add/location/:id', action: 'update_location'
+        post '/quick_add/service_category', action: 'create_service_category'
+        delete '/quick_add/service_category/:id', action: 'delete_service_category'
+        post '/quick_add/service', action: 'create_service'
+        delete '/quick_add/service/:id', action: 'delete_service'
+        get '/quick_add/list_services', action: 'list_services'
+        post '/quick_add/service_provider', action: 'create_service_provider'
+        delete '/quick_add/service_provider/:id', action: 'delete_service_provider'
+        patch '/quick_add/update_company', action: 'update_company'
+    end
 
     post '/create_notification_email', :to => 'quick_add#create_notification_email'
     post '/delete_notification_email', :to => 'quick_add#delete_notification_email'
@@ -549,6 +548,7 @@ Agendapro::Application.routes.draw do
     post '/delete_company_folder', :to => 'companies#delete_folder'
     post '/move_company_file', :to => 'companies#move_file'
     post '/change_company_file', :to => 'companies#edit_file'
+    post '/client_update_attributes', :to => 'clients#update_custom_attributes'
 
     post '/upload_client_file', :to => 'clients#upload_file'
     post '/create_client_folder', :to => 'clients#create_folder'
@@ -565,6 +565,9 @@ Agendapro::Application.routes.draw do
     get '/billing_info_admin_edit', :to => 'billing_infos#super_admin_edit'
     post '/billing_info_admin_create', :to => 'billing_infos#super_admin_create'
     patch '/billing_info_admin_update', :to => 'billing_infos#super_admin_update'
+
+    post '/rearrange_attributes', :to => 'attributes#rearrange'
+    post '/rearrange_attribute_groups', :to => 'attribute_groups#rearrange'
 
 
   end

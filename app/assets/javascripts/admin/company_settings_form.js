@@ -368,6 +368,10 @@ $(function () {
     $('#attributeModal').modal('show');
   });
 
+  $('#new_attribute_group_button').on('click', function(){
+    $('#attributeGroupModal').modal('show');
+  });
+
   $('#attribute_datatype').on('change', function(){
     if($(this).val() == "file")
     {
@@ -481,19 +485,120 @@ $(function () {
     });
   });
 
+
   $('#blocked_clients_link').on('click', function(e){
     e.preventDefault();
   });
 
-  $('.submit-block').on('click', function() {
-    var $btn = $(this),
-        $form = $btn.closest('form');
-    if( $form.valid() ) {
-      $btn.attr('disabled', true);
-      $form.submit();
+  $("#attribute-groups-tbody").sortable({
+    revert: true,
+    axis: "y",
+    handle: ".move-attribute-group",
+    containment: "#attribute-groups-tbody",
+    scroll: true,
+    stop: function(){
+
+      var rearrangement = [];
+      var index = 0;
+      $('#attribute-groups-tbody').children().each(function(){
+        rearrangement[index] = $(this).attr("attribute_group_id");
+        index++;
+      });
+
+      company_id = $('#company_id').val();
+
+      $.ajax({
+        url: '/rearrange_attribute_groups',
+        method: 'post',
+        dataType: 'json',
+        data: {company_id: company_id, rearrangement: rearrangement},
+        error: function(response){
+          swal({
+            title: "Error",
+            text: "Se produjo un error al reordenar.",
+            type: "error"
+          });
+        },
+        success: function(response){
+          if(response[0] != "ok")
+          {
+            swal({
+              title: "Error",
+              text: "Se produjo un error al reordenar.",
+              type: "error"
+            });
+          }
+        }
+      });
+
     }
+
   });
 
+  $(".attributes-tbody").sortable({
+    revert: true,
+    axis: "y",
+    handle: ".move-attribute",
+    containment: "parent",
+    scroll: true,
+    stop: function(){
+
+      var rearrangement = [];
+      var index = 0;
+      $(this).children().each(function(){
+        rearrangement[index] = $(this).attr("attribute_id");
+        index++;
+      });
+
+      company_id = $('#company_id').val();
+
+      $.ajax({
+        url: '/rearrange_attributes',
+        method: 'post',
+        dataType: 'json',
+        data: {company_id: company_id, rearrangement: rearrangement},
+        error: function(response){
+          swal({
+            title: "Error",
+            text: "Se produjo un error al reordenar.",
+            type: "error"
+          });
+        },
+        success: function(response){
+          if(response[0] != "ok")
+          {
+            swal({
+              title: "Error",
+              text: "Se produjo un error al reordenar.",
+              type: "error"
+            });
+          }
+        }
+      });
+
+    }
+
+  });
+
+  var $btn = $('.submit-block');
+
+  function blockSubmit(e) {
+    e.preventDefault();
+    var $btn = $(this),
+        $form = $btn.closest('form');
+
+    $form.find(':input').on('change', function(){
+      $btn.attr('disabled', false);
+    });
+
+    if( $form.valid() ) {
+      $btn.unbind('click', blockSubmit).click().attr('disabled', true);
+    } else {
+      $btn.attr('disabled', false);
+    }
+  }
+
+  $btn.click(blockSubmit);
 
 });
 
