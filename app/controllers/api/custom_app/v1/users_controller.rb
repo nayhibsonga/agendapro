@@ -32,7 +32,7 @@ module Api
       end
 
       def bookings
-        @client_ids = Client.where(:email => @mobile_user.email).pluck(:id)
+        @client_ids = Client.where(company_id: @api_company.id, :email => @mobile_user.email).pluck(:id)
         @preSessionBookings = SessionBooking.where(:client_id => @client_ids)
 
         @preSessionBookings.each do |sb|
@@ -71,8 +71,8 @@ module Api
 
 
 
-        @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids, :status_id => Status.where(:name => ['Reservado', 'Confirmado'])).where("start > ?", DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])).order(:start).group_by{ |i| i.start.to_date }
-        @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where("start <= ?", DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])).where(:client_id => @client_ids).order(updated_at: :desc).limit(10).group_by{ |i| i.start.to_date }
+        @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(location_id: @api_company.locations.pluck(:id), :client_id => @client_ids, :status_id => Status.where(:name => ['Reservado', 'Confirmado'])).where("start > ?", DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])).order(:start).group_by{ |i| i.start.to_date }
+        @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where("start <= ?", DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])).where(location_id: @api_company.locations.pluck(:id), :client_id => @client_ids).order(updated_at: :desc).limit(10).group_by{ |i| i.start.to_date }
       end
 
       def favorites
