@@ -16,7 +16,7 @@ class ClientsController < ApplicationController
     if mobile_request?
       @company = current_user.company
     end
-    @monthly_mails = current_user.company.plan.monthly_mails
+    @monthly_mails = current_user.company.company_setting.get_mails_capacity #.plan.monthly_mails
     @monthly_mails_sent = current_user.company.company_setting.monthly_mails
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
 

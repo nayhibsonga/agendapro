@@ -5,7 +5,7 @@ class ClientEmailWorker
     company = content.company
     recipients = filter_mails(content.to.split(', ').uniq)
     if company.reached_mailing_limit? && recipients.size > company.mails_left
-      sending.update(status: 'canceled', detail: "Reached monthly limit sending #{recipients.size} mails. (#{company.settings.monthly_mails}/#{company.plan.monthly_mails})")
+      sending.update(status: 'canceled', detail: "Reached monthly limit sending #{recipients.size} mails. (#{company.settings.monthly_mails}/#{company.settings.get_mails_capacity})")
     else
       total_sendings = 0
       total_recipients = 0

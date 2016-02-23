@@ -115,6 +115,8 @@ class CompaniesController < ApplicationController
 
 					            	company.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
 					            	company.company_plan_setting.save
+					            	company.company_setting.mails_base_capacity = company.plan.monthly_mails
+          							company.company_setting.save
 
 					            	@transfer.approved = true
 					            	@transfer.save
@@ -164,6 +166,8 @@ class CompaniesController < ApplicationController
 
 						    			mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
 					            		mockCompany.company_plan_setting.save
+					            		mockCompany.company_setting.mails_base_capacity = mockCompany.plan.monthly_mails
+          								mockCompany.company_setting.save
 
 						                PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
 
@@ -224,6 +228,8 @@ class CompaniesController < ApplicationController
 
 									mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
 					            	mockCompany.company_plan_setting.save
+					            	mockCompany.company_setting.mails_base_capacity = mockCompany.plan.monthly_mails
+          							mockCompany.company_setting.save
 
 									@transfer.approved
 									@transfer.save
@@ -475,6 +481,11 @@ class CompaniesController < ApplicationController
 			end
 		end
 
+		@billing_info = BillingInfo.new
+		if BillingInfo.where(company_id: @company.id).count > 0
+			@billing_info = @company.billing_info
+		end
+
 		# @company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.find_by_name("Normal").plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
 
 		#@company.payment_status == PaymentStatus.find_by_name("Trial") ? @price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', @company.locations.where(active: true).count).where('service_providers >= ?', @company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: @company.country.id).price : @price = @company.plan.plan_countries.find_by(country_id: @company.country.id).price
@@ -493,6 +504,7 @@ class CompaniesController < ApplicationController
 	        @price = @company.company_plan_setting.base_price * @company.computed_multiplier
 	      end
 	    end
+	    
 		@sales_tax = @company.country.sales_tax
 	    @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
 	    @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
@@ -636,6 +648,10 @@ class CompaniesController < ApplicationController
 		if params[:new_locations_multiplier].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
 			@company.company_plan_setting.locations_multiplier = params[:new_locations_multiplier].to_f
 			@company.company_plan_setting.save
+		end
+		if params[:new_mails_base_capacity].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			@company.company_setting.mails_base_capacity = params[:new_mails_base_capacity].to_i
+			@company.company_setting.save
 		end
 
 		@company.company_setting.online_payment_capable = params[:new_online_payment_capable]
@@ -2691,6 +2707,6 @@ class CompaniesController < ApplicationController
 
 		# Never trust parameters from the scary internet, only allow the white list through.
 		def company_params
-			params.require(:company).permit(:name, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, :show_in_home, :country_id, company_setting_attributes: [:before_booking, :after_booking, :allows_online_payment, :account_number, :company_rut, :account_name, :account_type, :bank_id], economic_sector_ids: [], company_countries_attributes: [:id, :country_id, :web_address, :active])
+			params.require(:company).permit(:name, :plan_id, :logo, :remove_logo, :payment_status_id, :pay_due, :web_address, :description, :cancellation_policy, :months_active_left, :due_amount, :due_date, :active, :show_in_home, :country_id, company_setting_attributes: [:before_booking, :after_booking, :allows_online_payment, :account_number, :company_rut, :account_name, :account_type, :bank_id, :mails_base_capacity], economic_sector_ids: [], company_countries_attributes: [:id, :country_id, :web_address, :active])
 		end
 end
