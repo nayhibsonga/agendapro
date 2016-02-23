@@ -61,4 +61,8 @@ class CompanySetting < ActiveRecord::Base
 		end
 	end
 
+	def get_mails_capacity
+		return self.mails_base_capacity * self.company.locations.where(active: true).count
+	end
+
 end
