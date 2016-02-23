@@ -743,11 +743,11 @@ class Company < ActiveRecord::Base
 	end
 
 	def reached_mailing_limit?
-		self.settings.monthly_mails >= self.plan.monthly_mails
+		self.settings.monthly_mails >= self.settings.get_mails_capacity #plan.monthly_mails
 	end
 
 	def mails_left
-		self.plan.monthly_mails - self.settings.monthly_mails
+		self.settings.get_mails_capacity - self.settings.monthly_mails
 	end
 
 end
