@@ -84,11 +84,23 @@ class BillingInfosController < ApplicationController
 
     respond_to do |format|
       if @billing_info.save
-        format.html { redirect_to companies_path, notice: 'Datos de facturación creados correctamente..' }
-        format.json { render action: 'show', status: :created, location: @billing_info }
+        if !params[:origin].blank? && params[:origin] == "manage_company"
+          flash[:notice] = 'Datos de facturación creados correctamente.'
+          format.html { redirect_to controller: 'companies', action: 'manage_company', id: @billing_info.company_id, notice: 'Datos de facturación creados correctamente.' }
+          format.json { render action: 'show', status: :created, location: @billing_info }
+        else
+          format.html { redirect_to companies_path, notice: 'Datos de facturación creados correctamente.' }
+          format.json { render action: 'show', status: :created, location: @billing_info }
+        end
       else
-        format.html { redirect_to companies_path, notice: 'Hubo un problema en la creación de los datos.' }
-        format.json { render json: @billing_info.errors, status: :unprocessable_entity }
+        if !params[:origin].blank? && params[:origin] == "manage_company"
+          flash[:alert] = 'Ocurrió un problema en la actualización de datos de facturación.'
+          format.html { redirect_to controller: 'companies', action: 'manage_company', id: @billing_info.company_id, notice: 'Hubo un problema en la creación de los datos.' }
+          format.json { render json: @billing_info.errors, status: :unprocessable_entity }
+        else
+          format.html { redirect_to companies_path, notice: 'Hubo un problema en la creación de los datos.' }
+          format.json { render json: @billing_info.errors, status: :unprocessable_entity }
+        end
       end
     end
 
@@ -97,11 +109,23 @@ class BillingInfosController < ApplicationController
   def super_admin_update
     respond_to do |format|
       if @billing_info.update(billing_info_params)
-        format.html { redirect_to companies_path, notice: 'Datos de facturación actualizados.' }
-        format.json { head :no_content }
+        if !params[:origin].blank? && params[:origin] == "manage_company"
+          flash[:notice] = 'Datos de facturación actualizados correctamente.'
+          format.html { redirect_to controller: 'companies', action: 'manage_company', id: @billing_info.company_id, notice: 'Datos de facturación actualizados correctamente.' }
+          format.json { head :no_content }
+        else
+          format.html { redirect_to companies_path, notice: 'Datos de facturación actualizados correctamente.' }
+          format.json { head :no_content }
+        end
       else
-        format.html { redirect_to companies_path, notice: 'Hubo un problema en la creación de los datos.' }
-        format.json { render json: @billing_info.errors, status: :unprocessable_entity }
+        if !params[:origin].blank? && params[:origin] == "manage_company"
+          flash[:alert] = 'Ocurrió un problema en la actualización de datos de facturación.'
+          format.html { redirect_to controller: 'companies', action: 'manage_company', id: @billing_info.company_id, notice: 'Hubo un problema en la actualización de los datos.' }
+          format.json { render json: @billing_info.errors, status: :unprocessable_entity }
+        else
+          format.html { redirect_to companies_path, notice: 'Hubo un problema en la actualización de los datos.' }
+          format.json { render json: @billing_info.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
