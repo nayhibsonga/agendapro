@@ -26,6 +26,14 @@ ActiveRecord::Schema.define(version: 20160218202055) do
     t.datetime "updated_at"
   end
 
+  create_table "attribute_groups", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.integer  "order"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "attributes", force: true do |t|
     t.integer  "company_id"
     t.string   "name"
@@ -39,6 +47,8 @@ ActiveRecord::Schema.define(version: 20160218202055) do
     t.boolean  "show_on_workflow",      default: false
     t.boolean  "mandatory_on_calendar", default: false
     t.boolean  "mandatory_on_workflow", default: false
+    t.integer  "attribute_group_id"
+    t.integer  "order"
   end
 
   create_table "banks", force: true do |t|
