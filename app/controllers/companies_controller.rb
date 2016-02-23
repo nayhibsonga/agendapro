@@ -115,6 +115,8 @@ class CompaniesController < ApplicationController
 
 					            	company.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
 					            	company.company_plan_setting.save
+					            	company.company_setting.mails_base_capacity = company.plan.monthly_mails
+          							company.company_setting.save
 
 					            	@transfer.approved = true
 					            	@transfer.save
@@ -164,6 +166,8 @@ class CompaniesController < ApplicationController
 
 						    			mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
 					            		mockCompany.company_plan_setting.save
+					            		mockCompany.company_setting.mails_base_capacity = mockCompany.plan.monthly_mails
+          								mockCompany.company_setting.save
 
 						                PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: due)
 
@@ -224,6 +228,8 @@ class CompaniesController < ApplicationController
 
 									mockCompany.company_plan_setting.base_price = Plan.find(plan_id).plan_countries.find_by(country_id: company.country.id).price
 					            	mockCompany.company_plan_setting.save
+					            	mockCompany.company_setting.mails_base_capacity = mockCompany.plan.monthly_mails
+          							mockCompany.company_setting.save
 
 									@transfer.approved
 									@transfer.save

@@ -102,7 +102,7 @@
                         <% end %>
                       </div>
                       <div>
-                        <%= plan.monthly_mails.to_s %> emails mensuales
+                        <%= plan.monthly_mails.to_s %> emails mensuales por local
                       </div>
                     <% else %>
                       <% if plan.name == "Personal" %>
@@ -113,7 +113,7 @@
                             1 prestador
                         </div>
                         <div>
-                          <%= plan.monthly_mails.to_s %> emails mensuales
+                          <%= plan.monthly_mails.to_s %> emails mensuales por local
                         </div>
                       <% else %>
                         <div>
@@ -123,7 +123,7 @@
                           Staff ilimitado
                         </div>
                         <div>
-                          <%= plan.monthly_mails.to_s %> emails mensuales
+                          <%= plan.monthly_mails.to_s %> emails mensuales por local
                         </div>
                       <% end %>
                     <% end %>
@@ -174,7 +174,7 @@
                       <% end %>
                     </div>
                     <div>
-                      <%= @company.plan.monthly_mails.to_s %> emails mensuales
+                      <%= @company.plan.monthly_mails.to_s %> emails mensuales por local
                     </div>
                   </div>
 
@@ -253,7 +253,7 @@
                       <br />
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.service_providers.to_s %> prestadores
                       <br />
-                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales por local
                     <% elsif @company.plan.name == "Personal" %>
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;1 local
                       <br />
@@ -265,7 +265,7 @@
                       <br />
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;Staff ilimitado
                       <br />
-                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales por local
                     <% end %>
                   </td>
                 </tr>
