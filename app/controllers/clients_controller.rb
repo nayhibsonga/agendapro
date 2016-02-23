@@ -418,7 +418,7 @@ class ClientsController < ApplicationController
 
     tmp_to = Array.new
     mail_list.each do |email|
-      tmp_to.push(email) if email=~ /([^\s]+)@([^\s]+)/
+      tmp_to.push(email) if email=~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
     end
     @to = tmp_to.join(', ')
   end
