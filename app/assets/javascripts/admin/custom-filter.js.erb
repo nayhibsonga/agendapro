@@ -1,5 +1,26 @@
-$(document).ready(function(){
-	$('.attribute-multiselect').multiselect({
+
+function initializeFilters()
+{
+
+  $(".attribute-datepicker").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
+
+	$('.categoric-multiselect').multiselect({
       includeSelectAllOption: true,
       selectAllText: 'Todos',
       buttonContainer: '<div style="margin-top: 8px;"></div>',
@@ -35,5 +56,8 @@ $(document).ready(function(){
       onInitialized: function(select, container){
         $('.attribute-multiselect').show();
       }
-  	});
-});
+  });
+
+}
+
+

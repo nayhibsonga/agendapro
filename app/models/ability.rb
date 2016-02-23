@@ -136,6 +136,8 @@ class Ability
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
         can :new_filter_form, CustomFilter, :company_id => user.company_id
+        can :rearrange, Attribute, :company_id => user.company_id
+        can :rearrange, AttributeGroup, :company_id => user.company_id
 
         can :select_plan, Plan
         can :use_email_templates, Client #FIXME
@@ -399,6 +401,12 @@ class Ability
         can :update, AttributeCategory, :company_id => user.company_id
         can :destroy, AttributeCategory, :company_id => user.company_id
 
+        can :show, AttributeGroup, :company_id => user.company_id
+        can :create, AttributeGroup, :company_id => user.company_id
+        can :update, AttributeGroup, :company_id => user.company_id
+        can :destroy, AttributeGroup, :company_id => user.company_id
+        can :edit_form, AttributeGroup, :company_id => user.company.id
+
         can :show, ClientFile, :client => {:company_id => user.company_id}
         can :create, ClientFile, :client => {:company_id => user.company_id}
         can :update, ClientFile, :client => {:company_id => user.company_id}
@@ -410,6 +418,7 @@ class Ability
         can :destroy, CompanyFile, :company_id => user.company_id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
+        can :update_custom_attributes, Client, :company_id => user.company_id
 
         can :files, Company, :company_id => user.company_id
         can :upload_file, Company, :company_id => user.company_id
@@ -442,6 +451,9 @@ class Ability
 
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
+
+        can :rearrange, Attribute, :company_id => user.company_id
+        can :rearrange, AttributeGroup, :company_id => user.company_id
 
         can :upload_file, Client
 
@@ -682,6 +694,9 @@ class Ability
         can :delete_folder, Client, :company_id => user.company_id
         can :move_file, Client, :company_id => user.company_id
         can :edit_file, Client, :company_id => user.company_id
+
+        can :get_attribute_categories, Attribute, :company_id => user.company_id
+        can :update_custom_attributes, Client, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 

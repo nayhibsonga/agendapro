@@ -219,6 +219,82 @@ class ClientsController < ApplicationController
 
           @sessionBookings = []
 
+          @files = @client.client_files.order('updated_at desc').limit(5)
+
+          s3 = Aws::S3::Client.new
+          resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/', delimiter: '/')
+
+          @s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+          folders_prefixes = resp.common_prefixes
+          @folders = []
+
+          folders_prefixes.each do |folder|
+            sub_str = folder.prefix[0, folder.prefix.rindex("/")]
+            @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
+          end
+
+          @preSessionBookings.each do |session_booking|
+
+            include_sb = false
+
+            if session_booking.sessions_taken < session_booking.sessions_amount
+              include_sb = true
+            else
+              session_booking.bookings.each do |booking|
+                if booking.start > DateTime.now
+                  include_sb = true
+                end
+              end
+            end
+
+            if include_sb
+              @sessionBookings << session_booking
+            end
+
+          end
+          render action: 'edit' }
+        format.json { render json: @client.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def update_custom_attributes
+
+    @client = Client.find(params[:client_id])
+
+    respond_to do |format|
+      if @client.save_attributes(params)
+        format.html { redirect_to edit_client_path(id: @client.id), notice: 'Cliente actualizado exitosamente.' }
+        format.json { head :no_content }
+      else
+        format.html {
+          @activeBookings = Booking.where(:client_id => @client).where("start > ?", DateTime.now).order(start: :asc)
+          @lastBookings = Booking.where(:client_id => @client).where("start <= ?", DateTime.now).order(start: :desc)
+          @next_bookings = Booking
+          @client_comment = ClientComment.new
+          @client_comments = ClientComment.where(client_id: @client).order(created_at: :desc)
+          @company = current_user.company
+
+          @preSessionBookings = SessionBooking.where(:client_id => @client)
+
+          @sessionBookings = []
+
+          @files = @client.client_files.order('updated_at desc').limit(5)
+
+          s3 = Aws::S3::Client.new
+          resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/', delimiter: '/')
+
+          @s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+          folders_prefixes = resp.common_prefixes
+          @folders = []
+
+          folders_prefixes.each do |folder|
+            sub_str = folder.prefix[0, folder.prefix.rindex("/")]
+            @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
+          end
+
           @preSessionBookings.each do |session_booking|
 
             include_sb = false

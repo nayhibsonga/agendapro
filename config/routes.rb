@@ -21,6 +21,7 @@ Agendapro::Application.routes.draw do
     resources :company_plan_settings
     resources :attribute_categories
     resources :attributes
+    resources :attribute_groups
 
     resources :countries
     resources :regions
@@ -551,6 +552,7 @@ Agendapro::Application.routes.draw do
     post '/delete_company_folder', :to => 'companies#delete_folder'
     post '/move_company_file', :to => 'companies#move_file'
     post '/change_company_file', :to => 'companies#edit_file'
+    post '/client_update_attributes', :to => 'clients#update_custom_attributes'
 
     post '/upload_client_file', :to => 'clients#upload_file'
     post '/create_client_folder', :to => 'clients#create_folder'
@@ -569,6 +571,9 @@ Agendapro::Application.routes.draw do
     patch '/billing_info_admin_update', :to => 'billing_infos#super_admin_update'
 
     get '/new_filter_form', :to => 'custom_filters#new_filter_form'
+    post '/rearrange_attributes', :to => 'attributes#rearrange'
+    post '/rearrange_attribute_groups', :to => 'attribute_groups#rearrange'
+
 
   end
 

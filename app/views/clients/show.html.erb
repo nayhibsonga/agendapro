@@ -7,15 +7,20 @@
           <small><%= @client.email %></small>
         </h2>
       </div>
-      <div class="col-sm-4 col-md-4">
+
+      <div class="col-sm-3 col-md-3">
         <p><strong><%= (I18n.t('ci')).capitalize %>:&nbsp;</strong> <%= if !@client.identification_number.blank? then @client.identification_number else '---' end %></p>
       </div>
-      <div class="col-sm-4 col-md-4">
+      <div class="col-sm-3 col-md-3">
+        <p><strong>Cumpleaños:&nbsp;</strong> <%= @client.get_birth_date %></p>
+      </div>
+      <div class="col-sm-3 col-md-3">
         <p><strong>Teléfono 1:&nbsp;</strong> <%= if !@client.phone.blank? then @client.phone else '---' end %></p>
       </div>
-      <div class="col-sm-4 col-md-4">
+      <div class="col-sm-3 col-md-3">
         <p><strong>Teléfono 2:&nbsp;</strong> <%= if !@client.second_phone.blank? then @client.second_phone else '---' end %></p>
       </div>
+
     </div>
     <div class="col-md-2" style="padding-top: 15px;">
     <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Archivos</span>'.html_safe, get_client_files_path(client_id: @client.id), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 140px;" %><br />

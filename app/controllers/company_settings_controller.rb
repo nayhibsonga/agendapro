@@ -56,8 +56,12 @@ class CompanySettingsController < ApplicationController
 
     @attribute = Attribute.new
     @attribute_category = AttributeCategory.new
+    @attribute_group = AttributeGroup.new
 
-    @attributes = @company.custom_attributes
+    @attribute_group_otros = AttributeGroup.where(name: "Otros", company_id: @company.id).first
+
+    @attributes = @company.custom_attributes.joins(:attribute_group).order('attribute_groups.order asc').order('attributes.order asc').order('name asc')
+    @attribute_groups = @company.attribute_groups.order(order: :asc).order(name: :asc)
 
     @custom_filter = CustomFilter.new
     @custom_filters = @company.custom_filters
