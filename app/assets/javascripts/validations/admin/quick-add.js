@@ -6,7 +6,6 @@ var service_provider_validation;
 $(function() {
 	location_validation = $('#new_location').submit(function(e) {
 		e.preventDefault();
-		window.console.log('prevented');
 	}).validate({
 		errorPlacement: function(error, element) {
 			var id = element.attr('id');
@@ -25,9 +24,6 @@ $(function() {
         required: true,
         minlength: 3
       },
-      'location[outcall_places]': {
-        required: true
-      },
       'location[phone]': {
         required: true,
         minlength: 8,
@@ -35,9 +31,6 @@ $(function() {
       },
       'location[email]': {
         email: true
-      },
-			'location[country_id]': {
-				required: true
 			}
 		},
 		highlight: function(element) {
@@ -53,12 +46,13 @@ $(function() {
 			$('#update_location_spinner').show();
 			$('#update_location_button').attr('disabled', true);
 			$('#next_location_button').attr('disabled', true);
-			if($(form).find('button').first().attr('name') == 'new_location_btn') {
+			if($(form).find('button.btn-green').attr('name') == 'new_location_btn') {
 				saveLocation('POST','');
 			}
 			else {
-				if (parseInt($(form).find('button').first().attr('name').split("edit_location_btn_")[1]) > 0) {
-					saveLocation('PATCH', '/'+parseInt($(form).find('button').first().attr('name').split("edit_location_btn_")[1]));
+				var locationId = parseInt($(form).find('button.btn-green').attr('name').split("edit_location_btn_")[1]);
+				if (locationId > 0) {
+					saveLocation('PATCH', '/' + locationId);
 				}
 				else {
 					window.console.log("Bad location update");

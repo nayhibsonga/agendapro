@@ -340,7 +340,7 @@ function places() {
   function geolocate() {
     $('#saveLocation').attr('disabled', true);
     if (navigator.geolocation) {
-      $('#geolocate').html('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>');
+      $('#geolocate').html('<i class="fa fa-spinner fa-spin"></i>');
       var positioned = false;
       navigator.geolocation.getCurrentPosition(
         function(position) {

@@ -130,8 +130,7 @@ function changeDayStatus (value, ctrl) {
 }
 
 function saveLocation (typeURL, extraURL) {
-  console.log("saveLocation")
-	var locationJSON = locJSON('local');
+  var locationJSON = locJSON('local');
 	$.ajax({
 		type: typeURL,
 		url: '/quick_add/location'+extraURL+'.json',
@@ -208,7 +207,7 @@ function locJSON (ctrl) {
 		"second_address": $('#location_second_address').val(),
 		"phone": $('#location_phone').val(),
 		"outcall": $('#location_outcall').prop('checked'),
-		"outcall_places": $('#location_outcall_places'),
+		"outcall_places": $('#location_outcall_places').val(),
 		"latitude": parseFloat($('#location_latitude').val()),
 		"longitude": parseFloat($('#location_longitude').val()),
 		"location_times_attributes": location_times,
@@ -245,7 +244,7 @@ function load_location(id) {
 	$.getJSON('/quick_add/load_location/'+id, {}, function (location) {
 		$('#location_name').val(location.location.name);
 		$('#address').val(location.location.full_address);
-		$('#location_address').val(location.location.address);
+		$('#location_address').val(JSON.stringify(location.location.address));
 		$('#location_second_address').val(location.location.second_address);
 		$('#location_phone').val(location.location.phone);
 		$('#location_outcall').prop('checked', location.location.outcall);
@@ -374,7 +373,7 @@ function places() {
   function geolocate() {
     $('#update_location_button').attr('disabled', true);
     if (navigator.geolocation) {
-      $('#geolocate').html('<%= image_tag "small-loader.gif", :alt => "Loader", :id => "small_loader_header", :class => "small-loader-header" %>');
+      $('#geolocate').html('<i class="fa fa-spinner fa-spin"></i>');
       var positioned = false;
       navigator.geolocation.getCurrentPosition(
         function(position) {
