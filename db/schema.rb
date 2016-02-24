@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160224135755) do
+ActiveRecord::Schema.define(version: 20160224190119) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,14 +22,6 @@ ActiveRecord::Schema.define(version: 20160224135755) do
   create_table "attribute_categories", force: true do |t|
     t.integer  "attribute_id"
     t.string   "category"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "attribute_groups", force: true do |t|
-    t.integer  "company_id"
-    t.string   "name"
-    t.integer  "order"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -47,8 +39,6 @@ ActiveRecord::Schema.define(version: 20160224135755) do
     t.boolean  "show_on_workflow",      default: false
     t.boolean  "mandatory_on_calendar", default: false
     t.boolean  "mandatory_on_workflow", default: false
-    t.integer  "attribute_group_id"
-    t.integer  "order"
   end
 
   create_table "banks", force: true do |t|
@@ -763,7 +753,6 @@ ActiveRecord::Schema.define(version: 20160224135755) do
     t.string   "phone",                          null: false
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "district_id",                    null: false
     t.integer  "company_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -782,7 +771,6 @@ ActiveRecord::Schema.define(version: 20160224135755) do
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
   add_index "locations", ["country_id"], name: "index_locations_on_country_id", using: :btree
-  add_index "locations", ["district_id"], name: "index_locations_on_district_id", using: :btree
 
   create_table "mailing_lists", force: true do |t|
     t.string   "first_name",     default: ""
