@@ -68,7 +68,7 @@ function localMap(id) {
 
 function loadOutcallDistricts(id) {
   $.getJSON('/local_districts', {id: id}, function (local_districts) {
-    $('#outcallDistricts').html('<h3>Comunas que se atienden desde esta sucursal:<br /><small>(comunas en '+local_districts.city+', '+local_districts.region+' - '+local_districts.country+')</small></h3><p>'+local_districts.districts+'</p>');
+    $('#outcallDistricts').html('<h3>Lugares que se atienden desde esta sucursal:</h3><pre>'+local_districts.districts+'</pre>');
   });
 }
 

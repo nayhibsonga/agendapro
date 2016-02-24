@@ -2,7 +2,7 @@ class Location < ActiveRecord::Base
   require 'pg_search'
   include PgSearch
 
-  belongs_to :district
+  belongs_to :country
   belongs_to :company
 
   has_many :location_times, dependent: :destroy
@@ -14,6 +14,7 @@ class Location < ActiveRecord::Base
 
   #############################
   # Remover despues de generar la migracion
+  belongs_to :district
   has_many :location_outcall_districts, dependent: :destroy
   has_many :districts, :through => :location_outcall_districts
   #############################
@@ -64,7 +65,7 @@ class Location < ActiveRecord::Base
 
   scope :ordered, -> { order(:order, :name) }
 
-  validates :name, :phone, :company, :district, :email, :presence => true
+  validates :name, :phone, :company, :country, :email, :presence => true
 
   validate :times_overlap, :time_empty_or_negative, :plan_locations, :outcall_services, :active_countries
   validate :new_plan_locations, :on => :create
@@ -269,7 +270,7 @@ class Location < ActiveRecord::Base
 	end
 
 	def active_countries
-		if self.active && CompanyCountry.where(country_id: self.district.city.region.country.id, company_id: self.company_id).count < 1
+		if self.active && CompanyCountry.where(country_id: self.country_id, company_id: self.company_id).count < 1
 			errors.add(:base, "No puedes guardar el local ya que no tienes ese país activo en tus configuraciones.")
 		end
 	end
@@ -481,11 +482,11 @@ class Location < ActiveRecord::Base
 	end
 
 	def get_web_address
-		return self.company.company_countries.find_by(country_id: self.district.city.region.country.id).web_address
+		return self.company.company_countries.find_by(country_id: self.country_id).web_address
 	end
 
 	def get_locale
-		return self.district.city.region.country.locale
+		return self.country.locale
 	end
 
 	def opened_days_zero_index

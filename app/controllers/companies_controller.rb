@@ -1118,7 +1118,7 @@ class CompaniesController < ApplicationController
   		return
   	end
 
-		@locations = Location.where(:active => true, online_booking: true, district_id: District.where(city_id: City.where(region_id: Region.where(country_id: Country.find_by(locale: I18n.locale.to_s))))).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).order(:order, :name)
+		@locations = Location.actives.where(online_booking: true, country_id: Country.find_by(locale: I18n.locale.to_s), company_id: @company.id).where(id: ServiceProvider.actives.where(company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).ordered
 
 		unless @company.company_setting.activate_workflow && @company.active && @locations.uniq.count > 0
 			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."

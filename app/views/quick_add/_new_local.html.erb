@@ -28,6 +28,7 @@
           <%= form_for @location, html: {class: "form-horizontal"} do |f| %>
             <%= f.hidden_field :latitude %>
             <%= f.hidden_field :longitude %>
+            <%= f.hidden_field :country_id, value: current_user.company.country_id %>
             <div class="form-group has-feedback">
               <%= f.label :name, "Nombre: ", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">

@@ -203,6 +203,7 @@ function locJSON (ctrl) {
 	}
 	var locationJSON  = {
 		"name": $('#location_name').val(),
+    "country_id": $('#location_country_id').val(),
 		"address": $('#location_address').val(),
 		"second_address": $('#location_second_address').val(),
 		"phone": $('#location_phone').val(),

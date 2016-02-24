@@ -28,6 +28,9 @@ $(function() {
 			},
 			'location[email]': {
 				email: true
+			},
+			'location[country_id]': {
+				required: true
 			}
 		},
 		highlight: function(element) {

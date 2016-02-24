@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160218202055) do
+ActiveRecord::Schema.define(version: 20160224135755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -777,9 +777,11 @@ ActiveRecord::Schema.define(version: 20160218202055) do
     t.string   "image2"
     t.string   "image3"
     t.text     "outcall_places"
+    t.integer  "country_id"
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
+  add_index "locations", ["country_id"], name: "index_locations_on_country_id", using: :btree
   add_index "locations", ["district_id"], name: "index_locations_on_district_id", using: :btree
 
   create_table "mailing_lists", force: true do |t|

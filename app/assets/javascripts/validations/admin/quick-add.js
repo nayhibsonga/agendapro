@@ -35,7 +35,10 @@ $(function() {
       },
       'location[email]': {
         email: true
-      }
+      },
+			'location[country_id]': {
+				required: true
+			}
 		},
 		highlight: function(element) {
 			$(element).closest('.form-group').removeClass('has-success has-feedback').addClass('has-error has-feedback');
