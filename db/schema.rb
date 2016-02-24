@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160224190119) do
+ActiveRecord::Schema.define(version: 20160223133202) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,14 @@ ActiveRecord::Schema.define(version: 20160224190119) do
   create_table "attribute_categories", force: true do |t|
     t.integer  "attribute_id"
     t.string   "category"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "attribute_groups", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.integer  "order"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -39,6 +47,8 @@ ActiveRecord::Schema.define(version: 20160224190119) do
     t.boolean  "show_on_workflow",      default: false
     t.boolean  "mandatory_on_calendar", default: false
     t.boolean  "mandatory_on_workflow", default: false
+    t.integer  "attribute_group_id"
+    t.integer  "order"
   end
 
   create_table "banks", force: true do |t|
@@ -445,6 +455,7 @@ ActiveRecord::Schema.define(version: 20160224190119) do
     t.boolean  "editable_payment_prices",     default: true
     t.boolean  "mandatory_mock_booking_info", default: false
     t.boolean  "strict_booking",              default: false,                 null: false
+    t.integer  "mails_base_capacity",         default: 0
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree

@@ -14,6 +14,7 @@ class Company < ActiveRecord::Base
 	has_many :email_contents, dependent: :destroy, class_name: 'Email::Content'
 
 	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
+	has_many :attribute_groups
 
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
 
@@ -425,6 +426,7 @@ class Company < ActiveRecord::Base
 
 			company.plan_id = plan.id
 			company.company_plan_setting.base_price = plan.plan_countries.find_by_country_id(company.country.id).price
+			company.company_setting.mails_base_capacity = plan.monthly_mails
 
 			company.due_date = Time.now
 			#company.due_amount = - 1 * ((day_number - 1).to_f / month_days.to_f) * company.plan.plan_countries.find_by(country_id: company.country.id).price * (1 + sales_tax)
@@ -437,6 +439,7 @@ class Company < ActiveRecord::Base
 			if company.save
 
 				company.company_plan_setting.save
+				company.company_setting.save
 
 				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "OK end_trial")
 
@@ -742,11 +745,11 @@ class Company < ActiveRecord::Base
 	end
 
 	def reached_mailing_limit?
-		self.settings.monthly_mails >= self.plan.monthly_mails
+		self.settings.monthly_mails >= self.settings.get_mails_capacity #plan.monthly_mails
 	end
 
 	def mails_left
-		self.plan.monthly_mails - self.settings.monthly_mails
+		self.settings.get_mails_capacity - self.settings.monthly_mails
 	end
 
 end

@@ -255,10 +255,17 @@ function saveService() {
       document.location.href = '/services/';
     },
     error: function(xhr){
-      var errors = $.parseJSON(xhr.responseText).errors;
+
+      console.log(xhr);
+      var errors = $.parseJSON(xhr.responseText);
       var errorList = '';
       for (i in errors) {
-        errorList += '- ' + errors[i] + '\n\n';
+        errorList += i + ":\n"
+        for(j = 0; j < errors[i].length; j++)
+        {
+          errorList += errors[i][j] + '\n';
+        }
+        errorList += "\n";
       }
       swal({
         title: "Error",

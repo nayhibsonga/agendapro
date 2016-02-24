@@ -7,18 +7,23 @@
           <small><%= @client.email %></small>
         </h2>
       </div>
-      <div class="col-sm-4 col-md-4">
+
+      <div class="col-sm-3 col-md-3">
         <p><strong><%= (I18n.t('ci')).capitalize %>:&nbsp;</strong> <%= if !@client.identification_number.blank? then @client.identification_number else '---' end %></p>
       </div>
-      <div class="col-sm-4 col-md-4">
+      <div class="col-sm-3 col-md-3">
+        <p><strong>Cumpleaños:&nbsp;</strong> <%= @client.get_birth_date %></p>
+      </div>
+      <div class="col-sm-3 col-md-3">
         <p><strong>Teléfono 1:&nbsp;</strong> <%= if !@client.phone.blank? then @client.phone else '---' end %></p>
       </div>
-      <div class="col-sm-4 col-md-4">
+      <div class="col-sm-3 col-md-3">
         <p><strong>Teléfono 2:&nbsp;</strong> <%= if !@client.second_phone.blank? then @client.second_phone else '---' end %></p>
       </div>
+
     </div>
     <div class="col-md-2" style="padding-top: 15px;">
-    <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Archivos</span>'.html_safe, get_client_files_path(client_id: @client.id), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 140px;" %><br />
+      <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Archivos</span>'.html_safe, get_client_files_path(client_id: @client.id), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 140px;" %><br />
       <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar Cliente</span>'.html_safe, edit_client_path(@client), :class => "btn btn-orange", :style => "width: 140px;" %>
     </div>
   </div>
@@ -49,7 +54,7 @@
       <div class="row">
         <label for="serviceMultiSelect" class="col-sm-1 control-label" style="margin-top: 5px;">Servicios:</label>
         <div class="col-sm-3">
-          
+
           <select id="serviceMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
             <% for service in @services.accessible_by(current_ability) do %>
               <option value="<%= service.id %>">
@@ -59,10 +64,10 @@
           </select>
 
         </div>
-        
+
         <label for="serviceProviderMultiSelect" class="col-sm-1 control-label" style="margin-top: 5px;">Prestadores:</label>
         <div class="col-sm-3">
-          
+
           <select id="serviceProviderMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
             <% for service_provider in @service_providers.accessible_by(current_ability) do %>
               <option value="<%= service_provider.id %>">
@@ -75,7 +80,7 @@
 
         <label for="statusMultiSelect" class="col-sm-1 control-label" style="margin-top: 5px;">Estado:</label>
         <div class="col-sm-3">
-          
+
           <select id="statusMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
             <% for status in Status.all do %>
               <option value="<%= status.id %>">
@@ -94,7 +99,7 @@
   </div>
 
   <div id="client_bookings_div">
-    
+
   </div>
 </div>
 

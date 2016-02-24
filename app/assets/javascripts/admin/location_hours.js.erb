@@ -198,7 +198,7 @@ function saveLocation() {
     data: { location: locationJSON },
     dataType: 'json',
     success: function(location){
-      if (location.warnings.length > 0) {
+      if (location.warnings != null && location.warnings.length > 0) {
         swal({
           title: "¡Completado!",
           text: location.warnings,

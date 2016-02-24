@@ -52,7 +52,7 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       if @location.save
-        flash[:notice] = 'Local actualizado exitosamente.'
+        flash[:notice] = 'Local creado exitosamente.'
         format.html { redirect_to locations_path }
         format.json { render :json => @location }
       else

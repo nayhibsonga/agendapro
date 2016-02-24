@@ -1,3 +1,5 @@
+@import 'variables';
+
 html, body, .main, .ng-app-container {
   height: 100%;
 }
@@ -5,8 +7,8 @@ html, body, .main, .ng-app-container {
 .main { margin-bottom: 0; }
 
 .btn-list {
-  border: 1px solid #22c488;
-  color: #22c488;
+  border: 1px solid $light-green;
+  color: $light-green;
   background-color: transparent;
 }
 
@@ -128,5 +130,152 @@ html, body, .main, .ng-app-container {
     &:hover {
       background-color: #FFF;
     }
+  }
+}
+
+/*
+  ================================
+  ========== Dashboard ===========
+  ================================
+*/
+#dashboard {
+  padding-top: 10px;
+  .rec-highlight {
+    background-color: $lighterx-gray;
+    font-weight: 600;
+    padding: 5px 7px;
+    @media(max-width: 767px) {
+      text-align: center;
+    }
+    @media(max-width: 991px) {
+      border: solid #e3e3e3 1px;
+      margin-bottom: 5px;
+    }
+    @media(min-width: 768px) {
+      padding-left: 15%;
+    }
+    @media(min-width: 992px) {
+      & + .rec-highlight {
+        margin-top: 3px;
+      }
+    }
+    @media(min-width: 1200px) {
+      padding-left: 22%;
+    }
+  }
+  .square-highlight,
+  .square-green {
+    @extend .rec-highlight;
+    padding: 5px;
+    text-align: center;
+    height: auto;
+    > h2 {
+      margin-top: 10px;
+      font-weight: bold;
+      @media(min-width: 768px) {
+        font-size: 1.52em;
+      }
+      @media(min-width: 992px) {
+        margin-top: 20px;
+      }
+      @media(min-width: 1200px) {
+        font-size: 1.72em;
+      }
+    }
+    @media(min-width: 768px) {
+      padding-left: 0;
+    }
+    @media(min-width: 992px) {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      height: 219px;
+      padding: 10px 5px;
+    }
+    @media(min-width: 1200px) {
+      padding-left: 0;
+    }
+  }
+  .square-green {
+    background-color: $light-green;
+    color: $white;
+    @media(max-width: 991px) {
+      border-color: $dark-green;
+    }
+    @media(min-width: 992px) {
+      > h2 {
+        font-size: 1.72em;
+      }
+    }
+    @media(min-width: 1200px) {
+      > h2 {
+        font-size: 2.47em;
+      }
+    }
+  }
+  .panel-body-grey {
+    background-color: $lighterx-gray;
+  }
+}
+
+.label-reserved,
+.label-confirmed,
+.label-cancelled,
+.label-session,
+.label-completed,
+.label-noshow {
+  color: $dark-gray;
+}
+.label-reserved {
+  background-color: $reserved-back;
+}
+.label-confirmed {
+  background-color: $confirmed-back;
+}
+.label-cancelled {
+  background-color: $blocked-back;
+}
+.label-session {
+  background-color: $break-back;
+}
+.label-completed {
+  background-color: $completed-back;
+}
+.label-noshow {
+  background-color: $noshow-back;
+}
+
+.panel-scrollable {
+  max-height: 337px;
+  overflow-y: auto;
+  overflow-y: overlay;
+}
+
+.panel-green {
+  border-color: $dark-green;
+  > .panel-heading {
+    color: $white;
+    background-color: $light-green;
+    border-color: $dark-green;
+    .badge {
+      color: $light-green;
+      background-color: #505050;
+    }
+    & + .panel-collapse > .panel-body {
+      border-top-color: $dark-green;
+    }
+  }
+  > .panel-footer + .panel-collapse > .panel-body {
+    border-bottom-color: $dark-green;
   }
 }

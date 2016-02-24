@@ -186,6 +186,8 @@ class PayUController < ApplicationController
             if company.save
               company.company_plan_setting.base_price = company.plan.plan_countries.find_by_country_id(company.country.id).price
               company.company_plan_setting.save
+              company.company_setting.mails_base_capacity = company.plan.monthly_mails
+              company.company_setting.save
               PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."
               return
@@ -542,6 +544,8 @@ class PayUController < ApplicationController
         if company.save
           company.company_plan_setting.base_price = company.plan.plan_countries.find_by_country_id(company.country.id).price
           company.company_plan_setting.save
+          company.company_setting.mails_base_capacity = company.plan.monthly_mails
+          company.company_setting.save
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "OK notification_plan")
           CompanyMailer.pay_u_online_receipt_email(company.id, pay_u_notification.id)
         else
