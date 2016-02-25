@@ -159,14 +159,14 @@ class CustomFilter < ActiveRecord::Base
 				end
 
 				param_option = params[str_option]
-				param_date1 = params[str_date1].to_datetime
-				param_date1.change({hour: params[str_date1_hour].to_i, min: params[str_date1_minute].to_i})
+				aux_date1 = params[str_date1].to_datetime
+				param_date1 = DateTime.new(aux_date1.year, aux_date1.month, aux_date1.day, params[str_date1_hour].to_i, params[str_date1_minute].to_i, 0)
 
 				param_date2 = nil
 
 				if !params[str_date2].blank?
-					param_date2 = params[str_date2].to_datetime
-					param_date2.change({hour: params[str_date2_hour].to_i, min: params[str_date2_minute].to_i})
+					aux_date2 = params[str_date2].to_datetime
+					param_date2 = DateTime.new(aux_date2.year, aux_date2.month, aux_date2.day, params[str_date2_hour].to_i, params[str_date2_minute].to_i, 0)
 				end
 
 				date_filter = DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first
