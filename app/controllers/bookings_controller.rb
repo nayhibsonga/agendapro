@@ -1289,6 +1289,11 @@ class BookingsController < ApplicationController
       #sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
     end
     respond_to do |format|
+
+      if !new_booking_params[:service_id].blank? && new_booking_params[:service_id].to_i != @booking.service_id
+        new_booking_params[:list_price] = Service.find(new_booking_params[:service_id]).price
+      end
+
       if @booking.update(new_booking_params)
 
         if @booking.is_session
