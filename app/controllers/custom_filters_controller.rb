@@ -30,7 +30,10 @@ class CustomFiltersController < ApplicationController
 
   def update
     @custom_filter.update(custom_filter_params)
-    respond_with(@custom_filter)
+    flash[:notice] = "Filtro actualizado." if @custom_filter.update(custom_filter_params) && @custom_filter.create_filters
+    respond_with(@custom_filter) do |format|
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+    end
   end
 
   def destroy

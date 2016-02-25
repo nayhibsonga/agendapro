@@ -60,4 +60,22 @@ function initializeFilters()
 
 }
 
+$(function(){
+  $('body').on('change', '.filter-check', function(){
+    var attribute_id = $(this).attr("attribute_id");
+    if($(this).is(':checked'))
+    {
+      $('.filter-field[attribute_id="' + attribute_id + '"]').prop('disabled', false);
+      $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').prop('disabled', false);
+      $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').removeClass('disabled');
+    }
+    else
+    {
+      $('.filter-field[attribute_id="' + attribute_id + '"]').prop('disabled', true);
+      $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').prop('disabled', true);
+      $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').addClass('disabled');
+    }
+  });
+});
+
 

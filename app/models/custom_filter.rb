@@ -20,6 +20,30 @@ class CustomFilter < ActiveRecord::Base
 
 		self.company.custom_attributes.each do |attribute|
 
+			#Check if it is included in the filter
+			str_include = "attribute_" + attribute.id.to_s + "_include"
+			param_include = params[str_include]
+			if param_include.to_i == 0
+				if attribute.datatype == "boolean"
+					if BooleanCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
+						BooleanCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
+					end
+				elsif attribute.datatype == "float" || attribute.datatype == "integer"
+					if NumericCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
+						NumericCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
+					end
+				elsif attribute.datatype == "date" || "datetime"
+					if DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
+						DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
+					end
+				elsif attribute.datatype == "categoric"
+					if CategoricCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
+						CategoricCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
+					end
+				end
+				next
+			end
+
 			if attribute.datatype == "boolean"
 
 				str_sm = "attribute_" + attribute.id.to_s + "_boolean"
@@ -69,26 +93,111 @@ class CustomFilter < ActiveRecord::Base
 				# Check for nulls
 				#
 
+				param_value2 = nil
+
 				param_option = params[str_option]
-				param_value1 = params[str_value1]
-				param_value2 = params[str_value2]
+				param_value1 = params[str_value1].to_f
+
+				if !params[str_value2].blank?
+					param_value2 = params[str_value2].to_f
+				end
 
 				numeric_filter = NumericCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first
 				if numeric_filter.nil?
-					NumericCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, option: param_option, value1: param_value1.to_f, value2: param_value2.to_f)
+					numeric_filter = NumericCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, option: param_option, value1: param_value1.to_f, value2: param_value2.to_f)
 				else
 					numeric_filter.option = param_option
 					numeric_filter.value1 = param_value1.to_f
 					numeric_filter.value2 = param_value2.to_f
+					numeric_filter.save
 				end
 
 
 			elsif attribute.datatype == "date"
+
+				str_option = "attribute_" + attribute.id.to_s + "_option"
+				str_date1 = "attribute_" + attribute.id.to_s + "_date1"
+				str_date2 = "attribute_" + attribute.id.to_s + "_date2"
+
+				if !params.keys.include?(str_date1)
+					next
+				end
+
+				para
+
+				param_option = params[str_option]
+				param_date1 = params[str_date1].to_date
+
+				param_date2 = nil
+
+				if !param_date2.nil?
+					param_date2 = params[str_date2].to_date
+				end
+
+				date_filter = DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first
+				if date_filter.nil?
+					date_filter = DateCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, option: param_option, date1: param_date1, date2: param_date2)
+				else
+					date_filter.option = param_option
+					date_filter.date1 = param_date1
+					date_filter.date2 = param_date2
+					date_filter.save
+				end
 			
 			elsif attribute.datatype == "datetime"
 
+				str_option = "attribute_" + attribute.id.to_s + "_option"
+				str_date1 = "attribute_" + attribute.id.to_s + "_date1"
+				str_date1_hour = "attribute_" + attribute.id.to_s + "_date1_hour"
+				str_date1_minute = "attribute_" + attribute.id.to_s + "_date1_minute"
+				str_date2 = "attribute_" + attribute.id.to_s + "_date2"
+				str_date2_hour = "attribute_" + attribute.id.to_s + "_date2_hour"
+				str_date2_minute = "attribute_" + attribute.id.to_s + "_date2_minute"
+
+				if !params.keys.include?(str_date1)
+					next
+				end
+
+				para
+
+				param_option = params[str_option]
+				param_date1 = params[str_date1].to_datetime
+				param_date1.change({hour: params[str_date1_hour].to_i, min: params[str_date1_minute].to_i})
+
+				param_date2 = nil
+
+				if !param_date2.nil?
+					param_date2 = params[str_date2].to_date
+					param_date2.change({hour: params[str_date2_hour].to_i, min: params[str_date2_minute].to_i})
+				end
+
+				date_filter = DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first
+				if date_filter.nil?
+					date_filter = DateCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, option: param_option, date1: param_date1, date2: param_date2)
+				else
+					date_filter.option = param_option
+					date_filter.date1 = param_date1
+					date_filter.date2 = param_date2
+					date_filter.save
+				end
+
 			elsif attribute.datatype == "categoric"
 
+				str_categories_ids = "attribute_" + attribute.id.to_s + "_multi_select"
+
+				if !params.keys.include?(str_categories_ids)
+					next
+				end
+
+				param_categories_ids = params[str_categories_ids]
+
+				categoric_filter = CategoricCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first
+				if categoric_filter.nil?
+					categoric_filter = CategoricCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, categories_ids: param_categories_ids)
+				else
+					categoric_filter.categories_ids = param_categories_ids
+					categoric_filter.save
+				end
 			end
 
 		end
