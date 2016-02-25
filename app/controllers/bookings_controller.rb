@@ -1290,7 +1290,7 @@ class BookingsController < ApplicationController
     end
     respond_to do |format|
 
-      if new_booking_params[:service_id].to_i != @booking.service_id
+      if !new_booking_params[:service_id].blank? && new_booking_params[:service_id].to_i != @booking.service_id
         new_booking_params[:list_price] = Service.find(new_booking_params[:service_id]).price
       end
 
