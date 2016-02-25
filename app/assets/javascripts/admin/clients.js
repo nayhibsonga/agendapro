@@ -221,6 +221,7 @@ $(function() {
     $('#folderSelect').val("select");
     $('#new_folder_name').show();
     $('#fileUploadModal').modal('show');
+    $('#file').val("");
   });
 
   $('#addFolderBtn').on('click', function(){
@@ -237,6 +238,7 @@ $(function() {
     $('#new_folder_name').hide();
     $('#fileUploadModal #folderSelect').val($(this).attr("folder_name"));
     $('#fileUploadModal').modal('show');
+    $('#file').val("");
   });
 
   $('.renameFolderBtn').on('click', function(e){
@@ -331,6 +333,10 @@ $(function() {
       });
       $(this).val("");
     }
+    else
+    {
+      $(this).closest('form').valid();
+    }
   });
 
   $('.file-attribute').on('change', function(){
@@ -342,6 +348,10 @@ $(function() {
         type: "error"
       });
       $(this).val("");
+    }
+    else
+    {
+      $(this).closest('form').valid();
     }
   });
 

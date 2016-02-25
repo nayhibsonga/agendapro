@@ -16,7 +16,7 @@ class ClientsController < ApplicationController
     if mobile_request?
       @company = current_user.company
     end
-    @monthly_mails = current_user.company.plan.monthly_mails
+    @monthly_mails = current_user.company.company_setting.get_mails_capacity #.plan.monthly_mails
     @monthly_mails_sent = current_user.company.company_setting.monthly_mails
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
 
@@ -418,7 +418,7 @@ class ClientsController < ApplicationController
 
     tmp_to = Array.new
     mail_list.each do |email|
-      tmp_to.push(email) if email=~ /([^\s]+)@([^\s]+)/
+      tmp_to.push(email) if email=~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
     end
     @to = tmp_to.join(', ')
   end

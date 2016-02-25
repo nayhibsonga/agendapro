@@ -1864,7 +1864,9 @@ class BookingsController < ApplicationController
         events.push(event)
       end
     end
-    @breaks = ProviderBreak.where(:service_provider_id => @providers).where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', end_date, start_date).order(:start)
+
+    @breaks = ProviderBreak.where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', start_date, end_date).where(:service_provider_id => @providers).order(:start)
+
     @breaks.each do |provider_break|
       if provider_break.name && provider_break.name != ""
         label = provider_break.name

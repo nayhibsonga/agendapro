@@ -50,6 +50,7 @@
               <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
               <li><a href="#edit" role="tab" data-toggle="tab" class="tab_index">Edición</a></li>
               <% end %>
+              <li><a href="#billing-info" role="tab" data-toggle="tab" class="tab_index">Facturación</a></li>
             </ul>
           </div>
           <div class="col-md-10 left-panel">
@@ -163,6 +164,156 @@
                       <h3>Reservas para el año <span id="bookings-selected-year"><%= current %></span></h3>
                       <table class="table table-green"></table>
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="billing-info">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Facturación</h4>
+                  </div>
+                  <div class="panel-body panel-scrollable">
+                    
+                    <% if @billing_info.company_id.nil? %>
+
+                      <%= form_for @billing_info, url: { controller: "billing_infos", action: "super_admin_create" }, :html => {:class => 'form-horizontal tab-margin', :multipart => true} do |f| %>
+                        <% if @billing_info.errors.any? %>
+                          <div id="error_explanation">
+                            <h2><%= pluralize(@billing_info.errors.count, "error") %> no permitió que sea creada:</h2>
+                            <ul>
+                              <% @billing_info.errors.full_messages.each do |msg| %>
+                                <li><%= msg %></li>
+                              <% end %>
+                            </ul>
+                          </div>
+                        <% end %>
+
+                        <input type="hidden" id="origin" name="origin" value="manage_company" />
+                        <input type="hidden" id="billing_info_company_id" name="billing_info[company_id]" value="<%= @company.id %>" />
+                        <input type="hidden" id="billing_info_active" name="billing_info[active]" value="1" />
+                        <input type="hidden" id="billing_info_accept" name="billing_info[accept]" value="1" />
+
+                        <div class="form-group">
+                          <%= f.label :name, 'Razón Social', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :name, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :rut, 'RUT Empresa', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :rut, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :sector, 'Giro', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :sector, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :contact, 'Nombre Responsable', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :contact, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :address, 'Dirección', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :address, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :phone, 'Teléfono', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :phone, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :email, 'E-Mail', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :email, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="col-md-5 col-md-offset-2">
+                            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                            <%= link_to 'Cancelar', companies_path, :class => "btn btn-default" %>
+                          </div>
+                        </div>
+                      <% end %>
+
+                    <% else %>
+
+                      <%= form_for @billing_info, url: { controller: "billing_infos", action: "super_admin_update" }, :html => {:class => 'form-horizontal tab-margin', :multipart => true} do |f| %>
+                        <% if @billing_info.errors.any? %>
+                          <div id="error_explanation">
+                            <h2><%= pluralize(@billing_info.errors.count, "error") %> no permitió que sea creada:</h2>
+                            <ul>
+                              <% @billing_info.errors.full_messages.each do |msg| %>
+                                <li><%= msg %></li>
+                              <% end %>
+                            </ul>
+                          </div>
+                        <% end %>
+
+                        <input type="hidden" id="origin" name="origin" value="manage_company" />
+                        <input type="hidden" id="id" name="id" value="<%= @billing_info.id %>" />
+                        <input type="hidden" id="billing_info_active" name="billing_info[active]" value="1" />
+                        <input type="hidden" id="billing_info_accept" name="billing_info[accept]" value="1" />
+
+                        <div class="form-group">
+                          <%= f.label :name, 'Razón Social', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :name, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :rut, 'RUT Empresa', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :rut, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :sector, 'Giro', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :sector, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :contact, 'Nombre Responsable', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :contact, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :address, 'Dirección', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :address, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :phone, 'Teléfono', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :phone, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <%= f.label :email, 'E-Mail', :class => 'col-md-2 control-label' %>
+                          <div class="col-md-5">
+                            <%= f.text_field :email, :class => 'form-control' %>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="col-md-5 col-md-offset-2">
+                            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                            <%= link_to 'Cancelar', companies_path, :class => "btn btn-default" %>
+                          </div>
+                        </div>
+                      <% end %>
+
+                    <% end %> 
+
                   </div>
                 </div>
               </div>
@@ -409,6 +560,15 @@
                     </div>
                     <div class="col-md-4">
                       <input type="number" class="form-control" name="new_base_price" value="<%= @company.company_plan_setting.base_price %>" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Mails base</label>
+                    <div class="col-md-4">
+                      <p class="form-control-static"><%= @company.company_setting.mails_base_capacity.to_s %></p>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="number" class="form-control" name="new_mails_base_capacity" value="<%= @company.company_setting.mails_base_capacity %>" />
                     </div>
                   </div>
                   <div class="form-group">
