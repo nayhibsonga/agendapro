@@ -22,17 +22,29 @@ class CustomFiltersController < ApplicationController
 
   def create
     @custom_filter = CustomFilter.new(custom_filter_params)
-    flash[:notice] = "Filtro creado." if @custom_filter.save && @custom_filter.create_filters
+    
     respond_with(@custom_filter) do |format|
-      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+      if @custom_filter.save && @custom_filter.create_filters(params)
+        flash[:notice] = "Filtro creado." 
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+      else
+        flash[:alert] = "Filtro no pudo ser creado." 
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+      end
     end
   end
 
   def update
     @custom_filter.update(custom_filter_params)
-    flash[:notice] = "Filtro actualizado." if @custom_filter.update(custom_filter_params) && @custom_filter.create_filters
+    
     respond_with(@custom_filter) do |format|
-      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+      if @custom_filter.update(custom_filter_params) && @custom_filter.create_filters(params)
+        flash[:notice] = "Filtro actualizado."
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+      else
+        flash[:alert] = "Filtro no pudo ser actualizado."
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+      end
     end
   end
 

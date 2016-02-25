@@ -29,7 +29,7 @@
 						<div class="form-group has-feedback">
 							<div class="checkbox col-xs-3 custom-filter-checkbox">
 								<label class="control-label custom-filter-label">
-									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" required> <%= attribute.name %>
+									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
 								</label>
 								<span class="help-block"></span>
 							</div>
@@ -61,7 +61,7 @@
 						<div class="form-group">
 						  	<div class="checkbox col-xs-3 custom-filter-checkbox">
 								<label class="control-label custom-filter-label">
-									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" required> <%= attribute.name %>
+									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
 								</label>
 								<span class="help-block"></span>
 							</div>
@@ -89,7 +89,7 @@
 						<div class="form-group">
 						  	<div class="checkbox col-xs-3 custom-filter-checkbox">
 								<label class="control-label custom-filter-label">
-									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" required> <%= attribute.name %>
+									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
 								</label>
 								<span class="help-block"></span>
 							</div>
@@ -212,13 +212,13 @@
 						<div class="form-group has-feedback">
 						  	<div class="checkbox col-xs-3 custom-filter-checkbox">
 								<label class="control-label custom-filter-label">
-									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" required> <%= attribute.name %>
+									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
 								</label>
 								<span class="help-block"></span>
 							</div>
 						  	<div class="col-xs-9">
 						  		<!-- Use multiselect to combine categories -->
-						  		<select class="categoric-multiselect filter-field" id="attribute_<%= attribute.id %>_multi_select" name="attribute_<%= attribute.id %>_multi_select" multiple="multiple" style="margin-top: 7px;" attribute_id="<%= attribute.id %>" hidden disabled>
+						  		<select class="categoric-multiselect filter-field" id="attribute_<%= attribute.id %>_multi_select" name="attribute_<%= attribute.id %>_multi_select[]" multiple="multiple" style="margin-top: 7px;" attribute_id="<%= attribute.id %>" hidden disabled>
 									<% attribute.attribute_categories.each do |attribute_category| %>
 										<option value="<%= attribute_category.id %>"><%= attribute_category.category %></option>
 									<% end %>
@@ -233,7 +233,7 @@
 						<div class="form-group has-feedback">
 						  	<div class="checkbox col-xs-3 custom-filter-checkbox">
 								<label class="control-label custom-filter-label">
-									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" required> <%= attribute.name %>
+									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
 								</label>
 								<span class="help-block"></span>
 							</div>

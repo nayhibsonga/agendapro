@@ -130,7 +130,7 @@ class CustomFilter < ActiveRecord::Base
 
 				param_date2 = nil
 
-				if !param_date2.nil?
+				if !params[str_date2].blank?
 					param_date2 = params[str_date2].to_date
 				end
 
@@ -158,16 +158,14 @@ class CustomFilter < ActiveRecord::Base
 					next
 				end
 
-				para
-
 				param_option = params[str_option]
 				param_date1 = params[str_date1].to_datetime
 				param_date1.change({hour: params[str_date1_hour].to_i, min: params[str_date1_minute].to_i})
 
 				param_date2 = nil
 
-				if !param_date2.nil?
-					param_date2 = params[str_date2].to_date
+				if !params[str_date2].blank?
+					param_date2 = params[str_date2].to_datetime
 					param_date2.change({hour: params[str_date2_hour].to_i, min: params[str_date2_minute].to_i})
 				end
 
@@ -189,7 +187,7 @@ class CustomFilter < ActiveRecord::Base
 					next
 				end
 
-				param_categories_ids = params[str_categories_ids]
+				param_categories_ids = params[str_categories_ids].join(",")
 
 				categoric_filter = CategoricCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first
 				if categoric_filter.nil?

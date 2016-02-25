@@ -1,4 +1,3 @@
-
 function initializeFilters()
 {
 
@@ -51,7 +50,7 @@ function initializeFilters()
           }
       },
       onChange: function(option, checked, select){
-        //loadReport();
+
       },
       onInitialized: function(select, container){
         $('.attribute-multiselect').show();
@@ -65,12 +64,14 @@ $(function(){
     var attribute_id = $(this).attr("attribute_id");
     if($(this).is(':checked'))
     {
+      $(this).val("1");
       $('.filter-field[attribute_id="' + attribute_id + '"]').prop('disabled', false);
       $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').prop('disabled', false);
       $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').removeClass('disabled');
     }
     else
     {
+      $(this).val("0");
       $('.filter-field[attribute_id="' + attribute_id + '"]').prop('disabled', true);
       $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').prop('disabled', true);
       $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').addClass('disabled');
