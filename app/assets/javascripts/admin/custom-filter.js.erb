@@ -77,6 +77,33 @@ $(function(){
       $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').addClass('disabled');
     }
   });
+
+  $('body').on('change', '.filter-option', function(){
+
+    if($(this).val() == "between" || $(this).val() == "out")
+    {
+      $(this).parent().parent().find('.filter-exclusive').prop('disabled', false);
+    }
+    else
+    {
+      $(this).parent().parent().find('.filter-exclusive').prop('disabled', true);
+    }
+
+  });
+
+  $('body').on('change', '.filter-exclusive', function(){
+
+    if($(this).is(':checked'))
+    {
+      $(this).val("1");
+    }
+    else
+    {
+      $(this).val("0");
+    }
+
+  });
+
 });
 
 

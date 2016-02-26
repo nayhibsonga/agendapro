@@ -49,8 +49,15 @@ class CustomFiltersController < ApplicationController
   end
 
   def destroy
-    @custom_filter.destroy
-    respond_with(@custom_filter)
+    respond_with(@custom_filter) do |format|
+      if @custom_filter.destroy
+        flash[:notice] = "Filtro eliminado."
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+      else
+        flash[:alert] = "Filtro no pudo ser eliminado."
+        format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
+      end
+    end
   end
 
   def new_filter_form

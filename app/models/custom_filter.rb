@@ -82,6 +82,8 @@ class CustomFilter < ActiveRecord::Base
 				str_option = "attribute_" + attribute.id.to_s + "_option"
 				str_value1 = "attribute_" + attribute.id.to_s + "_value1"
 				str_value2 = "attribute_" + attribute.id.to_s + "_value2"
+				str_exclusive1 = "attribute_" + attribute.id.to_s + "_exclusive1"
+				str_exclusive2 = "attribute_" + attribute.id.to_s + "_exclusive2"
 
 				if !params.keys.include?(str_value1)
 					next
@@ -102,13 +104,30 @@ class CustomFilter < ActiveRecord::Base
 					param_value2 = params[str_value2].to_f
 				end
 
+				param_exclusive1 = params[str_exclusive1].to_i
+				param_exclusive2 = params[str_exclusive2].to_i
+
+				if param_exclusive1 == 0
+					param_exclusive1 = true
+				else
+					param_exclusive1 = false
+				end
+
+				if param_exclusive2 == 0
+					param_exclusive2 = true
+				else
+					param_exclusive2 = false
+				end
+
 				numeric_filter = NumericCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first
 				if numeric_filter.nil?
-					numeric_filter = NumericCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, option: param_option, value1: param_value1.to_f, value2: param_value2.to_f)
+					numeric_filter = NumericCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, option: param_option, value1: param_value1.to_f, value2: param_value2.to_f, exclusive1: param_exclusive1, exclusive2: param_exclusive2)
 				else
 					numeric_filter.option = param_option
 					numeric_filter.value1 = param_value1.to_f
 					numeric_filter.value2 = param_value2.to_f
+					numeric_filter.exclusive1 = param_exclusive1
+					numeric_filter.exclusive2 = param_exclusive2
 					numeric_filter.save
 				end
 
@@ -118,6 +137,8 @@ class CustomFilter < ActiveRecord::Base
 				str_option = "attribute_" + attribute.id.to_s + "_option"
 				str_date1 = "attribute_" + attribute.id.to_s + "_date1"
 				str_date2 = "attribute_" + attribute.id.to_s + "_date2"
+				str_exclusive1 = "attribute_" + attribute.id.to_s + "_exclusive1"
+				str_exclusive2 = "attribute_" + attribute.id.to_s + "_exclusive2"
 
 				if !params.keys.include?(str_date1)
 					next
@@ -134,13 +155,30 @@ class CustomFilter < ActiveRecord::Base
 					param_date2 = params[str_date2].to_date
 				end
 
+				param_exclusive1 = params[str_exclusive1].to_i
+				param_exclusive2 = params[str_exclusive2].to_i
+
+				if param_exclusive1 == 0
+					param_exclusive1 = true
+				else
+					param_exclusive1 = false
+				end
+
+				if param_exclusive2 == 0
+					param_exclusive2 = true
+				else
+					param_exclusive2 = false
+				end
+
 				date_filter = DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first
 				if date_filter.nil?
-					date_filter = DateCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, option: param_option, date1: param_date1, date2: param_date2)
+					date_filter = DateCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, option: param_option, date1: param_date1, date2: param_date2, exclusive1: param_exclusive1, exclusive2: param_exclusive2)
 				else
 					date_filter.option = param_option
 					date_filter.date1 = param_date1
 					date_filter.date2 = param_date2
+					date_filter.exclusive1 = param_exclusive1
+					date_filter.exclusive2 = param_exclusive2
 					date_filter.save
 				end
 			
@@ -153,6 +191,8 @@ class CustomFilter < ActiveRecord::Base
 				str_date2 = "attribute_" + attribute.id.to_s + "_date2"
 				str_date2_hour = "attribute_" + attribute.id.to_s + "_date2_hour"
 				str_date2_minute = "attribute_" + attribute.id.to_s + "_date2_minute"
+				str_exclusive1 = "attribute_" + attribute.id.to_s + "_exclusive1"
+				str_exclusive2 = "attribute_" + attribute.id.to_s + "_exclusive2"
 
 				if !params.keys.include?(str_date1)
 					next
@@ -169,13 +209,30 @@ class CustomFilter < ActiveRecord::Base
 					param_date2 = DateTime.new(aux_date2.year, aux_date2.month, aux_date2.day, params[str_date2_hour].to_i, params[str_date2_minute].to_i, 0)
 				end
 
+				param_exclusive1 = params[str_exclusive1].to_i
+				param_exclusive2 = params[str_exclusive2].to_i
+
+				if param_exclusive1 == 0
+					param_exclusive1 = true
+				else
+					param_exclusive1 = false
+				end
+
+				if param_exclusive2 == 0
+					param_exclusive2 = true
+				else
+					param_exclusive2 = false
+				end
+
 				date_filter = DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first
 				if date_filter.nil?
-					date_filter = DateCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, option: param_option, date1: param_date1, date2: param_date2)
+					date_filter = DateCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, option: param_option, date1: param_date1, date2: param_date2, exclusive1: param_exclusive1, exclusive2: param_exclusive2)
 				else
 					date_filter.option = param_option
 					date_filter.date1 = param_date1
 					date_filter.date2 = param_date2
+					date_filter.exclusive1 = param_exclusive1
+					date_filter.exclusive2 = param_exclusive2
 					date_filter.save
 				end
 
@@ -196,6 +253,22 @@ class CustomFilter < ActiveRecord::Base
 					categoric_filter.categories_ids = param_categories_ids
 					categoric_filter.save
 				end
+			elsif attribute.datatype == "text" || attribute.datatype == "textarea"
+				str_text = "attribute_" + attribute.id.to_s + "_text"
+				if !params.keys.include?(str_text) || params[str_text] == ""
+					next
+				end
+
+				param_text = params[str_text]
+
+				text_filter = TextCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first
+				if text_filter.nil?
+					text_filter = TextCustomFilter.create(custom_filter_id: self.id, attribute_id: attribute.id, text: param_text)
+				else
+					text_filter.text = param_text
+					text_filter.save
+				end
+
 			end
 
 		end
