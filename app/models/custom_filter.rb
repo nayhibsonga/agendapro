@@ -144,8 +144,6 @@ class CustomFilter < ActiveRecord::Base
 					next
 				end
 
-				para
-
 				param_option = params[str_option]
 				param_date1 = params[str_date1].to_date
 

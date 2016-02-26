@@ -918,41 +918,41 @@ class Client < ActiveRecord::Base
         if attribute.datatype == "date"
           date_attribute = DateAttribute.where(attribute_id: attribute.id)
         else
-          date_time_attribute = FloatAttribute.where(attribute_id: attribute.id)
+          date_attribute = DateTimeAttribute.where(attribute_id: attribute.id)
         end
 
 
         if date_filter.option == "equals"
-          clients = clients.where(id: date_attribute.where(date: date_filter.date1).pluck(:client_id))
+          clients = clients.where(id: date_attribute.where(value: date_filter.date1).pluck(:client_id))
         elsif date_filter.option == "greater"
-          clients = clients.where(id: date_attribute.where('date > ?', date_filter.date1).pluck(:client_id))
+          clients = clients.where(id: date_attribute.where('value > ?', date_filter.date1).pluck(:client_id))
         elsif date_filter.option == "greater_equal"
-          clients = clients.where(id: date_attribute.where('date >= ?', date_filter.date1).pluck(:client_id))
+          clients = clients.where(id: date_attribute.where('value >= ?', date_filter.date1).pluck(:client_id))
         elsif date_filter.option == "lower"
-          clients = clients.where(id: date_attribute.where('date < ?', date_filter.date1).pluck(:client_id))
+          clients = clients.where(id: date_attribute.where('value < ?', date_filter.date1).pluck(:client_id))
         elsif date_filter.option == "lower_equal"
-          clients = clients.where(id: date_attribute.where('date <= ?', date_filter.date1).pluck(:client_id))
+          clients = clients.where(id: date_attribute.where('value <= ?', date_filter.date1).pluck(:client_id))
         elsif date_filter.option == "between"
           #Check for exclusive options
           if date_filter.exclusive1 && date_filter.exclusive2
-            clients = clients.where(id: date_attribute.where('date > ? and date < ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+            clients = clients.where(id: date_attribute.where('value > ? and value < ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           elsif date_filter.exclusive1 && !date_filter.exclusive2
-            clients = clients.where(id: date_attribute.where('date > ? and date <= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+            clients = clients.where(id: date_attribute.where('value > ? and value <= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           elsif !date_filter.exclusive1 && date_filter.exclusive2
-            clients = clients.where(id: date_attribute.where('date >= ? and date < ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+            clients = clients.where(id: date_attribute.where('value >= ? and value < ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           else
-            clients = clients.where(id: date_attribute.where('date => ? and date <= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+            clients = clients.where(id: date_attribute.where('value => ? and value <= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           end
         elsif date_filter.option == "out"
           #Check for exclusive optionss
           if date_filter.exclusive1 && date_filter.exclusive2
-            clients = clients.where(id: date_attribute.where('date < ? and date > ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+            clients = clients.where(id: date_attribute.where('value < ? and value > ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           elsif date_filter.exclusive1 && !date_filter.exclusive2
-            clients = clients.where(id: date_attribute.where('date < ? and date >= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+            clients = clients.where(id: date_attribute.where('value < ? and value >= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           elsif !date_filter.exclusive1 && date_filter.exclusive2
-            clients = clients.where(id: date_attribute.where('date <= ? and date > ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+            clients = clients.where(id: date_attribute.where('value <= ? and value > ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           else
-            clients = clients.where(id: date_attribute.where('date <= ? and date >= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+            clients = clients.where(id: date_attribute.where('value <= ? and value >= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           end
         end
 
@@ -991,7 +991,7 @@ class Client < ActiveRecord::Base
           text_attribute = TextareaAttribute.where(attribute_id: attribute.id)
         end
 
-        clients = clients.where(id: text_attribute.where(value: text_filter.text).pluck(:client_id))
+        clients = clients.where(id: text_attribute.where('value like ?', '%' + text_filter.text + '%').pluck(:client_id))
 
       end
 
