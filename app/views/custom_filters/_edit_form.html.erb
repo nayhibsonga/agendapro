@@ -1,0 +1,304 @@
+<div class="modal-content">
+
+	<%= form_for @custom_filter, :html => {:class => 'form-horizontal custom_filter_form', :id => 'custom_filter_form'} do |f| %>
+
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title" id="addFilterModalLabel">Nuevo filtro</h4>
+		</div>
+		<div class="modal-body">
+			<%= f.hidden_field :company_id, :value => current_user.company.id %>
+
+		  	<div class="form-group has-feedback">
+			  	<%= f.label :name, 'Nombre', :class => 'custom-filter-label col-xs-3' %>
+			    <div class="col-xs-9">
+			      <%= f.text_field :name, :class => 'form-control', :required => true %>
+			      <span class="help-block"></span>
+			      <span class="form-control-feedback"></span>
+			    </div>
+			</div>
+
+			<div class="form-group has-feedback">
+				<p style="padding-left: 10px; padding-right: 10px; font-size: 15px; color: #949292; text-align: justify;">
+					Elige opciones de filtrado según los distintos tipos de campos que poseas. Para los campos numéricos y de fecha, si eliges las opciones "Entre" o "Fuera de", marca o desmarca el cuadro al lado de cada valor para que el valor se incluya o excluya en el rango. Por ejemplo, si eliges filtrar un campo de tipo "entero" con la opción "Entre" y valores 2 y 4, marcando el primero y no marcando el segundo, el rango será 2 <= X < 4.
+				</p>
+			</div>
+
+			<% current_user.company.attribute_groups.order(:order).order(:name).each do |attribute_group| %>
+				<div class="filter-title">
+					<%= attribute_group.name %>
+				</div>
+				<% attribute_group.custom_attributes.order(:order).order(:name).each do |attribute| %>
+
+					<% if attribute.datatype == "integer" || attribute.datatype == "float" %>
+
+						<div class="form-group has-feedback">
+							<div class="checkbox col-xs-3 custom-filter-checkbox">
+								<label class="control-label custom-filter-label">
+									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
+								</label>
+								<span class="help-block"></span>
+							</div>
+						  	<div class="col-xs-3">
+						  		<select id="attribute_<%= attribute.id %>_option" name="attribute_<%= attribute.id %>_option" class="form-control filter-field filter-option" attribute_id="<%= attribute.id %>" disabled>
+						  			<option value="equals">Igual a</option>
+						  			<option value="greater">Mayor que</option>
+						  			<option value="greater_equal">Mayor o igual que</option>
+						  			<option value="lower">Menor que</option>
+						  			<option value="lower_equal">Menor o igual que</option>
+						  			<option value="between">Entre</option>
+						  			<option value="out">Fuera de</option>
+						  		</select>
+						  	</div>
+						    <div class="col-xs-3">
+						    	<div class="checkbox value-checkbox">
+							    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
+							    	<% if attribute.datatype == "integer" %>
+							      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="1" disabled />
+							      	<% else %>
+							      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="0.01" disabled />
+							      	<% end %>
+						      	</div>
+						      	<span class="help-block"></span>
+						      	<span class="form-control-feedback"></span>
+						    </div>
+						    <div class="col-xs-3">
+						    	<div class="checkbox value-checkbox">
+							    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
+							    	<% if attribute.datatype == "integer" %>
+							      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="1" disabled />
+							      	<% else %>
+							      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="0.01" disabled />
+							      	<% end %>
+							    </div>
+						      	<span class="help-block"></span>
+						      	<span class="form-control-feedback"></span>
+						    </div>
+						</div>
+
+					<% elsif attribute.datatype == "date" %>
+
+						<div class="form-group">
+						  	<div class="checkbox col-xs-3 custom-filter-checkbox">
+								<label class="control-label custom-filter-label">
+									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
+								</label>
+								<span class="help-block"></span>
+							</div>
+						  	<div class="col-xs-3">
+						  		<select id="attribute_<%= attribute.id %>_option" name="attribute_<%= attribute.id %>_option" class="form-control filter-field filter-option" attribute_id="<%= attribute.id %>" disabled>
+						  			<option value="equals">Igual a</option>
+						  			<option value="greater">Mayor que</option>
+						  			<option value="greater_equal">Mayor o igual que</option>
+						  			<option value="lower">Menor que</option>
+						  			<option value="lower_equal">Menor o igual que</option>
+						  			<option value="between">Entre</option>
+						  			<option value="out">Fuera de</option>
+						  		</select>
+						  	</div>
+						    <div class="col-xs-3">
+						    	<div class="checkbox value-checkbox">
+							    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
+							      	<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+						      	</div>
+						    </div>
+						    <div class="col-xs-3">
+						    	<div class="checkbox value-checkbox">
+							    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
+							      	<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+						      	</div>
+						    </div>
+						</div>
+
+					<% elsif attribute.datatype == "datetime" %>
+
+						<div class="form-group">
+						  	<div class="checkbox col-xs-3 custom-filter-checkbox">
+								<label class="control-label custom-filter-label">
+									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
+								</label>
+								<span class="help-block"></span>
+							</div>
+						  	<div class="col-xs-3">
+						  		<select id="attribute_<%= attribute.id %>_option" name="attribute_<%= attribute.id %>_option" class="form-control filter-field filter-option" attribute_id="<%= attribute.id %>" disabled>
+						  			<option value="equals">Igual a</option>
+						  			<option value="greater">Mayor que</option>
+						  			<option value="greater_equal">Mayor o igual que</option>
+						  			<option value="lower">Menor que</option>
+						  			<option value="lower_equal">Menor o igual que</option>
+						  			<option value="between">Entre</option>
+						  			<option value="out">Fuera de</option>
+						  		</select>
+						  	</div>
+						    <div class="col-xs-3">
+						      	<div>
+						      		<div class="checkbox value-checkbox">
+							      		<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
+								      	<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+							      	</div>
+							    </div>
+							    <div>
+							    	<table style="width: 100%; margin-top: 5px;">
+							    		<tr>
+									    	<td style="width: 47%">
+										    	<select class="form-control filter-field" name="attribute_<%= attribute.id %>_date1_hour" id="attribute_<%= attribute.id %>_date1_hour" attribute_id="<%= attribute.id %>" disabled>
+						                            <% 
+						                              for i in 0..23
+						                                str_hour = i.to_s
+						                                if str_hour.length == 1
+						                                  str_hour = "0" + str_hour
+						                                end
+
+						                                %>
+						                                  <option value="<%= str_hour %>"><%= str_hour %></option>
+						                                <%
+
+						                              end 
+						                            %>
+						                        </select>
+			                       			</td>
+			                       			<td style="width: 6%; text-align: center;">
+			                       				:
+			                       			</td>
+			                       			<td style="width: 47%">
+										    	<select class="form-control filter-field" name="attribute_<%= attribute.id %>_date1_minute" id="attribute_<%= attribute.id %>_date1_minute" attribute_id="<%= attribute.id %>" disabled>
+						                            <% 
+						                              for i in 0..59
+						                                str_minute = i.to_s
+						                                if str_minute.length == 1
+						                                  str_minute = "0" + str_minute
+						                                end
+
+						                                #if str_minute == date_time_attribute_minute
+						                            %>
+
+						                                <option value="<%= str_minute %>"><%= str_minute %></option>
+						                            <%
+
+						                              end 
+						                            %>
+						                        </select>
+			                       			</td>
+			                       		</tr>
+			                       	</table>
+							    </div>
+						    </div>
+						    <div class="col-xs-3">
+						    	<div>
+						    		<div class="checkbox value-checkbox">
+							    		<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
+								      	<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+							      	</div>
+						      	</div>
+						      	<div>
+							    	<table style="width: 100%; margin-top: 5px;">
+							    		<tr>
+									    	<td style="width: 47%">
+										    	<select class="form-control filter-field" name="attribute_<%= attribute.id %>_date2_hour" id="attribute_<%= attribute.id %>_date2_hour" attribute_id="<%= attribute.id %>" disabled>
+						                            <% 
+						                              for i in 0..23
+						                                str_hour = i.to_s
+						                                if str_hour.length == 1
+						                                  str_hour = "0" + str_hour
+						                                end
+
+						                                %>
+						                                  <option value="<%= str_hour %>"><%= str_hour %></option>
+						                                <%
+
+						                              end 
+						                            %>
+						                        </select>
+			                       			</td>
+			                       			<td style="width: 6%; text-align: center;">
+			                       				:
+			                       			</td>
+			                       			<td style="width: 47%">
+										    	<select class="form-control filter-field" name="attribute_<%= attribute.id %>_date2_minute" id="attribute_<%= attribute.id %>_date2_minute" attribute_id="<%= attribute.id %>" disabled>
+						                            <% 
+						                              for i in 0..59
+						                                str_minute = i.to_s
+						                                if str_minute.length == 1
+						                                  str_minute = "0" + str_minute
+						                                end
+
+						                                #if str_minute == date_time_attribute_minute
+						                            %>
+
+						                                <option value="<%= str_minute %>"><%= str_minute %></option>
+						                            <%
+
+						                              end 
+						                            %>
+						                        </select>
+			                       			</td>
+			                       		</tr>
+			                       	</table>
+							    </div>
+						    </div>
+						</div>
+
+					<% elsif attribute.datatype == "categoric" %>
+
+						<div class="form-group has-feedback">
+						  	<div class="checkbox col-xs-3 custom-filter-checkbox">
+								<label class="control-label custom-filter-label">
+									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
+								</label>
+								<span class="help-block"></span>
+							</div>
+						  	<div class="col-xs-9">
+						  		<!-- Use multiselect to combine categories -->
+						  		<select class="categoric-multiselect filter-field" id="attribute_<%= attribute.id %>_multi_select" name="attribute_<%= attribute.id %>_multi_select[]" multiple="multiple" style="margin-top: 7px;" attribute_id="<%= attribute.id %>" hidden disabled>
+									<% attribute.attribute_categories.each do |attribute_category| %>
+										<option value="<%= attribute_category.id %>"><%= attribute_category.category %></option>
+									<% end %>
+					            </select>
+						  	</div>
+						</div>
+
+
+					<% elsif attribute.datatype == "text" || attribute.datatype == "textarea" %>
+						<div class="form-group has-feedback">
+							<div class="checkbox col-xs-3 custom-filter-checkbox">
+								<label class="control-label custom-filter-label">
+									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
+								</label>
+								<span class="help-block"></span>
+							</div>
+							<div class="col-xs-9">
+						  		<input type="text" id="attribute_<%= attribute.id %>_text" name="attribute_<%= attribute.id %>_text" class="form-control filter-field" attribute_id="<%= attribute.id %>" disabled />
+						  	</div>
+						</div>
+					<% elsif attribute.datatype == "boolean" %>
+						<div class="form-group has-feedback">
+						  	<div class="checkbox col-xs-3 custom-filter-checkbox">
+								<label class="control-label custom-filter-label">
+									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
+								</label>
+								<span class="help-block"></span>
+							</div>
+						  	<div class="col-xs-9">
+						  		<select class="form-control filter-field" id="attribute_<%= attribute.id %>_boolean" name="attribute_<%= attribute.id %>_boolean" attribute_id="<%= attribute.id %>" disabled>
+									
+									<option value="2">Cualquiera</option>
+									<option value="1">Sí</option>
+									<option value="0">No</option>
+
+					            </select>
+						  	</div>
+						</div>
+					<% end %>
+
+				<% end %>
+			<% end %>
+
+		</div>
+		<div class="modal-footer">
+		  	<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+		  	<input type="submit" class="btn btn-green" id="saveFilterBtn" value="Guardar" />
+		</div>
+
+	<% end %>
+</div>
+

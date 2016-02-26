@@ -571,6 +571,7 @@ Agendapro::Application.routes.draw do
     patch '/billing_info_admin_update', :to => 'billing_infos#super_admin_update'
 
     get '/new_filter_form', :to => 'custom_filters#new_filter_form'
+    get '/edit_filter_form', :to => 'custom_filters#edit_filter_form'
     post '/rearrange_attributes', :to => 'attributes#rearrange'
     post '/rearrange_attribute_groups', :to => 'attribute_groups#rearrange'
 

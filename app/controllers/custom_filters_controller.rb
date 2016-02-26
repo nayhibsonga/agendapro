@@ -1,5 +1,5 @@
 class CustomFiltersController < ApplicationController
-  before_action :set_custom_filter, only: [:show, :edit, :update, :destroy]
+  before_action :set_custom_filter, only: [:show, :edit, :update, :destroy, :edit_filter_form]
 
   respond_to :html, :json
 
@@ -64,6 +64,13 @@ class CustomFiltersController < ApplicationController
     @custom_filter = CustomFilter.new
     respond_to do |format|
       format.html { render :partial => 'form' }
+      format.json { render json: @custom_filter }
+    end
+  end
+
+  def edit_filter_form
+    respond_to do |format|
+      format.html { render :partial => 'edit_form' }
       format.json { render json: @custom_filter }
     end
   end
