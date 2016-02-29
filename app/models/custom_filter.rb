@@ -11,6 +11,11 @@ class CustomFilter < ActiveRecord::Base
 	def create_filters(params)
 
 		if params.blank?
+			self.numeric_custom_filters.delete_all
+			self.categoric_custom_filters.delete_all
+			self.date_custom_filters.delete_all
+			self.text_custom_filters.delete_all
+			self.boolean_custom_filters.delete_all
 	    	return
 	    end
 
@@ -23,23 +28,35 @@ class CustomFilter < ActiveRecord::Base
 			#Check if it is included in the filter
 			str_include = "attribute_" + attribute.id.to_s + "_include"
 			param_include = params[str_include]
-			if param_include.to_i == 0
+			puts "Checking include for " + attribute.name
+			puts param_include.to_s
+			if param_include.blank? || param_include.to_i == 0
+				puts "Enters"
 				if attribute.datatype == "boolean"
-					if BooleanCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
-						BooleanCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
-					end
+					BooleanCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).delete_all
+					#if BooleanCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
+					#	BooleanCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
+					#end
 				elsif attribute.datatype == "float" || attribute.datatype == "integer"
-					if NumericCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
-						NumericCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
-					end
-				elsif attribute.datatype == "date" || "datetime"
-					if DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
-						DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
-					end
+					NumericCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).delete_all
+					# if NumericCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
+					# 	NumericCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
+					# end
+				elsif attribute.datatype == "date" || attribute.datatype == "datetime"
+					DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).delete_all
+					# if DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
+					# 	DateCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
+					# end
 				elsif attribute.datatype == "categoric"
-					if CategoricCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
-						CategoricCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
-					end
+					CategoricCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).delete_all
+					# if CategoricCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
+					# 	CategoricCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
+					# end
+				elsif attribute.datatype == "text" || attribute.datatype == "textarea"
+					TextCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).delete_all
+					# if TextCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).count > 0
+					# 	TextCustomFilter.where(custom_filter_id: self.id, attribute_id: attribute.id).first.destroy
+					# end
 				end
 				next
 			end
