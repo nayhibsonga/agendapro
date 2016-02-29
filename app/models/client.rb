@@ -1,4 +1,6 @@
 class Client < ActiveRecord::Base
+  include Filter::Clients
+
   belongs_to :company
 
   has_many :client_comments, dependent: :destroy
@@ -16,8 +18,7 @@ class Client < ActiveRecord::Base
   has_many :file_attributes
   has_many :categoric_attributes
 
-  scope :filter_gender, -> gender { where(gender: gender) if gender.present? }
-  scope :filter_status, -> statuses { where(id: Booking.where(status_id: Status.find(statuses)).select(:client_id)) if statuses.present? }
+  scope :from_company, -> (id) { where(company_id: id) if id.present? }
 
   #Se quitó :identification_uniqueness
   validate :mail_uniqueness, :record_uniqueness, :minimun_info
@@ -38,7 +39,7 @@ class Client < ActiveRecord::Base
   end
 
   def get_storage_occupation
-    
+
     used_storage = 0
     used_storage += self.client_files.sum(:size)
 
@@ -54,43 +55,43 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         if FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           FloatAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "integer"
-        
+
         if IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "text"
-        
+
         if TextAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           TextAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "textarea"
-        
+
         if TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "boolean"
-        
+
         if BooleanAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           BooleanAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "date"
-        
+
         if DateAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           DateAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
 
       when "datetime"
-        
+
         if DateTimeAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
           DateTimeAttribute.create(attribute_id: attribute.id, client_id: self.id)
         end
@@ -113,43 +114,43 @@ class Client < ActiveRecord::Base
     company.clients.each do |client|
       case self.datatype
       when "float"
-        
+
         if FloatAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           FloatAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "integer"
-        
+
         if IntegerAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           IntegerAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "text"
-        
+
         if TextAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           TextAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "textarea"
-        
+
         if TextareaAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           TextareaAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "boolean"
-        
+
         if BooleanAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           BooleanAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "date"
-        
+
         if DateAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           DateAttribute.create(attribute_id: self.id, client_id: client.id)
         end
 
       when "datetime"
-        
+
         if DateTimeAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
           DateTimeAttribute.create(attribute_id: self.id, client_id: client.id)
         end
@@ -175,7 +176,7 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !float_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = float_attribute.value
@@ -184,7 +185,7 @@ class Client < ActiveRecord::Base
         end
 
       when "integer"
-        
+
         integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !integer_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = integer_attribute.value
@@ -193,7 +194,7 @@ class Client < ActiveRecord::Base
         end
 
       when "text"
-        
+
         text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !text_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = text_attribute.value
@@ -202,7 +203,7 @@ class Client < ActiveRecord::Base
         end
 
       when "textarea"
-        
+
         textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !textarea_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = textarea_attribute.value
@@ -220,7 +221,7 @@ class Client < ActiveRecord::Base
         end
 
       when "date"
-        
+
         date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if !date_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = date_attribute.value
@@ -277,7 +278,7 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if float_attribute.nil?
           float_attribute = FloatAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -287,7 +288,7 @@ class Client < ActiveRecord::Base
         end
 
       when "integer"
-        
+
         integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if integer_attribute.nil?
           IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -297,7 +298,7 @@ class Client < ActiveRecord::Base
         end
 
       when "text"
-        
+
         text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if text_attribute.nil?
           TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -307,7 +308,7 @@ class Client < ActiveRecord::Base
         end
 
       when "textarea"
-        
+
         textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if textarea_attribute.nil?
           TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -333,7 +334,7 @@ class Client < ActiveRecord::Base
         end
 
       when "date"
-        
+
         if !param_value.nil?
           param_value = param_value.gsub('/', '-')
         end
@@ -347,7 +348,7 @@ class Client < ActiveRecord::Base
         end
 
       when "datetime"
-        
+
         if !param_value.nil?
           param_value = param_value.gsub('/', '-')
           date_hour = params[attribute.slug + "_attribute_hour"]
@@ -433,7 +434,7 @@ class Client < ActiveRecord::Base
 
       case attribute.datatype
       when "float"
-        
+
         float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if float_attribute.nil?
           float_attribute = FloatAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -443,7 +444,7 @@ class Client < ActiveRecord::Base
         end
 
       when "integer"
-        
+
         integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if integer_attribute.nil?
           IntegerAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -453,7 +454,7 @@ class Client < ActiveRecord::Base
         end
 
       when "text"
-        
+
         text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if text_attribute.nil?
           TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -463,7 +464,7 @@ class Client < ActiveRecord::Base
         end
 
       when "textarea"
-        
+
         textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).first
         if textarea_attribute.nil?
           TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: param_value)
@@ -489,7 +490,7 @@ class Client < ActiveRecord::Base
         end
 
       when "date"
-        
+
         if !param_value.blank?
           param_value = param_value.gsub('/', '-')
         end
@@ -503,11 +504,11 @@ class Client < ActiveRecord::Base
         end
 
       when "datetime"
-        
+
         complete_datetime = nil
 
         if !param_value.blank?
-          param_value = param_value.gsub('/', '-')     
+          param_value = param_value.gsub('/', '-')
           complete_datetime = param_value
         end
 
@@ -605,7 +606,6 @@ class Client < ActiveRecord::Base
 
   end
 
-
   def self.send_multiple_reminder(bookings)
 
     helper = Rails.application.routes.url_helpers
@@ -657,7 +657,6 @@ class Client < ActiveRecord::Base
       BookingMailer.multiple_booking_reminder(@data)
 
   end
-
 
   def client_notification
     if changed_attributes['email']
@@ -741,111 +740,6 @@ class Client < ActiveRecord::Base
     end
     if self.last_name.blank? && self.email.blank? && self.phone.blank?
       errors.add(:base, "El cliente debe contener, por lo menos, un apellido, una dirección email o un teléfono.")
-    end
-  end
-
-  def self.search(search, company_id)
-    if search
-      search_raw = search
-      search_rut = search.gsub(/[.-]/, "")
-      search_array = search.gsub(/\b([D|d]el?)+\b|\b([U|u]n(o|a)?s?)+\b|\b([E|e]l)+\b|\b([T|t]u)+\b|\b([L|l](o|a)s?)+\b|\b[AaYy]\b|["'.,;:-]|\b([E|e]n)+\b|\b([L|l]a)+\b|\b([C|c]on)+\b|\b([Q|q]ue)+\b|\b([S|s]us?)+\b|\b([E|e]s[o|a]?s?)+\b/i, '').split(' ')
-      search_array2 = []
-      search_array.each do |item|
-        if item.length > 2
-          search_array2.push('%'+item+'%')
-        end
-      end
-      clients1 = where(company_id: company_id).where('first_name ILIKE ANY ( array[:s] )', :s => search_array2).where('last_name ILIKE ANY ( array[:s] )', :s => search_array2).pluck(:id).uniq
-      clients2 = where(company_id: company_id).where("CONCAT(unaccent(first_name), ' ', unaccent(last_name)) ILIKE unaccent(:s) OR unaccent(first_name) ILIKE unaccent(:s) OR unaccent(last_name) ILIKE unaccent(:s) OR unaccent(record) ILIKE unaccent(:t) OR unaccent(email) ILIKE unaccent(:t) OR replace(replace(identification_number, '.', ''), '-', '') ILIKE :r", :s => "%#{search}%", :r => "%#{search_rut}%", :t => "%#{search_raw}%").pluck(:id).uniq
-      where(id: (clients1 + clients2).uniq)
-    else
-      all
-    end
-  end
-
-  def self.filter_attendance(attendance, company_id)
-    if attendance # not nill
-      if attendance == "true"
-        where(company_id: company_id).where(id: Booking.where(location_id: Location.where(company: Company.find(company_id))).select(:client_id))
-      else
-        where(company_id: company_id).where.not(id: Booking.where(location_id: Location.where(company: Company.find(company_id))).select(:client_id))
-      end
-    else
-      all
-    end
-  end
-
-  def self.filter_location(locations, attendance)
-    if !locations.blank?
-      if attendance
-        where(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
-      else
-        where.not(id: Booking.where(location_id: Location.find(locations)).select(:client_id))
-      end
-    else
-      all
-    end
-  end
-
-  def self.filter_provider(providers, attendance)
-    if !providers.blank?
-      if attendance
-        where(id: Booking.where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
-      else
-        where.not(id: Booking.where(service_provider_id: ServiceProvider.find(providers)).select(:client_id))
-      end
-    else
-      all
-    end
-  end
-
-  def self.filter_service(services, attendance)
-    if !services.blank?
-      if attendance
-        where(id: Booking.where(service_id: Service.find(services)).select(:client_id))
-      else
-        where.not(id: Booking.where(service_id: Service.find(services)).select(:client_id))
-      end
-    else
-      all
-    end
-  end
-
-  def self.filter_birthdate(from, to)
-    if from.present? and to.present?
-      # Transformar string a date
-      from = Date.parse(from)
-      to = Date.parse(to)
-
-      # # posible falla al cambiar de año, fecha inicio 2015 - fecha termino 2016
-      # where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month BETWEEN ? AND ?)', from.month, from.day, 31, to.month, 1, to.day, (from + 1.month).month, (to - 1.month).month)
-      if from.month == to.month
-        where('birth_month = ? AND birth_day BETWEEN ? AND ?', from.month, from.day, to.day)
-      elsif from.month < to.month
-        where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month > ? AND birth_month < ?)', from.month, from.day, 31, to.month, 1, to.day, from.month, to.month)
-      elsif from.month > to.month
-        where('(birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month = ? AND birth_day BETWEEN ? AND ?) OR (birth_month > ? AND birth_month < ?) OR (birth_month > ? AND birth_month < ?)', from.month, from.day, 31, to.month, 1, to.day, from.month, 12, 1, to.month)
-      else
-        all
-      end
-    else
-      all
-    end
-  end
-
-  def self.filter_range(from, to, attendance)
-    if from.present? and to.present?
-      # Transformar string a datetime
-      from = Date.parse(from).to_datetime
-      to = Date.parse(to).to_datetime
-
-      if attendance
-        where(id: Booking.where('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
-      else
-        where.not(id: Booking.where('start BETWEEN ? AND ?', from.beginning_of_day, to.end_of_day).select(:client_id))
-      end
-    else
-      all
     end
   end
 
@@ -1181,6 +1075,28 @@ class Client < ActiveRecord::Base
     when ".xls" then Roo::Excel.new(file.path, file_warning: :ignore)
     when ".xlsx" then Roo::Excelx.new(file.path, file_warning: :ignore)
     end
+  end
+
+  def self.filter(company_id, params)
+    default_options = {
+      search: "",
+      attendance: true
+    }
+    options = default_options.merge(params.except(:utf8, :action, :controller, :locale).symbolize_keys)
+    Filter::Clients.filter(company_id, options)
+  end
+
+  def self.filtered(company_id, params)
+    # Client.includes(bookings: [:location, :service_provider, :service, :status]).from_company(146).where("booking.location_id" => 179)
+    search( params[:search], current_user.company_id )
+    filter_gender( params[:gender] )
+    filter_birthdate( params[:birth_from], params[:birth_to] )
+
+    filter_location( params[:locations], attendance )
+    filter_provider( params[:providers], attendance )
+    filter_service( params[:services], attendance )
+    filter_status( params[:statuses] )
+    filter_range( params[:range_from], params[:range_to], attendance )
   end
 
 end
