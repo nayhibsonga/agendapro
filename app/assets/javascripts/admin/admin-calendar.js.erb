@@ -960,7 +960,8 @@ function deleteBooking(eventId, bundled) {
   if ($('#calendar-data').data('staff-code')) {
     if( isFirefox ) {
       // TempFix for firefox input Modal Over Modal swal
-      $('#bookingModal').css('top', '-180px');
+      window.console.log("asd");
+      $('#bookingModal').css('top', '-1800px');
     }
 
     swal({
