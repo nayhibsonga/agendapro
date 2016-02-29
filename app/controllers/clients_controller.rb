@@ -28,6 +28,8 @@ class ClientsController < ApplicationController
 
     @clients_export = Client.accessible_by(current_ability).filter(current_user.company_id, params).order(sort_column + " " + sort_direction)
 
+    @custom_filters = current_user.company.custom_filters
+
     respond_to do |format|
       format.html
       format.csv
