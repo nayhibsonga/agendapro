@@ -70,7 +70,7 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
-	after_create :create_cashier, :create_plan_setting, :create_attribute_group
+	after_create :create_cashier, :create_plan_setting, :create_attribute_group 
 
 	def create_attribute_group
 		if AttributeGroup.where(name: "Otros", company_id: self.id).count < 1
