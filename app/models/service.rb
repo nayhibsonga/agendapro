@@ -36,6 +36,7 @@ class Service < ActiveRecord::Base
 	scope :with_time_promotions, -> { where(has_time_discount: true, active: true, online_payable: true, online_booking: true, time_promo_active: true).where.not(:active_service_promo_id => nil) }
 	scope :with_last_minute_promotions, -> { where(has_last_minute_discount: true, active: true, online_payable: true, online_booking: true).where.not(:active_last_minute_promo_id => nil) }
 	scope :with_treatment_promotions, -> { where(has_treatment_promo: true, active: true, online_payable: true, online_booking: true).where.not(:active_treatment_promo_id => nil) }
+	scope :actives, -> { where(active: true) }
 
 	accepts_nested_attributes_for :service_category, :reject_if => :all_blank, :allow_destroy => true
 
@@ -49,7 +50,7 @@ class Service < ActiveRecord::Base
 
 	after_save :check_treatment_promo
 
-	pg_search_scope :search, 
+	pg_search_scope :search,
 	:against => :name,
 	:associated_against => {
 		:service_category => :name,
@@ -163,7 +164,7 @@ class Service < ActiveRecord::Base
 		discount = 0
 
 		if self.has_time_discount && !self.active_service_promo_id.nil?
-			
+
 			service_promo = ServicePromo.find(self.active_service_promo_id)
 			service_promo.promos.each do |promo|
 				if promo.morning_discount > discount
@@ -264,7 +265,7 @@ class Service < ActiveRecord::Base
 			end
 		else
 			if self.has_time_discount && !self.active_service_promo_id.nil?
-				
+
 				service_promo = ServicePromo.find(self.active_service_promo_id)
 				service_promo.promos.each do |promo|
 					if promo.morning_discount > discount
@@ -326,7 +327,7 @@ class Service < ActiveRecord::Base
 	# 	puts "DTP: " + dateTimePointer.to_s
 	# 	puts "Open: " + open.to_s
 	# 	puts "Close: " + close.to_s
-	# 	puts "Limit: " + limit.to_s	
+	# 	puts "Limit: " + limit.to_s
 
 	# 	total_services_duration = 0
 
@@ -346,11 +347,11 @@ class Service < ActiveRecord::Base
  #      	dateTimePointerEnd = dateTimePointer
 
 	# 	if provider_id.nil? || provider_id == "0" || provider_id == 0
-			
+
 	# 		puts "Sin preferencia"
 
 	# 		while dateTimePointer < limit
-				
+
 	# 			min_pt = ProviderTime.where(:service_provider_id => ServiceProvider.where(active: true, online_booking: true, :location_id => local.id, :id => ServiceStaff.where(:service_id => self.id).pluck(:service_provider_id)).pluck(:id)).where(day_id: day).order(:open).first
 
 	# 	        # logger.debug "MIN PROVIDER TIME: " + min_pt.open.strftime("%H:%M")
@@ -364,7 +365,7 @@ class Service < ActiveRecord::Base
 	# 	        end
 
 	# 	        #Uncomment for overlaping hours
-          
+
 	# 	        if !self.company.company_setting.allows_optimization && last_check
 	# 	        	dateTimePointer = dateTimePointer - self.duration.minutes + first_service.company.company_setting.calendar_duration.minutes
 	# 	        end
@@ -409,7 +410,7 @@ class Service < ActiveRecord::Base
 
 	# 	            # Cross Booking
 	# 	            if service_valid
-		              
+
 	# 	            	if !self.group_service
 	# 	                  if Booking.where(service_provider_id: service_provider.id).where.not(:status_id => cancelled_id).where('is_session = false or (is_session = true and is_session_booked = true)').where.not('(bookings.end <= ? or ? <= bookings.start)', dateTimePointer, dateTimePointer + self.duration.minutes).count > 0
 	# 	                    service_valid = false
@@ -486,7 +487,7 @@ class Service < ActiveRecord::Base
 	# 		puts service_provider.public_name
 
 	# 		while dateTimePointer < limit && dateTimePointer < close
-				
+
 	# 			service_valid = false
 
 	# 			#Check dtp + duration isn't out of location time

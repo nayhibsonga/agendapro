@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160215160611) do
+ActiveRecord::Schema.define(version: 20160223133202) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "attribute_categories", force: true do |t|
@@ -455,6 +455,7 @@ ActiveRecord::Schema.define(version: 20160215160611) do
     t.boolean  "editable_payment_prices",     default: true
     t.boolean  "mandatory_mock_booking_info", default: false
     t.boolean  "strict_booking",              default: false,                 null: false
+    t.integer  "mails_base_capacity",         default: 0
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -471,6 +472,8 @@ ActiveRecord::Schema.define(version: 20160215160611) do
     t.string   "formatted_address", default: ""
     t.string   "domain",            default: ""
     t.float    "sales_tax",         default: 0.0, null: false
+    t.string   "timezone_name"
+    t.float    "timezone_offset"
   end
 
   create_table "custom_filters", force: true do |t|
