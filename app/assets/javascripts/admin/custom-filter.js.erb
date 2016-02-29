@@ -104,6 +104,24 @@ $(function(){
 
   });
 
+  $('body').on('click', '.edit_filter_btn', function(){
+    $('#editFilterModal .modal-dialog').empty()
+    var filter_id = $(this).attr("filter_id");
+    $.ajax({
+      url: '/edit_filter_form',
+      method: 'get',
+      data: {id: filter_id},
+      error: function(response){
+
+      },
+      success: function(response){
+        $('#editFilterModal .modal-dialog').append(response);
+        $('#editFilterModal').modal('show');
+        initializeFilters();
+      }
+    })
+  });
+
 });
 
 
