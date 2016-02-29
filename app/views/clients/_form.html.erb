@@ -12,7 +12,7 @@
           <li class="active"><a href="#personalTab" role="tab" data-toggle="tab" class="tab_index">Datos personales</a></li>
           <li class=""><a href="#commentsTab" role="tab" data-toggle="tab" class="tab_index">Comentarios</a></li>
           <li class=""><a href="#historyTab" role="tab" data-toggle="tab" class="tab_index">Historial</a></li>
-          <% if @company.is_plan_capable("Premium") %> 
+          <% if @company.is_plan_capable("Premium") %>
             <li class=""><a href="#filesTab" role="tab" data-toggle="tab" class="tab_index">Archivos</a></li>
             <% @company.attribute_groups.each do |attribute_group| %>
               <% if attribute_group.custom_attributes.count > 0 %>
@@ -35,7 +35,7 @@
                 </div>
               <% end %>
               <div class="well">
-                <div class="col-md-6">        
+                <div class="col-md-6">
                   <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
                     <div class="form-group">
                       <%= f.label :can_book, "¿Puede reservar?", class: "col-sm-3 control-label" %>
@@ -183,7 +183,6 @@
                   </div>
                 </div>
                 <div class="col-md-6">
-
                   <% @client_comments.each do |client_comment| %>
                     <div class="comment-div">
                       <div class="comment-date">
@@ -199,7 +198,6 @@
                     </div>
                     <br />
                   <% end %>
-
                 </div>
               </div>
             </div>
@@ -227,30 +225,27 @@
                       <td><%= l booking.start, format: :short %></td>
                       <td><%= booking.location.name %></td>
                       <td>
-                        <% if !booking.is_session %>
-                          <%= booking.service.name %>
-                        <% else %>
+                        <%= booking.service.name %>
+                        <% if booking.is_session %>
                           <%
-                              index = 1
-                              session_index = "Sesión "
-                              session_booking = booking.session_booking
-                              session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
-
-                                  if b.id == booking.id
-                                      session_index = session_index + index.to_s
-                                      break
-                                  end
-                                  index = index + 1
+                            index = 1
+                            session_index = ""
+                            session_booking = booking.session_booking
+                            session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
+                              if b.id == booking.id
+                                session_index = "Sesión #{index}"
+                                break
                               end
-
-                              session_index = session_index + " de " + session_booking.sessions_amount.to_s
-
+                              index = index + 1
+                            end
+                            session_index = "#{session_index} de #{session_booking.sessions_amount}"
                           %>
-
-                          <%= booking.service.name %><br /><%= "(" + session_index + ")" %>
+                          <span class="label label-session"><%= "(#{session_index})" %></span>
                         <% end %>
                       </td>
-                      <td><%= booking.status.name %></td>
+                      <td>
+                        <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
+                      </td>
                     </tr>
                     <% end %>
                   </tbody>
@@ -277,30 +272,27 @@
                       <td><%= l booking.start, format: :short %></td>
                       <td><%= booking.location.name %></td>
                       <td>
-                        <% if !booking.is_session %>
-                          <%= booking.service.name %>
-                        <% else %>
+                        <%= booking.service.name %>
+                        <% if booking.is_session %>
                           <%
-                              index = 1
-                              session_index = "Sesión "
-                              session_booking = booking.session_booking
-                              session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
-
-                                  if b.id == booking.id
-                                      session_index = session_index + index.to_s
-                                      break
-                                  end
-                                  index = index + 1
+                            index = 1
+                            session_index = ""
+                            session_booking = booking.session_booking
+                            session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
+                              if b.id == booking.id
+                                session_index = "Sesión #{index}"
+                                break
                               end
-
-                              session_index = session_index + " de " + session_booking.sessions_amount.to_s
-
+                              index = index + 1
+                            end
+                            session_index = "#{session_index} de #{session_booking.sessions_amount}"
                           %>
-
-                          <%= booking.service.name %><br /><%= "(" + session_index + ")" %>
+                          <span class="label label-session"><%= "(#{session_index})" %></span>
                         <% end %>
                       </td>
-                      <td><%= booking.status.name %></td>
+                      <td>
+                        <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
+                      </td>
                     </tr>
                     <% end %>
                   </tbody>
@@ -336,10 +328,9 @@
                 </table>
               </div>
             </div>
-            
           </div>
-          <% if @company.is_plan_capable("Premium") %>
 
+          <% if @company.is_plan_capable("Premium") %>
             <div class="tab-pane fade in" id="filesTab">
               <%= link_to '<i class="fa fa-file-o"></i> Todos los archivos'.html_safe, get_client_files_path(:client_id => @client.id), class: "btn btn-white", style: "margin-bottom: 10px;" %>
               <div class="panel panel-green">
@@ -384,18 +375,16 @@
                   </table>
                 </div>
               </div>
-              
             </div>
 
             <% @company.attribute_groups.each do |attribute_group| %>
               <% if attribute_group.custom_attributes.count > 0 %>
                 <div class="tab-pane fade in" id="group-<%= attribute_group.id.to_s %>-tab">
                   <%= form_tag client_update_attributes_path, multipart: true, class: 'form-horizontal update-custom-group-form', id: 'update-custom-group-#{attribute_group.id}' do %>
-
                     <input type="hidden" name="client_id" value="<%= @client.id %>" />
                     <div class="well">
                       <div class="col-md-6">
-                        <% 
+                        <%
                           attributes_index = 0
                           attributes_half = (@company.custom_attributes.where(attribute_group_id: attribute_group.id).count.to_f / 2.to_f).ceil
                         %>
@@ -679,7 +668,7 @@
                             </div>
 
                           <% end %>
-                          
+
 
                         <% end %>
                         <div class="form-group">
@@ -714,7 +703,7 @@
           Datos personales
         </div>
         <div class="well">
-          <div class="col-md-6">        
+          <div class="col-md-6">
             <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
               <div class="form-group">
                 <%= f.label :can_book, "¿Puede reservar?", class: "col-sm-3 control-label" %>
@@ -842,7 +831,7 @@
               </div>
               <div class="well">
                 <div class="col-md-6">
-                  <% 
+                  <%
                     attributes_index = 0
                     attributes_half = (@company.custom_attributes.where(attribute_group_id: attribute_group.id).count.to_f / 2.to_f).ceil
                   %>
@@ -1123,7 +1112,7 @@
                         </div>
                       </div>
 
-                    <% end %>                 
+                    <% end %>
                   <% end %>
                 </div>
               </div>
@@ -1144,8 +1133,8 @@
 </div>
 
 <% if @company.is_plan_capable("Premium") %>
+  <% content_for :modals do %>
   <!-- File Upload Modal -->
-
   <div class="modal fade fileUploadModal" id="fileUploadModal" tabindex="-1" role="dialog" aria-labelledby="Agregar archivo" aria-hidden="true">
     <div class="modal-dialog" style="width: auto;">
       <div class="modal-content">
@@ -1189,7 +1178,7 @@
                 </div>
 
                 <div class="payment-form-div form-group has-feedback">
-                  <label class="col-xs-4 control-label">Descripción</label>
+                  <label class="col-xs-4 control-label">DescripciÃ³n</label>
                   <div class="col-xs-8">
                     <textarea class="form-control" id="file_description" name="file_description"></textarea>
                     <span class="help-block"></span>
@@ -1239,11 +1228,9 @@
       </div>
     </div>
   </div>
-
   <!-- END File Upload Modal -->
 
   <!-- View File Modal -->
-
   <div class="modal fade fileUploadModal" id="viewFileModal" tabindex="-1" role="dialog" aria-labelledby="Ver archivo" aria-hidden="true">
     <div class="modal-dialog" style="width: auto;">
       <div class="modal-content">
@@ -1270,7 +1257,7 @@
                 </div>
 
                 <div class="payment-form-div form-group">
-                  <label class="col-xs-4 control-label">Descripción</label>
+                  <label class="col-xs-4 control-label">DescripciÃ³n</label>
                   <div class="col-xs-8">
                     <div id="view_file_description" class="view_file_content">
 
@@ -1314,9 +1301,11 @@
       </div>
     </div>
   </div>
+  <!-- END View File Modal -->
+  <% end %>
 <% end %>
 
-<!-- END View File Modal -->
+
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>

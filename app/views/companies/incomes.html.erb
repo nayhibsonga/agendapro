@@ -35,7 +35,14 @@
             </select>
           </div>
           <div class="col-md-3">
-            <a id="year-select-link" href="/companies_incomes?year=<%= @year %>" class="btn btn-white">Obtener ingresos</a>
+            <select id="filter-select" name="filter" class="form-control col-md-4">
+              <option value="all" <%= "selected" if !params[:filter].blank? && params[:filter] == "all" %>>Todas</option>
+              <option value="active" <%= "selected" if !params[:filter].blank? && params[:filter] == "active" %>>Activas</option>
+              <option value="inactive" <%= "selected" if !params[:filter].blank? && params[:filter] == "inactive" %>>Inactivas</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <a id="year-select-link" href="/companies_incomes?year=<%= @year %>&filter=@filter" class="btn btn-white">Obtener ingresos</a>
           </div>
         </div>
         <h3>Ingresos para el año <%= @year %></h3>
@@ -121,8 +128,14 @@
 <% content_for :scripts do %>
   <script type="text/javascript">
     $("#year-select").on('change', function(){
-      var year = $(this).val();
-      $("#year-select-link").attr("href", "/companies_incomes?year=" + year);
+      var year = $("#year-select").val();
+      var filter = $("#filter-select").val();
+      $("#year-select-link").attr("href", "/companies_incomes?year=" + year + "&filter=" + filter);
+    });
+    $('#filter-select').on('change', function(){
+      var year = $("#year-select").val();
+      var filter = $("#filter-select").val();
+      $("#year-select-link").attr("href", "/companies_incomes?year=" + year + "&filter=" + filter);
     });
   </script>
 <% end %>
