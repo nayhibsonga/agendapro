@@ -37,7 +37,6 @@
 								<label class="control-label custom-filter-label">
 									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
 								</label>
-								<span class="help-block"></span>
 							</div>
 						  	<div class="col-xs-3">
 						  		<select id="attribute_<%= attribute.id %>_option" name="attribute_<%= attribute.id %>_option" class="form-control filter-field filter-option" attribute_id="<%= attribute.id %>" disabled>
@@ -54,25 +53,21 @@
 						    	<div class="checkbox value-checkbox">
 							    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
 							    	<% if attribute.datatype == "integer" %>
-							      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="1" disabled />
+							      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field first-field" attribute_id="<%= attribute.id %>" step="1" disabled />
 							      	<% else %>
-							      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="0.01" disabled />
+							      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field first-field" attribute_id="<%= attribute.id %>" step="0.01" disabled />
 							      	<% end %>
 						      	</div>
-						      	<span class="help-block"></span>
-						      	<span class="form-control-feedback"></span>
 						    </div>
 						    <div class="col-xs-3">
 						    	<div class="checkbox value-checkbox">
 							    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
 							    	<% if attribute.datatype == "integer" %>
-							      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="1" disabled />
+							      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field second-field" attribute_id="<%= attribute.id %>" step="1" disabled />
 							      	<% else %>
-							      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="0.01" disabled />
+							      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field second-field" attribute_id="<%= attribute.id %>" step="0.01" disabled />
 							      	<% end %>
 							    </div>
-						      	<span class="help-block"></span>
-						      	<span class="form-control-feedback"></span>
 						    </div>
 						</div>
 
@@ -83,7 +78,6 @@
 								<label class="control-label custom-filter-label">
 									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
 								</label>
-								<span class="help-block"></span>
 							</div>
 						  	<div class="col-xs-3">
 						  		<select id="attribute_<%= attribute.id %>_option" name="attribute_<%= attribute.id %>_option" class="form-control filter-field filter-option" attribute_id="<%= attribute.id %>" disabled>
@@ -99,13 +93,13 @@
 						    <div class="col-xs-3">
 						    	<div class="checkbox value-checkbox">
 							    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
-							      	<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+							      	<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field first-field" attribute_id="<%= attribute.id %>" disabled />
 						      	</div>
 						    </div>
 						    <div class="col-xs-3">
 						    	<div class="checkbox value-checkbox">
 							    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
-							      	<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+							      	<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field second-field" attribute_id="<%= attribute.id %>" disabled />
 						      	</div>
 						    </div>
 						</div>
@@ -117,7 +111,6 @@
 								<label class="control-label custom-filter-label">
 									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
 								</label>
-								<span class="help-block"></span>
 							</div>
 						  	<div class="col-xs-3">
 						  		<select id="attribute_<%= attribute.id %>_option" name="attribute_<%= attribute.id %>_option" class="form-control filter-field filter-option" attribute_id="<%= attribute.id %>" disabled>
@@ -134,7 +127,7 @@
 						      	<div>
 						      		<div class="checkbox value-checkbox">
 							      		<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
-								      	<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+								      	<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field first-field datetime-field" attribute_id="<%= attribute.id %>" disabled />
 							      	</div>
 							    </div>
 							    <div>
@@ -187,7 +180,7 @@
 						    	<div>
 						    		<div class="checkbox value-checkbox">
 							    		<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
-								      	<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+								      	<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field second-field datetime-field" attribute_id="<%= attribute.id %>" disabled />
 							      	</div>
 						      	</div>
 						      	<div>
@@ -245,7 +238,6 @@
 								<label class="control-label custom-filter-label">
 									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
 								</label>
-								<span class="help-block"></span>
 							</div>
 						  	<div class="col-xs-9">
 						  		<!-- Use multiselect to combine categories -->
@@ -267,7 +259,7 @@
 								<span class="help-block"></span>
 							</div>
 							<div class="col-xs-9">
-						  		<input type="text" id="attribute_<%= attribute.id %>_text" name="attribute_<%= attribute.id %>_text" class="form-control filter-field" attribute_id="<%= attribute.id %>" disabled />
+						  		<input type="text" id="attribute_<%= attribute.id %>_text" name="attribute_<%= attribute.id %>_text" class="form-control filter-field first-field" attribute_id="<%= attribute.id %>" disabled />
 						  	</div>
 						</div>
 					<% elsif attribute.datatype == "boolean" %>
@@ -276,7 +268,6 @@
 								<label class="control-label custom-filter-label">
 									<input type="checkbox" id="attribute_<%= attribute.id %>_include" name="attribute_<%= attribute.id %>_include" attribute_id="<%= attribute.id %>" class="filter-check" value="0" /> <%= attribute.name %>
 								</label>
-								<span class="help-block"></span>
 							</div>
 						  	<div class="col-xs-9">
 						  		<select class="form-control filter-field" id="attribute_<%= attribute.id %>_boolean" name="attribute_<%= attribute.id %>_boolean" attribute_id="<%= attribute.id %>" disabled>

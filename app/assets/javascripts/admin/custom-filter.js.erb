@@ -7,6 +7,16 @@ function initializeFilters()
     firstDay: 1,
     changeMonth: true,
     changeYear: true,
+    onClose: function(){
+      if($('#custom_filter_form').length > 0)
+      {
+        $('#custom_filter_form').valid();
+      }
+      else
+      {
+        $('#edit_custom_filter_form').valid();
+      }
+    },
     monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
         monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         prevText: 'Atrás',
@@ -57,6 +67,45 @@ function initializeFilters()
       }
   });
 
+  if($('#custom_filter_form').length > 0)
+  {
+    $('#custom_filter_form').validate({
+      rules: {
+        'custom_filter[name]': {
+          required: true
+        }
+      },
+      highlight: function(element) {
+        $(element).parent().removeClass('has-success').addClass('has-error');
+      },
+      success: function(element) {
+        $(element).parent().removeClass('has-error').addClass('has-success');
+      },
+      submitHandler: function(form) {
+        form.submit();
+      }
+    });
+  }
+  else if($('#edit_custom_filter_form').length > 0)
+  {
+    $('#edit_custom_filter_form').validate({
+      rules: {
+        'custom_filter[name]': {
+          required: true
+        }
+      },
+      highlight: function(element) {
+        $(element).parent().removeClass('has-success').addClass('has-error');
+      },
+      success: function(element) {
+        $(element).parent().removeClass('has-error').addClass('has-success');
+      },
+      submitHandler: function(form) {
+        form.submit();
+      }
+    });
+  }
+
 }
 
 $(function(){
@@ -68,6 +117,7 @@ $(function(){
       $('.filter-field[attribute_id="' + attribute_id + '"]').prop('disabled', false);
       $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').prop('disabled', false);
       $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').removeClass('disabled');
+      $('.first-field[attribute_id="' + attribute_id + '"]').prop('required', true);
     }
     else
     {
@@ -75,18 +125,41 @@ $(function(){
       $('.filter-field[attribute_id="' + attribute_id + '"]').prop('disabled', true);
       $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').prop('disabled', true);
       $('.filter-field[attribute_id="' + attribute_id + '"]').parent().find('.multiselect').addClass('disabled');
+      $('.first-field[attribute_id="' + attribute_id + '"]').prop('required', false);
+      $('.first-field[attribute_id="' + attribute_id + '"]').parent().removeClass('has-success').removeClass('has-error');
+      $('.second-field[attribute_id="' + attribute_id + '"]').prop('required', false);
+      $('.second-field[attribute_id="' + attribute_id + '"]').parent().removeClass('has-success').removeClass('has-error');
+      if($('#custom_filter_form').length > 0)
+      {
+        $('#custom_filter_form').valid();
+      }
+      else if($('#edit_custom_filter_form').length() > 0)
+      {
+        $('#edit_custom_filter_form').valid();
+      }
     }
   });
 
   $('body').on('change', '.filter-option', function(){
-
+    var attribute_id = $(this).attr("attribute_id");
     if($(this).val() == "between" || $(this).val() == "out")
     {
       $(this).parent().parent().find('.filter-exclusive').prop('disabled', false);
+      $('.second-field[attribute_id="' + attribute_id + '"]').prop('required', true);
     }
     else
     {
       $(this).parent().parent().find('.filter-exclusive').prop('disabled', true);
+      $('.second-field[attribute_id="' + attribute_id + '"]').prop('required', false);
+      $('.second-field[attribute_id="' + attribute_id + '"]').parent().removeClass('has-success').removeClass('has-error');
+      if($('#custom_filter_form').length > 0)
+      {
+        $('#custom_filter_form').valid();
+      }
+      else if($('#edit_custom_filter_form').length() > 0)
+      {
+        $('#edit_custom_filter_form').valid();
+      }
     }
 
   });

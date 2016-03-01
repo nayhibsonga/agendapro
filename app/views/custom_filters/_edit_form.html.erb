@@ -1,6 +1,6 @@
 <div class="modal-content">
 
-	<%= form_for @custom_filter, :html => {:class => 'form-horizontal custom_filter_form', :id => 'custom_filter_form'} do |f| %>
+	<%= form_for @custom_filter, :html => {:class => 'form-horizontal custom_filter_form', :id => 'edit_custom_filter_form'} do |f| %>
 
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -63,9 +63,9 @@
 						    		<% if numeric_filter.nil? %>
 								    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
 								    	<% if attribute.datatype == "integer" %>
-								      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="1" disabled />
+								      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field first-field" attribute_id="<%= attribute.id %>" step="1" disabled />
 								      	<% else %>
-								      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="0.01" disabled />
+								      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field first-field" attribute_id="<%= attribute.id %>" step="0.01" disabled />
 								      	<% end %>
 							      	<% else %>
 							      		<% if numeric_filter.exclusive1 %>
@@ -74,9 +74,9 @@
 							      			<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="1" checked />
 							      		<% end %>
 								    	<% if attribute.datatype == "integer" %>
-								      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="1" value="<%= numeric_filter.value1 %>" />
+								      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field first-field" attribute_id="<%= attribute.id %>" step="1" value="<%= numeric_filter.value1 %>" />
 								      	<% else %>
-								      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="0.01" value="<%= numeric_filter.value1 %>" />
+								      		<input type="number" id="attribute_<%= attribute.id %>_value1" name="attribute_<%= attribute.id %>_value1" class="form-control filter-field first-field" attribute_id="<%= attribute.id %>" step="0.01" value="<%= numeric_filter.value1 %>" />
 								      	<% end %>
 							      	<% end %>
 						      	</div>
@@ -88,9 +88,9 @@
 						    		<% if numeric_filter.nil? %>
 								    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
 								    	<% if attribute.datatype == "integer" %>
-								      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="1" disabled />
+								      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field second-field" attribute_id="<%= attribute.id %>" step="1" disabled />
 								      	<% else %>
-								      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="0.01" disabled />
+								      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field second-field" attribute_id="<%= attribute.id %>" step="0.01" disabled />
 								      	<% end %>
 								    <% else %>
 								    	<% if numeric_filter.exclusive2 %>
@@ -99,14 +99,12 @@
 								    		<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="1" checked />
 								    	<% end %>
 								    	<% if attribute.datatype == "integer" %>
-								      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="1" value="<%= numeric_filter.value2 %>" />
+								      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field second-field" attribute_id="<%= attribute.id %>" step="1" value="<%= numeric_filter.value2 %>" />
 								      	<% else %>
-								      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field" attribute_id="<%= attribute.id %>" step="0.01" value="<%= numeric_filter.value2 %>" />
+								      		<input type="number" id="attribute_<%= attribute.id %>_value2" name="attribute_<%= attribute.id %>_value2" class="form-control filter-field second-field" attribute_id="<%= attribute.id %>" step="0.01" value="<%= numeric_filter.value2 %>" />
 								      	<% end %>
 								    <% end %>
 							    </div>
-						      	<span class="help-block"></span>
-						      	<span class="form-control-feedback"></span>
 						    </div>
 						</div>
 
@@ -141,14 +139,14 @@
 						    	<div class="checkbox value-checkbox">
 						    		<% if date_filter.nil? %>
 								    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
-								      	<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+								      	<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field first-field" attribute_id="<%= attribute.id %>" disabled />
 								    <% else %>
 								    	<% if date_filter.exclusive1 %>
 								    		<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" />
 								    	<% else %>
 								    		<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="1" checked />
 								    	<% end %>
-								      	<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" value="<%= date_filter.date1.strftime('%d/%m/%Y') %>" />
+								      	<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field first-field" attribute_id="<%= attribute.id %>" value="<%= date_filter.date1.strftime('%d/%m/%Y') %>" />
 								    <% end %>
 						      	</div>
 						    </div>
@@ -156,7 +154,7 @@
 						    	<div class="checkbox value-checkbox">
 						    		<% if date_filter.nil? %>
 								    	<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
-								      	<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+								      	<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field second-field" attribute_id="<%= attribute.id %>" disabled />
 							      	<% else %>
 							      		<% if date_filter.exclusive2 %>
 							      			<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" />
@@ -164,9 +162,9 @@
 							      			<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="1" checked />
 							      		<% end %>
 							      		<% if date_filter.date2.nil? %>
-							      			<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" />
+							      			<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field second-field" attribute_id="<%= attribute.id %>" />
 							      		<% else %>
-							      			<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" value="<%= date_filter.date2.strftime('%d/%m/%Y') %>" />
+							      			<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field second-field" attribute_id="<%= attribute.id %>" value="<%= date_filter.date2.strftime('%d/%m/%Y') %>" />
 							      		<% end %>
 							      	<% end %>
 						      	</div>
@@ -204,14 +202,14 @@
 						      		<div class="checkbox value-checkbox">
 						      			<% if date_filter.nil? %>
 							      			<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
-								      		<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+								      		<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field first-field" attribute_id="<%= attribute.id %>" disabled />
 								      	<% else %>
 								      		<% if date_filter.exclusive1 %>
 								      			<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" />
 								      		<% else %>
 								      			<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive1" name="attribute_<%= attribute.id %>_exclusive1" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="1" checked />
 								      		<% end %>
-								      		<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" value="<%= date_filter.date1.strftime('%d/%m/%Y') %>" />
+								      		<input type="text" id="attribute_<%= attribute.id %>_date1" name="attribute_<%= attribute.id %>_date1" class="form-control attribute-datepicker filter-field first-field" attribute_id="<%= attribute.id %>" value="<%= date_filter.date1.strftime('%d/%m/%Y') %>" />
 								      	<% end %>
 							      	</div>
 							    </div>
@@ -266,7 +264,7 @@
 						    		<div class="checkbox value-checkbox">
 						    			<% if date_filter.nil? %>
 							    			<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" disabled />
-								      		<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" disabled />
+								      		<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field second-field" attribute_id="<%= attribute.id %>" disabled />
 								      	<% else %>
 								      		<% if date_filter.exclusive1 %>
 								      			<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="0" />
@@ -274,9 +272,9 @@
 								      			<input type="checkbox" id="attribute_<%= attribute.id %>_exclusive2" name="attribute_<%= attribute.id %>_exclusive2" attribute_id="<%= attribute.id %>" class="filter-exclusive" value="1" checked />
 								      		<% end %>
 								      		<% if date_filter.date2.nil? %>
-								      			<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" />
+								      			<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field second-field" attribute_id="<%= attribute.id %>" />
 								      		<% else %>
-								      			<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field" attribute_id="<%= attribute.id %>" value="<%= date_filter.date2.strftime('%d/%m/%Y') %>" />
+								      			<input type="text" id="attribute_<%= attribute.id %>_date2" name="attribute_<%= attribute.id %>_date2" class="form-control attribute-datepicker filter-field second-field" attribute_id="<%= attribute.id %>" value="<%= date_filter.date2.strftime('%d/%m/%Y') %>" />
 								      		<% end %>
 								      	<% end %>
 							      	</div>
@@ -376,9 +374,9 @@
 							</div>
 							<div class="col-xs-9">
 								<% if text_filter.nil? %>
-						  			<input type="text" id="attribute_<%= attribute.id %>_text" name="attribute_<%= attribute.id %>_text" class="form-control filter-field" attribute_id="<%= attribute.id %>" disabled />
+						  			<input type="text" id="attribute_<%= attribute.id %>_text" name="attribute_<%= attribute.id %>_text" class="form-control filter-field first-field" attribute_id="<%= attribute.id %>" disabled />
 						  		<% else %>
-						  			<input type="text" id="attribute_<%= attribute.id %>_text" name="attribute_<%= attribute.id %>_text" class="form-control filter-field" attribute_id="<%= attribute.id %>" value="<%= text_filter.text %>" />
+						  			<input type="text" id="attribute_<%= attribute.id %>_text" name="attribute_<%= attribute.id %>_text" class="form-control filter-field first-field" attribute_id="<%= attribute.id %>" value="<%= text_filter.text %>" />
 						  		<% end %>
 						  	</div>
 						</div>
