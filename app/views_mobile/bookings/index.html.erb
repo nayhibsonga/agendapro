@@ -55,6 +55,11 @@
   booking_history: @company_setting.booking_history,
   staff_code: @company_setting.staff_code } do %>
 <% end %>
+<%= content_tag "div", id: "state", data: {
+  local: @state[:local],
+  provider: @state[:provider],
+  date: @state[:date] } do %>
+<% end %>
 
 <% content_for :modals do %>
   <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">

@@ -15,9 +15,9 @@ class BookingsController < ApplicationController
 
     @company = Company.find(current_user.company_id)
     if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
-      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).ordered
+      @locations = Location.actives.where(id: ServiceProvider.actives.where(id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).ordered
     else
-      @locations = Location.where(:active => true).accessible_by(current_ability).ordered
+      @locations = Location.actives.accessible_by(current_ability).ordered
     end
     @company_setting = @company.company_setting
     @service_providers = ServiceProvider.where(location_id: @locations).ordered
@@ -25,7 +25,7 @@ class BookingsController < ApplicationController
       json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order, :name) do |provider_group|
         json.name  provider_group.name
         json.location_id provider_group.location_id
-        json.resources provider_group.service_providers.where(active: true).accessible_by(current_ability).order(:order, :public_name) do |service_provider|
+        json.resources provider_group.service_providers.actives.accessible_by(current_ability).ordered do |service_provider|
           json.id service_provider.id
           json.name service_provider.public_name
         end
@@ -36,7 +36,7 @@ class BookingsController < ApplicationController
         json.location location.id
         json.days Day.all do |day|
           json.day day.id
-          json.resources ServiceProvider.joins(:provider_times).actives.where(provider_times: {day: day}).where(location: location).order(:order, :public_name) do |provider|
+          json.resources ServiceProvider.joins(:provider_times).actives.where(provider_times: {day: day}).where(location: location).ordered do |provider|
             json.id provider.id
             json.name provider.public_name
           end
@@ -47,6 +47,11 @@ class BookingsController < ApplicationController
     @booking = Booking.new
     @provider_break = ProviderBreak.new
     @payment = Payment.new
+
+    @state = Hash.new
+    @state[:local] = params[:local] if params[:local]
+    @state[:provider] = params[:provider] if params[:provider]
+    @state[:date] = params[:date] if params[:date]
   end
 
   def fixed_index
@@ -528,7 +533,8 @@ class BookingsController < ApplicationController
           :user_session_confirmed => u.user_session_confirmed,
           :sessions_ratio => sessions_ratio,
           :payed_state => u.payed_state,
-          :bundled => u.bundled
+          :bundled => u.bundled,
+          :location_id => u.location_id
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -1445,7 +1451,30 @@ class BookingsController < ApplicationController
 
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
-        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings , :is_session => u.is_session, :is_session_booked => u.is_session_booked, :user_session_confirmed => u.user_session_confirmed, :sessions_ratio => sessions_ratio, :payed_state => u.payed_state, :bundled => u.bundled}
+        @booking_json = {
+          :id => u.id,
+          :start => u.start,
+          :end => u.end,
+          :service_id => u.service_id,
+          :service_provider_id => u.service_provider_id,
+          :status_id => u.status_id,
+          :first_name => u.client.first_name,
+          :last_name => u.client.last_name,
+          :email => u.client.email,
+          :phone => u.client.phone,
+          :notes => u.notes,
+          :company_comment => u.company_comment,
+          :provider_lock => u.provider_lock,
+          :service_name => u.service.name,
+          :warnings => warnings ,
+          :is_session => u.is_session,
+          :is_session_booked => u.is_session_booked,
+          :user_session_confirmed => u.user_session_confirmed,
+          :sessions_ratio => sessions_ratio,
+          :payed_state => u.payed_state,
+          :bundled => u.bundled,
+          :location_id => u.location_id
+        }
         BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking_json }

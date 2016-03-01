@@ -1,3 +1,8 @@
+var actualDate = null;
+var dateSelected = null;
+var picker;
+var state;
+
 function loadProviders () {
   if (parseInt($('#locals-selector').val()) > 0) {
     var localId = parseInt($('#locals-selector').val());
@@ -8,8 +13,12 @@ function loadProviders () {
           $.each(providersArray, function (key, provider) {
             $('#providers-selector').append('<option name="providerRadio" value="'+provider.id+'">'+provider.public_name+'</option>');
           });
-          providerId = parseInt($('#providers-selector').val());
-          loadProviderTime(providerId);
+          if (state.local == $('#locals-selector').val()) {
+            $('#providers-selector').val(state.provider).change();
+          } else {
+            providerId = parseInt($('#providers-selector').val());
+            loadProviderTime(providerId);
+          }
         };
       });
     });
@@ -53,8 +62,6 @@ function loadProviderEvents(providerId) {
   return false;
 }
 
-var actualDate = null;
-var dateSelected = null;
 function loadWeekCalendar (startTime, endTime, providerId) {
   //Default values
   startTime = startTime || 0;
@@ -147,14 +154,15 @@ function loadWeekCalendar (startTime, endTime, providerId) {
   });
 
   actualDate = actualDate || $('#calendar').fullCalendar('getDate');
+  if (state.date) {
+    actualDate = Date.parse(state.date);
+  }
   picker.set('select', actualDate);
+  state = {}
 }
 
-var picker;
 $(function() {
-  if (parseInt($('#locals-selector').val()) > 0) {
-    loadProviders();
-  };
+  state = $('#state').data();
 
   $('#locals-selector').change(function() {
     if (parseInt($('#locals-selector').val()) > 0) {
@@ -167,6 +175,13 @@ $(function() {
       loadProviderTime(providerId);
     };
   });
+
+  if (parseInt($('#locals-selector').val()) > 0 && !state.local) {
+    loadProviders();
+  };
+  if (state.local) {
+    $('#locals-selector').val(state.local).change();
+  };
 
   $('#add').click(function () {
     var bookHref = "/bookings/new?" + $.param({
