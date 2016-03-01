@@ -1,6 +1,7 @@
 module Api
-  module V2
-  	class BookingsController < V2Controller
+	module AgendaproApp
+  module V1
+  	class BookingsController < V1Controller
       
       def book_service
 
@@ -164,8 +165,7 @@ module Api
 	          status_id: Status.find_by(name: 'Reservado').id,
 	          client_id: client.id,
 	          user_id: @mobile_user.id,
-		       	web_origin: true,
-	          marketplace_origin: true,
+	          web_origin: true,
 	          provider_lock: booking_params[:provider_lock],
 	          price: booking_params[:price]
 	        )
@@ -654,4 +654,5 @@ module Api
 
   	end
   end
+	end
 end
