@@ -5,6 +5,7 @@
       cursor: hand;
     }
   </style>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
 <% end %>
 
 <input type="hidden" id="company_id" value="@company.id" />
@@ -1441,6 +1442,7 @@
 
             <!-- End Attributes Groups -->
 
+
             <!-- Attributes -->
             <div class="row" style="margin-top: 40px;">
               <div class="col-md-12">
@@ -1515,6 +1517,42 @@
               </div>
             </div>
             <!-- End Attributes -->
+
+            <!-- Filters -->
+
+            <div class="row" style="margin-top: 40px; margin-bottom: 30px;">
+              <div class="col-md-12">
+                <div class="background-grey">
+                  <h3 class="text-green">
+                    Listado de filtros
+                    <button class="btn btn-green pull-right" id="new_filter_button"><i class="fa fa-plus"></i> Agregar filtro</button>
+                  </h3>
+                </div>
+                <table class="table table-hover table-green">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @custom_filters.each do |custom_filter| %>
+                      <tr>
+                        <td>
+                          <%= custom_filter.name %>
+                        </td>
+                        <td>
+                          <button class="btn btn-orange edit_filter_btn" filter_id="<%= custom_filter.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
+                          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, custom_filter, method: :delete, data: { confirm: '¿Estás seguro de eliminar el filtro seleccionado?' }, class: 'btn btn-red' %>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- End Filters -->
 
           </div>
         <% end %>
@@ -1875,6 +1913,21 @@
       </div>
     </div>
 
+
+
+    <div class="modal fade" id="addFilterModal" tabindex="-1" role="dialog" aria-labelledby="addFilterModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+
+      </div>
+    </div>
+
+    <div class="modal fade" id="editFilterModal" tabindex="-1" role="dialog" aria-labelledby="editFilterModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+
+      </div>
+    </div>
+        
+
     <div class="modal fade" id="attributeGroupModal" tabindex="-1" role="dialog" aria-labelledby="attributeGroupModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -1921,5 +1974,6 @@
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
+  <%= javascript_include_tag "admin/custom-filter" %>
   <%= javascript_include_tag "admin/company_settings" %>
 <% end %>

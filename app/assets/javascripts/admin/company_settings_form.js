@@ -490,6 +490,24 @@ $(function () {
     e.preventDefault();
   });
 
+
+  $('#new_filter_button').on('click', function(){
+    $('#addFilterModal .modal-dialog').empty()
+    $.ajax({
+      url: '/new_filter_form',
+      method: 'get',
+      data: {},
+      error: function(response){
+
+      },
+      success: function(response){
+        $('#addFilterModal .modal-dialog').append(response);
+        $('#addFilterModal').modal('show');
+        initializeFilters();
+      }
+    })
+  });
+
   $("#attribute-groups-tbody").sortable({
     revert: true,
     axis: "y",

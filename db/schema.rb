@@ -11,7 +11,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160223133202) do
+ActiveRecord::Schema.define(version: 20160226140636) do
+
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -466,6 +467,18 @@ ActiveRecord::Schema.define(version: 20160223133202) do
     t.datetime "updated_at"
   end
 
+  create_table "date_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.datetime "date1"
+    t.datetime "date2"
+    t.string   "option"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "exclusive1",       default: true
+    t.boolean  "exclusive2",       default: true
+  end
+
   create_table "date_time_attributes", force: true do |t|
     t.integer  "attribute_id"
     t.integer  "client_id"
@@ -827,6 +840,18 @@ ActiveRecord::Schema.define(version: 20160223133202) do
 
   add_index "notification_providers", ["notification_email_id"], name: "index_notification_providers_on_notification_email_id", using: :btree
   add_index "notification_providers", ["service_provider_id"], name: "index_notification_providers_on_service_provider_id", using: :btree
+
+  create_table "numeric_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.float    "value1"
+    t.float    "value2"
+    t.string   "option"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "exclusive1",       default: true
+    t.boolean  "exclusive2",       default: true
+  end
 
   create_table "numeric_parameters", force: true do |t|
     t.string   "name"

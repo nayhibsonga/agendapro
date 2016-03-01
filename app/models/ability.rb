@@ -135,6 +135,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
+        can :new_filter_form, CustomFilter, :company_id => user.company_id
+        can :edit_filter_form, CustomFilter, :company_id => user.company_id
         can :rearrange, Attribute, :company_id => user.company_id
         can :rearrange, AttributeGroup, :company_id => user.company_id
 
