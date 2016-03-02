@@ -2,6 +2,8 @@ class Base::CustomMailer < ActionMailer::Base
   require 'mandrill'
   require 'base64'
 
+  before_action :default_options
+
   def send_mail(template_name, template_content, message, async=true)
 
     mandrill = Mandrill::API.new Agendapro::Application.config.api_key
@@ -24,4 +26,11 @@ class Base::CustomMailer < ActionMailer::Base
   def filter_sender(email)
     email.present? ? email : "AgendaPro <no-reply@agendapro.cl>"
   end
+
+  private
+    def default_options
+      @title = "AgendaPro"
+      @url = "www.agendapro.co"
+      attachments.inline['logo.png'] = File.read('app/assets/images/logos/logodoble2.png')
+    end
 end

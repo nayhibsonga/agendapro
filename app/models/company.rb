@@ -70,7 +70,7 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
-	after_create :create_cashier, :create_plan_setting, :create_attribute_group 
+	after_create :create_cashier, :create_plan_setting, :create_attribute_group
 
 	def create_attribute_group
 		if AttributeGroup.where(name: "Otros", company_id: self.id).count < 1
@@ -754,6 +754,12 @@ class Company < ActiveRecord::Base
 
 	def mails_left
 		self.settings.get_mails_capacity - self.settings.monthly_mails
+	end
+
+	def web_url
+		countries = self.company_countries.where(country_id: Country.find_by(locale: I18n.locale.to_s)).first
+		countries = self.company_countries.first if countries.blank?
+		"#{countries.web_address}.agendapro#{countries.country.domain}"
 	end
 
 end
