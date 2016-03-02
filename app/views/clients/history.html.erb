@@ -24,7 +24,9 @@
               <td><%= l booking.start, format: :long %></td>
               <td><%= booking.service.name %></td>
               <td><%= booking.service_provider.public_name %></td>
-              <td><%= booking.status.name %></td>
+              <td>
+                <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
+              </td>
               <td><%= booking.notes %></td>
               <td><%= booking.company_comment %></td>
             </tr>
