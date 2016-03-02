@@ -578,7 +578,7 @@ class CompanyMailer < Base::CustomMailer
 		end
 
 		auth_code = "NA"
-		if !punto_pagos_confirmation.authorization_code.nil?
+		if !punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
 			auth_code = punto_pagos_confirmation.authorization_code
 		end
 
@@ -702,7 +702,7 @@ class CompanyMailer < Base::CustomMailer
 	    }
 
 	    auth_code = "NA"
-	    if !pay_u_notification.authorization_code.nil?
+	    if !pay_u_notification.authorization_code.nil? && pay_u_notification.authorization_code != ""
 	    	auth_code = pay_u_notification.authorization_code
 	    end
 
