@@ -1364,7 +1364,7 @@ class BookingMailer < Base::CustomMailer
 		template_content = []
 
 		auth_code = "NA"
-		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
 		end
 
@@ -1437,7 +1437,7 @@ class BookingMailer < Base::CustomMailer
 		template_content = []
 
 		auth_code = "NA"
-		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
 		end
 
@@ -1526,7 +1526,7 @@ class BookingMailer < Base::CustomMailer
 		client = payed_booking.bookings.first.client
 
 		auth_code = "NA"
-		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
 		end
 
@@ -1607,7 +1607,7 @@ class BookingMailer < Base::CustomMailer
 		client = payed_booking.bookings.first.client
 
 		auth_code = "NA"
-		if !payed_booking.punto_pagos_confirmation.authorization_code.nil?
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
 		end
 
