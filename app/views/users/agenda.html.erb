@@ -369,8 +369,12 @@
         </div>
         <% end %>
         <div class="campo">
+        <% if booking.editable %>
           <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, booking_edit_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-warning btn-xs' %>
+        <% end %>
+        <% if booking.cancelable %>
           <%= link_to '<i class="fa fa-trash-o"></i> Cancelar'.html_safe, booking_cancel_url(:confirmation_code => booking.confirmation_code), :class => 'btn btn-danger btn-xs' %>
+        <% end %>
         </div>
       </div>
       <div style="clear: both;"></div>
