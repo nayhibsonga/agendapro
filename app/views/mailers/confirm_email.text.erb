@@ -1,0 +1,9 @@
+<%= @company.name %>
+-------------------------------------------
+
+Estimado (a),
+Este correo ha sido agregado como nuevo remitente a la lista de correos de su cuenta AgendaPro. Por favor confirme en el siguiente link:
+
+<%= confirm_email_url(confirmation_code: @email.confirmation_code) %>
+
+Le recordamos que no podrá utilizar la dirección de correo hasta que sea confirmada.
