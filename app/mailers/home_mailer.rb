@@ -1,5 +1,4 @@
 class HomeMailer < Base::CustomMailer
-  layout "mailers/green"
 
   def contact (contact_info, mobile)
     @content = contact_info
