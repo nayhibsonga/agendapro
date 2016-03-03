@@ -1,7 +1,6 @@
 class ContactEmailWorker
 
   def self.perform(contact_info, mobile)
-    Rails.logger.debug "mobile: #{mobile}"
     contact = {
       client: {
         email: contact_info[:email],

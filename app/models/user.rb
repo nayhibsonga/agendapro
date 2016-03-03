@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
 	after_create :send_welcome_mail, :get_past_bookings
 
 	def send_welcome_mail
-		UserMailer.welcome_email(self)
+		UserEmailWorker.perform(self)
 	end
 
 	def get_past_bookings

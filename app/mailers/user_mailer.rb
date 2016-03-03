@@ -1,8 +1,23 @@
 class UserMailer < Base::CustomMailer
 
   def welcome_email(user)
+    @user = user
+    name = @user.full_name.present? ? @user.full_name : @user.email
+    subject = "Bienvenido a AgendaPro"
+    recipient = '#{name.titleize} <#{@user.email}>'
+
+    mail(
+      from: filter_sender("AgendaPro <no-reply@agendapro.cl>"),
+      to: filter_recipient(recipient),
+      subject: subject,
+      template_path: "mailers"
+      )
+  end
+
+  # legacy method
+  def welcome_email_legacy(user)
     # => Template
-    template_name = user.api_token.present? ? 'User - Marketplace' : 'User'
+    template_name = 'User - Marketplace'
     template_content = []
 
     @user_name = user.email

@@ -4,6 +4,7 @@ Saludos, Equipo AgendaPro
 -----------------------------
 -    Inicio del mensaje     -
 -----------------------------
+
 Nombre: <%= @content[:client][:name] %>
 Mail: <%= @content[:client][:email] %>
 <% if @content[:client][:phone].present? %>
@@ -11,6 +12,7 @@ Teléfono: <%= @content[:client][:phone] %>
 <% end %>
 Asunto: <%= @content[:content][:subject] %>
 Mensaje: <%= @content[:content][:message] %>
+
 -----------------------------
 -      Fin del mensaje      -
 -----------------------------
