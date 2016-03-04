@@ -1,0 +1,11 @@
+json.array!(@locations) do |location|
+  json.extract! location, :id, :address, :second_address, :phone, :latitude, :longitude, :email, :company_id
+  json.name location.company.name
+  json.district location.district.name
+  json.city location.district.city.name
+  json.region location.district.city.region.name
+  json.country location.district.city.region.country.name
+  json.url location_url(location, format: :json)
+  json.favorite @mobile_user.favorite_locations.include?(@location)
+  json.logo location.company.logo && location.company.logo.url ? request.protocol + request.host_with_port + location.company.logo.url : ""
+end
