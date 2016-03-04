@@ -42,6 +42,11 @@ class Booking < ActiveRecord::Base
     return self.location.company.company_setting.can_cancel
   end
 
+  #For sessions
+  def bookable
+    return self.location.company.company_setting.activate_workflow && self.location.online_booking && self.service.online_booking
+  end
+
   def get_commission
     service_commission = ServiceCommission.where(:service_id => self.service_id, :service_provider_id => self.service_provider_id).first
     if !service_commission.nil? && !service_commission.amount.nil?
