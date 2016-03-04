@@ -81,7 +81,7 @@
                     session_index = session_index + 1
                     end
                   end
-                  sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s 
+                  sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s
                 %>
                 <%= sessions_ratio %>
               </td>
@@ -115,7 +115,7 @@
   <div class="row">
     <div class="col-xs-12">
       <div class="group-btn">
-        <%= link_to 'Atrás', bookings_path, class: 'btn btn-lg btn-default' %>
+        <%= link_to 'Atrás', bookings_path(local: @booking.location_id, provider: @booking.service_provider_id, date: @booking.start), class: 'btn btn-lg btn-default' %>
       </div>
     </div>
   </div>

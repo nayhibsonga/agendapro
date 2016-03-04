@@ -252,6 +252,17 @@ class QuickAddController < ApplicationController
     end
   end
 
+  def load_notification_email_data
+    notifications = NotificationEmail.where(company_id: params[:company]).as_json(only: [:id, :email], methods: [:notification_text, :receptor_type_text])
+    locations = Array.new
+    Location.where(company_id: params[:company]).actives.ordered.each do |location|
+      local = location.as_json(only: [:id, :name])
+      local["service_providers"] = location.service_providers.actives.ordered.as_json(only: [:id, :public_name])
+      locations << local
+    end
+    render json: {locations: locations, notifications: notifications}
+  end
+
   def create_notification_email
     @notification_email = NotificationEmail.new(notification_email_params)
     respond_to do |format|
