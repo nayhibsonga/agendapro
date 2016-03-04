@@ -10,10 +10,8 @@ class LocationsController < ApplicationController
   def index
     if current_user.role == Role.find_by(name: "Super Admin")
       @companies = Company.where(active: true, owned: true).order(payment_status_id: :desc)
-      # @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(order: :asc)
-      @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
     else
-      @locations = Location.where(company_id: current_user.company_id, :active => true).order(:order, :name).accessible_by(current_ability)
+      @locations = Location.where(company_id: current_user.company_id).actives.ordered.accessible_by(current_ability)
     end
   end
 
@@ -126,6 +124,7 @@ class LocationsController < ApplicationController
     @location.active = false
     if @location.save
       @location.substract_due
+      @location.active_service_providers.update_all(active: false)
       redirect_to locations_path, notice: "Local desactivado exitosamente."
     else
       redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
