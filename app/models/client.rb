@@ -249,7 +249,7 @@ class Client < ActiveRecord::Base
         if !categoric_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = categoric_attribute.attribute_category_id
         else
-          custom_attributes[attribute.slug + "_attribute"] = attribute.attribute_categories.where(category: "Otra").id
+          custom_attributes[attribute.slug + "_attribute"] = attribute.attribute_categories.where(category: "Otra").first.id
         end
 
       end

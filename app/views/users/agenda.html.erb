@@ -152,7 +152,17 @@
                         <i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + 4.hours, format: :hour) %>
                       </div>
                       <div class="col-md-4 session-row-btns">
-                        <span><a class="btn session-btn session-btn-edit" booking_id="<%= booking.id %>" session_booking_id='<%= sessionBooking.id %>'>Editar</a><button class="btn session-btn session-btn-delete">Cancelar</button></span>
+                        <span>
+                          <% if booking.editable %>
+                            <a class="btn session-btn session-btn-edit" booking_id="<%= booking.id %>" session_booking_id='<%= sessionBooking.id %>'>Editar</a>
+                          <% end %>
+                          <% if booking.cancelable %>
+                            <button class="btn session-btn session-btn-delete">Cancelar</button>
+                          <% end %>
+                          <% if !booking.editable && !booking.cancelable %>
+                            <a class="btn session-btn session-btn-detail" booking_id="<%= booking.id %>">Ver detalle</a>
+                          <% end %>
+                        </span>
                       </div>
                     </div>
                   <% else %>
@@ -196,7 +206,11 @@
 
                   </div>
                   <div class="col-md-4 session-row-btns">
-                    <a class="btn session-btn session-btn-book" booking_id="<%= booking.id %>" session_booking_id='<%= sessionBooking.id %>'>Reservar</a>
+                    <% if booking.bookable %>
+                      <a class="btn session-btn session-btn-book" booking_id="<%= booking.id %>" session_booking_id='<%= sessionBooking.id %>'>Reservar</a>
+                    <% else %>
+                      Por reservar
+                    <% end %>
                   </div>
                 </div>
 
