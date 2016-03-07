@@ -36,7 +36,7 @@ class BookingsController < ApplicationController
         json.location location.id
         json.days Day.all do |day|
           json.day day.id
-          json.resources ServiceProvider.joins(:provider_times).actives.where(provider_times: {day: day}).where(location: location).ordered do |provider|
+          json.resources ServiceProvider.joins(:provider_times).actives.where(provider_times: {day: day}).where(location: location).order(:order, :public_name).uniq do |provider|
             json.id provider.id
             json.name provider.public_name
           end
@@ -1295,6 +1295,11 @@ class BookingsController < ApplicationController
       #sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
     end
     respond_to do |format|
+
+      if !new_booking_params[:service_id].blank? && new_booking_params[:service_id].to_i != @booking.service_id
+        new_booking_params[:list_price] = Service.find(new_booking_params[:service_id]).price
+      end
+
       if @booking.update(new_booking_params)
 
         if @booking.is_session

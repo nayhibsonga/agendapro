@@ -24,30 +24,9 @@ class ClientsController < ApplicationController
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
     @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
 
-    if [:locations, :providers, :services, :range_from, :range_to].any? {|s| params.key?(s) && !params[s].blank? }
-      attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
-      @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
+    @clients = Client.accessible_by(current_ability).filter(current_user.company_id, params).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
 
-      @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction)
-
-      logger.debug "Clients:"
-      logger.debug @clients.inspect
-
-      logger.debug "Clients export:"
-      logger.debug @clients_export.inspect
-
-    else
-      @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
-
-      @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction)
-
-      logger.debug "Clients:"
-      logger.debug @clients.inspect
-
-      logger.debug "Clients export:"
-      logger.debug @clients_export.inspect
-      
-    end
+    @clients_export = Client.accessible_by(current_ability).filter(current_user.company_id, params).order(sort_column + " " + sort_direction)
 
     respond_to do |format|
       format.html
@@ -405,12 +384,7 @@ class ClientsController < ApplicationController
   def compose_mail
     attendance = params[:attendance].blank? || params[:attendance] == 'true'
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
-    if [:locations, :providers, :services, :range_from, :range_to].any? {|s| params.key?(s) && !params[s].blank? }
-      attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
-      mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(:last_name, :first_name).pluck(:email).uniq
-    else
-      mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(:last_name, :first_name).pluck(:email).uniq
-    end
+    mail_list = Client.accessible_by(current_ability).filter(current_user.company_id, params).order(:last_name, :first_name).pluck(:email).uniq
 
     @tmpl = 'basic'
 

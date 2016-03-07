@@ -70,9 +70,13 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
-	after_create :create_cashier
+	after_create :create_cashier, :create_plan_setting, :create_attribute_group 
 
-	after_create :create_plan_setting
+	def create_attribute_group
+		if AttributeGroup.where(name: "Otros", company_id: self.id).count < 1
+			AttributeGroup.create(name: "Otros", company_id: self.id, order: 1)
+		end
+	end
 
 	def is_plan_capable(name)
 

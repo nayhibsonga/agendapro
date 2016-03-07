@@ -34,6 +34,19 @@ class Booking < ActiveRecord::Base
   after_create :send_booking_mail, :wait_for_payment, :check_session
   after_update :send_update_mail, :check_session
 
+  def editable
+    return self.location.company.company_setting.can_edit
+  end
+
+  def cancelable
+    return self.location.company.company_setting.can_cancel
+  end
+
+  #For sessions
+  def bookable
+    return self.location.company.company_setting.activate_workflow && self.location.online_booking && self.service.online_booking
+  end
+
   def get_commission
     service_commission = ServiceCommission.where(:service_id => self.service_id, :service_provider_id => self.service_provider_id).first
     if !service_commission.nil? && !service_commission.amount.nil?

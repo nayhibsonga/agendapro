@@ -11,7 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20160224190119) do
+=======
+ActiveRecord::Schema.define(version: 20160302172432) do
+>>>>>>> 42db59feffd26056c7e79b9ce4e4fe5ee86760f2
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -439,7 +443,7 @@ ActiveRecord::Schema.define(version: 20160224190119) do
     t.boolean  "editable_payment_prices",     default: true
     t.boolean  "mandatory_mock_booking_info", default: false
     t.boolean  "strict_booking",              default: false,                 null: false
-    t.integer  "mails_base_capacity",         default: 0
+    t.integer  "mails_base_capacity",         default: 5000
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -456,6 +460,16 @@ ActiveRecord::Schema.define(version: 20160224190119) do
     t.string   "formatted_address", default: ""
     t.string   "domain",            default: ""
     t.float    "sales_tax",         default: 0.0, null: false
+<<<<<<< HEAD
+=======
+  end
+
+  create_table "custom_filters", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+>>>>>>> 42db59feffd26056c7e79b9ce4e4fe5ee86760f2
   end
 
   create_table "date_attributes", force: true do |t|
@@ -466,6 +480,21 @@ ActiveRecord::Schema.define(version: 20160224190119) do
     t.datetime "updated_at"
   end
 
+<<<<<<< HEAD
+=======
+  create_table "date_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.datetime "date1"
+    t.datetime "date2"
+    t.string   "option"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "exclusive1",       default: true
+    t.boolean  "exclusive2",       default: true
+  end
+
+>>>>>>> 42db59feffd26056c7e79b9ce4e4fe5ee86760f2
   create_table "date_time_attributes", force: true do |t|
     t.integer  "attribute_id"
     t.integer  "client_id"
@@ -819,6 +848,21 @@ ActiveRecord::Schema.define(version: 20160224190119) do
   add_index "notification_providers", ["notification_email_id"], name: "index_notification_providers_on_notification_email_id", using: :btree
   add_index "notification_providers", ["service_provider_id"], name: "index_notification_providers_on_service_provider_id", using: :btree
 
+<<<<<<< HEAD
+=======
+  create_table "numeric_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.float    "value1"
+    t.float    "value2"
+    t.string   "option"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "exclusive1",       default: true
+    t.boolean  "exclusive2",       default: true
+  end
+
+>>>>>>> 42db59feffd26056c7e79b9ce4e4fe5ee86760f2
   create_table "numeric_parameters", force: true do |t|
     t.string   "name"
     t.float    "value"
