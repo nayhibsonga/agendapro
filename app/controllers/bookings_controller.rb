@@ -1198,6 +1198,7 @@ class BookingsController < ApplicationController
         if @client.save
           if User.find_by_email(@client.email)
             new_booking_params[:user_id] = User.find_by_email(@client.email).id
+            @client.save_attributes(params[:custom_attributes])
           end
         else
           render :json => { :errors => ["El cliente no se pudo guardar: " + @client.errors.full_messages.inspect] }, :status => 422
@@ -1228,6 +1229,7 @@ class BookingsController < ApplicationController
         if @client.save
           if User.find_by_email(booking_params[:client_email])
             new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
+            @client.save_attributes(params[:custom_attributes])
           end
         else
           render :json => { :errors => ["El cliente no se pudo guardar: " + @client.errors.full_messages.inspect] }, :status => 422
@@ -1243,6 +1245,7 @@ class BookingsController < ApplicationController
               client = Client.new(email: booking_params[:client_email], identification_number: booking_params[:client_identification_number], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_day: booking_params[:client_birth_day], birth_month: booking_params[:client_birth_month], birth_year: booking_params[:client_birth_year], age: booking_params[:client_age], record: booking_params[:client_record], second_phone: booking_params[:client_second_phone], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 new_booking_params[:client_id] = client.id
+                client.save_attributes(params[:custom_attributes])
               else
                 render :json => { :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect] }, :status => 422
                 return
@@ -1256,6 +1259,7 @@ class BookingsController < ApplicationController
               client = Client.new(email: booking_params[:client_email], identification_number: booking_params[:client_identification_number], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_day: booking_params[:client_birth_day], birth_month: booking_params[:client_birth_month], birth_year: booking_params[:client_birth_year], age: booking_params[:client_age], record: booking_params[:client_record], second_phone: booking_params[:client_second_phone], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 new_booking_params[:client_id] = client.id
+                client.save_attributes(params[:custom_attributes])
               else
                 render :json => { :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect] }, :status => 422
                 return
