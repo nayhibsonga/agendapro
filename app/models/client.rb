@@ -335,7 +335,7 @@ class Client < ActiveRecord::Base
 
       when "date"
 
-        if !param_value.nil?
+        if !param_value.blank?
           param_value = param_value.gsub('/', '-')
         end
 
@@ -349,14 +349,14 @@ class Client < ActiveRecord::Base
 
       when "datetime"
 
-        if !param_value.nil?
+        if !param_value.blank?
           param_value = param_value.gsub('/', '-')
           date_hour = params[attribute.slug + "_attribute_hour"]
           date_minute = params[attribute.slug + "_attribute_minute"]
         end
 
         complete_datetime = nil
-        if !param_value.nil?
+        if !param_value.blank?
           complete_datetime = param_value + " " + date_hour + ":" + date_minute + ":00"
         end
 
@@ -372,7 +372,7 @@ class Client < ActiveRecord::Base
 
         file_attribute = FileAttribute.where(attribute_id: attribute.id, client_id: self.id).first
 
-        if !param_value.nil?
+        if !param_value.blank?
 
           file_name = attribute.name
           folder_name = attribute.slug
