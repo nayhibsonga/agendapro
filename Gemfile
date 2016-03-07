@@ -189,3 +189,6 @@ gem 'sass-rails'
 
 #Amazon Web Service SDK
 gem 'aws-sdk', '~> 2'
+
+#Mysql2 para migración
+gem 'mysql2'
