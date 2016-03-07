@@ -45,7 +45,7 @@ class BookingsPdf < Prawn::Document
 		table_rows << ['Servicio', @booking.service.name]
 		table_rows << ['Horario', I18n.l(@booking.start)]
 		if !@booking.service.outcall
-			table_rows << ['Lugar', @booking.location.short_address
+			table_rows << ['Lugar', @booking.location.short_address]
 		end
 		table_rows << ['Prestador', @booking.service_provider.public_name]
 		if @booking.service.show_price
