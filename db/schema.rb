@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160226140636) do
+ActiveRecord::Schema.define(version: 20160302172432) do
 
 
   # These are extensions that must be enabled in order to support this database
@@ -202,6 +202,14 @@ ActiveRecord::Schema.define(version: 20160226140636) do
     t.datetime "updated_at"
   end
 
+  create_table "boolean_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.boolean  "option"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "bundles", force: true do |t|
     t.string   "name",                default: "",   null: false
     t.decimal  "price",               default: 0.0,  null: false
@@ -229,6 +237,14 @@ ActiveRecord::Schema.define(version: 20160226140636) do
     t.integer  "client_id"
     t.integer  "attribute_id"
     t.integer  "attribute_category_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "categoric_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.string   "categories_ids"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -440,7 +456,7 @@ ActiveRecord::Schema.define(version: 20160226140636) do
     t.boolean  "editable_payment_prices",     default: true
     t.boolean  "mandatory_mock_booking_info", default: false
     t.boolean  "strict_booking",              default: false,                 null: false
-    t.integer  "mails_base_capacity",         default: 0
+    t.integer  "mails_base_capacity",         default: 5000
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -457,6 +473,13 @@ ActiveRecord::Schema.define(version: 20160226140636) do
     t.string   "formatted_address", default: ""
     t.string   "domain",            default: ""
     t.float    "sales_tax",         default: 0.0, null: false
+  end
+
+  create_table "custom_filters", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "date_attributes", force: true do |t|
@@ -1745,6 +1768,14 @@ ActiveRecord::Schema.define(version: 20160226140636) do
     t.integer  "attribute_id"
     t.integer  "client_id"
     t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "text_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.text     "text"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
