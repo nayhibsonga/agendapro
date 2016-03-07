@@ -3,6 +3,16 @@ class AttributeGroup < ActiveRecord::Base
 	has_many :custom_attributes, foreign_key: 'attribute_group_id', class_name: 'Attribute'
 
 	after_save :rearrange
+	before_destroy :transfer_attributes
+
+	def transfer_attributes
+		group_otros = AttributeGroup.where(name: "Otros", company_id: self.company.id).first
+		self.custom_attributes.each do |custom_attribute|
+			custom_attribute.attribute_group_id = group_otros.id
+			custom_attribute.order = group_otros.get_attributes_greatest_order + 1
+			custom_attribute.save
+		end
+	end
 
 	def rearrange
 

@@ -439,6 +439,26 @@ $(function () {
     })
   });
 
+  $('.edit_attribute_group_btn').on('click', function(e){
+    var attribute_group_id = $(e.currentTarget).data('attributegroupid');
+    $('#editAttributeGroupModal .modal-content').empty();
+    $.ajax({
+      url: '/attribute_groups/' + attribute_group_id + '/edit',
+      method: 'get',
+      error: function(response){
+        swal({
+          title: "Error",
+          text: "Se produjo un error",
+          type: "error"
+        });
+      },
+      success: function(response){
+        $('#editAttributeGroupModal .modal-content').append(response);
+        $('#editAttributeGroupModal').modal('show');
+      }
+    })
+  });
+
   $("#attribute_category_form").on("ajax:success", function(e, data, status, xhr){
 
     if(data.category != "Otra")
@@ -513,6 +533,7 @@ $(function () {
     axis: "y",
     handle: ".move-attribute-group",
     containment: "#attribute-groups-tbody",
+    tolerance: 'pointer',
     scroll: true,
     stop: function(){
 
@@ -558,6 +579,7 @@ $(function () {
     axis: "y",
     handle: ".move-attribute",
     containment: "parent",
+    tolerance: 'pointer',
     scroll: true,
     stop: function(){
 
