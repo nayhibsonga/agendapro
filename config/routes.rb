@@ -569,6 +569,7 @@ Agendapro::Application.routes.draw do
     post '/rearrange_attributes', :to => 'attributes#rearrange'
     post '/rearrange_attribute_groups', :to => 'attribute_groups#rearrange'
 
+    post '/select_default_plan', :to => 'companies#select_default_plan'
 
   end
 
