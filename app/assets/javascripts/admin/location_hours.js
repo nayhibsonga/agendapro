@@ -414,10 +414,50 @@ function places() {
   });
 }
 
+/***    Popover    ***/
+function popover() {
+  var inputgroup = $("#popover-link");
+  var opened = false;
+  var close;
+
+  // Generate popover
+  inputgroup.popover({
+    content: function() {
+      return $('#content-popover').removeClass('no-show').detach();
+    },
+    container: "body",
+    title: 'Ubicación de tu Local<span class="close"><i class="fa fa-close"></i></span>',
+    placement: function () {
+      return $('html').width() > 981 ? 'right' : 'bottom';
+    }
+  });
+
+  // Bind events
+  inputgroup.on("shown.bs.popover", function() {
+    close = $(".popover .close");
+    close.click(function(event) {
+      inputgroup.popover('hide');
+    });
+  });
+  inputgroup.on("hide.bs.popover", function() {
+    $("#map-placement").append($('#content-popover').addClass('no-show').detach());
+    opened = false;
+    close.unbind('click');
+  });
+  inputgroup.focusin(function(event) {
+    if (!opened) {
+      opened = true;
+      inputgroup.popover('show');
+    };
+  });
+}
+
 $(function() {
   createMap();
   places();
   initialize();
+  popover();
+
   $('#saveLocation').click(function() {
     saveLocation();
     return false;
