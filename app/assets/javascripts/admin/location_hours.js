@@ -416,7 +416,7 @@ function places() {
 
 /***    Popover    ***/
 function popover() {
-  var inputgroup = $("#popover-link");
+  var inputgroup = $('#popover-link');
   var opened = false;
   var close;
 
@@ -433,14 +433,14 @@ function popover() {
   });
 
   // Bind events
-  inputgroup.on("shown.bs.popover", function() {
-    close = $(".popover .close");
+  inputgroup.on('shown.bs.popover', function() {
+    close = $('.popover .close');
     close.click(function(event) {
       inputgroup.popover('hide');
     });
   });
-  inputgroup.on("hide.bs.popover", function() {
-    $("#map-placement").append($('#content-popover').addClass('no-show').detach());
+  inputgroup.on('hide.bs.popover', function() {
+    $('#map-placement').append($('#content-popover').addClass('no-show').detach());
     opened = false;
     close.unbind('click');
   });
@@ -448,6 +448,14 @@ function popover() {
     if (!opened) {
       opened = true;
       inputgroup.popover('show');
+    };
+  });
+  $('body').click(function(event) {
+    var element = $(event.target);
+    var group = element.closest('.input-group');
+    var popover = element.closest('.popover');
+    if (group.length == popover.length) {
+      inputgroup.popover('hide');
     };
   });
 }
