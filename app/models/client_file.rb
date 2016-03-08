@@ -27,7 +27,10 @@ class ClientFile < ActiveRecord::Base
 
 		s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
     	obj = s3_bucket.object(self.full_path)
-    	obj.delete
+
+    	if obj.exists?
+    		obj.delete
+    	end
 
     	folder_path = 'companies/' +  self.client.company_id.to_s + '/clients/' + self.client_id.to_s + '/' + self.folder + '/'
     	folder_obj = s3_bucket.object(folder_path)
