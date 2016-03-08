@@ -14,9 +14,9 @@ class Location < ActiveRecord::Base
 
   #############################
   # Remover despues de generar la migracion
-  belongs_to :district
-  has_many :location_outcall_districts, dependent: :destroy
-  has_many :districts, :through => :location_outcall_districts
+  # belongs_to :district
+  # has_many :location_outcall_districts, dependent: :destroy
+  # has_many :districts, :through => :location_outcall_districts
   #############################
 
   has_many :resource_locations, dependent: :destroy
