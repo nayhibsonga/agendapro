@@ -937,20 +937,36 @@ class Client < ActiveRecord::Base
         # Accept , ; \t
         # ,
         sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ","})
-        if !sheet.row(1).length < 5
-          return sheet
+
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
         end
+
         # ;
         sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ";"})
-        if !sheet.row(1).length < 5
-          return sheet
+        
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
         end
+
         # \t
         sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: "\t"})
-        if !sheet.row(1).length < 5
-          return sheet
+        
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
         end
+
         return nil
+
       when ".xlsx"
         Roo::Excelx.new(file_path, file_warning: :ignore)
       when ".xlsm"
