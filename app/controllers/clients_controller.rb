@@ -539,7 +539,7 @@ class ClientsController < ApplicationController
     filename_arr = params[:file].original_filename.split(".")
     if filename_arr.length > 0
       extension = filename_arr[filename_arr.length - 1]
-      if extension == "csv" || extension == "xls"
+      if extension == "csv" || extension == "xls" || extension == "xlsx" || extension == "xlsm" || extension == "ods" || extension == "xml"
         message = Client.import(params[:file], current_user.company_id)
       else
         message = "La extensión del archivo no es correcta. Sólo se pueden importar archivos xls y csv."
