@@ -383,10 +383,6 @@ GEM
     roo (2.3.2)
       nokogiri (~> 1)
       rubyzip (~> 1.1, < 2.0.0)
-    roo-xls (1.0.0)
-      nokogiri
-      roo (>= 2.0.0beta1, < 3)
-      spreadsheet (> 0.9.0)
     rspec-core (3.0.4)
       rspec-support (~> 3.0.0)
     rspec-expectations (3.0.4)
@@ -403,7 +399,6 @@ GEM
       rspec-mocks (~> 3.0.0)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.4)
-    ruby-ole (1.2.12)
     rubyzip (1.1.7)
     sass (3.4.16)
     sass-rails (5.0.3)
@@ -420,8 +415,6 @@ GEM
       multi_json (~> 1.0)
       rubyzip (~> 1.0)
       websocket (~> 1.0)
-    spreadsheet (1.1.1)
-      ruby-ole (>= 1.0)
     sprockets (2.12.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -517,8 +510,7 @@ DEPENDENCIES
   rack-cors
   rails (= 4.0.1)
   ri_cal
-  roo (~> 2.3.2)
-  roo-xls
+  roo
   rspec-rails (~> 3.0.0)
   sass-rails
   sdoc
