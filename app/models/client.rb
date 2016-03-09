@@ -7,16 +7,16 @@ class Client < ActiveRecord::Base
   has_many :session_bookings, dependent: :destroy
   has_many :bookings, dependent: :destroy
   has_many :payments, dependent: :destroy
-  has_many :client_files
-  has_many :float_attributes
-  has_many :integer_attributes
-  has_many :text_attributes
-  has_many :textarea_attributes
-  has_many :boolean_attributes
-  has_many :date_attributes
-  has_many :date_time_attributes
-  has_many :file_attributes
-  has_many :categoric_attributes
+  has_many :client_files, dependent: :destroy
+  has_many :float_attributes, dependent: :destroy
+  has_many :integer_attributes, dependent: :destroy
+  has_many :text_attributes, dependent: :destroy
+  has_many :textarea_attributes, dependent: :destroy
+  has_many :boolean_attributes, dependent: :destroy
+  has_many :date_attributes, dependent: :destroy
+  has_many :date_time_attributes, dependent: :destroy
+  has_many :file_attributes, dependent: :destroy
+  has_many :categoric_attributes, dependent: :destroy
 
   scope :from_company, -> (id) { where(company_id: id) if id.present? }
 
