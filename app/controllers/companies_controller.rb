@@ -1822,10 +1822,13 @@ class CompaniesController < ApplicationController
     
 		@company = Company.find(params[:company_id])
 		@plan_id = params[:plan_id]
+		@plan = Plan.find(@plan_id)
 
 		@company.default_plan_id = @plan_id
+		@company.company_plan_setting.base_price = @plan.plan_countries.find_by_country_id(@company.country.id).price
 
 		if @company.save
+			@company.company_plan_setting.save
 			flash[:notice] = 'Plan guardado correctamente. Puedes cambiarlo cuantas veces quieras hasta que acabe tu período de prueba.'
 			redirect_to :action => 'select_plan', :controller => 'plans'
 		else
