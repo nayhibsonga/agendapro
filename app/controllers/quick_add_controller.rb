@@ -1,5 +1,4 @@
 class QuickAddController < ApplicationController
-
   before_action :authenticate_user!
   layout "quick_add", only: [:quick_add]
   before_action :quick_add_filter
@@ -125,7 +124,7 @@ class QuickAddController < ApplicationController
 
   def load_location
     @location = Location.find(params[:id])
-    render json: {location: @location, location_times: @location.location_times, location_districts: @location.location_outcall_districts, country_id: @location.district.city.region.country.id, region_id: @location.district.city.region.id, city_id: @location.district.city.id}
+    render json: {location: @location.as_json(methods: :full_address), location_times: @location.location_times}
   end
 
   def create_service_category
@@ -294,7 +293,7 @@ class QuickAddController < ApplicationController
   end
 
   def location_params
-    params.require(:location).permit(:name, :address, :second_address, :phone, :longitude, :latitude, :company_id, :district_id, :outcall, :email, :district_ids => [], location_times_attributes: [:id, :open, :close, :day_id, :location_id, :_destroy])
+    params.require(:location).permit(:name, :address, :second_address, :phone, :longitude, :latitude, :company_id, :country_id, :outcall, :outcall_places, :email, location_times_attributes: [:id, :open, :close, :day_id, :location_id, :_destroy])
   end
 
   def service_category_params

@@ -35,7 +35,7 @@
 					<div class="col-md-1">
 					</div>
 					<div class="data-local-search col-xs-7 col-md-7">
-						<div class="loc-div"><%= image_tag 'ubicacion.png', :alt => '', :size => "12x16", :class=>"loc-icon" %>&nbsp;<%= if !location.outcall then location.address+', '+location.district.name else "A Domicilio" end %>.<br />&nbsp;&nbsp;&nbsp;<%= if !location.second_address.blank? then location.second_address else '' end %><br />
+						<div class="loc-div"><%= image_tag 'ubicacion.png', :alt => '', :size => "12x16", :class=>"loc-icon" %>&nbsp;<%= if !location.outcall then location.short_address else "A Domicilio" end %>.<br />&nbsp;&nbsp;&nbsp;<%= if !location.second_address.blank? then location.second_address else '' end %><br />
 						<%= image_tag 'telefono.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;Tel: <%= location.phone %></div>
 						<% if !location.company.owned %>
 						<br />

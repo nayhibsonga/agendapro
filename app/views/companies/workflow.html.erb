@@ -83,8 +83,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_second_address}" else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -129,8 +128,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_second_address}" else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -1278,7 +1276,7 @@
 
 </div>
 
-<%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
+<%= content_tag "div", id: "selectedLocal", data: {local: @location.as_json(methods: :short_address, except: [:address])} do %>
 <% end %>
 <%= content_tag "div", id: "clientExclusive", data: {client_exclusive: @location.company.company_setting.client_exclusive} do %>
 <% end %>

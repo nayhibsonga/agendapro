@@ -11,7 +11,7 @@ class CompanyCountry < ActiveRecord::Base
   before_destroy :validate_locations
 
   def validate_locations
-  	if Location.where(district_id: District.where(city_id: City.where(region_id: Region.where(country_id: self.country))), company_id: self.company_id, active: true).count > 0
+  	if Location.actives.where(country_id: self.country, company_id: self.company_id).count > 0
 		errors.add(:base, "No puede eliminar un país con locales asociados.")
 		false
 	else

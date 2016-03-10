@@ -30,7 +30,7 @@ class SessionBooking < ActiveRecord::Base
 
 		# USER
 			@user = {}
-			@user[:where] = bookings[0].location.address + ', ' + bookings[0].location.district.name
+			@user[:where] = bookings[0].location.short_address
 			@user[:phone] = bookings[0].location.phone
 			@user[:name] = bookings[0].client.first_name
 			@user[:send_mail] = bookings[bookings.length - 1].send_mail

@@ -1,7 +1,12 @@
 $(function() {
 	$('#new_location, [id^="edit_location_"]').validate({
 		errorPlacement: function(error, element) {
-			error.appendTo(element.next());
+			var id = element.attr('id');
+			if (id == "address") {
+				error.appendTo(element.parent().next());
+			} else {
+				error.appendTo(element.next());
+			}
 		},
 		rules: {
 			'location[company_id]': {
@@ -11,19 +16,10 @@ $(function() {
 				required: true,
 				minlength: 3
 			},
-			'country': {
+			'location[outcall_places]': {
 				required: true
 			},
-			'region': {
-				required: true
-			},
-			'city': {
-				required: true
-			},
-			'location[district_id]': {
-				required: true
-			},
-			'location[address]': {
+			'address': {
 				required: true
 			},
 			'location[phone]': {
@@ -32,6 +28,9 @@ $(function() {
 			},
 			'location[email]': {
 				email: true
+			},
+			'location[country_id]': {
+				required: true
 			}
 		},
 		highlight: function(element) {

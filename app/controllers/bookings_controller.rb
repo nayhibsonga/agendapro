@@ -36,7 +36,7 @@ class BookingsController < ApplicationController
         json.location location.id
         json.days Day.all do |day|
           json.day day.id
-          json.resources ServiceProvider.joins(:provider_times).actives.where(provider_times: {day: day}).where(location: location).ordered do |provider|
+          json.resources ServiceProvider.joins(:provider_times).actives.where(provider_times: {day: day}).where(location: location).order(:order, :public_name).uniq do |provider|
             json.id provider.id
             json.name provider.public_name
           end

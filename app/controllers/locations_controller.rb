@@ -149,7 +149,7 @@ class LocationsController < ApplicationController
 
   def location_districts
     location = Location.find(params[:id])
-    render :json => { :districts => location.districts, :country => location.district.city.region.country.name, :region => location.district.city.region.name, :city => location.district.city.name }
+    render :json => { :districts => location.outcall_places }
   end
 
   def location_time
@@ -749,6 +749,6 @@ class LocationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def location_params
-      params.require(:location).permit(:name, :address, :second_address, :phone, :outcall, :longitude, :latitude, :company_id, :online_booking, :email, :district_id, :image1, :remove_image1, :image2, :remove_image2, :image3, :remove_image3, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
+      params.require(:location).permit(:name, :country_id, :address, :second_address, :phone, :outcall, :outcall_places, :longitude, :latitude, :company_id, :online_booking, :email, :image1, :remove_image1, :image2, :remove_image2, :image3, :remove_image3, location_times_attributes: [:id, :open, :close, :day_id, :location_id])
     end
 end

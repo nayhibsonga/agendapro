@@ -1,8 +1,10 @@
-json.extract! @location, :id, :name, :address, :second_address, :phone, :longitude, :latitude, :company_id, :latitude, :longitude
-json.district @location.district.name
-json.city @location.district.city.name
-json.region @location.district.city.region.name
-json.country @location.district.city.region.country.name
+location_address = LocationAddress.new @location.address
+json.extract! @location, :id, :name, :second_address, :phone, :longitude, :latitude, :company_id, :latitude, :longitude
+json.address "#{location_address.route} #{location_address.street_number}"
+json.district "#{location_address.district}"
+json.city "#{location_address.city}"
+json.region "#{location_address.region}"
+json.country "#{location_address.country}"
 json.description @location.company.description
 json.location_times @location.location_times do |location_time|
 	json.day_id location_time.day_id
