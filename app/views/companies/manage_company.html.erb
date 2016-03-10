@@ -72,6 +72,12 @@
                       <%= c_user.email %>
                     <% end %>
                   </dd>
+                  <dt>Teléfono</dt>
+                  <dd>
+                    <% if !c_user.nil? %>
+                      <%= c_user.phone %>
+                    <% end %>
+                  </dd>
                   <dt>Fecha de ingreso</dt>
                   <dd><%= @company.created_at.strftime('%d/%m/%Y %R') %></dd>
                   <dt>Número de reservas</dt>
