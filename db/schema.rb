@@ -12,7 +12,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 
-ActiveRecord::Schema.define(version: 20160302172432) do
+ActiveRecord::Schema.define(version: 20160308133628) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -323,6 +323,7 @@ ActiveRecord::Schema.define(version: 20160302172432) do
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
     t.integer  "trial_months_left",   default: 0
+    t.integer  "default_plan_id",     default: 11
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree

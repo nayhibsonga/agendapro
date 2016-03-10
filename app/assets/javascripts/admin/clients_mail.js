@@ -92,7 +92,7 @@ function checkFile() {
   if(file_array.length > 0)
   {
     var extension = file_array[file_array.length - 1];
-    if (extension != "csv" && extension != "xls")
+    if (extension != "csv" && extension != "xls" && extension != "xlsx" && extension != "xlsm" && extension != "ods" && extension != "xml")
     {
       swal({
         title: "El archivo no tiene la extensión correcta",
