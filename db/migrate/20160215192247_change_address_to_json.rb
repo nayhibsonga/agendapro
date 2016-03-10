@@ -2,16 +2,20 @@ class ChangeAddressToJson < ActiveRecord::Migration
   def change
     locations_address = []
     Location.all.each do |local|
+      district = location.district_id && District.find(local.district_id) ? District.find(local.district_id).name : ""
+      city = district.present && City.find(District.find(local.district_id).city_id) ? City.find(District.find(local.district_id).city_id).name : ""
+      region = city.present? && Region.find(City.find(District.find(local.district_id).country_id).region_id) ? Region.find(City.find(District.find(local.district_id).country_id).region_id).name : ""
+      country = region.present? && Country.find(Region.find(City.find(District.find(local.district_id).country_id).region_id).country_id) ? Country.find(Region.find(City.find(District.find(local.district_id).country_id).region_id).country_id).name : ""
       location = {
         id: local.id,
         address: [
           generateHash("", ["street_number"]),
           generateHash(local.address, ["route"]),
-          generateHash(local.district.name, ["locality", "political"]),
-          generateHash(local.district.name, ["administrative_area_level_3", "political"]),
-          generateHash(local.district.city.name, ["administrative_area_level_2", "political"]),
-          generateHash(local.district.city.region.name, ["administrative_area_level_1", "political"]),
-          generateHash(local.district.city.region.country.name, ["country", "political"])
+          generateHash(district, ["locality", "political"]),
+          generateHash(district, ["administrative_area_level_3", "political"]),
+          generateHash(city, ["administrative_area_level_2", "political"]),
+          generateHash(region, ["administrative_area_level_1", "political"]),
+          generateHash(country, ["country", "political"])
         ]
       }
       locations_address.push(location)
