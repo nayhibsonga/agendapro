@@ -1,0 +1,133 @@
+<%
+  administrador_general_id = Role.find_by_name('Administrador General').id
+  administrador_local_id = Role.find_by_name('Administrador Local').id
+%>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Inventario</h2>
+      <p>Controla el inventario de productos para cada uno de tus locales.</p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-5">
+      <div class="form-group" style="margin-top: 10px;">
+        <div class="col-md-12">
+          <table>
+            <tr>
+              <td>
+                Local:&nbsp;&nbsp;
+              </td>
+            </tr>
+          </table>     
+        </div>
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div class="pull-right" style="margin: 10px 0;">
+        <% if current_user.role_id == administrador_general_id || current_user.role_id == administrador_local_id %>
+          <%= link_to '<i class="fa fa-plus"></i> Nueva Categoría'.html_safe, "#", :class => "btn btn-green", :id => "openCategoriesBtn" %>
+          <%= link_to '<i class="fa fa-plus"></i> Nueva Marca'.html_safe, "#", :class => "btn btn-green", :id => "openBrandsBtn" %>
+          <%= link_to '<i class="fa fa-plus"></i> Nueva Cantidad'.html_safe, "#", :class => "btn btn-green", :id => "openDisplaysBtn" %>
+          &nbsp;&nbsp;
+          <%= link_to '<i class="fa fa-upload"></i> Importar productos'.html_safe, "#", :class => "btn btn-green", :id => "openImportBtn" %>
+          <%= link_to '<i class="fa fa-plus"></i> Nuevo Producto'.html_safe, new_product_path, :class => "btn btn-green" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3" style="margin: 5px 0;">
+      <p style="text-align: left; font-size: 20px; color: #22c488;">Inventario de <span id="selectedLocationInventory"></span></p>
+    </div>
+    <div class="col-md-9" style="margin: 5px 0;">
+      <div class="pull-right">
+        <table id="inventoryFiltersTable">
+          <tr>
+            <td style="width: 22%;">
+              <div class="form-group">
+                <div class="col-md-12">
+                  <div class="input-group">
+                    <input class="form-control" id="productSearch" name="productSearch" placeholder="Buscar..."  type="search" value="">
+                    <span class="input-group-btn">
+                      <button id="product_search_btn" class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                      <button class="btn btn-red" type="button" id="product_clear_btn"><i class="fa fa-times-circle"></i></button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td style="width: 26%;">
+              <div class="form-group">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                Categoría:
+                </div>
+                <div class="col-md-7">
+                  <select id="categoryFilterSelect" class="form-control filterSelect">
+                    <option value="0">Todas</option>
+                    <% current_user.company.product_categories.order(:name).each do |category| %>
+                      <option value="<%= category.id %>"><%= category.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </td>
+            <td style="width: 26%;">
+              <div class="form-group">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                  Marca:
+                </div>
+                <div class="col-md-7">
+                  <select id="brandFilterSelect" class="form-control filterSelect">
+                    <option value="0">Todas</option>
+                    <% current_user.company.product_brands.order(:name).each do |brand| %>
+                      <option value="<%= brand.id %>"><%= brand.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </td>
+            <td style="width: 26%;">
+              <div class="form-group">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                  Cantidad:
+                </div>
+                <div class="col-md-7">
+                  <select id="displayFilterSelect" class="form-control filterSelect">
+                    <option value="0">Todas</option>
+                    <% current_user.company.product_displays.order(:name).each do |display| %>
+                      <option value="<%= display.id %>"><%= display.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </td>
+            <!--<td>
+              <button id="filterBtn" class="btn btn-default btn-dark-green">Filtrar</button>
+            </td>-->
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <div id="locationInventory">
+
+  </div>
+
+</div>
+
+<% if current_user.role_id == administrador_general_id || current_user.role_id == administrador_local_id %>
+
+  <% content_for :modals do %>
+
+
+  <% end %>
+
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "products" %>
+<% end %>

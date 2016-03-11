@@ -34,6 +34,31 @@ class ProductsController < ApplicationController
     respond_with(@products)
   end
 
+  def company_reports
+
+    @company = current_user.company
+
+    @from = params[:from].to_datetime.beginning_of_day
+    @to = params[:to].to_datetime.end_of_day
+
+    #Get products ranking by price sum and item quantity in this period
+    @products = []
+
+    @company.products.each do |product|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      product.payment_products.where(payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      product_tuple = [product, product_price_sum, product_quantity_sum]
+      @products << product_tuple
+    end
+
+    #Get sellers ranking in this period
+
+  end
+
   def show
     respond_with(@product)
   end
