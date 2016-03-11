@@ -135,6 +135,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
+        can :client_base_pdf, Client, :company_id => user.company_id
+
         can :select_default_plan, Company, :company_id => user.company_id
 
         can :rearrange, Attribute, :company_id => user.company_id
