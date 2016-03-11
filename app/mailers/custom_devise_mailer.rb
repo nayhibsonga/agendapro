@@ -1,5 +1,5 @@
 class CustomDeviseMailer < Devise::Mailer
-  layout "mailers/green_footer"
+  layout "mailers/green"
 
   before_action :default_options
 

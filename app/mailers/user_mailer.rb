@@ -1,5 +1,5 @@
 class UserMailer < Base::CustomMailer
-  layout "mailers/green_footer"
+  layout "mailers/green"
 
   def welcome_email(user)
     @user = user
