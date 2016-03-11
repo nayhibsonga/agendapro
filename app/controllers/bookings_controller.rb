@@ -2149,7 +2149,7 @@ class BookingsController < ApplicationController
                 block_it = true
                 next
               end
-            elsif service.group_service && buffer_params[:service].to_i == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => buffer_params[:start].to_datetime).where.not(status_id: Status.find_by_name('Cancelado')).count >= service.capacity
+            elsif service.group_service && buffer_params[:service].to_i == provider_booking.service_id && service_provider.bookings.where(:service_id => service.id, :start => buffer_params[:start].to_datetime).where.not(status_id: Status.find_by_name('Cancelado')).count > service.capacity
               if !provider_booking.is_session || (provider_booking.is_session and provider_booking.is_session_booked)
                 @errors << "Lo sentimos, la capacidad del servicio grupal " + service.name + " llegó a su límite."
                 block_it = true
