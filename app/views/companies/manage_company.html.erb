@@ -86,7 +86,11 @@
                   <dd><%= @company.payment_status.name %></dd>
                   <dt>Plan</dt>
                   <dd><%= @company.plan.name %></dd>
-                  <dt>Costo</dt>
+                  <% if @company.payment_status_id == PaymentStatus.find_by_name("Trial").id %>
+                    <dt>Plan post Trial</dt>
+                    <dd><%= @company.default_plan.name %></dd>
+                  <% end %>
+                  <dt>Costo (sin IVA)</dt>
                   <dd><%= @company.company_plan_setting.base_price * @company.computed_multiplier %></dd>
                   <dt>Locales</dt>
                   <dd><%= @company.locations.where(:active => true).count %></dd>
@@ -104,7 +108,7 @@
                   <dd><%= @company.months_active_left %></dd>
                 </dl>
                 <div class="row">
-                  <h3>Simulador de Pago (IVA incluído), deuda mes anterior: <%= number_to_currency(@plan_1 - @price > 0 ? (@plan_1 - @price) * (1 + @sales_tax) : 0, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></h3>
+                  <h3>Simulador de Pago (IVA incluído), cálculo incluye deuda. La deuda del mes anterior es: <%= number_to_currency(@company.due_amount, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></h3>
                   <dl class="dl-horizontal">
                     <dt><%= @company.months_active_left > 0 ? "1 Mes" : "Mes Actual" %></dt>
                     <dd value="1"><%= number_to_currency(@plan_1 * (1 + @sales_tax), {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %></dd>
