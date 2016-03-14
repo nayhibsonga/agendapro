@@ -5,7 +5,6 @@ section.title {
 }
 
 section.plans {
-  $cols: 4;
   %border {
     border-color: $gray;
     border-style: solid;
@@ -69,7 +68,7 @@ section.plans {
     display: inline-block;
     padding: 5px 10px;
     text-align: center;
-    width: calc((100% / #{$cols}) - (#{$cols} - 1)* 1px);
+    width: 100% / 3 - 0.5;
     cursor: pointer;
 
     & + .pricing-title { border-left: $gray solid 1px; }
@@ -103,21 +102,21 @@ section.plans {
   @media (min-width: 992px) {
     .pricing-col {
       display: initial;
-      width: 25%;
+      width: (100% / 3);
       & + .pricing-col { border-left: $gray solid 1px; }
     }
     .pricing-row {
       .pricing-cols {
-        width: 70%;
+        width: 60%;
       }
       .pricing-description {
-        width: 30%;
+        width: 40%;
       }
     }
     .pricing-header {
-      .pricing-cols { width: 70%; }
+      .pricing-cols { width: 60%; }
       .pricing-description {
-        width: 30%;
+        width: 40%;
       }
     }
     .floating-header {
