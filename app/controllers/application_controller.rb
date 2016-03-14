@@ -209,6 +209,10 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_premium_plan
+    #Don't restrict if in Trial
+    if current_user.company.plan.name == "Trial" || current_user.company.payment_status.name == "Trial"
+      return
+    end
     if current_user.company.plan_id != Plan.where(name: "Premium", custom: false).first.id && current_user.company.plan_id != Plan.where(name: "Pro", custom: false).first.id
       #redirect_to premium_plan_path(page: source)
       redirect_to select_plan_path, alert: "Para acceder al contenido buscado debes cambiarte al plan Premium."
@@ -217,6 +221,10 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_pro_plan
+    #Don't restrict if in Trial
+    if current_user.company.plan.name == "Trial" || current_user.company.payment_status.name == "Trial"
+      return
+    end
     if current_user.company.plan_id != Plan.where(name: "Pro", custom: false).first.id
       #redirect_to pro_plan_path(page: source)
       redirect_to select_plan_path, alert: "Para acceder al contenido buscado debes cambiarte al plan Pro."
