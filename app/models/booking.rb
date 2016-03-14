@@ -14,6 +14,7 @@ class Booking < ActiveRecord::Base
   belongs_to :receipt
 
   has_many :booking_histories, dependent: :destroy
+  has_many :sendings, class_name: 'Email::Sending', as: :sendable
 
   validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :client_id, :presence => true
 
@@ -33,6 +34,8 @@ class Booking < ActiveRecord::Base
 
   after_create :send_booking_mail, :wait_for_payment, :check_session
   after_update :send_update_mail, :check_session
+
+  WORKER = 'BookingEmailWorker'
 
   def get_commission
     service_commission = ServiceCommission.where(:service_id => self.service_id, :service_provider_id => self.service_provider_id).first
@@ -645,7 +648,8 @@ class Booking < ActiveRecord::Base
         if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
           if self.status != Status.find_by(:name => "Cancelado")
             if self.booking_group.nil?
-              BookingMailer.book_service_mail(self)
+              sendings.build(method: 'book_service_mail').save
+              #BookingMailer.book_service_mail(self)
             end
           end
         end
