@@ -169,6 +169,7 @@ class Ability
         can :create, Company, :id => user.company_id
         can :update, Company, :id => user.company_id
 
+        can :stats, Product, company_id => user.company_id
         can :location_products, Location, :company_id => user.company_id
         can :get_staff_by_code, StaffCode, :company_id => user.company_id
         can :create_new_payment, Payment, :company_id => user.company_id
@@ -514,6 +515,7 @@ class Ability
         can :create, Product, :company_id => user.company_id
         can :update, Product, :company_id => user.company_id
 
+        can :stats, Product, company_id => user.company_id
         can :location_products, Location, :company_id => user.company_id
         can :get_staff_by_code, StaffCode, :company_id => user.company_id
         can :create_new_payment, Payment, :company_id => user.company_id
@@ -763,6 +765,7 @@ class Ability
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 
+        can :stats, Product, company_id => user.company_id
         can :location_products, Location, :company_id => user.company_id
         can :get_staff_by_code, StaffCode, :company_id => user.company_id
         can :create_new_payment, Payment, :company_id => user.company_id

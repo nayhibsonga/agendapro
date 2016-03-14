@@ -571,6 +571,10 @@ Agendapro::Application.routes.draw do
 
     post '/select_default_plan', :to => 'companies#select_default_plan'
 
+    #Inventory reports
+    get '/products_stats', :to => 'products#stats'
+    get '/locations_products_stats', :to => 'products#location_stats'
+
   end
 
   namespace :api, defaults: {format: 'json'} do

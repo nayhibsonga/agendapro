@@ -34,7 +34,7 @@ class ProductsController < ApplicationController
     respond_with(@products)
   end
 
-  def company_reports
+  def company_stats
 
     @company = current_user.company
 
@@ -55,7 +55,106 @@ class ProductsController < ApplicationController
       @products << product_tuple
     end
 
-    #Get sellers ranking in this period
+    #Get provider sellers ranking in this period
+    @provider_sellers = []
+    @company.service_providers.each do |service_provider|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to).pluck(:id), seller_type: 0, seller_id: service_provider.id).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      provider_tuple = [service_provider, product_price_sum, product_quantity_sum]
+      @provider_sellers << provider_tuple
+    end
+
+    #Get user sellers ranking in this period
+    @user_sellers = []
+    @company.users.each do |user|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to).pluck(:id), seller_type: 1, seller_id: user.id).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      user_tuple = [user, product_price_sum, product_quantity_sum]
+      @user_sellers << user_tuple
+    end
+
+    @cashier_sellers = []
+    @company.cashiers.each do |cashier|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to).pluck(:id), seller_type: 2, seller_id: cashier.id).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      cashier_tuple = [cashier, product_price_sum, product_quantity_sum]
+      @cashier_sellers << cashier_tuple
+    end
+
+  end
+
+  def stats
+
+    @company = current_user.company
+
+    @locations = Location.find(params[:location_ids])
+
+    @from = params[:from].to_datetime.beginning_of_day
+    @to = params[:to].to_datetime.end_of_day
+
+    #Get products ranking by price sum and item quantity in this period
+    @products = []
+
+    @company.products.each do |product|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      product.payment_products.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids]).pluck(:id)).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      product_tuple = [product, product_price_sum, product_quantity_sum]
+      @products << product_tuple
+    end
+
+    #Get provider sellers ranking in this period
+    @provider_sellers = []
+    @company.service_providers.each do |service_provider|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids]).pluck(:id), seller_type: 0, seller_id: service_provider.id).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      provider_tuple = [service_provider, product_price_sum, product_quantity_sum]
+      @provider_sellers << provider_tuple
+    end
+
+    #Get user sellers ranking in this period
+    @user_sellers = []
+    @company.users.each do |user|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids]).pluck(:id), seller_type: 1, seller_id: user.id).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      user_tuple = [user, product_price_sum, product_quantity_sum]
+      @user_sellers << user_tuple
+    end
+
+    @cashier_sellers = []
+    @company.cashiers.each do |cashier|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids]).pluck(:id), seller_type: 2, seller_id: cashier.id).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      cashier_tuple = [cashier, product_price_sum, product_quantity_sum]
+      @cashier_sellers << cashier_tuple
+    end
 
   end
 
