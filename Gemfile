@@ -105,8 +105,13 @@ gem 'bcrypt-ruby', '~> 3.1.2'
 # Pago en linea: Punto Pagos
 gem 'puntopagos'
 
+# Legacy
 # Importacion de datos desde excel
 gem 'roo'
+
+#New for spreadsheets
+#gem 'roo', '~> 2.3.2'
+#gem 'roo-xls'
 
 # File Upload
 # gem 'rmagick'
