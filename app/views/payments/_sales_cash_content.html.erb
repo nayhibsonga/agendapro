@@ -265,7 +265,7 @@
                 <%= number_to_currency(sales_cash_transaction.amount, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
               </td>
               <td>
-                <% if sales_cash_transaction.receipt_number.nil? || sales_cash_transaction.receipt_number = "" %>
+                <% if sales_cash_transaction.receipt_number.nil? || sales_cash_transaction.receipt_number == "" %>
                   No aplica
                 <% else %>
                   <%= sales_cash_transaction.receipt_number %>
