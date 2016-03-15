@@ -1,4 +1,5 @@
 module Api
+  module AgendaproApp
   module V1
   	class UsersController < V1Controller
   	  skip_before_filter :check_auth_token, only: [:login, :create, :oauth]
@@ -177,4 +178,5 @@ module Api
       end
   	end
   end
+end
 end

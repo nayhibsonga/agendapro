@@ -1,4 +1,5 @@
 module Api
+  module HorachicApp
   module V1
   	class UsersController < V1Controller
   	  skip_before_filter :check_auth_token, only: [:login, :create, :oauth]
@@ -70,7 +71,7 @@ module Api
 
 
 
-        @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids, :status_id => Status.where(:name => ['Reservado', 'Confirmado'])).where("start > ?", DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])).order(:start).group_by{ |i| i.start.to_date }
+        @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids, :status_id => Status.where(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])).order(:start).group_by{ |i| i.start.to_date }
         @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where("start <= ?", DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])).where(:client_id => @client_ids).order(updated_at: :desc).limit(10).group_by{ |i| i.start.to_date }
       end
 
@@ -177,4 +178,5 @@ module Api
       end
   	end
   end
+end
 end

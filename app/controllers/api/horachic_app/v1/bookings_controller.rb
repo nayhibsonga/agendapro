@@ -1,6 +1,7 @@
 module Api
-  module V2
-  	class BookingsController < V2Controller
+	module HorachicApp
+  module V1
+  	class BookingsController < V1Controller
       
       def book_service
 
@@ -654,4 +655,5 @@ module Api
 
   	end
   end
+end
 end
