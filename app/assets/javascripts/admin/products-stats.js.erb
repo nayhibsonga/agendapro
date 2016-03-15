@@ -24,18 +24,25 @@ function changeLocations()
 	console.log("location_type: " + location_type);
 	if(location_type == "active")
 	{
-		$('#location-select option.inactive').hide();
-		$('#location-select option.active').show();
+		$('#location-select option.inactive').each(function(){
+			$('.location-option input[value="' + $(this).val() + '"]').hide();
+		});
+		$('#location-select option.active').each(function(){
+			$('.location-option input[value="' + $(this).val() + '"]').show();
+		});
 	}
 	else if(location_type == "inactive")
 	{
-		$('#location-select option.active').hide();
-		$('#location-select option.inactive').show();
+		$('#location-select option.inactive').each(function(){
+			$('.location-option input[value="' + $(this).val() + '"]').show();
+		});
+		$('#location-select option.active').each(function(){
+			$('.location-option input[value="' + $(this).val() + '"]').hide();
+		});
 	}
 	else
 	{
-		$('#location-select option.active').show();
-		$('#location-select option.inactive').show();
+		$('.location-option').show();
 	}
 }
 
@@ -64,6 +71,9 @@ $(function(){
 	    includeSelectAllOption: true,
 	    selectAllText: 'Todos',
 	    buttonContainer: '<div style="min-width: 200px;"></div>',
+	    templates: {
+	    	li: '<li class="location-option"><a><label></label></a></li>'
+	    },
 	    buttonText: function(options, select) {
 
 	      	if (options.length === 0) {
@@ -89,6 +99,9 @@ $(function(){
 	        	});
 	        	return labels.join(', ') + '';
 	      	}
+	    },
+	    optionClass: function(element){
+	    	return 'location-option';
 	    },
 	    onChange: function(option, checked, select){
 
