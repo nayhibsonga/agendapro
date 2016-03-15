@@ -662,7 +662,7 @@ class Booking < ActiveRecord::Base
         if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
           if self.status != Status.find_by(:name => "Cancelado")
             if self.booking_group.nil?
-              sendings.build(method: 'book_service_mail').save
+              sendings.build(method: 'new_booking').save
               #BookingMailer.book_service_mail(self)
             end
           end

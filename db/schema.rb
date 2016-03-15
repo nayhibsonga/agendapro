@@ -322,6 +322,7 @@ ActiveRecord::Schema.define(version: 20160314160252) do
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
     t.integer  "trial_months_left",   default: 0
+    t.integer  "default_plan_id",     default: 11
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
@@ -499,8 +500,6 @@ ActiveRecord::Schema.define(version: 20160314160252) do
     t.string   "option"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "exclusive1",       default: true
-    t.boolean  "exclusive2",       default: true
   end
 
   create_table "date_time_attributes", force: true do |t|
@@ -863,8 +862,6 @@ ActiveRecord::Schema.define(version: 20160314160252) do
     t.string   "option"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "exclusive1",       default: true
-    t.boolean  "exclusive2",       default: true
   end
 
   create_table "numeric_parameters", force: true do |t|

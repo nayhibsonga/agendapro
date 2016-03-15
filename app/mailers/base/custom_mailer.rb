@@ -27,7 +27,7 @@ class Base::CustomMailer < ActionMailer::Base
     ENV['EMAIL_FILTER'] || recipients
   end
 
-  def filter_sender(email)
+  def filter_sender(email=nil)
     email.present? ? email : "AgendaPro <no-reply@agendapro.cl>"
   end
 
@@ -35,7 +35,6 @@ class Base::CustomMailer < ActionMailer::Base
     def default_options
       @title = "AgendaPro"
       @url = "www.agendapro.co"
-      attachments.inline['logo.png'] = File.read('app/assets/images/logos/logodoble2.png')
       headers["X-MC-PreserveRecipients"] = "false"
     end
 end

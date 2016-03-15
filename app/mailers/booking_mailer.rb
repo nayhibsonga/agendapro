@@ -1,6 +1,35 @@
 class BookingMailer < Base::CustomMailer
+  layout "mailers/green"
 
 	include ActionView::Helpers::NumberHelper
+
+	def new_booking (booking, recipient, options = {})
+		# defaults
+		options = {
+			client: true,
+			name: "#{booking.client.first_name} #{booking.client.last_name}"
+		}.merge(options)
+
+		@company = booking.location.company
+
+		# layout variables
+		@title = "Nueva Reserva en #{@company.name}"
+    @url = @company.web_url
+		attacht_logo("public#{@company.logo.email.url}") unless @company.logo.email.url.include?("logo_vacio")
+
+		# view variables
+		@booking = booking
+		@company_setting = @company.company_setting
+		@client = options[:client]
+		@name = options[:name]
+
+    mail(
+      from: filter_sender(),
+      to: filter_recipient(recipient),
+      subject: @title,
+      template_path: "mailers"
+      )
+	end
 
 	def book_service_mail (book_info)
 		# => Template
@@ -2101,4 +2130,10 @@ class BookingMailer < Base::CustomMailer
 	#Mail de edición de sesión (depende de si es por admin o no)
 	def update_session_booking_mail(booking, is_admin)
 	end
+
+	private
+		def attacht_logo(url=nil)
+			url ||= "app/assets/images/logos/logodoble2.png"
+      attachments.inline['logo.png'] = File.read(url)
+		end
 end
