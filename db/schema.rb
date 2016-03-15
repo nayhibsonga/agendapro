@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160308133628) do
+ActiveRecord::Schema.define(version: 20160314160252) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "attribute_categories", force: true do |t|
@@ -473,6 +473,8 @@ ActiveRecord::Schema.define(version: 20160308133628) do
     t.string   "formatted_address", default: ""
     t.string   "domain",            default: ""
     t.float    "sales_tax",         default: 0.0, null: false
+    t.string   "timezone_name"
+    t.float    "timezone_offset"
   end
 
   create_table "custom_filters", force: true do |t|
@@ -498,8 +500,6 @@ ActiveRecord::Schema.define(version: 20160308133628) do
     t.string   "option"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "exclusive1",       default: true
-    t.boolean  "exclusive2",       default: true
   end
 
   create_table "date_time_attributes", force: true do |t|
@@ -618,7 +618,8 @@ ActiveRecord::Schema.define(version: 20160308133628) do
     t.datetime "updated_at"
     t.integer  "total_sendings",   default: 0
     t.integer  "total_recipients", default: 0
-    t.string   "detail"
+    t.json     "detail"
+    t.string   "method"
   end
 
   create_table "email_templates", force: true do |t|
@@ -870,8 +871,6 @@ ActiveRecord::Schema.define(version: 20160308133628) do
     t.string   "option"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "exclusive1",       default: true
-    t.boolean  "exclusive2",       default: true
   end
 
   create_table "numeric_parameters", force: true do |t|
