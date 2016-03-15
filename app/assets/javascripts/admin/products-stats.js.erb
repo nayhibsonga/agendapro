@@ -1,0 +1,55 @@
+$(function(){
+
+	$('#getStatsBtn').on('click', function(){
+		var location_ids = [];
+		$.ajax({
+			url: 'locations_products_stats',
+			method: 'get',
+			error: function(response){
+
+			},
+			success: function(response){
+
+			}
+		});
+	});
+
+	$('#location-select').multiselect({
+	    includeSelectAllOption: true,
+	    selectAllText: 'Todos',
+	    buttonContainer: '<div style="min-width: 200px;"></div>',
+	    buttonText: function(options, select) {
+
+	      	if (options.length === 0) {
+	        	return 'Ninguno';
+	      	}
+	      	else if(options.length == select[0].length)
+	      	{
+	        	return "Todos";
+	      	}
+	      	else if(options.length > 2)
+	      	{
+	        	return options.length + " seleccionados";
+	      	}
+	      	else {
+	        	var labels = [];
+	        	options.each(function() {
+	           		if ($(this).attr('label') !== undefined) {
+	               		labels.push($(this).attr('label'));
+	           		}
+	           		else {
+	               		labels.push($(this).html());
+	           		}
+	        	});
+	        	return labels.join(', ') + '';
+	      	}
+	    },
+	    onChange: function(option, checked, select){
+
+	    },
+	    onInitialized: function(select, container){
+	    	$('#location-select').show();
+	    }
+	});
+
+});

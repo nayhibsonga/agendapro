@@ -99,6 +99,31 @@ class ProductsController < ApplicationController
 
     @company = current_user.company
 
+    loc_status = "active"
+
+    if params[:loc_status].blank? || params[:loc_status] == "all"
+      loc_status = "all"
+    elsif params[:loc_status] == "inactive"
+      loc_status = "inactive"
+    end
+
+    @locations = @company.locations
+    
+    if current_user.role_id != Role.find_by_name("Administrador General").id
+      @locations = current_user.locations
+    end
+
+    if loc_status == "active"
+      @locations = @locations.where(active: true)
+    elsif loc_status == "inactive"
+      @locations = @locations.where(active: false)
+    end
+  
+  end
+
+  def locations_stats
+    @company = current_user.company
+
     @locations = Location.find(params[:location_ids])
 
     @from = params[:from].to_datetime.beginning_of_day
@@ -155,7 +180,6 @@ class ProductsController < ApplicationController
       cashier_tuple = [cashier, product_price_sum, product_quantity_sum]
       @cashier_sellers << cashier_tuple
     end
-
   end
 
   def show
