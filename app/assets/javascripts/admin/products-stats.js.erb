@@ -1,7 +1,43 @@
+var location_type = "all";
+
+function loadStats()
+{
+	var location_ids = [];
+	$('#render_content').empty();
+
+	$("#location-select option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	provider_ids.push($(this).val());
+		}
+	});
+
+	if(provider_ids.length == 0)
+	{
+		return;
+	}
+}
+
 $(function(){
 
+	$('#location-type-select').on('change', function(){
+		location_type = $(this).val();
+		if(location_type == "active")
+		{
+			
+		}
+		else if(location_type == "inactive")
+		{
+
+		}
+		else
+		{
+			
+		}
+	});
+
 	$('#getStatsBtn').on('click', function(){
-		var location_ids = [];
+		
 		$.ajax({
 			url: 'locations_products_stats',
 			method: 'get',
