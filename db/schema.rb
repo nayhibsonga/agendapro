@@ -499,6 +499,8 @@ ActiveRecord::Schema.define(version: 20160314160252) do
     t.string   "option"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "exclusive1",       default: true
+    t.boolean  "exclusive2",       default: true
   end
 
   create_table "date_time_attributes", force: true do |t|
@@ -734,16 +736,6 @@ ActiveRecord::Schema.define(version: 20160314160252) do
     t.datetime "updated_at"
   end
 
-  create_table "location_outcall_districts", force: true do |t|
-    t.integer  "location_id"
-    t.integer  "district_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "location_outcall_districts", ["district_id"], name: "index_location_outcall_districts_on_district_id", using: :btree
-  add_index "location_outcall_districts", ["location_id"], name: "index_location_outcall_districts_on_location_id", using: :btree
-
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
     t.integer  "location_id",                null: false
@@ -771,11 +763,10 @@ ActiveRecord::Schema.define(version: 20160314160252) do
 
   create_table "locations", force: true do |t|
     t.string   "name",                           null: false
-    t.string   "address",                        null: false
+    t.json     "address",                        null: false
     t.string   "phone",                          null: false
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "district_id",                    null: false
     t.integer  "company_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -788,10 +779,12 @@ ActiveRecord::Schema.define(version: 20160314160252) do
     t.string   "image1"
     t.string   "image2"
     t.string   "image3"
+    t.text     "outcall_places"
+    t.integer  "country_id"
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
-  add_index "locations", ["district_id"], name: "index_locations_on_district_id", using: :btree
+  add_index "locations", ["country_id"], name: "index_locations_on_country_id", using: :btree
 
   create_table "mailing_lists", force: true do |t|
     t.string   "first_name",     default: ""
@@ -870,6 +863,8 @@ ActiveRecord::Schema.define(version: 20160314160252) do
     t.string   "option"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "exclusive1",       default: true
+    t.boolean  "exclusive2",       default: true
   end
 
   create_table "numeric_parameters", force: true do |t|

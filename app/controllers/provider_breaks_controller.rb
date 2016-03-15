@@ -84,7 +84,7 @@ class ProviderBreaksController < ApplicationController
         respond_to do |format|
           if @provider_break.save
             @provider_break.warnings ? warnings = @provider_break.warnings.full_messages : warnings = []
-            @break_json << {id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings}
+            @break_json << {id: @provider_break.id, start: @provider_break.start, end: @provider_break.end, service_provider_id: @provider_break.service_provider_id, name: @provider_break.name, warnings: warnings, location_id: @provider_break.service_provider.location_id}
             format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
             format.json { render :json => @break_json }
             format.js { }
@@ -95,7 +95,7 @@ class ProviderBreaksController < ApplicationController
           end
         end
       else
-        
+
         @break_errors = Array.new
 
         @provider_break_repeat = ProviderBreakRepeat.create(:start_date => params[:provider_break][:start].to_datetime, :repeat_option => params[:provider_break][:repeat_option], :repeat_type => params[:provider_break][:repeat], :weeks => params[:provider_break][:repeat_weeks])
@@ -151,7 +151,7 @@ class ProviderBreaksController < ApplicationController
 
               #Get correct day
               diff = (start_date.wday-first_start_date.wday)%7
-              
+
               if (start_date - diff.days).wday == first_start_date.wday
                 start_date = start_date - diff.days
                 end_date = end_date - diff.days
@@ -174,12 +174,12 @@ class ProviderBreaksController < ApplicationController
             elsif params[:provider_break][:repeat] == "yearly"
               start_date = first_start_date + i.years
               end_date = first_end_date + i.years
-            end               
+            end
             provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => ids[0].to_i, :name => params[:provider_break][:name], :break_repeat_id => repeat_id)
 
             if provider_break.save
               provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
-              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings, location_id: provider_break.service_provider.location_id})
               status = status && true
             else
               @break_errors.push(provider_break.errors.full_messages)
@@ -228,7 +228,7 @@ class ProviderBreaksController < ApplicationController
 
               #Get correct day
               diff = (start_date.wday-first_start_date.wday)%7
-              
+
               if (start_date - diff.days).wday == first_start_date.wday
                 start_date = start_date - diff.days
                 end_date = end_date - diff.days
@@ -254,13 +254,13 @@ class ProviderBreaksController < ApplicationController
 
             if start_date > final_date
               break
-            end 
+            end
 
             provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => ids[0].to_i, :name => params[:provider_break][:name], :break_repeat_id => repeat_id)
 
             if provider_break.save
               provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
-              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings, location_id: provider_break.service_provider.location_id})
               status = status && true
             else
               @break_errors.push(provider_break.errors.full_messages)
@@ -311,10 +311,10 @@ class ProviderBreaksController < ApplicationController
         repeat_id = @provider_break_repeat.id
 
         service_providers.each do |provider|
-          
+
           break_group_id = break_group
-          
-          
+
+
           first_start_date = params[:provider_break][:start].to_datetime
           first_end_date = params[:provider_break][:end].to_datetime
           start_date = first_start_date
@@ -354,7 +354,7 @@ class ProviderBreaksController < ApplicationController
 
                 #Get correct day
                 diff = (start_date.wday-first_start_date.wday)%7
-                
+
                 if (start_date - diff.days).wday == first_start_date.wday
                   start_date = start_date - diff.days
                   end_date = end_date - diff.days
@@ -376,12 +376,12 @@ class ProviderBreaksController < ApplicationController
               elsif params[:provider_break][:repeat] == "yearly"
                 start_date = first_start_date + i.years
                 end_date = first_end_date + i.years
-              end               
+              end
               provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id, :break_repeat_id => repeat_id)
 
               if provider_break.save
                 provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
-                @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+                @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings, location_id: provider_break.service_provider.location_id})
                 status = status && true
               else
                 @break_errors.push(provider_break.errors.full_messages)
@@ -429,7 +429,7 @@ class ProviderBreaksController < ApplicationController
 
                 #Get correct day
                 diff = (start_date.wday-first_start_date.wday)%7
-                
+
                 if (start_date - diff.days).wday == first_start_date.wday
                   start_date = start_date - diff.days
                   end_date = end_date - diff.days
@@ -461,7 +461,7 @@ class ProviderBreaksController < ApplicationController
 
               if provider_break.save
                 provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
-                @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+                @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings, location_id: provider_break.service_provider.location_id})
                 status = status && true
               else
                 @break_errors.push(provider_break.errors.full_messages)
@@ -485,7 +485,7 @@ class ProviderBreaksController < ApplicationController
 
           if provider_break.save
             provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
-            @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+            @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings, location_id: provider_break.service_provider.location_id})
             status = status && true
           else
             @break_errors.push(provider_break.errors.full_messages)
@@ -495,7 +495,7 @@ class ProviderBreaksController < ApplicationController
 
       end
 
-      
+
 
       respond_to do |format|
         if status
@@ -516,7 +516,7 @@ class ProviderBreaksController < ApplicationController
   def update_provider_break
     #if provider_break_params[:service_provider_id].to_i != 0
 
-  
+
 
       @provider_break = ProviderBreak.find(params[:id])
       ids = params[:provider_break][:service_provider_id]
@@ -554,7 +554,7 @@ class ProviderBreaksController < ApplicationController
         end
         return
       end
-      
+
       service_providers = ServiceProvider.find(ids)
       group_service_providers = []
 
@@ -628,7 +628,7 @@ class ProviderBreaksController < ApplicationController
 
             old_provider_breaks.each do |provider_break|
               provider_break.break_group_id = new_break_group_id
-              
+
               if provider_break.save
                 provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
                 @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
@@ -650,7 +650,7 @@ class ProviderBreaksController < ApplicationController
             provider_break.name = new_name
             provider_break.start = provider_break_params[:start]
             provider_break.end = provider_break_params[:end]
-            
+
             if provider_break.save
               provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
               @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
@@ -686,7 +686,7 @@ class ProviderBreaksController < ApplicationController
 
         else
 
-          
+
           new_providers = []
           service_providers.each do |service_provider|
             if service_provider.id != @provider_break.service_provider.id
@@ -740,7 +740,7 @@ class ProviderBreaksController < ApplicationController
 
           end
 
-        end      
+        end
 
       end
 
@@ -760,7 +760,7 @@ class ProviderBreaksController < ApplicationController
 
   #Edit all repetitions
   def update_repeat_break
-    
+
     ids = provider_break_params[:service_provider_id]
 
     if params[:provider_break][:end].to_datetime <= params[:provider_break][:start].to_datetime
@@ -825,9 +825,9 @@ class ProviderBreaksController < ApplicationController
       repeat_id = provider_break_repeat.id
 
       service_providers.each do |provider|
-        
-        break_group_id = nil       
-        
+
+        break_group_id = nil
+
         #Given start and end could differ from the original, so we have to move them.
         given_start_date = params[:provider_break][:start].to_datetime
         given_end_date = params[:provider_break][:end].to_datetime
@@ -839,158 +839,163 @@ class ProviderBreaksController < ApplicationController
         start_date = first_start_date
         end_date = first_end_date
 
-        if params[:provider_break][:repeat_option] == "times"
-          times = 1
-          if params[:provider_break][:times] != ""
-            times = params[:provider_break][:times].to_i
-          end
-          provider_break_repeat.times = times
-          for i in 0..times-1
-            if params[:provider_break][:repeat] == "daily"
-              start_date = first_start_date + i.days
-              end_date = first_end_date + i.days
-            elsif params[:provider_break][:repeat] == "weekly"
-              start_date = first_start_date + i.weeks
-              end_date = first_end_date + i.weeks
-            elsif params[:provider_break][:repeat] == "biweekly"
-              start_date = first_start_date + (i*2).weeks
-              end_date = first_end_date + (i*2).weeks
-            elsif params[:provider_break][:repeat] == "triweekly"
-              start_date = first_start_date + (i*3).weeks
-              end_date = first_end_date + (i*3).weeks
-            elsif params[:provider_break][:repeat] == "fourthweekly"
-              start_date = first_start_date + (i*4).weeks
-              end_date = first_end_date + (i*4).weeks
-            elsif params[:provider_break][:repeat] == "xweekly"
-              start_date = first_start_date + (i*provider_break_repeat.weeks).weeks
-              end_date = first_end_date + (i*provider_break_repeat.weeks).weeks
-            elsif params[:provider_break][:repeat] == "monthly_date"
-              start_date = first_start_date + i.months
-              end_date = first_end_date + i.months
-            elsif params[:provider_break][:repeat] == "monthly_day"
-              start_date = first_start_date + i.months
-              end_date = first_end_date + i.months
+        if !params[:provider_break][:repeat].blank? && params[:provider_break][:repeat] != "never"
+          if params[:provider_break][:repeat_option] == "times"
+            times = 1
+            if params[:provider_break][:times] != ""
+              times = params[:provider_break][:times].to_i
+            end
+            provider_break_repeat.times = times
+            for i in 0..times-1
+              if params[:provider_break][:repeat] == "daily"
+                start_date = first_start_date + i.days
+                end_date = first_end_date + i.days
+              elsif params[:provider_break][:repeat] == "weekly"
+                start_date = first_start_date + i.weeks
+                end_date = first_end_date + i.weeks
+              elsif params[:provider_break][:repeat] == "biweekly"
+                start_date = first_start_date + (i*2).weeks
+                end_date = first_end_date + (i*2).weeks
+              elsif params[:provider_break][:repeat] == "triweekly"
+                start_date = first_start_date + (i*3).weeks
+                end_date = first_end_date + (i*3).weeks
+              elsif params[:provider_break][:repeat] == "fourthweekly"
+                start_date = first_start_date + (i*4).weeks
+                end_date = first_end_date + (i*4).weeks
+              elsif params[:provider_break][:repeat] == "xweekly"
+                start_date = first_start_date + (i*provider_break_repeat.weeks).weeks
+                end_date = first_end_date + (i*provider_break_repeat.weeks).weeks
+              elsif params[:provider_break][:repeat] == "monthly_date"
+                start_date = first_start_date + i.months
+                end_date = first_end_date + i.months
+              elsif params[:provider_break][:repeat] == "monthly_day"
+                start_date = first_start_date + i.months
+                end_date = first_end_date + i.months
 
-              #Get correct day
-              diff = (start_date.wday-first_start_date.wday)%7
-              
-              if (start_date - diff.days).wday == first_start_date.wday
-                start_date = start_date - diff.days
-                end_date = end_date - diff.days
-              else
-                start_date = start_date + diff.days
-                end_date = end_date + diff.days
-              end
-
-              #Get correct week
-              if start_date.day/7 != first_start_date.day/7
-                if start_date.day/7 < first_start_date.day/7
-                  start_date = start_date + 1.weeks
-                  end_date = end_date + 1.weeks
+                #Get correct day
+                diff = (start_date.wday-first_start_date.wday)%7
+                
+                if (start_date - diff.days).wday == first_start_date.wday
+                  start_date = start_date - diff.days
+                  end_date = end_date - diff.days
                 else
-                  start_date = start_date - 1.weeks
-                  end_date = end_date - 1.weeks
+                  start_date = start_date + diff.days
+                  end_date = end_date + diff.days
                 end
-              end
-            elsif params[:provider_break][:repeat] == "yearly"
-              start_date = first_start_date + i.years
-              end_date = first_end_date + i.years
-            end               
-            provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id, :break_repeat_id => repeat_id)
 
-            if provider_break.save
-              provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
-              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
-              status = status && true
-            else
-              @break_errors.push(provider_break.errors.full_messages)
-              status = status && false
+                #Get correct week
+                if start_date.day/7 != first_start_date.day/7
+                  if start_date.day/7 < first_start_date.day/7
+                    start_date = start_date + 1.weeks
+                    end_date = end_date + 1.weeks
+                  else
+                    start_date = start_date - 1.weeks
+                    end_date = end_date - 1.weeks
+                  end
+                end
+              elsif params[:provider_break][:repeat] == "yearly"
+                start_date = first_start_date + i.years
+                end_date = first_end_date + i.years
+              end               
+              provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id, :break_repeat_id => repeat_id)
+
+              if provider_break.save
+                provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
+                @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+                status = status && true
+              else
+                @break_errors.push(provider_break.errors.full_messages)
+                status = status && false
+              end
+
+            end
+            provider_break_repeat.end_date = end_date
+          else
+
+            start_date = first_start_date
+            end_date = first_end_date
+            final_date = params[:provider_break][:repeat_end].to_datetime
+            provider_break_repeat.end_date = final_date
+            provider_break_repeat.times = nil
+
+            i = 0
+
+            while start_date < final_date
+
+              if params[:provider_break][:repeat] == "daily"
+                start_date = first_start_date + i.days
+                end_date = first_end_date + i.days
+              elsif params[:provider_break][:repeat] == "weekly"
+                start_date = first_start_date + i.weeks
+                end_date = first_end_date + i.weeks
+              elsif params[:provider_break][:repeat] == "biweekly"
+                start_date = first_start_date + (i*2).weeks
+                end_date = first_end_date + (i*2).weeks
+              elsif params[:provider_break][:repeat] == "triweekly"
+                start_date = first_start_date + (i*3).weeks
+                end_date = first_end_date + (i*3).weeks
+              elsif params[:provider_break][:repeat] == "fourthweekly"
+                start_date = first_start_date + (i*4).weeks
+                end_date = first_end_date + (i*4).weeks
+              elsif params[:provider_break][:repeat] == "xweekly"
+                start_date = first_start_date + (i*provider_break_repeat).weeks
+                end_date = first_end_date + (i*provider_break_repeat).weeks
+              elsif params[:provider_break][:repeat] == "monthly_date"
+                start_date = first_start_date + i.months
+                end_date = first_end_date + i.months
+              elsif params[:provider_break][:repeat] == "monthly_day"
+                start_date = first_start_date + i.months
+                end_date = first_end_date + i.months
+
+                #Get correct day
+                diff = (start_date.wday-first_start_date.wday)%7
+                
+                if (start_date - diff.days).wday == first_start_date.wday
+                  start_date = start_date - diff.days
+                  end_date = end_date - diff.days
+                else
+                  start_date = start_date + diff.days
+                  end_date = end_date + diff.days
+                end
+
+                #Get correct week
+                if start_date.day/7 != first_start_date.day/7
+                  if start_date.day/7 < first_start_date.day/7
+                    start_date = start_date + 1.weeks
+                    end_date = end_date + 1.weeks
+                  else
+                    start_date = start_date - 1.weeks
+                    end_date = end_date - 1.weeks
+                  end
+                end
+              elsif params[:provider_break][:repeat] == "yearly"
+                start_date = first_start_date + i.years
+                end_date = first_end_date + i.years
+              end
+
+              if start_date > final_date
+                break
+              end
+
+              provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id, :break_repeat_id => repeat_id)
+
+              if provider_break.save
+                provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
+                @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+                status = status && true
+              else
+                @break_errors.push(provider_break.errors.full_messages)
+                status = status && false
+              end
+
+              i = i+1
+
             end
 
           end
-          provider_break_repeat.end_date = end_date
         else
-
-          start_date = first_start_date
-          end_date = first_end_date
-          final_date = params[:provider_break][:repeat_end].to_datetime
-          provider_break_repeat.end_date = final_date
+          provider_break_repeat.end_date = end_date
           provider_break_repeat.times = nil
-
-          i = 0
-
-          while start_date < final_date
-
-            if params[:provider_break][:repeat] == "daily"
-              start_date = first_start_date + i.days
-              end_date = first_end_date + i.days
-            elsif params[:provider_break][:repeat] == "weekly"
-              start_date = first_start_date + i.weeks
-              end_date = first_end_date + i.weeks
-            elsif params[:provider_break][:repeat] == "biweekly"
-              start_date = first_start_date + (i*2).weeks
-              end_date = first_end_date + (i*2).weeks
-            elsif params[:provider_break][:repeat] == "triweekly"
-              start_date = first_start_date + (i*3).weeks
-              end_date = first_end_date + (i*3).weeks
-            elsif params[:provider_break][:repeat] == "fourthweekly"
-              start_date = first_start_date + (i*4).weeks
-              end_date = first_end_date + (i*4).weeks
-            elsif params[:provider_break][:repeat] == "xweekly"
-              start_date = first_start_date + (i*provider_break_repeat).weeks
-              end_date = first_end_date + (i*provider_break_repeat).weeks
-            elsif params[:provider_break][:repeat] == "monthly_date"
-              start_date = first_start_date + i.months
-              end_date = first_end_date + i.months
-            elsif params[:provider_break][:repeat] == "monthly_day"
-              start_date = first_start_date + i.months
-              end_date = first_end_date + i.months
-
-              #Get correct day
-              diff = (start_date.wday-first_start_date.wday)%7
-              
-              if (start_date - diff.days).wday == first_start_date.wday
-                start_date = start_date - diff.days
-                end_date = end_date - diff.days
-              else
-                start_date = start_date + diff.days
-                end_date = end_date + diff.days
-              end
-
-              #Get correct week
-              if start_date.day/7 != first_start_date.day/7
-                if start_date.day/7 < first_start_date.day/7
-                  start_date = start_date + 1.weeks
-                  end_date = end_date + 1.weeks
-                else
-                  start_date = start_date - 1.weeks
-                  end_date = end_date - 1.weeks
-                end
-              end
-            elsif params[:provider_break][:repeat] == "yearly"
-              start_date = first_start_date + i.years
-              end_date = first_end_date + i.years
-            end
-
-            if start_date > final_date
-              break
-            end
-
-            provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id, :break_repeat_id => repeat_id)
-
-            if provider_break.save
-              provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
-              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
-              status = status && true
-            else
-              @break_errors.push(provider_break.errors.full_messages)
-              status = status && false
-            end
-
-            i = i+1
-
-          end
-
         end
 
       end
@@ -1033,9 +1038,9 @@ class ProviderBreaksController < ApplicationController
         repeat_id = provider_break_repeat.id
 
         new_service_providers.each do |provider|
-          
-          break_group_id = nil       
-          
+
+          break_group_id = nil
+
           #Given start and end could differ from the original, so we have to move them.
           given_start_date = params[:provider_break][:start].to_datetime
           given_end_date = params[:provider_break][:end].to_datetime
@@ -1047,6 +1052,205 @@ class ProviderBreaksController < ApplicationController
           start_date = first_start_date
           end_date = first_end_date
 
+          if !params[:provider_break][:repeat].blank? && params[:provider_break][:repeat] != "never"
+            if params[:provider_break][:repeat_option] == "times"
+              times = 1
+              if params[:provider_break][:times] != ""
+                times = params[:provider_break][:times].to_i
+              end
+              provider_break_repeat.times = times
+              for i in 0..times-1
+                if params[:provider_break][:repeat] == "daily"
+                  start_date = first_start_date + i.days
+                  end_date = first_end_date + i.days
+                elsif params[:provider_break][:repeat] == "weekly"
+                  start_date = first_start_date + i.weeks
+                  end_date = first_end_date + i.weeks
+                elsif params[:provider_break][:repeat] == "biweekly"
+                  start_date = first_start_date + (i*2).weeks
+                  end_date = first_end_date + (i*2).weeks
+                elsif params[:provider_break][:repeat] == "triweekly"
+                  start_date = first_start_date + (i*3).weeks
+                  end_date = first_end_date + (i*3).weeks
+                elsif params[:provider_break][:repeat] == "fourthweekly"
+                  start_date = first_start_date + (i*4).weeks
+                  end_date = first_end_date + (i*4).weeks
+                elsif params[:provider_break][:repeat] == "xweekly"
+                  start_date = first_start_date + (i*provider_break_repeat.weeks).weeks
+                  end_date = first_end_date + (i*provider_break_repeat.weeks).weeks
+                elsif params[:provider_break][:repeat] == "monthly_date"
+                  start_date = first_start_date + i.months
+                  end_date = first_end_date + i.months
+                elsif params[:provider_break][:repeat] == "monthly_day"
+                  start_date = first_start_date + i.months
+                  end_date = first_end_date + i.months
+
+                  #Get correct day
+                  diff = (start_date.wday-first_start_date.wday)%7
+                  
+                  if (start_date - diff.days).wday == first_start_date.wday
+                    start_date = start_date - diff.days
+                    end_date = end_date - diff.days
+                  else
+                    start_date = start_date + diff.days
+                    end_date = end_date + diff.days
+                  end
+
+                  #Get correct week
+                  if start_date.day/7 != first_start_date.day/7
+                    if start_date.day/7 < first_start_date.day/7
+                      start_date = start_date + 1.weeks
+                      end_date = end_date + 1.weeks
+                    else
+                      start_date = start_date - 1.weeks
+                      end_date = end_date - 1.weeks
+                    end
+                  end
+                elsif params[:provider_break][:repeat] == "yearly"
+                  start_date = first_start_date + i.years
+                  end_date = first_end_date + i.years
+                end               
+                provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id, :break_repeat_id => repeat_id)
+
+                if provider_break.save
+                  provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
+                  @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+                  status = status && true
+                else
+                  @break_errors.push(provider_break.errors.full_messages)
+                  status = status && false
+                end
+
+              end
+              provider_break_repeat.end_date = end_date
+            else
+
+              start_date = first_start_date
+              end_date = first_end_date
+              final_date = params[:provider_break][:repeat_end].to_datetime
+              provider_break_repeat.end_date = final_date
+              provider_break_repeat.times = nil
+
+              i = 0
+
+              while start_date < final_date
+
+                if params[:provider_break][:repeat] == "daily"
+                  start_date = first_start_date + i.days
+                  end_date = first_end_date + i.days
+                elsif params[:provider_break][:repeat] == "weekly"
+                  start_date = first_start_date + i.weeks
+                  end_date = first_end_date + i.weeks
+                elsif params[:provider_break][:repeat] == "biweekly"
+                  start_date = first_start_date + (i*2).weeks
+                  end_date = first_end_date + (i*2).weeks
+                elsif params[:provider_break][:repeat] == "triweekly"
+                  start_date = first_start_date + (i*3).weeks
+                  end_date = first_end_date + (i*3).weeks
+                elsif params[:provider_break][:repeat] == "fourthweekly"
+                  start_date = first_start_date + (i*4).weeks
+                  end_date = first_end_date + (i*4).weeks
+                elsif params[:provider_break][:repeat] == "xweekly"
+                  start_date = first_start_date + (i*provider_break_repeat.weeks).weeks
+                  end_date = first_end_date + (i*provider_break_repeat.weeks).weeks
+                elsif params[:provider_break][:repeat] == "monthly_date"
+                  start_date = first_start_date + i.months
+                  end_date = first_end_date + i.months
+                elsif params[:provider_break][:repeat] == "monthly_day"
+                  start_date = first_start_date + i.months
+                  end_date = first_end_date + i.months
+
+                  #Get correct day
+                  diff = (start_date.wday-first_start_date.wday)%7
+                  
+                  if (start_date - diff.days).wday == first_start_date.wday
+                    start_date = start_date - diff.days
+                    end_date = end_date - diff.days
+                  else
+                    start_date = start_date + diff.days
+                    end_date = end_date + diff.days
+                  end
+
+                  #Get correct week
+                  if start_date.day/7 != first_start_date.day/7
+                    if start_date.day/7 < first_start_date.day/7
+                      start_date = start_date + 1.weeks
+                      end_date = end_date + 1.weeks
+                    else
+                      start_date = start_date - 1.weeks
+                      end_date = end_date - 1.weeks
+                    end
+                  end
+                elsif params[:provider_break][:repeat] == "yearly"
+                  start_date = first_start_date + i.years
+                  end_date = first_end_date + i.years
+                end
+
+                if start_date > final_date
+                  break
+                end
+
+                provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id, :break_repeat_id => repeat_id)
+
+                if provider_break.save
+                  provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
+                  @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
+                  status = status && true
+                else
+                  @break_errors.push(provider_break.errors.full_messages)
+                  status = status && false
+                end
+
+                i = i+1
+
+              end
+
+            end
+          else
+            provider_break_repeat.end_date = end_date
+            provider_break_repeat.times = nil
+          end
+
+        end
+        provider_break_repeat.save
+
+      end
+
+      #For the rest, update them and their repeat_id
+
+
+      #Delete and redo breaks for given providers using its sart_date and the given params.
+      provider_break_repeat.repeat_option = params[:provider_break][:repeat_option]
+      provider_break_repeat.repeat_type = params[:provider_break][:repeat]
+      provider_break_repeat.weeks = params[:provider_break][:repeat_weeks]
+
+      repeat_id = provider_break_repeat.id
+
+      update_provider_breaks = ProviderBreak.where(:break_repeat_id => repeat_id, :service_provider_id => update_service_providers.map(&:id))
+
+      update_provider_breaks.each do |provider_break|
+
+        @break_deletes << provider_break
+        provider_break.delete
+
+      end      
+
+      update_service_providers.each do |provider|
+        
+        break_group_id = nil       
+        
+        #Given start and end could differ from the original, so we have to move them.
+        given_start_date = params[:provider_break][:start].to_datetime
+        given_end_date = params[:provider_break][:end].to_datetime
+        given_diff = (given_end_date - given_start_date)*24
+
+        first_start_date = given_start_date
+        first_end_date = given_start_date + given_diff.hours
+
+        start_date = first_start_date
+        end_date = first_end_date
+
+        if !params[:provider_break][:repeat].blank? && params[:provider_break][:repeat] != "never"
           if params[:provider_break][:repeat_option] == "times"
             times = 1
             if params[:provider_break][:times] != ""
@@ -1200,198 +1404,9 @@ class ProviderBreaksController < ApplicationController
             end
 
           end
-
-        end
-        provider_break_repeat.save
-
-      end
-
-      #For the rest, update them and their repeat_id
-
-
-      #Delete and redo breaks for given providers using its sart_date and the given params.
-      provider_break_repeat.repeat_option = params[:provider_break][:repeat_option]
-      provider_break_repeat.repeat_type = params[:provider_break][:repeat]
-      provider_break_repeat.weeks = params[:provider_break][:repeat_weeks]
-
-      repeat_id = provider_break_repeat.id
-
-      update_provider_breaks = ProviderBreak.where(:break_repeat_id => repeat_id, :service_provider_id => update_service_providers.map(&:id))
-
-      update_provider_breaks.each do |provider_break|
-
-        @break_deletes << provider_break
-        provider_break.delete
-
-      end      
-
-      update_service_providers.each do |provider|
-        
-        break_group_id = nil       
-        
-        #Given start and end could differ from the original, so we have to move them.
-        given_start_date = params[:provider_break][:start].to_datetime
-        given_end_date = params[:provider_break][:end].to_datetime
-        given_diff = (given_end_date - given_start_date)*24
-
-        first_start_date = given_start_date
-        first_end_date = given_start_date + given_diff.hours
-
-        start_date = first_start_date
-        end_date = first_end_date
-
-        if params[:provider_break][:repeat_option] == "times"
-          times = 1
-          if params[:provider_break][:times] != ""
-            times = params[:provider_break][:times].to_i
-          end
-          provider_break_repeat.times = times
-          for i in 0..times-1
-            if params[:provider_break][:repeat] == "daily"
-              start_date = first_start_date + i.days
-              end_date = first_end_date + i.days
-            elsif params[:provider_break][:repeat] == "weekly"
-              start_date = first_start_date + i.weeks
-              end_date = first_end_date + i.weeks
-            elsif params[:provider_break][:repeat] == "biweekly"
-              start_date = first_start_date + (i*2).weeks
-              end_date = first_end_date + (i*2).weeks
-            elsif params[:provider_break][:repeat] == "triweekly"
-              start_date = first_start_date + (i*3).weeks
-              end_date = first_end_date + (i*3).weeks
-            elsif params[:provider_break][:repeat] == "fourthweekly"
-              start_date = first_start_date + (i*4).weeks
-              end_date = first_end_date + (i*4).weeks
-            elsif params[:provider_break][:repeat] == "xweekly"
-              start_date = first_start_date + (i*provider_break_repeat.weeks).weeks
-              end_date = first_end_date + (i*provider_break_repeat.weeks).weeks
-            elsif params[:provider_break][:repeat] == "monthly_date"
-              start_date = first_start_date + i.months
-              end_date = first_end_date + i.months
-            elsif params[:provider_break][:repeat] == "monthly_day"
-              start_date = first_start_date + i.months
-              end_date = first_end_date + i.months
-
-              #Get correct day
-              diff = (start_date.wday-first_start_date.wday)%7
-              
-              if (start_date - diff.days).wday == first_start_date.wday
-                start_date = start_date - diff.days
-                end_date = end_date - diff.days
-              else
-                start_date = start_date + diff.days
-                end_date = end_date + diff.days
-              end
-
-              #Get correct week
-              if start_date.day/7 != first_start_date.day/7
-                if start_date.day/7 < first_start_date.day/7
-                  start_date = start_date + 1.weeks
-                  end_date = end_date + 1.weeks
-                else
-                  start_date = start_date - 1.weeks
-                  end_date = end_date - 1.weeks
-                end
-              end
-            elsif params[:provider_break][:repeat] == "yearly"
-              start_date = first_start_date + i.years
-              end_date = first_end_date + i.years
-            end               
-            provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id, :break_repeat_id => repeat_id)
-
-            if provider_break.save
-              provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
-              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
-              status = status && true
-            else
-              @break_errors.push(provider_break.errors.full_messages)
-              status = status && false
-            end
-
-          end
-          provider_break_repeat.end_date = end_date
         else
-
-          start_date = first_start_date
-          end_date = first_end_date
-          final_date = params[:provider_break][:repeat_end].to_datetime
-          provider_break_repeat.end_date = final_date
+          provider_break_repeat.end_date = end_date
           provider_break_repeat.times = nil
-
-          i = 0
-
-          while start_date < final_date
-
-            if params[:provider_break][:repeat] == "daily"
-              start_date = first_start_date + i.days
-              end_date = first_end_date + i.days
-            elsif params[:provider_break][:repeat] == "weekly"
-              start_date = first_start_date + i.weeks
-              end_date = first_end_date + i.weeks
-            elsif params[:provider_break][:repeat] == "biweekly"
-              start_date = first_start_date + (i*2).weeks
-              end_date = first_end_date + (i*2).weeks
-            elsif params[:provider_break][:repeat] == "triweekly"
-              start_date = first_start_date + (i*3).weeks
-              end_date = first_end_date + (i*3).weeks
-            elsif params[:provider_break][:repeat] == "fourthweekly"
-              start_date = first_start_date + (i*4).weeks
-              end_date = first_end_date + (i*4).weeks
-            elsif params[:provider_break][:repeat] == "xweekly"
-              start_date = first_start_date + (i*provider_break_repeat.weeks).weeks
-              end_date = first_end_date + (i*provider_break_repeat.weeks).weeks
-            elsif params[:provider_break][:repeat] == "monthly_date"
-              start_date = first_start_date + i.months
-              end_date = first_end_date + i.months
-            elsif params[:provider_break][:repeat] == "monthly_day"
-              start_date = first_start_date + i.months
-              end_date = first_end_date + i.months
-
-              #Get correct day
-              diff = (start_date.wday-first_start_date.wday)%7
-              
-              if (start_date - diff.days).wday == first_start_date.wday
-                start_date = start_date - diff.days
-                end_date = end_date - diff.days
-              else
-                start_date = start_date + diff.days
-                end_date = end_date + diff.days
-              end
-
-              #Get correct week
-              if start_date.day/7 != first_start_date.day/7
-                if start_date.day/7 < first_start_date.day/7
-                  start_date = start_date + 1.weeks
-                  end_date = end_date + 1.weeks
-                else
-                  start_date = start_date - 1.weeks
-                  end_date = end_date - 1.weeks
-                end
-              end
-            elsif params[:provider_break][:repeat] == "yearly"
-              start_date = first_start_date + i.years
-              end_date = first_end_date + i.years
-            end
-
-            if start_date > final_date
-              break
-            end
-
-            provider_break = ProviderBreak.new(:start => start_date, :end => end_date, :service_provider_id => provider.id, :name => params[:provider_break][:name], :break_group_id => break_group_id, :break_repeat_id => repeat_id)
-
-            if provider_break.save
-              provider_break.warnings ? warnings = provider_break.warnings.full_messages : warnings = []
-              @break_json.push({id: provider_break.id, start: provider_break.start, end: provider_break.end, service_provider_id: provider_break.service_provider_id, name: provider_break.name, warnings: warnings})
-              status = status && true
-            else
-              @break_errors.push(provider_break.errors.full_messages)
-              status = status && false
-            end
-
-            i = i+1
-
-          end
-
         end
 
       end
@@ -1413,7 +1428,7 @@ class ProviderBreaksController < ApplicationController
     #   end_diff = (first_break.end.to_datetime - provider_break_params[:end].to_datetime)*24
 
     #   provider_breaks.each do |breaks|
-     
+
     #     breaks.service_provider_id = provider_break_params[:service_provider_id]
     #     breaks.name = provider_break_params[:name]
     #     breaks.start = breaks.start - start_diff.hours

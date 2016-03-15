@@ -7,7 +7,7 @@ class BookingsPdf < Prawn::Document
 		table_content
 		notes_content
 	end
-	
+
 	def header
 		y_position = cursor
 		bounding_box([0, y_position], width: 260, height: 40) do
@@ -30,11 +30,11 @@ class BookingsPdf < Prawn::Document
 
 	def table_content
 		move_down 20
-		
+
 		text 'Resumen de la Reserva', size: 14, style: :bold
 		table(booking_data, position: :center, row_colors: ['E6E3CF', 'FFFFFF'])
 
-		move_down 20		
+		move_down 20
 		text 'Datos del Cliente', size: 14, style: :bold
 		table(client_data, position: :center, row_colors: ['E6E3CF', 'FFFFFF'])
 	end
@@ -45,7 +45,7 @@ class BookingsPdf < Prawn::Document
 		table_rows << ['Servicio', @booking.service.name]
 		table_rows << ['Horario', I18n.l(@booking.start)]
 		if !@booking.service.outcall
-			table_rows << ['Lugar', @booking.location.address + ', ' + @booking.location.district.name]
+			table_rows << ['Lugar', @booking.location.short_address]
 		end
 		table_rows << ['Prestador', @booking.service_provider.public_name]
 		if @booking.service.show_price

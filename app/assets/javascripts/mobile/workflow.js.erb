@@ -18,6 +18,7 @@ function getHour (str) {
   return str;
 }
 
+var state;
 function loadServices (localId) {
   $.getJSON('/local_services', {location: localId}, function (categorized_services) {
     $.each(categorized_services, function (key, service_hash) {
@@ -35,6 +36,10 @@ function loadServices (localId) {
       var serviceId = $(event.target).val();
       loadProviders(localId, serviceId);
     });
+    state = window.history.state;
+    if (state) {
+      $('#service').val(state.service).change();
+    }
   });
 }
 
@@ -51,19 +56,30 @@ function loadProviders (localId, serviceId) {
         });
       }
 
+      var picker;
       if ($('#providerPreference').data('provider-preference') != 1) {
         $('#provider').prepend(
           '<option value="0">Sin Preferencia</option>'
         );
 
         $('#datepicker').attr('disabled', false);
-        datepicker('#datepicker', {
+        picker = datepicker('#datepicker', {
           format: 'dddd d !de mmmm !de yyyy',
           min: true,
           klass: {
             input: 'datepicker'
           },
           onSet: function (context) {
+            window.history.replaceState(
+              {
+                local: localId,
+                service: $('#service').val(),
+                provider: $('#provider').val(),
+                datepicker: picker.get('select', 'yyyy/mm/dd')
+              },
+              null,
+              "workflow?&local=178"
+            );
             $('.btn-block').attr('disabled', false);
           }
         });
@@ -80,7 +96,7 @@ function loadProviders (localId, serviceId) {
           var maxDate = new Date($('#timeInterval').data('max'));
 
           $('#datepicker').attr('disabled', false);
-          datepicker('#datepicker', {
+          picker = datepicker('#datepicker', {
             format: 'dddd d !de mmmm !de yyyy',
             min: minDate,
             max: maxDate,
@@ -88,12 +104,26 @@ function loadProviders (localId, serviceId) {
               input: 'datepicker'
             },
             onSet: function (context) {
+              window.history.replaceState(
+                {
+                  local: localId,
+                  service: $('#service').val(),
+                  provider: $('#provider').val(),
+                  datepicker: picker.get('select', 'yyyy/mm/dd')
+                },
+                null,
+                "workflow?&local=178"
+              );
               $('.btn-block').attr('disabled', false);
             }
           });
         });
       }
       $('#provider').attr('disabled', false);
+      if (state) {
+        $('#provider').val(state.provider).change();
+        picker.set('select', state.datepicker, {format: "yyyy/mm/dd"});
+      }
     });
   } else{
     $('#provider').attr('disabled', true);

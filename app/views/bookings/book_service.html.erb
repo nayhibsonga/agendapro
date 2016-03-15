@@ -24,8 +24,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_@second_address}" else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -56,8 +55,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_@second_address}" else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -138,9 +136,8 @@
                       </dd>
 
                       <dt class="dark-gray">¿Dónde?</dt>
-                      <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
                       <dd class="light-gray">
-                        <p><%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %></p>
+                        <p><%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_second_address}" else "A Domicilio" end %></p>
                       </dd>
 
                       <dt class="dark-gray">¿Cuántas sesiones?</dt>
@@ -173,8 +170,7 @@
                         <% end %>
                       </dd>
                       <dt class="dark-gray">¿Dónde?</dt>
-                      <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
-                      <dd class="light-gray"><p><%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %></p></dd>
+                      <dd class="light-gray"><p><%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_second_address}" else "A Domicilio" end %></p></dd>
                       <% if @bookings.first.location.company.company_setting.provider_preference != 2 %>
                       <dt class="dark-gray">¿Con quién?</dt>
                       <dd class="light-gray">
