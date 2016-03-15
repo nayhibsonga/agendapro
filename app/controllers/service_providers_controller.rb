@@ -138,7 +138,8 @@ class ServiceProvidersController < ApplicationController
 
   def provider_service
     provider = ServiceProvider.find(params[:id])
-    services = provider.services.where(:active => true).order(:order, :name)
+    services = provider.services.where(:active => true).joins(:service_category).order('"service_categories"."order", "service_categories"."name", "services"."order", "services"."name"')
+
     bundles = Bundle.where(id: ServiceBundle.where(service_id: services.pluck(:id)).pluck(:bundle_id))
     services_array = Array.new
     services.each do |service|
