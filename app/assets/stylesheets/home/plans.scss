@@ -68,7 +68,7 @@ section.plans {
     display: inline-block;
     padding: 5px 10px;
     text-align: center;
-    width: 100% / 3 - 0.5;
+    width: 100% / 3 - 1;
     cursor: pointer;
 
     & + .pricing-title { border-left: $gray solid 1px; }
