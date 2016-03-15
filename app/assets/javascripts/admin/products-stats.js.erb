@@ -18,22 +18,32 @@ function loadStats()
 	}
 }
 
+function changeLocations()
+{
+	console.log("Changed ");
+	console.log("location_type: " + location_type);
+	if(location_type == "active")
+	{
+		$('#location-select option.inactive').hide();
+		$('#location-select option.active').show();
+	}
+	else if(location_type == "inactive")
+	{
+		$('#location-select option.active').hide();
+		$('#location-select option.inactive').show();
+	}
+	else
+	{
+		$('#location-select option.active').show();
+		$('#location-select option.inactive').show();
+	}
+}
+
 $(function(){
 
 	$('#location-type-select').on('change', function(){
 		location_type = $(this).val();
-		if(location_type == "active")
-		{
-			
-		}
-		else if(location_type == "inactive")
-		{
-
-		}
-		else
-		{
-			
-		}
+		
 	});
 
 	$('#getStatsBtn').on('click', function(){
