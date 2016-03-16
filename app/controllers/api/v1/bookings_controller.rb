@@ -357,15 +357,15 @@ module Api
 	    if @has_session_booking
 
 	      #@session_booking.sessions_taken = @bookings.size
-	      sessions_missing = @session_booking.sessions_amount - @bookings.size
-	      @session_booking.sessions_taken = @bookings.size
+	      sessions_missing = @session_booking.sessions_amount - 1
+	      @session_booking.sessions_taken = 1
 	      @session_booking.save
 	      
 
 	      for i in 0..sessions_missing-1
 
-	        if !first_booking.nil?
-	          new_booking = first_booking.dup
+	        if !@booking.nil?
+	          new_booking = @booking.dup
 	          new_booking.is_session = true
 	          new_booking.session_booking_id = @session_booking.id
 	          new_booking.user_session_confirmed = false
