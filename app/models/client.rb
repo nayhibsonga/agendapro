@@ -754,6 +754,7 @@ class Client < ActiveRecord::Base
 
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
+    
     spreadsheet = open_spreadsheet(file)
 
     company = Company.find(company_id)
@@ -917,12 +918,84 @@ class Client < ActiveRecord::Base
     end
   end
 
+  # def self.open_spreadsheet(file)
+  #   case File.extname(file.original_filename)
+  #   when ".csv" then Roo::Csv.new(file.path, file_warning: :ignore)
+  #   when ".xls" then Roo::Excel.new(file.path, file_warning: :ignore)
+  #   when ".xlsx" then Roo::Excelx.new(file.path, file_warning: :ignore)
+  #   end
+  # end
+
   def self.open_spreadsheet(file)
-    case File.extname(file.original_filename)
-    when ".csv" then Roo::Csv.new(file.path, file_warning: :ignore)
-    when ".xls" then Roo::Excel.new(file.path, file_warning: :ignore)
-    when ".xlsx" then Roo::Excelx.new(file.path, file_warning: :ignore)
+    file_name = file.original_filename
+    file_path = file.path
+    begin
+      case File.extname(file_name)
+      when ".csv"
+        # Try to identify separator type
+        # Take a wild guess by column count (totally improvable)
+        # Accept , ; \t
+        # ,
+        sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ","})
+
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
+        end
+
+        # ;
+        sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ";"})
+        
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
+        end
+
+        # \t
+        sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: "\t"})
+        
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
+        end
+
+        return nil
+
+      when ".xlsx"
+        Roo::Excelx.new(file_path, file_warning: :ignore)
+      when ".xlsm"
+        Roo::Excelx.new(file_path, file_warning: :ignore)
+      when ".ods"
+        Roo::OpenOffice.new(file_path, file_warning: :ignore)
+      when ".xls"
+        begin
+          Roo::Excel.new(file_path, file_warning: :ignore)
+        rescue
+          Roo::Excel2003XML.new(file_path, file_warning: :ignore)
+        end
+      when ".xml"
+        Roo::Excel2003XML.new(file_path, file_warning: :ignore)
+      end
+    rescue
+      return nil
     end
+  end
+
+  def self.test_write(input)
+    book = Spreadsheet::Workbook.new
+    write_sheet = book.create_worksheet
+    row_num = 0
+    input.each do |row|
+      write_sheet.row(row_num).replace row
+      row_num +=1
+    end
+    book.write "/home/zuru/AgendaPro/roo_test/to.xls"
   end
 
   def self.filter(company_id, params)

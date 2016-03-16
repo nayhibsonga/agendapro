@@ -8,6 +8,8 @@ class ClientsController < ApplicationController
   load_and_authorize_resource
   layout "admin"
 
+  include ApplicationHelper
+
   helper_method :sort_column, :sort_direction
 
   # GET /clients
@@ -539,7 +541,7 @@ class ClientsController < ApplicationController
     filename_arr = params[:file].original_filename.split(".")
     if filename_arr.length > 0
       extension = filename_arr[filename_arr.length - 1]
-      if extension == "csv" || extension == "xls"
+      if extension == "csv" || extension == "xls" || extension == "xlsx" || extension == "xlsm" || extension == "ods" || extension == "xml"
         message = Client.import(params[:file], current_user.company_id)
       else
         message = "La extensión del archivo no es correcta. Sólo se pueden importar archivos xls y csv."
@@ -824,6 +826,22 @@ class ClientsController < ApplicationController
     folders_prefixes.each do |folder|
       sub_str = folder.prefix[0, folder.prefix.rindex("/")]
       @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
+    end
+
+  end
+
+  def client_base_pdf
+
+    @company = current_user.company
+    @filename = "detalle_carga"
+    date = DateTime.now
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = ClientsBasePdf.new(@company.id)
+        send_data pdf.render, filename: @filename + "_" + date.to_s[0,10] + '.pdf', type: 'application/pdf'
+      end
     end
 
   end
