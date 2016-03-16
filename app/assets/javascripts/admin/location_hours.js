@@ -307,6 +307,7 @@ function places() {
     } else {
       $('#location_address, #location_latitude, #location_longitude').val('');
     };
+    $('#address').valid();
   });
 
   function geolocate() {
