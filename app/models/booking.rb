@@ -663,7 +663,6 @@ class Booking < ActiveRecord::Base
           if self.status != Status.find_by(:name => "Cancelado")
             if self.booking_group.nil?
               sendings.build(method: 'new_booking').save
-              #BookingMailer.book_service_mail(self)
             end
           end
         end
@@ -673,7 +672,7 @@ class Booking < ActiveRecord::Base
 
   def send_validate_mail
     if !self.id.nil?
-      BookingMailer.book_service_mail(self)
+      sendings.build(method: 'new_booking').save
     end
   end
 
@@ -688,17 +687,17 @@ class Booking < ActiveRecord::Base
       if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
         if !self.is_session_booked
           if changed_attributes['is_session_booked']
-            BookingMailer.cancel_booking(self)
+            sendings.build(method: 'cancel_booking').save
           end
         else
           #if (changed_attributes['start'] || changed_attributes['is_session_booked']) && self.user_session_confirmed
           if changed_attributes['is_session_booked']
-            BookingMailer.book_service_mail(self)
+            sendings.build(method: 'new_booking').save
           else
             if changed_attributes['start']
               BookingMailer.update_booking(self, changed_attributes['start'])
             else
-              BookingMailer.book_service_mail(self)
+              sendings.build(method: 'new_booking').save
             end
           end
           #end
@@ -708,7 +707,7 @@ class Booking < ActiveRecord::Base
   end
 
   def send_session_cancel_mail
-    BookingMailer.cancel_booking(self)
+    sendings.build(method: 'cancel_booking').save
   end
 
   def send_update_mail
@@ -718,7 +717,7 @@ class Booking < ActiveRecord::Base
     if self.start > Time.now - eval(ENV["TIME_ZONE_OFFSET"])
       if self.status == Status.find_by(:name => "Cancelado")
         if changed_attributes['status_id']
-          BookingMailer.cancel_booking(self)
+          sendings.build(method: 'cancel_booking').save
         end
         #if !self.payed_booking.nil?
         # BookingMailer.cancel_payment_mail(self.payed_booking, 1)
@@ -743,11 +742,13 @@ class Booking < ActiveRecord::Base
           if booking.send_mail
             if booking.is_session
               if booking.is_session_booked and booking.user_session_confirmed
-                BookingMailer.book_reminder_mail(booking)
+                booking.sendings.build(method: 'reminder_booking').save
+                # BookingMailer.book_reminder_mail(booking)
                 puts 'Mail enviado a mailer booking_id: ' + booking.id.to_s
               end
             else
-              BookingMailer.book_reminder_mail(booking)
+              booking.sendings.build(method: 'reminder_booking').save
+              # BookingMailer.book_reminder_mail(booking)
               puts 'Mail enviado a mailer booking_id: ' + booking.id.to_s
             end
           end
@@ -761,20 +762,25 @@ class Booking < ActiveRecord::Base
     address = ''
     date = I18n.l self.start
     if !self.service.outcall
-      address = self.location.name + " - " + self.location.long_address_with_second_address
+      address = "#{self.location.name} - #{self.location.long_address_with_second_address}"
     else
       address = "A domicilio"
     end
     event = RiCal.Calendar do |cal|
       cal.event do |event|
-        event.summary = self.service.name + ' en ' + self.location.company.name
-        event.description = "Datos de tu reserva:\n- Fecha: " + date + "\n- Servicio: " + self.service.name + "\n- Prestador: " + self.service_provider.public_name + "\n- Lugar: " + address + ".\nNOTA: por favor asegúrate que el calendario de tu celular esté en la zona horario correcta. En caso contrario, este recordatorio podría quedar guardado para otra hora."
+        event.summary = "#{self.service.name} en #{self.location.company.name}"
+        event.description = "Datos de tu reserva:\n
+          \t- Fecha: #{date}\n
+          \t- Servicio: #{self.service.name}\n
+          \t- Prestador: #{self.service_provider.public_name}\n
+          \t- Lugar: #{address}.\n
+          NOTA: por favor asegúrate que el calendario de tu celular esté en la zona horario correcta. En caso contrario, este recordatorio podría quedar guardado para otra hora."
         event.dtstart =  self.start.strftime('%Y%m%dT%H%M%S')
         event.dtend = self.end.strftime('%Y%m%dT%H%M%S')
         event.location = self.location.long_address_with_second_address
         event.add_attendee self.client.email
         event.alarm do
-          description "Recuerda tu hora de " + booking.service.name + " en "  + booking.location.company.name
+          description "Recuerda tu hora de #{booking.service.name} en #{booking.location.company.name}"
         end
       end
     end

@@ -1,0 +1,152 @@
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
+    <h4 class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-family:inherit;font-weight:500;line-height:1.1;color:inherit;margin-top:10px;margin-bottom:10px;font-size:20px;text-align:center;"><%= @company.name %></h4>
+    <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:center;"><%= @name %>, <%= if @client then "tu reserva fue recibida exitosamente" else "fue reservado un servicio contigo" end %></p>
+  </td>
+</tr>
+<tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;line-height:1.42857143;vertical-align:top;padding-top:10px;padding-bottom:10px;padding-right:20px;padding-left:20px;">
+    <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:center;font-size:20px;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">Resumen</b> de <%= "#{@client ? 'tu' : 'la'}" %> reserva</p>
+  </td>
+</tr>
+<% if @client %>
+<tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;line-height:1.42857143;vertical-align:top;padding-top:10px;padding-bottom:10px;padding-right:20px;padding-left:20px;">
+    <div class="responsive-table" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;min-height:.01%;overflow-x:auto;width:100%;overflow-y:hidden;-ms-overflow-style:-ms-autohiding-scrollbar;min-width:440px;">
+      <table class="table table-booking" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-spacing:0;border-collapse:collapse;font-family:'Roboto Condensed', sans-serif;font-size:12px;font-weight:300;color:#505050;max-width:100%;margin-right:auto;margin-left:auto;width:80%;background-color:transparent;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;margin-bottom:0;">
+        <tbody style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+          <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-color:#ddd;width:1%;border-top-style:none;min-width:150px;">
+              <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+                <%= image_tag "http://agendapro.co/assets/email/what.png", alt: "¿Qué Reservaste?", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;width:50px;height:50px;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;border-width:1px;border-style:solid;border-color:#ffffff;border-radius:6px;" %>
+              </div>
+              <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">¿Qué Reservaste?</b></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= @book.service.name %></p>
+              </div>
+            </td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-color:#ddd;width:1%;border-top-style:none;min-width:150px;">
+              <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+                <%= image_tag 'http://agendapro.co/assets/email/when.png', alt: "¿Cuando?", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;width:50px;height:50px;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;border-width:1px;border-style:solid;border-color:#ffffff;border-radius:6px;" %>
+              </div>
+              <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">¿Cuándo?</b></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= l(@book.start) %></p>
+              </div>
+            </td>
+          </tr>
+          <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-color:#ddd;width:1%;border-top-style:none;min-width:150px;">
+              <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+                <%= image_tag "http://agendapro.co/assets/email/where.png", alt: "¿Dónde?", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;width:50px;height:50px;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;border-width:1px;border-style:solid;border-color:#ffffff;border-radius:6px;" %>
+              </div>
+              <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">¿Dónde?</b></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= @book.location.short_address_with_second_address %></p>
+              </div>
+            </td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-color:#ddd;width:1%;border-top-style:none;min-width:150px;">
+              <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+                <%= image_tag "http://agendapro.co/assets/email/question.png", alt: "Consultas", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;width:50px;height:50px;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;border-width:1px;border-style:solid;border-color:#ffffff;border-radius:6px;" %>
+              </div>
+              <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">Consultas</b></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= number_to_phone(@book.location.phone) %></p>
+              </div>
+            </td>
+          </tr>
+          <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-color:#ddd;width:1%;border-top-style:none;min-width:150px;">
+              <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+                <%= image_tag "http://agendapro.co/assets/email/who.png", alt: "¿Con Quién?", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;width:50px;height:50px;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;border-width:1px;border-style:solid;border-color:#ffffff;border-radius:6px;" %>
+              </div>
+              <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">¿Con Quién?</b></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= @book.service_provider.public_name unless @company_setting.provider_preference == 2 %></p>
+              </div>
+            </td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-color:#ddd;width:1%;border-top-style:none;min-width:150px;">
+              <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+                <%= image_tag "http://agendapro.co/assets/email/notes.png", alt: "Notas", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;width:50px;height:50px;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;border-width:1px;border-style:solid;border-color:#ffffff;border-radius:6px;" %>
+              </div>
+              <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">Notas</b></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= @book.notes if @book.notes.present? %></p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </td>
+</tr>
+<% else %>
+<tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;line-height:1.42857143;vertical-align:top;padding-top:10px;padding-bottom:10px;padding-right:20px;padding-left:20px;">
+    <div class="responsive-table" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;min-height:.01%;overflow-x:auto;width:100%;overflow-y:hidden;-ms-overflow-style:-ms-autohiding-scrollbar;min-width:440px;">
+      <table class="table table-booking" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-spacing:0;border-collapse:collapse;font-family:'Roboto Condensed', sans-serif;font-size:12px;font-weight:300;color:#505050;max-width:100%;margin-right:auto;margin-left:auto;width:80%;background-color:transparent;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;margin-bottom:0;">
+        <tbody style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+          <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-color:#ddd;width:1%;border-top-style:none;min-width:150px;">
+              <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+                <%= image_tag "http://agendapro.co/assets/email/what.png", alt: "¿Qué Reservaste?", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;width:50px;height:50px;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;border-width:1px;border-style:solid;border-color:#ffffff;border-radius:6px;" %>
+              </div>
+              <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">¿Qué Reservaron?</b></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= @book.service.name %></p>
+              </div>
+            </td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-color:#ddd;width:1%;border-top-style:none;min-width:150px;">
+              <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+                <%= image_tag "http://agendapro.co/assets/email/when.png", alt: "¿Cuando?", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;width:50px;height:50px;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;border-width:1px;border-style:solid;border-color:#ffffff;border-radius:6px;" %>
+              </div>
+              <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">¿Cuándo?</b></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= l(@book.start) %></p>
+              </div>
+            </td>
+          </tr>
+          <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-color:#ddd;width:1%;border-top-style:none;min-width:150px;">
+              <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+                <%= image_tag "http://agendapro.co/assets/email/who.png", alt: "¿Con Quién?", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;width:50px;height:50px;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;border-width:1px;border-style:solid;border-color:#ffffff;border-radius:6px;" %>
+              </div>
+              <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">¿Quién?</b></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= "#{@book.client.first_name} #{@book.client.last_name}" %></p>
+              </div>
+            </td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-color:#ddd;width:1%;border-top-style:none;min-width:150px;">
+              <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+                <%= image_tag "http://agendapro.co/assets/email/notes.png", alt: "Notas", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;width:50px;height:50px;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;border-width:1px;border-style:solid;border-color:#ffffff;border-radius:6px;" %>
+              </div>
+              <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">Notas</b></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= @book.notes if @book.notes.present? %></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= @book.company_comment if @book.company_comment.present? %></p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </td>
+</tr>
+<% end %>
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
+    <div class="pull-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:center;margin-left:auto;margin-right:auto;">
+      <% if @client && @company_setting.can_edit && @book.service.online_booking && @book.service_provider.online_booking %>
+      <%= link_to "Modificar Reserva", booking_edit_url(:confirmation_code => @book.confirmation_code), class: "btn btn-lg btn-orange", target: "_blank", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:10px;padding-bottom:10px;padding-right:16px;padding-left:16px;font-size:18px;line-height:1.33;border-radius:6px;color:#ffffff;background-color:#fd9610;border-color:#db7400;margin-bottom:5px;" %>
+      <% end %>
+      <% if @client && @company_setting.can_cancel %>
+      <%= link_to "Cancelar Reserva", booking_cancel_url(:confirmation_code => @book.confirmation_code), class: "btn btn-lg btn-red", target: "_blank", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:10px;padding-bottom:10px;padding-right:16px;padding-left:16px;font-size:18px;line-height:1.33;border-radius:6px;color:#ffffff;background-color:#fd633f;border-color:#e55938;margin-bottom:5px;" %>
+      <% end %>
+    </div>
+  </td>
+</tr>
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
+    <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;"><% @company_setting.signature %></p>
+  </td>
+</tr>

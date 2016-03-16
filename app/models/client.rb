@@ -596,7 +596,8 @@ class Client < ActiveRecord::Base
           else
             #Send regular reminder
             puts "Booking " + single_booking.id.to_s + " will be sent alone."
-            BookingMailer.book_reminder_mail(single_booking)
+            single_booking.sendings.build(method: 'reminder_booking').save
+            # BookingMailer.book_reminder_mail(single_booking)
           end
         end
 
