@@ -1,3 +1,8 @@
+$.validator.addMethod('addressCheck', function(value, element, params) {
+    var address = $('#location_address').val();
+    return address.length > 0;
+}, 'La dirección no es correcta');
+
 $(function() {
 	$('#new_location, [id^="edit_location_"]').validate({
 		errorPlacement: function(error, element) {
@@ -20,7 +25,9 @@ $(function() {
 				required: true
 			},
 			'address': {
-				required: true
+				required: true,
+        minlength: 3,
+				addressCheck: true
 			},
 			'location[phone]': {
 				required: true,
@@ -60,5 +67,4 @@ $(function() {
 			$('input[name="location[email]"]').next().empty()
 		};
 	});
-
 });
