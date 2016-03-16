@@ -17,10 +17,13 @@ function loadStats()
 		return;
 	}
 
+	var date_from = $('#from').val();
+	var date_to = $('#to').val();
+
 	$.ajax({
 		url: '/locations_products_stats',
 		method: 'get',
-		data: {location_ids: location_ids},
+		data: {location_ids: location_ids, from: date_from, to: date_to},
 		error: function(response){
 
 		},
@@ -124,5 +127,22 @@ $(function(){
 	    	$('#location-select').show();
 	    }
 	});
+
+	$(".datepicker").datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    autoSize: true,
+	    firstDay: 1,
+	    changeMonth: true,
+	    changeYear: true,
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	        prevText: 'Atrás',
+	        nextText: 'Adelante',
+	        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	        today: 'Hoy',
+	        clear: ''
+	  });
 
 });

@@ -181,6 +181,8 @@ class ProductsController < ApplicationController
       @cashier_sellers << cashier_tuple
     end
 
+    @sellers = @provider_sellers + @user_sellers + @cashier_sellers
+
     respond_to do |format|
       format.html { render :partial => 'locations_stats' }
       format.json { render :json => @products }

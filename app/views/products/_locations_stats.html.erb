@@ -1,0 +1,138 @@
+<div class="row" style="margin-top: 15px;">
+	<div class="col-md-12">
+		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
+			Productos más vendidos por recaudación
+		</div>
+		<div>
+			<table>
+				<tr>
+					<td>Producto</td>
+					<td>Cantidad</td>
+					<td>Recaudación</td>
+				</tr>
+				<% @products.sort_by{ |product_tuple| [product_tuple[2], product_tuple[1], product_tuple[0].name]}.reverse.each do |product_arr| %>
+					<tr>
+						<td><%= product_arr[0].name %></td>
+						<td><%= product_arr[2].to_s %></td>
+						<td><%= product_arr[1].to_s %></td>
+					</tr>
+				<% end %>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="row" style="margin-top: 15px;">
+	<div class="col-md-12">
+		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
+			Productos más vendidos por cantidad
+		</div>
+		<div>
+			<table>
+				<tr>
+					<td>Producto</td>
+					<td>Cantidad</td>
+					<td>Recaudación</td>
+				</tr>
+				<% @products.sort_by{ |product_tuple| [product_tuple[1], product_tuple[2], product_tuple[0].name]}.reverse.each do |product_arr| %>
+					<tr>
+						<td><%= product_arr[0].name %></td>
+						<td><%= product_arr[2].to_s %></td>
+						<td><%= product_arr[1].to_s %></td>
+					</tr>
+				<% end %>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="row" style="margin-top: 15px;">
+	<div class="col-md-12">
+		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
+			Ranking de vendedores por recaudación
+		</div>
+		<div>
+			<table>
+				<tr>
+					<td>Vendedor</td>
+					<td>Tipo</td>
+					<td>Cantidad</td>
+					<td>Recaudación</td>
+				</tr>
+				<% @sellers.sort_by{ |seller| [seller[1], seller[2]]}.reverse.each do |seller| %>
+					<tr>
+						<% if seller[0].is_a?(ServiceProvider) %>
+							<td>
+								<%= seller[0].public_name %>
+							</td>
+							<td>
+								Prestador
+							</td>
+						<% elsif seller[0].is_a?(User) %>
+							<td>
+							<%= seller[0].full_name %>
+							</td>
+							<td>
+								Usuario (<%= seller[0].role.name %>)
+							</td>
+						<% else %>
+							<td>
+								<%= seller[0].name %>
+							</td>
+							<td>
+								Cajero
+							</td>
+						<% end %>
+						<td><%= seller[2].to_s %></td>
+						<td><%= seller[1].to_s %></td>
+					</tr>
+				<% end %>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="row" style="margin-top: 15px;">
+	<div class="col-md-12">
+		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
+			Ranking de vendedores por cantidad
+		</div>
+		<div>
+			<table>
+				<tr>
+					<td>Vendedor</td>
+					<td>Tipo</td>
+					<td>Cantidad</td>
+					<td>Recaudación</td>
+				</tr>
+				<% @sellers.sort_by{ |seller| [seller[2], seller[1]]}.reverse.each do |seller| %>
+					<tr>
+						
+						<% if seller[0].is_a?(ServiceProvider) %>
+							<td>
+								<%= seller[0].public_name %>
+							</td>
+							<td>
+								Prestador
+							</td>
+						<% elsif seller[0].is_a?(User) %>
+							<td>
+							<%= seller[0].full_name %>
+							</td>
+							<td>
+								Usuario (<%= seller[0].role.name %>)
+							</td>
+						<% else %>
+							<td>
+								<%= seller[0].name %>
+							</td>
+							<td>
+								Cajero
+							</td>
+						<% end %>
+
+						<td><%= seller[2].to_s %></td>
+						<td><%= seller[1].to_s %></td>
+					</tr>
+				<% end %>
+			</table>
+		</div>
+	</div>
+</div>
