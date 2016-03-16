@@ -8,14 +8,26 @@ function loadStats()
 	$("#location-select option").each(function(){
 		if ($(this).is(':selected'))
 		{
-		  	provider_ids.push($(this).val());
+		  	location_ids.push($(this).val());
 		}
 	});
 
-	if(provider_ids.length == 0)
+	if(location_ids.length == 0)
 	{
 		return;
 	}
+
+	$.ajax({
+		url: '/locations_products_stats',
+		method: 'get',
+		data: {location_ids: location_ids},
+		error: function(response){
+
+		},
+		success: function(response){
+			$('#render_content').append(response);
+		}
+	})
 }
 
 function changeLocations()
@@ -25,24 +37,26 @@ function changeLocations()
 	if(location_type == "active")
 	{
 		$('#location-select option.inactive').each(function(){
-			$('.location-option input[value="' + $(this).val() + '"]').hide();
+			$('.location-option input[value="' + $(this).val() + '"]').closest('li').hide();
+			$('.location-option input[value="' + $(this).val() + '"]').prop('checked', false);
 		});
 		$('#location-select option.active').each(function(){
-			$('.location-option input[value="' + $(this).val() + '"]').show();
+			$('.location-option input[value="' + $(this).val() + '"]').closest('li').show();
 		});
 	}
 	else if(location_type == "inactive")
 	{
 		$('#location-select option.inactive').each(function(){
-			$('.location-option input[value="' + $(this).val() + '"]').show();
+			$('.location-option input[value="' + $(this).val() + '"]').closest('li').show();
 		});
 		$('#location-select option.active').each(function(){
-			$('.location-option input[value="' + $(this).val() + '"]').hide();
+			$('.location-option input[value="' + $(this).val() + '"]').closest('li').hide();
+			$('.location-option input[value="' + $(this).val() + '"]').prop('checked', false);
 		});
 	}
 	else
 	{
-		$('.location-option').show();
+		$('.location-option').closest('li').show();
 	}
 }
 
@@ -50,7 +64,7 @@ $(function(){
 
 	$('#location-type-select').on('change', function(){
 		location_type = $(this).val();
-		
+		changeLocations();
 	});
 
 	$('#getStatsBtn').on('click', function(){
@@ -104,7 +118,7 @@ $(function(){
 	    	return 'location-option';
 	    },
 	    onChange: function(option, checked, select){
-
+	    	loadStats();
 	    },
 	    onInitialized: function(select, container){
 	    	$('#location-select').show();

@@ -180,6 +180,12 @@ class ProductsController < ApplicationController
       cashier_tuple = [cashier, product_price_sum, product_quantity_sum]
       @cashier_sellers << cashier_tuple
     end
+
+    respond_to do |format|
+      format.html { render :partial => 'locations_stats' }
+      format.json { render :json => @products }
+    end
+
   end
 
   def show
