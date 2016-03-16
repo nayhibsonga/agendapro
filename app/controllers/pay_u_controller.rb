@@ -23,8 +23,8 @@ class PayUController < ApplicationController
     task = crypt.decrypt_and_verify(params[:encrypted_task])
     task = task.to_hash
 
-    @merchantId = "540049"
-    @accountId = "547737"
+    @merchantId = "558490"
+    @accountId = "560923"
     @description = task[:description]
     @referenceCode = task[:reference]
     @amount = task[:amount]
@@ -36,7 +36,7 @@ class PayUController < ApplicationController
     @sourceUrl = task[:source_url]
     @buttonType = "SIMPLE"
     # “ApiKey~merchantId~referenceCode~amount~currency”.
-    @signature = Digest::MD5.hexdigest('5LG9s41B7yZWmYuLPs74I79dQE~' + @merchantId + '~' + @referenceCode + '~' + @amount + '~' + @currency)
+    @signature = Digest::MD5.hexdigest('lcYvfI1vUATdee2D70HJLbh8XpApi~' + @merchantId + '~' + @referenceCode + '~' + @amount + '~' + @currency)
 
     render layout: "empty"
   end
