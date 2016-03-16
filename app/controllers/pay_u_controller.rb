@@ -36,7 +36,7 @@ class PayUController < ApplicationController
     @sourceUrl = task[:source_url]
     @buttonType = "SIMPLE"
     # “ApiKey~merchantId~referenceCode~amount~currency”.
-    @signature = Digest::MD5.hexdigest('lcYvfI1vUATdee2D70HJLbh8XpApi~' + @merchantId + '~' + @referenceCode + '~' + @amount + '~' + @currency)
+    @signature = Digest::MD5.hexdigest('lcYvfI1vUATdee2D70HJLbh8Xp~' + @merchantId + '~' + @referenceCode + '~' + @amount + '~' + @currency)
 
     render layout: "empty"
   end
