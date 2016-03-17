@@ -2424,7 +2424,7 @@ class PaymentsController < ApplicationController
     sales_cash_transaction.is_internal_transaction = params[:is_internal]
     sales_cash_transaction.amount = params[:amount].to_f
     sales_cash_transaction.user_id = current_user.id
-    sales_cash_transaction.date = params[:date].to_date
+    sales_cash_transaction.date = params[:date].to_datetime
     sales_cash_transaction.notes = params[:notes]
 
     if sales_cash_transaction.is_internal_transaction
