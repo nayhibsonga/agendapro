@@ -22,6 +22,13 @@ class Attribute < ActiveRecord::Base
 
 	after_create :create_clients_attributes
 	after_save :check_file, :generate_slug, :rearrange
+	after_destroy :check_left
+
+	def check_left
+		if self.company.custom_attributes.count < 1
+			company.custom_filters.destroy_all
+		end
+	end
 
 	def rearrange
 

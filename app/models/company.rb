@@ -3,6 +3,7 @@ class Company < ActiveRecord::Base
 	belongs_to :plan
 	belongs_to :payment_status
 	belongs_to :country
+	belongs_to :default_plan, class_name: 'Plan', foreign_key: "default_plan_id"
 
 	has_many :company_economic_sectors
 	has_many :economic_sectors, :through => :company_economic_sectors
@@ -81,6 +82,10 @@ class Company < ActiveRecord::Base
 	end
 
 	def is_plan_capable(name)
+
+		if self.plan.name == "Trial" || self.payment_status.name == "Trial"
+			return true
+		end
 
 		if self.plan.custom
 			return false
@@ -431,11 +436,17 @@ class Company < ActiveRecord::Base
 
 		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
 
-			#plan_id = Plan.where.not(id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
-			plan = Plan.where(name: "Personal", custom: false).first
-			if company.locations.where(active: true).count > 1 || company.service_providers.where(location_id: company.locations.where(active: true).pluck(:id), active:true).count > 1
-				plan = Plan.where(name: "Normal", custom: false).first
-			end
+			#New plan should be the default one
+			plan = company.default_plan
+
+			#If default wasn't changed, then set plan by locations and providers number
+			if plan.name == "Normal" || plan.name == "Personal"				
+				if company.locations.where(active: true).count > 1 || company.service_providers.where(location_id: company.				locations.where(active: true).pluck(:id), active:true).count > 1
+					plan = Plan.where(name: "Normal", custom: false).first
+				else
+					plan = Plan.where(name: "Personal", custom: false).first
+				end
+ 			end
 
 			sales_tax = company.country.sales_tax
 

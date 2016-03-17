@@ -2,7 +2,7 @@ json.id @service.id
 json.location_id @location.id
 json.latitude @location.latitude
 json.longitude @location.longitude
-json.address @location.get_full_address
+json.address @location.long_address_with_second_address
 json.phone @location.phone
 json.logo @location.company.logo && @location.company.logo.page && @location.company.logo.page.url ? request.protocol + request.host_with_port + @location.company.logo.page.url : ""
 json.booking_conditions @booking_conditions

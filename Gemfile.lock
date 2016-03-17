@@ -298,6 +298,7 @@ GEM
     multi_json (1.10.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
+    mysql2 (0.4.3)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.2)
@@ -379,10 +380,9 @@ GEM
       mime-types (~> 1.16)
       rdoc (>= 2.4.2)
     ri_cal (0.8.8)
-    roo (1.13.2)
-      nokogiri
-      rubyzip
-      spreadsheet (> 0.6.4)
+    roo (2.3.2)
+      nokogiri (~> 1)
+      rubyzip (~> 1.1, < 2.0.0)
     rspec-core (3.0.4)
       rspec-support (~> 3.0.0)
     rspec-expectations (3.0.4)
@@ -399,7 +399,6 @@ GEM
       rspec-mocks (~> 3.0.0)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.4)
-    ruby-ole (1.2.11.8)
     rubyzip (1.1.7)
     sass (3.4.16)
     sass-rails (5.0.3)
@@ -416,8 +415,6 @@ GEM
       multi_json (~> 1.0)
       rubyzip (~> 1.0)
       websocket (~> 1.0)
-    spreadsheet (1.0.1)
-      ruby-ole (>= 1.0)
     sprockets (2.12.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -498,6 +495,7 @@ DEPENDENCIES
   mandrill-api
   mini_magick
   mobu
+  mysql2
   newrelic_rpm
   oink
   omniauth

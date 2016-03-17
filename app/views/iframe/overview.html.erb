@@ -25,7 +25,7 @@
                         <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" data-outcall="<%= local.outcall %>" <%= "checked" if @selectedLocal.to_i == local.id %> >
                         <p>
                           <strong><%= local.name %></strong> <br/>
-                          <%= if !local.outcall then local.address+', '+local.district.name else "A Domicilio" end %>
+                          <%= if !local.outcall then local.short_address else "A Domicilio" end %>
                         </p>
 
                       </label>

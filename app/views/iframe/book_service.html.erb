@@ -60,7 +60,7 @@
                       <% end %>
                     </dd>
                     <dt class="dark-gray">¿Dónde?</dt>
-                    <dd class="light-gray"><p><%= @bookings[0].location.address %>, <%= @bookings[0].location.district.name %></p></dd>
+                    <dd class="light-gray"><p><%= @bookings[0].location.short_address %></p></dd>
                     <dt class="dark-gray">¿Con quién?</dt>
                     <dd class="light-gray">
                       <% @bookings.each do |booking| %>

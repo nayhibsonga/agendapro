@@ -7,16 +7,16 @@ class Client < ActiveRecord::Base
   has_many :session_bookings, dependent: :destroy
   has_many :bookings, dependent: :destroy
   has_many :payments, dependent: :destroy
-  has_many :client_files
-  has_many :float_attributes
-  has_many :integer_attributes
-  has_many :text_attributes
-  has_many :textarea_attributes
-  has_many :boolean_attributes
-  has_many :date_attributes
-  has_many :date_time_attributes
-  has_many :file_attributes
-  has_many :categoric_attributes
+  has_many :client_files, dependent: :destroy
+  has_many :float_attributes, dependent: :destroy
+  has_many :integer_attributes, dependent: :destroy
+  has_many :text_attributes, dependent: :destroy
+  has_many :textarea_attributes, dependent: :destroy
+  has_many :boolean_attributes, dependent: :destroy
+  has_many :date_attributes, dependent: :destroy
+  has_many :date_time_attributes, dependent: :destroy
+  has_many :file_attributes, dependent: :destroy
+  has_many :categoric_attributes, dependent: :destroy
 
   scope :from_company, -> (id) { where(company_id: id) if id.present? }
 
@@ -249,7 +249,7 @@ class Client < ActiveRecord::Base
         if !categoric_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = categoric_attribute.attribute_category_id
         else
-          custom_attributes[attribute.slug + "_attribute"] = attribute.attribute_categories.where(category: "Otra").id
+          custom_attributes[attribute.slug + "_attribute"] = attribute.attribute_categories.where(category: "Otra").first.id
         end
 
       end
@@ -335,7 +335,7 @@ class Client < ActiveRecord::Base
 
       when "date"
 
-        if !param_value.nil?
+        if !param_value.blank?
           param_value = param_value.gsub('/', '-')
         end
 
@@ -349,14 +349,14 @@ class Client < ActiveRecord::Base
 
       when "datetime"
 
-        if !param_value.nil?
+        if !param_value.blank?
           param_value = param_value.gsub('/', '-')
           date_hour = params[attribute.slug + "_attribute_hour"]
           date_minute = params[attribute.slug + "_attribute_minute"]
         end
 
         complete_datetime = nil
-        if !param_value.nil?
+        if !param_value.blank?
           complete_datetime = param_value + " " + date_hour + ":" + date_minute + ":00"
         end
 
@@ -372,7 +372,7 @@ class Client < ActiveRecord::Base
 
         file_attribute = FileAttribute.where(attribute_id: attribute.id, client_id: self.id).first
 
-        if !param_value.nil?
+        if !param_value.blank?
 
           file_name = attribute.name
           folder_name = attribute.slug
@@ -627,7 +627,7 @@ class Client < ActiveRecord::Base
 
     # USER
       @user = {}
-      @user[:where] = bookings[0].location.address + ', ' + bookings[0].location.district.name
+      @user[:where] = bookings[0].location.short_address
       @user[:phone] = bookings[0].location.phone
       @user[:name] = bookings[0].client.first_name
       @user[:send_mail] = bookings[bookings.length - 1].send_mail
@@ -906,6 +906,7 @@ class Client < ActiveRecord::Base
 
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
+    
     spreadsheet = open_spreadsheet(file)
 
     company = Company.find(company_id)
@@ -1069,12 +1070,84 @@ class Client < ActiveRecord::Base
     end
   end
 
+  # def self.open_spreadsheet(file)
+  #   case File.extname(file.original_filename)
+  #   when ".csv" then Roo::Csv.new(file.path, file_warning: :ignore)
+  #   when ".xls" then Roo::Excel.new(file.path, file_warning: :ignore)
+  #   when ".xlsx" then Roo::Excelx.new(file.path, file_warning: :ignore)
+  #   end
+  # end
+
   def self.open_spreadsheet(file)
-    case File.extname(file.original_filename)
-    when ".csv" then Roo::Csv.new(file.path, file_warning: :ignore)
-    when ".xls" then Roo::Excel.new(file.path, file_warning: :ignore)
-    when ".xlsx" then Roo::Excelx.new(file.path, file_warning: :ignore)
+    file_name = file.original_filename
+    file_path = file.path
+    begin
+      case File.extname(file_name)
+      when ".csv"
+        # Try to identify separator type
+        # Take a wild guess by column count (totally improvable)
+        # Accept , ; \t
+        # ,
+        sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ","})
+
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
+        end
+
+        # ;
+        sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ";"})
+        
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
+        end
+
+        # \t
+        sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: "\t"})
+        
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
+        end
+
+        return nil
+
+      when ".xlsx"
+        Roo::Excelx.new(file_path, file_warning: :ignore)
+      when ".xlsm"
+        Roo::Excelx.new(file_path, file_warning: :ignore)
+      when ".ods"
+        Roo::OpenOffice.new(file_path, file_warning: :ignore)
+      when ".xls"
+        begin
+          Roo::Excel.new(file_path, file_warning: :ignore)
+        rescue
+          Roo::Excel2003XML.new(file_path, file_warning: :ignore)
+        end
+      when ".xml"
+        Roo::Excel2003XML.new(file_path, file_warning: :ignore)
+      end
+    rescue
+      return nil
     end
+  end
+
+  def self.test_write(input)
+    book = Spreadsheet::Workbook.new
+    write_sheet = book.create_worksheet
+    row_num = 0
+    input.each do |row|
+      write_sheet.row(row_num).replace row
+      row_num +=1
+    end
+    book.write "/home/zuru/AgendaPro/roo_test/to.xls"
   end
 
   def self.filter(company_id, params)

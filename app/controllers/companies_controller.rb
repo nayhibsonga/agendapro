@@ -492,11 +492,18 @@ class CompaniesController < ApplicationController
 
 		@price = 0
 	    if @company.payment_status == PaymentStatus.find_by_name("Trial")
-	      if @company.locations.count > 1 || @company.service_providers.count > 1
-	        @price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier
-	      else
-	        @price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier
-	      end
+	    	plan = @company.default_plan
+
+	    	if plan.name == "Normal" || plan.name == "Personal"				
+				if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
+					plan = Plan.where(name: "Normal", custom: false).first
+				else
+					plan = Plan.where(name: "Personal", custom: false).first
+				end
+ 			end
+
+	        @price = plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier
+
 	    else
 	      if @company.plan.custom
 	        @price = @company.company_plan_setting.base_price
@@ -516,7 +523,9 @@ class CompaniesController < ApplicationController
 	    @day_number = Time.now.day
 	    @month_number = Time.now.month
 	    @month_days = Time.now.days_in_month
-		@company.months_active_left > 0 ? @plan_1 = (@company.due_amount/(1+@sales_tax) + @price).round(0) : @plan_1 = ((@company.due_amount/(1+@sales_tax) + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
+		#@company.months_active_left > 0 ? @plan_1 = (@company.due_amount/(1+@sales_tax) + @price).round(0) : @plan_1 = ((@company.due_amount/(1+@sales_tax) + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
+
+		@plan_1 = (@company.due_amount/(1+@sales_tax) + @price).round(0)
 
 
 	    @plan_2 = (@plan_1 + @price*1).round(0)
@@ -1144,14 +1153,16 @@ class CompaniesController < ApplicationController
   		return
   	end
 
-		@locations = Location.where(:active => true, online_booking: true, district_id: District.where(city_id: City.where(region_id: Region.where(country_id: Country.find_by(locale: I18n.locale.to_s))))).where(company_id: @company.id).where(id: ServiceProvider.where(active: true, company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).uniq.order(:order, :name)
+		@locations = Location.actives.where(online_booking: true, country_id: Country.find_by(locale: I18n.locale.to_s), company_id: @company.id).where(id: ServiceProvider.actives.where(company_id: @company.id, online_booking: true).joins(:provider_times).joins(:services).where("services.id" => Service.where(active: true, company_id: @company.id, online_booking: true).pluck(:id)).pluck(:location_id).uniq).joins(:location_times).ordered
 
-		unless @company.company_setting.activate_workflow && @company.active && @locations.count > 0
+		unless @company.company_setting.activate_workflow && @company.active && @locations.uniq.count > 0
 			flash[:alert] = "Lo sentimos, el mini-sitio que estás buscando no se encuentra disponible."
 
 			redirect_to root_url(:host => domain)
 			return
 		end
+
+		@locations = @locations.group("locations.id")
 
 		@has_images = false
 		@locations.each do |location|
@@ -1808,6 +1819,26 @@ class CompaniesController < ApplicationController
 		respond_with(@company)
 
 	end
+
+	def select_default_plan
+    
+		@company = Company.find(params[:company_id])
+		@plan_id = params[:plan_id]
+		@plan = Plan.find(@plan_id)
+
+		@company.default_plan_id = @plan_id
+		@company.company_plan_setting.base_price = @plan.plan_countries.find_by_country_id(@company.country.id).price
+
+		if @company.save
+			@company.company_plan_setting.save
+			flash[:notice] = 'Plan guardado correctamente. Puedes cambiarlo cuantas veces quieras hasta que acabe tu período de prueba.'
+			redirect_to :action => 'select_plan', :controller => 'plans'
+		else
+			flash[:alert] = 'Ocurrió un error al elegir el plan.'
+			redirect_to :action => 'select_plan', :controller => 'plans'
+		end
+
+  	end
 
 	private
 
