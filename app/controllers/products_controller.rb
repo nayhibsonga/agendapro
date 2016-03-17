@@ -34,67 +34,6 @@ class ProductsController < ApplicationController
     respond_with(@products)
   end
 
-  def company_stats
-
-    @company = current_user.company
-
-    @from = params[:from].to_datetime.beginning_of_day
-    @to = params[:to].to_datetime.end_of_day
-
-    #Get products ranking by price sum and item quantity in this period
-    @products = []
-
-    @company.products.each do |product|
-      product_price_sum = 0
-      product_quantity_sum = 0
-      product.payment_products.where(payment_id: Payment.where(payment_date: @from..@to).pluck(:id)).each do |pp|
-        product_quantity_sum += pp.quantity
-        product_price_sum += pp.quantity * pp.price
-      end
-      product_tuple = [product, product_price_sum, product_quantity_sum]
-      @products << product_tuple
-    end
-
-    #Get provider sellers ranking in this period
-    @provider_sellers = []
-    @company.service_providers.each do |service_provider|
-      product_price_sum = 0
-      product_quantity_sum = 0
-      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to).pluck(:id), seller_type: 0, seller_id: service_provider.id).each do |pp|
-        product_quantity_sum += pp.quantity
-        product_price_sum += pp.quantity * pp.price
-      end
-      provider_tuple = [service_provider, product_price_sum, product_quantity_sum]
-      @provider_sellers << provider_tuple
-    end
-
-    #Get user sellers ranking in this period
-    @user_sellers = []
-    @company.users.each do |user|
-      product_price_sum = 0
-      product_quantity_sum = 0
-      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to).pluck(:id), seller_type: 1, seller_id: user.id).each do |pp|
-        product_quantity_sum += pp.quantity
-        product_price_sum += pp.quantity * pp.price
-      end
-      user_tuple = [user, product_price_sum, product_quantity_sum]
-      @user_sellers << user_tuple
-    end
-
-    @cashier_sellers = []
-    @company.cashiers.each do |cashier|
-      product_price_sum = 0
-      product_quantity_sum = 0
-      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to).pluck(:id), seller_type: 2, seller_id: cashier.id).each do |pp|
-        product_quantity_sum += pp.quantity
-        product_price_sum += pp.quantity * pp.price
-      end
-      cashier_tuple = [cashier, product_price_sum, product_quantity_sum]
-      @cashier_sellers << cashier_tuple
-    end
-
-  end
-
   def stats
 
     @company = current_user.company
@@ -186,6 +125,63 @@ class ProductsController < ApplicationController
     respond_to do |format|
       format.html { render :partial => 'locations_stats' }
       format.json { render :json => @products }
+    end
+
+  end
+
+  def seller_history
+
+    @from = params[:from].to_datetime.beginning_of_day
+    @to = params[:to].to_datetime.end_of_day
+
+    @locations = Location.find(params[:location_ids])
+
+    #json_response = []
+    @status = "ok"
+
+    if params[:seller_type].blank? || params[:seller_type].to_i > 2 || params[:seller_id].blank?
+      @status = "error"
+    end
+
+    @seller = nil
+    if params[:seller_type].to_i == 0
+      @seller = ServiceProvider.find(params[:seller_id])
+    elsif params[:seller_type].to_i == 1
+      @seller = User.find(params[:seller_id])
+    else
+      @seller = Cashier.find(params[:seller_id])
+    end
+
+    @payment_products = PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids]), seller_type: params[:seller_type], seller_id: params[:seller_id]).order('(quantity * price) desc')
+
+    respond_to do |format|
+      format.html { render :partial => 'seller_history' }
+      format.json { render :json => @payment_products }
+    end
+
+  end
+
+  def product_history
+
+    @product = Product.find(params[:product_id])
+
+    @from = params[:from].to_datetime.beginning_of_day
+    @to = params[:to].to_datetime.end_of_day
+
+    @locations = Location.find(params[:location_ids])
+
+    #json_response = []
+    @status = "ok"
+
+    if params[:product_id].blank?
+      @status = "error"
+    end
+
+    @payment_products = PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids]), product_id: params[:product_id]).order('(quantity * price) desc')
+
+    respond_to do |format|
+      format.html { render :partial => 'product_history' }
+      format.json { render :json => @payment_products }
     end
 
   end

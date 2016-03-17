@@ -574,6 +574,8 @@ Agendapro::Application.routes.draw do
     #Inventory reports
     get '/products_stats', :to => 'products#stats'
     get '/locations_products_stats', :to => 'products#locations_stats'
+    get '/seller_history', :to => 'products#seller_history'
+    get '/product_history', :to => 'products#product_history'
 
   end
 

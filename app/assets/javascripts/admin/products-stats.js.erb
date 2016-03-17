@@ -25,12 +25,87 @@ function loadStats()
 		method: 'get',
 		data: {location_ids: location_ids, from: date_from, to: date_to},
 		error: function(response){
-
+			$('#render_content').empty();
 		},
 		success: function(response){
+			$('#render_content').empty();
 			$('#render_content').append(response);
 		}
 	})
+}
+
+function loadSellerHistory(seller_id, seller_type)
+{
+
+	$('#sellerModal .modal-content').empty();
+
+	var location_ids = [];
+
+	$("#location-select option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	location_ids.push($(this).val());
+		}
+	});
+
+	if(location_ids.length == 0)
+	{
+		return;
+	}
+
+	var date_from = $('#from').val();
+	var date_to = $('#to').val();
+
+	$.ajax({
+		url: '/seller_history',
+		method: 'get',
+		data: {location_ids: location_ids, from: date_from, to: date_to, seller_id: seller_id, seller_type: seller_type},
+		error: function(response){
+
+		},
+		success: function(response){
+			$('#sellerModal .modal-content').append(response);
+			$('#sellerModal').modal('show');
+		}
+	})
+
+}
+
+function loadProductHistory(product_id)
+{
+
+	$('#productModal .modal-content').empty();
+
+	var location_ids = [];
+
+	$("#location-select option").each(function(){
+		if ($(this).is(':selected'))
+		{
+		  	location_ids.push($(this).val());
+		}
+	});
+
+	if(location_ids.length == 0)
+	{
+		return;
+	}
+
+	var date_from = $('#from').val();
+	var date_to = $('#to').val();
+
+	$.ajax({
+		url: '/product_history',
+		method: 'get',
+		data: {location_ids: location_ids, from: date_from, to: date_to, product_id: product_id},
+		error: function(response){
+
+		},
+		success: function(response){
+			$('#productModal .modal-content').append(response);
+			$('#productModal').modal('show');
+		}
+	})
+
 }
 
 function changeLocations()
@@ -144,5 +219,16 @@ $(function(){
 	        today: 'Hoy',
 	        clear: ''
 	  });
+
+	$('body').on('click', '.seller_link', function(){
+		var seller_id = $(this).attr("seller_id");
+		var seller_type = $(this).attr("seller_type");
+		loadSellerHistory(seller_id, seller_type);
+	});
+
+	$('body').on('click', '.product_link', function(){
+		var product_id = $(this).attr("product_id");
+		loadProductHistory(product_id);
+	});
 
 });

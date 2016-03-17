@@ -1,9 +1,16 @@
 <div class="row" style="margin-top: 15px;">
 	<div class="col-md-12">
-		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
-			Productos más vendidos por recaudación
+		<div style="color: #22c488; font-size: 20px; padding-top: 8px; padding-bottom: 8px;">
+			Ranking de productos
 		</div>
-		<div>
+	</div>
+</div>
+<div class="row" style="margin-top: 15px;">
+	<div class="col-md-6">
+		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
+			Por recaudación
+		</div>
+		<div class="ranking-container">
 			<table>
 				<tr>
 					<td>Producto</td>
@@ -12,7 +19,7 @@
 				</tr>
 				<% @products.sort_by{ |product_tuple| [product_tuple[2], product_tuple[1], product_tuple[0].name]}.reverse.each do |product_arr| %>
 					<tr>
-						<td><%= product_arr[0].name %></td>
+						<td><span class="product_link" product_id="<%= product_arr[0].id %>"><%= product_arr[0].name + " (" + product_arr[0].product_category.name + ")" %></span></td>
 						<td><%= product_arr[2].to_s %></td>
 						<td><%= product_arr[1].to_s %></td>
 					</tr>
@@ -20,13 +27,11 @@
 			</table>
 		</div>
 	</div>
-</div>
-<div class="row" style="margin-top: 15px;">
-	<div class="col-md-12">
+	<div class="col-md-6">
 		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
-			Productos más vendidos por cantidad
+			Por cantidad
 		</div>
-		<div>
+		<div class="ranking-container">
 			<table>
 				<tr>
 					<td>Producto</td>
@@ -35,7 +40,7 @@
 				</tr>
 				<% @products.sort_by{ |product_tuple| [product_tuple[1], product_tuple[2], product_tuple[0].name]}.reverse.each do |product_arr| %>
 					<tr>
-						<td><%= product_arr[0].name %></td>
+						<td><span class="product_link" product_id="<%= product_arr[0].id %>"><%= product_arr[0].name + " (" + product_arr[0].product_category.name + ")" %></span></td>
 						<td><%= product_arr[2].to_s %></td>
 						<td><%= product_arr[1].to_s %></td>
 					</tr>
@@ -46,10 +51,17 @@
 </div>
 <div class="row" style="margin-top: 15px;">
 	<div class="col-md-12">
-		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
-			Ranking de vendedores por recaudación
+		<div style="color: #22c488; font-size: 20px; padding-top: 8px; padding-bottom: 8px;">
+			Ranking de vendedores
 		</div>
-		<div>
+	</div>
+</div>
+<div class="row" style="margin-top: 15px;">
+	<div class="col-md-6">
+		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
+			Por recaudación
+		</div>
+		<div class="ranking-container">
 			<table>
 				<tr>
 					<td>Vendedor</td>
@@ -61,21 +73,21 @@
 					<tr>
 						<% if seller[0].is_a?(ServiceProvider) %>
 							<td>
-								<%= seller[0].public_name %>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="0"><%= seller[0].public_name %></span>
 							</td>
 							<td>
 								Prestador
 							</td>
 						<% elsif seller[0].is_a?(User) %>
 							<td>
-							<%= seller[0].full_name %>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="1"><%= seller[0].full_name %></span>
 							</td>
 							<td>
 								Usuario (<%= seller[0].role.name %>)
 							</td>
 						<% else %>
 							<td>
-								<%= seller[0].name %>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="2"><%= seller[0].name %></span>
 							</td>
 							<td>
 								Cajero
@@ -88,13 +100,11 @@
 			</table>
 		</div>
 	</div>
-</div>
-<div class="row" style="margin-top: 15px;">
-	<div class="col-md-12">
+	<div class="col-md-6">
 		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
-			Ranking de vendedores por cantidad
+			Por cantidad
 		</div>
-		<div>
+		<div class="ranking-container">
 			<table>
 				<tr>
 					<td>Vendedor</td>
@@ -107,21 +117,21 @@
 						
 						<% if seller[0].is_a?(ServiceProvider) %>
 							<td>
-								<%= seller[0].public_name %>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="0"><%= seller[0].public_name %></span>
 							</td>
 							<td>
 								Prestador
 							</td>
 						<% elsif seller[0].is_a?(User) %>
 							<td>
-							<%= seller[0].full_name %>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="1"><%= seller[0].full_name %></span>
 							</td>
 							<td>
 								Usuario (<%= seller[0].role.name %>)
 							</td>
 						<% else %>
 							<td>
-								<%= seller[0].name %>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="2"><%= seller[0].name %></span>
 							</td>
 							<td>
 								Cajero

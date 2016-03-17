@@ -169,6 +169,8 @@ class Ability
         can :create, Company, :id => user.company_id
         can :update, Company, :id => user.company_id
 
+        can :seller_history, Product, :company_id => user.company_id
+        can :product_history, Product, :company_id => user.company_id
         can :stats, Product, :company_id => user.company_id
         can :locations_stats, Product, :company_id => user.company_id
         can :location_products, Location, :company_id => user.company_id
@@ -516,6 +518,8 @@ class Ability
         can :create, Product, :company_id => user.company_id
         can :update, Product, :company_id => user.company_id
 
+        can :seller_history, Product, :company_id => user.company_id
+        can :product_history, Product, :company_id => user.company_id
         can :stats, Product, :company_id => user.company_id
         can :locations_stats, Product, :company_id => user.company_id
         can :location_products, Location, :company_id => user.company_id
@@ -767,6 +771,8 @@ class Ability
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 
+        can :seller_history, Product, :company_id => user.company_id
+        can :product_history, Product, :company_id => user.company_id
         can :stats, Product, :company_id => user.company_id
         can :locations_stats, Product, :company_id => user.company_id
         can :location_products, Location, :company_id => user.company_id

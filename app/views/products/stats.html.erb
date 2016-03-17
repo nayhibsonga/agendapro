@@ -1,7 +1,7 @@
 <div class="container-fluid background-grey">
   <div class="row">
     <div class="col-md-12">
-      <h2 class="text-green">Estadísticas</h2>
+      <h2 class="text-green">Ventas</h2>
       <p>Revisa las estadísticas de ventas de tus productos.</p>
     </div>
   </div>
@@ -11,17 +11,17 @@
     <div class="col-md-12">
       <table>
         <tr>
-          <td>
+          <td style="width: 100px;">
             Desde:&nbsp;&nbsp;
           </td>
-          <td>
-            <input type="text" class="form-control datepicker" id="from" />
+          <td style="width: 200px;">
+            <input type="text" class="form-control datepicker" id="from" value="<%= (DateTime.now - 5.months).strftime('%d/%m/%Y') %>" />
           </td>
-          <td>
-            &nbsp;&nbsp;Hasta:&nbsp;&nbsp;
+          <td style="width: 100px; padding-left: 20px;">
+            Hasta:&nbsp;&nbsp;
           </td>
-          <td>
-            <input type="text" class="form-control datepicker" id="to" />
+          <td style="width: 200px;">
+            <input type="text" class="form-control datepicker" id="to" value="<%= (DateTime.now).strftime('%d/%m/%Y') %>" />
           </td>
         </tr>
       </table>     
@@ -31,20 +31,20 @@
     <div class="col-md-12">
       <table>
         <tr>
-          <td>
+          <td style="width: 100px;">
             Tipo:&nbsp;&nbsp;
           </td>
-          <td>
+          <td style="width: 200px;">
             <select id="location-type-select" class="form-control">
               <option value="all">Todos</option>
               <option value="active">Activos</option>
               <option value="inactive">Inactivos</option>
             </select>
           </td>
-          <td>
-            &nbsp;&nbsp;Locales:&nbsp;&nbsp;
+          <td style="width: 100px; padding-left: 20px;">
+            Locales:&nbsp;&nbsp;
           </td>
-          <td>
+          <td style="min-width: 200px;">
             <select id="location-select" multiple="multiple" class="form-control" hidden>
               <% @locations.each do |location| 
                 status = "inactive"
@@ -74,7 +74,20 @@
 
 
 <% content_for :modals do %>
+  <div class="modal fade sellerModal" id="sellerModal" tabindex="-1" role="dialog" aria-labelledby="Resumen de ventas" aria-hidden="true">
+    <div class="modal-dialog" style="width: 70%;">
+      <div class="modal-content">
 
+      </div>
+    </div>
+  </div>
+  <div class="modal fade productModal" id="productModal" tabindex="-1" role="dialog" aria-labelledby="Resumen de ventas" aria-hidden="true">
+    <div class="modal-dialog" style="width: 70%;">
+      <div class="modal-content">
+        
+      </div>
+    </div>
+  </div>
 <% end %>
 
 
