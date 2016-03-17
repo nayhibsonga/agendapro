@@ -5558,8 +5558,8 @@ class BookingsController < ApplicationController
           service_valid = false
           service = services_arr[serviceStaffPos]
 
-          logger.info "Service: " + service.name
-          logger.info "DTP: " + dateTimePointer.to_s
+          logger.debug "Service: " + service.name
+          logger.debug "DTP: " + dateTimePointer.to_s
 
 
           #Get providers min
@@ -5571,7 +5571,7 @@ class BookingsController < ApplicationController
             day_open_time = dateTimePointer
           end
 
-          logger.info "Debug 1"
+          logger.debug "Debug 1"
 
           #To deattach continous services, just delete the serviceStaffPos condition
 
@@ -5588,7 +5588,7 @@ class BookingsController < ApplicationController
             end
           end
 
-          logger.info "Debug 2"
+          logger.deug "Debug 2"
 
           #Find next service block starting from dateTimePointer
           service_sum = service.duration.minutes
@@ -5602,7 +5602,7 @@ class BookingsController < ApplicationController
             service_valid = true
           end
 
-          logger.info "Debug 3"
+          logger.debug "Debug 3"
 
           # Hora dentro del horario del local
 
@@ -5612,7 +5612,7 @@ class BookingsController < ApplicationController
               location_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
               location_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
 
-              logger.info "Debug 4"
+              logger.debug "Debug 4"
 
               if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
                 service_valid = true
@@ -5621,7 +5621,7 @@ class BookingsController < ApplicationController
             end
           end
 
-          logger.info "Debug 5"
+          logger.debug "Debug 5"
 
           # Horario dentro del horario del provider
           if service_valid
@@ -5629,7 +5629,7 @@ class BookingsController < ApplicationController
             if serviceStaff[serviceStaffPos][:provider] != "0"
               providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
               #providers = providers_arr[serviceStaffPos]
-              logger.info "Debug 6"
+              logger.debug "Debug 6"
             else
 
               #Check if providers have same day open
@@ -5646,11 +5646,11 @@ class BookingsController < ApplicationController
                 #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
               end
 
-              logger.info "Debug 7"
+              logger.debug "Debug 7"
 
             end
 
-            logger.info "Debug 8"
+            logger.debug "Debug 8"
 
             providers.each do |provider|
 
@@ -5661,7 +5661,7 @@ class BookingsController < ApplicationController
                 #dateTimePointer = provider.provider_times.where(day_id: dateTimePointer.cwday).order('open asc').first.open.to_datetime
               end
 
-              logger.info "Debug 9"
+              logger.debug "Debug 9"
 
               service_valid = false
 
@@ -5677,7 +5677,7 @@ class BookingsController < ApplicationController
                 end
               end
 
-              logger.info "Debug 10"
+              logger.debug "Debug 10"
 
               # #Stored procedure for time check
 
@@ -5700,7 +5700,7 @@ class BookingsController < ApplicationController
 
               end
 
-              logger.info "Debug 11"
+              logger.debug "Debug 11"
 
               # Cross Booking
               if service_valid
@@ -5717,7 +5717,7 @@ class BookingsController < ApplicationController
 
               end
 
-              logger.info "Debug 12"
+              logger.debug "Debug 12"
 
               # Recursos
               if service_valid and service.resources.count > 0
@@ -5749,7 +5749,7 @@ class BookingsController < ApplicationController
                 end
               end
 
-              logger.info "Debug 13"
+              logger.debug "Debug 13"
 
               if service_valid
 
@@ -5785,7 +5785,7 @@ class BookingsController < ApplicationController
                   dateTimePointer = dateTimePointer + service.duration.minutes
                 end
 
-                logger.info "Debug 14"
+                logger.debug "Debug 14"
 
                 if serviceStaffPos == serviceStaff.count
                   last_check = true
@@ -5798,7 +5798,7 @@ class BookingsController < ApplicationController
                   end
                 end
 
-                logger.info "Debug 15"
+                logger.debug "Debug 15"
 
                 break
 
@@ -5806,7 +5806,7 @@ class BookingsController < ApplicationController
             end
           end
 
-          logger.info "Debug 16"
+          logger.debug "Debug 16"
 
           if !service_valid
 
@@ -5817,8 +5817,8 @@ class BookingsController < ApplicationController
             #First, check if there's a gap. If so, back dateTimePointer to (blocking_start - total_duration)
             #This way, you can give two options when there are gaps.
 
-            logger.info "DTP starting not valid: " + dateTimePointer.to_s
-            logger.info "Last Check: " + last_check.to_s
+            logger.debug "DTP starting not valid: " + dateTimePointer.to_s
+            logger.debug "Last Check: " + last_check.to_s
 
             #Assume there is no gap
             time_gap = 0
@@ -5874,7 +5874,7 @@ class BookingsController < ApplicationController
 
                 end
 
-                logger.info "Debug 17"
+                logger.debug "Debug 17"
 
               else
 
@@ -5926,7 +5926,7 @@ class BookingsController < ApplicationController
                   end
                 end
 
-                logger.info "Debug 18"
+                logger.debug "Debug 18"
 
               end
 
@@ -6010,8 +6010,8 @@ class BookingsController < ApplicationController
               dateTimePointer += smallest_diff.minutes
             end
 
-            logger.info "Smalled diff: " + smallest_diff.to_s
-            logger.info "Gap DTP: " + dateTimePointer.to_s
+            logger.debug "Smalled diff: " + smallest_diff.to_s
+            logger.debug "Gap DTP: " + dateTimePointer.to_s
 
             serviceStaffPos = 0
             bookings = []
@@ -6021,7 +6021,7 @@ class BookingsController < ApplicationController
           end
         end
 
-        logger.info "Debug 20"
+        logger.debug "Debug 20"
 
         if bookings.length == serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
           @hours_array << {
