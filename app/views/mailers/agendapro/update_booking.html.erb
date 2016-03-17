@@ -1,13 +1,7 @@
 <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
   <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
     <h4 class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-family:inherit;font-weight:500;line-height:1.1;color:inherit;margin-top:10px;margin-bottom:10px;font-size:20px;text-align:center;"><%= @company.name %></h4>
-    <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:center;"><%= @name %>, <%= if @client then "por favor confirma tu reserva haciendo click en el siguiente botón:" else "recuerda tu reserva" end %></p>
-    <% if @client %>
-    <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:center;">
-      <%= link_to "Confirmar Reserva", confirm_booking_url(:confirmation_code => @book.confirmation_code), class: "btn btn-lg btn-green", target: "_blank", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:0;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:10px;padding-bottom:10px;padding-right:16px;padding-left:16px;font-size:18px;line-height:1.33;border-radius:6px;color:#ffffff;background-color:#22c488;border-color:#1ba970;" %>
-      <% image_tag "http://agendapro.co/assets/ico/email/flecha_verde.png", class: "arrow", alt: "Arrow", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-width:0;vertical-align:middle;width:70px;margin-left:10px;" %>
-    </p>
-    <% end %>
+    <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:center;"><%= @name %>, <%= if @client then "tu reserva fue actualizada exitosamente" else "fue actualizada una reserva contigo" end %></p>
   </td>
 </tr>
 <tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
@@ -38,6 +32,7 @@
               <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
                 <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">¿Cuándo?</b></p>
                 <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= l(@book.start) %></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><s style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><%= l(@old_booking.start) %></s></p>
               </div>
             </td>
           </tr>
@@ -109,6 +104,7 @@
               <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
                 <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#ffffff;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">¿Cuándo?</b></p>
                 <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><%= l(@book.start) %></p>
+                <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><s style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><%= l(@old_booking.start) %></s></p>
               </div>
             </td>
           </tr>

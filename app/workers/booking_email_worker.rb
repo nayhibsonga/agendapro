@@ -26,11 +26,17 @@ class BookingEmailWorker < BaseEmailWorker
       when "new_booking" then booking.web_origin ? recipients.where(new_web: true) : recipients.where(new: true)
       when "cancel_booking" then booking.web_origin ? recipients.where(canceled_web: true) : recipients.where(canceled: true)
       when "reminder_booking" then recipients.where(summary: false)
+      when "confirm_booking" then booking.web_origin ? recipients.where(confirmed_web: true) : recipients.where(confirmed: true)
+      when "update_booking" then booking.web_origin ? recipients.where(modified_web: true) : recipients.where(modified: true)
       else NotificationEmail.none
       end unless recipient_type == "client"
 
       # Get emails
-      recipient_type == "client" ? [recipients.email] : recipients.pluck(:email)
+      unless recipient_type == "client" && method == "confirm_booking"
+        recipient_type == "client" ? [recipients.email] : recipients.pluck(:email)
+      else
+        []
+      end
     end
 
     def self.perform_agendapro(booking, sending)
@@ -38,7 +44,7 @@ class BookingEmailWorker < BaseEmailWorker
       total_recipients = 0
 
       if booking.send_mail
-        recipients = filter_mails(self.get_receipients(booking, "client"))
+        recipients = filter_mails(self.get_receipients(booking, "client", sending.method))
         total_sendings += 1
         total_recipients += recipients.size
         BookingMailer.delay.send(sending.method, booking, recipients.join(', '))
@@ -75,6 +81,9 @@ class BookingEmailWorker < BaseEmailWorker
     end
 
     def self.perform_horachic(booking, sending)
+      total_sendings = 0
+      total_recipients = 0
+
       case sending.method
       when "new_booking"
         BookingMailer.delay.book_service_mail(booking)
@@ -82,6 +91,11 @@ class BookingEmailWorker < BaseEmailWorker
         BookingMailer.delay.cancel_booking_legacy(booking)
       when "reminder_booking"
         BookingMailer.delay.book_reminder_mail(booking)
+      when "update_booking"
+        BookingMailer.delay.update_booking_legacy(booking)
+      else
+        self.perform(booking, sending)
+        return
       end
       sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients, detail: ["legacy marketplace"])
     end

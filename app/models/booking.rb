@@ -678,7 +678,8 @@ class Booking < ActiveRecord::Base
 
   def send_admin_payed_session_mail
     if !self.id.nil?
-      BookingMailer.admin_session_booking_mail(self)
+      sendings.build(method: 'admin_session_booking').save
+      # BookingMailer.admin_session_booking_mail(self)
     end
   end
 
@@ -695,7 +696,8 @@ class Booking < ActiveRecord::Base
             sendings.build(method: 'new_booking').save
           else
             if changed_attributes['start']
-              BookingMailer.update_booking(self, changed_attributes['start'])
+              sendings.build(method: 'update_booking').save
+              # BookingMailer.update_booking(self, changed_attributes['start'])
             else
               sendings.build(method: 'new_booking').save
             end
@@ -726,9 +728,11 @@ class Booking < ActiveRecord::Base
         #end
       else
         if changed_attributes['start']
-          BookingMailer.update_booking(self, changed_attributes['start'])
+          sendings.build(method: 'update_booking').save
+          # BookingMailer.update_booking(self, changed_attributes['start'])
         elsif changed_attributes['status_id'] and self.status == Status.find_by(:name => "Confirmado")
-          BookingMailer.confirm_booking(self)
+          sendings.build(method: 'confirm_booking').save
+          # BookingMailer.confirm_booking(self)
         end
       end
     end
