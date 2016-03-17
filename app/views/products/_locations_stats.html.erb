@@ -1,21 +1,21 @@
-<div class="row" style="margin-top: 15px;">
-	<div class="col-md-12">
-		<div style="color: #22c488; font-size: 20px; padding-top: 8px; padding-bottom: 8px;">
+<div class="row" style="margin-top: 5px;">
+	<div class="col-md-12" style="padding: 0px !important;">
+		<div class="stats-title">
 			Ranking de productos
 		</div>
 	</div>
 </div>
-<div class="row" style="margin-top: 15px;">
-	<div class="col-md-6">
-		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
+<div class="row" style="margin-top: 5px;">
+	<div class="col-md-6" style="padding-left: 0px !important;">
+		<div class="stats-subtitle">
 			Por recaudación
 		</div>
 		<div class="ranking-container">
 			<table>
-				<tr>
-					<td>Producto</td>
-					<td>Cantidad</td>
-					<td>Recaudación</td>
+				<tr class="first-tr">
+					<th>Producto</th>
+					<th>Cantidad</th>
+					<th>Recaudación</th>
 				</tr>
 				<% @products.sort_by{ |product_tuple| [product_tuple[2], product_tuple[1], product_tuple[0].name]}.reverse.each do |product_arr| %>
 					<tr>
@@ -27,16 +27,16 @@
 			</table>
 		</div>
 	</div>
-	<div class="col-md-6">
-		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
+	<div class="col-md-6" style="padding-right: 0px !important;">
+		<div class="stats-subtitle">
 			Por cantidad
 		</div>
 		<div class="ranking-container">
 			<table>
-				<tr>
-					<td>Producto</td>
-					<td>Cantidad</td>
-					<td>Recaudación</td>
+				<tr class="first-tr">
+					<th>Producto</th>
+					<th>Cantidad</th>
+					<th>Recaudación</th>
 				</tr>
 				<% @products.sort_by{ |product_tuple| [product_tuple[1], product_tuple[2], product_tuple[0].name]}.reverse.each do |product_arr| %>
 					<tr>
@@ -50,24 +50,24 @@
 	</div>
 </div>
 <div class="row" style="margin-top: 15px;">
-	<div class="col-md-12">
-		<div style="color: #22c488; font-size: 20px; padding-top: 8px; padding-bottom: 8px;">
+	<div class="col-md-12" style="padding: 0px !important;">
+		<div class="stats-title">
 			Ranking de vendedores
 		</div>
 	</div>
 </div>
-<div class="row" style="margin-top: 15px;">
-	<div class="col-md-6">
-		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
+<div class="row" style="margin-top: 15px; margin-bottom: 15px;">
+	<div class="col-md-6" style="padding-left: 0px !important;">
+		<div class="stats-subtitle">
 			Por recaudación
 		</div>
 		<div class="ranking-container">
 			<table>
-				<tr>
-					<td>Vendedor</td>
-					<td>Tipo</td>
-					<td>Cantidad</td>
-					<td>Recaudación</td>
+				<tr class="first-tr">
+					<th>Vendedor</th>
+					<th>Tipo</th>
+					<th>Cantidad</th>
+					<th>Recaudación</th>
 				</tr>
 				<% @sellers.sort_by{ |seller| [seller[1], seller[2]]}.reverse.each do |seller| %>
 					<tr>
@@ -100,17 +100,17 @@
 			</table>
 		</div>
 	</div>
-	<div class="col-md-6">
-		<div style="color: #22c488; font-size: 18px; padding-top: 8px; padding-bottom: 8px;">
+	<div class="col-md-6" style="padding-right: 0px !important;">
+		<div class="stats-subtitle">
 			Por cantidad
 		</div>
 		<div class="ranking-container">
 			<table>
-				<tr>
-					<td>Vendedor</td>
-					<td>Tipo</td>
-					<td>Cantidad</td>
-					<td>Recaudación</td>
+				<tr class="first-tr">
+					<th>Vendedor</th>
+					<th>Tipo</th>
+					<th>Cantidad</th>
+					<th>Recaudación</th>
 				</tr>
 				<% @sellers.sort_by{ |seller| [seller[2], seller[1]]}.reverse.each do |seller| %>
 					<tr>
