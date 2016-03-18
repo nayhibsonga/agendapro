@@ -576,6 +576,8 @@ Agendapro::Application.routes.draw do
 
     post '/select_default_plan', :to => 'companies#select_default_plan'
 
+    get '/client_base_pdf', :to => 'clients#client_base_pdf'
+
   end
 
   namespace :api, defaults: {format: 'json'} do
