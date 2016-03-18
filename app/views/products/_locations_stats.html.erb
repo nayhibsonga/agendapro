@@ -1,3 +1,5 @@
+<input type="hidden" id="price_total" value="<%= number_to_currency(@price_total, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>" />
+<input type="hidden" id="quantity_total" value="<%= @quantity_total %>" />
 <div class="row" style="margin-top: 5px;">
 	<div class="col-md-12" style="padding: 0px !important;">
 		<div class="stats-title">
@@ -114,7 +116,7 @@
 				</tr>
 				<% @sellers.sort_by{ |seller| [seller[2], seller[1]]}.reverse.each do |seller| %>
 					<tr>
-						
+
 						<% if seller[0].is_a?(ServiceProvider) %>
 							<td>
 								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="0"><%= seller[0].public_name %></span>

@@ -27,7 +27,7 @@
                 <input type="text" class="form-control datepicker" id="to" value="<%= (DateTime.now).strftime('%d/%m/%Y') %>" />
               </td>
             </tr>
-          </table>     
+          </table>
         </div>
       </div>
       <div class="row" style="margin-top: 10px;">
@@ -48,8 +48,8 @@
                 Locales:&nbsp;&nbsp;
               </td>
               <td style="min-width: 200px;">
-                <select id="location-select" multiple="multiple" class="form-control" hidden>
-                  <% @locations.each do |location| 
+                <select id="location-select" multiple="multiple" class="form-control" style="display: none;">
+                  <% @locations.each do |location|
                     status = "inactive"
                     if location.active
                       status = "active"
@@ -61,35 +61,43 @@
                   <% end %>
                 </select>
               </td>
+            </tr>
+            <tr>
               <td>
-                <!--&nbsp;&nbsp;<button class="btn btn-green" id="getStatsBtn">Ver estadísticas</button>-->
+
+              </td>
+              <td>
+
+              </td>
+              <td>
+
+              </td>
+              <td>
+              <button id="download_stats_btn" class="btn btn-green" style="display: none; width: 200px; margin-top: 10px;"><i class="fa fa-file-excel-o"></i>&nbsp;Descargar</button>
               </td>
             </tr>
-          </table>     
+          </table>
         </div>
       </div>
     </div>
     <div class="col-md-6">
-      <div class="row" style="margin-top: 10px;">
-        <div class="col-sm-5">
-          <div class="well revenue1">
+      <div class="row" style="margin-top: 10px;" id="summaries_div" hidden>
+        <div class="col-sm-6">
+          <div class="well revenue">
             <h4>Recaudación:</h4>
-            <p class="revenue-price" id=""></p>
+            <p class="revenue-price" id="price_sum_summary"></p>
           </div>
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-6">
           <div class="well revenue">
             <h4>Cantidad:</h4>
-            <p class="revenue-price"><strong></strong></p>
+            <p class="revenue-price" id="quantity_sum_summary"></p>
           </div>
-        </div>
-        <div class="col-sm-2">
-          
         </div>
       </div>
     </div>
   </div>
-  
+
   <div id="render_content">
 
   </div>
@@ -108,7 +116,7 @@
   <div class="modal fade productModal" id="productModal" tabindex="-1" role="dialog" aria-labelledby="Resumen de ventas" aria-hidden="true">
     <div class="modal-dialog" style="width: 70%;">
       <div class="modal-content">
-        
+
       </div>
     </div>
   </div>

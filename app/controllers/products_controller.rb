@@ -47,7 +47,7 @@ class ProductsController < ApplicationController
     end
 
     @locations = @company.locations
-    
+
     if current_user.role_id != Role.find_by_name("Administrador General").id
       @locations = current_user.locations
     end
@@ -57,7 +57,7 @@ class ProductsController < ApplicationController
     elsif loc_status == "inactive"
       @locations = @locations.where(active: false)
     end
-  
+
   end
 
   def locations_stats
@@ -67,6 +67,9 @@ class ProductsController < ApplicationController
 
     @from = params[:from].to_datetime.beginning_of_day
     @to = params[:to].to_datetime.end_of_day
+
+    @price_total = 0
+    @quantity_total = 0
 
     #Get products ranking by price sum and item quantity in this period
     @products = []
@@ -79,6 +82,8 @@ class ProductsController < ApplicationController
         product_price_sum += pp.quantity * pp.price
       end
       product_tuple = [product, product_price_sum, product_quantity_sum]
+      @price_total += product_price_sum
+      @quantity_total += product_quantity_sum
       @products << product_tuple
     end
 
@@ -232,11 +237,11 @@ class ProductsController < ApplicationController
   end
 
   def update
-    
+
     @product = Product.find(params[:id])
     respond_to do |format|
       if @product.update(product_params)
-        
+
         loc_prods = JSON.parse(params[:location_products], symbolize_names: true)
 
         loc_prods.each do |loc_prod|
@@ -324,7 +329,7 @@ class ProductsController < ApplicationController
   end
 
   def product_features
-    
+
     respond_to do |format|
       format.html { render :partial => 'product_features' }
     end

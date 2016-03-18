@@ -4,6 +4,8 @@ function loadStats()
 {
 	var location_ids = [];
 	$('#render_content').empty();
+	$('#summaries_div').hide();
+	$('#download_stats_btn').hide();
 
 	$("#location-select option").each(function(){
 		if ($(this).is(':selected'))
@@ -26,10 +28,16 @@ function loadStats()
 		data: {location_ids: location_ids, from: date_from, to: date_to},
 		error: function(response){
 			$('#render_content').empty();
+			$('#summaries_div').hide();
+			$('#download_stats_btn').hide();
 		},
 		success: function(response){
 			$('#render_content').empty();
 			$('#render_content').append(response);
+			$('#price_sum_summary').html('<strong>' + $('#price_total').val() + '</strong>');
+			$('#quantity_sum_summary').html('<strong>' + $('#quantity_total').val() + '</strong>');
+			$('#summaries_div').show();
+			$('#download_stats_btn').show();
 		}
 	})
 }
@@ -146,7 +154,7 @@ $(function(){
 	});
 
 	$('#getStatsBtn').on('click', function(){
-		
+
 		$.ajax({
 			url: 'locations_products_stats',
 			method: 'get',
