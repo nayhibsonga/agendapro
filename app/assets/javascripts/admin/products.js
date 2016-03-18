@@ -334,7 +334,7 @@ function checkFile()
 	if(file_array.length > 0)
 	{
 		var extension = file_array[file_array.length - 1];
-		if (extension != "csv" && extension != "xls")
+		if (extension != "csv" && extension != "xls" && extension != "xlsx" && extension != "xlsm" && extension != "ods" && extension != "xml")
 		{
 			swal("El archivo no tiene la extensión correcta. Por favor importa sólo archivos de tipo csv o xls.");
 			return false;

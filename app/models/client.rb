@@ -335,7 +335,7 @@ class Client < ActiveRecord::Base
 
       when "date"
 
-        if !param_value.nil?
+        if !param_value.blank?
           param_value = param_value.gsub('/', '-')
         end
 
@@ -349,14 +349,14 @@ class Client < ActiveRecord::Base
 
       when "datetime"
 
-        if !param_value.nil?
+        if !param_value.blank?
           param_value = param_value.gsub('/', '-')
           date_hour = params[attribute.slug + "_attribute_hour"]
           date_minute = params[attribute.slug + "_attribute_minute"]
         end
 
         complete_datetime = nil
-        if !param_value.nil?
+        if !param_value.blank?
           complete_datetime = param_value + " " + date_hour + ":" + date_minute + ":00"
         end
 
@@ -372,7 +372,7 @@ class Client < ActiveRecord::Base
 
         file_attribute = FileAttribute.where(attribute_id: attribute.id, client_id: self.id).first
 
-        if !param_value.nil?
+        if !param_value.blank?
 
           file_name = attribute.name
           folder_name = attribute.slug
@@ -627,7 +627,7 @@ class Client < ActiveRecord::Base
 
     # USER
       @user = {}
-      @user[:where] = bookings[0].location.address + ', ' + bookings[0].location.district.name
+      @user[:where] = bookings[0].location.short_address
       @user[:phone] = bookings[0].location.phone
       @user[:name] = bookings[0].client.first_name
       @user[:send_mail] = bookings[bookings.length - 1].send_mail
@@ -743,6 +743,158 @@ class Client < ActiveRecord::Base
     end
   end
 
+  def self.custom_filter(clients, custom_filter)
+
+    if custom_filter.nil?
+      
+      return clients
+
+    else
+
+      #Loop through each kind of filters
+
+      #Loop for numeric filters
+      custom_filter.numeric_custom_filters.each do |numeric_filter|
+
+        attribute = numeric_filter.attribute
+
+        numeric_attribute = nil
+
+        if attribute.datatype == "integer"
+          numeric_attribute = IntegerAttribute.where(attribute_id: attribute.id)
+        else
+          numeric_attribute = FloatAttribute.where(attribute_id: attribute.id)
+        end
+
+        if numeric_filter.option == "equals"
+          clients = clients.where(id: numeric_attribute.where(value: numeric_filter.value1).pluck(:client_id))
+        elsif numeric_filter.option == "greater"
+          clients = clients.where(id: numeric_attribute.where('value > ?', numeric_filter.value1).pluck(:client_id))
+        elsif numeric_filter.option == "greater_equal"
+          clients = clients.where(id: numeric_attribute.where('value >= ?', numeric_filter.value1).pluck(:client_id))
+        elsif numeric_filter.option == "lower"
+          clients = clients.where(id: numeric_attribute.where('value < ?', numeric_filter.value1).pluck(:client_id))
+        elsif numeric_filter.option == "lower_equal"
+          clients = clients.where(id: numeric_attribute.where('value <= ?', numeric_filter.value1).pluck(:client_id))
+        elsif numeric_filter.option == "between"
+          #Check for exclusive options
+          if numeric_filter.exclusive1 && numeric_filter.exclusive2
+            clients = clients.where(id: numeric_attribute.where('value > ? and value < ?', numeric_filter.value1, numeric_filter.value2).pluck(:client_id))
+          elsif numeric_filter.exclusive1 && !numeric_filter.exclusive2
+            clients = clients.where(id: numeric_attribute.where('value > ? and value <= ?', numeric_filter.value1, numeric_filter.value2).pluck(:client_id))
+          elsif !numeric_filter.exclusive1 && numeric_filter.exclusive2
+            clients = clients.where(id: numeric_attribute.where('value >= ? and value < ?', numeric_filter.value1, numeric_filter.value2).pluck(:client_id))
+          else
+            clients = clients.where(id: numeric_attribute.where('value => ? and value <= ?', numeric_filter.value1, numeric_filter.value2).pluck(:client_id))
+          end
+        elsif numeric_filter.option == "out"
+          #Check for exclusive optionss
+          if numeric_filter.exclusive1 && numeric_filter.exclusive2
+            clients = clients.where(id: numeric_attribute.where('value < ? and value > ?', numeric_filter.value1, numeric_filter.value2).pluck(:client_id))
+          elsif numeric_filter.exclusive1 && !numeric_filter.exclusive2
+            clients = clients.where(id: numeric_attribute.where('value < ? and value >= ?', numeric_filter.value1, numeric_filter.value2).pluck(:client_id))
+          elsif !numeric_filter.exclusive1 && numeric_filter.exclusive2
+            clients = clients.where(id: numeric_attribute.where('value <= ? and value > ?', numeric_filter.value1, numeric_filter.value2).pluck(:client_id))
+          else
+            clients = clients.where(id: numeric_attribute.where('value <= ? and value >= ?', numeric_filter.value1, numeric_filter.value2).pluck(:client_id))
+          end
+        end
+        
+      end
+
+      #Loop for date filters
+      custom_filter.date_custom_filters.each do |date_filter|
+
+        attribute = date_filter.attribute
+
+        date_attribute = nil
+
+        if attribute.datatype == "date"
+          date_attribute = DateAttribute.where(attribute_id: attribute.id)
+        else
+          date_attribute = DateTimeAttribute.where(attribute_id: attribute.id)
+        end
+
+
+        if date_filter.option == "equals"
+          clients = clients.where(id: date_attribute.where(value: date_filter.date1).pluck(:client_id))
+        elsif date_filter.option == "greater"
+          clients = clients.where(id: date_attribute.where('value > ?', date_filter.date1).pluck(:client_id))
+        elsif date_filter.option == "greater_equal"
+          clients = clients.where(id: date_attribute.where('value >= ?', date_filter.date1).pluck(:client_id))
+        elsif date_filter.option == "lower"
+          clients = clients.where(id: date_attribute.where('value < ?', date_filter.date1).pluck(:client_id))
+        elsif date_filter.option == "lower_equal"
+          clients = clients.where(id: date_attribute.where('value <= ?', date_filter.date1).pluck(:client_id))
+        elsif date_filter.option == "between"
+          #Check for exclusive options
+          if date_filter.exclusive1 && date_filter.exclusive2
+            clients = clients.where(id: date_attribute.where('value > ? and value < ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+          elsif date_filter.exclusive1 && !date_filter.exclusive2
+            clients = clients.where(id: date_attribute.where('value > ? and value <= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+          elsif !date_filter.exclusive1 && date_filter.exclusive2
+            clients = clients.where(id: date_attribute.where('value >= ? and value < ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+          else
+            clients = clients.where(id: date_attribute.where('value => ? and value <= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+          end
+        elsif date_filter.option == "out"
+          #Check for exclusive optionss
+          if date_filter.exclusive1 && date_filter.exclusive2
+            clients = clients.where(id: date_attribute.where('value < ? and value > ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+          elsif date_filter.exclusive1 && !date_filter.exclusive2
+            clients = clients.where(id: date_attribute.where('value < ? and value >= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+          elsif !date_filter.exclusive1 && date_filter.exclusive2
+            clients = clients.where(id: date_attribute.where('value <= ? and value > ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+          else
+            clients = clients.where(id: date_attribute.where('value <= ? and value >= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+          end
+        end
+
+
+      end
+
+      #Loop for boolean filters
+      custom_filter.boolean_custom_filters.each do |boolean_filter|
+
+        attribute = boolean_filter.attribute
+        boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id)
+
+        clients = clients.where(id: boolean_attribute.where(value: boolean_filter.option).pluck(:client_id))
+
+      end
+
+      #Loop for categoric filters
+      custom_filter.categoric_custom_filters.each do |categoric_filter|
+
+        attribute = categoric_filter.attribute
+        categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id)
+
+        clients = clients.where(id: categoric_attribute.where(attribute_category_id: categoric_filter.categories_ids.split(",")).pluck(:client_id))
+
+      end
+
+      #Loop for text filters
+      custom_filter.text_custom_filters.each do |text_filter|
+
+        attribute = text_filter.attribute
+
+        text_attribute = nil
+        if attribute.datatype == "text"
+          text_attribute = TextAttribute.where(attribute_id: attribute.id)
+        else
+          text_attribute = TextareaAttribute.where(attribute_id: attribute.id)
+        end
+
+        clients = clients.where(id: text_attribute.where('value like ?', '%' + text_filter.text + '%').pluck(:client_id))
+
+      end
+
+      return clients
+
+    end
+
+  end
+
   def self.to_csv(options = {})
     CSV.generate(options) do |csv|
       csv << column_names
@@ -754,6 +906,7 @@ class Client < ActiveRecord::Base
 
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
+    
     spreadsheet = open_spreadsheet(file)
 
     company = Company.find(company_id)
@@ -917,12 +1070,84 @@ class Client < ActiveRecord::Base
     end
   end
 
+  # def self.open_spreadsheet(file)
+  #   case File.extname(file.original_filename)
+  #   when ".csv" then Roo::Csv.new(file.path, file_warning: :ignore)
+  #   when ".xls" then Roo::Excel.new(file.path, file_warning: :ignore)
+  #   when ".xlsx" then Roo::Excelx.new(file.path, file_warning: :ignore)
+  #   end
+  # end
+
   def self.open_spreadsheet(file)
-    case File.extname(file.original_filename)
-    when ".csv" then Roo::Csv.new(file.path, file_warning: :ignore)
-    when ".xls" then Roo::Excel.new(file.path, file_warning: :ignore)
-    when ".xlsx" then Roo::Excelx.new(file.path, file_warning: :ignore)
+    file_name = file.original_filename
+    file_path = file.path
+    begin
+      case File.extname(file_name)
+      when ".csv"
+        # Try to identify separator type
+        # Take a wild guess by column count (totally improvable)
+        # Accept , ; \t
+        # ,
+        sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ","})
+
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
+        end
+
+        # ;
+        sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ";"})
+        
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
+        end
+
+        # \t
+        sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: "\t"})
+        
+        arr = sheet.row(1)
+        if arr.length > 2
+          if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
+            return sheet
+          end
+        end
+
+        return nil
+
+      when ".xlsx"
+        Roo::Excelx.new(file_path, file_warning: :ignore)
+      when ".xlsm"
+        Roo::Excelx.new(file_path, file_warning: :ignore)
+      when ".ods"
+        Roo::OpenOffice.new(file_path, file_warning: :ignore)
+      when ".xls"
+        begin
+          Roo::Excel.new(file_path, file_warning: :ignore)
+        rescue
+          Roo::Excel2003XML.new(file_path, file_warning: :ignore)
+        end
+      when ".xml"
+        Roo::Excel2003XML.new(file_path, file_warning: :ignore)
+      end
+    rescue
+      return nil
     end
+  end
+
+  def self.test_write(input)
+    book = Spreadsheet::Workbook.new
+    write_sheet = book.create_worksheet
+    row_num = 0
+    input.each do |row|
+      write_sheet.row(row_num).replace row
+      row_num +=1
+    end
+    book.write "/home/zuru/AgendaPro/roo_test/to.xls"
   end
 
   def self.filter(company_id, params)

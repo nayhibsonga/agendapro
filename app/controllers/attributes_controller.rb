@@ -55,7 +55,7 @@ class AttributesController < ApplicationController
     @attribute_groups = @attribute.company.attribute_groups.order(name: :asc)
     respond_to do |format|
         format.html { render :partial => 'edit_attribute' }
-      end
+    end
   end
 
   def rearrange

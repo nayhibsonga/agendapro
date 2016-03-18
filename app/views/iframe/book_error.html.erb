@@ -223,7 +223,7 @@
                         <% end %>
                       </dd>
                       <dt class="dark-gray">Lugar</dt>
-                      <dd class="light-gray"><%= @location.address %>, <%= @location.district.name %></dd>
+                      <dd class="light-gray"><%= @location.short_address %></dd>
                       <dt class="dark-gray">Prestadores</dt>
                       <dd class="light-gray">
                         <% @bookings.each do |booking| %>

@@ -1,0 +1,19 @@
+<div class="col-sm-5">
+    <div class="well revenue1">
+      <h4>Recaudación:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@payments_sum, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+    </div>
+  </div>
+  <div class="col-sm-5">
+    <div class="well revenue">
+      <h4>Recaudación por Servicios:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(MockBooking.where(payment_id: @payments).sum(:price) + Booking.where(payment_id: @payments).sum(:price), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="well revenue">
+      <h4>Recaudación por Productos:</h4>
+      <p class="revenue-price"><strong><%= number_to_currency(@products_sum, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></strong></p>
+    </div>
+  </div>
+</div>

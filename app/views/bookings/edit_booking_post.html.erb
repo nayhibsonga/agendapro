@@ -28,7 +28,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <%= if !@selectedLocation.outcall then @selectedLocation.short_address else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -61,7 +61,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <%= if !@selectedLocation.outcall then @selectedLocation.short_address else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -136,7 +136,7 @@
 											¿Dónde?
 										</div>
 										<div class="md-col-8">
-											<%= @booking.location.address %>, <%= @booking.location.district.name %>
+											<%= @booking.location.short_address %>
 										</div>
 									</div>
 
@@ -174,7 +174,7 @@
 										<dt class="dark-gray">¿Qué reservaste?</dt>
 										<dd class="light-gray"><%= @booking.service.name %></dd>
 										<dt class="dark-gray">¿Dónde?</dt>
-										<dd class="light-gray"><%= @booking.location.address %>, <%= @booking.location.district.name %></dd>
+										<dd class="light-gray"><%= @booking.location.short_address %></dd>
 										<dt class="dark-gray">¿Con quién?</dt>
 										<dd class="light-gray"><%= @booking.service_provider.public_name %></dd>
 										<dt class="dark-gray">¿Cuándo?</dt>

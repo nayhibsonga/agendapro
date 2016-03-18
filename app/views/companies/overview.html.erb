@@ -38,8 +38,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_second_address}" else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -87,8 +86,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_second_address}" else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -147,8 +145,7 @@
                     <input type="radio" name="localRadio" id="localOption<%= local.id %>" value="<%= local.id %>" data-outcall="<%= local.outcall %>" <%= "checked" if @selectedLocal.to_i == local.id %> >
                     <p>
                       <span class="local-name"><%= local.name %></span><br/>
-                      <% @second_address = local.second_address.blank? ? '' : ', ' + local.second_address %>
-                      <span class="local-address" localid="<%= local.id %>"><%= if !local.outcall then local.address+@second_address+', '+local.district.name+', '+local.district.city.name else "A Domicilio" end %></span>
+                      <span class="local-address" localid="<%= local.id %>"><%= if !local.outcall then "#{local.long_address_with_second_address}" else "A Domicilio" end %></span>
                       <span class="local-phone" localid="<%= local.id %>" hidden><%= local.phone%></span>
                     </p>
                   </label>

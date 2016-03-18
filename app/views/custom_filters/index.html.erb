@@ -1,0 +1,29 @@
+<h1>Listing custom_filters</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @custom_filters.each do |custom_filter| %>
+      <tr>
+        <td><%= custom_filter.company_id %></td>
+        <td><%= custom_filter.name %></td>
+        <td><%= link_to 'Show', custom_filter %></td>
+        <td><%= link_to 'Edit', edit_custom_filter_path(custom_filter) %></td>
+        <td><%= link_to 'Destroy', custom_filter, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Custom filter', new_custom_filter_path %>

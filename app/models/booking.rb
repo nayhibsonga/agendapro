@@ -761,7 +761,7 @@ class Booking < ActiveRecord::Base
     address = ''
     date = I18n.l self.start
     if !self.service.outcall
-      address = self.location.name + " - " + self.location.get_full_address
+      address = self.location.name + " - " + self.location.long_address_with_second_address
     else
       address = "A domicilio"
     end
@@ -771,7 +771,7 @@ class Booking < ActiveRecord::Base
         event.description = "Datos de tu reserva:\n- Fecha: " + date + "\n- Servicio: " + self.service.name + "\n- Prestador: " + self.service_provider.public_name + "\n- Lugar: " + address + ".\nNOTA: por favor asegúrate que el calendario de tu celular esté en la zona horario correcta. En caso contrario, este recordatorio podría quedar guardado para otra hora."
         event.dtstart =  self.start.strftime('%Y%m%dT%H%M%S')
         event.dtend = self.end.strftime('%Y%m%dT%H%M%S')
-        event.location = self.location.get_full_address
+        event.location = self.location.long_address_with_second_address
         event.add_attendee self.client.email
         event.alarm do
           description "Recuerda tu hora de " + booking.service.name + " en "  + booking.location.company.name
@@ -1521,7 +1521,7 @@ class Booking < ActiveRecord::Base
 
     # USER
       @user = {}
-      @user[:where] = bookings[0].location.address + ', ' + bookings[0].location.district.name
+      @user[:where] = bookings[0].location.short_address
       @user[:phone] = bookings[0].location.phone
       @user[:name] = bookings[0].client.first_name
       @user[:send_mail] = bookings[bookings.length - 1].send_mail

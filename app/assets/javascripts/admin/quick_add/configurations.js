@@ -15,9 +15,7 @@ $(function() {
 
 				if(response.status == "ok")
 				{
-					$('#fieldset_step6').show();
-					$('#fieldset_step6').attr('disabled', false);
-					scrollToAnchor('fieldset_step6');
+					loadNotifications();
 				}
 				else
 				{

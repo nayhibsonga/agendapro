@@ -99,11 +99,6 @@ class BookingMailer < Base::CustomMailer
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
-		second_address = ''
-		if !book_info.location.second_address.blank?
-			second_address = ", " + book_info.location.second_address
-		end
-
 		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] = [{
@@ -116,7 +111,7 @@ class BookingMailer < Base::CustomMailer
 							:vars => [
 								{
 									:name => 'LOCALADDRESS',
-									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+									:content => "#{book_info.location.short_address_with_second_address}"
 								},
 								{
 									:name => 'LOCATIONPHONE',
@@ -321,11 +316,6 @@ class BookingMailer < Base::CustomMailer
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
-		second_address = ''
-		if !book_info.location.second_address.blank?
-			second_address = ", " + book_info.location.second_address
-		end
-
 		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] = [{
@@ -338,7 +328,7 @@ class BookingMailer < Base::CustomMailer
 							:vars => [
 								{
 									:name => 'LOCALADDRESS',
-									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+									:content => "#{book_info.location.short_address_with_second_address}"
 								},
 								{
 									:name => 'LOCATIONPHONE',
@@ -465,11 +455,6 @@ class BookingMailer < Base::CustomMailer
 		template_name = 'Confirm Booking'
 		template_content = []
 
-		second_address = ''
-		if !book_info.location.second_address.blank?
-			second_address = ", " + book_info.location.second_address
-		end
-
 		company = book_info.service_provider.company
 
 		# => Message
@@ -486,7 +471,7 @@ class BookingMailer < Base::CustomMailer
 				},
 				{
 					:name => 'LOCALADDRESS',
-					:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+					:content => "#{book_info.location.short_address_with_second_address}"
 				},
 				{
 					:name => 'CLIENTNAME',
@@ -700,11 +685,6 @@ class BookingMailer < Base::CustomMailer
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
-		second_address = ''
-		if !book_info.location.second_address.blank?
-			second_address = ", " + book_info.location.second_address
-		end
-
 		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] = [{
@@ -717,7 +697,7 @@ class BookingMailer < Base::CustomMailer
 				:vars => [
 					{
 						:name => 'LOCALADDRESS',
-						:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+						:content => "#{book_info.location.short_address_with_second_address}"
 					},
 					{
 						:name => 'LOCATIONPHONE',
@@ -910,11 +890,6 @@ class BookingMailer < Base::CustomMailer
 						}
 		end
 
-		second_address = ''
-		if !book_info.location.second_address.blank?
-			second_address = ", " + book_info.location.second_address
-		end
-
 		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] = [{
@@ -927,7 +902,7 @@ class BookingMailer < Base::CustomMailer
 						  :vars => [
 								{
 									:name => 'LOCALADDRESS',
-									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+									:content => "#{book_info.location.short_address_with_second_address}"
 								},
 								{
 									:name => 'LOCATIONPHONE',
@@ -1364,7 +1339,7 @@ class BookingMailer < Base::CustomMailer
 		template_content = []
 
 		auth_code = "NA"
-		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && payed_booking.punto_pagos_confirmation.authorization_code != ""
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
 		end
 
@@ -1437,7 +1412,7 @@ class BookingMailer < Base::CustomMailer
 		template_content = []
 
 		auth_code = "NA"
-		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && payed_booking.punto_pagos_confirmation.authorization_code != ""
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
 		end
 
@@ -1526,7 +1501,7 @@ class BookingMailer < Base::CustomMailer
 		client = payed_booking.bookings.first.client
 
 		auth_code = "NA"
-		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && payed_booking.punto_pagos_confirmation.authorization_code != ""
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
 		end
 
@@ -1607,7 +1582,7 @@ class BookingMailer < Base::CustomMailer
 		client = payed_booking.bookings.first.client
 
 		auth_code = "NA"
-		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
+		if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && payed_booking.punto_pagos_confirmation.authorization_code != ""
 			auth_code = payed_booking.punto_pagos_confirmation.authorization_code
 		end
 
@@ -2076,11 +2051,6 @@ class BookingMailer < Base::CustomMailer
 			message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
 		end
 
-		second_address = ''
-		if !book_info.location.second_address.blank?
-			second_address = ", " + book_info.location.second_address
-		end
-
 		# Notificacion cliente
 		if book_info.send_mail
 			message[:to] = [{
@@ -2093,7 +2063,7 @@ class BookingMailer < Base::CustomMailer
 							:vars => [
 								{
 									:name => 'LOCALADDRESS',
-									:content => book_info.location.address + second_address + " - " + District.find(book_info.location.district_id).name
+									:content => "#{book_info.location.short_address_with_second_address}"
 								},
 								{
 									:name => 'LOCATIONPHONE',

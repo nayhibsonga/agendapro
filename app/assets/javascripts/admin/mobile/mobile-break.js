@@ -13,8 +13,12 @@ function saveBreak (typeURL, booking_id) {
     url: '/provider_breaks' + booking_id + '.json',
     data: { "provider_break": breakJSON },
     dataType: 'json',
-    success: function(booking){
-      window.location.href = "/bookings/"
+    success: function(breaks){
+      window.location.href = "/bookings?" + $.param({
+        local: breaks[0].location_id,
+        provider: breaks[0].service_provider_id,
+        date: breaks[0].start
+      });
     },
     error: function(xhr){
       var errors = $.parseJSON(xhr.responseText).errors[0].errors;

@@ -17,6 +17,8 @@ class Company < ActiveRecord::Base
 	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
 	has_many :attribute_groups
 
+	has_many :custom_filters, dependent: :destroy
+
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
 
 	def reject_company_country(attributes)
@@ -152,6 +154,15 @@ class Company < ActiveRecord::Base
 		crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
 		encrypted_data = crypt.encrypt_and_sign(self.id.to_s)
 		return encrypted_data
+	end
+
+	def encode_company_token
+		return (self.id * 12345678).to_s(30)
+	end
+
+	def self.api_decode_and_find(token)
+		id = token.to_i(30) / 12345678
+		return Company.find_by_id(id)
 	end
 
 	def self.substract_month

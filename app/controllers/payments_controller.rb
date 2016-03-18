@@ -2433,27 +2433,27 @@ class PaymentsController < ApplicationController
         sales_cash_transaction.receipt_number = params[:receipt_number]
       end
       
-        sales_cash_transaction.receipt_number = params[:receipt_number]
-        
-        petty_transaction = PettyTransaction.new
-        petty_transaction.petty_cash_id = petty_cash.id
-        petty_transaction.transactioner_type = 1
-        petty_transaction.transactioner_id = current_user.id
-        petty_transaction.date = DateTime.now
-        petty_transaction.amount = sales_cash_transaction.amount
-        petty_transaction.is_income = true
-        petty_transaction.notes = sales_cash_transaction.notes
-        petty_transaction.receipt_number = sales_cash_transaction.receipt_number
+      sales_cash_transaction.receipt_number = params[:receipt_number]
+      
+      petty_transaction = PettyTransaction.new
+      petty_transaction.petty_cash_id = petty_cash.id
+      petty_transaction.transactioner_type = 1
+      petty_transaction.transactioner_id = current_user.id
+      petty_transaction.date = DateTime.now
+      petty_transaction.amount = sales_cash_transaction.amount
+      petty_transaction.is_income = true
+      petty_transaction.notes = sales_cash_transaction.notes
+      petty_transaction.receipt_number = sales_cash_transaction.receipt_number
 
-        if !petty_transaction.save
-          errors << "Error al generar el traspaso a caja chica."
-        else
-          sales_cash_transaction.petty_transaction_id = petty_transaction.id
-        end
+      if !petty_transaction.save
+        errors << "Error al generar el traspaso a caja chica."
+      else
+        sales_cash_transaction.petty_transaction_id = petty_transaction.id
+      end
 
     else
       if params[:receipt_number].blank?
-        errors << "Se debe ingresar un número de comprobante asociado."
+        sales_cash_transaction.receipt_number = ""
       else
         sales_cash_transaction.receipt_number = params[:receipt_number]
       end

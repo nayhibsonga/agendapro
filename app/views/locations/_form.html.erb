@@ -21,44 +21,29 @@
               <span class="form-control-feedback"></span>
             </div>
           </div>
+          <% if current_user.company.activate_i18n %>
           <div class="form-group has-feedback">
-            <%= label_tag :country, "País", class: "col-md-3 control-label" %>
+            <%= f.label :country_id, "País", class: "col-md-3 control-label" %>
             <div class="col-md-9">
-              <%= select_tag :country, options_from_collection_for_select(Country.where(id: CompanyCountry.where(company_id: current_user.company_id).pluck(:country_id)).order(:name), :id, :name), class: "form-control", include_blank: true %>
+              <%= f.collection_select :country_id, Country.where(id: CompanyCountry.where(company_id: current_user.company_id).pluck(:country_id)).order(:name), :id, :name, {}, {class: "form-control", required: true} %>
               <span class="help-block"></span>
               <span class="form-control-feedback"></span>
             </div>
           </div>
-          <div class="form-group has-feedback">
-            <%= label_tag :region, "Región", class: "col-md-3 control-label" %>
-            <div class="col-md-9">
-              <%= select_tag :region, options_from_collection_for_select(Region.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-          </div>
-          <div class="form-group has-feedback">
-            <%= label_tag :city, "Ciudad", class: "col-md-3 control-label" %>
-            <div class="col-md-9">
-              <%= select_tag :city, options_from_collection_for_select(City.all.order(:name), :id, :name), class: "form-control", :disabled => true %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-          </div>
-          <div class="form-group has-feedback">
-            <%= f.label :district_id, (I18n.t('district')).capitalize, class: "col-md-3 control-label" %>
-            <div class="col-md-9">
-              <%= f.collection_select :district_id, District.all.order(:name), :id, :name, {}, { class: "form-control", :disabled => true }%>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
-            </div>
-          </div>
+          <% else %>
+          <%= f.hidden_field :country_id, value: current_user.company.country_id %>
+          <% end %>
           <div class="form-group has-feedback">
             <%= f.label :address, "Dirección", class: "col-md-3 control-label" %>
             <div class="col-md-9">
-              <%= f.text_field :address, class: "form-control", placeholder: 'Dirección (requerido)' %>
+              <div class="input-group" id="popover-link" tabindex="0" role="button" data-toggle="popover" data-trigger="manual" data-placement="bottom" data-html="true">
+                <%= text_field_tag :address, @location.try(:full_address), class: "form-control", placeholder: 'Dirección (requerido)' %>
+                <%= f.hidden_field :address %>
+                <span class="input-group-btn">
+                  <button class="btn btn-default" id="geolocate" type="button"><i class="fa fa-crosshairs"></i></button>
+                </span>
+              </div>
               <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
             </div>
           </div>
           <div class="form-group has-feedback">
@@ -67,12 +52,23 @@
               <%= f.text_field :second_address, class: "form-control", placeholder: 'Oficina D, Local 22' %>
               <span class="help-block"></span>
               <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-9 col-md-offset-3">
               <div class="checkbox">
                 <label>
-                  <%= f.check_box :outcall %> Sin Dirección (sólo servicios a domicilio).
+                  <%= f.check_box :outcall %> Sólo servicios a domicilio.
                 </label>
               </div>
-              <div id="districtsCheckboxes" class='hidden'></div>
+            </div>
+          </div>
+          <div class="form-group has-feedback" hidden="true">
+            <%= f.label :outcall_places, "Sectores de Atención", class: "col-md-3 control-label" %>
+            <div class="col-md-9">
+              <%= f.text_area :outcall_places, class: "form-control", placeholder: "Indica los sectores o lugares a los que se puede pedir los servicios a domicilio." %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
             </div>
           </div>
           <div class="form-group has-feedback">
@@ -127,13 +123,11 @@
           </tbody>
         </table>
       </div>
-    </div>
-    <div class="col-md-6">
-      <div class="well well-sm">
-        <h4 class="text-center" style="margin-bottom: 0;">¿Aquí se ubica tu local? <small class="hide"><i class="fa fa-spinner fa-spin"></i></small></h4>
-        <span class="hide" id="error">Hubo un error ubicando tu local</span>
-        <span>Puedes dar click en el mapa para cambiar la ubicación</span>
-        <div id="map"></div>
+      <div id="map-placement">
+        <div id="content-popover" class="no-show">
+          <p class="text-center">Puedes dar click en el mapa para cambiar la ubicación</p>
+          <div id="map"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -141,9 +135,17 @@
 
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "bootstrap-tagsinput" %>
+  <style type="text/css">
+    .popover {
+      max-width: 370px;
+    }
+    .pac-container {
+      z-index: 1061;
+    }
+  </style>
 <% end %>
 
 <% content_for :scripts do %>
-  <%= javascript_include_tag "https://maps.google.com/maps/api/js?sensor=false" %>
+  <%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?libraries=places" %>
   <%= javascript_include_tag "location" %>
 <% end %>

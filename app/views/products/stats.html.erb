@@ -7,62 +7,86 @@
   </div>
 </div>
 <div class="container-fluid">
-  <div class="row" style="margin-top: 10px;">
-    <div class="col-md-12">
-      <table>
-        <tr>
-          <td style="width: 100px;">
-            Desde:&nbsp;&nbsp;
-          </td>
-          <td style="width: 200px;">
-            <input type="text" class="form-control datepicker" id="from" value="<%= (DateTime.now - 5.months).strftime('%d/%m/%Y') %>" />
-          </td>
-          <td style="width: 100px; padding-left: 20px;">
-            Hasta:&nbsp;&nbsp;
-          </td>
-          <td style="width: 200px;">
-            <input type="text" class="form-control datepicker" id="to" value="<%= (DateTime.now).strftime('%d/%m/%Y') %>" />
-          </td>
-        </tr>
-      </table>     
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="row" style="margin-top: 10px;">
+        <div class="col-md-12">
+          <table>
+            <tr>
+              <td style="width: 100px;">
+                Desde:&nbsp;&nbsp;
+              </td>
+              <td style="width: 200px;">
+                <input type="text" class="form-control datepicker" id="from" value="<%= (DateTime.now - 5.months).strftime('%d/%m/%Y') %>" />
+              </td>
+              <td style="width: 100px; padding-left: 20px;">
+                Hasta:&nbsp;&nbsp;
+              </td>
+              <td style="width: 200px;">
+                <input type="text" class="form-control datepicker" id="to" value="<%= (DateTime.now).strftime('%d/%m/%Y') %>" />
+              </td>
+            </tr>
+          </table>     
+        </div>
+      </div>
+      <div class="row" style="margin-top: 10px;">
+        <div class="col-md-12">
+          <table>
+            <tr>
+              <td style="width: 100px;">
+                Tipo:&nbsp;&nbsp;
+              </td>
+              <td style="width: 200px;">
+                <select id="location-type-select" class="form-control">
+                  <option value="all">Todos</option>
+                  <option value="active">Activos</option>
+                  <option value="inactive">Inactivos</option>
+                </select>
+              </td>
+              <td style="width: 100px; padding-left: 20px;">
+                Locales:&nbsp;&nbsp;
+              </td>
+              <td style="min-width: 200px;">
+                <select id="location-select" multiple="multiple" class="form-control" hidden>
+                  <% @locations.each do |location| 
+                    status = "inactive"
+                    if location.active
+                      status = "active"
+                    end
+                  %>
+                    <option value="<%= location.id %>" class="<%= status %>">
+                      <%= location.name %>
+                    </option>
+                  <% end %>
+                </select>
+              </td>
+              <td>
+                <!--&nbsp;&nbsp;<button class="btn btn-green" id="getStatsBtn">Ver estadísticas</button>-->
+              </td>
+            </tr>
+          </table>     
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="row" style="margin-top: 10px;">
-    <div class="col-md-12">
-      <table>
-        <tr>
-          <td style="width: 100px;">
-            Tipo:&nbsp;&nbsp;
-          </td>
-          <td style="width: 200px;">
-            <select id="location-type-select" class="form-control">
-              <option value="all">Todos</option>
-              <option value="active">Activos</option>
-              <option value="inactive">Inactivos</option>
-            </select>
-          </td>
-          <td style="width: 100px; padding-left: 20px;">
-            Locales:&nbsp;&nbsp;
-          </td>
-          <td style="min-width: 200px;">
-            <select id="location-select" multiple="multiple" class="form-control" hidden>
-              <% @locations.each do |location| 
-                status = "inactive"
-                if location.active
-                  status = "active"
-                end
-              %>
-                <option value="<%= location.id %>" class="<%= status %>">
-                  <%= location.name %>
-                </option>
-              <% end %>
-            </select>
-          </td>
-          <td>
-            <!--&nbsp;&nbsp;<button class="btn btn-green" id="getStatsBtn">Ver estadísticas</button>-->
-          </td>
-        </tr>
-      </table>     
+    <div class="col-md-6">
+      <div class="row" style="margin-top: 10px;">
+        <div class="col-sm-5">
+          <div class="well revenue1">
+            <h4>Recaudación:</h4>
+            <p class="revenue-price" id=""></p>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div class="well revenue">
+            <h4>Cantidad:</h4>
+            <p class="revenue-price"><strong></strong></p>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          
+        </div>
+      </div>
     </div>
   </div>
   

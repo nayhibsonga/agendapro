@@ -235,6 +235,8 @@ html, body, .main, .ng-app-container {
 .label-completed,
 .label-noshow {
   color: $dark-gray;
+  display: inline-block;
+  min-width: 73px;
 }
 .label-reserved {
   background-color: $reserved-back;
