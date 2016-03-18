@@ -500,11 +500,8 @@ ActiveRecord::Schema.define(version: 20160314160252) do
     t.string   "option"
     t.datetime "created_at"
     t.datetime "updated_at"
-<<<<<<< HEAD
     t.boolean  "exclusive1",       default: true
     t.boolean  "exclusive2",       default: true
-=======
->>>>>>> 45cb22f67438db9301b27841ef23cf4608a182b7
   end
 
   create_table "date_time_attributes", force: true do |t|
@@ -867,11 +864,8 @@ ActiveRecord::Schema.define(version: 20160314160252) do
     t.string   "option"
     t.datetime "created_at"
     t.datetime "updated_at"
-<<<<<<< HEAD
     t.boolean  "exclusive1",       default: true
     t.boolean  "exclusive2",       default: true
-=======
->>>>>>> 45cb22f67438db9301b27841ef23cf4608a182b7
   end
 
   create_table "numeric_parameters", force: true do |t|
