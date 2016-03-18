@@ -15,9 +15,9 @@ class BookingsController < ApplicationController
 
     @company = Company.find(current_user.company_id)
     if current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id
-      @locations = Location.where(:active => true, id: ServiceProvider.where(active: true, id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).ordered
+      @locations = Location.actives.where(id: ServiceProvider.actives.where(id: UserProvider.where(user_id: current_user.id).pluck(:service_provider_id)).pluck(:location_id)).accessible_by(current_ability).ordered
     else
-      @locations = Location.where(:active => true).accessible_by(current_ability).ordered
+      @locations = Location.actives.accessible_by(current_ability).ordered
     end
     @company_setting = @company.company_setting
     @service_providers = ServiceProvider.where(location_id: @locations).ordered
@@ -25,7 +25,7 @@ class BookingsController < ApplicationController
       json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order, :name) do |provider_group|
         json.name  provider_group.name
         json.location_id provider_group.location_id
-        json.resources provider_group.service_providers.where(active: true).accessible_by(current_ability).order(:order, :public_name) do |service_provider|
+        json.resources provider_group.service_providers.actives.accessible_by(current_ability).ordered do |service_provider|
           json.id service_provider.id
           json.name service_provider.public_name
         end
@@ -47,6 +47,11 @@ class BookingsController < ApplicationController
     @booking = Booking.new
     @provider_break = ProviderBreak.new
     @payment = Payment.new
+
+    @state = Hash.new
+    @state[:local] = params[:local] if params[:local]
+    @state[:provider] = params[:provider] if params[:provider]
+    @state[:date] = params[:date] if params[:date]
   end
 
   def fixed_index
@@ -530,7 +535,8 @@ class BookingsController < ApplicationController
           :user_session_confirmed => u.user_session_confirmed,
           :sessions_ratio => sessions_ratio,
           :payed_state => u.payed_state,
-          :bundled => u.bundled
+          :bundled => u.bundled,
+          :location_id => u.location_id
         }
 
         BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
@@ -1200,6 +1206,7 @@ class BookingsController < ApplicationController
         if @client.save
           if User.find_by_email(@client.email)
             new_booking_params[:user_id] = User.find_by_email(@client.email).id
+            @client.save_attributes(params[:custom_attributes])
           end
         else
           render :json => { :errors => ["El cliente no se pudo guardar: " + @client.errors.full_messages.inspect] }, :status => 422
@@ -1230,6 +1237,7 @@ class BookingsController < ApplicationController
         if @client.save
           if User.find_by_email(booking_params[:client_email])
             new_booking_params[:user_id] = User.find_by_email(booking_params[:client_email]).id
+            @client.save_attributes(params[:custom_attributes])
           end
         else
           render :json => { :errors => ["El cliente no se pudo guardar: " + @client.errors.full_messages.inspect] }, :status => 422
@@ -1245,6 +1253,7 @@ class BookingsController < ApplicationController
               client = Client.new(email: booking_params[:client_email], identification_number: booking_params[:client_identification_number], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_day: booking_params[:client_birth_day], birth_month: booking_params[:client_birth_month], birth_year: booking_params[:client_birth_year], age: booking_params[:client_age], record: booking_params[:client_record], second_phone: booking_params[:client_second_phone], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 new_booking_params[:client_id] = client.id
+                client.save_attributes(params[:custom_attributes])
               else
                 render :json => { :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect] }, :status => 422
                 return
@@ -1258,6 +1267,7 @@ class BookingsController < ApplicationController
               client = Client.new(email: booking_params[:client_email], identification_number: booking_params[:client_identification_number], first_name: booking_params[:client_first_name], last_name: booking_params[:client_last_name], phone: booking_params[:client_phone], address: booking_params[:client_address], district: booking_params[:client_district], city: booking_params[:client_city], birth_day: booking_params[:client_birth_day], birth_month: booking_params[:client_birth_month], birth_year: booking_params[:client_birth_year], age: booking_params[:client_age], record: booking_params[:client_record], second_phone: booking_params[:client_second_phone], gender: booking_params[:client_gender], company_id: ServiceProvider.find(booking_params[:service_provider_id]).company.id)
               if client.save
                 new_booking_params[:client_id] = client.id
+                client.save_attributes(params[:custom_attributes])
               else
                 render :json => { :errors => ["El cliente no se pudo guardar: " + client.errors.full_messages.inspect] }, :status => 422
                 return
@@ -1447,7 +1457,30 @@ class BookingsController < ApplicationController
 
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
-        @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings , :is_session => u.is_session, :is_session_booked => u.is_session_booked, :user_session_confirmed => u.user_session_confirmed, :sessions_ratio => sessions_ratio, :payed_state => u.payed_state, :bundled => u.bundled}
+        @booking_json = {
+          :id => u.id,
+          :start => u.start,
+          :end => u.end,
+          :service_id => u.service_id,
+          :service_provider_id => u.service_provider_id,
+          :status_id => u.status_id,
+          :first_name => u.client.first_name,
+          :last_name => u.client.last_name,
+          :email => u.client.email,
+          :phone => u.client.phone,
+          :notes => u.notes,
+          :company_comment => u.company_comment,
+          :provider_lock => u.provider_lock,
+          :service_name => u.service.name,
+          :warnings => warnings ,
+          :is_session => u.is_session,
+          :is_session_booked => u.is_session_booked,
+          :user_session_confirmed => u.user_session_confirmed,
+          :sessions_ratio => sessions_ratio,
+          :payed_state => u.payed_state,
+          :bundled => u.bundled,
+          :location_id => u.location_id
+        }
         BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking_json }
@@ -5558,8 +5591,8 @@ class BookingsController < ApplicationController
           service_valid = false
           service = services_arr[serviceStaffPos]
 
-          logger.info "Service: " + service.name
-          logger.info "DTP: " + dateTimePointer.to_s
+          logger.debug "Service: " + service.name
+          logger.debug "DTP: " + dateTimePointer.to_s
 
 
           #Get providers min
@@ -5571,7 +5604,7 @@ class BookingsController < ApplicationController
             day_open_time = dateTimePointer
           end
 
-          logger.info "Debug 1"
+          logger.debug "Debug 1"
 
           #To deattach continous services, just delete the serviceStaffPos condition
 
@@ -5588,7 +5621,7 @@ class BookingsController < ApplicationController
             end
           end
 
-          logger.info "Debug 2"
+          logger.deug "Debug 2"
 
           #Find next service block starting from dateTimePointer
           service_sum = service.duration.minutes
@@ -5602,7 +5635,7 @@ class BookingsController < ApplicationController
             service_valid = true
           end
 
-          logger.info "Debug 3"
+          logger.debug "Debug 3"
 
           # Hora dentro del horario del local
 
@@ -5612,7 +5645,7 @@ class BookingsController < ApplicationController
               location_open = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.open.hour, times.open.min)
               location_close = DateTime.new(dateTimePointer.year, dateTimePointer.month, dateTimePointer.mday, times.close.hour, times.close.min)
 
-              logger.info "Debug 4"
+              logger.debug "Debug 4"
 
               if location_open <= dateTimePointer and (dateTimePointer + service.duration.minutes) <= location_close
                 service_valid = true
@@ -5621,7 +5654,7 @@ class BookingsController < ApplicationController
             end
           end
 
-          logger.info "Debug 5"
+          logger.debug "Debug 5"
 
           # Horario dentro del horario del provider
           if service_valid
@@ -5629,7 +5662,7 @@ class BookingsController < ApplicationController
             if serviceStaff[serviceStaffPos][:provider] != "0"
               providers << ServiceProvider.find(serviceStaff[serviceStaffPos][:provider])
               #providers = providers_arr[serviceStaffPos]
-              logger.info "Debug 6"
+              logger.debug "Debug 6"
             else
 
               #Check if providers have same day open
@@ -5646,11 +5679,11 @@ class BookingsController < ApplicationController
                 #providers = providers_arr[serviceStaffPos].order(:order, :public_name).sort_by {|service_provider| service_provider.provider_booking_day_open(dateTimePointer) }
               end
 
-              logger.info "Debug 7"
+              logger.debug "Debug 7"
 
             end
 
-            logger.info "Debug 8"
+            logger.debug "Debug 8"
 
             providers.each do |provider|
 
@@ -5661,7 +5694,7 @@ class BookingsController < ApplicationController
                 #dateTimePointer = provider.provider_times.where(day_id: dateTimePointer.cwday).order('open asc').first.open.to_datetime
               end
 
-              logger.info "Debug 9"
+              logger.debug "Debug 9"
 
               service_valid = false
 
@@ -5677,7 +5710,7 @@ class BookingsController < ApplicationController
                 end
               end
 
-              logger.info "Debug 10"
+              logger.debug "Debug 10"
 
               # #Stored procedure for time check
 
@@ -5700,7 +5733,7 @@ class BookingsController < ApplicationController
 
               end
 
-              logger.info "Debug 11"
+              logger.debug "Debug 11"
 
               # Cross Booking
               if service_valid
@@ -5717,7 +5750,7 @@ class BookingsController < ApplicationController
 
               end
 
-              logger.info "Debug 12"
+              logger.debug "Debug 12"
 
               # Recursos
               if service_valid and service.resources.count > 0
@@ -5749,7 +5782,7 @@ class BookingsController < ApplicationController
                 end
               end
 
-              logger.info "Debug 13"
+              logger.debug "Debug 13"
 
               if service_valid
 
@@ -5785,7 +5818,7 @@ class BookingsController < ApplicationController
                   dateTimePointer = dateTimePointer + service.duration.minutes
                 end
 
-                logger.info "Debug 14"
+                logger.debug "Debug 14"
 
                 if serviceStaffPos == serviceStaff.count
                   last_check = true
@@ -5798,7 +5831,7 @@ class BookingsController < ApplicationController
                   end
                 end
 
-                logger.info "Debug 15"
+                logger.debug "Debug 15"
 
                 break
 
@@ -5806,7 +5839,7 @@ class BookingsController < ApplicationController
             end
           end
 
-          logger.info "Debug 16"
+          logger.debug "Debug 16"
 
           if !service_valid
 
@@ -5817,8 +5850,8 @@ class BookingsController < ApplicationController
             #First, check if there's a gap. If so, back dateTimePointer to (blocking_start - total_duration)
             #This way, you can give two options when there are gaps.
 
-            logger.info "DTP starting not valid: " + dateTimePointer.to_s
-            logger.info "Last Check: " + last_check.to_s
+            logger.debug "DTP starting not valid: " + dateTimePointer.to_s
+            logger.debug "Last Check: " + last_check.to_s
 
             #Assume there is no gap
             time_gap = 0
@@ -5874,7 +5907,7 @@ class BookingsController < ApplicationController
 
                 end
 
-                logger.info "Debug 17"
+                logger.debug "Debug 17"
 
               else
 
@@ -5926,7 +5959,7 @@ class BookingsController < ApplicationController
                   end
                 end
 
-                logger.info "Debug 18"
+                logger.debug "Debug 18"
 
               end
 
@@ -6010,8 +6043,8 @@ class BookingsController < ApplicationController
               dateTimePointer += smallest_diff.minutes
             end
 
-            logger.info "Smalled diff: " + smallest_diff.to_s
-            logger.info "Gap DTP: " + dateTimePointer.to_s
+            logger.debug "Smalled diff: " + smallest_diff.to_s
+            logger.debug "Gap DTP: " + dateTimePointer.to_s
 
             serviceStaffPos = 0
             bookings = []
@@ -6021,7 +6054,7 @@ class BookingsController < ApplicationController
           end
         end
 
-        logger.info "Debug 20"
+        logger.debug "Debug 20"
 
         if bookings.length == serviceStaff.length and (dateTimePointer <=> now + company_setting.after_booking.month) == -1
           @hours_array << {

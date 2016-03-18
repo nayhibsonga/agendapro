@@ -3,39 +3,40 @@ var service_category_validation;
 var service_validation;
 var service_provider_validation;
 
+$.validator.addMethod('addressCheck', function(value, element, params) {
+    var address = $('#location_address').val();
+    return address.length > 0;
+}, 'La dirección no es correcta');
+
 $(function() {
 	location_validation = $('#new_location').submit(function(e) {
 		e.preventDefault();
-		window.console.log('prevented');
 	}).validate({
 		errorPlacement: function(error, element) {
-			error.appendTo(element.next());
+			var id = element.attr('id');
+      if (id == "address") {
+        error.appendTo(element.parent().next());
+      } else {
+        error.appendTo(element.next());
+      }
 		},
 		rules: {
 			'location[name]': {
-				required: true,
-				minlength: 3
-			},
-			'country': {
-				required: true
-			},
-			'region': {
-				required: true
-			},
-			'city': {
-				required: true
-			},
-			'location[district_id]': {
-				required: true
-			},
-			'location[address]': {
-				required: true,
-				minlength: 3
-			},
-			'location[phone]': {
-				required: true,
-				minlength: 8,
-				maxlength: 12
+        required: true,
+        minlength: 3
+      },
+      'address': {
+        required: true,
+        minlength: 3,
+				addressCheck: true
+      },
+      'location[phone]': {
+        required: true,
+        minlength: 8,
+        maxlength: 12
+      },
+      'location[email]': {
+        email: true
 			}
 		},
 		highlight: function(element) {
@@ -51,12 +52,13 @@ $(function() {
 			$('#update_location_spinner').show();
 			$('#update_location_button').attr('disabled', true);
 			$('#next_location_button').attr('disabled', true);
-			if($(form).find('button').first().attr('name') == 'new_location_btn') {
+			if($(form).find('button.btn-green').attr('name') == 'new_location_btn') {
 				saveLocation('POST','');
 			}
 			else {
-				if (parseInt($(form).find('button').first().attr('name').split("edit_location_btn_")[1]) > 0) {
-					saveLocation('PATCH', '/'+parseInt($(form).find('button').first().attr('name').split("edit_location_btn_")[1]));
+				var locationId = parseInt($(form).find('button.btn-green').attr('name').split("edit_location_btn_")[1]);
+				if (locationId > 0) {
+					saveLocation('PATCH', '/' + locationId);
 				}
 				else {
 					window.console.log("Bad location update");

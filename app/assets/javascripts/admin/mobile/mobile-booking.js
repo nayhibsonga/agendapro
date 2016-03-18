@@ -91,7 +91,15 @@ function saveBooking (typeURL, booking_id) {
     data: bookingJSON,
     dataType: 'json',
     success: function(booking){
-      window.location.href = "/bookings/"
+      var book = booking;
+      if (Array.isArray(booking)) {
+        book = booking[0];
+      }
+      window.location.href = "/bookings?" + $.param({
+        local: book.location_id,
+        provider: book.service_provider_id,
+        date: book.start
+      });
     },
     error: function(xhr){
       var errors = $.parseJSON(xhr.responseText).errors[0].errors;

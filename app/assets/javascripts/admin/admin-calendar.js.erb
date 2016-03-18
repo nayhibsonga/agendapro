@@ -88,7 +88,7 @@ function loadProviders () {
             loadLocationTime (localId, $('#providers-selector option:selected').data('resources'));
           }
           else {
-            loadProviderTime(parseInt($('#providers-selector').val()));
+            loadProviderTime(parseInt($('#providers-selector>option[name="providerRadio"]:last').val()));
           }
           globalResources = resources;
           return;
@@ -411,12 +411,12 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
       $('#bookingPopover').click(function() {
         if (!bookingModalOpen) {
           bookingModalOpen = true;
-          createBookingModal(date);
+          createBookingModal(date, providerId);
         };
         $('.popover').hide();
       });
       $('#breakPopover').click(function() {
-        createBreakModal(date);
+        createBreakModal(date, providerId);
         $('.popover').hide();
       });
       $('.popover').show();

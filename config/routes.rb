@@ -1,5 +1,6 @@
 Agendapro::Application.routes.draw do
 
+
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -16,6 +17,7 @@ Agendapro::Application.routes.draw do
     post "mandrill/unsubscribe"
     get "mandrill/resuscribe"
 
+    resources :custom_filters
     resources :company_plan_settings
     resources :attribute_categories
     resources :attributes
@@ -92,23 +94,24 @@ Agendapro::Application.routes.draw do
 
     # Quick Add
     scope controller: 'quick_add' do
-        get '/quick_add', action: 'quick_add', as: 'quick_add'
-        get '/quick_add/load_location/:id', action: 'load_location'
-        post '/quick_add/location', action: 'create_location'
-        patch '/quick_add/location/:id', action: 'update_location'
-        post '/quick_add/service_category', action: 'create_service_category'
-        delete '/quick_add/service_category/:id', action: 'delete_service_category'
-        post '/quick_add/service', action: 'create_service'
-        delete '/quick_add/service/:id', action: 'delete_service'
-        get '/quick_add/list_services', action: 'list_services'
-        post '/quick_add/service_provider', action: 'create_service_provider'
-        delete '/quick_add/service_provider/:id', action: 'delete_service_provider'
-        patch '/quick_add/update_company', action: 'update_company'
+      get '/quick_add', action: 'quick_add', as: 'quick_add'
+      patch '/quick_add/update_company', action: 'update_company'
+      post '/quick_add/location', action: 'create_location'
+      patch '/quick_add/location/:id', action: 'update_location'
+      get '/quick_add/load_location/:id', action: 'load_location'
+      post '/quick_add/service_category', action: 'create_service_category'
+      delete '/quick_add/service_category/:id', action: 'delete_service_category'
+      post '/quick_add/service', action: 'create_service'
+      delete '/quick_add/service/:id', action: 'delete_service'
+      get '/quick_add/list_services', action: 'list_services'
+      post '/quick_add/service_provider', action: 'create_service_provider'
+      delete '/quick_add/service_provider/:id', action: 'delete_service_provider'
+      patch '/save_configurations', action: 'save_configurations'
+      get '/quick_add/load_notification_email_data', action: 'load_notification_email_data'
+      post '/create_notification_email', action: 'create_notification_email'
+      post '/delete_notification_email', action: 'delete_notification_email'
     end
 
-    post '/create_notification_email', :to => 'quick_add#create_notification_email'
-    post '/delete_notification_email', :to => 'quick_add#delete_notification_email'
-    patch '/save_configurations', :to => 'quick_add#save_configurations'
 
     # Reporting
     get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
@@ -566,6 +569,8 @@ Agendapro::Application.routes.draw do
     post '/billing_info_admin_create', :to => 'billing_infos#super_admin_create'
     patch '/billing_info_admin_update', :to => 'billing_infos#super_admin_update'
 
+    get '/new_filter_form', :to => 'custom_filters#new_filter_form'
+    get '/edit_filter_form', :to => 'custom_filters#edit_filter_form'
     post '/rearrange_attributes', :to => 'attributes#rearrange'
     post '/rearrange_attribute_groups', :to => 'attribute_groups#rearrange'
 

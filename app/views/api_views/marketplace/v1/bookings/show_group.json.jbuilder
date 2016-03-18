@@ -3,7 +3,7 @@ json.array!(@bookings) do |booking|
 	json.service booking.service.name
 	json.provider booking.service_provider.public_name
 	json.location booking.location.name
-	json.location_address booking.location.get_full_address
+	json.location_address booking.location.long_address_with_second_address
 	json.client_full_name booking.client.full_name
 	json.client_email booking.client.email
 	json.client_phone booking.client.phone

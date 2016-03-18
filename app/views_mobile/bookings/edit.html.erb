@@ -144,31 +144,26 @@
           <% if @booking.is_session %>
             <div class="form-group" id="sessions-row">
               <input type="hidden" name="has_sessions" id="has_sessions" value="1" />
-
-                  <%= f.label "sessions-label", "Sesiones", class: "col-xs-3 control-label" %>
-                  <div class="col-xs-9">
-                    <div id="sessions-info">
-                      
-                        Esta reserva corresponde a una sesión de un servicio.
-                      
-                    </div>
-                  </div>
+              <%= f.label "sessions-label", "Sesiones", class: "col-xs-3 control-label" %>
+              <div class="col-xs-9">
+                <div id="sessions-info">
+                  Esta reserva corresponde a una sesión de un servicio.
+                </div>
+              </div>
             </div>
           <% else %>
             <div class="form-group" id="sessions-row" hidden>
-              <input type="hidden" name="has_sessions" id="has_sessions" value="0" />
-
-                  <%= f.label "sessions-label", "Sesiones", class: "col-sm-3 control-label" %>
-                  <div class="col-sm-9">
-                    <div id="sessions-info">
-                      
-                    </div>
-                  </div>
+            <input type="hidden" name="has_sessions" id="has_sessions" value="0" />
+              <%= f.label "sessions-label", "Sesiones", class: "col-sm-3 control-label" %>
+              <div class="col-sm-9">
+                <div id="sessions-info">
+                </div>
+              </div>
             </div>
           <% end %>
 
           <button type="submit" class="btn btn-block btn-lg btn-orange" data-id="<%= @booking.id %>" data-url="PATCH" data-loading="Guardando <i class='fa fa-spinner fa-spin'></i>" autocomplete="off">Guardar</button>
-          <%= link_to 'Volver', bookings_path, class: 'btn btn-block btn-lg btn-default' %>
+          <%= link_to 'Volver', bookings_path(local: @booking.location_id, provider: @booking.service_provider_id, date: @booking.start), class: 'btn btn-block btn-lg btn-default' %>
         </div>
       <% end %>
     </div>
