@@ -3,6 +3,11 @@ var service_category_validation;
 var service_validation;
 var service_provider_validation;
 
+$.validator.addMethod('addressCheck', function(value, element, params) {
+    var address = $('#location_address').val();
+    return address.length > 0;
+}, 'La dirección no es correcta');
+
 $(function() {
 	location_validation = $('#new_location').submit(function(e) {
 		e.preventDefault();
@@ -22,7 +27,8 @@ $(function() {
       },
       'address': {
         required: true,
-        minlength: 3
+        minlength: 3,
+				addressCheck: true
       },
       'location[phone]': {
         required: true,

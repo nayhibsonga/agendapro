@@ -204,7 +204,7 @@
                       <td><%= payment_account.amount.round.to_s %></td>
                       <td><%= payment_account.company_amount.round.to_s %></td>
                       <td><%= payment_account.gain_amount.round.to_s %></td>
-                      <td><%= I18n.l(payment_account.updated_at - eval(ENV["TIME_ZONE_OFFSET"]), format: :long) %></td>
+                      <td><%= I18n.l(payment_account.updated_at + CustomeTimezone.from_company(payment_account.company).offset, format: :long) %></td>
                       <td>
                         <form method="post" action="payed_bookings/unmark_as_payed">
                           <input type="hidden" name="id" value="<%= payment_account.id %>" />
@@ -471,7 +471,7 @@
                         <td><%= payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name %></td>
                         <td><%= payed_booking.bookings.first.client.email %></td>
                       <% end %>
-                      
+
                       <td><%= payed_booking.bookings.first.location.company.name %></td>
                       <td>
                         <% payed_booking.bookings.each do |booking| %>

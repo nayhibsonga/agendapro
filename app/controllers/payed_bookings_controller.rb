@@ -10,7 +10,7 @@ class PayedBookingsController < ApplicationController
   	#load_and_authorize_resource
 
   	def index
-  		
+
 
   		#Organizar por compañía para hacer una sola transferencia:
   		#Pagos pendiente de payed_bookings sumados por empresa.
@@ -25,9 +25,9 @@ class PayedBookingsController < ApplicationController
   		Company.all.each do |company|
   			c_user = User.find_by_company_id(company.id)
   			commission = company.company_setting.online_payment_commission
-  			
+
   			if !c_user.nil? and c_user.role_id != Role.find_by_name("Super Admin")
-  				
+
   				cancel_max = 0
   				limit_date = now
   				if !company.company_setting.online_cancelation_policy.nil?
@@ -37,21 +37,22 @@ class PayedBookingsController < ApplicationController
 	  				end
 	  			end
 
-	  			limit_date = limit_date + eval(ENV["TIME_ZONE_OFFSET"])
+					timezone = CustomTimezone.from_company(company)
+	  			limit_date = limit_date + timezone.offset
 
 	  			pending_payed_bookings = PayedBooking.where(:transfer_complete => false, :canceled => false, :id => Booking.where('"bookings".created_at < ?', limit_date).where(:location_id => Location.where(:company_id => company.id)).pluck('distinct payed_booking_id'))
 	  			if pending_payed_bookings.count > 0
 
 		  			payment_account = PaymentAccount.new
 		  			if(PaymentAccount.where(:company_id => company.id, :status => false).count > 0)
-		  				payment_account = PaymentAccount.where(:company_id => company.id, :status => false).first  			
+		  				payment_account = PaymentAccount.where(:company_id => company.id, :status => false).first
 			  		end
 
 			  		#Lo reseteamos y sumamos de nuevo por si hubiera un nuevo payed_booking
 			  		payment_account.amount = 0
 			  		payment_account.company_amount = 0
 			  		payment_account.gain_amount = 0
-			  		
+
 
 			  		#Get company's payed_bookings instead of bookings, because bookings share payed_bookings
 			  		pending_payed_bookings.each do |payed_booking|
@@ -67,7 +68,7 @@ class PayedBookingsController < ApplicationController
   		 				if !payed_booking.bookings.first.service_promo_id.nil?
   		 					commission = company.company_setting.promo_commission
   		 				end
-  		 				payment_account.company_amount = payment_account.amount*(100-commission)/100		 				
+  		 				payment_account.company_amount = payment_account.amount*(100-commission)/100
   		 				payed_booking.payment_account = payment_account
   		 				payed_booking.save
 			  		end
@@ -76,7 +77,7 @@ class PayedBookingsController < ApplicationController
 		  		 	# 	loc.bookings.each do |booking|
 
 		  		 	# 		if(!booking.payed_booking.nil? && booking.payed_booking.canceled == false)
-		  		 				
+
 		  		 	# 			if payment_account.company_id.nil?
 		  		 	# 				payment_account.name = company.company_setting.account_name
 		  		 	# 				payment_account.rut = company.company_setting.company_rut
@@ -85,14 +86,14 @@ class PayedBookingsController < ApplicationController
 		  		 	# 				payment_account.bank_code = company.company_setting.bank.code
 		  		 	# 				payment_account.account_type = company.company_setting.account_type
 		  		 	# 			end
-		  		 				
+
 		  		 	# 			payment_account.amount = payment_account.amount + booking.payed_booking.punto_pagos_confirmation.amount
 		  		 	# 			payment_account.company_amount = payment_account.amount*(100-commission)/100
 
-		  		 				
+
 		  		 	# 			booking.payed_booking.payment_account = payment_account
 		  		 	# 			booking.payed_booking.save
-			  		 			
+
 		  		 	# 		end
 		  		 	# 	end
 		  		 	# end
@@ -128,7 +129,7 @@ class PayedBookingsController < ApplicationController
   	end
 
 	def create_csv
-	
+
 		#respond_to do |format|
 	    #  format.html
 	    #  format.csv { render text: PaymentAccount.to_csv(params[:type], params[:start_date], params[:end_date]), :filename => "online_payments.csv" }
@@ -158,7 +159,7 @@ class PayedBookingsController < ApplicationController
 	end
 
 	def create_company_csv
-	
+
 		#respond_to do |format|
 	    #  format.html
 	    #  format.csv { render text: PaymentAccount.to_csv(params[:type], params[:start_date], params[:end_date]), :filename => "online_payments.csv" }

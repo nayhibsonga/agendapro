@@ -174,6 +174,8 @@ function initialize() {
       $('#dayStatusId' + i).prop('checked', true).val(1);
     };
   };
+
+  serviceGroup();
 }
 
 function changeDayStatus (value) {

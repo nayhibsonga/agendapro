@@ -10,7 +10,7 @@
 					</div>
 					<div class="col-xs-6 session-row-date">
 						<i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :default) %>&nbsp;&nbsp;
-						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + eval(ENV["TIME_ZONE_OFFSET"]), format: :hour) %>
+						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + CustomeTimezone.from_booking(booking).offset, format: :hour) %>
 					</div>
 					<div class="col-xs-4 session-row-btns">
 						<span><button class="btn session-btn session-btn-edit" data-toggle="bookModal" href="book_session_form?id=<%= booking.id %>"disabled>Editar</button><button class="btn session-btn session-btn-delete"disabled>Cancelar</button></span>
@@ -23,7 +23,7 @@
 					</div>
 					<div class="col-xs-6 session-row-date">
 						<i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :default) %>&nbsp;&nbsp;
-						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + eval(ENV["TIME_ZONE_OFFSET"]), format: :hour) %>
+						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + CustomeTimezone.from_booking(booking).offset, format: :hour) %>
 					</div>
 					<div class="col-xs-4 session-row-btns">
 						<button class="btn session-btn session-btn-detail" data-toggle="detailModal" href="session_booking_detail?id=<%= booking.id %>" disabled>Ver</button>
@@ -38,7 +38,7 @@
 				</div>
 				<div class="col-xs-6 session-row-date">
 					<i class="fa fa-calendar-o"></i>&nbsp;<%= I18n.l(booking.start.to_date, format: :default) %>&nbsp;&nbsp;
-						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + eval(ENV["TIME_ZONE_OFFSET"]), format: :hour) %>
+						<i class="fa fa-clock-o"></i>&nbsp;<%= I18n.l(booking.start.to_time + CustomeTimezone.from_booking(booking).offset, format: :hour) %>
 				</div>
 				<div class="col-xs-4 session-row-btns">
 					<button class="btn session-btn session-btn-detail" data-toggle="detailModal" href="session_booking_detail?id=<%= booking.id %>" disabled>Ver</button>
@@ -54,7 +54,7 @@
 				Sesión <%= i.to_s %>
 			</div>
 			<div class="col-xs-6 session-row-date">
-				
+
 			</div>
 			<div class="col-xs-4 session-row-btns">
 				<button class="btn session-btn session-btn-book" data-toggle="bookModal" href="book_session_form?id=<%= booking.id %>" disabled>Reservar</button>
@@ -67,13 +67,13 @@
 
 <div class="modal" id="detailModal">
 	<div class="modal-body">
-		
+
 	</div>
 </div>
 
 <div class="modal" id="bookModal">
 	<div class="modal-body">
-		
+
 	</div>
 </div>
 
@@ -127,7 +127,7 @@
           , $modal = $('<div class="modal" id="detailModal"><div class="modal-body"></div></div>');
         $('body').append($modal);
         $modal.modal({backdrop: 'static', keyboard: false});
-        $modal.load($remote); 
+        $modal.load($remote);
     });
 
     $('#detailModal').on('hidden.bs.modal', function(){
@@ -143,7 +143,7 @@
           , $modal = $('<div class="modal" id="bookModal"><div class="modal-body"></div></div>');
         $('body').append($modal);
         $modal.modal({backdrop: 'static', keyboard: false});
-        $modal.load($remote); 
+        $modal.load($remote);
     });
 
     $(document).ready(function(){

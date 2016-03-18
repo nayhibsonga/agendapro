@@ -447,7 +447,7 @@ class CompaniesController < ApplicationController
 		if current_user.role_id == Role.find_by_name("Ventas").id
 			@companies = StatsCompany.where(company_sales_user_id: current_user.id)
 			@active_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Activo').id).order(:company_name)
-			@trial_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Trial').id).order(:company_name)
+			@trial_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Trial').id).order(:created_at, :company_name)
 			@late_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Vencido').id).order(:company_name)
 			@blocked_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Bloqueado').id).order(:company_name)
 			@inactive_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Inactivo').id).order(:company_name)
@@ -461,7 +461,7 @@ class CompaniesController < ApplicationController
 				@companies = StatsCompany.where(company_id: Company.where(country_id: Country.find_by(locale: I18n.locale.to_s))).order(:company_name)
 			end
 			@active_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Activo').id).order(:company_name)
-			@trial_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Trial').id).order(:company_name)
+			@trial_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Trial').id).order(:created_at, :company_name)
 			@late_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Vencido').id).order(:company_name)
 			@blocked_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Bloqueado').id).order(:company_name)
 			@inactive_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Inactivo').id).order(:company_name)
@@ -492,11 +492,18 @@ class CompaniesController < ApplicationController
 
 		@price = 0
 	    if @company.payment_status == PaymentStatus.find_by_name("Trial")
-	      if @company.locations.count > 1 || @company.service_providers.count > 1
-	        @price = Plan.where(name: "Normal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier
-	      else
-	        @price = Plan.where(name: "Personal", custom: false).first.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier
-	      end
+	    	plan = @company.default_plan
+
+	    	if plan.name == "Normal" || plan.name == "Personal"				
+				if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
+					plan = Plan.where(name: "Normal", custom: false).first
+				else
+					plan = Plan.where(name: "Personal", custom: false).first
+				end
+ 			end
+
+	        @price = plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier
+
 	    else
 	      if @company.plan.custom
 	        @price = @company.company_plan_setting.base_price
@@ -516,7 +523,9 @@ class CompaniesController < ApplicationController
 	    @day_number = Time.now.day
 	    @month_number = Time.now.month
 	    @month_days = Time.now.days_in_month
-		@company.months_active_left > 0 ? @plan_1 = (@company.due_amount/(1+@sales_tax) + @price).round(0) : @plan_1 = ((@company.due_amount/(1+@sales_tax) + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
+		#@company.months_active_left > 0 ? @plan_1 = (@company.due_amount/(1+@sales_tax) + @price).round(0) : @plan_1 = ((@company.due_amount/(1+@sales_tax) + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
+
+		@plan_1 = (@company.due_amount/(1+@sales_tax) + @price).round(0)
 
 
 	    @plan_2 = (@plan_1 + @price*1).round(0)
@@ -1810,6 +1819,26 @@ class CompaniesController < ApplicationController
 		respond_with(@company)
 
 	end
+
+	def select_default_plan
+    
+		@company = Company.find(params[:company_id])
+		@plan_id = params[:plan_id]
+		@plan = Plan.find(@plan_id)
+
+		@company.default_plan_id = @plan_id
+		@company.company_plan_setting.base_price = @plan.plan_countries.find_by_country_id(@company.country.id).price
+
+		if @company.save
+			@company.company_plan_setting.save
+			flash[:notice] = 'Plan guardado correctamente. Puedes cambiarlo cuantas veces quieras hasta que acabe tu período de prueba.'
+			redirect_to :action => 'select_plan', :controller => 'plans'
+		else
+			flash[:alert] = 'Ocurrió un error al elegir el plan.'
+			redirect_to :action => 'select_plan', :controller => 'plans'
+		end
+
+  	end
 
 	private
 

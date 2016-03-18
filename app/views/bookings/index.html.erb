@@ -214,7 +214,7 @@
                       <div class="form-group has-feedback">
                         <%= f.label :service_provider_id, "Prestador de Servicios", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
-                          <%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability).order(public_name: :asc), :id, :public_name, {}, { class: "form-control" }%>
+                          <%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id).actives).accessible_by(current_ability).ordered, :id, :public_name, {}, { class: "form-control" }%>
                           <span class="help-block"></span>
                           <span class="form-control-feedback"></span>
                           <div class="checkbox">
@@ -404,11 +404,11 @@
                   <% if @company.is_plan_capable("Premium") %>
                     <% if @company.custom_attributes.where(show_on_calendar: true).count > 0 %>
                       <div class="row">
-                          <div class="col-md-12">
-                            <div style="font-size: 20px; padding: 10px;">
-                              Datos personalizados del cliente
-                            </div>
+                        <div class="col-md-12">
+                          <div style="font-size: 20px; padding: 10px;">
+                            Datos personalizados del cliente
                           </div>
+                        </div>
                       </div>
                     <% end %>
 
@@ -697,11 +697,11 @@
                     <% if @company.is_plan_capable("Premium") %>
                       <% if @company.custom_attributes.where(show_on_calendar: false).count > 0 %>
                         <div class="row">
-                            <div class="col-md-12">
-                              <div style="font-size: 20px; padding: 10px;">
-                                Datos personalizados del cliente
-                              </div>
+                          <div class="col-md-12">
+                            <div style="font-size: 20px; padding: 10px;">
+                              Datos personalizados del cliente
                             </div>
+                          </div>
                         </div>
                       <% end %>
 
@@ -1034,13 +1034,13 @@
             <div class="form-group">
               <%= f.label :start, "Inicio", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
-                <%= f.datetime_select :start, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
+                <%= f.datetime_select :start, {default: @timezone.offset.ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
             <div class="form-group">
               <%= f.label :end, "Fin", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
-                <%= f.datetime_select :end, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
+                <%= f.datetime_select :end, {default: @timezone.offset.ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
             <div class="form-group form-repeat-div">
@@ -1112,7 +1112,7 @@
                 </div>
                 <div>
                   <%= radio_button_tag :repeat_option, 'date_end', false %>&nbsp;El&nbsp;
-                  <%= datetime_select "provider_break_repeat", "repeat_end", {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
+                  <%= datetime_select "provider_break_repeat", "repeat_end", {default: @timezone.offset.ago, :minute_step => 5}, {class: "form-control date-select"} %>
                 </div>
               </div>
             </div>

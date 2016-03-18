@@ -339,39 +339,12 @@ function places() {
       setLatLng(autocomplete.getPlace().geometry.location);
       setAddress(autocomplete.getPlace());
       setCenter(autocomplete.getPlace().geometry.location);
-    }
+    } else {
+      $('#location_address, #location_latitude, #location_longitude').val('');
+    };
+    $('#address').valid();
   });
 
-  $("#address").focusin(function () {
-    $(document).bind("keypress.key1", function(e) {
-      if (e.which == 13) {
-        e.preventDefault();
-        selectFirstResult();
-      }
-    });
-  });
-  $("#address").focusout(function () {
-    selectFirstResult();
-    $(document).unbind("keypress.key1");
-  });
-
-  function selectFirstResult() {
-    $('#update_location_button').attr('disabled', true);
-    infowindow.close();
-    $(".pac-container").hide();
-    var firstResult = $(".pac-container .pac-item:first").text();
-    geocoder.geocode({"address":firstResult }, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        setLatLng(results[0].geometry.location);
-        setAddress(results[0]);
-        setCenter(results[0].geometry.location);
-      }
-      else {
-        $("#location_address").val('');
-        $("#address").val('');
-      }
-    });
-  }
   function geolocate() {
     $('#update_location_button').attr('disabled', true);
     if (navigator.geolocation) {
@@ -486,10 +459,11 @@ function popover() {
     };
   });
   $('body').click(function(event) {
-    var element = $(event.target);
+    var element = event.target;
     var group = element.closest('.input-group');
     var popover = element.closest('.popover');
-    if (group.length == popover.length) {
+    var icon = $(element).hasClass('fa-crosshairs');
+    if (!group && !popover && !icon) {
       inputgroup.popover('hide');
     };
   });

@@ -63,6 +63,9 @@ class CompanySettingsController < ApplicationController
     @attributes = @company.custom_attributes.joins(:attribute_group).order('attribute_groups.order asc').order('attributes.order asc').order('name asc')
     @attribute_groups = @company.attribute_groups.order(order: :asc).order(name: :asc)
 
+    @custom_filter = CustomFilter.new
+    @custom_filters = @company.custom_filters
+
     @notification_email = NotificationEmail.new
     @notifications = NotificationEmail.where(company: @company).order(:receptor_type)
 

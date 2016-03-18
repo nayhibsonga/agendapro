@@ -14,8 +14,21 @@ class Attribute < ActiveRecord::Base
 	has_many :categoric_attributes, dependent: :destroy
 	has_many :textarea_attributes, dependent: :destroy
 
+	has_many :numeric_custom_filters, dependent: :destroy
+	has_many :categoric_custom_filters, dependent: :destroy
+	has_many :date_custom_filters, dependent: :destroy
+	has_many :text_custom_filters, dependent: :destroy
+	has_many :boolean_custom_filters, dependent: :destroy
+
 	after_create :create_clients_attributes
 	after_save :check_file, :generate_slug, :rearrange
+	after_destroy :check_left
+
+	def check_left
+		if self.company.custom_attributes.count < 1
+			company.custom_filters.destroy_all
+		end
+	end
 
 	def rearrange
 
