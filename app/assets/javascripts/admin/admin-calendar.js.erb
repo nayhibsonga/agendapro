@@ -2816,7 +2816,7 @@ function loadClientHistory(booking_id) {
             staffCode = '<td>'+booking_history.staff_code+'</td>';
           }
           var created = new Date(booking_history.created);
-          created.setHours(created.getHours() - <%= ENV["TIME_ZONE_OFFSET"].split('.')[0] %>);
+          offsetDate(created, booking_history.time_offset);
           var date = new Date(booking_history.start);
           $('#booking-history-tbody').append('<tr><td>'+booking_history.action+'</td><td>'+dateToLocal(created)+'</td><td>'+dateToLocal(date)+'</td><td>'+booking_history.service+'</td><td>'+booking_history.provider+'</td><td>'+booking_history.status+'</td><td>'+booking_history.notes+'</td><td>'+booking_history.company_comment+'</td><td>'+booking_history.user+'</td>'+staffCode+'</tr>');
         });
@@ -2864,6 +2864,12 @@ function dateFullToLocal(date) {
   var hours = date.getUTCHours() < 10 ? '0'+date.getUTCHours() : date.getUTCHours();
   var minutes =  date.getUTCMinutes() < 10 ? '0'+date.getUTCMinutes() : date.getUTCMinutes();
   return diasSemana[date.getUTCDay()] + ", " + date.getUTCDate() + " de " + meses[date.getUTCMonth()] + " de " + date.getUTCFullYear() + ' - ' + hours + ':' + minutes;
+}
+
+function offsetDate(date, offset) {
+  var hours = Math.trunc(offset);
+  var minutes = (offset % 1) * 60;
+  date.setHours(date.getHours() + hours, date.getMinutes() + minutes);
 }
 
 $(function() {

@@ -5,7 +5,7 @@
   xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
   xmlns:html="http://www.w3.org/TR/REC-html40">
 
- 
+
 
       <Worksheet ss:Name="Reporte de Caja">
 
@@ -41,7 +41,7 @@
             </Row>
             <Row>
               <Cell><Data ss:Type="String">Apertura</Data></Cell>
-              <Cell><Data ss:Type="String"><%= (@sales_cash.last_reset_date - eval(ENV["TIME_ZONE_OFFSET"])).strftime('%d/%m/%Y %R') %></Data></Cell>
+              <Cell><Data ss:Type="String"><%= (@sales_cash.last_reset_date + CustomeTimezone.from_sales_cash(@sales_cash).offset).strftime('%d/%m/%Y %R') %></Data></Cell>
             </Row>
             <Row>
               <Cell><Data ss:Type="String">Fecha actual</Data></Cell>
@@ -276,7 +276,7 @@
               <Cell><Data ss:Type="String">#Servicios</Data></Cell>
               <Cell><Data ss:Type="String">#Reservas</Data></Cell>
               <Cell><Data ss:Type="String">Métodos de pago</Data></Cell>
-              <Cell><Data ss:Type="String">#Boletas</Data></Cell>           
+              <Cell><Data ss:Type="String">#Boletas</Data></Cell>
               <Cell><Data ss:Type="String">Precio</Data></Cell>
               <Cell><Data ss:Type="String">Monto pagado</Data></Cell>
               <Cell><Data ss:Type="String">Vuelto</Data></Cell>
@@ -301,11 +301,11 @@
                   end
                 %>
 
-                <% 
+                <%
 
                   payment_products_num = 0
 
-                  payment.payment_products.each do |payment_product| 
+                  payment.payment_products.each do |payment_product|
                     payment_products_num += payment_product.quantity
                   end
 
@@ -327,7 +327,7 @@
                 <Cell><Data ss:Type="Number"><%= payment.mock_bookings.count %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= payment.bookings.count %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
-                <Cell><Data ss:Type="Number"><%= payment.receipts.count %></Data></Cell>           
+                <Cell><Data ss:Type="Number"><%= payment.receipts.count %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= payment.amount %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= payment.paid_amount %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= payment.change_amount %></Data></Cell>
@@ -400,7 +400,7 @@
                 <Cell><Data ss:Type="String"><%= sales_cash_income.notes %></Data></Cell>
               </Row>
 
-            <% end %> 
+            <% end %>
 
             <Row>
               <Cell><Data ss:Type="String"></Data></Cell>
@@ -421,13 +421,13 @@
 
             <% @sales_cash_transactions.each do |sales_cash_transaction| %>
 
-              <% 
+              <%
                 transaction_destiny = ""
                 if sales_cash_transaction.is_internal_transaction
                   transaction_destiny = "A caja chica"
                 else
                   transaction_destiny = "Externo"
-                end 
+                end
               %>
 
               <Row>
@@ -439,7 +439,7 @@
                 <Cell><Data ss:Type="String"><%= sales_cash_transaction.notes %></Data></Cell>
               </Row>
 
-            <% end %> 
+            <% end %>
 
             <Row>
               <Cell><Data ss:Type="String"></Data></Cell>

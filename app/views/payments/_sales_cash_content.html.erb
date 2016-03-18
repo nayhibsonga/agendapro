@@ -3,7 +3,7 @@
   <div class="col-xs-6">
     <div id="sales-cash-title">Caja de ventas de <%= @location.name %></div>
     <div id="sales-cash-last-reset-date">
-      Último cierre de caja: <%= I18n.l(@sales_cash.last_reset_date - eval(ENV["TIME_ZONE_OFFSET"])).capitalize %>.
+      Último cierre de caja: <%= I18n.l(@sales_cash.last_reset_date + CustomeTimezone.from_sales_cash(@sales_cash).offset).capitalize %>.
     </div>
     <div id="sales-cash-schedule">Cierre programado:
       <% if @sales_cash.scheduled_reset %>
@@ -29,7 +29,7 @@
       <div style="margin-bottom: 5px; margin-top: 4px; display: block; text-align: right;">
         <select id="sales_cash_log_select" class="form-control pull-right" style="width: 65% !important; text-align: right !important;">
           <% @sales_cash.sales_cash_logs.order('end_date desc').each do |sales_cash_log| %>
-            <option value="<%= sales_cash_log.id %>"><%= "Del  " + (sales_cash_log.start_date - eval(ENV["TIME_ZONE_OFFSET"])).strftime('%d/%m/%Y %R') + "  al  " + (sales_cash_log.end_date - eval(ENV["TIME_ZONE_OFFSET"])).strftime('%d/%m/%Y %R') %></option>
+            <option value="<%= sales_cash_log.id %>"><%= "Del  " + (sales_cash_log.start_date + CustomeTimezone.from_sales_cash(@sales_cash).offset).strftime('%d/%m/%Y %R') + "  al  " + (sales_cash_log.end_date + CustomeTimezone.from_sales_cash(@sales_cash).offset).strftime('%d/%m/%Y %R') %></option>
           <% end %>
         </select>
         <br />
@@ -113,7 +113,7 @@
               <button class="btn btn-dark-green btn-xs" onclick="openPaymentPdfs(<%= payment.id %>);"><i class="fa fa-file-pdf-o"></i></button>
               <button class="btn btn-orange btn-xs" onclick="openPaymentMailer(<%= payment.id %>);"><i class="fa fa-envelope"></i></button>
               <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
-                <button class="btn btn-warning btn-xs" onclick="editPayment(<%= payment.id %>);"><i class="fa fa-pencil"></i></button> 
+                <button class="btn btn-warning btn-xs" onclick="editPayment(<%= payment.id %>);"><i class="fa fa-pencil"></i></button>
                 <button class="btn btn-red btn-xs" onclick="deletePayment(<%= payment.id %>);"><i class="fa fa-trash-o"></i></button>
               <% end %>
             </td>
@@ -142,7 +142,7 @@
             else
               mock_bookings_text += '* ' + mock_booking.service.name + " con " + mock_booking.service_provider.public_name + " " + number_to_currency(mock_booking.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) + ' con ' + mock_booking.discount.to_s + '% de descuento<br/>'
             end
-              
+
           end %>
           <% qtip_text = ''
           if bookings_text != '' then qtip_text += '<strong>Reservas:</strong><br/>' + bookings_text + '<br/>' end
@@ -222,7 +222,7 @@
               <td>
                 <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
                   <button class="btn btn-default btn-xs" onclick="openInternalSaleSummary(<%= internal_sale.id %>);"><i class="fa fa-search-plus"></i></button>
-                  <button class="btn btn-warning btn-xs" onclick="editInternalSale(<%= internal_sale.id %>);"><i class="fa fa-pencil"></i></button> 
+                  <button class="btn btn-warning btn-xs" onclick="editInternalSale(<%= internal_sale.id %>);"><i class="fa fa-pencil"></i></button>
                   <button class="btn btn-red btn-xs" onclick="deleteInternalSale(<%= internal_sale.id %>);"><i class="fa fa-trash-o"></i></button>
                 <% else %>
                   Sin opciones
@@ -279,7 +279,7 @@
               <td>
                 <% if current_user.role_id == Role.find_by_name("Administrador General").id && sales_cash_transaction.open %>
                   <button class="btn btn-default btn-xs" onclick="openSalesCashTransactionSummary(<%= sales_cash_transaction.id %>);"><i class="fa fa-search-plus"></i></button>
-                  <button class="btn btn-warning btn-xs" onclick="editSalesCashTransaction(<%= sales_cash_transaction.id %>);"><i class="fa fa-pencil"></i></button> 
+                  <button class="btn btn-warning btn-xs" onclick="editSalesCashTransaction(<%= sales_cash_transaction.id %>);"><i class="fa fa-pencil"></i></button>
                   <button class="btn btn-red btn-xs" onclick="deleteSalesCashTransaction(<%= sales_cash_transaction.id %>);"><i class="fa fa-trash-o"></i></button>
                 <% else %>
                   Sin opciones
@@ -323,7 +323,7 @@
               <td>
                 <% if current_user.role_id == Role.find_by_name("Administrador General").id && sales_cash_income.open %>
                   <button class="btn btn-default btn-xs" onclick="openSalesCashIncomeSummary(<%= sales_cash_income.id %>);"><i class="fa fa-search-plus"></i></button>
-                  <button class="btn btn-warning btn-xs" onclick="editSalesCashIncome(<%= sales_cash_income.id %>);"><i class="fa fa-pencil"></i></button> 
+                  <button class="btn btn-warning btn-xs" onclick="editSalesCashIncome(<%= sales_cash_income.id %>);"><i class="fa fa-pencil"></i></button>
                   <button class="btn btn-red btn-xs" onclick="deleteSalesCashIncome(<%= sales_cash_income.id %>);"><i class="fa fa-trash-o"></i></button>
                 <% else %>
                   Sin opciones

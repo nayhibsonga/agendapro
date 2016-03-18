@@ -541,7 +541,7 @@ class Client < ActiveRecord::Base
     canceled_status = Status.find_by_name("Cancelado")
     bookings = Array.new
     #Send all services from same client (each company has diferent clients)
-    Client.where(id: Booking.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
+    Client.where(id: Booking.where(:start => CustomTimezone.first_timezone.offset.ago...(96.hours + CustomTimezone.last_timezone.offset).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
 
       #Send a reminder for each location
       client.company.locations.each do |location|
@@ -549,13 +549,15 @@ class Client < ActiveRecord::Base
         bookings = Array.new
         single_booking = Booking.new
 
-        potential_bookings = client.bookings.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
+        timezone = CustomTimezone.from_company(client.company)
+
+        potential_bookings = client.bookings.where(:start => timezone.offset.ago...(96.hours + timezone.offset).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
 
         potential_bookings.each do |booking|
 
           booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
 
-          if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start) && booking.send_mail
+          if ((booking_confirmation_time.days + timezone.offset).from_now..(booking_confirmation_time.days + 1.days + timezone.offset).from_now).cover?(booking.start) && booking.send_mail
 
             if booking.is_session
               if booking.is_session_booked and booking.user_session_confirmed
@@ -671,7 +673,8 @@ class Client < ActiveRecord::Base
           valid = true
         end
         if !valid
-          Booking.where('bookings.start >= ?', Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where(client_id: self.id).each do |booking|
+          timezone = CustomTimezone.from_company(self.company)
+          Booking.where('bookings.start >= ?', Time.now + timezone.offset).where(client_id: self.id).each do |booking|
             if booking.send_mail
               booking.send_mail = false
               booking.save
@@ -746,7 +749,7 @@ class Client < ActiveRecord::Base
   def self.custom_filter(clients, custom_filter)
 
     if custom_filter.nil?
-      
+
       return clients
 
     else
@@ -799,7 +802,7 @@ class Client < ActiveRecord::Base
             clients = clients.where(id: numeric_attribute.where('value <= ? and value >= ?', numeric_filter.value1, numeric_filter.value2).pluck(:client_id))
           end
         end
-        
+
       end
 
       #Loop for date filters
@@ -906,7 +909,7 @@ class Client < ActiveRecord::Base
 
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
-    
+
     spreadsheet = open_spreadsheet(file)
 
     company = Company.find(company_id)
@@ -1099,7 +1102,7 @@ class Client < ActiveRecord::Base
 
         # ;
         sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ";"})
-        
+
         arr = sheet.row(1)
         if arr.length > 2
           if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
@@ -1109,7 +1112,7 @@ class Client < ActiveRecord::Base
 
         # \t
         sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: "\t"})
-        
+
         arr = sheet.row(1)
         if arr.length > 2
           if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
