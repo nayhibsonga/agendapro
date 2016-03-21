@@ -246,8 +246,11 @@ class ProductsController < ApplicationController
 
         loc_prods.each do |loc_prod|
           location_product = LocationProduct.where(:location_id => loc_prod[:location_id], :product_id => @product.id).first
+          old_stock = location_product.stock
           location_product.stock = loc_prod[:stock]
-          location_product.save
+          if location_product.save
+            ProductLog.create(product_id: @product.id, location_id: loc_prod[:location_id], user_id: current_user.id, change: "Incremento de " + old_stock.to_s + " a " + location_product.stock.to_s, cause: "Edición manual de producto.")
+          end
         end
 
         format.html { redirect_to products_path, notice: 'Producto actualizado exitosamente.' }
@@ -336,6 +339,96 @@ class ProductsController < ApplicationController
   end
 
   def free_plan_landing
+
+  end
+
+  def stock_change
+
+    @status = "ok"
+    @type = params[:type]
+    @product = Product.find(params[:product_id])
+    @message = ""
+
+    @locations = []
+    if params[:location_id].to_i == 0
+      if current_user.role == Role.find_by_name("Administrador Local")
+        if current_user.locations.order(:id).pluck(:id) != current_user.company.locations.order(:id).pluck(:id)
+          @status = "error"
+          @message = "Lo sentimos, no tienes los permisos suficientes para modificar el stock de los locales elegidos."
+        end
+      end
+      @locations = current_user.company.locations.where(active: true)
+    else
+      @locations << Location.find(params[:location_id])
+    end
+
+    respond_to do |format|
+      format.html { render :partial => 'stock_change' }
+      format.json { render json: @locations }
+    end
+
+  end
+
+  def update_stock
+
+    product = Product.find(params[:product_id])
+    json_response = []
+    errors = []
+
+    json_response[0] = "ok"
+
+    if params[:stock_change_type] == "add"
+      current_user.company.locations.each do |location|
+        loc_str = "location_" + location.id.to_s
+        loc_str = loc_str.to_sym
+        if !params[loc_str].blank? && params[loc_str].to_i > 0
+          location_product = LocationProduct.where(location_id: location.id, product_id: product.id).first
+          old_stock = location_product.stock
+          location_product.stock += params[loc_str].to_i
+          if !location_product.save
+            errors << location_product.errors
+            json_response[0] = "error"
+          else
+            cause = "Cambio de stock desde administrador."
+            if !params[:notes].blank?
+              cause += " Comentario: " + params[:notes]
+            else
+              cause += " Sin comentarios."
+            end
+            ProductLog.create(product_id: product.id, location_id: location.id, user_id: current_user.id, change: "Incremento de " + old_stock.to_s + " a " + location_product.stock.to_s, cause: cause)
+          end
+        end
+      end
+    else
+      current_user.company.locations.each do |location|
+        loc_str = "location_" + location.id.to_s
+        loc_str = loc_str.to_sym
+        if !params[loc_str].blank? && params[loc_str].to_i > 0
+          location_product = LocationProduct.where(location_id: location.id, product_id: product.id).first
+          old_stock = location_product.stock
+          location_product.stock -= params[loc_str].to_i
+          if location_product.stock < 0
+            location_product.stock = 0
+          end
+          if !location_product.save
+            errors << location_product.errors
+            json_response[0] = "error"
+          else
+            cause = "Cambio de stock desde administrador."
+            if !params[:notes].blank?
+              cause += " Comentario: " + params[:notes]
+            else
+              cause += " Sin comentarios."
+            end
+            ProductLog.create(product_id: product.id, location_id: location.id, user_id: current_user.id, change: "Decremento de " + old_stock.to_s + " a " + location_product.stock.to_s, cause: cause)
+          end
+        end
+      end
+    end
+
+    json_response[1] = errors
+
+    render :json => json_response
 
   end
 

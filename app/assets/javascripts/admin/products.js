@@ -1,3 +1,69 @@
+function loadStockChange(type, product_id)
+{
+	$('#stockChangeModal .modal-content').empty();
+	var location_id = $('#locationsSelect').val();
+	$.ajax({
+		url: '/stock_change',
+		method: 'get',
+		data: {type: type, location_id: location_id, product_id: product_id},
+		error: function(response){
+			$('#stockChangeModal .modal-content').empty();
+			swal({
+				title: "Error",
+				text: "Se produjo un error inesperado",
+				type: "error"
+			});
+		},
+		success: function(response){
+			$('#stockChangeModal .modal-content').empty();
+			$('#stockChangeModal .modal-content').append(response);
+			$('#stockChangeModal').modal('show');
+		}
+	})
+}
+
+function saveStockChange()
+{
+	var data = $('#products_update_stock').serialize();
+	$('#stockChangeModal .modal-body').empty();
+	$('#stockChangeModal .modal-body').append('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+	$.ajax({
+		url: '/update_stock',
+		method: 'post',
+		dataType: 'json',
+		data: data,
+		error: function(response){
+			$('#stockChangeModal').modal('hide');
+			swal({
+				title: "Error",
+				text: "Se produjo un error inesperado",
+				type: "error"
+			});
+		},
+		success: function(response){
+			$('#stockChangeModal').modal('hide');
+			if(response[0] == "ok")
+			{
+				swal({
+					title: "Stock actualizado",
+					text: "El stock se ha actualizado correctamente",
+					type: "success",
+					confirmButtonText: "Aceptar"
+				});
+				getInventory();
+			}
+			else
+			{
+				swal({
+					title: "Error",
+					text: "Se produjo un error inesperado",
+					type: "error"
+				});
+			}
+		}
+	});
+}
+
 function changeLocationStatus(location_id) {
 	if( $('#location_product_ids_'+location_id).prop('checked')) {
 		$('#location_product_ids_stock_'+location_id).prop('disabled', false);
@@ -370,6 +436,19 @@ function initialize() {
 }
 
 $(function() {
+
+	$('body').on('click', '.add-stock-btn', function(){
+		loadStockChange("add", $(this).attr("product_id"));
+	});
+
+	$('body').on('click', '.substract-stock-btn', function(){
+		loadStockChange("substract", $(this).attr("product_id"));
+	});
+
+	$('body').on('click', '#stockChangeSaveBtn', function(e){
+		e.preventDefault();
+		saveStockChange();
+	});
 
 	$('form input, form select').bind('keypress keydown keyup', function(e){
     	if(e.keyCode == 13) {

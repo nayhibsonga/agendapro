@@ -135,6 +135,9 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
+        can :stock_change, Product, :company_id => user.company_id
+        can :update_stock, Product, :company_id => user.company_id
+
         can :new_filter_form, CustomFilter, :company_id => user.company_id
         can :edit_filter_form, CustomFilter, :company_id => user.company_id
         can :client_base_pdf, Client, :company_id => user.company_id
@@ -460,6 +463,9 @@ class Ability
 
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
+
+        can :stock_change, Product, :company_id => user.company_id
+        can :update_stock, Product, :company_id => user.company_id
 
         can :rearrange, Attribute, :company_id => user.company_id
         can :rearrange, AttributeGroup, :company_id => user.company_id

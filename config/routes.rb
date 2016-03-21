@@ -584,6 +584,9 @@ Agendapro::Application.routes.draw do
 
     get '/client_base_pdf', :to => 'clients#client_base_pdf'
 
+    get '/stock_change', :to => 'products#stock_change'
+    post '/update_stock', :to => 'products#update_stock'
+
 
   end
 

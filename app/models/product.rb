@@ -1,7 +1,7 @@
 class Product < ActiveRecord::Base
   require 'pg_search'
   include PgSearch
-  
+
   belongs_to :company
   belongs_to :product_category
   belongs_to :product_brand
@@ -74,7 +74,7 @@ class Product < ActiveRecord::Base
 
         # ;
         sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ";"})
-        
+
         arr = sheet.row(1)
         if arr.length > 2
           if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
@@ -84,7 +84,7 @@ class Product < ActiveRecord::Base
 
         # \t
         sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: "\t"})
-        
+
         arr = sheet.row(1)
         if arr.length > 2
           if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
@@ -136,7 +136,7 @@ class Product < ActiveRecord::Base
       #"Sku", "Categoría", "Marca", "Nombre", "Cantidad/Unidad"
 
       (2..spreadsheet.last_row).each do |i|
-        
+
         row = Hash[[header, spreadsheet.row(i)].transpose].values
 
         logger.debug row.inspect
@@ -214,13 +214,18 @@ class Product < ActiveRecord::Base
         xls_locations.each do |location|
           if LocationProduct.where(:location_id => location.id, :product_id => product.id).count > 0
             location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first
+            old_stock = location_product.stock
             location_product.stock = row[loc_index].to_i
-            location_product.save
+            if location_product.save
+              ProductLog.create(product_id: product.id, location_id: location.id, user_id: current_user.id, change: "Incremento de " + old_stock.to_s + " a " + location_product.stock.to_s, cause: "Importación de productos.")
+            end
           else
             if !row[loc_index].blank?
               location_product = LocationProduct.create(:location_id => location.id, :product_id => product.id, :stock => row[loc_index].to_i)
+              ProductLog.create(product_id: product.id, location_id: location.id, user_id: current_user.id, change: "Creación de producto con stock de " + row[loc_index], cause: "Importación de productos.")
             else
               location_product = LocationProduct.create(:location_id => location.id, :product_id => product.id, :stock => 0)
+              ProductLog.create(product_id: product.id, location_id: location.id, user_id: current_user.id, change: "Creación de producto con stock de 0", cause: "Importación de productos.")
             end
           end
           loc_index = loc_index + 1
@@ -234,6 +239,7 @@ class Product < ActiveRecord::Base
           missing_locations.each do |location|
             if LocationProduct.where(:location_id => location.id, :product_id => product.id).count == 0
               location_product = LocationProduct.create(:location_id => location.id, :product_id => product.id, :stock => 0)
+              ProductLog.create(product_id: product.id, location_id: location.id, user_id: current_user.id, change: "Creación de producto con stock de 0", cause: "Importación de productos.")
             end
           end
         end
