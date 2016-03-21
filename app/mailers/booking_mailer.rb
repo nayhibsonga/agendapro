@@ -15,7 +15,7 @@ class BookingMailer < Base::CustomMailer
     # layout variables
     @title = "Nueva Reserva en #{@company.name}"
     @url = @company.web_url
-    attacht_logo("public#{@company.logo.email.url}") unless @company.logo.email.url.include?("logo_vacio")
+    attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
     attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
 
     # view variables
@@ -45,7 +45,7 @@ class BookingMailer < Base::CustomMailer
     # layout variables
     @title = "Reserva Cancelada en #{@company.name}"
     @url = @company.web_url
-    attacht_logo("public#{@company.logo.email.url}") unless @company.logo.email.url.include?("logo_vacio")
+    attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
 
     # view variables
     @book = book
@@ -74,7 +74,7 @@ class BookingMailer < Base::CustomMailer
     # layout variables
     @title = "#{options[:client] ? 'Confirma' : 'Recuerda'} tu Reserva en #{@company.name}"
     @url = @company.web_url
-    attacht_logo("public#{@company.logo.email.url}") unless @company.logo.email.url.include?("logo_vacio")
+    attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
     attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
 
     # view variables
@@ -103,7 +103,7 @@ class BookingMailer < Base::CustomMailer
     # layout variables
     @title = "Reserva Confirmada de #{book.client.first_name} #{book.client.last_name}"
     @url = @company.web_url
-    attacht_logo("public#{@company.logo.email.url}") unless @company.logo.email.url.include?("logo_vacio")
+    attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
 
     # view variables
     @book = book
@@ -131,7 +131,7 @@ class BookingMailer < Base::CustomMailer
     # layout variables
     @title = "Reserva Actualizada en #{@company.name}"
     @url = @company.web_url
-    attacht_logo("public#{@company.logo.email.url}") unless @company.logo.email.url.include?("logo_vacio")
+    attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
     attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
 
     # view variables
@@ -162,7 +162,7 @@ class BookingMailer < Base::CustomMailer
     # layout variables
     @title = "Nueva Reserva en #{@company.name}"
     @url = @company.web_url
-    attacht_logo("public#{@company.logo.email.url}") unless @company.logo.email.url.include?("logo_vacio")
+    attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
     attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
 
     # view variables
@@ -1348,472 +1348,6 @@ class BookingMailer < Base::CustomMailer
       # => Send mail
       send_mail(template_name, template_content, message)
     end
-  end
-
-  #Correo de comprobante de pago para el cliente
-  def book_payment_mail (payed_booking)
-    # => Template
-    template_name = 'Payment'
-    template_content = []
-
-    auth_code = "NA"
-    if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
-      auth_code = payed_booking.punto_pagos_confirmation.authorization_code
-    end
-
-    card_number = "NA"
-    if !payed_booking.punto_pagos_confirmation.card_number.nil? && payed_booking.punto_pagos_confirmation.card_number != ""
-      card_number = payed_booking.punto_pagos_confirmation.card_number
-    end
-
-    owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
-    client = payed_booking.bookings.first.client
-
-    # => Message
-    message = {
-      :from_email => 'no-reply@agendapro.cl',
-      :from_name => payed_booking.bookings.first.service_provider.company.name,
-      :subject => 'Comprobante de pago en Agendapro',
-      :to => [
-        {
-          :email => client.email,
-          :type => 'to'
-        }
-      ],
-      :headers => { 'Reply-To' => 'contacto@agendapro.cl' },
-      :global_merge_vars => [
-        {
-          :name => 'COMPANYNAME',
-          :content => payed_booking.bookings.first.location.company.name
-        },
-        {
-          :name => 'PRICE',
-          :content => payed_booking.punto_pagos_confirmation.amount
-        },
-        {
-          :name => 'CARDNUMBER',
-          :content => card_number
-        },
-        {
-          :name => 'PAYORDER',
-          :content => payed_booking.punto_pagos_confirmation.operation_number
-        },
-        {
-          :name => 'AUTHNUMBER',
-          :content => auth_code
-        },
-        {
-          :name => 'DATE',
-          :content => payed_booking.punto_pagos_confirmation.approvement_date
-        },
-        {
-          :name => 'CLIENT',
-          :content => client.first_name + ' ' + client.last_name
-        },
-        {
-          :name => 'DOMAIN',
-          :content => payed_booking.bookings.first.location.company.country.domain
-        }
-
-      ],
-      :tags => ['payment']
-    }
-
-    # => Send mail
-    send_mail(template_name, template_content, message)
-  end
-
-  #Correo de comprobante de pago para AgendaPro
-  def book_payment_agendapro_mail(payed_booking)
-    # => Template
-    template_name = 'Payment'
-    template_content = []
-
-    auth_code = "NA"
-    if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
-      auth_code = payed_booking.punto_pagos_confirmation.authorization_code
-    end
-
-    card_number = "NA"
-    if !payed_booking.punto_pagos_confirmation.card_number.nil? && payed_booking.punto_pagos_confirmation.card_number != ""
-      card_number = payed_booking.punto_pagos_confirmation.card_number
-    end
-
-    owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
-    client = payed_booking.bookings.first.client
-
-    # => Message
-    message = {
-      :from_email => 'no-reply@agendapro.cl',
-      :from_name => payed_booking.bookings.first.service_provider.company.name,
-      :subject => 'Comprobante de pago en Agendapro',
-      :to => [
-        {
-          :email => "nrossi@agendapro.cl",
-          :type => 'to'
-        }
-      ],
-      :headers => { 'Reply-To' => 'contacto@agendapro.cl' },
-      :global_merge_vars => [
-        {
-          :name => 'COMPANYNAME',
-          :content => payed_booking.bookings.first.location.company.name
-        },
-        {
-          :name => 'PRICE',
-          :content => payed_booking.punto_pagos_confirmation.amount
-        },
-        {
-          :name => 'CARDNUMBER',
-          :content => card_number
-        },
-        {
-          :name => 'PAYORDER',
-          :content => payed_booking.punto_pagos_confirmation.operation_number
-        },
-        {
-          :name => 'AUTHNUMBER',
-          :content => auth_code
-        },
-        {
-          :name => 'DATE',
-          :content => payed_booking.punto_pagos_confirmation.approvement_date
-        },
-        {
-          :name => 'CLIENT',
-          :content => client.first_name + ' ' + client.last_name
-        },
-        {
-          :name => 'DOMAIN',
-          :content => payed_booking.bookings.first.location.company.country.domain
-        }
-
-      ],
-      :tags => ['payment'],
-      :images => [
-        {
-          :type => 'image/png',
-          :name => 'company_img.jpg',
-          :content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
-        },
-        {
-          :type => 'image/png',
-          :name => 'LOGO',
-          :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
-        }
-      ]
-    }
-
-    # => Send mail
-    send_mail(template_name, template_content, message)
-  end
-
-  #Comprobante de pago para la empresa
-  def book_payment_company_mail (payed_booking)
-    # => Template
-    template_name = 'Payment'
-    template_content = []
-
-    owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
-    #email = payed_booking.booking.location.company.company_setting.email
-    client = payed_booking.bookings.first.client
-
-    auth_code = "NA"
-    if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
-      auth_code = payed_booking.punto_pagos_confirmation.authorization_code
-    end
-
-    card_number = "NA"
-    if !payed_booking.punto_pagos_confirmation.card_number.nil? && payed_booking.punto_pagos_confirmation.card_number != ""
-      card_number = payed_booking.punto_pagos_confirmation.card_number
-    end
-
-    # => Message
-    message = {
-      :from_email => 'no-reply@agendapro.cl',
-      :from_name => 'AgendaPro',
-      :subject => 'Comprobante de pago en Agendapro',
-      :to => [
-        {
-          :email => owner.email,
-          :type => 'to'
-        }
-      ],
-      :headers => { 'Reply-To' => 'contacto@agendapro.cl' },
-      :global_merge_vars => [
-        {
-          :name => 'COMPANYNAME',
-          :content => payed_booking.bookings.first.location.company.name
-        },
-        {
-          :name => 'PRICE',
-          :content => payed_booking.punto_pagos_confirmation.amount
-        },
-        {
-          :name => 'CARDNUMBER',
-          :content => card_number
-        },
-        {
-          :name => 'PAYORDER',
-          :content => payed_booking.punto_pagos_confirmation.operation_number
-        },
-        {
-          :name => 'AUTHNUMBER',
-          :content => auth_code
-        },
-        {
-          :name => 'DATE',
-          :content => payed_booking.punto_pagos_confirmation.approvement_date
-        },
-        {
-          :name => 'DOMAIN',
-          :content => payed_booking.bookings.first.location.company.country.domain
-        }
-      ],
-      :tags => ['payment'],
-      :images => [
-        {
-          :type => 'image/png',
-          :name => 'company_img.jpg',
-          :content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
-        },
-        {
-          :type => 'image/png',
-          :name => 'LOGO',
-          :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
-        }
-      ]
-    }
-
-    # => Send mail
-    send_mail(template_name, template_content, message)
-  end
-
-  #Comprobante de pago para la empresa
-  def cancel_payment_mail (payed_booking, target)
-    # => Template
-    template_name = 'Payment'
-    template_content = []
-
-    owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
-    #email = payed_booking.booking.location.company.company_setting.email
-    client = payed_booking.bookings.first.client
-
-    auth_code = "NA"
-    if !payed_booking.punto_pagos_confirmation.authorization_code.nil? && punto_pagos_confirmation.authorization_code != ""
-      auth_code = payed_booking.punto_pagos_confirmation.authorization_code
-    end
-
-    card_number = "NA"
-    if !payed_booking.punto_pagos_confirmation.card_number.nil? && payed_booking.punto_pagos_confirmation.card_number != ""
-      card_number = payed_booking.punto_pagos_confirmation.card_number
-    end
-
-    message = Hash.new
-
-    if target == 1 #Mail al cliente
-      # => Message
-      message = {
-        :from_email => 'no-reply@agendapro.cl',
-        :from_name => 'AgendaPro',
-        :subject => 'Cancelación de pago en Agendapro',
-        :to => [
-          {
-            :email => client.email,
-            :type => 'to'
-          }
-        ],
-        :headers => { 'Reply-To' => 'contacto@agendapro.cl' },
-        :global_merge_vars => [
-          {
-            :name => 'COMPANYNAME',
-            :content => payed_booking.bookings.first.location.company.name
-          },
-          {
-            :name => 'CANCEL',
-            :content => 'true'
-          },
-          {
-            :name => 'CLIENTCANCEL',
-            :content => 'true'
-          },
-          {
-            :name => 'CLIENT',
-            :content => client.first_name + ' ' + client.last_name
-          },
-          {
-            :name => 'PRICE',
-            :content => payed_booking.punto_pagos_confirmation.amount
-          },
-          {
-            :name => 'CARDNUMBER',
-            :content => card_number
-          },
-          {
-            :name => 'PAYORDER',
-            :content => payed_booking.punto_pagos_confirmation.operation_number
-          },
-          {
-            :name => 'AUTHNUMBER',
-            :content => auth_code
-          },
-          {
-            :name => 'DATE',
-            :content => payed_booking.punto_pagos_confirmation.approvement_date
-          },
-          {
-            :name => 'DOMAIN',
-            :content => payed_booking.bookings.first.location.company.country.domain
-          }
-        ],
-        :tags => ['payment'],
-        :images => [
-          {
-            :type => 'image/png',
-            :name => 'company_img.jpg',
-            :content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
-          },
-          {
-            :type => 'image/png',
-            :name => 'LOGO',
-            :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
-          }
-        ]
-      }
-    elsif target == 2 #Mail a la empresa
-      # => Message
-      message = {
-        :from_email => 'no-reply@agendapro.cl',
-        :from_name => 'AgendaPro',
-        :subject => 'Cancelación de pago en Agendapro',
-        :to => [
-          {
-            :email => owner.email,
-            :type => 'to'
-          }
-        ],
-        :headers => { 'Reply-To' => 'contacto@agendapro.cl' },
-        :global_merge_vars => [
-          {
-            :name => 'CANCEL',
-            :content => 'true'
-          },
-          {
-            :name => 'COMPANYCANCEL',
-            :content => 'true'
-          },
-          {
-            :name => 'COMPANYNAME',
-            :content => payed_booking.bookings.first.location.company.name
-          },
-          {
-            :name => 'PRICE',
-            :content => payed_booking.punto_pagos_confirmation.amount
-          },
-          {
-            :name => 'CARDNUMBER',
-            :content => card_number
-          },
-          {
-            :name => 'PAYORDER',
-            :content => payed_booking.punto_pagos_confirmation.operation_number
-          },
-          {
-            :name => 'AUTHNUMBER',
-            :content => auth_code
-          },
-          {
-            :name => 'DATE',
-            :content => payed_booking.punto_pagos_confirmation.approvement_date
-          }
-        ],
-        :tags => ['payment'],
-        :images => [
-          {
-            :type => 'image/png',
-            :name => 'company_img.jpg',
-            :content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
-          },
-          {
-            :type => 'image/png',
-            :name => 'LOGO',
-            :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
-          }
-        ]
-      }
-    else #Mail a AgendaPro
-      # => Message
-      message = {
-        :from_email => 'no-reply@agendapro.cl',
-        :from_name => 'AgendaPro',
-        :subject => 'Cancelación de pago en Agendapro',
-        :to => [
-          {
-            :email => 'iegomez@uc.cl', #Cambiar a contacto@agendapro.cl
-            :type => 'to'
-          }
-        ],
-        :headers => { 'Reply-To' => 'contacto@agendapro.cl' },
-        :global_merge_vars => [
-          {
-            :name => 'CANCEL',
-            :content => 'true'
-          },
-          {
-            :name => 'AGENDAPROCANCEL',
-            :content => 'true'
-          },
-          {
-            :name => 'COMPANYNAME',
-            :content => payed_booking.bookings.first.location.company.name
-          },
-          {
-            :name => 'CLIENT',
-            :content => client.first_name + ' ' + client.last_name
-          },
-          {
-            :name => 'CLIENTEMAIL',
-            :content => client.email
-          },
-          {
-            :name => 'PRICE',
-            :content => payed_booking.punto_pagos_confirmation.amount
-          },
-          {
-            :name => 'CARDNUMBER',
-            :content => card_number
-          },
-          {
-            :name => 'PAYORDER',
-            :content => payed_booking.punto_pagos_confirmation.operation_number
-          },
-          {
-            :name => 'AUTHNUMBER',
-            :content => auth_code
-          },
-          {
-            :name => 'DATE',
-            :content => payed_booking.punto_pagos_confirmation.approvement_date
-          }
-        ],
-        :tags => ['payment'],
-        :images => [
-          {
-            :type => 'image/png',
-            :name => 'company_img.jpg',
-            :content => Base64.encode64(File.read('app/assets/ico/apple-touch-icon.png'))
-          },
-          {
-            :type => 'image/png',
-            :name => 'LOGO',
-            :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
-          }
-        ]
-      }
-    end
-
-    # => Send mail
-    send_mail(template_name, template_content, message)
   end
 
   #Mail de reserva de servicio con sesiones

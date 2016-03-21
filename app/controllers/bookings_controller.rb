@@ -3859,9 +3859,10 @@ class BookingsController < ApplicationController
 
       if success && were_payed && !are_session_bookings
         payed_booking = @bookings.first.payed_booking
-        BookingMailer.cancel_payment_mail(payed_booking, 1)
-        BookingMailer.cancel_payment_mail(payed_booking, 2)
-        BookingMailer.cancel_payment_mail(payed_booking, 3)
+        payed_booking.cancel_payment_email
+        # BookingMailer.cancel_payment_mail(payed_booking, 1)
+        # BookingMailer.cancel_payment_mail(payed_booking, 2)
+        # BookingMailer.cancel_payment_mail(payed_booking, 3)
       end
 
     end
@@ -4076,9 +4077,10 @@ class BookingsController < ApplicationController
 
       if success && were_payed && !are_session_bookings
         payed_booking = @bookings.first.payed_booking
-        BookingMailer.cancel_payment_mail(payed_booking, 1)
-        BookingMailer.cancel_payment_mail(payed_booking, 2)
-        BookingMailer.cancel_payment_mail(payed_booking, 3)
+        payed_booking.cancel_payment_email
+        # BookingMailer.cancel_payment_mail(payed_booking, 1)
+        # BookingMailer.cancel_payment_mail(payed_booking, 2)
+        # BookingMailer.cancel_payment_mail(payed_booking, 3)
       end
 
     end

@@ -1,8 +1,11 @@
 class PayedBooking < ActiveRecord::Base
-	
-	has_many :bookings
 	belongs_to :punto_pagos_confirmation
 	belongs_to :payment_account
+
+	has_many :bookings
+	has_many :sendings, class_name: 'Email::Sending', as: :sendable
+
+	WORKER = 'PayedBookingEmailWorker'
 
 	#after_create :send_confirmation
 
@@ -22,7 +25,7 @@ class PayedBooking < ActiveRecord::Base
 	def self.to_csv(type, p_start_date, p_end_date)
 
 		CSV.generate do |csv|
-	      	
+
 	        start_date = DateTime.new(1990,1,1,0,0,0)
 	    	end_date = DateTime.now
 
@@ -54,10 +57,10 @@ class PayedBooking < ActiveRecord::Base
 	      		canceled = false
 	      		cancel_complete = false
 	      		transfer_complete = true
-	      	end      	
+	      	end
 
 	      	#Distintos headers dependiendo de si está cancelado o es vista de compañía
-	      	if canceled 
+	      	if canceled
 	      		header = ["Id", "Cliente", "Email", "Empresa", "Servicio", "Monto", "Orden de compra", "Código de autorización", "Fecha"]
 	      		csv << header
 	      	else
@@ -80,7 +83,7 @@ class PayedBooking < ActiveRecord::Base
 		        	row_array << payed_booking.id
 		        	row_array << payed_booking.bookings.first.client.first_name + " " + payed_booking.bookings.first.client.last_name
 
-		        	if canceled 
+		        	if canceled
 		        		row_array << payed_booking.bookings.first.client.email
 		        		row_array << payed_booking.bookings.first.location.company.name
 		        	else
@@ -116,6 +119,14 @@ class PayedBooking < ActiveRecord::Base
 	        end
 	    end
 
+	end
+
+	def payment_email
+		sendings.build(method: 'payment_booking').save
+	end
+
+	def cancel_payment_email
+		sendings.build(method: 'cancel_payment_booking').save
 	end
 
 end

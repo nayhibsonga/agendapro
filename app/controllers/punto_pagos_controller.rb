@@ -143,7 +143,7 @@ class PuntoPagosController < ApplicationController
     accepted_payments = ["00","16","03","04","05","06","07"]
     if accepted_plans.include?(plan_id) && accepted_payments.include?(payment_method) && company
       if (company.service_providers.where(active: true, location_id: company.locations.where(active: true).pluck(:id)).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || (!new_plan.custom && new_plan.name != "Personal")
-      
+
         previous_plan_id = company.plan.id
         months_active_left = company.months_active_left
         plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
@@ -357,7 +357,7 @@ class PuntoPagosController < ApplicationController
             not_payed_bookings = Booking.where(:booking_group => @bookings.first.booking_group, :payed => false)
             not_payed_bookings.each do |not_payed_booking|
               @bookings << not_payed_booking
-            end 
+            end
           end
 
           @try_register = false
@@ -423,7 +423,7 @@ class PuntoPagosController < ApplicationController
               service_promo = ServicePromo.find(booking.service_promo_id)
               service_promo.max_bookings = service_promo.max_bookings + 1
               service_promo.save
-            end       
+            end
             booking.delete
           end
         end
@@ -468,11 +468,11 @@ class PuntoPagosController < ApplicationController
             service_promo = ServicePromo.find(booking.service_promo_id)
             service_promo.max_bookings = service_promo.max_bookings + 1
             service_promo.save
-          end       
+          end
           booking.delete
         end
       end
-      
+
       #@bookings = Array.new
       #bookings.each do |failed_booking|
         #failed_booking = Booking.find_by_token(params[:token])
@@ -663,10 +663,11 @@ class PuntoPagosController < ApplicationController
           return
         end
         #Enviar comprobantes de pago
-        BookingMailer.book_payment_mail(payed_booking)
-        BookingMailer.book_payment_company_mail(payed_booking)
-        BookingMailer.book_payment_agendapro_mail(payed_booking)
-        
+        payed_booking.payment_email
+        # BookingMailer.book_payment_mail(payed_booking)
+        # BookingMailer.book_payment_company_mail(payed_booking)
+        # BookingMailer.book_payment_agendapro_mail(payed_booking)
+
       end
     end
 
