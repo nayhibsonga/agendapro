@@ -59,11 +59,71 @@ class CompanyMailer < Base::CustomMailer
   end
 
   #Send invoice_email charging for new month.
-  def invoice_email(company_id, reminder_message)
+  def invoice(company, recipient)
+    # layout variables
+    @title = "¡Ya puedes pagar tu cuenta AgendaPro!"
+    @header = "Notificación cobro mes de #{(l DateTime.now, :format => '%B').capitalize}. Si ya pagaste, por favor ignora este correo. Los pagos pueden tardar en actualizarse por el sistema."
+
+    # view variables
+    @chile = company.country.name == "Chile"
+    @company = company
+    @admin = @company.users.where(role_id: Role.find_by_name('Administrador General')).first
+    sales_tax = @company.country.sales_tax
+    day_number = Time.now.day
+    month_days = Time.now.days_in_month
+    @plan_amount = @company.company_plan_setting.base_price * @company.computed_multiplier * (1 + sales_tax)
+    if @company.plan_id == Plan.find_by_name("Gratis").id
+      downgradeLog = DowngradeLog.where(company_id: @company.id).order('created_at desc').first
+      if !downgradeLog.nil?
+        prev_plan = Plan.find(downgradeLog.plan_id)
+        price = prev_plan.plan_countries.find_by(country_id: @company.country.id).price
+        @plan_amount = ((month_days.to_f - day_number + 1) / month_days.to_f) * price * (1 + sales_tax)
+      end
+    end
+    @current_amount = @plan_amount + @company.due_amount
+
+    mail(
+      from: filter_sender(),
+      reply_to: filter_sender("cuentas@agendapro.cl"),
+      to: filter_recipient(recipient),
+      subject: @title,
+      template_path: "mailers/agendapro"
+      )
+  end
+
+  def invoice_legacy(company, recipient)
+    # layout variables
+    @title = "¡Ya puedes pagar tu cuenta AgendaPro!"
+    @header = "Notificación cobro mes de #{(l DateTime.now, :format => '%B').capitalize}. Si ya pagaste, por favor ignora este correo. Los pagos pueden tardar en actualizarse por el sistema."
+
+    # view variables
+    @chile = company.country.name == "Chile"
+    @company = company
+    @admin = @company.users.where(role_id: Role.find_by_name('Administrador General')).first
+    sales_tax = @company.country.sales_tax
+    day_number = Time.now.day
+    month_days = Time.now.days_in_month
+    @plan_amount = @company.company_plan_setting.base_price * @company.computed_multiplier * (1 + sales_tax)
+    if @company.plan_id == Plan.find_by_name("Gratis").id
+      downgradeLog = DowngradeLog.where(company_id: @company.id).order('created_at desc').first
+      if !downgradeLog.nil?
+        prev_plan = Plan.find(downgradeLog.plan_id)
+        price = prev_plan.plan_countries.find_by(country_id: @company.country.id).price
+        @plan_amount = ((month_days.to_f - day_number + 1) / month_days.to_f) * price * (1 + sales_tax)
+      end
+    end
+    @current_amount = @plan_amount + @company.due_amount
+
+    mail(
+      from: filter_sender(),
+      reply_to: filter_sender("cuentas@agendapro.cl"),
+      to: filter_recipient(recipient),
+      subject: @title,
+      template_path: "mailers/agendapro"
+      )
+
 
     current_date = DateTime.now
-    day_number = Time.now.day
-      month_days = Time.now.days_in_month
     company = Company.find(company_id)
 
       #company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where.not(id: Plan.find_by_name("Gratis").id).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
@@ -81,24 +141,13 @@ class CompanyMailer < Base::CustomMailer
     admins = company.users.where(role_id: Role.find_by_name('Administrador General'))
     admin = admins.first
 
-    sales_tax = company.country.sales_tax
     #current_amount = ((company.due_amount + (month_days - day_number + 1)*price/month_days)).round(0)
-    plan_amount = price * (1 + sales_tax)
     #debt_amount = current_amount - price
 
-    if company.plan_id == Plan.find_by_name("Gratis").id
 
-      downgradeLog = DowngradeLog.where(company_id: company.id).order('created_at desc').first
 
-      if !downgradeLog.nil?
-        prev_plan = Plan.find(downgradeLog.plan_id)
-        price = prev_plan.plan_countries.find_by(country_id: company.country.id).price
-        plan_amount = ((month_days.to_f - day_number + 1) / month_days.to_f) * price * (1 + sales_tax)
-      end
 
-    end
 
-    current_amount = plan_amount + company.due_amount
     debt_amount = company.due_amount
 
     puts "Current: " + current_amount.to_s
@@ -169,59 +218,6 @@ class CompanyMailer < Base::CustomMailer
           {
             :name => 'REMINDER_MESSAGE',
             :content => reminder_message
-          },
-          {
-            :name => 'ACTIVATE_URL',
-            :content => select_plan_url
-          },
-          {
-            :name => 'CHILE',
-            :content => is_chile
-          }
-        ],
-        :tags => ['invoice']
-      }
-
-    else
-
-      message = {
-        :from_email => 'no-reply@agendapro.cl',
-        :from_name => 'AgendaPro',
-        :subject => '¡Ya puedes pagar tu cuenta AgendaPro!',
-        :to => recipients,
-        :headers => { 'Reply-To' => 'contacto@agendapro.cl' },
-        :global_merge_vars => [
-          {
-            :name => 'CURRENT_YEAR',
-            :content => current_date.year
-          },
-          {
-            :name => 'CURRENT_MONTH',
-            :content => (l current_date, :format => '%B').capitalize
-          },
-          {
-            :name => 'COMPANY_NAME',
-            :content => company.name
-          },
-          {
-            :name => 'ADMIN_NAME',
-            :content => admin.full_name
-          },
-          {
-            :name => 'ADMIN_EMAIL',
-            :content => admin.email
-          },
-          {
-            :name => 'CURRENT_AMOUNT',
-            :content => ActionController::Base.helpers.number_to_currency(current_amount, locale: company.country.locale.to_sym)
-          },
-          {
-            :name => 'PLAN_AMOUNT',
-            :content => ActionController::Base.helpers.number_to_currency(plan_amount, locale: company.country.locale.to_sym)
-          },
-          {
-            :name => 'DEBT_AMOUNT',
-            :content => ActionController::Base.helpers.number_to_currency(debt_amount, locale: company.country.locale.to_sym)
           },
           {
             :name => 'ACTIVATE_URL',
