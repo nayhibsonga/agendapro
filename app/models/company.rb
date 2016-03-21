@@ -59,6 +59,8 @@ class Company < ActiveRecord::Base
 
 	has_many :client_files, :through => :clients
 
+	has_many :sendings, class_name: 'Email::Sending', as: :sendable
+
 	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
@@ -74,6 +76,8 @@ class Company < ActiveRecord::Base
 	after_update :update_online_payment, :update_stats
 
 	after_create :create_cashier, :create_plan_setting, :create_attribute_group
+
+	WORKER = 'CompanyEmailWorker'
 
 	def create_attribute_group
 		if AttributeGroup.where(name: "Otros", company_id: self.id).count < 1
@@ -419,9 +423,11 @@ class Company < ActiveRecord::Base
 		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where('created_at BETWEEN ? AND ?', (1.months.ago + 5.days).beginning_of_day, (1.months.ago + 5.days).end_of_day).each do |company|
 
 			if company.account_used
-				CompanyMailer.trial_warning(company.id)
+				sendings.build(method: 'warning_trial').save
+				# CompanyMailer.trial_warning(company.id)
 			else
-				CompanyMailer.trial_recovery(company.id)
+				sendings.build(method: 'recovery_trial').save
+				# CompanyMailer.trial_recovery(company.id)
 			end
 
 		end
@@ -440,7 +446,7 @@ class Company < ActiveRecord::Base
 			plan = company.default_plan
 
 			#If default wasn't changed, then set plan by locations and providers number
-			if plan.name == "Normal" || plan.name == "Personal"				
+			if plan.name == "Normal" || plan.name == "Personal"
 				if company.locations.where(active: true).count > 1 || company.service_providers.where(location_id: company.				locations.where(active: true).pluck(:id), active:true).count > 1
 					plan = Plan.where(name: "Normal", custom: false).first
 				else
@@ -471,9 +477,11 @@ class Company < ActiveRecord::Base
 
 				#Check if account was used.
 				if company.account_used
-					CompanyMailer.trial_end(company.id)
+					sendings.build(method: 'end_trial').save
+					# CompanyMailer.trial_end(company.id)
 				else
-					CompanyMailer.trial_recovery(company.id)
+					sendings.build(method: 'recovery_trial').save
+					# CompanyMailer.trial_recovery(company.id)
 				end
 
 				#if company.country_id == 1
@@ -567,7 +575,8 @@ class Company < ActiveRecord::Base
 
 				#Send invoice_email
 				if company.created_at > (DateTime.now - 2.months) && !company.account_used
-					CompanyMailer.trial_recovery(company.id)
+					sendings.build(method: 'recovery_trial').save
+					# CompanyMailer.trial_recovery(company.id)
 				else
 					CompanyMailer.invoice_email(company.id, message_emitido)
 				end
