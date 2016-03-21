@@ -2,6 +2,7 @@ json.company_id @api_company.id
 json.company_name @api_company.name
 json.locations do
   json.array!(@locations) do |location|
+    location_address = LocationAddress.new location.address
     json.extract! location, :id, :name, :second_address, :phone, :longitude, :latitude, :company_id, :location_times, :latitude, :longitude, :email
     json.address "#{location_address.route} #{location_address.street_number}"
     json.district "#{location_address.district}"
