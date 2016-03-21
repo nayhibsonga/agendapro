@@ -1,17 +1,20 @@
 class UserMailer < Base::CustomMailer
   layout "mailers/green"
 
-  def welcome_email(user)
+  def welcome_email(user, recipient)
+    # layout variables
+    @title = "Bienvenido a AgendaPro"
+    attacht_logo()
+
+    # view variables
     @user = user
-    name = @user.full_name.present? ? @user.full_name : @user.email
-    subject = "Bienvenido a AgendaPro"
-    recipient = '#{name.titleize} <#{@user.email}>'
 
     mail(
-      from: filter_sender("AgendaPro <no-reply@agendapro.cl>"),
+      from: filter_sender(),
+      reply_to: filter_sender(),
       to: filter_recipient(recipient),
-      subject: subject,
-      template_path: "mailers"
+      subject: @title,
+      template_path: "mailers/agendapro"
       )
   end
 
@@ -69,5 +72,11 @@ class UserMailer < Base::CustomMailer
     # => Send mail
     send_mail(template_name, template_content, message)
   end
+
+  private
+    def attacht_logo(url=nil)
+      url ||= "app/assets/images/logos/logodoble2.png"
+      attachments.inline['logo.png'] = File.read(url)
+    end
 
 end

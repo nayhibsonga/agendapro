@@ -1,20 +1,28 @@
 class CompanyFromEmailMailer < Base::CustomMailer
 
-	def confirm_email (email, company)
-    @email = email
-    @company = company
+	def confirm_email (email_from, recipient)
+    @company = email_from.company
+
+    # layout variables
+    @title = "Confirmar email #{@email_from.email}"
     @url = @company.web_url
+    attacht_logo()
 
-    subject = "Confirmar email #{@email.email}"
-    recipient = "#{@email.email}"
-
-    attachments.inline['logo.png'] = File.read('app/assets/images/logos/logodoble2.png')
+    # view variables
+    @email_from = email_from
 
     mail(
-      from: filter_sender("AgendaPro <no-reply@agendapro.cl>"),
+      from: filter_sender(),
+      reply_to: filter_sender(),
       to: filter_recipient(recipient),
-      subject: subject,
-      template_path: "mailers"
+      subject: @title,
+      template_path: "mailers/agendapro"
       )
 	end
+
+  private
+    def attacht_logo(url=nil)
+      url ||= "app/assets/images/logos/logodoble2.png"
+      attachments.inline['logo.png'] = File.read(url)
+    end
 end

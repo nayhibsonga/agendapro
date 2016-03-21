@@ -1,12 +1,22 @@
-class UserEmailWorker
+class UserEmailWorker < BaseEmailWorker
 
-  def self.perform(user_id)
-    user = User.find(user_id)
+  def self.perform(sending)
+    total_sendings = 0
+    total_recipients = 0
+
+    user = User.find(sending.sendable_id)
+
+    recipients = filter_mails([user.email])
+    total_sendings += 1
+    total_recipients += recipients.size
+
     if user.api_token.present?
       UserMailer.delay.welcome_email_legacy(user)
     else
-      UserMailer.delay.welcome_email(user)
+      UserMailer.delay.send(sending.method, user, recipients.join(', '))
     end
+
+    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)
   end
 
 end
