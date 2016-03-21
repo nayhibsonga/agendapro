@@ -51,7 +51,7 @@ class EmailContentUploader < CarrierWave::Uploader::Base
   # end
 
   process :convert => 'png'
-  # process :resize_to_limit => [200, 200]
+  process :resize_to_limit => [600, nil]
 
   # Create different versions of your uploaded files:
   # version :thumb do

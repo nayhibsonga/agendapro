@@ -19,7 +19,7 @@
 }
 
 .payBtn{
-	
+
 	border: 1px solid #22c488;
 	text-align: center;
 	width: 160px;
@@ -38,7 +38,7 @@
 }
 
 .cancelBtn{
-	
+
 	border: 1px solid #EB2929;
 	text-align: center;
 	width: 160px;
@@ -96,9 +96,9 @@
 							<dt>Código de la Transacción</dt>
 							<dd><%= params[:token] %></dd>
 							<dt>¿Dudas o consultas?</dt>
-							<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
+							<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al <%= t('phones.support') %></dd>
 						</dl>
-						
+
 					</div>
 					<div class="col-md-5">
 						<%= image_tag("backgrounds/cross.png", :class => "center-block") %>

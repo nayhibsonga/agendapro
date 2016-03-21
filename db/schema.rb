@@ -473,8 +473,6 @@ ActiveRecord::Schema.define(version: 20160308133628) do
     t.string   "formatted_address", default: ""
     t.string   "domain",            default: ""
     t.float    "sales_tax",         default: 0.0, null: false
-    t.string   "timezone_name"
-    t.float    "timezone_offset"
   end
 
   create_table "custom_filters", force: true do |t|
