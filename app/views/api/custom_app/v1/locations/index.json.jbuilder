@@ -2,11 +2,12 @@ json.company_id @api_company.id
 json.company_name @api_company.name
 json.locations do
   json.array!(@locations) do |location|
-    json.extract! location, :id, :name, :address, :second_address, :phone, :longitude, :latitude, :company_id, :location_times, :latitude, :longitude, :email
-    json.district location.district.name
-    json.city location.district.city.name
-    json.region location.district.city.region.name
-    json.country location.district.city.region.country.name
+    json.extract! location, :id, :name, :second_address, :phone, :longitude, :latitude, :company_id, :location_times, :latitude, :longitude, :email
+    json.address "#{location_address.route} #{location_address.street_number}"
+    json.district "#{location_address.district}"
+    json.city "#{location_address.city}"
+    json.region "#{location_address.region}"
+    json.country "#{location_address.country}"
     json.description location.company.description
     json.url location_url(location, format: :json)
     json.categorized_services location.api_categorized_services
