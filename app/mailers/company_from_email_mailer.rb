@@ -1,4 +1,5 @@
 class CompanyFromEmailMailer < Base::CustomMailer
+  layout "mailers/green"
 
 	def confirm_email (email_from, recipient)
     @company = email_from.company

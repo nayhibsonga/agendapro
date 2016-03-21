@@ -124,7 +124,8 @@ class ServicesController < ApplicationController
           end
           if send_promo_notification
             if @service.time_promo_active && @service.has_time_discount && !@service.active_service_promo_id.nil?
-              AdminMailer.notify_promo_creation(@service)
+              @service.sendings.build(method: 'notify_promotion').save
+              # AdminMailer.notify_promo_creation(@service)
             end
           end
           @service.check_online_discount
@@ -147,7 +148,8 @@ class ServicesController < ApplicationController
           end
           if send_promo_notification
             if @service.time_promo_active && @service.has_time_discount && !@service.active_service_promo_id.nil?
-              AdminMailer.notify_promo_creation(@service)
+              @service.sendings.build(method: 'notify_promotion').save
+              # AdminMailer.notify_promo_creation(@service)
             end
           end
           @service.check_online_discount
@@ -678,7 +680,8 @@ class ServicesController < ApplicationController
 
           if discounts_changed
             #Send notification for promo_activation.
-            AdminMailer.notify_promo_creation(@service)
+            @service.sendings.build(method: 'notify_promotion').save
+            # AdminMailer.notify_promo_creation(@service)
           end
 
         else
@@ -744,7 +747,7 @@ class ServicesController < ApplicationController
           if treatment_promo.save
             @treatment_promos << treatment_promo
 
-            @treatment_locations.each do |treatment_location|      
+            @treatment_locations.each do |treatment_location|
               treatment_promo_location = TreatmentPromoLocation.create(:treatment_promo_id => treatment_promo.id, :location_id => treatment_location.id)
             end
 
@@ -776,7 +779,7 @@ class ServicesController < ApplicationController
             if treatment_promo.save
               @treatment_promos << treatment_promo
 
-              @treatment_locations.each do |treatment_location|      
+              @treatment_locations.each do |treatment_location|
                 treatment_promo_location = TreatmentPromoLocation.create(:treatment_promo_id => treatment_promo.id, :location_id => treatment_location.id)
               end
 
@@ -1280,13 +1283,13 @@ class ServicesController < ApplicationController
 
   def last_minute_hours
     @service = Service.find(params[:id])
-    
+
     @location = Location.find(params[:location_id])
-    
+
     @serviceStaff = []
-    
+
     @serviceStaff[0] = {:service => @service.id, :provider => params[:service_provider_id]}
-    
+
     @last_minute_promo = @service.active_last_minute_promo
 
     @selected_date = params[:date]

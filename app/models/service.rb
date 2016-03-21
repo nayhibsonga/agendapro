@@ -31,6 +31,8 @@ class Service < ActiveRecord::Base
 
   has_many :service_commissions
 
+  has_many :sendings, class_name: 'Email::Sending', as: :sendable
+
 	mount_uploader :time_promo_photo, TimePromoPhotoUploader
 
 	scope :with_time_promotions, -> { where(has_time_discount: true, active: true, online_payable: true, online_booking: true, time_promo_active: true).where.not(:active_service_promo_id => nil) }
@@ -69,6 +71,8 @@ class Service < ActiveRecord::Base
                 }
     },
     :ignoring => :accents
+
+  WORKER = 'ServiceEmailWorker'
 
     def check_treatment_promo
     	if self.has_sessions
