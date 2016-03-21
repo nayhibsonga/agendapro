@@ -394,6 +394,11 @@ class Booking < ActiveRecord::Base
       return
     end
 
+    #If there was no change on start, there is nothing to check
+    if !self.start_changed? && !self.end_changed?
+      return
+    end
+
     unless self.location.company.company_setting.provider_overcapacity
       cancelled_id = Status.find_by(name: 'Cancelado').id
       unless self.status_id == cancelled_id
