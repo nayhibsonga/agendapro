@@ -182,7 +182,8 @@ class Company < ActiveRecord::Base
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
 				if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id && company.country_id == 1
-					CompanyMailer.invoice_email(company.id)
+					company.sendings.build(method: 'invoice').save
+					# CompanyMailer.invoice_email(company.id)
 				end
 			else
 				errors = ""
@@ -200,7 +201,8 @@ class Company < ActiveRecord::Base
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 2, details: "OK payment_expiry")
 				if company.country_id == 1
-					CompanyMailer.invoice_email(company.id)
+					company.sendings.build(method: 'invoice').save
+					# CompanyMailer.invoice_email(company.id)
 				end
 			else
 				errors = ""
@@ -286,7 +288,8 @@ class Company < ActiveRecord::Base
 
 	def self.invoice_email
 		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id), due_date: [10.days.ago, 15.days.ago, 20.days.ago], country_id: 1).each do |company|
-			CompanyMailer.invoice_email(company.id)
+			company.sendings.build(method: 'invoice').save
+			# CompanyMailer.invoice_email(company.id)
 		end
 	end
 
@@ -509,7 +512,6 @@ class Company < ActiveRecord::Base
 		status_emitido = PaymentStatus.find_by_name("Emitido")
 		status_vencido = PaymentStatus.find_by_name("Vencido")
 		plan_gratis = Plan.find_by_name("Gratis")
-		message_emitido = "Tu cuenta está atrasada de pago por un mes. Si quieres continuar usando tu plan con todas sus características, por favor ponte al día en el pago"
 
 		collectables.where.not(payment_status_id: status_vencido.id).each do |company|
 
@@ -533,7 +535,8 @@ class Company < ActiveRecord::Base
 				if company.save
 					CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
 					if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id && company.country_id == 1
-						CompanyMailer.invoice_email(company.id, "")
+						company.sendings.build(method: 'invoice').save
+						# CompanyMailer.invoice_email(company.id, "")
 					end
 				else
 					errors = ""
@@ -578,7 +581,8 @@ class Company < ActiveRecord::Base
 					sendings.build(method: 'recovery_trial').save
 					# CompanyMailer.trial_recovery(company.id)
 				else
-					CompanyMailer.invoice_email(company.id, message_emitido)
+					company.sendings.build(method: 'insistence_message_invoice').save
+					# CompanyMailer.invoice_email(company.id, message_emitido)
 				end
 
 
@@ -605,9 +609,6 @@ class Company < ActiveRecord::Base
 		month_end = Time.now.days_in_month
 		month_prop = (month_day - 1).to_f / month_end.to_f
 
-		message_emitido = "Recuerda que tu cuenta ya fue enviada. Por favor paga a la brevedad para que no tengas problemas con tu servicio"
-		message_vencido = "Tu plan se ha desactivado por no pago. Aún puedes entrar a tu cuenta, pero sólo tendrás disponible el uso del calendario para revisar tus reservas. Si quieres reactivar tu plan, por favor cancela la deuda y el proporcional para el mes actual"
-
 		collectables.where.not(payment_status_id: status_activo.id).each do |company|
 
 			sales_tax = company.country.sales_tax
@@ -618,7 +619,8 @@ class Company < ActiveRecord::Base
 				if company.created_at > (DateTime.now - 2.months) && !company.account_used
 					#Was in trial and hasn't used
 				else
-					CompanyMailer.invoice_email(company.id, message_emitido)
+					company.sendings.build(method: 'message_invoice').save
+					# CompanyMailer.invoice_email(company.id, message_emitido)
 				end
 
 			elsif company.payment_status_id == status_vencido.id
@@ -651,7 +653,8 @@ class Company < ActiveRecord::Base
 				if company.save
 					#DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
 					#Send mail alerting their plan changed
-					CompanyMailer.invoice_email(company.id, message_vencido)
+					company.sendings.build(method: 'close_message_invoice').save
+					# CompanyMailer.invoice_email(company.id, message_vencido)
 				end
 
 			end
@@ -668,15 +671,14 @@ class Company < ActiveRecord::Base
 		status_vencido = PaymentStatus.find_by_name("Vencido")
 		plan_gratis = Plan.find_by_name("Gratis")
 
-		message_emitido = "Tu cuenta fue enviada el 1° del mes. Por favor paga a la brevedad para que no tengas problemas con tu servicio"
-
 		collectables.where(payment_status_id: status_emitido.id).each do |company|
 
 			#Send second reminder (insistence)
 			if company.created_at > (DateTime.now - 2.months) && !company.account_used
 				#Was in trial and hasn't used
 			else
-				CompanyMailer.invoice_email(company.id, message_emitido)
+				company.sendings.build(method: 'reminder_message_invoice').save
+				# CompanyMailer.invoice_email(company.id, message_emitido)
 			end
 
 		end
@@ -699,7 +701,8 @@ class Company < ActiveRecord::Base
 			if company.created_at > (DateTime.now - 2.months) && !company.account_used
 				#Was in trial and hasn't used
 			else
-				CompanyMailer.invoice_email(company.id, message_emitido)
+				company.sendings.build(method: 'warning_message_invoice').save
+				# CompanyMailer.invoice_email(company.id, message_emitido)
 			end
 
 		end

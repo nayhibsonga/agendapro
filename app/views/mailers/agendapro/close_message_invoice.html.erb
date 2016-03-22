@@ -13,12 +13,15 @@
                       <tr>
                         <td valign="top" class="mcnTextContent" style="padding-top:9px;padding-right:18px;padding-bottom:9px;padding-left:18px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#606060;font-family:Helvetica;font-size:15px;line-height:150%;text-align:left;">
                           <h1 style="display:block;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;color:#606060 !important;font-family:Helvetica;font-size:40px;font-style:normal;font-weight:bold;line-height:125%;letter-spacing:-1px;text-align:left;">
-                            ¡Tu cuenta ya está lista!
+                            Recordatorio de pago de cuenta.
                           </h1>
                           <h3 style="display:block;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;color:#606060 !important;font-family:Helvetica;font-size:18px;font-style:normal;font-weight:bold;line-height:125%;letter-spacing:-.5px;text-align:left;">
                             <br>
                             Estimado/a <%= @admin.full_name %>:
                           </h3>
+                          <p style="margin-top:1em;margin-bottom:1em;margin-right:0;margin-left:0;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#606060;font-family:Helvetica;font-size:15px;line-height:150%;text-align:left;">
+                            <%= @message %>.
+                          </p>
                           <p style="margin-top:1em;margin-bottom:1em;margin-right:0;margin-left:0;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#606060;font-family:Helvetica;font-size:15px;line-height:150%;text-align:left;">
                             El monto a pagar para el mes de <%= (l DateTime.now, :format => '%B').capitalize %> es de&nbsp;<span style="font-size:19px;"><strong><%= number_to_currency(@current_amount, locale: @company.country.locale.to_sym) %></strong>.</span>
                           </p>
