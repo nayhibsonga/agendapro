@@ -4,4 +4,7 @@ class InternalSale < ActiveRecord::Base
 	belongs_to :service_provider
 	belongs_to :product
 	belongs_to :user
+
+  has_one :product_log, dependent: :nullify
+
 end
