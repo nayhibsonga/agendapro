@@ -1,7 +1,47 @@
 class BookingEmailWorker < BaseEmailWorker
 
   def self.perform(sending)
+    total_sendings = 0
+    total_recipients = 0
+
     booking = Booking.find(sending.sendable_id)
+
+    if booking.send_mail
+      recipients = filter_mails(self.get_receipients(booking, "client", sending.method))
+      total_sendings += 1
+      total_recipients += recipients.size
+      self.send_layout(sending.method, booking, recipients.join(', '))
+    end
+
+    recipients = filter_mails(self.get_receipients(booking, "provider", sending.method))
+    name = booking.service_provider.public_name
+    recipients.in_groups_of(1000).each do |group|
+      group.compact!
+      total_sendings += 1
+      total_recipients += group.size
+      BookingMailer.delay.send(sending.method, booking, group.join(', '), client: false, name: name)
+    end
+
+    recipients = filter_mails(self.get_receipients(booking, "location", sending.method))
+    name = booking.location.name
+    recipients.in_groups_of(1000).each do |group|
+      group.compact!
+      total_sendings += 1
+      total_recipients += group.size
+      BookingMailer.delay.send(sending.method, booking, group.join(', '), client: false, name: name)
+    end
+
+    recipients = filter_mails(self.get_receipients(booking, "company", sending.method))
+    name = booking.location.company.name
+    recipients.in_groups_of(1000).each do |group|
+      group.compact!
+      total_sendings += 1
+      total_recipients += group.size
+      BookingMailer.delay.send(sending.method, booking, group.join(', '), client: false, name: name)
+    end
+
+    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)
+
 
     unless booking.marketplace_origin
       self.perform_agendapro(booking, sending)
@@ -39,64 +79,9 @@ class BookingEmailWorker < BaseEmailWorker
       end
     end
 
-    def self.perform_agendapro(booking, sending)
-      total_sendings = 0
-      total_recipients = 0
-
-      if booking.send_mail
-        recipients = filter_mails(self.get_receipients(booking, "client", sending.method))
-        total_sendings += 1
-        total_recipients += recipients.size
-        BookingMailer.delay.send(sending.method, booking, recipients.join(', '))
-      end
-
-      recipients = filter_mails(self.get_receipients(booking, "provider", sending.method))
-      name = booking.service_provider.public_name
-      recipients.in_groups_of(1000).each do |group|
-        group.compact!
-        total_sendings += 1
-        total_recipients += group.size
-        BookingMailer.delay.send(sending.method, booking, group.join(', '), client: false, name: name)
-      end
-
-      recipients = filter_mails(self.get_receipients(booking, "location", sending.method))
-      name = booking.location.name
-      recipients.in_groups_of(1000).each do |group|
-        group.compact!
-        total_sendings += 1
-        total_recipients += group.size
-        BookingMailer.delay.send(sending.method, booking, group.join(', '), client: false, name: name)
-      end
-
-      recipients = filter_mails(self.get_receipients(booking, "company", sending.method))
-      name = booking.location.company.name
-      recipients.in_groups_of(1000).each do |group|
-        group.compact!
-        total_sendings += 1
-        total_recipients += group.size
-        BookingMailer.delay.send(sending.method, booking, group.join(', '), client: false, name: name)
-      end
-
-      sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)
-    end
-
-    def self.perform_horachic(booking, sending)
-      total_sendings = 0
-      total_recipients = 0
-
-      case sending.method
-      when "new_booking"
-        BookingMailer.delay.book_service_mail(booking)
-      when "cancel_booking"
-        BookingMailer.delay.cancel_booking_legacy(booking)
-      when "reminder_booking"
-        BookingMailer.delay.book_reminder_mail(booking)
-      when "update_booking"
-        BookingMailer.delay.update_booking_legacy(booking)
-      else
-        self.perform(booking, sending)
-        return
-      end
-      sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients, detail: ["legacy marketplace"])
+    def self.send_layout(method, booking, recipients)
+      methods = ["new_booking", "cancel_booking", "reminder_booking", "update_booking"]
+      new_method = booking.marketplace_origin && methods.include?(method) ? "#{method}_horachic" : method
+      BookingMailer.delay.send(new_method, booking, recipients)
     end
 end

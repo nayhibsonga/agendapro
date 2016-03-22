@@ -180,238 +180,37 @@ class BookingMailer < Base::CustomMailer
       )
   end
 
-  #################### HoraChic ####################
-  def book_service_mail (book_info)
-    # => Template
-    template_name = 'Booking'
-    template_content = []
+  def new_booking_horachic (book, recipient, options = {})
+    layout "mailers/horachic"
 
-    sessions_ratio = ""
+    # defaults
+    options = {
+      client: true,
+      name: "#{book.client.first_name} #{book.client.last_name}"
+    }.merge(options)
 
-    if book_info.is_session && !book_info.session_booking_id.nil?
-      session_index = 1
-      Booking.where(:session_booking_id => book_info.session_booking_id, :is_session_booked => true).order('start asc').each do |b|
-        if b.id == book_info.id
-          break
-        else
-          session_index = session_index + 1
-        end
-      end
+    @company = book.location.company
 
-      sessions_ratio = "(Sesión " + session_index.to_s + " de " + book_info.session_booking.sessions_amount.to_s + ")"
-    end
+    # layout variables
+    @title = "Nueva Reserva en #{@company.name}"
+    @header = "Nueva reserva recibida exitosamente."
+    attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
 
-    company = book_info.service_provider.company
-    # => Message
-    message = {
-      :from_email => 'no-reply@agendapro.cl',
-      :from_name => company.name,
-      :subject => 'Nueva Reserva en ' + company.name,
-      :to => [],
-      :headers => { 'Reply-To' => book_info.location.email },
-      :global_merge_vars => [
-        {
-          :name => 'URL',
-          :content => book_info.location.get_web_address
-        },
-        {
-          :name => 'COMPANYNAME',
-          :content => company.name
-        },
-        {
-          :name => 'CLIENTNAME',
-          :content => book_info.client.first_name + ' ' + book_info.client.last_name
-        },
-        {
-          :name => 'SERVICEPROVIDER',
-          :content => company.company_setting.provider_preference == 2 ? "" : book_info.service_provider.public_name
-        },
-        {
-          :name => 'SERVICENAME',
-          :content => book_info.service.name
-        },
-        {
-          :name => 'BSTART',
-          :content => l(book_info.start)
-        },
-        {
-          :name => 'SIGNATURE',
-          :content => company.company_setting.signature
-        },
-        {
-          :name => 'DOMAIN',
-          :content => company.country.domain
-        },
-        {
-          :name => 'SESSIONSRATIO',
-          :content => sessions_ratio
-        }
-      ],
-      :merge_vars => [],
-      :tags => ['booking', 'new_booking'],
-      :images => [
-        {
-          :type => 'image/png',
-          :name => 'LOGO',
-          :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
-        }
-      ],
-      :attachments => [
-        {
-          :type => 'text/calendar',
-          :name => book_info.service.name + ' - ' + company.name + '.ics',
-          :content => Base64.encode64(book_info.generate_ics.export())
-        }
-      ]
-    }
+    # view variables
+    @book = book
+    @company_setting = @company.company_setting
+    @name = options[:name]
 
-    # => Logo empresa
-    if !company.logo.email.url.include? "logo_vacio"
-      message[:images] = [{
-              :type => 'image/png',
-              :name => 'LOGO',
-              :content => Base64.encode64(File.read('public' + company.logo.email.url.to_s))
-            }]
-    end
-
-    if !book_info.notes.blank?
-      message[:global_merge_vars] << {:name => 'BNOTES', :content => book_info.notes}
-    end
-
-    # Notificacion cliente
-    if book_info.send_mail
-      message[:to] = [{
-                :email => book_info.client.email,
-                :name => book_info.client.first_name + ' ' + book_info.client.last_name,
-                :type => 'to'
-              }]
-      message[:merge_vars] = [{
-              :rcpt => book_info.client.email,
-              :vars => [
-                {
-                  :name => 'LOCALADDRESS',
-                  :content => "#{book_info.location.short_address_with_second_address}"
-                },
-                {
-                  :name => 'LOCATIONPHONE',
-                  :content => number_to_phone(book_info.location.phone)
-                },
-                {
-                  :name => 'CLIENT',
-                  :content => true
-                }
-              ]
-            }]
-
-      if company.company_setting.can_edit && book_info.service.online_booking && book_info.service_provider.online_booking
-        message[:merge_vars][0][:vars] << {
-          :name => 'EDIT',
-          :content => book_info.marketplace_origin ? book_info.marketplace_url('edit') : booking_edit_url(:confirmation_code => book_info.confirmation_code)
-        }
-      end
-      if company.company_setting.can_cancel
-        message[:merge_vars][0][:vars] << {
-          :name => 'CANCEL',
-          :content => book_info.marketplace_origin ? book_info.marketplace_url('cancel') : booking_cancel_url(:confirmation_code => book_info.confirmation_code)
-        }
-      end
-
-
-      client_template_name = template_name
-      if book_info.marketplace_origin
-        client_template_name = 'Booking - Marketplace'
-      end
-
-      # => Send mail
-      send_mail(client_template_name, template_content, message)
-    end
-
-    # Notificacion service provider
-    providers_emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: book_info.service_provider), receptor_type: 2).select(:email).distinct
-    if book_info.web_origin
-      providers_emails = providers_emails.where(new_web: true)
-    else
-      providers_emails = providers_emails.where(new: true)
-    end
-    providers_emails.each do |provider|
-      message[:to] = [{
-          :email => provider.email,
-          :type => 'bcc'
-        }]
-      message[:merge_vars] = [{
-          :rcpt => provider.email,
-          :vars => [
-            {
-              :name => 'COMPANYCOMMENT',
-              :content => book_info.company_comment
-            }
-          ]
-        }]
-
-      # => Send mail
-      send_mail(template_name, template_content, message)
-    end
-
-    # Email notificacion local
-    location_emails = NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: book_info.location), receptor_type: 1).select(:email).distinct
-    if book_info.web_origin
-      location_emails = location_emails.where(new_web: true)
-    else
-      location_emails = location_emails.where(new: true)
-    end
-    location_emails.each do |local|
-      message[:to] = [{
-              :email => local.email,
-              :type => 'bcc'
-            }]
-      message[:merge_vars] = [{
-              :rcpt => local.email,
-              :vars => [
-                {
-                  :name => 'COMPANYCOMMENT',
-                  :content => book_info.company_comment
-                }
-              ]
-            }]
-      message[:global_merge_vars][3] = {
-            :name => 'SERVICEPROVIDER',
-            :content => book_info.location.name
-          }
-
-      # => Send mail
-      send_mail(template_name, template_content, message)
-    end
-
-    # Email notificacion compañia
-    company_emails = NotificationEmail.where(company: company, receptor_type: 0).select(:email).distinct
-    if book_info.web_origin
-      company_emails = company_emails.where(new_web: true)
-    else
-      company_emails = company_emails.where(new: true)
-    end
-    company_emails.each do |company_email|
-      message[:to] = [{
-              :email => company_email.email,
-              :type => 'bcc'
-            }]
-      message[:merge_vars] = [{
-              :rcpt => company_email.email,
-              :vars => [
-                {
-                  :name => 'COMPANYCOMMENT',
-                  :content => book_info.company_comment
-                }
-              ]
-            }]
-      message[:global_merge_vars][3] = {
-            :name => 'SERVICEPROVIDER',
-            :content => company.name
-          }
-
-      # => Send mail
-      send_mail(template_name, template_content, message)
-    end
+    mail(
+      from: filter_sender(),
+      reply_to: filter_sender(@book.location.email),
+      to: filter_recipient(recipient),
+      subject: @title,
+      template_path: "mailers/horachic"
+      )
   end
+
+  #################### HoraChic ####################
   def cancel_booking_legacy (book_info)
     # => Template
     template_name = 'Cancel Booking'
