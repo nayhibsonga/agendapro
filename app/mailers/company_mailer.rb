@@ -159,6 +159,7 @@ class CompanyMailer < Base::CustomMailer
       )
   end
 
+  #################### Legacy ####################
   def online_receipt_email(company_id, punto_pagos_confirmation_id)
     company = Company.find(company_id)
     admins = company.users.where(role_id: Role.find_by_name('Administrador General'))

@@ -1,6 +1,29 @@
 class ClientMailer < Base::CustomMailer
   helper ClientsHelper
 
+  def process_campaign(id)
+    content = Email::Content.find(id)
+    content.to.split(', ').each do |recipient|
+      send_campaign(content, recipient.strip.downcase)
+    end
+  end
+
+  def send_campaign(content, recipient)
+    @content = content
+    @data = @content.data
+    @email = true
+    subject = (Rails.env == 'production' ? @content.subject : "#{@content.subject} (#{recipient})")
+    headers["X-MC-PreserveRecipients"] = "false"
+    mail(
+      from: filter_sender("#{@content.company.name.titleize} <#{@content.from}>"),
+      to: filter_recipient(recipient),
+      subject: subject,
+      template_path: Email::Template::TMPL_DIR,
+      template_name: "_"+@content.template.name
+      )
+  end
+
+  #################### Legacy ####################
   def send_client_mail (current_user, clients, subject, content, attachment, from)
     company = Company.find(current_user.company_id)
 
@@ -63,27 +86,5 @@ class ClientMailer < Base::CustomMailer
 
     # => Send mail
     send_mail(template_name, template_content, message, false)
-  end
-
-  def process_campaign(id)
-    content = Email::Content.find(id)
-    content.to.split(', ').each do |recipient|
-      send_campaign(content, recipient.strip.downcase)
-    end
-  end
-
-  def send_campaign(content, recipient)
-    @content = content
-    @data = @content.data
-    @email = true
-    subject = (Rails.env == 'production' ? @content.subject : "#{@content.subject} (#{recipient})")
-    headers["X-MC-PreserveRecipients"] = "false"
-    mail(
-      from: filter_sender("#{@content.company.name.titleize} <#{@content.from}>"),
-      to: filter_recipient(recipient),
-      subject: subject,
-      template_path: Email::Template::TMPL_DIR,
-      template_name: "_"+@content.template.name
-      )
   end
 end

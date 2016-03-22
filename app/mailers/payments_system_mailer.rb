@@ -1,5 +1,6 @@
 class PaymentsSystemMailer < Base::CustomMailer
 
+  #################### Legacy ####################
   def stock_alarm_email(location_product)
     # => Template
     template_name = 'Stock Alarm'

@@ -18,7 +18,7 @@ class UserMailer < Base::CustomMailer
       )
   end
 
-  # legacy method
+  #################### Legacy ####################
   def welcome_email_legacy(user)
     # => Template
     template_name = 'User - Marketplace'

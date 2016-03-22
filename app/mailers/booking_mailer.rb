@@ -180,9 +180,7 @@ class BookingMailer < Base::CustomMailer
       )
   end
 
-  ################################################
-  #                    Legacy                    #
-  #                                              #
+  #################### HoraChic ####################
   def book_service_mail (book_info)
     # => Template
     template_name = 'Booking'
@@ -1033,10 +1031,8 @@ class BookingMailer < Base::CustomMailer
       send_mail(template_name, template_content, message)
     end
   end
-  #                                              #
-  #                                              #
-  ################################################
 
+  #################### Legacy ####################
   def multiple_booking_reminder (data)
     # => Template
     template_name = data[:marketplace] ? 'Confirm Multiple - Marketplace' : 'Multiple Booking Reminder'
