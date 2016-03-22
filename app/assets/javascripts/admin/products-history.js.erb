@@ -34,11 +34,12 @@ function loadHistory()
 
   var date_from = $('#from').val();
   var date_to = $('#to').val();
+  var order = $('#order-select').val();
 
   $.ajax({
     url: '/product_logs_history',
     method: 'get',
-    data: {location_ids: location_ids, product_ids: product_ids, from: date_from, to: date_to},
+    data: {location_ids: location_ids, product_ids: product_ids, from: date_from, to: date_to, order: order},
     error: function(response){
       $('#render_content').empty();
       $('#download_stats_btn').hide();
@@ -122,6 +123,18 @@ $(function(){
   $('#location-type-select').on('change', function(){
     location_type = $(this).val();
     changeLocations();
+  });
+
+  $('#order-select').on('change', function(){
+    loadHistory();
+  });
+
+  $('#from').on('change', function(){
+    loadHistory();
+  });
+
+  $('#to').on('change', function(){
+    loadHistory();
   });
 
   $('#location-select').multiselect({
@@ -251,20 +264,20 @@ $(function(){
   });
 
   $(".datepicker").datepicker({
-      dateFormat: 'dd/mm/yy',
-      autoSize: true,
-      firstDay: 1,
-      changeMonth: true,
-      changeYear: true,
-      monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-          monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-          prevText: 'Atrás',
-          nextText: 'Adelante',
-          dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-          dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-          dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-          today: 'Hoy',
-          clear: ''
-    });
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
 
 });

@@ -153,19 +153,14 @@ $(function(){
 		changeLocations();
 	});
 
-	$('#getStatsBtn').on('click', function(){
+	$('#from').on('change', function(){
+    loadStats();
+  });
 
-		$.ajax({
-			url: 'locations_products_stats',
-			method: 'get',
-			error: function(response){
+  $('#to').on('change', function(){
+    loadStats();
+  });
 
-			},
-			success: function(response){
-
-			}
-		});
-	});
 
 	$('#location-select').multiselect({
 	    includeSelectAllOption: true,

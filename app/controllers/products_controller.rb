@@ -468,7 +468,17 @@ class ProductsController < ApplicationController
     @from = params[:from].to_datetime.beginning_of_day
     @to = params[:to].to_datetime.end_of_day
 
-    @product_logs = ProductLog.where(location_id: @locations, product_id: @products, created_at: @from.beginning_of_day..@to.end_of_day).order(created_at: :desc)
+    @product_logs = ProductLog.where(location_id: @locations, product_id: @products, created_at: @from.beginning_of_day..@to.end_of_day)
+
+    if params[:order] == "recent"
+      @product_logs = @product_logs.order(created_at: :desc)
+    elsif params[:order] == "old"
+      @product_logs = @product_logs.order(created_at: :asc)
+    elsif params[:order] == "by_product_recent"
+      @product_logs = @product_logs.joins(:product).order('products.name').order(created_at: :desc)
+    else
+      @product_logs = @product_logs.joins(:product).order('products.name').order(created_at: :asc)
+    end
 
     respond_to do |format|
       format.html { render :partial => 'logs_history' }

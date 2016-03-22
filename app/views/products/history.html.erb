@@ -73,7 +73,7 @@
 
               </td>
               <td>
-              <button id="download_stats_btn" class="btn btn-green" style="display: none; width: 200px; margin-top: 10px;"><i class="fa fa-file-excel-o"></i>&nbsp;Descargar</button>
+
               </td>
             </tr>
           </table>
@@ -105,6 +105,25 @@
                 <select id="product-select" multiple="multiple" class="form-control" style="display: none;">
 
                 </select>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 100px;">
+                Orden:&nbsp;&nbsp;
+              </td>
+              <td style="width: 200px;">
+                <select id="order-select" class="form-control">
+                  <option value="recent">Más reciente (todos)</option>
+                  <option value="old">Más antiguo (todos)</option>
+                  <option value="by_products_recent">Por productos (más reciente)</option>
+                  <option value="by_products_old">Por productos (más antiguo)</option>
+                </select>
+              </td>
+              <td style="width: 100px; padding-left: 20px;">
+
+              </td>
+              <td style="min-width: 200px;">
+                <button id="download_stats_btn" class="btn btn-green" style="display: none; width: 200px; margin-top: 10px;"><i class="fa fa-file-excel-o"></i>&nbsp;Descargar</button>
               </td>
             </tr>
           </table>
