@@ -432,6 +432,51 @@ class ProductsController < ApplicationController
 
   end
 
+  def history
+
+    @company = current_user.company
+
+    loc_status = "active"
+
+    if params[:loc_status].blank? || params[:loc_status] == "all"
+      loc_status = "all"
+    elsif params[:loc_status] == "inactive"
+      loc_status = "inactive"
+    end
+
+    @locations = @company.locations
+
+    if current_user.role_id != Role.find_by_name("Administrador General").id
+      @locations = current_user.locations
+    end
+
+    if loc_status == "active"
+      @locations = @locations.where(active: true)
+    elsif loc_status == "inactive"
+      @locations = @locations.where(active: false)
+    end
+
+    @product_categories = @company.product_categories
+    @products = @company.products
+
+  end
+
+  def logs_history
+
+    @locations = Location.find(params[:location_ids])
+    @products = Product.find(params[:product_ids])
+    @from = params[:from].to_datetime.beginning_of_day
+    @to = params[:to].to_datetime.end_of_day
+
+    @product_logs = ProductLog.where(location_id: @locations, product_id: @products, created_at: @from.beginning_of_day..@to.end_of_day).order(created_at: :desc)
+
+    respond_to do |format|
+      format.html { render :partial => 'logs_history' }
+      format.json { render :json => @product_logs }
+    end
+
+  end
+
   private
     def set_product
       @product = Product.find(params[:id])

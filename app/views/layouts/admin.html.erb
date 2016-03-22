@@ -112,6 +112,9 @@
                         <li>
                         <%= link_to 'Ventas<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, products_stats_path, :class => "locked-section" %>
                         </li>
+                        <li>
+                        <%= link_to 'Uso<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, products_history_path, :class => "locked-section" %>
+                        </li>
                       </ul>
                     </li>
                   <% else %>
@@ -123,6 +126,9 @@
                         </li>
                         <li>
                         <%= link_to '<i class="fa fa-money"></i>&nbsp;&nbsp;Ventas'.html_safe, products_stats_path %>
+                        </li>
+                        <li>
+                        <%= link_to '<i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;Uso'.html_safe, products_history_path %>
                         </li>
                       </ul>
                     </li>
@@ -247,7 +253,7 @@
           <% else %>
             <div class="collapse navbar-collapse" id="navbar">
               <ul class="nav navbar-nav navbar-right">
-                
+
 
                 <!-- Super Admin -->
                 <% if current_user.role_id == Role.find_by_name("Super Admin").id || current_user.role_id == Role.find_by_name("Ventas").id %>

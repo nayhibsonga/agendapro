@@ -581,6 +581,10 @@ Agendapro::Application.routes.draw do
     get '/locations_products_stats', :to => 'products#locations_stats'
     get '/seller_history', :to => 'products#seller_history'
     get '/product_history', :to => 'products#product_history'
+    get '/products_history', :to => 'products#history'
+    get '/product_logs_history', :to => 'products#logs_history'
+
+    get '/categories_products', :to => 'product_categories#products'
 
     get '/client_base_pdf', :to => 'clients#client_base_pdf'
 
