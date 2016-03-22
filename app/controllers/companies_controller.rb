@@ -123,7 +123,8 @@ class CompaniesController < ApplicationController
 
 					              	PlanLog.create(trx_id: "", new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
 
-					              	CompanyMailer.transfer_receipt_email(@transfer.id)
+					              	@transfer.sendings.build(method: 'receipt_transfer').save
+					              	# CompanyMailer.transfer_receipt_email(@transfer.id)
 
 					              	@json_response[0] = "ok"
 									@json_response[1] = company
@@ -174,7 +175,8 @@ class CompaniesController < ApplicationController
 						                @transfer.approved = true
 						                @transfer.save
 
-						                CompanyMailer.transfer_receipt_email(@transfer.id)
+						                @transfer.sendings.build(method: 'receipt_transfer').save
+						                # CompanyMailer.transfer_receipt_email(@transfer.id)
 
 						                @json_response[0] = "ok"
 										@json_response[1] = company
@@ -234,7 +236,8 @@ class CompaniesController < ApplicationController
 									@transfer.approved
 									@transfer.save
 
-									CompanyMailer.transfer_receipt_email(@transfer.id)
+									@transfer.sendings.build(method: 'receipt_transfer').save
+									# CompanyMailer.transfer_receipt_email(@transfer.id)
 
 									@json_response[0] = "ok"
 									@json_response[1] = company
@@ -330,7 +333,8 @@ class CompaniesController < ApplicationController
 	        				@transfer.approved = true
 	        				@transfer.save
 			          		CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
-			          		CompanyMailer.transfer_receipt_email(@transfer.id)
+			          		@transfer.sendings.build(method: 'receipt_transfer').save
+			          		# CompanyMailer.transfer_receipt_email(@transfer.id)
 			          		@json_response[0] = "ok"
 							@json_response[1] = company
 							render :json => @json_response
@@ -404,7 +408,8 @@ class CompaniesController < ApplicationController
                 @transfer.approved = true
                 @transfer.save
 
-                CompanyMailer.transfer_receipt_email(@transfer.id)
+                @transfer.sendings.build(method: 'receipt_transfer').save
+                # CompanyMailer.transfer_receipt_email(@transfer.id)
 
                 @json_response[0] = "ok"
 				@json_response[1] = company
@@ -494,7 +499,7 @@ class CompaniesController < ApplicationController
 	    if @company.payment_status == PaymentStatus.find_by_name("Trial")
 	    	plan = @company.default_plan
 
-	    	if plan.name == "Normal" || plan.name == "Personal"				
+	    	if plan.name == "Normal" || plan.name == "Personal"
 				if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
 					plan = Plan.where(name: "Normal", custom: false).first
 				else
@@ -511,7 +516,7 @@ class CompaniesController < ApplicationController
 	        @price = @company.company_plan_setting.base_price * @company.computed_multiplier
 	      end
 	    end
-	    
+
 		@sales_tax = @company.country.sales_tax
 	    @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
 	    @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
@@ -1821,7 +1826,7 @@ class CompaniesController < ApplicationController
 	end
 
 	def select_default_plan
-    
+
 		@company = Company.find(params[:company_id])
 		@plan_id = params[:plan_id]
 		@plan = Plan.find(@plan_id)
