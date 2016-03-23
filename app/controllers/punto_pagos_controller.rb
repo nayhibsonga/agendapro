@@ -497,7 +497,7 @@ class PuntoPagosController < ApplicationController
         company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
           CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
-          CompanyMailer.online_receipt_email(company.id, punto_pagos_confirmation.id)
+          punto_pagos_confirmation.sendings.build(method: 'online_receipt').save
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
         end
@@ -515,7 +515,7 @@ class PuntoPagosController < ApplicationController
           company.company_setting.mails_base_capacity = company.plan.monthly_mails
           company.company_setting.save
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "OK notification_plan")
-          CompanyMailer.online_receipt_email(company.id, punto_pagos_confirmation.id)
+          punto_pagos_confirmation.sendings.build(method: 'online_receipt').save
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
         end
