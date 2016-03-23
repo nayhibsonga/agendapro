@@ -8,9 +8,27 @@
               <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;">
                 <div style="text-align: center;">
                   <span style="font-size:14px">
-                    <strong><%= @name %></strong>, tu reserva fue recibida exitosamente
+                    <strong><%= @name %></strong>, tu reserva fue modificada correctamente.
                   </span>
                 </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
+  <tbody class="mcnDividerBlockOuter">
+    <tr>
+      <td class="mcnDividerBlockInner" style="min-width:100%; padding:18px;">
+        <table class="mcnDividerContent" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%;border-top-width: 2px;border-top-style: solid;border-top-color: #EAEAEA;">
+          <tbody>
+            <tr>
+              <td>
+                <span>
+                </span>
               </td>
             </tr>
           </tbody>
@@ -26,7 +44,7 @@
         <table align="left" width="273" border="0" cellpadding="0" cellspacing="0" class="mcnImageGroupContentContainer">
           <tbody>
             <tr>
-              <td class="mcnImageGroupContent" valign="top" style="padding-top: 0; padding-bottom: 0;text-align: center;">
+              <td class="mcnImageGroupContent" valign="top" style="text-align: center;padding-top: 0; padding-bottom: 0;text-align: center;">
                 <%= image_tag "https://gallery.mailchimp.com/542f2957e9b5d351a6230de51/images/8288e06f-5f24-4025-8948-170bdf3aacd2.png", width: "86", style: "max-width:86px; padding-bottom: 0;", class: "mcnImage" %>
               </td>
             </tr>
@@ -54,15 +72,9 @@
             <tr>
               <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-left:18px; padding-bottom:9px; padding-right:0;">
                 <div style="text-align: center;">
-                  <span style="font-size:14px">
-                    <span class="mc-toc-title">
-                      <span style="font-family:arial,helvetica neue,helvetica,sans-serif">
-                        <strong>¿Qué Reservaste?</strong>
-                        <br>
-                        <%= @book.service.name %>
-                      </span>
-                    </span>
-                  </span>
+                  <strong style="font-family:arial,helvetica neue,helvetica,sans-serif; font-size:14px; line-height:20.8px; text-align:justify">¿Qué Reservaste?</strong>
+                  <br style="font-family: arial, 'helvetica neue', helvetica, sans-serif; font-size: 14px; line-height: 20.8px; text-align: justify;">
+                  <span style="font-family:arial,helvetica neue,helvetica,sans-serif; font-size:14px; line-height:20.8px; text-align:justify"><%= @book.service.name %></span>
                 </div>
               </td>
             </tr>
@@ -73,15 +85,19 @@
             <tr>
               <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right:18px; padding-bottom:9px; padding-left:18px;">
                 <div style="text-align: center;">
-                  <span style="font-size:14px">
+                  <span style="font-size:14px; line-height:20.8px">
                     <span class="mc-toc-title">
                       <span style="font-family:arial,helvetica neue,helvetica,sans-serif">
                         <strong>¿Cuándo?</strong>
                         <br>
-                        <%= l(@book.start) %>
+                        <%= l(@old_booking.start) %>
                       </span>
                     </span>
                   </span>
+                  <br>
+                  <font face="arial, helvetica neue, helvetica, sans-serif">
+                    <span style="font-size:14px"><%= l(@book.start) %></span>
+                  </font>
                 </div>
               </td>
             </tr>
@@ -126,15 +142,11 @@
             <tr>
               <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-left:18px; padding-bottom:9px; padding-right:0;">
                 <div style="text-align: center;">
-                  <span style="font-size:14px">
-                    <span class="mc-toc-title">
-                      <span style="font-family:arial,helvetica neue,helvetica,sans-serif">
-                        <strong>¿Con Quién?</strong>
-                        <br>
-                        <%= @book.service_provider.public_name unless @company_setting.provider_preference == 2 %>
-                      </span>
-                    </span>
-                  </span>
+                  <strong style="font-family:arial,helvetica neue,helvetica,sans-serif; font-size:14px; line-height:20.8px; text-align:justify">¿Con Quién?</strong>
+                  <br style="font-family: arial, 'helvetica neue', helvetica, sans-serif; font-size: 14px; line-height: 20.8px; text-align: justify;">
+                  <font face="arial, helvetica neue, helvetica, sans-serif">
+                    <span style="font-size:14px"><%= @book.service_provider.public_name unless @company_setting.provider_preference == 2 %></span>
+                  </font>
                 </div>
               </td>
             </tr>
@@ -145,24 +157,17 @@
             <tr>
               <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right:18px; padding-bottom:9px; padding-left:18px;">
                 <div style="text-align: center;">
-                  <span style="font-size:14px">
+                  <span style="font-size:14px; line-height:20.8px">
                     <span class="mc-toc-title">
                       <span style="font-family:arial,helvetica neue,helvetica,sans-serif">
                         <strong>¿Dónde?</strong>
                       </span>
                     </span>
                   </span>
-                </div>
-                <div style="text-align: center;">
-                  <span style="font-size:14px">
-                    <span class="mc-toc-title">
-                      <span style="font-family:arial,helvetica neue,helvetica,sans-serif">
-                        <%= @company.name %>
-                        <br>
-                        <%= @book.location.short_address_with_second_address %>
-                      </span>
-                    </span>
-                  </span>
+                  <br>
+                  <%= @company.name %>
+                  <br>
+                  <%= @book.location.short_address_with_second_address %>
                 </div>
               </td>
             </tr>
@@ -207,20 +212,12 @@
             <tr>
               <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-left:18px; padding-bottom:9px; padding-right:0;">
                 <div style="text-align: center;">
-                  <span style="font-size:14px">
-                    <span class="mc-toc-title">
-                      <span style="font-family:arial,helvetica neue,helvetica,sans-serif">
-                        <strong>Notas</strong>
-                      </span>
+                  <strong style="font-family:arial,helvetica neue,helvetica,sans-serif; font-size:14px; line-height:20.8px; text-align:justify">Notas</strong>
+                  <div style="text-align: center;">
+                    <span style="font-size:14px; line-height:1.6em">
+                      <font face="arial, helvetica neue, helvetica, sans-serif"><%= @book.notes if @book.notes.present? %></font>
                     </span>
-                  </span>
-                </div>
-                <div style="text-align: center;">
-                  <span style="font-size:14px">
-                    <span class="mc-toc-title">
-                      <span style="font-family:arial,helvetica neue,helvetica,sans-serif"><%= @book.notes if @book.notes.present? %></span>
-                    </span>
-                  </span>
+                  </div>
                 </div>
               </td>
             </tr>
@@ -231,7 +228,7 @@
             <tr>
               <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right:18px; padding-bottom:9px; padding-left:18px;">
                 <div style="text-align: center;">
-                  <span style="font-size:14px">
+                  <span style="font-size:14px; line-height:20.8px">
                     <span class="mc-toc-title">
                       <span style="font-family:arial,helvetica neue,helvetica,sans-serif">
                         <strong>Consultas</strong>
@@ -257,9 +254,7 @@
           <tbody>
             <tr>
               <td align="center" valign="middle" class="mcnButtonContent" style="font-family: Arial; font-size: 16px; padding: 15px;">
-                <% if @company_setting.can_edit && @book.service.online_booking && @book.service_provider.online_booking %>
-                <%= link_to "Modificar Reserva", @book.marketplace_url('edit'), class: "mcnButton", target: "_blank", title: "Modificar Reserva", style: "font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;" %>
-                <% end %>
+                <%= link_to "Modificar Reserva", @book.marketplace_url('edit'), class: "mcnButton", title: "Modificar Reserva", target: "_blank", style: "font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;" %>
               </td>
             </tr>
           </tbody>
@@ -272,13 +267,11 @@
   <tbody class="mcnButtonBlockOuter">
     <tr>
       <td style="padding-top:0; padding-right:18px; padding-bottom:18px; padding-left:18px;" valign="top" align="center" class="mcnButtonBlockInner">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonContentContainer" style="border-collapse: separate !important;border: 3px solid #EE5E66;border-radius: 3px;background-color: #FFFFFF;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonContentContainer" style="border-collapse: separate !important;border: 2px solid #EE5E66;border-radius: 0px;background-color: #FFFFFF;">
           <tbody>
             <tr>
-              <td align="center" valign="middle" class="mcnButtonContent" style="font-family: Arial; font-size: 16px; padding: 15px;">
-                <% if @company_setting.can_cancel %>
-                <%= link_to "Cancelar Reserva", @book.marketplace_url('cancel'), class: "mcnButton", target: "_blank", title: "Cancelar Reserva", style: "ont-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #EE5E66;" %>
-                <% end %>
+              <td align="center" valign="middle" class="mcnButtonContent" style="font-family: Arial; font-size: 14px; padding: 15px;">
+                <%= link_to "Cancelar Reserva", @book.marketplace_url('cancel'), class: "mcnButton", title: "Cancelar Reserva", target: "_blank", style: "font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #EE5E66;" %>
               </td>
             </tr>
           </tbody>

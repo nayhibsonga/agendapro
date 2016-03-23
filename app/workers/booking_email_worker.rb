@@ -10,7 +10,7 @@ class BookingEmailWorker < BaseEmailWorker
       recipients = filter_mails(self.get_receipients(booking, "client", sending.method))
       total_sendings += 1
       total_recipients += recipients.size
-      self.send_layout(sending.method, booking, recipients.join(', '))
+      BookingMailer.delay.send(sending.method, booking, recipients.join(', '), horachic: self.horachic?(sending.method, booking))
     end
 
     recipients = filter_mails(self.get_receipients(booking, "provider", sending.method))
@@ -41,13 +41,6 @@ class BookingEmailWorker < BaseEmailWorker
     end
 
     sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)
-
-
-    unless booking.marketplace_origin
-      self.perform_agendapro(booking, sending)
-    else
-      self.perform_horachic(booking, sending)
-    end
   end
 
   private
@@ -79,9 +72,8 @@ class BookingEmailWorker < BaseEmailWorker
       end
     end
 
-    def self.send_layout(method, booking, recipients)
+    def self.horachic?(method, booking)
       methods = ["new_booking", "cancel_booking", "reminder_booking", "update_booking"]
-      new_method = booking.marketplace_origin && methods.include?(method) ? "#{method}_horachic" : method
-      BookingMailer.delay.send(new_method, booking, recipients)
+      return booking.marketplace_origin && methods.include?(method)
     end
 end
