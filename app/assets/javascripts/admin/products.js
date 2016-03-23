@@ -1,3 +1,69 @@
+function loadStockChange(type, product_id)
+{
+	$('#stockChangeModal .modal-content').empty();
+	var location_id = $('#locationsSelect').val();
+	$.ajax({
+		url: '/stock_change',
+		method: 'get',
+		data: {type: type, location_id: location_id, product_id: product_id},
+		error: function(response){
+			$('#stockChangeModal .modal-content').empty();
+			swal({
+				title: "Error",
+				text: "Se produjo un error inesperado",
+				type: "error"
+			});
+		},
+		success: function(response){
+			$('#stockChangeModal .modal-content').empty();
+			$('#stockChangeModal .modal-content').append(response);
+			$('#stockChangeModal').modal('show');
+		}
+	})
+}
+
+function saveStockChange()
+{
+	var data = $('#products_update_stock').serialize();
+	$('#stockChangeModal .modal-body').empty();
+	$('#stockChangeModal .modal-body').append('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+	$.ajax({
+		url: '/update_stock',
+		method: 'post',
+		dataType: 'json',
+		data: data,
+		error: function(response){
+			$('#stockChangeModal').modal('hide');
+			swal({
+				title: "Error",
+				text: "Se produjo un error inesperado",
+				type: "error"
+			});
+		},
+		success: function(response){
+			$('#stockChangeModal').modal('hide');
+			if(response[0] == "ok")
+			{
+				swal({
+					title: "Stock actualizado",
+					text: "El stock se ha actualizado correctamente",
+					type: "success",
+					confirmButtonText: "Aceptar"
+				});
+				getInventory();
+			}
+			else
+			{
+				swal({
+					title: "Error",
+					text: "Se produjo un error inesperado",
+					type: "error"
+				});
+			}
+		}
+	});
+}
+
 function changeLocationStatus(location_id) {
 	if( $('#location_product_ids_'+location_id).prop('checked')) {
 		$('#location_product_ids_stock_'+location_id).prop('disabled', false);
@@ -289,21 +355,25 @@ function getProductDisplays() {
 
 function getInventory()
 {
+	$('#orderSelect').prop('disabled', false);
 	var location_id = $("#locationsSelect").val();
 	var location_name = $("#locationsSelect option:selected").text();
 	var category = $("#categoryFilterSelect").val();
 	var brand = $("#brandFilterSelect").val();
 	var display = $("#displayFilterSelect").val();
 	var searchInput = $('#productSearch').val();
+	var order = $('#orderSelect').val();
 
 	$("#locationInventory").html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
 
 	if(location_id == "0")
 	{
+		$('#orderSelect').val('product');
+		$('#orderSelect').prop('disabled', true);
 		$.ajax({
 			url: '/company_inventory',
 			type: 'get',
-			data: {category: category, brand: brand, display: display, searchInput: searchInput},
+			data: {category: category, brand: brand, display: display, searchInput: searchInput, order: order},
 			success: function(response)
 			{
 				$("#locationInventory").empty();
@@ -314,10 +384,11 @@ function getInventory()
 	}
 	else
 	{
+		$('#orderSelect').prop('disabled', false);
 		$.ajax({
 			url: '/inventory',
 			type: 'get',
-			data: {id: location_id, category: category, brand: brand, display: display, searchInput: searchInput},
+			data: {id: location_id, category: category, brand: brand, display: display, searchInput: searchInput, order: order},
 			success: function(response)
 			{
 				$("#locationInventory").empty();
@@ -370,6 +441,19 @@ function initialize() {
 }
 
 $(function() {
+
+	$('body').on('click', '.add-stock-btn', function(){
+		loadStockChange("add", $(this).attr("product_id"));
+	});
+
+	$('body').on('click', '.substract-stock-btn', function(){
+		loadStockChange("substract", $(this).attr("product_id"));
+	});
+
+	$('body').on('click', '#stockChangeSaveBtn', function(e){
+		e.preventDefault();
+		saveStockChange();
+	});
 
 	$('form input, form select').bind('keypress keydown keyup', function(e){
     	if(e.keyCode == 13) {

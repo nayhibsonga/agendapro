@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160308133628) do
+ActiveRecord::Schema.define(version: 20160321163627) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1222,6 +1222,28 @@ ActiveRecord::Schema.define(version: 20160308133628) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "product_logs", force: true do |t|
+    t.integer  "product_id"
+    t.integer  "internal_sale_id"
+    t.integer  "payment_product_id"
+    t.integer  "service_provider_id"
+    t.integer  "client_id"
+    t.string   "change"
+    t.text     "cause"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "location_id"
+    t.integer  "user_id"
+  end
+
+  add_index "product_logs", ["client_id"], name: "index_product_logs_on_client_id", using: :btree
+  add_index "product_logs", ["internal_sale_id"], name: "index_product_logs_on_internal_sale_id", using: :btree
+  add_index "product_logs", ["location_id"], name: "index_product_logs_on_location_id", using: :btree
+  add_index "product_logs", ["payment_product_id"], name: "index_product_logs_on_payment_product_id", using: :btree
+  add_index "product_logs", ["product_id"], name: "index_product_logs_on_product_id", using: :btree
+  add_index "product_logs", ["service_provider_id"], name: "index_product_logs_on_service_provider_id", using: :btree
+  add_index "product_logs", ["user_id"], name: "index_product_logs_on_user_id", using: :btree
 
   create_table "products", force: true do |t|
     t.integer  "company_id"

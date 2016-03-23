@@ -1,0 +1,174 @@
+<input type="hidden" id="price_total" value="<%= number_to_currency(@price_total, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>" />
+<input type="hidden" id="quantity_total" value="<%= @quantity_total %>" />
+<div class="row" style="margin-top: 5px;">
+	<div class="col-md-12" style="padding: 0px !important;">
+		<div class="stats-title">
+			Ranking de productos
+		</div>
+	</div>
+</div>
+<div class="row" style="margin-top: 5px;">
+	<div class="col-md-6" style="padding-left: 0px !important;">
+		<div class="stats-subtitle">
+			Por recaudación
+		</div>
+		<div class="ranking-container">
+			<table>
+				<tr class="first-tr">
+					<th>Producto</th>
+					<th>Cantidad</th>
+					<th>Recaudación</th>
+					<th></th>
+				</tr>
+				<% @products.sort_by{ |product_tuple| [product_tuple[2], product_tuple[1], product_tuple[0].name]}.reverse.each do |product_arr| %>
+					<tr>
+						<td><span class="product_link" product_id="<%= product_arr[0].id %>"><%= product_arr[0].name + " (" + product_arr[0].product_category.name + ")" %></span></td>
+						<td><%= product_arr[2].to_s %></td>
+						<td><%= product_arr[1].to_s %></td>
+						<td><button class="btn btn-default btn-xs product_link" product_id="<%= product_arr[0].id %>"><i class="fa fa-search-plus"></i></button></td>
+					</tr>
+				<% end %>
+			</table>
+		</div>
+	</div>
+	<div class="col-md-6" style="padding-right: 0px !important;">
+		<div class="stats-subtitle">
+			Por cantidad
+		</div>
+		<div class="ranking-container">
+			<table>
+				<tr class="first-tr">
+					<th>Producto</th>
+					<th>Cantidad</th>
+					<th>Recaudación</th>
+					<th></th>
+				</tr>
+				<% @products.sort_by{ |product_tuple| [product_tuple[1], product_tuple[2], product_tuple[0].name]}.reverse.each do |product_arr| %>
+					<tr>
+						<td><span class="product_link" product_id="<%= product_arr[0].id %>"><%= product_arr[0].name + " (" + product_arr[0].product_category.name + ")" %></span></td>
+						<td><%= product_arr[2].to_s %></td>
+						<td><%= product_arr[1].to_s %></td>
+						<td><button class="btn btn-default btn-xs product_link" product_id="<%= product_arr[0].id %>"><i class="fa fa-search-plus"></i></button></td>
+					</tr>
+				<% end %>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="row" style="margin-top: 15px;">
+	<div class="col-md-12" style="padding: 0px !important;">
+		<div class="stats-title">
+			Ranking de vendedores
+		</div>
+	</div>
+</div>
+<div class="row" style="margin-top: 15px; margin-bottom: 15px;">
+	<div class="col-md-6" style="padding-left: 0px !important;">
+		<div class="stats-subtitle">
+			Por recaudación
+		</div>
+		<div class="ranking-container">
+			<table>
+				<tr class="first-tr">
+					<th>Vendedor</th>
+					<th>Tipo</th>
+					<th>Cantidad</th>
+					<th>Recaudación</th>
+					<th></th>
+				</tr>
+				<% @sellers.sort_by{ |seller| [seller[1], seller[2]]}.reverse.each do |seller| %>
+					<tr>
+						<% if seller[0].is_a?(ServiceProvider) %>
+							<td>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="0"><%= seller[0].public_name %></span>
+							</td>
+							<td>
+								Prestador
+							</td>
+						<% elsif seller[0].is_a?(User) %>
+							<td>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="1"><%= seller[0].full_name %></span>
+							</td>
+							<td>
+								Usuario (<%= seller[0].role.name %>)
+							</td>
+						<% else %>
+							<td>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="2"><%= seller[0].name %></span>
+							</td>
+							<td>
+								Cajero
+							</td>
+						<% end %>
+						<td><%= seller[2].to_s %></td>
+						<td><%= seller[1].to_s %></td>
+						<td>
+							<% if seller[0].is_a?(ServiceProvider) %>
+								<button class="btn btn-default btn-xs seller_link" seller_id="<%= seller[0].id %>" seller_type="0"><i class="fa fa-search-plus"></i></button>
+							<% elsif seller[0].is_a?(User) %>
+								<button class="btn btn-default btn-xs seller_link" seller_id="<%= seller[0].id %>" seller_type="1"><i class="fa fa-search-plus"></i></button>
+							<% else %>
+								<button class="btn btn-default btn-xs seller_link" seller_id="<%= seller[0].id %>" seller_type="2"><i class="fa fa-search-plus"></i></button>
+							<% end %>
+						</td>
+					</tr>
+				<% end %>
+			</table>
+		</div>
+	</div>
+	<div class="col-md-6" style="padding-right: 0px !important;">
+		<div class="stats-subtitle">
+			Por cantidad
+		</div>
+		<div class="ranking-container">
+			<table>
+				<tr class="first-tr">
+					<th>Vendedor</th>
+					<th>Tipo</th>
+					<th>Cantidad</th>
+					<th>Recaudación</th>
+					<th></th>
+				</tr>
+				<% @sellers.sort_by{ |seller| [seller[2], seller[1]]}.reverse.each do |seller| %>
+					<tr>
+
+						<% if seller[0].is_a?(ServiceProvider) %>
+							<td>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="0"><%= seller[0].public_name %></span>
+							</td>
+							<td>
+								Prestador
+							</td>
+						<% elsif seller[0].is_a?(User) %>
+							<td>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="1"><%= seller[0].full_name %></span>
+							</td>
+							<td>
+								Usuario (<%= seller[0].role.name %>)
+							</td>
+						<% else %>
+							<td>
+								<span class="seller_link" seller_id="<%= seller[0].id %>" seller_type="2"><%= seller[0].name %></span>
+							</td>
+							<td>
+								Cajero
+							</td>
+						<% end %>
+
+						<td><%= seller[2].to_s %></td>
+						<td><%= seller[1].to_s %></td>
+						<td>
+							<% if seller[0].is_a?(ServiceProvider) %>
+								<button class="btn btn-default btn-xs seller_link" seller_id="<%= seller[0].id %>" seller_type="0"><i class="fa fa-search-plus"></i></button>
+							<% elsif seller[0].is_a?(User) %>
+								<button class="btn btn-default btn-xs seller_link" seller_id="<%= seller[0].id %>" seller_type="1"><i class="fa fa-search-plus"></i></button>
+							<% else %>
+								<button class="btn btn-default btn-xs seller_link" seller_id="<%= seller[0].id %>" seller_type="2"><i class="fa fa-search-plus"></i></button>
+							<% end %>
+						</td>
+					</tr>
+				<% end %>
+			</table>
+		</div>
+	</div>
+</div>

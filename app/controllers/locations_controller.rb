@@ -598,21 +598,37 @@ class LocationsController < ApplicationController
     end
 
     if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id))
     elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).pluck(:id))
     elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).pluck(:id))
     elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category]).pluck(:id))
     elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id))
     elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand]).pluck(:id))
     elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_display_id => params[:display]).pluck(:id))
     else
-      @location_products = location_products.order('stock asc')
+      @location_products = location_products
+    end
+
+    if normalized_search != ""
+      if params[:order].blank? || params[:order] == "product"
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"product_categories"."name", "product_brands"."name", "location_products"."stock"')
+        #ActiveRecord::Associations::Preloader.new.preload
+      else
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"location_products"."stock","product_categories"."name", "product_brands"."name"')
+      end
+    else
+      if params[:order].blank? || params[:order] == "product"
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"product_categories"."name", "product_brands"."name", "products"."name", "location_products"."stock"')
+        #ActiveRecord::Associations::Preloader.new.preload
+      else
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"location_products"."stock","product_categories"."name", "product_brands"."name", "products"."name"')
+      end
     end
 
     respond_to do |format|

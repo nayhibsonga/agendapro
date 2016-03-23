@@ -1,0 +1,52 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+	<h3 class="modal-title" id="productModalTitle" style="line-height: 1.1;">
+		<%
+			str_title = "Resumen de ventas de " + @product.name
+		%>
+		<%= str_title %>
+	</h3>
+</div>
+<div class="modal-body" id="productModalBody">
+	<div class="row">
+		<div class="col-md-12 payment_summary_col">
+			<div class="payment_summary_title">
+				<%
+					str_title = "Resumen de ventas de " + @product.name
+					str_title += " entre " + @from.strftime('%d/%m/%Y') + " y " + @to.strftime('%d/%m/%Y')
+				%>
+				<%= str_title %>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="payment-summary-table">
+				<tr>
+	              	<th>Fecha</th>
+	              	<th>Vendedor</th>
+	              	<th>Cantidad</th>
+	              	<th>Precio unitario</th>
+	              	<th>Monto total</th>
+              	</tr>
+
+              	<% @payment_products.each do |payment_product| %>
+              	<tr>
+	                <td><%= payment_product.payment.payment_date.strftime('%d/%m/%Y %R') %></td>
+	                <td>
+	                	<%= payment_product.get_seller_details %>
+	                </td>
+	                <td><%= payment_product.quantity %></td>
+	                <td><%= number_to_currency(payment_product.price, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+	                <td><%= number_to_currency(payment_product.price * payment_product.quantity, currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+	            </tr>
+              	<% end %>
+
+            </table>
+
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+</div>
