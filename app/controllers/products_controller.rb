@@ -4,6 +4,7 @@ class ProductsController < ApplicationController
   before_action :quick_add
   before_action -> (source = "products") { verify_free_plan source }
   before_action :verify_blocked_status
+  before_action :verify_premium_plan, only: [:stats, :locations_stats, :locations_stats_excel, :history, :logs_history, :logs_history_excel]
   layout "admin"
   load_and_authorize_resource
 
@@ -89,7 +90,7 @@ class ProductsController < ApplicationController
 
     #Get provider sellers ranking in this period
     @provider_sellers = []
-    @company.service_providers.each do |service_provider|
+    @company.service_providers.where(active: true).each do |service_provider|
       product_price_sum = 0
       product_quantity_sum = 0
       PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids]).pluck(:id), seller_type: 0, seller_id: service_provider.id).each do |pp|
@@ -132,6 +133,78 @@ class ProductsController < ApplicationController
       format.json { render :json => @products }
     end
 
+  end
+
+  def locations_stats_excel
+    @company = current_user.company
+
+    @locations = Location.find(params[:location_ids].split(","))
+
+    @from = params[:from].to_datetime.beginning_of_day
+    @to = params[:to].to_datetime.end_of_day
+
+    @price_total = 0
+    @quantity_total = 0
+
+    #Get products ranking by price sum and item quantity in this period
+    @products = []
+
+    @company.products.each do |product|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      product.payment_products.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids].split(",")).pluck(:id)).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      product_tuple = [product, product_price_sum, product_quantity_sum]
+      @price_total += product_price_sum
+      @quantity_total += product_quantity_sum
+      @products << product_tuple
+    end
+
+    #Get provider sellers ranking in this period
+    @provider_sellers = []
+    @company.service_providers.where(active: true).each do |service_provider|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids].split(",")).pluck(:id), seller_type: 0, seller_id: service_provider.id).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      provider_tuple = [service_provider, product_price_sum, product_quantity_sum]
+      @provider_sellers << provider_tuple
+    end
+
+    #Get user sellers ranking in this period
+    @user_sellers = []
+    @company.users.each do |user|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids].split(",")).pluck(:id), seller_type: 1, seller_id: user.id).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      user_tuple = [user, product_price_sum, product_quantity_sum]
+      @user_sellers << user_tuple
+    end
+
+    @cashier_sellers = []
+    @company.cashiers.each do |cashier|
+      product_price_sum = 0
+      product_quantity_sum = 0
+      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids].split(",")).pluck(:id), seller_type: 2, seller_id: cashier.id).each do |pp|
+        product_quantity_sum += pp.quantity
+        product_price_sum += pp.quantity * pp.price
+      end
+      cashier_tuple = [cashier, product_price_sum, product_quantity_sum]
+      @cashier_sellers << cashier_tuple
+    end
+
+    @sellers = @provider_sellers + @user_sellers + @cashier_sellers
+
+    respond_to do |format|
+      format.xls
+    end
   end
 
   def seller_history
@@ -485,6 +558,29 @@ class ProductsController < ApplicationController
       format.json { render :json => @product_logs }
     end
 
+  end
+
+  def logs_history_excel
+    @locations = Location.find(params[:location_ids].split(","))
+    @products = Product.find(params[:product_ids].split(","))
+    @from = params[:from].to_datetime.beginning_of_day
+    @to = params[:to].to_datetime.end_of_day
+
+    @product_logs = ProductLog.where(location_id: @locations, product_id: @products, created_at: @from.beginning_of_day..@to.end_of_day)
+
+    if params[:order] == "recent"
+      @product_logs = @product_logs.order(created_at: :desc)
+    elsif params[:order] == "old"
+      @product_logs = @product_logs.order(created_at: :asc)
+    elsif params[:order] == "by_product_recent"
+      @product_logs = @product_logs.joins(:product).order('products.name').order(created_at: :desc)
+    else
+      @product_logs = @product_logs.joins(:product).order('products.name').order(created_at: :asc)
+    end
+
+    respond_to do |format|
+      format.xls
+    end
   end
 
   private

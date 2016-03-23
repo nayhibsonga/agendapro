@@ -37,6 +37,8 @@ function loadStats()
 			$('#price_sum_summary').html('<strong>' + $('#price_total').val() + '</strong>');
 			$('#quantity_sum_summary').html('<strong>' + $('#quantity_total').val() + '</strong>');
 			$('#summaries_div').show();
+			link_href = '/locations_products_stats_excel.xls?location_ids=' + location_ids.join() + '&from=' + date_from + '&to=' + date_to;
+			$('#download-stats-link').attr("href", link_href);
 			$('#download_stats_btn').show();
 		}
 	})

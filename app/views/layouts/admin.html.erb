@@ -124,12 +124,21 @@
                         <li>
                         <%= link_to '<i class="fa fa-barcode"></i>&nbsp;&nbsp;Inventario'.html_safe, products_path %>
                         </li>
-                        <li>
-                        <%= link_to '<i class="fa fa-money"></i>&nbsp;&nbsp;Ventas'.html_safe, products_stats_path %>
-                        </li>
-                        <li>
-                        <%= link_to '<i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;Uso'.html_safe, products_history_path %>
-                        </li>
+                        <% if current_user.company.is_plan_capable("Premium") %>
+                          <li>
+                          <%= link_to '<i class="fa fa-money"></i>&nbsp;&nbsp;Ventas'.html_safe, products_stats_path %>
+                          </li>
+                          <li>
+                          <%= link_to '<i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;Uso'.html_safe, products_history_path %>
+                          </li>
+                        <% else %>
+                          <li>
+                          <%= link_to '<i class="fa fa-money"></i>&nbsp;&nbsp;Ventas<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, products_stats_path %>
+                          </li>
+                          <li>
+                          <%= link_to '<i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;Uso<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, products_history_path %>
+                          </li>
+                        <% end %>
                       </ul>
                     </li>
                   <% end %>

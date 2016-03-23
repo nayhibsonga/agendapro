@@ -355,21 +355,25 @@ function getProductDisplays() {
 
 function getInventory()
 {
+	$('#orderSelect').prop('disabled', false);
 	var location_id = $("#locationsSelect").val();
 	var location_name = $("#locationsSelect option:selected").text();
 	var category = $("#categoryFilterSelect").val();
 	var brand = $("#brandFilterSelect").val();
 	var display = $("#displayFilterSelect").val();
 	var searchInput = $('#productSearch').val();
+	var order = $('#orderSelect').val();
 
 	$("#locationInventory").html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
 
 	if(location_id == "0")
 	{
+		$('#orderSelect').val('product');
+		$('#orderSelect').prop('disabled', true);
 		$.ajax({
 			url: '/company_inventory',
 			type: 'get',
-			data: {category: category, brand: brand, display: display, searchInput: searchInput},
+			data: {category: category, brand: brand, display: display, searchInput: searchInput, order: order},
 			success: function(response)
 			{
 				$("#locationInventory").empty();
@@ -380,10 +384,11 @@ function getInventory()
 	}
 	else
 	{
+		$('#orderSelect').prop('disabled', false);
 		$.ajax({
 			url: '/inventory',
 			type: 'get',
-			data: {id: location_id, category: category, brand: brand, display: display, searchInput: searchInput},
+			data: {id: location_id, category: category, brand: brand, display: display, searchInput: searchInput, order: order},
 			success: function(response)
 			{
 				$("#locationInventory").empty();

@@ -598,21 +598,28 @@ class LocationsController < ApplicationController
     end
 
     if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id))
     elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).pluck(:id))
     elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).pluck(:id))
     elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category]).pluck(:id))
     elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id))
     elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand]).pluck(:id))
     elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_display_id => params[:display]).pluck(:id))
     else
-      @location_products = location_products.order('stock asc')
+      @location_products = location_products
+    end
+
+    if params[:order].blank? || params[:order] == "product"
+      @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"product_categories"."name", "product_brands"."name", "products"."name", "location_products"."stock"')
+      #.joins(:product_categories).order(name: :asc).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
+    else
+      @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"location_products"."stock","product_categories"."name", "product_brands"."name", "products"."name"')
     end
 
     respond_to do |format|
