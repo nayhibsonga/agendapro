@@ -615,11 +615,20 @@ class LocationsController < ApplicationController
       @location_products = location_products
     end
 
-    if params[:order].blank? || params[:order] == "product"
-      @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"product_categories"."name", "product_brands"."name", "products"."name", "location_products"."stock"')
-      #.joins(:product_categories).order(name: :asc).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
+    if normalized_search != ""
+      if params[:order].blank? || params[:order] == "product"
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"product_categories"."name", "product_brands"."name", "location_products"."stock"')
+        #ActiveRecord::Associations::Preloader.new.preload
+      else
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"location_products"."stock","product_categories"."name", "product_brands"."name"')
+      end
     else
-      @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"location_products"."stock","product_categories"."name", "product_brands"."name", "products"."name"')
+      if params[:order].blank? || params[:order] == "product"
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"product_categories"."name", "product_brands"."name", "products"."name", "location_products"."stock"')
+        #ActiveRecord::Associations::Preloader.new.preload
+      else
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"location_products"."stock","product_categories"."name", "product_brands"."name", "products"."name"')
+      end
     end
 
     respond_to do |format|
