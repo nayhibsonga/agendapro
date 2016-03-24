@@ -15,7 +15,7 @@ class ReceiptEmailWorker < BaseEmailWorker
       group.compact!
       total_sendings += 1
       total_recipients += group.size
-      CompanyMailer.delay.send(sending.method, company, group.join(', '))
+      ReceiptMailer.delay.send(sending.method, receipt, group.join(', '))
     end
 
     sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)
