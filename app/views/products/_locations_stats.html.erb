@@ -24,7 +24,7 @@
 					<tr>
 						<td><span class="product_link" product_id="<%= product_arr[0].id %>"><%= product_arr[0].name + " (" + product_arr[0].product_category.name + ")" %></span></td>
 						<td><%= product_arr[2].to_s %></td>
-						<td><%= product_arr[1].to_s %></td>
+						<td><%= number_to_currency(product_arr[1], currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
 						<td><button class="btn btn-default btn-xs product_link" product_id="<%= product_arr[0].id %>"><i class="fa fa-search-plus"></i></button></td>
 					</tr>
 				<% end %>
@@ -47,7 +47,7 @@
 					<tr>
 						<td><span class="product_link" product_id="<%= product_arr[0].id %>"><%= product_arr[0].name + " (" + product_arr[0].product_category.name + ")" %></span></td>
 						<td><%= product_arr[2].to_s %></td>
-						<td><%= product_arr[1].to_s %></td>
+						<td><%= number_to_currency(product_arr[1], currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
 						<td><button class="btn btn-default btn-xs product_link" product_id="<%= product_arr[0].id %>"><i class="fa fa-search-plus"></i></button></td>
 					</tr>
 				<% end %>
@@ -101,7 +101,7 @@
 							</td>
 						<% end %>
 						<td><%= seller[2].to_s %></td>
-						<td><%= seller[1].to_s %></td>
+						<td><%= number_to_currency(seller[1], currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
 						<td>
 							<% if seller[0].is_a?(ServiceProvider) %>
 								<button class="btn btn-default btn-xs seller_link" seller_id="<%= seller[0].id %>" seller_type="0"><i class="fa fa-search-plus"></i></button>
@@ -156,7 +156,7 @@
 						<% end %>
 
 						<td><%= seller[2].to_s %></td>
-						<td><%= seller[1].to_s %></td>
+						<td><%= number_to_currency(seller[1], currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
 						<td>
 							<% if seller[0].is_a?(ServiceProvider) %>
 								<button class="btn btn-default btn-xs seller_link" seller_id="<%= seller[0].id %>" seller_type="0"><i class="fa fa-search-plus"></i></button>
