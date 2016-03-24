@@ -47,7 +47,7 @@
                     <optgroup label="Activos">
                       <% @locations.where(active: true).each do |location|
                       %>
-                        <option value="<%= location.id %>">
+                        <option value="<%= location.id %>" selected="selected">
                           <%= location.name %>
                         </option>
                       <% end %>

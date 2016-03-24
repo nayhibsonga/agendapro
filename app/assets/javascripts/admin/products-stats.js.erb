@@ -141,7 +141,7 @@ $(function(){
 	      	{
 	        	return "Todos";
 	      	}
-	      	else if(options.length > 2)
+	      	else if(options.length > 1)
 	      	{
 	        	return options.length + " seleccionados";
 	      	}
@@ -168,6 +168,8 @@ $(function(){
 	    	$('#location-select').show();
 	    }
 	});
+
+	loadStats();
 
 	$(".datepicker").datepicker({
 	    dateFormat: 'dd/mm/yy',
