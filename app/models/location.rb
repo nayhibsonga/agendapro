@@ -56,6 +56,7 @@ class Location < ActiveRecord::Base
   has_many :products, through: :location_products
   has_one :stock_alarm_setting, dependent: :destroy
   has_one :sales_cash, dependent: :destroy
+  has_many :sendings, class_name: 'Email::Sending', as: :sendable
 
   mount_uploader :image1, LocationImagesUploader
   mount_uploader :image2, LocationImagesUploader
@@ -133,6 +134,8 @@ class Location < ActiveRecord::Base
       }
   },
   :ignoring => :accents
+
+  WORKER = 'StockEmailWorker'
 
   	#Add due if plan is not custom and locations increased by one
   	def add_due
@@ -530,7 +533,7 @@ class Location < ActiveRecord::Base
 
 			location_products = []
 
-			location.location_products.where('product_id is not null').where('product_id > 0').each do |location_product|
+			location.location_products.where.not(product_id: nil).where('product_id > 0').each do |location_product|
 				if location_product.check_stock_for_reminder
 					if !location_product.product.nil?
 						location_products << location_product
@@ -540,45 +543,46 @@ class Location < ActiveRecord::Base
 
 			if location_products.count > 0
 				#Send reminder
-				location.send_stock_reminders(location_products)
+				# location.send_stock_reminders(location_products)
+        location.sendings.build(method: 'reminder_stock').save
 			end
 
 		end
 
 	end
 
-	def send_stock_reminders(location_products)
+	# def send_stock_reminders(location_products)
 
-		stocks = ''
+	# 	stocks = ''
 
-		emails = []
-		self.stock_alarm_setting.stock_setting_emails.each do |stock_email|
-			emails << stock_email.email
-		end
+	# 	emails = []
+	# 	self.stock_alarm_setting.stock_setting_emails.each do |stock_email|
+	# 		emails << stock_email.email
+	# 	end
 
-		location_products.each do |location_product|
+	# 	location_products.each do |location_product|
 
-			stock_limit = location_product.stock_limit
-			puts "LocationProduct: "
-			puts location_product.inspect
-		    if stock_limit.nil?
-		      stock_limit = location_product.location.stock_alarm_setting.default_stock_limit
-		  	else
-		  		puts "No era nulo. Stock limit: " + stock_limit.to_s
-		    end
-		    puts "Stock limit: " + stock_limit.to_s
+	# 		stock_limit = location_product.stock_limit
+	# 		puts "LocationProduct: "
+	# 		puts location_product.inspect
+	# 	    if stock_limit.nil?
+	# 	      stock_limit = location_product.location.stock_alarm_setting.default_stock_limit
+	# 	  	else
+	# 	  		puts "No era nulo. Stock limit: " + stock_limit.to_s
+	# 	    end
+	# 	    puts "Stock limit: " + stock_limit.to_s
 
-		    stocks = stocks + '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.product.full_name + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.stock.to_s + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + stock_limit.to_s + '</td>' +
-            '</tr>'
+	# 	    stocks = stocks + '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
+ #            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.product.full_name + '</td>' +
+ #            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.stock.to_s + '</td>' +
+ #            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + stock_limit.to_s + '</td>' +
+ #            '</tr>'
 
-		end
+	# 	end
 
-		PaymentsSystemMailer.stock_reminder_email(self, stocks, emails)
+	# 	PaymentsSystemMailer.stock_reminder_email(self, stocks, emails)
 
-	end
+	# end
 
 	def services_top4
 		services = Service.where(active: true, online_booking: true).joins(:bookings).where('bookings.location_id = ?', self.id).group("services.id").limit(4)

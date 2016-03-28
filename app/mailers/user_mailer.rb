@@ -1,7 +1,8 @@
 class UserMailer < Base::CustomMailer
-  layout "mailers/green"
 
   def welcome_email(user, recipient)
+    layout "mailers/#{user.api_token.present? ? "horachic" : "green"}"
+
     # layout variables
     @title = "Bienvenido a AgendaPro"
     unless user.api_token.present?
@@ -13,12 +14,14 @@ class UserMailer < Base::CustomMailer
     # view variables
     @user = user
 
+    path = user.api_token.present? ? "horachic" : "agendapro"
+
     mail(
       from: filter_sender(),
       reply_to: filter_sender(),
       to: filter_recipient(recipient),
       subject: @title,
-      template_path: "mailers/agendapro"
+      template_path: "mailers/#{path}"
       )
   end
 
