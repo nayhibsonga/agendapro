@@ -1,5 +1,5 @@
 class BookingMailer < Base::CustomMailer
-  layout "mailers/green"
+  layout :select_layout
 
   include ActionView::Helpers::NumberHelper
 
@@ -18,7 +18,7 @@ class BookingMailer < Base::CustomMailer
     attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
     unless options[:horachic] # layout green
       @url = @company.web_url
-      attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
+      @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
     else # layout horachic
       @header = "Nueva reserva recibida exitosamente."
     end
@@ -55,7 +55,7 @@ class BookingMailer < Base::CustomMailer
     attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
     unless options[:horachic] # layout green
       @url = @company.web_url
-      attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
+      @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
     else # layout horachic
       @header = "Reserva cancelada correctamente."
     end
@@ -66,6 +66,7 @@ class BookingMailer < Base::CustomMailer
     @client = options[:client]
     @name = options[:name]
 
+    layout = options[:horachic] ? "horachic" : "green"
     path = options[:horachic] ? "horachic" : "agendapro"
 
     mail(
@@ -92,7 +93,7 @@ class BookingMailer < Base::CustomMailer
     attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
     unless options[:horachic] # layout green
       @url = @company.web_url
-      attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
+      @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
     else # layout horachic
       @header = "Confirma tu reserva en #{@company.name}."
     end
@@ -103,6 +104,7 @@ class BookingMailer < Base::CustomMailer
     @client = options[:client]
     @name = options[:name]
 
+    layout = options[:horachic] ? "horachic" : "green"
     path = options[:horachic] ? "horachic" : "agendapro"
 
     mail(
@@ -125,7 +127,7 @@ class BookingMailer < Base::CustomMailer
     # layout variables
     @title = "Reserva Confirmada de #{book.client.first_name} #{book.client.last_name}"
     @url = @company.web_url
-    attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
+    @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
 
     # view variables
     @book = book
@@ -156,7 +158,7 @@ class BookingMailer < Base::CustomMailer
     attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
     unless options[:horachic] # layout green
       @url = @company.web_url
-      attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
+      @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
     else # layout horachic
       @header = "Reserva modificada correctamente."
     end
@@ -168,6 +170,7 @@ class BookingMailer < Base::CustomMailer
     @name = options[:name]
     @old_booking = @book.booking_histories.second
 
+    layout = options[:horachic] ? "horachic" : "green"
     path = options[:horachic] ? "horachic" : "agendapro"
 
     mail(
@@ -191,7 +194,7 @@ class BookingMailer < Base::CustomMailer
     # layout variables
     @title = "Nueva Reserva en #{@company.name}"
     @url = @company.web_url
-    attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
+    @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
     attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
 
     # view variables
@@ -705,5 +708,13 @@ class BookingMailer < Base::CustomMailer
     def attacht_logo(url=nil)
       url ||= "app/assets/images/logos/logodoble2.png"
       attachments.inline['logo.png'] = File.read(url)
+    end
+
+    def select_layout
+      if @header
+        "mailers/horachic"
+      else
+        "mailers/green"
+      end
     end
 end

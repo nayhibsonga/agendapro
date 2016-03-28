@@ -2,7 +2,7 @@ class Base::CustomMailer < ActionMailer::Base
   require 'mandrill'
   require 'base64'
 
-  layout "mailers/green", except: :send_mail
+  # layout "mailers/green", except: :send_mail
 
   default reply_to: 'contacto@agendapro.cl'
 
