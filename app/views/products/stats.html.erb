@@ -1,8 +1,12 @@
+<style type="text/css">
+.multiselect-container.dropdown-menu{
+  left: auto;
+}
+</style>
 <div class="container-fluid background-grey">
   <div class="row">
     <div class="col-md-12">
       <h2 class="text-green">Ventas</h2>
-      <p>Revisa las estadísticas de ventas de tus productos.</p>
     </div>
   </div>
 </div>
@@ -18,7 +22,7 @@
                 Desde:&nbsp;&nbsp;
               </td>
               <td style="width: 200px;">
-                <input type="text" class="form-control datepicker" id="from" value="<%= (DateTime.now - 5.months).strftime('%d/%m/%Y') %>" />
+                <input type="text" class="form-control datepicker" id="from" value="<%= (DateTime.now - 1.months).strftime('%d/%m/%Y') %>" />
               </td>
               <td style="width: 100px; padding-left: 20px;">
                 Hasta:&nbsp;&nbsp;
@@ -35,45 +39,35 @@
           <table>
             <tr>
               <td style="width: 100px;">
-                Tipo:&nbsp;&nbsp;
-              </td>
-              <td style="width: 200px;">
-                <select id="location-type-select" class="form-control">
-                  <option value="all">Todos</option>
-                  <option value="active">Activos</option>
-                  <option value="inactive">Inactivos</option>
-                </select>
-              </td>
-              <td style="width: 100px; padding-left: 20px;">
                 Locales:&nbsp;&nbsp;
               </td>
               <td style="min-width: 200px;">
-                <select id="location-select" multiple="multiple" class="form-control" style="display: none;">
-                  <% @locations.each do |location|
-                    status = "inactive"
-                    if location.active
-                      status = "active"
-                    end
-                  %>
-                    <option value="<%= location.id %>" class="<%= status %>">
-                      <%= location.name %>
-                    </option>
-                  <% end %>
-                </select>
+                <div>
+                  <select id="location-select" multiple="multiple" class="form-control" style="display: none;">
+                    <optgroup label="Activos">
+                      <% @locations.where(active: true).each do |location|
+                      %>
+                        <option value="<%= location.id %>" selected="selected">
+                          <%= location.name %>
+                        </option>
+                      <% end %>
+                    </optgroup>
+                    <optgroup label="Inactivos">
+                      <% @locations.where(active: false).each do |location|
+                      %>
+                        <option value="<%= location.id %>">
+                          <%= location.name %>
+                        </option>
+                      <% end %>
+                    </optgroup>
+                  </select>
+                </div>
               </td>
-            </tr>
-            <tr>
-              <td>
+              <td style="width: 100px; padding-left: 20px;">
 
               </td>
               <td>
-
-              </td>
-              <td>
-
-              </td>
-              <td>
-              <a href="" id="download-stats-link" target="_blank"><button id="download_stats_btn" class="btn btn-green" style="display: none; width: 200px; margin-top: 10px;"><i class="fa fa-file-excel-o"></i>&nbsp;Descargar</button></a>
+                <a href="" id="download-stats-link" target="_blank"><button id="download_stats_btn" class="btn btn-green" style="display: none; width: 200px;"><i class="fa fa-file-excel-o"></i>&nbsp;Descargar</button></a>
               </td>
             </tr>
           </table>

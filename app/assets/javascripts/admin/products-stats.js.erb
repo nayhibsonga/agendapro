@@ -1,5 +1,3 @@
-var location_type = "all";
-
 function loadStats()
 {
 	var location_ids = [];
@@ -118,42 +116,7 @@ function loadProductHistory(product_id)
 
 }
 
-function changeLocations()
-{
-	console.log("Changed ");
-	console.log("location_type: " + location_type);
-	if(location_type == "active")
-	{
-		$('#location-select option.inactive').each(function(){
-			$('.location-option input[value="' + $(this).val() + '"]').closest('li').hide();
-			$('.location-option input[value="' + $(this).val() + '"]').prop('checked', false);
-		});
-		$('#location-select option.active').each(function(){
-			$('.location-option input[value="' + $(this).val() + '"]').closest('li').show();
-		});
-	}
-	else if(location_type == "inactive")
-	{
-		$('#location-select option.inactive').each(function(){
-			$('.location-option input[value="' + $(this).val() + '"]').closest('li').show();
-		});
-		$('#location-select option.active').each(function(){
-			$('.location-option input[value="' + $(this).val() + '"]').closest('li').hide();
-			$('.location-option input[value="' + $(this).val() + '"]').prop('checked', false);
-		});
-	}
-	else
-	{
-		$('.location-option').closest('li').show();
-	}
-}
-
 $(function(){
-
-	$('#location-type-select').on('change', function(){
-		location_type = $(this).val();
-		changeLocations();
-	});
 
 	$('#from').on('change', function(){
     loadStats();
@@ -168,9 +131,7 @@ $(function(){
 	    includeSelectAllOption: true,
 	    selectAllText: 'Todos',
 	    buttonContainer: '<div style="min-width: 200px;"></div>',
-	    templates: {
-	    	li: '<li class="location-option"><a><label></label></a></li>'
-	    },
+	    enableClickableOptGroups: true,
 	    buttonText: function(options, select) {
 
 	      	if (options.length === 0) {
@@ -180,7 +141,7 @@ $(function(){
 	      	{
 	        	return "Todos";
 	      	}
-	      	else if(options.length > 2)
+	      	else if(options.length > 1)
 	      	{
 	        	return options.length + " seleccionados";
 	      	}
@@ -207,6 +168,8 @@ $(function(){
 	    	$('#location-select').show();
 	    }
 	});
+
+	loadStats();
 
 	$(".datepicker").datepicker({
 	    dateFormat: 'dd/mm/yy',
