@@ -576,7 +576,23 @@ Agendapro::Application.routes.draw do
 
     post '/select_default_plan', :to => 'companies#select_default_plan'
 
+    #Inventory reports
+    get '/products_stats', :to => 'products#stats'
+    get '/locations_products_stats', :to => 'products#locations_stats'
+    get '/seller_history', :to => 'products#seller_history'
+    get '/product_history', :to => 'products#product_history'
+    get '/products_history', :to => 'products#history'
+    get '/product_logs_history', :to => 'products#logs_history'
+    get '/locations_products_stats_excel', :to => 'products#locations_stats_excel'
+    get '/product_logs_history_excel', :to => 'products#logs_history_excel'
+
+    get '/categories_products', :to => 'product_categories#products'
+
     get '/client_base_pdf', :to => 'clients#client_base_pdf'
+
+    get '/stock_change', :to => 'products#stock_change'
+    post '/update_stock', :to => 'products#update_stock'
+
 
   end
 

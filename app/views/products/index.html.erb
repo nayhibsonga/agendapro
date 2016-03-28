@@ -23,7 +23,9 @@
               <td>
                 <select id="locationsSelect" class="form-control">
                   <% if current_user.role_id == administrador_general_id %>
-                    <option value="0">Todos</option>
+                    <% if current_user.company.locations.where(:active => true).count > 1 %>
+                      <option value="0">Todos</option>
+                    <% end %>
                     <% current_user.company.locations.where(:active => true).order(name: :asc).each do |location| %>
                       <option value="<%= location.id %>"><%= location.name %></option>
                     <% end %>
@@ -42,7 +44,7 @@
                 <% end %>
               </td>
             </tr>
-          </table>     
+          </table>
         </div>
       </div>
     </div>
@@ -67,7 +69,7 @@
       <div class="pull-right">
         <table id="inventoryFiltersTable">
           <tr>
-            <td style="width: 22%;">
+            <td style="width: 20%;">
               <div class="form-group">
                 <div class="col-md-12">
                   <div class="input-group">
@@ -80,12 +82,25 @@
                 </div>
               </div>
             </td>
-            <td style="width: 26%;">
+            <td style="width: 20%;">
               <div class="form-group">
-                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px; padding-left: 5px !important; padding-right: 5px !important;">
+                Orden:
+                </div>
+                <div class="col-md-7" style="padding-left: 0px !important; padding-right: 0px !important;">
+                  <select id="orderSelect" class="form-control filterSelect">
+                    <option value="product">Producto</option>
+                    <option value="stock">Stock</option>
+                  </select>
+                </div>
+              </div>
+            </td>
+            <td style="width: 20%;">
+              <div class="form-group">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px; padding-left: 5px !important; padding-right: 5px !important;">
                 Categoría:
                 </div>
-                <div class="col-md-7">
+                <div class="col-md-7" style="padding-left: 0px !important; padding-right: 0px !important;">
                   <select id="categoryFilterSelect" class="form-control filterSelect">
                     <option value="0">Todas</option>
                     <% current_user.company.product_categories.order(:name).each do |category| %>
@@ -95,12 +110,12 @@
                 </div>
               </div>
             </td>
-            <td style="width: 26%;">
+            <td style="width: 20%;">
               <div class="form-group">
-                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px; padding-left: 5px !important; padding-right: 5px !important;">
                   Marca:
                 </div>
-                <div class="col-md-7">
+                <div class="col-md-7" style="padding-left: 0px !important; padding-right: 0px !important;">
                   <select id="brandFilterSelect" class="form-control filterSelect">
                     <option value="0">Todas</option>
                     <% current_user.company.product_brands.order(:name).each do |brand| %>
@@ -110,12 +125,12 @@
                 </div>
               </div>
             </td>
-            <td style="width: 26%;">
+            <td style="width: 20%;">
               <div class="form-group">
-                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px; padding-left: 5px !important; padding-right: 5px !important;">
                   Cantidad:
                 </div>
-                <div class="col-md-7">
+                <div class="col-md-7" style="padding-left: 0px !important; padding-right: 0px !important;">
                   <select id="displayFilterSelect" class="form-control filterSelect">
                     <option value="0">Todas</option>
                     <% current_user.company.product_displays.order(:name).each do |display| %>
@@ -133,7 +148,7 @@
       </div>
     </div>
   </div>
-  
+
   <div id="locationInventory">
 
   </div>
@@ -159,7 +174,7 @@
               <label for="location_product_stock_limit" class="col-md-4 control-label">Límite de stock</label>
               <div class="col-md-8">
                 <input type="number" id="location_product_stock_limit" class="form-control" value="" />
-                <span class="help-block"></span>
+                <span class="help-block" style="font-size: 15px;">La alarma se activará si el stock está bajo este límite.</span>
                 <span class="form-control-feedback"></span>
               </div>
             </div>
@@ -168,7 +183,7 @@
               <label for="location_product_alarm_email" class="col-md-4 control-label">Emails para avisos</label>
               <div class="col-md-8">
                 <input type="text" id="location_product_alarm_email" class="form-control" value="" />
-                <span class="help-block">Ingresa los correos a los que quieras enviar el aviso de stock bajo separados por coma: ejemplo1@agendapro.cl, ejemplo2@agendapro.cl, ejemplo3@agendapro.cl</span>
+                <span class="help-block" style="font-size: 15px;">Ingresa los correos a los que quieras enviar el aviso de stock bajo separados por coma: ejemplo1@agendapro.cl, ejemplo2@agendapro.cl, ejemplo3@agendapro.cl</span>
                 <span class="form-control-feedback"></span>
               </div>
             </div>
@@ -379,6 +394,14 @@
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             <button type="button" class="btn btn-green" id="saveGeneralAlarmsBtn">Guardar</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="stockChangeModal" tabindex="-1" role="dialog" aria-labelledby="stockChangeModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
         </div>
       </div>
     </div>

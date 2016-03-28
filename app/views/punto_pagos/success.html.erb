@@ -23,7 +23,7 @@
 										<dt>Código de la Transacción</dt>
 										<dd><%= @billing_log.trx_id %></dd>
 										<dt>¿Dudas o consultas?</dt>
-										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
+										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al <%= t('phones.support') %></dd>
 									</dl>
 									<% elsif @success_page == "plan" %>
 									<h4>Resumen de tu Pago</h4>
@@ -37,7 +37,7 @@
 										<dt>Código de la Transacción</dt>
 										<dd><%= @plan_log.trx_id %></dd>
 										<dt>¿Dudas o consultas?</dt>
-										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
+										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al <%= t('phones.support') %></dd>
 									</dl>
 									<% end %>
 									<% if current_user && @company %>

@@ -641,8 +641,13 @@ class PaymentsController < ApplicationController
           if location_product.nil?
             @errors << "No existe el producto para el local."
           else
+
             location_product.stock = location_product.stock - payment_product.quantity
             location_product.save
+
+            product_log = ProductLog.new(product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: nil, user_id: nil, client_id: payment.client_id, change: "Decremento de " + (location_product.stock + payment_product.quantity).to_s + " a " + location_product.stock.to_s, cause: "Venta a cliente.")
+            product_log.payment_product = payment_product
+            product_log.save
           end
 
           @paymentProducts << payment_product
@@ -679,6 +684,7 @@ class PaymentsController < ApplicationController
         mock_booking.delete
       end
       payment.payment_products.each do |payment_product|
+        ProductLog.where(payment_product_id: payment_product.id).delete_all
         payment_product.delete
       end
       payment.bookings.each do |booking|
@@ -828,6 +834,7 @@ class PaymentsController < ApplicationController
       else
         location_product.stock = location_product.stock + payment_product.quantity
         location_product.save
+        ProductLog.where(payment_product_id: payment_product.id).delete_all
       end
 
       payment_product.delete
@@ -1001,6 +1008,9 @@ class PaymentsController < ApplicationController
           else
             location_product.stock = location_product.stock - payment_product.quantity
             location_product.save
+            product_log = ProductLog.new(product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: nil, user_id: nil, client_id: payment.client_id, change: "Decremento de " + (location_product.stock + payment_product.quantity).to_s + " a " + location_product.stock.to_s, cause: "Venta a cliente.")
+            product_log.payment_product = payment_product
+            product_log.save
           end
 
           new_receipt.payment_products << payment_product
@@ -1236,6 +1246,7 @@ class PaymentsController < ApplicationController
         if !location_product.nil?
           location_product.stock = location_product.stock + payment_product.quantity
           location_product.save
+          product_log = ProductLog.create(product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: nil, user_id: nil, client_id: payment.client_id, change: "Incremento de " + (location_product.stock - payment_product.quantity).to_s + " a " + location_product.stock.to_s, cause: "Eliminación de Venta a cliente.")
         end
       else
         errors << payment_product.errors
@@ -1749,7 +1760,10 @@ class PaymentsController < ApplicationController
             location_product.stock = location_product.stock - internal_sale.quantity + old_quantity
           else
             old_location_product.stock += old_quantity
-            old_location_product.save
+            if old_location_product.save
+              change = "Incremento de " + (old_location_product.stock - old_quantity).to_s + " a " + old_location_product.stock.to_s
+              ProductLog.create(internal_sale_id: internal_sale.id, product_id: old_location_product.product.id, location_id: old_location_product.location.id, service_provider_id: internal_sale.service_provider_id, user_id: internal_sale.user_id, change: change, cause: "Modificación de venta interna.")
+            end
             location_product.stock = location_product.stock - internal_sale.quantity
           end
         else
@@ -1757,6 +1771,9 @@ class PaymentsController < ApplicationController
         end
 
         if location_product.save
+          change = "Decremento de " + (location_product.stock + internal_sale.quantity).to_s + " a " + location_product.stock.to_s
+
+          ProductLog.create(internal_sale_id: internal_sale.id, product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: internal_sale.service_provider_id, user_id: internal_sale.user_id, change: change, cause: "Venta interna.")
           @json_response[0] = "ok"
           @json_response[1] = internal_sale
         else
@@ -1796,7 +1813,9 @@ class PaymentsController < ApplicationController
     if internal_sale.delete
       if !location_product.nil?
         location_product.stock += quantity
-        location_product.save
+        if location_product.save
+          ProductLog.create(product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: internal_sale.service_provider_id, user_id: internal_sale.user_id, change: "Incremento de " + (location_product.stock - internal_sale.quantity).to_s + " a " + location_product.stock.to_s, cause: "Eliminación de Venta interna.")
+        end
       end
       json_response[0] = "ok"
     else

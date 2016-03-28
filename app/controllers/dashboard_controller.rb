@@ -50,7 +50,7 @@ class DashboardController < ApplicationController
         if session_booking.sessions_amount && session_booking.sessions_taken && session_booking.sessions_amount > session_booking.sessions_taken
           @session_bookings << session_booking
         else
-          active_count = session_booking.bookings.where('start > ?', DateTime.now + timezone.offset).count
+          active_count = session_booking.bookings.where('start > ?', DateTime.now + @timezone.offset).count
           if active_count > 0
             @session_bookings << session_booking
           end

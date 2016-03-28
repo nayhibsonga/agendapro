@@ -5628,7 +5628,7 @@ class BookingsController < ApplicationController
             end
           end
 
-          logger.deug "Debug 2"
+          logger.debug "Debug 2"
 
           #Find next service block starting from dateTimePointer
           service_sum = service.duration.minutes

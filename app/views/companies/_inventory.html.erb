@@ -11,6 +11,9 @@
           <% @company.locations.where(:active => true).order(:name).each do |location| %>
             <th><%= location.name %></th>
           <% end %>
+          <% if current_user.role_id == Role.find_by_name("Administrador General").id ||  current_user.role_id == Role.find_by_name("Administrador Local").id %>
+            <th>Cambio de stock</th>
+          <% end %>
           <th>Opciones</th>
         </tr>
       </thead>
@@ -23,8 +26,8 @@
             <td><%= product.product_brand.name %></td>
             <td><%= product.product_display.name %></td>
             <% @company.locations.where(:active => true).order(:name).each do |location| %>
-              <% 
-                location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first 
+              <%
+                location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first
                 stock_alarm_setting = location.stock_alarm_setting
               %>
               <% if !location_product.stock_limit.nil? && (!location.stock_alarm_setting.nil? && location.stock_alarm_setting.has_default_stock_limit && !location.stock_alarm_setting.default_stock_limit.nil?)  %>
@@ -62,11 +65,14 @@
                   <% end %>
                 <% end %>
 
-              <% else %> 
+              <% else %>
                 <td>
               <% end %>
                 <%= location_product.stock.to_s %>
               </td>
+            <% end %>
+            <% if current_user.role_id == Role.find_by_name("Administrador General").id ||  current_user.role_id == Role.find_by_name("Administrador Local").id %>
+              <td style="text-align: center;"><button class="btn add-stock-btn" product_id="<%= product.id %>">+</button>&nbsp;&nbsp;<button class="btn substract-stock-btn" product_id="<%= product.id %>">-</button></td>
             <% end %>
             <td>
               <% if current_user.role_id == Role.find_by_name("Administrador General").id ||  current_user.role_id == Role.find_by_name("Administrador Local").id %>

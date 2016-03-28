@@ -1,0 +1,41 @@
+<div class="row" style="margin-top: 5px;">
+  <div class="col-md-12" >
+    <div class="stats-subtitle">
+      Historial
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="ranking-container" style=" max-height: 360px !important;">
+      <table>
+        <tr class="first-tr">
+          <th>Fecha</th>
+          <th>Producto</th>
+          <th>Cambio</th>
+          <th>Causa</th>
+          <th>Detalle</th>
+        </tr>
+        <% @product_logs.each do |product_log| %>
+          <tr>
+            <td>
+              <%= product_log.created_at.strftime("%d/%m/%Y %R") %>
+            </td>
+            <td>
+              <%= product_log.product.name %>
+            </td>
+            <td>
+              <%= product_log.change %>
+            </td>
+            <td>
+              <%= product_log.cause %>
+            </td>
+            <td>
+              <%= product_log.details %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>
