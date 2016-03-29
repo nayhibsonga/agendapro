@@ -1320,6 +1320,7 @@ class BookingsController < ApplicationController
           end
 
           @booking.session_booking.bookings.each do |booking|
+
             booking.client_id = @booking.client_id
             if !new_user.nil?
               booking.user_id = new_user.id
