@@ -1425,8 +1425,9 @@
                           <%= attribute_group.name %>
                         </td>
                         <td>
-                          <button class="btn btn-orange edit_attribute_group_btn" data-attributegroupid="<%= attribute_group.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
                           <% if attribute_group.name != "Otros" %>
+                            <button class="btn btn-orange edit_attribute_group_btn" data-attributegroupid="<%= attribute_group.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
+
                             <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, attribute_group, method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo seleccionado?' }, class: 'btn btn-red' %>
                           <% end %>
                         </td>
@@ -1927,7 +1928,7 @@
 
       </div>
     </div>
-        
+
 
     <div class="modal fade" id="attributeGroupModal" tabindex="-1" role="dialog" aria-labelledby="attributeGroupModalLabel" aria-hidden="true">
       <div class="modal-dialog">
