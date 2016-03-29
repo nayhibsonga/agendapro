@@ -135,6 +135,7 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
+        can :get_treatment_info, Booking, :company_id => user.company_id
         can :new_filter_form, CustomFilter, :company_id => user.company_id
         can :edit_filter_form, CustomFilter, :company_id => user.company_id
         can :client_base_pdf, Client, :company_id => user.company_id
@@ -457,6 +458,7 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
+        can :get_treatment_info, Booking, :company_id => user.company_id
         can :rearrange, Attribute, :company_id => user.company_id
         can :rearrange, AttributeGroup, :company_id => user.company_id
 
@@ -705,6 +707,7 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
+        can :get_treatment_info, Booking, :company_id => user.company_id
         can :location_users, User, :company_id => user.company_id
 
         can :index_content, Payment
@@ -825,6 +828,7 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Staff").id
 
+        can :get_treatment_info, Booking, :company_id => user.company_id
         can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
 
         can :read, ServiceProvider, :id => user.service_providers.pluck(:id)
