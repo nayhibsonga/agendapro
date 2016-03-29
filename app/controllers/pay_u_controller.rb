@@ -573,7 +573,8 @@ class PayUController < ApplicationController
         if bookings.count > 0
 
           if bookings.first.booking_group.nil?
-            BookingMailer.book_service_mail(bookings.first)
+            bookings.first.sendings.build(method: 'new_booking').save
+            # BookingMailer.book_service_mail(bookings.first)
           else
             if bookings.first.session_booking.nil?
               Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
