@@ -3,7 +3,7 @@
   <div class="col-xs-6">
     <div id="sales-cash-title">Caja de ventas de <%= @location.name %></div>
     <div id="sales-cash-last-reset-date">
-      Último cierre de caja: <%= I18n.l(@sales_cash.last_reset_date + CustomeTimezone.from_sales_cash(@sales_cash).offset).capitalize %>.
+      Último cierre de caja: <%= I18n.l(@sales_cash.last_reset_date + CustomTimezone.from_sales_cash(@sales_cash).offset).capitalize %>.
     </div>
     <div id="sales-cash-schedule">Cierre programado:
       <% if @sales_cash.scheduled_reset %>
@@ -29,7 +29,7 @@
       <div style="margin-bottom: 5px; margin-top: 4px; display: block; text-align: right;">
         <select id="sales_cash_log_select" class="form-control pull-right" style="width: 65% !important; text-align: right !important;">
           <% @sales_cash.sales_cash_logs.order('end_date desc').each do |sales_cash_log| %>
-            <option value="<%= sales_cash_log.id %>"><%= "Del  " + (sales_cash_log.start_date + CustomeTimezone.from_sales_cash(@sales_cash).offset).strftime('%d/%m/%Y %R') + "  al  " + (sales_cash_log.end_date + CustomeTimezone.from_sales_cash(@sales_cash).offset).strftime('%d/%m/%Y %R') %></option>
+            <option value="<%= sales_cash_log.id %>"><%= "Del  " + (sales_cash_log.start_date + CustomTimezone.from_sales_cash(@sales_cash).offset).strftime('%d/%m/%Y %R') + "  al  " + (sales_cash_log.end_date + CustomTimezone.from_sales_cash(@sales_cash).offset).strftime('%d/%m/%Y %R') %></option>
           <% end %>
         </select>
         <br />
