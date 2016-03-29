@@ -1,8 +1,7 @@
 class UserMailer < Base::CustomMailer
+  layout :select_layout
 
   def welcome_email(user, recipient)
-    layout "mailers/#{user.api_token.present? ? "horachic" : "green"}"
-
     # layout variables
     @title = "Bienvenido a AgendaPro"
     unless user.api_token.present?
@@ -29,6 +28,14 @@ class UserMailer < Base::CustomMailer
     def attacht_logo(url=nil)
       url ||= "app/assets/images/logos/logodoble2.png"
       attachments.inline['logo.png'] = File.read(url)
+    end
+
+    def select_layout
+      if @user.api_token.present?
+        "mailers/horachic"
+      else
+        "mailers/green"
+      end
     end
 
 end
