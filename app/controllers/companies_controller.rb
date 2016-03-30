@@ -456,9 +456,9 @@ class CompaniesController < ApplicationController
 		else
 			@user = User.find_by_email('cuentas@agendapro.cl')
 			if I18n.locale == :es
-				@companies = StatsCompany.all.order(:company_name)
+				@companies = StatsCompany.all#.order(:company_name)
 			else
-				@companies = StatsCompany.where(company_id: Company.where(country_id: Country.find_by(locale: I18n.locale.to_s))).order(:company_name)
+				@companies = StatsCompany.where(company_id: Company.where(country_id: Country.find_by(locale: I18n.locale.to_s)))#.order(:company_name)
 			end
 			@active_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Activo').id).order(:company_name)
 			@trial_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Trial').id).order(:created_at, :company_name)
@@ -494,7 +494,7 @@ class CompaniesController < ApplicationController
 	    if @company.payment_status == PaymentStatus.find_by_name("Trial")
 	    	plan = @company.default_plan
 
-	    	if plan.name == "Normal" || plan.name == "Personal"				
+	    	if plan.name == "Normal" || plan.name == "Personal"
 				if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
 					plan = Plan.where(name: "Normal", custom: false).first
 				else
@@ -511,7 +511,7 @@ class CompaniesController < ApplicationController
 	        @price = @company.company_plan_setting.base_price * @company.computed_multiplier
 	      end
 	    end
-	    
+
 		@sales_tax = @company.country.sales_tax
 	    @month_discount_4 = NumericParameter.find_by_name("4_month_discount").value
 	    @month_discount_6 = NumericParameter.find_by_name("6_month_discount").value
@@ -1821,7 +1821,7 @@ class CompaniesController < ApplicationController
 	end
 
 	def select_default_plan
-    
+
 		@company = Company.find(params[:company_id])
 		@plan_id = params[:plan_id]
 		@plan = Plan.find(@plan_id)
