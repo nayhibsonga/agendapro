@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
 
 	has_many :internal_sales, dependent: :nullify
 	has_many :product_logs, dependent: :nullify
+	has_many :treatment_logs, dependent: :nullify
 
 	accepts_nested_attributes_for :company
 

@@ -18,6 +18,7 @@ class Client < ActiveRecord::Base
   has_many :file_attributes, dependent: :destroy
   has_many :categoric_attributes, dependent: :destroy
   has_many :product_logs, dependent: :nullify
+  has_many :treatment_logs, dependent: :nullify
 
   scope :from_company, -> (id) { where(company_id: id) if id.present? }
 
