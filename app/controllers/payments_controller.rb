@@ -59,7 +59,7 @@ class PaymentsController < ApplicationController
 
     #   if !@paymentItems.include?("products")
     #     @payments = @payments.where.not(id: PaymentProduct.where('payment_id is not null'))
-    #   end      
+    #   end
 
     # end
 
@@ -411,16 +411,16 @@ class PaymentsController < ApplicationController
     payment = Payment.new
 
     #Find or create a client (update if necessary)
-    
+
 
     if params[:set_client] == "1"
-      
+
       client = Client.new
-      
+
       if params[:client_id] && !params[:client_id].blank?
         client = Client.find(params[:client_id])
       end
-        
+
       first_name = ""
       last_name = ""
       client_name = params[:client_name]
@@ -448,7 +448,7 @@ class PaymentsController < ApplicationController
       client.phone = params[:client_phone]
       client.gender = params[:client_gender]
       client.company_id = location.company_id
-      
+
       if client.save
         payment.client_id = client.id
       else
@@ -460,7 +460,7 @@ class PaymentsController < ApplicationController
         @json_response << @errors
         render :json => @json_response
         return
-      end   
+      end
 
     else
       payment.client_id = nil
@@ -647,7 +647,7 @@ class PaymentsController < ApplicationController
       end
 
       new_receipt.payment = payment
-      
+
       unless new_receipt.save
         @errors << new_receipt.errors
       end
@@ -725,9 +725,9 @@ class PaymentsController < ApplicationController
 
     #Find or create a client (update if necessary)
     if params[:set_client] == "1"
-      
+
       client = Client.new
-      
+
       if params[:client_id] && !params[:client_id].blank?
         client = Client.find(params[:client_id])
       end
@@ -752,14 +752,14 @@ class PaymentsController < ApplicationController
       if !params[:client_email].blank?
         client_email = params[:client_email]
       end
-        
+
       client.first_name = first_name
       client.last_name = last_name
       client.email = client_email
       client.phone = params[:client_phone]
       client.gender = params[:client_gender]
       client.company_id = location.company_id
-      
+
       if client.save
         payment.client_id = client.id
       else
@@ -769,7 +769,7 @@ class PaymentsController < ApplicationController
         @json_response << @errors
         render :json => @json_response
         return
-      end   
+      end
 
     else
       if params[:client_id].present?
@@ -1007,7 +1007,7 @@ class PaymentsController < ApplicationController
       end
 
       new_receipt.payment = payment
-      
+
       unless new_receipt.save
         @errors << new_receipt.errors
       end
@@ -1051,7 +1051,7 @@ class PaymentsController < ApplicationController
   end
 
   def receipt_pdf
-    
+
     @receipt = Receipt.find(params[:receipt_id])
     @filename = @receipt.receipt_type.name + "_" + @receipt.number.to_s
 
@@ -1085,7 +1085,7 @@ class PaymentsController < ApplicationController
 
     @payment = Payment.find(params[:payment_id])
     @json_response = []
-    
+
     if @payment.send_receipts_email(params[:emails])
       @json_response << "ok"
       @json_response << @payment
@@ -1136,25 +1136,25 @@ class PaymentsController < ApplicationController
     payment = Payment.find(params[:payment_id])
 
     if params[:set_client] == "1"
-      
+
       client = Client.new
-      
+
       if params[:client_id] && !params[:client_id].blank?
         client = Client.find(params[:client_id])
       end
-        
+
       client.first_name = params[:client_first_name]
       client.last_name = params[:client_last_name]
       client.email = params[:client_email]
       client.phone = params[:client_phone]
       client.gender = params[:client_gender]
       client.company_id = payment.location.company_id
-      
+
       if client.save
         payment.client_id = client.id
       else
         errors << "No se pudo guardar al cliente"
-      end   
+      end
 
     else
       payment.client_id = nil
@@ -1197,7 +1197,7 @@ class PaymentsController < ApplicationController
 
   #Responds if a booking has a payment or not
   def check_booking_payment
-    
+
     booking = Booking.find(params[:booking_id])
     json_response = []
 
@@ -1392,7 +1392,7 @@ class PaymentsController < ApplicationController
     elsif params[:filter_option] == "inactive"
       services = provider.services.where(active: false)
     end
-      
+
 
     service_commissions = []
 
@@ -1421,7 +1421,7 @@ class PaymentsController < ApplicationController
   def set_default_commission
 
     @errors = []
-    @json_response = [] 
+    @json_response = []
     service = Service.find(params[:service_id])
 
     service.comission_value = params[:comission_value]
@@ -1484,7 +1484,7 @@ class PaymentsController < ApplicationController
   def set_provider_default_commissions
 
     @errors = []
-    @json_response = [] 
+    @json_response = []
 
     provider = ServiceProvider.find(params[:provider_id])
 
@@ -1617,7 +1617,7 @@ class PaymentsController < ApplicationController
   end
 
   def get_product_for_payment_or_sale
-    
+
     json_response = []
     errors = []
 
@@ -1731,6 +1731,9 @@ class PaymentsController < ApplicationController
       @errors << "No existe el producto para el local ingresado."
     end
 
+    if !params[:notes].blank?
+      internal_sale.notes = params[:notes]
+    end
     internal_sale.list_price = params[:price].to_f
     internal_sale.discount = params[:discount].to_f
     internal_sale.quantity = params[:quantity].to_i
@@ -1741,7 +1744,7 @@ class PaymentsController < ApplicationController
       if internal_sale.save
 
         if is_edit && !old_location_product.nil?
-          logger.debug "Entra a old_location"       
+          logger.debug "Entra a old_location"
           if old_location_product.id == location_product.id
             location_product.stock = location_product.stock - internal_sale.quantity + old_quantity
           else
@@ -1964,7 +1967,7 @@ class PaymentsController < ApplicationController
     end
 
     if petty_transaction.save
-      
+
       if petty_cash.save_with_cash
         @json_response << "ok"
         @json_response << petty_transaction
@@ -2076,7 +2079,7 @@ class PaymentsController < ApplicationController
   end
 
   def petty_cash_report
-    
+
     @petty_cash = PettyCash.find(params[:petty_cash_id])
     @start_date = params[:start_date].to_datetime
     @end_date = params[:end_date].to_datetime
@@ -2309,7 +2312,7 @@ class PaymentsController < ApplicationController
   end
 
   def close_sales_cash
-    
+
     json_response = []
     errors = []
 
@@ -2324,7 +2327,7 @@ class PaymentsController < ApplicationController
     end
 
     now = DateTime.now
-    
+
     sales_cash.sales_cash_incomes.where('date <= ?', now).each do |income|
       income.open = false
       income.save
@@ -2432,9 +2435,9 @@ class PaymentsController < ApplicationController
       if !params[:receipt_number].blank?
         sales_cash_transaction.receipt_number = params[:receipt_number]
       end
-      
+
       sales_cash_transaction.receipt_number = params[:receipt_number]
-      
+
       petty_transaction = PettyTransaction.new
       petty_transaction.petty_cash_id = petty_cash.id
       petty_transaction.transactioner_type = 1
@@ -2493,7 +2496,7 @@ class PaymentsController < ApplicationController
   end
 
   def delete_sales_cash_transaction
-    
+
     json_response = []
     errors = []
 
@@ -2557,7 +2560,7 @@ class PaymentsController < ApplicationController
   end
 
   def save_sales_cash_income
-    
+
     json_response = []
     errors = []
 

@@ -160,7 +160,7 @@ table.servicesTable td{
 }
 
 #payment_transactions_table td.cost_td input{
-  
+
   color: #fff !important;
   border: 1px solid #22c488 !important;
   background-color: #22c488;
@@ -169,7 +169,7 @@ table.servicesTable td{
 }
 
 #payment_transactions_table td.change_td input{
-  
+
   color: #fff !important;
   border: 1px solid #949292 !important;
   background-color: #949292;
@@ -188,7 +188,7 @@ table.servicesTable td{
 }
 
 .sales_cash_table th{
-	width: 12.5% !important;
+	width: 11.1% !important;
 }
 
 .providers_report_table{
