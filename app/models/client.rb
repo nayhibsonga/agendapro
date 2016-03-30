@@ -17,6 +17,7 @@ class Client < ActiveRecord::Base
   has_many :date_time_attributes, dependent: :destroy
   has_many :file_attributes, dependent: :destroy
   has_many :categoric_attributes, dependent: :destroy
+  has_many :treatment_logs, dependent: :nullify
 
   scope :from_company, -> (id) { where(company_id: id) if id.present? }
 
@@ -746,7 +747,7 @@ class Client < ActiveRecord::Base
   def self.custom_filter(clients, custom_filter)
 
     if custom_filter.nil?
-      
+
       return clients
 
     else
@@ -799,7 +800,7 @@ class Client < ActiveRecord::Base
             clients = clients.where(id: numeric_attribute.where('value <= ? and value >= ?', numeric_filter.value1, numeric_filter.value2).pluck(:client_id))
           end
         end
-        
+
       end
 
       #Loop for date filters
@@ -906,7 +907,7 @@ class Client < ActiveRecord::Base
 
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
-    
+
     spreadsheet = open_spreadsheet(file)
 
     company = Company.find(company_id)
@@ -1099,7 +1100,7 @@ class Client < ActiveRecord::Base
 
         # ;
         sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ";"})
-        
+
         arr = sheet.row(1)
         if arr.length > 2
           if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
@@ -1109,7 +1110,7 @@ class Client < ActiveRecord::Base
 
         # \t
         sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: "\t"})
-        
+
         arr = sheet.row(1)
         if arr.length > 2
           if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"

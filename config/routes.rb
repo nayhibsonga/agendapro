@@ -177,6 +177,8 @@ Agendapro::Application.routes.draw do
     get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
     get '/get_session_bookings', :to => 'users#get_session_bookings'
     get '/get_session_summary', :to => 'users#get_session_summary'
+    post '/delete_treatment', :to => 'bookings#delete_treatment'
+    post '/user_delete_treatment', :to => 'bookings#user_delete_treatment'
 
     scope controller: 'bookings' do
       post '/delete_session_booking', action: 'delete_session_booking'

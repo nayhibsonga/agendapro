@@ -1835,10 +1835,12 @@ class BookingsController < ApplicationController
   end
 
   def delete_treatment
+
     @session_booking = @booking.session_booking
     booking_ids = @session_booking.bookings.pluck(:id)
     respond_to do |format|
       if @session_booking.destroy
+        TreatmentLog.create(client_id: @session_booking.client_id, user_id: current_user.id, service_id: @session_booking.service_id, detail: "Eliminado por calendario.")
         format.html { redirect_to bookings_url }
         format.json { render :json => booking_ids }
       else
@@ -1846,6 +1848,34 @@ class BookingsController < ApplicationController
         format.json { render :json => { :errors => "No se pudo borrar el tratamiento." }, :status => 422 }
       end
     end
+
+  end
+
+  def user_delete_treatment
+
+    @session_booking = SessionBooking.find(params[:session_booking_id])
+    @json_response = []
+
+    if current_user.nil? || current_user.id != @session_booking.user_id
+      @json_response << "error"
+      @json_response << "No puedes borrar un tratamiento no asociado a tu usuario."
+      render :json => @json_response
+      return
+    end
+
+    booking_ids = @session_booking.bookings.pluck(:id)
+
+
+    if @session_booking.destroy
+      @json_response << "ok"
+      @json_response << @booking
+      render :json => @json_response
+    else
+      @json_response << "error"
+      @json_response << @session_booking.errors
+      render :json => @json_response
+    end
+
   end
 
   #GET
@@ -1890,7 +1920,7 @@ class BookingsController < ApplicationController
       @json_response << @booking
       render :json => @json_response
     else
-      @json_response << "ok"
+      @json_response << "error"
       @json_response << @booking.errors
       render :json => @json_response
     end
