@@ -1,5 +1,5 @@
 class BookingsController < ApplicationController
-  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form, :get_treatment_info]
+  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form, :get_treatment_info, :delete_treatment]
   before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :confirm_error, :confirm_success, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours]
   before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
   layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :transfer_error_cancel, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
@@ -1834,6 +1834,20 @@ class BookingsController < ApplicationController
     end
   end
 
+  def delete_treatment
+    @session_booking = @booking.session_booking
+    booking_ids = @session_booking.bookings.pluck(:id)
+    respond_to do |format|
+      if @session_booking.destroy
+        format.html { redirect_to bookings_url }
+        format.json { render :json => booking_ids }
+      else
+        format.html { redirect_to bookings_url }
+        format.json { render :json => { :errors => "No se pudo borrar el tratamiento." }, :status => 422 }
+      end
+    end
+  end
+
   #GET
   def validate_session_form
 
@@ -3097,7 +3111,7 @@ class BookingsController < ApplicationController
 
   def book_error
 
-     @try_register = false
+    @try_register = false
 
     if params[:client] && params[:client] != ""
 
