@@ -555,12 +555,13 @@ class BookingsController < ApplicationController
         end
 
         if !session_booking.nil?
-          if @booking.user_session_confirmed
+          if @booking.user_session_confirmed && @booking.send_mail
             session_booking.send_sessions_booking_mail
           else
-            if @booking.payed
+            if @booking.payed && @booking.send_mail
               @booking.send_admin_payed_session_mail
             else
+              #Send anyways, it needs validation
               @booking.send_validate_mail
             end
           end
@@ -1441,6 +1442,16 @@ class BookingsController < ApplicationController
 
               sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
 
+              if @booking.user_session_confirmed && @booking.send_mail
+                @booking.session_booking.send_sessions_booking_mail
+              else
+                if @booking.payed && @booking.send_mail
+                  @booking.send_admin_payed_session_mail
+                else
+                  @booking.send_validate_mail
+                end
+              end
+
             else
               #Update
               #Add a fresh unbooked session for old treatment (session_booking)
@@ -1534,6 +1545,16 @@ class BookingsController < ApplicationController
               end
 
               sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
+
+              if @booking.user_session_confirmed && @booking.send_mail
+                @booking.session_booking.send_sessions_booking_mail
+              else
+                if @booking.payed && @booking.send_mail
+                  @booking.send_admin_payed_session_mail
+                else
+                  @booking.send_validate_mail
+                end
+              end
 
             else
               #Just update, so do nothing
@@ -1766,7 +1787,9 @@ class BookingsController < ApplicationController
           if booking.is_session
             booking.session_booking.sessions_taken -= 1
             booking.session_booking.save
-            booking.send_session_cancel_mail
+            if booking.send_mail
+              booking.send_session_cancel_mail
+            end
           end
         end
         format.html { redirect_to bookings_url }
