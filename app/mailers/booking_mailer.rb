@@ -212,6 +212,43 @@ class BookingMailer < Base::CustomMailer
       )
   end
 
+  def multiple_booking (bookings, recipient, options = {})
+    book = bookings.first
+    # defaults
+    options = {
+      client: true,
+      name: "#{book.client.first_name} #{book.client.last_name}",
+      horachic: false
+    }.merge(options)
+
+    @company = book.location.company
+
+    # layout variables
+    @title = "Nueva Reserva en #{@company.name}"
+    unless options[:horachic] # layout green
+      @url = @company.web_url
+      @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
+    else # layout horachic
+      @header = "Nueva reserva recibida exitosamente."
+    end
+
+    # view variables
+    @bookings = bookings
+    @company_setting = @company.company_setting
+    @client = options[:client]
+    @name = options[:name]
+
+    path = options[:horachic] ? "horachic" : "agendapro"
+
+    mail(
+      from: filter_sender(),
+      reply_to: filter_sender(book.location.email),
+      to: filter_recipient(recipient),
+      subject: @title,
+      template_path: "mailers/#{path}"
+      )
+  end
+
   #################### Legacy ####################
   def multiple_booking_reminder (data)
     # => Template
@@ -354,176 +391,6 @@ class BookingMailer < Base::CustomMailer
 
     # => Send mail
     send_mail(template_name, template_content, message)
-  end
-
-  def multiple_booking_mail (data)
-    # => Template
-    template_name = data[:marketplace] ? 'Multiple Bookings - Marketplace' : 'Multiple Booking'
-    template_content = []
-
-    # => Message
-    message = {
-      :from_email => 'no-reply@agendapro.cl',
-      :from_name => data[:company_name],
-      :subject => 'Nueva Reserva en ' + data[:company_name],
-      :to => [],
-      :headers => { 'Reply-To' => data[:reply_to] },
-      :global_merge_vars => [
-        {
-          :name => 'URL',
-          :content => data[:url]
-        },
-        {
-          :name => 'COMPANYNAME',
-          :content => data[:company_name]
-        },
-        {
-          :name => 'SIGNATURE',
-          :content => data[:signature]
-        },
-        {
-          :name => 'DOMAIN',
-          :content => data[:domain]
-        }
-      ],
-      :merge_vars => [],
-      :tags => ['booking', 'new_booking'],
-      :images => [
-        {
-          :type => data[:type],
-          :name => 'LOGO',
-          :content => data[:logo]
-        }
-      ]
-    }
-
-    # Notificacion cliente
-    if data[:user][:send_mail]
-      message[:to] = [{
-                :email => data[:user][:email],
-                :name => data[:user][:name],
-                :type => 'to'
-              }]
-      message[:merge_vars] = [{
-              :rcpt => data[:user][:email],
-              :vars => [
-                {
-                  :name => 'LOCALADDRESS',
-                  :content => data[:user][:where]
-                },
-                {
-                  :name => 'LOCATIONPHONE',
-                  :content => number_to_phone(data[:user][:phone])
-                },
-                {
-                  :name => 'BOOKINGS',
-                  :content => data[:user][:user_table]
-                },
-                {
-                  :name => 'CLIENTNAME',
-                  :content => data[:user][:name]
-                },
-                {
-                  :name => 'CLIENT',
-                  :content => true
-                }
-              ]
-            }]
-
-      if data[:user][:can_cancel]
-        message[:merge_vars][0][:vars] << {
-          :name => 'CANCEL',
-          :content => data[:user][:cancel]
-        }
-      end
-
-      # => Send mail
-      send_mail(template_name, template_content, message)
-    end
-
-    # Notificacion service provider
-    data[:provider][:array].each do |provider|
-      message[:to] = [{
-                :email => provider[:email],
-                :type => 'bcc'
-              }]
-      message[:merge_vars] = [{
-                :rcpt => provider[:email],
-                :vars => [
-                  {
-                    :name => 'CLIENTNAME',
-                    :content => data[:provider][:client_name]
-                  },
-                  {
-                    :name => 'SERVICEPROVIDER',
-                    :content => provider[:name]
-                  },
-                  {
-                    :name => 'BOOKINGS',
-                    :content => provider[:provider_table]
-                  }
-                ]
-              }]
-
-      # => Send mail
-      send_mail(template_name, template_content, message)
-    end
-
-    # Email notificacion local
-    data[:location][:email].each do |local|
-      message[:to] = [{
-              :email => local,
-              :type => 'bcc'
-            }]
-      message[:merge_vars] = [{
-              :rcpt => local,
-              :vars => [
-                {
-                  :name => 'CLIENTNAME',
-                  :content => data[:location][:client_name]
-                },
-                {
-                  :name => 'SERVICEPROVIDER',
-                  :content => data[:location][:name]
-                },
-                {
-                  :name => 'BOOKINGS',
-                  :content => data[:location][:location_table]
-                }
-              ]
-            }]
-
-      # => Send mail
-      send_mail(template_name, template_content, message)
-    end
-
-    # Notificacion Empresa
-    data[:company][:email].each do |company|
-      message[:to] = [{
-              :email => company,
-              :type => 'bcc'
-            }]
-      message[:merge_vars] = [{
-              :rcpt => company,
-              :vars => [
-                {
-                  :name => 'CLIENTNAME',
-                  :content => data[:company][:client_name]
-                },
-                {
-                  :name => 'SERVICEPROVIDER',
-                  :content => data[:company][:name]
-                },
-                {
-                  :name => 'BOOKINGS',
-                  :content => data[:company][:company_table]
-                }
-              ]
-            }]
-
-      # => Send mail
-      send_mail(template_name, template_content, message)
-    end
   end
 
   #Mail de reserva de servicio con sesiones
@@ -698,10 +565,6 @@ class BookingMailer < Base::CustomMailer
       # => Send mail
       send_mail(template_name, template_content, message)
     end
-  end
-
-  #Mail de edición de sesión (depende de si es por admin o no)
-  def update_session_booking_mail(booking, is_admin)
   end
 
   private

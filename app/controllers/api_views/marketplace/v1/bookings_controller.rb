@@ -504,7 +504,7 @@ module ApiViews
 
 									#LastMinutePromo.where(location_id: @selectedLocation.id, service_id: booking.service.id).first
 
-									if last_minute_promo.nil? 
+									if last_minute_promo.nil?
 
 									 @errors << "La promoción de último minuto ya no existe."
 
@@ -587,7 +587,7 @@ module ApiViews
 		                else
 		                  booking.discount = 0
 		                end
-		              end        
+		              end
 
 		            end
 
@@ -805,7 +805,8 @@ module ApiViews
 
 		    if @bookings.length > 1
 		      if @session_booking.nil?
-		        Booking.send_multiple_booking_mail(@location_id, booking_group)
+		      	@bookings.first.sendings.build(method: 'multiple_booking').save
+		        # Booking.send_multiple_booking_mail(@location_id, booking_group)
 		      else
 		        @session_booking.send_sessions_booking_mail
 		      end
@@ -1078,7 +1079,7 @@ module ApiViews
 		  		elsif @booking.booking_group.present?
 		  			@bookings_group = Booking.where(booking_group: @booking.booking_group, location_id: @booking.location_id)
 		  		end
-		  			
+
 			else
 				render json: { errors: "Parámetros mal ingresados." }, status: 422
 	      return
