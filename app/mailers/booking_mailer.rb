@@ -249,94 +249,42 @@ class BookingMailer < Base::CustomMailer
       )
   end
 
-  #################### Legacy ####################
-  def multiple_booking_reminder (data)
-    # => Template
-    template_name = data[:marketplace] ? 'Confirm Multiple - Marketplace' : 'Multiple Booking Reminder'
-    template_content = []
+  def reminder_multiple_booking (bookings, recipient, options = {})
+    book = bookings.first
+    # defaults
+    options = {
+      name: "#{book.client.first_name} #{book.client.last_name}",
+      horachic: false
+    }.merge(options)
 
-    # => Message
-    message = {
-      :from_email => 'no-reply@agendapro.cl',
-      :from_name => data[:company_name],
-      :subject => 'Confirma tus reservas en ' + data[:company_name],
-      :to => [],
-      :headers => { 'Reply-To' => data[:reply_to] },
-      :global_merge_vars => [
-        {
-          :name => 'URL',
-          :content => data[:url]
-        },
-        {
-          :name => 'COMPANYNAME',
-          :content => data[:company_name]
-        },
-        {
-          :name => 'SIGNATURE',
-          :content => data[:signature]
-        },
-        {
-          :name => 'DOMAIN',
-          :content => data[:domain]
-        }
-      ],
-      :merge_vars => [],
-      :tags => ['booking', 'new_booking'],
-      :images => [
-        {
-          :type => data[:type],
-          :name => 'LOGO',
-          :content => data[:logo]
-        }
-      ]
-    }
+    @company = book.location.company
 
-    # Notificacion cliente
-    if data[:user][:send_mail]
-      message[:to] = [{
-                :email => data[:user][:email],
-                :name => data[:user][:name],
-                :type => 'to'
-              }]
-      message[:merge_vars] = [{
-              :rcpt => data[:user][:email],
-              :vars => [
-                {
-                  :name => 'LOCALADDRESS',
-                  :content => data[:user][:where]
-                },
-                {
-                  :name => 'LOCATIONPHONE',
-                  :content => number_to_phone(data[:user][:phone])
-                },
-                {
-                  :name => 'BOOKINGS',
-                  :content => data[:user][:user_table]
-                },
-                {
-                  :name => 'CLIENTNAME',
-                  :content => data[:user][:name]
-                },
-                {
-                  :name => 'CLIENT',
-                  :content => true
-                },
-                {
-                  :name => 'CANCELALL',
-                  :content => data[:user][:cancel_all]
-                },
-                {
-                  :name => 'CONFIRMALL',
-                  :content => data[:user][:confirm_all]
-                }
-              ]
-            }]
-
-      # => Send mail
-      send_mail(template_name, template_content, message)
+    # layout variables
+    @title = "Confirma tus reservas #{@company.name}"
+    unless options[:horachic] # layout green
+      @url = @company.web_url
+      @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
+    else # layout horachic
+      @header = "Confirma tus reservas #{@company.name}"
     end
+
+    # view variables
+    @bookings = bookings
+    @company_setting = @company.company_setting
+    @name = options[:name]
+
+    path = options[:horachic] ? "horachic" : "agendapro"
+
+    mail(
+      from: filter_sender(),
+      reply_to: filter_sender(book.location.email),
+      to: filter_recipient(recipient),
+      subject: @title,
+      template_path: "mailers/#{path}"
+      )
   end
 
+  #################### Legacy ####################
   def booking_summary (booking_data, booking_summary, today_schedule)
     # => Template
     template_name = 'Booking Summary'

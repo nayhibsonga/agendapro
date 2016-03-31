@@ -6,7 +6,8 @@ class BookingEmailWorker < BaseEmailWorker
 
     booking = Booking.find(sending.sendable_id)
 
-    if booking.booking_group.present?
+    methods = ["multiple_booking", "reminder_multiple_booking"]
+    if methods.include? sending.method
       self.perform_multiple(booking, sending.method)
     else
       self.perform_single(booking, sending.method)
@@ -86,46 +87,51 @@ class BookingEmailWorker < BaseEmailWorker
     end
 
     def self.perform_multiple(booking, method)
-      bookings = Booking.where(location: booking.location, booking_group: booking.booking_group).order(:start)
+      bookings = case method
+      when "multiple_booking" then Booking.where(location: booking.location, booking_group: booking.booking_group).order(:start)
+      when "reminder_multiple_booking" then Booking.where(location: booking.location, client: booking.client, start: CustomTimezone.from_booking(booking).offset.ago...(96.hours + CustomTimezone.from_booking(booking).offset).from_now).where.not(status: Status.find_by_name("Cancelado")).order(:start)
+      end
       send_mail = bookings.reduce{ |t, b| t &&= b.send_mail }
 
       if send_mail
-        recipients = filter_mails([booking.cleint.email])
+        recipients = filter_mails([booking.client.email])
         @total_sendings += 1
         @total_recipients += recipients.size
         BookingMailer.delay.send(method, bookings, recipients.join(', '), horachic: self.horachic?(method, booking))
       end
 
-      # Providers
-      bookings.map { |b| b.service_provider }.uniq.each do |provider|
-        recipients = filter_mails(NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: provider), receptor_type: 2, summary: false).distinct.pluck(:email))
-        name = provider.public_name
+      unless method == "reminder_multiple_booking"
+        # Providers
+        bookings.map { |b| b.service_provider }.uniq.each do |provider|
+          recipients = filter_mails(NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: provider), receptor_type: 2, summary: false).distinct.pluck(:email))
+          name = provider.public_name
+          recipients.in_groups_of(1000).each do |group|
+            group.compact!
+            @total_sendings += 1
+            @total_recipients += group.size
+            BookingMailer.delay.send(method, bookings.where(service_provider: provider), group.join(', '), client: false, name: name)
+          end
+        end
+
+        # Location
+        recipients = filter_mails(NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: booking.location), receptor_type: 1, summary: false).distinct.pluck(:email))
+        name = booking.location.name
         recipients.in_groups_of(1000).each do |group|
           group.compact!
           @total_sendings += 1
           @total_recipients += group.size
-          BookingMailer.delay.send(method, bookings.where(service_provider: provider), group.join(', '), client: false, name: name)
+          BookingMailer.delay.send(method, booking, group.join(', '), client: false, name: name)
         end
-      end
 
-      # Location
-      recipients = filter_mails(NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: booking.location), receptor_type: 1, summary: false).distinct.pluck(:email))
-      name = booking.location.name
-      recipients.in_groups_of(1000).each do |group|
-        group.compact!
-        @total_sendings += 1
-        @total_recipients += group.size
-        BookingMailer.delay.send(method, booking, group.join(', '), client: false, name: name)
-      end
-
-      # Company
-      recipients = filter_mails(NotificationEmail.where(company:  booking.location.company, receptor_type: 0, summary: false).distinct.pluck(:email))
-      name = booking.location.company.name
-      recipients.in_groups_of(1000).each do |group|
-        group.compact!
-        @total_sendings += 1
-        @total_recipients += group.size
-        BookingMailer.delay.send(method, booking, group.join(', '), client: false, name: name)
+        # Company
+        recipients = filter_mails(NotificationEmail.where(company:  booking.location.company, receptor_type: 0, summary: false).distinct.pluck(:email))
+        name = booking.location.company.name
+        recipients.in_groups_of(1000).each do |group|
+          group.compact!
+          @total_sendings += 1
+          @total_recipients += group.size
+          BookingMailer.delay.send(method, booking, group.join(', '), client: false, name: name)
+        end
       end
     end
 end
