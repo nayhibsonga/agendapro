@@ -2108,7 +2108,14 @@ function createBreakModal(date, providerId) {
           '<input class="check_boxes providers_check_boxes" id="provider_break_service_provider_id_' + provider.id + '" name="provider_break[service_provider_id][]" type="checkbox" value="' + provider.id + '"> ' + provider.public_name + ' ' +
           '</label></div>'
           );*/
-        $('#serviceProvidersMultiSelect').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+        if(providersArray.length == 1)
+        {
+          $('#serviceProvidersMultiSelect').append('<option value="' + provider.id + '" selected="selected">' + provider.public_name + '</option>');
+        }
+        else
+        {
+          $('#serviceProvidersMultiSelect').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+        }
 
       });
 
