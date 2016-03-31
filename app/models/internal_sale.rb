@@ -29,4 +29,12 @@ class InternalSale < ActiveRecord::Base
     return details_str
   end
 
+  def get_notes
+    if notes == ""
+      return "Sin comentarios"
+    else
+      return notes
+    end
+  end
+
 end

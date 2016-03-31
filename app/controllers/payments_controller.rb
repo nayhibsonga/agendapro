@@ -1745,6 +1745,9 @@ class PaymentsController < ApplicationController
       @errors << "No existe el producto para el local ingresado."
     end
 
+    if !params[:notes].blank?
+      internal_sale.notes = params[:notes]
+    end
     internal_sale.list_price = params[:price].to_f
     internal_sale.discount = params[:discount].to_f
     internal_sale.quantity = params[:quantity].to_i

@@ -456,9 +456,9 @@ class CompaniesController < ApplicationController
 		else
 			@user = User.find_by_email('cuentas@agendapro.cl')
 			if I18n.locale == :es
-				@companies = StatsCompany.all.order(:company_name)
+				@companies = StatsCompany.all#.order(:company_name)
 			else
-				@companies = StatsCompany.where(company_id: Company.where(country_id: Country.find_by(locale: I18n.locale.to_s))).order(:company_name)
+				@companies = StatsCompany.where(company_id: Company.where(country_id: Country.find_by(locale: I18n.locale.to_s)))#.order(:company_name)
 			end
 			@active_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Activo').id).order(:company_name)
 			@trial_companies = @companies.where(:company_payment_status_id => PaymentStatus.find_by_name('Trial').id).order(:created_at, :company_name)
