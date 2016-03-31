@@ -15,6 +15,44 @@ class ClientsController < ApplicationController
   # GET /clients
   # GET /clients.json
   def index
+
+
+    # if mobile_request?
+    #   @company = current_user.company
+    # end
+    # @monthly_mails = current_user.company.company_setting.get_mails_capacity #.plan.monthly_mails
+    # @monthly_mails_sent = current_user.company.company_setting.monthly_mails
+    # @from_collection = current_user.company.company_from_email.where(confirmed: true)
+
+    # @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
+    # @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
+    # @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
+
+    # selected_custom_filters = []
+    # if !params[:custom_filters].blank?
+    #   selected_custom_filters = CustomFilter.find(params[:custom_filters])
+    # end
+
+    # @clients = Client.accessible_by(current_ability).filter(current_user.company_id, params)
+    # @clients_export = Client.accessible_by(current_ability).filter(current_user.company_id, params)
+
+    # #Custom filters
+    # selected_custom_filters.each do |custom_filter|
+    #   @clients = Client.custom_filter(@clients, custom_filter)
+    #   @clients_export = Client.custom_filter(@clients_export, custom_filter)
+    # end
+
+    # @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
+    # @clients_export = @clients_export.order(sort_column + " " + sort_direction)
+
+    # @custom_filters = current_user.company.custom_filters
+
+    # respond_to do |format|
+    #   format.html
+    #   format.csv
+    #   format.xls
+    # end
+
     if mobile_request?
       @company = current_user.company
     end
@@ -31,17 +69,22 @@ class ClientsController < ApplicationController
       selected_custom_filters = CustomFilter.find(params[:custom_filters])
     end
 
-    @clients = Client.accessible_by(current_ability).filter(current_user.company_id, params)
-    @clients_export = Client.accessible_by(current_ability).filter(current_user.company_id, params)
+    @clients = Client.accessible_by(current_ability)
+    #@clients_export = Client.accessible_by(current_ability)
 
     #Custom filters
     selected_custom_filters.each do |custom_filter|
       @clients = Client.custom_filter(@clients, custom_filter)
-      @clients_export = Client.custom_filter(@clients_export, custom_filter)
+      #@clients_export = Client.custom_filter(@clients_export, custom_filter)
     end
 
+    @clients = @clients.filter(current_user.company_id, params)
+    #@clients_export = @clients_export.filter(current_user.company_id, params)
+
+
+
     @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
-    @clients_export = @clients_export.order(sort_column + " " + sort_direction)
+    @clients_export = @clients.order(sort_column + " " + sort_direction)
 
     @custom_filters = current_user.company.custom_filters
 
@@ -50,6 +93,7 @@ class ClientsController < ApplicationController
       format.csv
       format.xls
     end
+
   end
 
   # GET /clients/1

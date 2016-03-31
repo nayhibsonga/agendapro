@@ -70,18 +70,33 @@ module Filter
     end
 
     def self.filter_type_bookings(company_id, statuses, locations, providers, services, range_from, range_to, attendance)
-      clients = Client.from_company(company_id).includes(:bookings)
-      clients = TypeBookings::filter_by_status(clients, statuses) if statuses.present?
-      clients = TypeBookings::filter_by_location(clients, locations) if locations.present?
-      clients = TypeBookings::filter_by_provider(clients, providers) if providers.present?
-      clients = TypeBookings::filter_by_service(clients, services) if services.present?
-      clients = TypeBookings::filter_by_range(clients, range_from, range_to) if range_from.present? && range_to.present?
 
-      if attendance == "false"
-        clients = Client.from_company(company_id).includes(:bookings).where.not(id: clients.select(:id))
+      clients = Client.from_company(company_id).includes(:bookings)
+
+      company = Company.find(company_id)
+
+      if statuses.present? || locations.present? || providers.present?  || services.present?
+        clients = TypeBookings::filter_by_status(clients, statuses) if statuses.present?
+        clients = TypeBookings::filter_by_location(clients, locations) if locations.present?
+        clients = TypeBookings::filter_by_provider(clients, providers) if providers.present?
+        clients = TypeBookings::filter_by_service(clients, services) if services.present?
+        clients = TypeBookings::filter_by_range(clients, range_from, range_to) if range_from.present? && range_to.present?
+
+        if attendance == "false"
+          clients = Client.from_company(company_id).where.not(id: Booking.where(client_id: clients.select(:id)).pluck(:client_id))
+        end
+      else
+
+        clients = TypeBookings::filter_by_range(clients, range_from, range_to) if range_from.present? && range_to.present?
+        if attendance == "false"
+          clients = Client.from_company(company_id).where.not(id: Booking.where(location_id: company.locations.pluck(:id)).pluck(:client_id)) #.where.not(id: clients.select(:id))
+        else
+          clients = Client.from_company(company_id).where(id: Booking.where(location_id: company.locations.pluck(:id)).pluck(:client_id))
+        end
       end
 
       return clients
+
     end
 
     def self.filter(company_id, options = {})
