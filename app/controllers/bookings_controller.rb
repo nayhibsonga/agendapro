@@ -84,7 +84,7 @@ class BookingsController < ApplicationController
   def show
     u = @booking
     is_payed = false
-    if u.payed && !u.payed_booking.nil?
+    if (u.payed && !u.payed_booking.nil?)
       is_payed = true
     end
 
@@ -437,6 +437,10 @@ class BookingsController < ApplicationController
           end
         end
 
+      end
+
+      if @booking.is_session && !@booking.payment_id.nil?
+        @booking.payed_state = true
       end
 
       if @booking.save
@@ -1309,6 +1313,10 @@ class BookingsController < ApplicationController
       if @booking.update(new_booking_params)
 
         if @booking.is_session
+
+          if !@booking.payment_id.nil?
+            @booking.payed_state = true
+          end
 
           new_user = nil
           if !@booking.client.email.nil?
