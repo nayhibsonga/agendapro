@@ -1,4 +1,22 @@
 class PaymentsSystemMailer < Base::CustomMailer
+  def receipts (payment, recipient)
+    @company = payment.location.company
+
+    # layout variables
+    @title = "Comprobantes de pago"
+    @url = @company.web_url
+
+    # view variables
+    @payment = payment
+
+    mail(
+      from: filter_sender(),
+      reply_to: filter_sender("cuentas@agendapro.cl"),
+      to: filter_recipient(recipient),
+      subject: @title,
+      template_path: "mailers/agendapro"
+      )
+  end
 
   #################### Legacy ####################
   def receipts_email(payment, emails, data)
