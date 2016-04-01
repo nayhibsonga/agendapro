@@ -455,8 +455,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
     },
 
     defaultView: 'agendaWeek',
-    defaultEventMinutes: $('#providers-selector option:selected').data("block"),
-    slotMinutes: $('#providers-selector option:selected').data("block")
+    defaultEventMinutes: $('#providers-selector option:selected').data("block") || $('#calendar-data').data('calendar-duration'),
+    slotMinutes: $('#providers-selector option:selected').data("block") || $('#calendar-data').data('calendar-duration')
   };
   loadCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId, properties);
 }
@@ -2232,7 +2232,14 @@ function createBreakModal(date, providerId) {
           '<input class="check_boxes providers_check_boxes" id="provider_break_service_provider_id_' + provider.id + '" name="provider_break[service_provider_id][]" type="checkbox" value="' + provider.id + '"> ' + provider.public_name + ' ' +
           '</label></div>'
           );*/
-        $('#serviceProvidersMultiSelect').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+        if(providersArray.length == 1)
+        {
+          $('#serviceProvidersMultiSelect').append('<option value="' + provider.id + '" selected="selected">' + provider.public_name + '</option>');
+        }
+        else
+        {
+          $('#serviceProvidersMultiSelect').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+        }
 
       });
 

@@ -86,7 +86,7 @@ class BookingsController < ApplicationController
   def show
     u = @booking
     is_payed = false
-    if u.payed && !u.payed_booking.nil?
+    if (u.payed && !u.payed_booking.nil?)
       is_payed = true
     end
 
@@ -439,6 +439,10 @@ class BookingsController < ApplicationController
           end
         end
 
+      end
+
+      if @booking.is_session && !@booking.payment_id.nil?
+        @booking.payed_state = true
       end
 
       if @booking.save
@@ -1301,6 +1305,17 @@ class BookingsController < ApplicationController
       #If updated by admin, mark for user validation
       #Also, check if client was changed and update SessionBooking and all sessions
 
+
+          if !@booking.payment_id.nil?
+            @booking.payed_state = true
+          end
+
+          new_user = nil
+          if !@booking.client.email.nil?
+            if User.find_by_email(@booking.client.email).nil?
+              new_user = User.find_by_email(@booking.client.email)
+            end
+          end
 
       @booking.session_booking.bookings.each do |booking|
 
