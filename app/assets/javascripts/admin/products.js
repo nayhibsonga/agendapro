@@ -407,7 +407,11 @@ function checkFile()
 		var extension = file_array[file_array.length - 1];
 		if (extension != "csv" && extension != "xls" && extension != "xlsx" && extension != "xlsm" && extension != "ods" && extension != "xml")
 		{
-			swal("El archivo no tiene la extensión correcta. Por favor importa sólo archivos de tipo csv o xls.");
+			swal({
+        title: "Error",
+        text: "El archivo no tiene la extensión correcta. Por favor importa sólo archivos de tipo csv o xls.",
+        type: "error"
+      });
 			return false;
 		}
 		else
@@ -417,7 +421,11 @@ function checkFile()
 	}
 	else
 	{
-		swal("No hay archivo seleccionado.");
+		swal({
+        title: "Error",
+        text: "No hay archivo seleccionado. Por favor importa sólo archivos de tipo csv o xls.",
+        type: "error"
+      });
 		return false;
 	}
 }

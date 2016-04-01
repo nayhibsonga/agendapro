@@ -229,7 +229,10 @@ function loadAvailableHours(date)
     error: function(response){
       $("#loader-div").hide();
       $("#hours-selection-div").empty();
-      swal("Ocurrió un error.");
+      swal({
+          title: "Error",
+          type: "error"
+      });
     }
   });
 }
