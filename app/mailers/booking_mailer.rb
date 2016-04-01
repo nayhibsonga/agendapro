@@ -284,63 +284,6 @@ class BookingMailer < Base::CustomMailer
       )
   end
 
-  #################### Legacy ####################
-  def booking_summary (booking_data, booking_summary, today_schedule)
-    # => Template
-    template_name = 'Booking Summary'
-    template_content = []
-
-    # => Message
-    message = {
-      :from_email => 'no-reply@agendapro.cl',
-      :from_name => 'AgendaPro',
-      :subject => 'Resumen de Reservas',
-      :to => [
-        {
-          :email => booking_data[:to],
-          :type => 'to'
-        }
-      ],
-      :global_merge_vars => [
-        {
-          :name => 'COMPANYNAME',
-          :content => booking_data[:company]
-        },
-        {
-          :name => 'URL',
-          :content => booking_data[:url]
-        },
-        {
-          :name => 'NAME',
-          :content => booking_data[:name]
-        },
-        {
-          :name => 'SUMMARY',
-          :content => booking_summary
-        },
-        {
-          :name => 'TODAY',
-          :content => today_schedule
-        },
-        {
-          :name => 'DOMAIN',
-          :content => booking_data[:domain]
-        }
-      ],
-      :tags => ['booking', 'booking_summary'],
-      :images => [
-        {
-          :type => 'image/png',
-          :name => 'LOGO',
-          :content => Base64.encode64(File.read(booking_data[:logo].to_s))
-        }
-      ]
-    }
-
-    # => Send mail
-    send_mail(template_name, template_content, message)
-  end
-
   private
     def attacht_logo(url=nil)
       url ||= "app/assets/images/logos/logodoble2.png"
