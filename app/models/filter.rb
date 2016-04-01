@@ -72,7 +72,6 @@ module Filter
     def self.filter_type_bookings(company_id, statuses, locations, providers, services, range_from, range_to, attendance)
 
       clients = Client.from_company(company_id).includes(:bookings)
-
       company = Company.find(company_id)
 
       if statuses.present? || locations.present? || providers.present?  || services.present?
@@ -82,16 +81,24 @@ module Filter
         clients = TypeBookings::filter_by_service(clients, services) if services.present?
         clients = TypeBookings::filter_by_range(clients, range_from, range_to) if range_from.present? && range_to.present?
 
-        if attendance == "false"
-          clients = Client.from_company(company_id).where.not(id: Booking.where(client_id: clients.select(:id)).pluck(:client_id))
+        if !attendance.nil?
+          if attendance == "false"
+            clients = Client.from_company(company_id).where.not(id: Booking.where(client_id: clients.select(:id)).pluck(:client_id))
+          else
+            clients = Client.from_company(company_id).where(id: Booking.where(client_id: clients.select(:id)).pluck(:client_id))
+          end
         end
       else
 
         clients = TypeBookings::filter_by_range(clients, range_from, range_to) if range_from.present? && range_to.present?
-        if attendance == "false"
-          clients = Client.from_company(company_id).where.not(id: Booking.where(location_id: company.locations.pluck(:id)).pluck(:client_id)) #.where.not(id: clients.select(:id))
+        if !attendance.nil?
+          if attendance == "false"
+            clients = Client.from_company(company_id).where.not(id: Booking.where(location_id: company.locations.pluck(:id)).pluck(:client_id)) #.where.not(id: clients.select(:id))
+          else
+            clients = Client.from_company(company_id).where(id: Booking.where(location_id: company.locations.pluck(:id)).pluck(:client_id))
+          end
         else
-          clients = Client.from_company(company_id).where(id: Booking.where(location_id: company.locations.pluck(:id)).pluck(:client_id))
+          clients = Client.from_company(company_id)
         end
       end
 
@@ -102,9 +109,12 @@ module Filter
     def self.filter(company_id, options = {})
       default_options = {
         search: "",
-        attendance: true
+        attendance: nil
       }
       options = default_options.merge(options)
+
+      puts "Options attendance: "
+      puts options[:attendance].to_s
 
       type_clients = self.filter_type_client(company_id, options[:search], options[:gender], options[:birth_from], options[:birth_to])
       type_bookings = self.filter_type_bookings(company_id, options[:statuses], options[:locations], options[:providers], options[:services], options[:range_from], options[:range_to], options[:attendance])

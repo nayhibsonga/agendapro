@@ -746,7 +746,7 @@ class Client < ActiveRecord::Base
   def self.custom_filter(clients, custom_filter)
 
     if custom_filter.nil?
-      
+
       return clients
 
     else
@@ -799,7 +799,7 @@ class Client < ActiveRecord::Base
             clients = clients.where(id: numeric_attribute.where('value <= ? and value >= ?', numeric_filter.value1, numeric_filter.value2).pluck(:client_id))
           end
         end
-        
+
       end
 
       #Loop for date filters
@@ -906,13 +906,14 @@ class Client < ActiveRecord::Base
 
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
-    
+
     spreadsheet = open_spreadsheet(file)
 
     company = Company.find(company_id)
 
     if !spreadsheet.nil?
       header = spreadsheet.row(1)
+      logger.debug "Header: " + header.inspect
       (2..spreadsheet.last_row).each do |i|
         row = Hash[[header, spreadsheet.row(i)].transpose]
 
@@ -1043,9 +1044,6 @@ class Client < ActiveRecord::Base
 
         end
 
-        "Custom params: "
-        puts custom_params.to_s
-
         if row["identification_number"].present? && Client.where(identification_number: row["identification_number"], company_id: company_id).count > 0
           client = Client.where(identification_number: row["identification_number"], company_id: company_id).first
         elsif row["email"].present? && Client.where(email: row["email"], company_id: company_id).count > 0
@@ -1062,6 +1060,9 @@ class Client < ActiveRecord::Base
         end
         if client.save
           client.save_attributes_from_import(custom_params)
+        else
+          logger.debug "Errors: "
+          logger.debug client.errors.inspect
         end
       end
       message = "Clientes importados exitosamente."
@@ -1099,7 +1100,7 @@ class Client < ActiveRecord::Base
 
         # ;
         sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: ";"})
-        
+
         arr = sheet.row(1)
         if arr.length > 2
           if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
@@ -1109,7 +1110,7 @@ class Client < ActiveRecord::Base
 
         # \t
         sheet = Roo::CSV.new(file_path, file_warning: :ignore, csv_options: {col_sep: "\t"})
-        
+
         arr = sheet.row(1)
         if arr.length > 2
           if arr[0] == "email" && arr[1] == "first_name" && arr[2] == "last_name"
@@ -1153,7 +1154,7 @@ class Client < ActiveRecord::Base
   def self.filter(company_id, params)
     default_options = {
       search: "",
-      attendance: true
+      attendance: nil
     }
     options = default_options.merge(params.except(:utf8, :action, :controller, :locale).symbolize_keys)
     Filter::Clients.filter(company_id, options)
