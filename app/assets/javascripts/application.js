@@ -2,6 +2,7 @@
 //= require ga
 //= require sweetalert.min
 //= require ckeditor/init
+//= require toastr.min
 
 //por defecto:
 //= require jquery_ujs

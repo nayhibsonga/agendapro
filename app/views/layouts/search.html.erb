@@ -85,7 +85,7 @@
 					</div>
 				</div>
 			</nav>
-			<!-- start: Alerts -->
+			<!-- start: Alerts
 			<% if notice %>
 				<div class="alert alert-info alert-dismissable fade in">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -98,7 +98,16 @@
 				<%= alert %>
 				</div>
 			<% end %>
-			<!-- end: Alerts -->
+			end: Alerts -->
+			<% puts flash.inspect %>
+			<% unless flash.empty? %>
+				<script type="text/javascript">
+					<% flash.each do |f| %>
+			      <% type = f[0].inspect.gsub('alert', 'error').gsub('notice', 'info') %>
+						toastr['<%= type %>']('<%= f[1] %>', '<%= type %>');
+					<% end %>
+				</script>
+			<% end %>
 		</header>
 		<!-- end: Header -->
 
