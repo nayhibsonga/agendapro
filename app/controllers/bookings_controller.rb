@@ -443,6 +443,8 @@ class BookingsController < ApplicationController
         @booking.payed_state = true
       end
 
+      @booking.status_id = buffer_params[:status_id]
+
       if @booking.save
 
         #If it's a sessions service and it's the first session, create the others.
@@ -865,6 +867,8 @@ class BookingsController < ApplicationController
 
       end
 
+
+      @booking.status_id = buffer_params[:status_id]
 
       if @booking.save
 
@@ -1309,7 +1313,7 @@ class BookingsController < ApplicationController
       if !new_booking_params[:service_id].blank? && new_booking_params[:service_id].to_i != @booking.service_id
         new_booking_params[:list_price] = Service.find(new_booking_params[:service_id]).price
       end
-
+      @booking.status_id = booking_params[:status_id]
       if @booking.update(new_booking_params)
 
         if @booking.is_session
@@ -1522,6 +1526,7 @@ class BookingsController < ApplicationController
         @bookings = Booking.where(bundle_id: @booking.bundle_id, client_id: @booking.client_id, booking_group: @booking.booking_group)
       end
     else
+      status = Status.find_by(:name => 'Cancelado').id
       is_booked = false
     end
     # @booking.destroy
@@ -1548,6 +1553,7 @@ class BookingsController < ApplicationController
 
     @booking.user_session_confirmed = false
     @booking.is_session_booked = false
+    @booking.status_id = Status.find_by_name("Cancelado").id
     #Send cancel mail
     @json_response = []
 

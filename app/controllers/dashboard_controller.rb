@@ -34,13 +34,13 @@ class DashboardController < ApplicationController
       @locations = Location.where(company_id: current_user.company_id).accessible_by(current_ability).order(:order, :name)
       @service_providers = ServiceProvider.where(location_id: @locations).accessible_by(current_ability).order(:order, :public_name)
 
-      @monthBookings = Booking.where(service_provider_id: @service_providers).where("created_at BETWEEN ? AND ?", Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now).where('is_session = false or (is_session = true and is_session_booked = true)')
+      @monthBookings = Booking.where(service_provider_id: @service_providers).where("created_at BETWEEN ? AND ?", Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now).where('is_session = false or (is_session = true and (is_session_booked = true or status_id = ?))', Status.find_by_name("Cancelado").id)
       @statusArray = []
       Status.all.each do |status|
         @statusArray.push([status.name,@monthBookings.where(:status_id => status.id).count])
       end
 
-      @lastBookings = Booking.where(service_provider_id: @service_providers.filter_location(params[:location]).filter_provider(params[:provider])).where('start >= ?', Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and is_session_booked = true)').order(updated_at: :desc).limit(50)
+      @lastBookings = Booking.where(service_provider_id: @service_providers.filter_location(params[:location]).filter_provider(params[:provider])).where('start >= ?', Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where('is_session = false or (is_session = true and (is_session_booked = true or status_id = ?))', Status.find_by_name("Cancelado").id).order(updated_at: :desc).limit(50)
 
       @services = Service.where(:company_id => current_user.company_id).order(:order, :name)
       @potential_session_bookings = SessionBooking.where('client_id is not null').where(service_id: @services).order('updated_at desc').limit(20)
