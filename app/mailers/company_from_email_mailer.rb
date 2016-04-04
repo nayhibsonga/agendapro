@@ -1,7 +1,7 @@
 class CompanyFromEmailMailer < Base::CustomMailer
   layout "mailers/green"
 
-	def confirm_email (email_from, recipient)
+  def confirm_email (email_from, recipient)
     @company = email_from.company
 
     # layout variables
@@ -19,7 +19,7 @@ class CompanyFromEmailMailer < Base::CustomMailer
       subject: @title,
       template_path: "mailers/agendapro"
       )
-	end
+  end
 
   private
     def attacht_logo(url=nil)

@@ -152,7 +152,6 @@ class PlansController < ApplicationController
     if @billing_wire_transfer.save
       flash[:notice] = 'Transferencia guardada correctamente y en espera de aprobación.'
       @billing_wire_transfer.sendings.build(method: 'transfer').save
-      # CompanyMailer.new_transfer_email(@billing_wire_transfer.id)
 
       redirect_to :action => 'select_plan'
     else

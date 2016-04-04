@@ -806,7 +806,6 @@ module ApiViews
 		    if @bookings.length > 1
 		      if @session_booking.nil?
 		      	@bookings.first.sendings.build(method: 'multiple_booking').save
-		        # Booking.send_multiple_booking_mail(@location_id, booking_group)
 		      else
 		        @session_booking.send_sessions_booking_mail
 		      end
@@ -1042,7 +1041,6 @@ module ApiViews
 				  @booking.payed_booking.save
 				end
 				#flash[:notice] = "Reserva cancelada exitosamente."
-				# BookingMailer.cancel_booking(@booking)
 				@api_user ? user = @api_user.id : user = 0
 				BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
 			else
@@ -1214,7 +1212,6 @@ module ApiViews
 						  booking.payed_booking.save
 						end
 						#flash[:notice] = "Reserva cancelada exitosamente."
-						# BookingMailer.cancel_booking(@booking)
 						@api_user ? user = @api_user.id : user = 0
 						BookingHistory.create(booking_id: booking.id, action: "Cancelada por Cliente", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: user, notes: booking.notes, company_comment: booking.company_comment)
 					else

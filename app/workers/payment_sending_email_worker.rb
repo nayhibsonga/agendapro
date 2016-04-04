@@ -1,4 +1,4 @@
-class NotificationEmailWorker < BaseEmailWorker
+class PaymentSendingEmailWorker < BaseEmailWorker
 
   def self.perform(sending)
     total_sendings = 0

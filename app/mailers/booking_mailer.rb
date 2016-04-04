@@ -1,8 +1,6 @@
 class BookingMailer < Base::CustomMailer
   layout :select_layout
 
-  include ActionView::Helpers::NumberHelper
-
   def new_booking (book, recipient, options = {})
     # defaults
     options = {

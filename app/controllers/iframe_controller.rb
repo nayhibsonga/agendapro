@@ -849,7 +849,6 @@ class IframeController < ApplicationController
     if @bookings.length > 1
       if @session_booking.nil?
         @bookings.first.sendings.build(method: 'multiple_booking').save
-        # Booking.send_multiple_booking_mail(@location_id, booking_group)
       else
         @session_booking.send_sessions_booking_mail
       end

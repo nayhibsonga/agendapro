@@ -121,12 +121,12 @@ class PayedBooking < ActiveRecord::Base
 
 	end
 
-	def payment_email
-		sendings.build(method: 'payment_booking').save
-	end
+  def payment_email
+    sendings.build(method: 'payment_booking').save
+  end
 
-	def cancel_payment_email
-		sendings.build(method: 'cancel_payment_booking').save
-	end
+  def cancel_payment_email
+    sendings.build(method: 'cancel_payment_booking').save
+  end
 
 end

@@ -35,7 +35,6 @@ class User < ActiveRecord::Base
 
 	def send_welcome_mail
 		sendings.build(method: 'welcome_email').save
-		# UserEmailWorker.perform(self)
 	end
 
 	def get_past_bookings

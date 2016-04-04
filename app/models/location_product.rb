@@ -48,7 +48,6 @@ class LocationProduct < ActiveRecord::Base
           #Send alert and mark flag
           self.update_column(:alert_flag, false)
           sendings.build(method: 'alarm_stock').save
-    			# PaymentsSystemMailer.stock_alarm_email(self)
 
     		end
       else
@@ -57,7 +56,6 @@ class LocationProduct < ActiveRecord::Base
           #Send alert and mark flag
           self.update_column(:alert_flag, false)
           sendings.build(method: 'alarm_stock').save
-          # PaymentsSystemMailer.stock_alarm_email(self)
         end
     	end
 

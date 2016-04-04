@@ -554,7 +554,6 @@ class BookingsController < ApplicationController
 
         if @bookings.length > 1 && session_booking.nil?
           @booking.sendings.build(method: 'multiple_booking').save
-          # Booking.send_multiple_booking_mail(@booking.location_id, booking_group)
         end
 
         if !session_booking.nil?
@@ -972,7 +971,6 @@ class BookingsController < ApplicationController
 
       if @bookings.length > 1 && session_booking.nil?
         @booking.sendings.build(method: 'multiple_booking').save
-        # Booking.send_multiple_booking_mail(@booking.location_id, booking_group)
       end
 
       if !session_booking.nil?
@@ -2810,7 +2808,6 @@ class BookingsController < ApplicationController
     if @bookings.length > 1
       if @session_booking.nil?
         @bookings.first.sendings.build(method: 'multiple_booking').save
-        # Booking.send_multiple_booking_mail(@location_id, booking_group)
       else
         @session_booking.send_sessions_booking_mail
       end
@@ -3863,9 +3860,6 @@ class BookingsController < ApplicationController
       if success && were_payed && !are_session_bookings
         payed_booking = @bookings.first.payed_booking
         payed_booking.cancel_payment_email
-        # BookingMailer.cancel_payment_mail(payed_booking, 1)
-        # BookingMailer.cancel_payment_mail(payed_booking, 2)
-        # BookingMailer.cancel_payment_mail(payed_booking, 3)
       end
 
     end
@@ -4081,9 +4075,6 @@ class BookingsController < ApplicationController
       if success && were_payed && !are_session_bookings
         payed_booking = @bookings.first.payed_booking
         payed_booking.cancel_payment_email
-        # BookingMailer.cancel_payment_mail(payed_booking, 1)
-        # BookingMailer.cancel_payment_mail(payed_booking, 2)
-        # BookingMailer.cancel_payment_mail(payed_booking, 3)
       end
 
     end

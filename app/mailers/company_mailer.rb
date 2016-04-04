@@ -1,8 +1,6 @@
 class CompanyMailer < Base::CustomMailer
   layout "mailers/agendapro"
 
-  include ApplicationHelper
-
   #Send a warning notifying tht trial period ends soon (5 days)
   def warning_trial (company, recipient)
     # layout variables

@@ -574,11 +574,9 @@ class PayUController < ApplicationController
 
           if bookings.first.booking_group.nil?
             bookings.first.sendings.build(method: 'new_booking').save
-            # BookingMailer.book_service_mail(bookings.first)
           else
             if bookings.first.session_booking.nil?
               bookings.first.sendings.build(method: 'multiple_booking').save
-              # Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
             else
               bookings.first.session_booking.send_sessions_booking_mail
             end
@@ -589,9 +587,6 @@ class PayUController < ApplicationController
         end
         #Enviar comprobantes de pago
         payed_booking.payment_email
-        # BookingMailer.book_payment_mail(payed_booking)
-        # BookingMailer.book_payment_company_mail(payed_booking)
-        # BookingMailer.book_payment_agendapro_mail(payed_booking)
 
       end
     elsif pay_u_notification && pay_u_notification.id

@@ -1,4 +1,4 @@
-class BookingMailer < Base::CustomMailer
+class SessionsBookingMailer < Base::CustomMailer
   layout "mailers/green"
 
   #Mail de reserva de servicio con sesiones

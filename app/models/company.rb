@@ -183,7 +183,6 @@ class Company < ActiveRecord::Base
 				CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
 				if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id && company.country_id == 1
 					company.sendings.build(method: 'invoice').save
-					# CompanyMailer.invoice_email(company.id)
 				end
 			else
 				errors = ""
@@ -202,7 +201,6 @@ class Company < ActiveRecord::Base
 				CompanyCronLog.create(company_id: company.id, action_ref: 2, details: "OK payment_expiry")
 				if company.country_id == 1
 					company.sendings.build(method: 'invoice').save
-					# CompanyMailer.invoice_email(company.id)
 				end
 			else
 				errors = ""
@@ -289,7 +287,6 @@ class Company < ActiveRecord::Base
 	def self.invoice_email
 		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id), due_date: [10.days.ago, 15.days.ago, 20.days.ago], country_id: 1).each do |company|
 			company.sendings.build(method: 'invoice').save
-			# CompanyMailer.invoice_email(company.id)
 		end
 	end
 
@@ -427,10 +424,8 @@ class Company < ActiveRecord::Base
 
 			if company.account_used
 				sendings.build(method: 'warning_trial').save
-				# CompanyMailer.trial_warning(company.id)
 			else
 				sendings.build(method: 'recovery_trial').save
-				# CompanyMailer.trial_recovery(company.id)
 			end
 
 		end
@@ -481,10 +476,8 @@ class Company < ActiveRecord::Base
 				#Check if account was used.
 				if company.account_used
 					sendings.build(method: 'end_trial').save
-					# CompanyMailer.trial_end(company.id)
 				else
 					sendings.build(method: 'recovery_trial').save
-					# CompanyMailer.trial_recovery(company.id)
 				end
 
 				#if company.country_id == 1
@@ -536,7 +529,6 @@ class Company < ActiveRecord::Base
 					CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
 					if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id && company.country_id == 1
 						company.sendings.build(method: 'invoice').save
-						# CompanyMailer.invoice_email(company.id, "")
 					end
 				else
 					errors = ""
@@ -579,10 +571,8 @@ class Company < ActiveRecord::Base
 				#Send invoice_email
 				if company.created_at > (DateTime.now - 2.months) && !company.account_used
 					sendings.build(method: 'recovery_trial').save
-					# CompanyMailer.trial_recovery(company.id)
 				else
 					company.sendings.build(method: 'insistence_message_invoice').save
-					# CompanyMailer.invoice_email(company.id, message_emitido)
 				end
 
 
@@ -620,7 +610,6 @@ class Company < ActiveRecord::Base
 					#Was in trial and hasn't used
 				else
 					company.sendings.build(method: 'message_invoice').save
-					# CompanyMailer.invoice_email(company.id, message_emitido)
 				end
 
 			elsif company.payment_status_id == status_vencido.id
@@ -654,7 +643,6 @@ class Company < ActiveRecord::Base
 					#DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
 					#Send mail alerting their plan changed
 					company.sendings.build(method: 'close_message_invoice').save
-					# CompanyMailer.invoice_email(company.id, message_vencido)
 				end
 
 			end
@@ -678,7 +666,6 @@ class Company < ActiveRecord::Base
 				#Was in trial and hasn't used
 			else
 				company.sendings.build(method: 'reminder_message_invoice').save
-				# CompanyMailer.invoice_email(company.id, message_emitido)
 			end
 
 		end
@@ -702,7 +689,6 @@ class Company < ActiveRecord::Base
 				#Was in trial and hasn't used
 			else
 				company.sendings.build(method: 'warning_message_invoice').save
-				# CompanyMailer.invoice_email(company.id, message_emitido)
 			end
 
 		end
