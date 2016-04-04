@@ -1317,16 +1317,16 @@ class BookingsController < ApplicationController
             end
           end
 
-      @booking.session_booking.bookings.each do |booking|
+      # @booking.session_booking.bookings.each do |booking|
 
-        booking.client_id = @booking.client_id
-        if !new_user.nil?
-          booking.user_id = new_user.id
-        else
-          booking.user_id = nil
-        end
-        booking.save
-      end
+      #   booking.client_id = @booking.client_id
+      #   if !new_user.nil?
+      #     booking.user_id = new_user.id
+      #   else
+      #     booking.user_id = nil
+      #   end
+      #   booking.save
+      # end
 
       #We need to check wether the booking was a treatment session or not
 
