@@ -1448,6 +1448,9 @@ class BookingsController < ApplicationController
 
               @booking.is_session = true
               @booking.is_session_booked = true
+              if !@booking.payment_id.nil?
+                @booking.payed_state = true
+              end
 
               #Check for payment for confirmation status
               if @booking.payed
@@ -1552,6 +1555,10 @@ class BookingsController < ApplicationController
 
               @booking.is_session = true
               @booking.is_session_booked = true
+
+              if !@booking.payment_id.nil?
+                @booking.payed_state = true
+              end
 
               #Check if payed for confirmation status
               if @booking.payed
