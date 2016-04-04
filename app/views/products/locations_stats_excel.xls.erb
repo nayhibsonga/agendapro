@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Productos recaudación">
+    <Table>
+      <ss:Column ss:Width="200"/>
+      <ss:Column ss:Width="200"/>
+      <ss:Column ss:Width="200"/>
+      <Row>
+        <Cell><Data ss:Type="String">Productos por recaudación</Data></Cell>
+      </Row>
+      <Row>
+        <Cell><Data ss:Type="String">Producto</Data></Cell>
+        <Cell><Data ss:Type="String">Cantidad</Data></Cell>
+        <Cell><Data ss:Type="String">Recaudación</Data></Cell>
+      </Row>
+      <% @products.sort_by{ |product_tuple| [product_tuple[2], product_tuple[1], product_tuple[0].name]}.reverse.each do |product_arr| %>
+        <Row>
+          <Cell><Data ss:Type="String"><%= product_arr[0].name + " (" + product_arr[0].product_category.name + ")" %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= product_arr[2].to_s %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= product_arr[1].to_s %></Data></Cell>
+        </Row>
+      <% end %>
+    </Table>
+  </Worksheet>
+  <Worksheet ss:Name="Productos cantidad">
+    <Table>
+      <ss:Column ss:Width="200"/>
+      <ss:Column ss:Width="200"/>
+      <ss:Column ss:Width="200"/>
+      <Row>
+        <Cell><Data ss:Type="String">Productos por cantidad</Data></Cell>
+      </Row>
+      <Row>
+        <Cell><Data ss:Type="String">Producto</Data></Cell>
+        <Cell><Data ss:Type="String">Cantidad</Data></Cell>
+        <Cell><Data ss:Type="String">Recaudación</Data></Cell>
+      </Row>
+      <% @products.sort_by{ |product_tuple| [product_tuple[1], product_tuple[2], product_tuple[0].name]}.reverse.each do |product_arr| %>
+        <Row>
+          <Cell><Data ss:Type="String"><%= product_arr[0].name + " (" + product_arr[0].product_category.name + ")" %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= product_arr[2].to_s %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= product_arr[1].to_s %></Data></Cell>
+        </Row>
+      <% end %>
+    </Table>
+  </Worksheet>
+  <Worksheet ss:Name="Vendedores recaudación">
+    <Table>
+      <ss:Column ss:Width="200"/>
+      <ss:Column ss:Width="200"/>
+      <ss:Column ss:Width="200"/>
+      <Row>
+        <Cell><Data ss:Type="String">Vendedores por recaudación</Data></Cell>
+      </Row>
+      <Row>
+        <Cell><Data ss:Type="String">Vendedor</Data></Cell>
+        <Cell><Data ss:Type="String">Tipo</Data></Cell>
+        <Cell><Data ss:Type="String">Cantidad</Data></Cell>
+        <Cell><Data ss:Type="String">Recaudación</Data></Cell>
+      </Row>
+      <% @sellers.sort_by{ |seller| [seller[1], seller[2]]}.reverse.each do |seller| %>
+        <Row>
+          <% if seller[0].is_a?(ServiceProvider) %>
+            <Cell><Data ss:Type="String"><%= seller[0].public_name %></Data></Cell>
+            <Cell><Data ss:Type="String">Prestador</Data></Cell>
+          <% elsif seller[0].is_a?(User) %>
+            <Cell><Data ss:Type="String"><%= seller[0].full_name %></Data></Cell>
+            <Cell><Data ss:Type="String">Usuario (<%= seller[0].role.name %>)</Data></Cell>
+          <% else %>
+            <Cell><Data ss:Type="String"><%= seller[0].name %></Data></Cell>
+            <Cell><Data ss:Type="String">Cajero</Data></Cell>
+          <% end %>
+          <Cell><Data ss:Type="String"><%= seller[2].to_s %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= seller[1].to_s %></Data></Cell>
+        </Row>
+      <% end %>
+    </Table>
+  </Worksheet>
+  <Worksheet ss:Name="Vendedores cantidad">
+    <Table>
+      <ss:Column ss:Width="200"/>
+      <ss:Column ss:Width="200"/>
+      <ss:Column ss:Width="200"/>
+      <Row>
+        <Cell><Data ss:Type="String">Vendedores por cantidad</Data></Cell>
+      </Row>
+      <Row>
+        <Cell><Data ss:Type="String">Vendedor</Data></Cell>
+        <Cell><Data ss:Type="String">Tipo</Data></Cell>
+        <Cell><Data ss:Type="String">Cantidad</Data></Cell>
+        <Cell><Data ss:Type="String">Recaudación</Data></Cell>
+      </Row>
+      <% @sellers.sort_by{ |seller| [seller[2], seller[1]]}.reverse.each do |seller| %>
+        <Row>
+          <% if seller[0].is_a?(ServiceProvider) %>
+            <Cell><Data ss:Type="String"><%= seller[0].public_name %></Data></Cell>
+            <Cell><Data ss:Type="String">Prestador</Data></Cell>
+          <% elsif seller[0].is_a?(User) %>
+            <Cell><Data ss:Type="String"><%= seller[0].full_name %></Data></Cell>
+            <Cell><Data ss:Type="String">Usuario (<%= seller[0].role.name %>)</Data></Cell>
+          <% else %>
+            <Cell><Data ss:Type="String"><%= seller[0].name %></Data></Cell>
+            <Cell><Data ss:Type="String">Cajero</Data></Cell>
+          <% end %>
+          <Cell><Data ss:Type="String"><%= seller[2].to_s %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= seller[1].to_s %></Data></Cell>
+        </Row>
+      <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

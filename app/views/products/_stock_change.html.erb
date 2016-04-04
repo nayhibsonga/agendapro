@@ -1,0 +1,55 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  <h4 class="modal-title stockChange-modal-title" id="stockChangeModalLabel">Cambio de stock</h4>
+</div>
+<div class="modal-body">
+  <% if @status == "ok" %>
+    <% if @type == "add" %>
+      <p>Ingresa la cantidad de stock a agregar para cada local. Esto se sumará a la cantidad ya existente. Si ingresas un 0, un número negativo o dejas la casilla en blanco, el stock se mantendrá.</p>
+    <% else %>
+      <p>Ingresa la cantidad de stock a restar para cada local. Esto se restará la cantidad ya existente. Si ingresas un 0, un número negativo o dejas la casilla en blanco, el stock se mantendrá. Si ingresas un número mayor a la cantidad actual, ésta quedará en 0.</p>
+    <% end %>
+    <%= form_tag({ :controller => 'products', :action => 'update_stock'}, id: "products_update_stock",  method: "post", class: 'form-horizontal') do %>
+      <input type="hidden" id="stock_change_type" name="stock_change_type" value="<%= @type %>" />
+      <input type="hidden" name="product_id" value="<%= @product.id %>" />
+      <% @locations.each do |location| %>
+        <div class="form-group location-stock-div">
+          <div class="col-md-6">
+            <%= location.name %>
+          </div>
+          <div class="col-md-6">
+            <input type="number" class="stock-change-input form-control" name="location_<%= location.id %>" location_id="<%= location.id.to_s %>" value="0" />
+          </div>
+        </div>
+      <% end %>
+      <div class="form-group location-stock-save-div">
+        <div class="col-md-6">
+          Comentario
+        </div>
+        <div class="col-md-6">
+          <textarea name="notes" class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="form-group location-stock-save-div">
+        <div class="col-md-6">
+        </div>
+        <div class="col-md-6">
+          <button type="button" class="btn btn-green" id="stockChangeSaveBtn" style="width: 100%;">
+          <% if @type == "add" %>
+            Agregar
+          <% else %>
+            Restar
+          <% end %>
+          </button>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <p>Ha ocurrido el siguiente error: </p>
+    <p><%= @message %></p>
+  <% end %>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+</div>
+

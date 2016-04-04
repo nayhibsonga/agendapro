@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160308133628) do
+ActiveRecord::Schema.define(version: 20160404103728) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -473,6 +473,8 @@ ActiveRecord::Schema.define(version: 20160308133628) do
     t.string   "formatted_address", default: ""
     t.string   "domain",            default: ""
     t.float    "sales_tax",         default: 0.0, null: false
+    t.string   "timezone_name"
+    t.float    "timezone_offset"
   end
 
   create_table "custom_filters", force: true do |t|
@@ -719,6 +721,7 @@ ActiveRecord::Schema.define(version: 20160308133628) do
     t.datetime "updated_at"
     t.datetime "date",                default: '2015-10-30 21:54:55'
     t.integer  "user_id"
+    t.text     "notes",               default: ""
   end
 
   create_table "last_minute_promo_locations", force: true do |t|
@@ -1222,6 +1225,28 @@ ActiveRecord::Schema.define(version: 20160308133628) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "product_logs", force: true do |t|
+    t.integer  "product_id"
+    t.integer  "internal_sale_id"
+    t.integer  "payment_product_id"
+    t.integer  "service_provider_id"
+    t.integer  "client_id"
+    t.string   "change"
+    t.text     "cause"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "location_id"
+    t.integer  "user_id"
+  end
+
+  add_index "product_logs", ["client_id"], name: "index_product_logs_on_client_id", using: :btree
+  add_index "product_logs", ["internal_sale_id"], name: "index_product_logs_on_internal_sale_id", using: :btree
+  add_index "product_logs", ["location_id"], name: "index_product_logs_on_location_id", using: :btree
+  add_index "product_logs", ["payment_product_id"], name: "index_product_logs_on_payment_product_id", using: :btree
+  add_index "product_logs", ["product_id"], name: "index_product_logs_on_product_id", using: :btree
+  add_index "product_logs", ["service_provider_id"], name: "index_product_logs_on_service_provider_id", using: :btree
+  add_index "product_logs", ["user_id"], name: "index_product_logs_on_user_id", using: :btree
 
   create_table "products", force: true do |t|
     t.integer  "company_id"
@@ -1791,6 +1816,19 @@ ActiveRecord::Schema.define(version: 20160308133628) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "treatment_logs", force: true do |t|
+    t.integer  "client_id"
+    t.integer  "user_id"
+    t.integer  "service_id"
+    t.text     "detail"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "treatment_logs", ["client_id"], name: "index_treatment_logs_on_client_id", using: :btree
+  add_index "treatment_logs", ["service_id"], name: "index_treatment_logs_on_service_id", using: :btree
+  add_index "treatment_logs", ["user_id"], name: "index_treatment_logs_on_user_id", using: :btree
 
   create_table "treatment_promo_locations", force: true do |t|
     t.integer  "treatment_promo_id"
