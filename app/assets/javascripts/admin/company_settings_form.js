@@ -27,6 +27,17 @@ $(function () {
     $(this).val(tmp);
   });
 
+  $('#company_setting_allows_optimizaton').on('change', function(){
+    if($(this).prop('checked'))
+    {
+      $('#booking_leap_div').hide();
+    }
+    else
+    {
+      $('#booking_leap_div').show();
+    }
+  });
+
   $("#company_logo").change(function (){
     if ($("#company_logo").valid()) {
       var src = $('#company-form img').attr("src");
