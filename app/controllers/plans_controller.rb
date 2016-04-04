@@ -121,8 +121,9 @@ class PlansController < ApplicationController
     @plan_9 = ((@plan_1 + @price*8* (1+@sales_tax))*(1-@month_discount_9)).round(0)
     @plan_12 = ((@plan_1 + @price*11* (1+@sales_tax))*(1-@month_discount_12)).round(0)
 
+    timezone = CustomTimezone.from_company(@company)
     @billing_wire_transfer = BillingWireTransfer.new
-    @billing_wire_transfer.payment_date = DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])
+    @billing_wire_transfer.payment_date = DateTime.now + timezone.offset
     @billing_wire_transfer.account_name = nil
     @billing_wire_transfer.account_number = nil
     @billing_wire_transfer.bank_id = nil
@@ -151,13 +152,13 @@ class PlansController < ApplicationController
     if @billing_wire_transfer.save
       flash[:notice] = 'Transferencia guardada correctamente y en espera de aprobación.'
       CompanyMailer.new_transfer_email(@billing_wire_transfer.id)
-      
+
       redirect_to :action => 'select_plan'
     else
       flash[:alert] = 'Ocurrió un error al tratar de guardar la transferencia.'
       redirect_to :action => 'select_plan'
     end
-    
+
   end
 
 
@@ -190,7 +191,7 @@ class PlansController < ApplicationController
     new_plan = Plan.find(params[:new_plan_id])
 
     company = Company.find(current_user.company_id)
-    
+
     #company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
     sales_tax = company.country.sales_tax
     day_number = Time.now.day
@@ -201,7 +202,7 @@ class PlansController < ApplicationController
     billing_wire_transfer = BillingWireTransfer.new(payment_date: params[:date], amount: amount, receipt_number: params[:receipt_number], account_name: params[:account_name], account_bank: params[:account_bank], account_number: params[:account_number], approved: false, company_id: company.id, change_plan: true, new_plan: new_plan.id, change_plan_amount: 0, new_plan_amount: 0)
 
     if billing_wire_transfer.save
-      
+
     else
 
     end

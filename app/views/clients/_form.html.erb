@@ -186,7 +186,7 @@
                   <% @client_comments.each do |client_comment| %>
                     <div class="comment-div">
                       <div class="comment-date">
-                        <%= l client_comment.created_at - eval(ENV["TIME_ZONE_OFFSET"]), format: :long %>
+                        <p><%= l client_comment.created_at + CustomTimezone.from_company(@company).offset, format: :long %></p>
                       </div>
                       <div class="comment-detail">
                         <%= client_comment.comment.gsub("\n", "<br />").html_safe %>
