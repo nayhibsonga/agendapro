@@ -52,6 +52,8 @@ class BookingsController < ApplicationController
     @state[:local] = params[:local] if params[:local]
     @state[:provider] = params[:provider] if params[:provider]
     @state[:date] = params[:date] if params[:date]
+
+    @timezone = CustomTimezone.from_company(@company)
   end
 
   def fixed_index
@@ -84,7 +86,7 @@ class BookingsController < ApplicationController
   def show
     u = @booking
     is_payed = false
-    if u.payed && !u.payed_booking.nil?
+    if (u.payed && !u.payed_booking.nil?)
       is_payed = true
     end
 
@@ -1304,6 +1306,27 @@ class BookingsController < ApplicationController
       #Also, check if client was changed and update SessionBooking and all sessions
 
 
+          if !@booking.payment_id.nil?
+            @booking.payed_state = true
+          end
+
+          new_user = nil
+          if !@booking.client.email.nil?
+            if User.find_by_email(@booking.client.email).nil?
+              new_user = User.find_by_email(@booking.client.email)
+            end
+          end
+
+      # @booking.session_booking.bookings.each do |booking|
+
+      #   booking.client_id = @booking.client_id
+      #   if !new_user.nil?
+      #     booking.user_id = new_user.id
+      #   else
+      #     booking.user_id = nil
+      #   end
+      #   booking.save
+      # end
 
       #We need to check wether the booking was a treatment session or not
 
@@ -2038,7 +2061,8 @@ class BookingsController < ApplicationController
           user = booking_history.user.email
         end
       end
-      bookings.push( { action: booking_history.action, created: booking_history.created_at, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code, notes: booking_history.notes, company_comment: booking_history.company_comment } )
+      timezone = CustomTimezone.from_booking_history(booking_history)
+      bookings.push( { action: booking_history.action, created: booking_history.created_at, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code, notes: booking_history.notes, company_comment: booking_history.company_comment, time_offset: timezone.offseti } )
     end
     render :json => bookings
   end
@@ -3635,15 +3659,16 @@ class BookingsController < ApplicationController
     crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
     id = crypt.decrypt_and_verify(params[:confirmation_code])
     @booking = Booking.find(id)
-    @company = Location.find(@booking.location_id).company
     @selectedLocation = Location.find(@booking.location_id)
+    @company = @selectedLocation.company
 
     status_confirmed = Status.find_by(:name => 'Confirmado')
     #status_reservado = Status.find_by_name('Reservado')
     #status_pagado = Status.find_by_name('Pagado')
     status_cancelado = Status.find_by_name('Cancelado')
 
-    if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > @booking.start || @booking.status_id == status_cancelado.id
+    timezone = CustomTimezone.from_company(@company)
+    if DateTime.now + timezone.offset > @booking.start || @booking.status_id == status_cancelado.id
         redirect_to confirm_error_path(:id => @booking.id)
         return
     end
@@ -3672,8 +3697,9 @@ class BookingsController < ApplicationController
     status_confirmed = Status.find_by(:name => 'Confirmado')
     status_cancelado = Status.find_by_name('Cancelado')
 
+    timezone = CustomTimezone.from_company(@company)
     @bookings.each do |b|
-      if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > b.start || b.status_id == status_cancelado.id
+      if DateTime.now + timezone.offset > b.start || b.status_id == status_cancelado.id
 
           if b.status_id == status_cancelado.id
             reason = "fue cancelada."

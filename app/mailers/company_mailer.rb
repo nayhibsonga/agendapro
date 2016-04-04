@@ -646,7 +646,7 @@ class CompanyMailer < Base::CustomMailer
 				},
 				{
 					:name => 'DATE',
-					:content => punto_pagos_confirmation.created_at.strftime('%d/%m/%Y %R')
+					:content => (punto_pagos_confirmation.created_at - eval(ENV["TIME_ZONE_OFFSET"])).strftime('%d/%m/%Y %R')
 				},
 				{
 					:name => 'CHILE',
@@ -751,7 +751,7 @@ class CompanyMailer < Base::CustomMailer
 				},
 				{
 					:name => 'DATE',
-					:content => pay_u_notification.created_at.strftime('%d/%m/%Y %R')
+					:content => (pay_u_notification.created_at - eval(ENV["TIME_ZONE_OFFSET"])).strftime('%d/%m/%Y %R')
 				},
 				{
 					:name => 'CHILE',

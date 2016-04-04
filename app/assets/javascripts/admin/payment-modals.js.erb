@@ -749,6 +749,7 @@ function loadInternalSale(internal_sale)
   $("#internal_sale_date").val($("#today_date").val());
   $("#internal_sale_quantity").val("1");
   $("#internal_sale_discount").val("0");
+  $('#internal_sale_notes').val("");
   clearValidations("#internal_sale_date");
   clearValidations("#internal_sale_price");
   clearValidations("#internal_sale_quantity");
@@ -795,6 +796,7 @@ function loadInternalSale(internal_sale)
     $('#internal_sale_date').val(edit_date);
     $("#internal_sale_time_4i").val(edit_hour);
     $("#internal_sale_time_5i").val(edit_minute);
+    $('#internal_sale_notes').val(internal_sale.notes);
   }
 
   $('#internalSaleModal').modal('show');
@@ -956,6 +958,7 @@ function saveInternalSale()
         var discount = $('#internal_sale_discount').val();
         var date = $('#internal_sale_date').val();
         var time = $('#internal_sale_time_4i').val() + ":" + $('#internal_sale_time_5i').val() + ":00";
+        var notes = $('#internal_sale_notes').val();
         date = date + " " + time;
 
         if(internal_sale_id == "")
@@ -966,7 +969,7 @@ function saveInternalSale()
         $.ajax({
           url: '/save_internal_sale',
           method: 'post',
-          data: {location_id: location_id, cashier_id: cashier_id, product_id: product_id, buyer_id: buyer_id, buyer_type: buyer_type, price: price, quantity: quantity, discount: discount, date: date, internal_sale_id: internal_sale_id},
+          data: {location_id: location_id, cashier_id: cashier_id, product_id: product_id, buyer_id: buyer_id, buyer_type: buyer_type, price: price, quantity: quantity, discount: discount, date: date, internal_sale_id: internal_sale_id, notes: notes},
           dataType: 'json',
           error: function(response){
             triggerAlert("Ocurrió un error al guardar la venta.");
@@ -1018,7 +1021,7 @@ function deleteInternalSale(internal_sale_id)
       cancelButtonText: 'Cancelar'
     },
     function (isConfirm) {
-      if (isConfirm) {  
+      if (isConfirm) {
 
         $.ajax({
           url: '/delete_internal_sale',
@@ -2852,7 +2855,7 @@ function deletePayment(payment_id)
     cancelButtonText: 'Cancelar'
   },
   function (isConfirm) {
-    if (isConfirm) {  
+    if (isConfirm) {
       $.ajax({
         url: '/delete_payment',
         type: 'post',

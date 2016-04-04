@@ -17,6 +17,7 @@ class Client < ActiveRecord::Base
   has_many :date_time_attributes, dependent: :destroy
   has_many :file_attributes, dependent: :destroy
   has_many :categoric_attributes, dependent: :destroy
+  has_many :product_logs, dependent: :nullify
   has_many :treatment_logs, dependent: :nullify
 
   scope :from_company, -> (id) { where(company_id: id) if id.present? }
@@ -542,7 +543,7 @@ class Client < ActiveRecord::Base
     canceled_status = Status.find_by_name("Cancelado")
     bookings = Array.new
     #Send all services from same client (each company has diferent clients)
-    Client.where(id: Booking.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
+    Client.where(id: Booking.where(:start => CustomTimezone.first_timezone.offset.ago...(96.hours + CustomTimezone.last_timezone.offset).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
 
       #Send a reminder for each location
       client.company.locations.each do |location|
@@ -550,13 +551,15 @@ class Client < ActiveRecord::Base
         bookings = Array.new
         single_booking = Booking.new
 
-        potential_bookings = client.bookings.where(:start => eval(ENV["TIME_ZONE_OFFSET"]).ago...(96.hours - eval(ENV["TIME_ZONE_OFFSET"])).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
+        timezone = CustomTimezone.from_company(client.company)
+
+        potential_bookings = client.bookings.where(:start => timezone.offset.ago...(96.hours + timezone.offset).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
 
         potential_bookings.each do |booking|
 
           booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
 
-          if ((booking_confirmation_time.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now..(booking_confirmation_time.days + 1.days - eval(ENV["TIME_ZONE_OFFSET"])).from_now).cover?(booking.start) && booking.send_mail
+          if ((booking_confirmation_time.days + timezone.offset).from_now..(booking_confirmation_time.days + 1.days + timezone.offset).from_now).cover?(booking.start) && booking.send_mail
 
             if booking.is_session
               if booking.is_session_booked and booking.user_session_confirmed
@@ -672,7 +675,8 @@ class Client < ActiveRecord::Base
           valid = true
         end
         if !valid
-          Booking.where('bookings.start >= ?', Time.now - eval(ENV["TIME_ZONE_OFFSET"])).where(client_id: self.id).each do |booking|
+          timezone = CustomTimezone.from_company(self.company)
+          Booking.where('bookings.start >= ?', Time.now + timezone.offset).where(client_id: self.id).each do |booking|
             if booking.send_mail
               booking.send_mail = false
               booking.save
@@ -914,6 +918,7 @@ class Client < ActiveRecord::Base
 
     if !spreadsheet.nil?
       header = spreadsheet.row(1)
+      logger.debug "Header: " + header.inspect
       (2..spreadsheet.last_row).each do |i|
         row = Hash[[header, spreadsheet.row(i)].transpose]
 
@@ -1044,9 +1049,6 @@ class Client < ActiveRecord::Base
 
         end
 
-        "Custom params: "
-        puts custom_params.to_s
-
         if row["identification_number"].present? && Client.where(identification_number: row["identification_number"], company_id: company_id).count > 0
           client = Client.where(identification_number: row["identification_number"], company_id: company_id).first
         elsif row["email"].present? && Client.where(email: row["email"], company_id: company_id).count > 0
@@ -1063,6 +1065,9 @@ class Client < ActiveRecord::Base
         end
         if client.save
           client.save_attributes_from_import(custom_params)
+        else
+          logger.debug "Errors: "
+          logger.debug client.errors.inspect
         end
       end
       message = "Clientes importados exitosamente."
@@ -1154,7 +1159,7 @@ class Client < ActiveRecord::Base
   def self.filter(company_id, params)
     default_options = {
       search: "",
-      attendance: true
+      attendance: nil
     }
     options = default_options.merge(params.except(:utf8, :action, :controller, :locale).symbolize_keys)
     Filter::Clients.filter(company_id, options)
