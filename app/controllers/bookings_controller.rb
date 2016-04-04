@@ -445,6 +445,7 @@ class BookingsController < ApplicationController
         @booking.payed_state = true
       end
 
+      @booking.status_id = buffer_params[:status_id]
       if @booking.save
 
         #If it's a sessions service and it's the first session, create the others.
@@ -868,7 +869,7 @@ class BookingsController < ApplicationController
 
       end
 
-
+      @booking.status_id = buffer_params[:status_id]
       if @booking.save
 
 
@@ -1317,16 +1318,16 @@ class BookingsController < ApplicationController
             end
           end
 
-      @booking.session_booking.bookings.each do |booking|
+      # @booking.session_booking.bookings.each do |booking|
 
-        booking.client_id = @booking.client_id
-        if !new_user.nil?
-          booking.user_id = new_user.id
-        else
-          booking.user_id = nil
-        end
-        booking.save
-      end
+      #   booking.client_id = @booking.client_id
+      #   if !new_user.nil?
+      #     booking.user_id = new_user.id
+      #   else
+      #     booking.user_id = nil
+      #   end
+      #   booking.save
+      # end
 
       #We need to check wether the booking was a treatment session or not
 
@@ -1348,6 +1349,7 @@ class BookingsController < ApplicationController
       was_session = @booking.is_session
       session_booking = nil
 
+      @booking.status_id = booking_params[:status_id]
       if @booking.update(new_booking_params)
 
         #Check if new service has sessions before doing all the treatment checkings
@@ -1448,6 +1450,9 @@ class BookingsController < ApplicationController
 
               @booking.is_session = true
               @booking.is_session_booked = true
+              if !@booking.payment_id.nil?
+                @booking.payed_state = true
+              end
 
               #Check for payment for confirmation status
               if @booking.payed
@@ -1552,6 +1557,10 @@ class BookingsController < ApplicationController
 
               @booking.is_session = true
               @booking.is_session_booked = true
+
+              if !@booking.payment_id.nil?
+                @booking.payed_state = true
+              end
 
               #Check if payed for confirmation status
               if @booking.payed
@@ -1804,6 +1813,7 @@ class BookingsController < ApplicationController
         @bookings = Booking.where(bundle_id: @booking.bundle_id, client_id: @booking.client_id, booking_group: @booking.booking_group)
       end
     else
+      status = Status.find_by(:name => 'Cancelado').id
       is_booked = false
     end
     # @booking.destroy
@@ -1832,6 +1842,7 @@ class BookingsController < ApplicationController
 
     @booking.user_session_confirmed = false
     @booking.is_session_booked = false
+    @booking.status_id = Status.find_by_name("Cancelado").id
     #Send cancel mail
     @json_response = []
 
