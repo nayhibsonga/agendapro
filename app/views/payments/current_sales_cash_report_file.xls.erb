@@ -41,7 +41,7 @@
             </Row>
             <Row>
               <Cell><Data ss:Type="String">Apertura</Data></Cell>
-              <Cell><Data ss:Type="String"><%= (@sales_cash.last_reset_date + CustomeTimezone.from_sales_cash(@sales_cash).offset).strftime('%d/%m/%Y %R') %></Data></Cell>
+              <Cell><Data ss:Type="String"><%= (@sales_cash.last_reset_date + CustomTimezone.from_sales_cash(@sales_cash).offset).strftime('%d/%m/%Y %R') %></Data></Cell>
             </Row>
             <Row>
               <Cell><Data ss:Type="String">Fecha actual</Data></Cell>
@@ -353,6 +353,7 @@
               <Cell><Data ss:Type="String">Precio</Data></Cell>
               <Cell><Data ss:Type="String">Cantidad</Data></Cell>
               <Cell><Data ss:Type="String">Descuento</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
               <Cell><Data ss:Type="String">Cobro total</Data></Cell>
             </Row>
 
@@ -363,16 +364,31 @@
               %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= internal_sale.date.strftime('%d/%m/%Y %R') %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.product.sku %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.product.product_category.name %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.product.product_brand.name %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.product.name %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.product.product_display.name %></Data></Cell>
-                <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
-                <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.discount %>%</Data></Cell>
-                <Cell><Data ss:Type="Number"><%= internal_sale.quantity * internal_sale.price %></Data></Cell>
+                <% if internal_sale.product.nil? || Product.where(id: internal_sale.product_id).count == 0 %>
+                  <Cell><Data ss:Type="String"><%= internal_sale.date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                  <Cell><Data ss:Type="String">No existe producto</Data></Cell>
+                  <Cell><Data ss:Type="String">No existe producto</Data></Cell>
+                  <Cell><Data ss:Type="String">No existe producto</Data></Cell>
+                  <Cell><Data ss:Type="String">No existe producto</Data></Cell>
+                  <Cell><Data ss:Type="String">No existe producto</Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.discount %>%</Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.get_notes %></Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.quantity * internal_sale.price %></Data></Cell>
+                <% else %>
+                  <Cell><Data ss:Type="String"><%= internal_sale.date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.product.sku %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.product.product_category.name %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.product.product_brand.name %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.product.name %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.product.product_display.name %></Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.discount %>%</Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.get_notes %></Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.quantity * internal_sale.price %></Data></Cell>
+                <% end %>
               </Row>
             <% end %>
 

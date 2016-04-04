@@ -64,6 +64,7 @@
                     <tbody>
                       <tr>
                         <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right:18px; padding-bottom:9px; padding-left:18px;">
+                          <% timezone = CustomTimezone.from_company(@company) %>
                           <%= @company.name %>
                           <hr><%= @admin.email %>
                           <hr><%= number_to_currency(@amount, locale: @company.country.locale.to_sym) %>
@@ -73,7 +74,7 @@
                           <hr><%= @receipt.try(:operation_number) %>
                           <% end %>
                           <hr><%= @auth_code %>
-                          <hr><%= @receipt.created_at.strftime('%d/%m/%Y %R') %>
+                          <hr><%= (@receipt.created_at + timezone.offset).strftime('%d/%m/%Y %R') %>
                           <hr>
                         </td>
                       </tr>

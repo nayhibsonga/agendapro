@@ -32,6 +32,7 @@ class Service < ActiveRecord::Base
   has_many :service_commissions
 
   has_many :sendings, class_name: 'Email::Sending', as: :sendable
+  has_many :treatment_logs, dependent: :nullify
 
 	mount_uploader :time_promo_photo, TimePromoPhotoUploader
 

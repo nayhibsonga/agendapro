@@ -18,6 +18,7 @@ class Client < ActiveRecord::Base
   has_many :file_attributes, dependent: :destroy
   has_many :categoric_attributes, dependent: :destroy
   has_many :product_logs, dependent: :nullify
+  has_many :treatment_logs, dependent: :nullify
 
   scope :from_company, -> (id) { where(company_id: id) if id.present? }
 
@@ -865,6 +866,7 @@ class Client < ActiveRecord::Base
 
     if !spreadsheet.nil?
       header = spreadsheet.row(1)
+      logger.debug "Header: " + header.inspect
       (2..spreadsheet.last_row).each do |i|
         row = Hash[[header, spreadsheet.row(i)].transpose]
 
@@ -995,9 +997,6 @@ class Client < ActiveRecord::Base
 
         end
 
-        "Custom params: "
-        puts custom_params.to_s
-
         if row["identification_number"].present? && Client.where(identification_number: row["identification_number"], company_id: company_id).count > 0
           client = Client.where(identification_number: row["identification_number"], company_id: company_id).first
         elsif row["email"].present? && Client.where(email: row["email"], company_id: company_id).count > 0
@@ -1014,6 +1013,9 @@ class Client < ActiveRecord::Base
         end
         if client.save
           client.save_attributes_from_import(custom_params)
+        else
+          logger.debug "Errors: "
+          logger.debug client.errors.inspect
         end
       end
       message = "Clientes importados exitosamente."
@@ -1105,7 +1107,7 @@ class Client < ActiveRecord::Base
   def self.filter(company_id, params)
     default_options = {
       search: "",
-      attendance: true
+      attendance: nil
     }
     options = default_options.merge(params.except(:utf8, :action, :controller, :locale).symbolize_keys)
     Filter::Clients.filter(company_id, options)

@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
 	has_many :internal_sales, dependent: :nullify
 	has_many :product_logs, dependent: :nullify
 	has_many :sendings, class_name: 'Email::Sending', as: :sendable
+	has_many :treatment_logs, dependent: :nullify
 
 	accepts_nested_attributes_for :company
 

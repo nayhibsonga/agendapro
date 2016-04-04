@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160321163627) do
+ActiveRecord::Schema.define(version: 20160404103728) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -720,6 +720,7 @@ ActiveRecord::Schema.define(version: 20160321163627) do
     t.datetime "updated_at"
     t.datetime "date",                default: '2015-10-27 17:17:43'
     t.integer  "user_id"
+    t.text     "notes",               default: ""
   end
 
   create_table "last_minute_promo_locations", force: true do |t|
@@ -1814,6 +1815,19 @@ ActiveRecord::Schema.define(version: 20160321163627) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "treatment_logs", force: true do |t|
+    t.integer  "client_id"
+    t.integer  "user_id"
+    t.integer  "service_id"
+    t.text     "detail"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "treatment_logs", ["client_id"], name: "index_treatment_logs_on_client_id", using: :btree
+  add_index "treatment_logs", ["service_id"], name: "index_treatment_logs_on_service_id", using: :btree
+  add_index "treatment_logs", ["user_id"], name: "index_treatment_logs_on_user_id", using: :btree
 
   create_table "treatment_promo_locations", force: true do |t|
     t.integer  "treatment_promo_id"
