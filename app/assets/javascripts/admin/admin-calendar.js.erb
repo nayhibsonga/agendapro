@@ -423,8 +423,8 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
     },
 
     defaultView: 'agendaWeek',
-    defaultEventMinutes: $('#providers-selector option:selected').data("block"),
-    slotMinutes: $('#providers-selector option:selected').data("block")
+    defaultEventMinutes: $('#providers-selector option:selected').data("block") || $('#calendar-data').data('calendar-duration'),
+    slotMinutes: $('#providers-selector option:selected').data("block") || $('#calendar-data').data('calendar-duration')
   };
   loadCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId, properties);
 }
