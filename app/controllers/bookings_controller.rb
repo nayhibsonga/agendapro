@@ -445,7 +445,9 @@ class BookingsController < ApplicationController
         @booking.payed_state = true
       end
 
-      @booking.status_id = buffer_params[:status_id]
+      if !buffer_params[:status_id].blank?
+        @booking.status_id = buffer_params[:status_id]
+      end
       if @booking.save
 
         #If it's a sessions service and it's the first session, create the others.
@@ -869,7 +871,9 @@ class BookingsController < ApplicationController
 
       end
 
-      @booking.status_id = buffer_params[:status_id]
+      if !buffer_params[:status_id].blank?
+        @booking.status_id = buffer_params[:status_id]
+      end
       if @booking.save
 
 
@@ -1349,7 +1353,9 @@ class BookingsController < ApplicationController
       was_session = @booking.is_session
       session_booking = nil
 
-      @booking.status_id = booking_params[:status_id]
+      if !booking_params[:status_id].blank?
+        @booking.status_id = booking_params[:status_id]
+      end
       if @booking.update(new_booking_params)
 
         #Check if new service has sessions before doing all the treatment checkings
