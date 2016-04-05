@@ -1,5 +1,5 @@
 class BookingsController < ApplicationController
-  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form]
+  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form, :get_treatment_info, :delete_treatment]
   before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :confirm_error, :confirm_success, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours]
   before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel]
   layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :transfer_error_cancel, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
@@ -52,6 +52,8 @@ class BookingsController < ApplicationController
     @state[:local] = params[:local] if params[:local]
     @state[:provider] = params[:provider] if params[:provider]
     @state[:date] = params[:date] if params[:date]
+
+    @timezone = CustomTimezone.from_company(@company)
   end
 
   def fixed_index
@@ -443,6 +445,7 @@ class BookingsController < ApplicationController
         @booking.payed_state = true
       end
 
+      @booking.status_id = buffer_params[:status_id]
       if @booking.save
 
         #If it's a sessions service and it's the first session, create the others.
@@ -559,12 +562,13 @@ class BookingsController < ApplicationController
         end
 
         if !session_booking.nil?
-          if @booking.user_session_confirmed
+          if @booking.user_session_confirmed && @booking.send_mail
             session_booking.send_sessions_booking_mail
           else
-            if @booking.payed
+            if @booking.payed && @booking.send_mail
               @booking.send_admin_payed_session_mail
             else
+              #Send anyways, it needs validation
               @booking.send_validate_mail
             end
           end
@@ -865,7 +869,7 @@ class BookingsController < ApplicationController
 
       end
 
-
+      @booking.status_id = buffer_params[:status_id]
       if @booking.save
 
 
@@ -1290,29 +1294,18 @@ class BookingsController < ApplicationController
       @booking.price = 0
     end
 
-    session_booking_index = 0
-    sessions_ratio = ""
-    #If updated by admin, mark for user validation
-    #Also, check if client was changed and update SessionBooking and all sessions
-    if @booking.is_session
-      new_booking_params[:session_booking_id] = @booking.session_booking_id
-      if @booking.payed
-        @booking.user_session_confirmed = false
-      else
-        @booking.user_session_confirmed = true
-      end
-      #session_booking_index = @booking.session_booking.sessions_taken
-      #sessions_ratio = "Sesión " + session_booking_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
-    end
     respond_to do |format|
 
       if !new_booking_params[:service_id].blank? && new_booking_params[:service_id].to_i != @booking.service_id
         new_booking_params[:list_price] = Service.find(new_booking_params[:service_id]).price
       end
 
-      if @booking.update(new_booking_params)
+      session_booking_index = 0
+      sessions_ratio = ""
 
-        if @booking.is_session
+      #If updated by admin, mark for user validation
+      #Also, check if client was changed and update SessionBooking and all sessions
+
 
           if !@booking.payment_id.nil?
             @booking.payed_state = true
@@ -1325,129 +1318,153 @@ class BookingsController < ApplicationController
             end
           end
 
-          @booking.session_booking.bookings.each do |booking|
-            booking.client_id = @booking.client_id
-            if !new_user.nil?
-              booking.user_id = new_user.id
-            else
-              booking.user_id = nil
-            end
-            booking.save
-          end
+      # @booking.session_booking.bookings.each do |booking|
 
-          @booking.session_booking.client_id = @booking.client_id
-          if !new_user.nil?
-            @booking.session_booking.user_id = new_user.id
-          else
-            @booking.session_booking.user_id = nil
-          end
-          @booking.session_booking.save
+      #   booking.client_id = @booking.client_id
+      #   if !new_user.nil?
+      #     booking.user_id = new_user.id
+      #   else
+      #     booking.user_id = nil
+      #   end
+      #   booking.save
+      # end
 
+      #We need to check wether the booking was a treatment session or not
 
-          if @booking.user_session_confirmed
-            @booking.session_booking.send_sessions_booking_mail
-          else
-            if @booking.payed
-              @booking.send_admin_payed_session_mail
-            else
-              @booking.send_validate_mail
-            end
-          end
+      # => If it was, we need to check if the service remains the same or not
+      # =>    If it changes, we need to check if new service is a treatment or not
+      # =>        If it's a treatment, we need to create it or book the according session (if there is a session_booking_id set), then generate and unbooked session for the old treatment
+      # =>        If not, we just need to update the booking, then generate and unbooked session for the old treatment
+      # =>        End
+      # =>    If not, we just need to update the booking
+      # =>    End
+      # => If not, we need to check if the service remains the same or not
+      # =>    If it changes, we need to check if the new service is a treatment or not
+      # =>        If it is, we need to create it or book the according session (if there is a session_booking_id set)
+      # =>        If not, we just need to update the booking
+      # =>    If not, we just need to update the booking
+      # => End
+      old_service_id = @booking.service
+      old_session_booking_id = @booking.session_booking_id
+      was_session = @booking.is_session
+      session_booking = nil
 
-          session_index = 1
-          Booking.where(:session_booking_id => @booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
-            if b.id == @booking.id
-              break
-            else
-              session_index = session_index + 1
-            end
-          end
+      @booking.status_id = booking_params[:status_id]
+      if @booking.update(new_booking_params)
 
-          sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
+        #Check if new service has sessions before doing all the treatment checkings
+        if !@booking.service.has_sessions
+          @booking.is_session = false
+          @booking.is_session_booked = false
+          @booking.session_booking_id = nil
+          @booking.user_session_confirmed = false
+          @booking.save
+        end
 
-        else
+        if was_session
+          if @booking.service_id != old_service_id
+            if @booking.is_session || @booking.service.has_sessions
+              #Update
+              #Create treatment or book new session
+              #Add a fresh unbooked session for old treatment (session_booking)
+              #Do this by changing their session_booking_ids
+              if !booking_params[:session_booking_id].blank? && booking_params[:session_booking_id].to_i != 0
 
-          if @booking.service.has_sessions
-
-
-            should_create_sessions = false
-            session_booking = nil
-
-
-            if booking_params[:session_booking_id]
-              if booking_params[:session_booking_id] != "0" && booking_params[:session_booking_id] != 0
                 session_booking = SessionBooking.find(booking_params[:session_booking_id])
-                #session_booking.sessions_taken = session_booking.sessions_taken + 1
-                #@booking = Booking.where(:session_booking_id => session_booking.id, :is_session_booked => false).first
-                #@booking.start = booking_params[:start]
-                #@booking.end = booking_params[:end]
-                #@booking.service_provider_id = booking_params[:service_provider_id]
-                @booking.session_booking_id = session_booking.id
-                @booking.is_session = true
-                @booking.is_session_booked = true
-                if @booking.payed
-                  @booking.user_session_confirmed = false
+
+                if !session_booking.nil?
+                  #There is session_booking, book a session, unbook for old_treatment
+                  @booking.session_booking_id = session_booking.id
+
+                  discharged_booking = session_booking.bookings.where(is_session_booked: false).last
+                  discharged_booking.delete
+
+                  session_booking.sessions_taken += 1
+                  session_booking.save
+
+                  old_session_booking = SessionBooking.find(old_session_booking_id)
+
+                  restored_booking = old_session_booking.bookings.last.dup
+                  restored_booking.id = nil
+                  restored_booking.is_session_booked = false
+                  restored_booking.save
+
+                  old_session_booking.sessions_taken -= 1
+                  old_session_booking.save
+
                 else
-                  @booking.user_session_confirmed = true
+                  #There is no session_booking, create the rest of the sessions, unbook for old treatment
+
+                  session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+
+                  @booking.session_booking_id = session_booking.id
+
+                  for i in 1..session_booking.sessions_amount-1
+                    new_booking = @booking.dup
+                    new_booking.is_session = true
+                    new_booking.is_session_booked = false
+                    new_booking.user_session_confirmed = false
+                    new_booking.session_booking_id = session_booking.id
+                    new_booking.save
+                  end
+
+                  old_session_booking = SessionBooking.find(old_session_booking_id)
+
+                  restored_booking = old_session_booking.bookings.last.dup
+                  restored_booking.id = nil
+                  restored_booking.is_session_booked = false
+                  restored_booking.save
+
+                  old_session_booking.sessions_taken -= 1
+                  old_session_booking.save
+
                 end
 
-                session_booking.sessions_taken = session_booking.sessions_taken+1
-                session_booking.save
-
-                @booking.save
               else
-                should_create_sessions = true
-                session_booking = SessionBooking.new
-                #session_booking.sessions_taken = 1
-                serv = Service.find(booking_params[:service_id])
-                session_booking.service_id = booking_params[:service_id]
-                session_booking.sessions_amount = serv.sessions_amount
+                #There is no session_booking, create the rest of the sessions, unbook for old treatment
+
+                session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+
+                  @booking.session_booking_id = session_booking.id
+
+                  for i in 1..session_booking.sessions_amount-1
+                    new_booking = @booking.dup
+                    new_booking.is_session = true
+                    new_booking.is_session_booked = false
+                    new_booking.user_session_confirmed = false
+                    new_booking.session_booking_id = session_booking.id
+                    new_booking.save
+                  end
+
+                  old_session_booking = SessionBooking.find(old_session_booking_id)
+
+                  restored_booking = old_session_booking.bookings.last.dup
+                  restored_booking.id = nil
+                  restored_booking.is_session_booked = false
+                  restored_booking.save
+
+                  old_session_booking.sessions_taken -= 1
+                  old_session_booking.save
 
               end
-            end
 
-            # If it's a sessions service and it's the first session, save client and user for SessionBooking
-            # and associate it with the @booking
-            sessions_ratio = ""
-            if should_create_sessions
-
-              session_booking.client_id = @booking.client_id
-              if User.find_by_email(booking_params[:client_email])
-                session_booking.user_id = User.find_by_email(booking_params[:client_email]).id
-              end
-
-              session_booking.sessions_taken = 1
-              session_booking.save
-              @booking.session_booking_id = session_booking.id
               @booking.is_session = true
               @booking.is_session_booked = true
+              if !@booking.payment_id.nil?
+                @booking.payed_state = true
+              end
+
+              #Check for payment for confirmation status
               if @booking.payed
                 @booking.user_session_confirmed = false
               else
                 @booking.user_session_confirmed = true
               end
+
               @booking.save
-            end
-
-            if should_create_sessions
-
-              sessions_missing = session_booking.sessions_amount - 1
-              sessions_ratio = "Sesión 1 de " + @booking.service.sessions_amount.to_s
-
-              for i in 0..sessions_missing-1
-                new_booking = @booking.dup
-                new_booking.is_session = true
-                new_booking.is_session_booked = false
-                new_booking.user_session_confirmed = false
-                new_booking.session_booking_id = session_booking.id
-                new_booking.save
-              end
-
-            elsif !session_booking.nil?
-              session_booking.save
 
               session_index = 1
-              Booking.where(:session_booking_id => session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+              Booking.where(:session_booking_id => @booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
                 if b.id == @booking.id
                   break
                 else
@@ -1455,13 +1472,287 @@ class BookingsController < ApplicationController
                 end
               end
 
-              sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s
+              sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
+
+              if @booking.user_session_confirmed && @booking.send_mail
+                @booking.session_booking.send_sessions_booking_mail
+              else
+                if @booking.payed && @booking.send_mail
+                  @booking.send_admin_payed_session_mail
+                else
+                  @booking.send_validate_mail
+                end
+              end
+
+            else
+              #Update
+              #Add a fresh unbooked session for old treatment (session_booking)
+
+              @booking.session_booking_id = nil
+              @booking.is_session = false
+              @booking.is_session_booked = false
+              @booking.save
+
+              old_session_booking = SessionBooking.find(old_session_booking_id)
+
+              restored_booking = old_session_booking.bookings.last.dup
+              restored_booking.id = nil
+              restored_booking.is_session_booked = false
+              restored_booking.save
+
+              old_session_booking.sessions_taken -= 1
+              old_session_booking.save
 
             end
-
+          else
+            #Just update, so do nothing
           end
+        else
+          if @booking.service_id != old_service_id
+            if @booking.is_session || @booking.service.has_sessions
+              if !booking_params[:session_booking_id].blank? && booking_params[:session_booking_id].to_i != 0
+                #There is session_booking, book a session
+                session_booking = SessionBooking.find(booking_params[:session_booking_id])
 
+                if !session_booking.nil?
+                  @booking.session_booking_id = session_booking.id
+
+
+                  discharged_booking = session_booking.bookings.where(is_session_booked: false).last
+                  discharged_booking.delete
+
+                  session_booking.sessions_taken += 1
+                  session_booking.save
+                else
+                  session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+
+                  @booking.session_booking_id = session_booking.id
+
+                  for i in 1..session_booking.sessions_amount-1
+                    new_booking = @booking.dup
+                    new_booking.is_session = true
+                    new_booking.is_session_booked = false
+                    new_booking.user_session_confirmed = false
+                    new_booking.session_booking_id = session_booking.id
+                    new_booking.save
+                  end
+
+                end
+              else
+                #There is no session_booking, create the rest of the session
+                session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+
+                @booking.session_booking_id = session_booking.id
+
+                for i in 1..session_booking.sessions_amount-1
+                  new_booking = @booking.dup
+                  new_booking.is_session = true
+                  new_booking.is_session_booked = false
+                  new_booking.user_session_confirmed = false
+                  new_booking.session_booking_id = session_booking.id
+                  new_booking.save
+                end
+
+              end
+
+              @booking.is_session = true
+              @booking.is_session_booked = true
+
+              if !@booking.payment_id.nil?
+                @booking.payed_state = true
+              end
+
+              #Check if payed for confirmation status
+              if @booking.payed
+                @booking.user_session_confirmed = false
+              else
+                @booking.user_session_confirmed = true
+              end
+
+              @booking.save
+
+              session_index = 1
+              Booking.where(:session_booking_id => @booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+                if b.id == @booking.id
+                  break
+                else
+                  session_index = session_index + 1
+                end
+              end
+
+              sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
+
+              if @booking.user_session_confirmed && @booking.send_mail
+                @booking.session_booking.send_sessions_booking_mail
+              else
+                if @booking.payed && @booking.send_mail
+                  @booking.send_admin_payed_session_mail
+                else
+                  @booking.send_validate_mail
+                end
+              end
+
+            else
+              #Just update, so do nothing
+            end
+          else
+            #Just update, so do nothing
+          end
         end
+
+        ############
+        ## LEGACY ##
+        ############
+        # if @booking.is_session
+
+        #   new_user = nil
+        #   if !@booking.client.email.nil?
+        #     if User.find_by_email(@booking.client.email).nil?
+        #       new_user = User.find_by_email(@booking.client.email)
+        #     end
+        #   end
+
+        #   @booking.session_booking.bookings.each do |booking|
+        #     booking.client_id = @booking.client_id
+        #     if !new_user.nil?
+        #       booking.user_id = new_user.id
+        #     else
+        #       booking.user_id = nil
+        #     end
+        #     booking.save
+        #   end
+
+        #   @booking.session_booking.client_id = @booking.client_id
+        #   if !new_user.nil?
+        #     @booking.session_booking.user_id = new_user.id
+        #   else
+        #     @booking.session_booking.user_id = nil
+        #   end
+        #   @booking.session_booking.save
+
+
+        #   if @booking.user_session_confirmed
+        #     @booking.session_booking.send_sessions_booking_mail
+        #   else
+        #     if @booking.payed
+        #       @booking.send_admin_payed_session_mail
+        #     else
+        #       @booking.send_validate_mail
+        #     end
+        #   end
+
+        #   session_index = 1
+        #   Booking.where(:session_booking_id => @booking.session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+        #     if b.id == @booking.id
+        #       break
+        #     else
+        #       session_index = session_index + 1
+        #     end
+        #   end
+
+        #   sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
+
+        # else
+
+        #   if @booking.service.has_sessions
+
+
+        #     should_create_sessions = false
+        #     session_booking = nil
+
+
+        #     if booking_params[:session_booking_id]
+        #       if booking_params[:session_booking_id] != "0" && booking_params[:session_booking_id] != 0
+        #         session_booking = SessionBooking.find(booking_params[:session_booking_id])
+        #         #session_booking.sessions_taken = session_booking.sessions_taken + 1
+        #         #@booking = Booking.where(:session_booking_id => session_booking.id, :is_session_booked => false).first
+        #         #@booking.start = booking_params[:start]
+        #         #@booking.end = booking_params[:end]
+        #         #@booking.service_provider_id = booking_params[:service_provider_id]
+        #         @booking.session_booking_id = session_booking.id
+        #         @booking.is_session = true
+        #         @booking.is_session_booked = true
+        #         if @booking.payed
+        #           @booking.user_session_confirmed = false
+        #         else
+        #           @booking.user_session_confirmed = true
+        #         end
+
+        #         session_booking.sessions_taken = session_booking.sessions_taken+1
+        #         session_booking.save
+
+        #         @booking.save
+        #       else
+        #         should_create_sessions = true
+        #         session_booking = SessionBooking.new
+        #         #session_booking.sessions_taken = 1
+        #         serv = Service.find(booking_params[:service_id])
+        #         session_booking.service_id = booking_params[:service_id]
+        #         session_booking.sessions_amount = serv.sessions_amount
+
+        #       end
+        #     end
+
+        #     # If it's a sessions service and it's the first session, save client and user for SessionBooking
+        #     # and associate it with the @booking
+        #     sessions_ratio = ""
+        #     if should_create_sessions
+
+        #       session_booking.client_id = @booking.client_id
+        #       if User.find_by_email(booking_params[:client_email])
+        #         session_booking.user_id = User.find_by_email(booking_params[:client_email]).id
+        #       end
+
+        #       session_booking.sessions_taken = 1
+        #       session_booking.save
+        #       @booking.session_booking_id = session_booking.id
+        #       @booking.is_session = true
+        #       @booking.is_session_booked = true
+        #       if @booking.payed
+        #         @booking.user_session_confirmed = false
+        #       else
+        #         @booking.user_session_confirmed = true
+        #       end
+        #       @booking.save
+        #     end
+
+        #     if should_create_sessions
+
+        #       sessions_missing = session_booking.sessions_amount - 1
+        #       sessions_ratio = "Sesión 1 de " + @booking.service.sessions_amount.to_s
+
+        #       for i in 0..sessions_missing-1
+        #         new_booking = @booking.dup
+        #         new_booking.is_session = true
+        #         new_booking.is_session_booked = false
+        #         new_booking.user_session_confirmed = false
+        #         new_booking.session_booking_id = session_booking.id
+        #         new_booking.save
+        #       end
+
+        #     elsif !session_booking.nil?
+        #       session_booking.save
+
+        #       session_index = 1
+        #       Booking.where(:session_booking_id => session_booking.id, :is_session_booked => true).order('start asc').each do |b|
+        #         if b.id == @booking.id
+        #           break
+        #         else
+        #           session_index = session_index + 1
+        #         end
+        #       end
+
+        #       sessions_ratio = "Sesión " + session_index.to_s + " de " + session_booking.sessions_amount.to_s
+
+        #     end
+
+        #   end
+
+        # end
+
+        ################
+        ## END LEGACY ##
+        ################
 
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
@@ -1522,6 +1813,7 @@ class BookingsController < ApplicationController
         @bookings = Booking.where(bundle_id: @booking.bundle_id, client_id: @booking.client_id, booking_group: @booking.booking_group)
       end
     else
+      status = Status.find_by(:name => 'Cancelado').id
       is_booked = false
     end
     # @booking.destroy
@@ -1532,7 +1824,9 @@ class BookingsController < ApplicationController
           if booking.is_session
             booking.session_booking.sessions_taken -= 1
             booking.session_booking.save
-            booking.send_session_cancel_mail
+            if booking.send_mail
+              booking.send_session_cancel_mail
+            end
           end
         end
         format.html { redirect_to bookings_url }
@@ -1548,6 +1842,7 @@ class BookingsController < ApplicationController
 
     @booking.user_session_confirmed = false
     @booking.is_session_booked = false
+    @booking.status_id = Status.find_by_name("Cancelado").id
     #Send cancel mail
     @json_response = []
 
@@ -1575,6 +1870,50 @@ class BookingsController < ApplicationController
       @json_response << @booking.errors
       render :json => @json_response
     end
+  end
+
+  def delete_treatment
+
+    @session_booking = @booking.session_booking
+    booking_ids = @session_booking.bookings.pluck(:id)
+    respond_to do |format|
+      if @session_booking.destroy
+        TreatmentLog.create(client_id: @session_booking.client_id, user_id: current_user.id, service_id: @session_booking.service_id, detail: "Eliminado por calendario.")
+        format.html { redirect_to bookings_url }
+        format.json { render :json => booking_ids }
+      else
+        format.html { redirect_to bookings_url }
+        format.json { render :json => { :errors => "No se pudo borrar el tratamiento." }, :status => 422 }
+      end
+    end
+
+  end
+
+  def user_delete_treatment
+
+    @session_booking = SessionBooking.find(params[:session_booking_id])
+    @json_response = []
+
+    if current_user.nil? || current_user.id != @session_booking.user_id
+      @json_response << "error"
+      @json_response << "No puedes borrar un tratamiento no asociado a tu usuario."
+      render :json => @json_response
+      return
+    end
+
+    booking_ids = @session_booking.bookings.pluck(:id)
+
+
+    if @session_booking.destroy
+      @json_response << "ok"
+      @json_response << @booking
+      render :json => @json_response
+    else
+      @json_response << "error"
+      @json_response << @session_booking.errors
+      render :json => @json_response
+    end
+
   end
 
   #GET
@@ -1619,7 +1958,7 @@ class BookingsController < ApplicationController
       @json_response << @booking
       render :json => @json_response
     else
-      @json_response << "ok"
+      @json_response << "error"
       @json_response << @booking.errors
       render :json => @json_response
     end
@@ -1726,7 +2065,8 @@ class BookingsController < ApplicationController
           user = booking_history.user.email
         end
       end
-      bookings.push( { action: booking_history.action, created: booking_history.created_at, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code, notes: booking_history.notes, company_comment: booking_history.company_comment } )
+      timezone = CustomTimezone.from_booking_history(booking_history)
+      bookings.push( { action: booking_history.action, created: booking_history.created_at, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code, notes: booking_history.notes, company_comment: booking_history.company_comment, time_offset: timezone.offseti } )
     end
     render :json => bookings
   end
@@ -2840,7 +3180,7 @@ class BookingsController < ApplicationController
 
   def book_error
 
-     @try_register = false
+    @try_register = false
 
     if params[:client] && params[:client] != ""
 
@@ -3323,15 +3663,16 @@ class BookingsController < ApplicationController
     crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
     id = crypt.decrypt_and_verify(params[:confirmation_code])
     @booking = Booking.find(id)
-    @company = Location.find(@booking.location_id).company
     @selectedLocation = Location.find(@booking.location_id)
+    @company = @selectedLocation.company
 
     status_confirmed = Status.find_by(:name => 'Confirmado')
     #status_reservado = Status.find_by_name('Reservado')
     #status_pagado = Status.find_by_name('Pagado')
     status_cancelado = Status.find_by_name('Cancelado')
 
-    if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > @booking.start || @booking.status_id == status_cancelado.id
+    timezone = CustomTimezone.from_company(@company)
+    if DateTime.now + timezone.offset > @booking.start || @booking.status_id == status_cancelado.id
         redirect_to confirm_error_path(:id => @booking.id)
         return
     end
@@ -3360,8 +3701,9 @@ class BookingsController < ApplicationController
     status_confirmed = Status.find_by(:name => 'Confirmado')
     status_cancelado = Status.find_by_name('Cancelado')
 
+    timezone = CustomTimezone.from_company(@company)
     @bookings.each do |b|
-      if DateTime.now - eval(ENV["TIME_ZONE_OFFSET"]) > b.start || b.status_id == status_cancelado.id
+      if DateTime.now + timezone.offset > b.start || b.status_id == status_cancelado.id
 
           if b.status_id == status_cancelado.id
             reason = "fue cancelada."
@@ -6181,6 +6523,15 @@ class BookingsController < ApplicationController
     crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
     ids = crypt.decrypt_and_verify(params[:encrypted_ids])
     @bookings_group = Booking.where(id: ids)
+  end
+
+  def get_treatment_info
+
+    @session_booking = @booking.session_booking
+    @json_response = {session_booking: @session_booking, bookings: @session_booking.bookings}
+
+    render :json => @json_response
+
   end
 
 

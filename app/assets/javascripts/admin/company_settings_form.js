@@ -27,15 +27,8 @@ $(function () {
     $(this).val(tmp);
   });
 
-  $('#company_setting_allows_optimizaton').on('change', function(){
-    if($(this).prop('checked'))
-    {
-      $('#booking_leap_div').hide();
-    }
-    else
-    {
-      $('#booking_leap_div').show();
-    }
+  $('#company_setting_allows_optimization').change(function () {
+    $('#booking_leap_div').toggle();
   });
 
   $("#company_logo").change(function (){

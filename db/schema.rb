@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160401171459) do
+ActiveRecord::Schema.define(version: 20160404103728) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -474,6 +474,8 @@ ActiveRecord::Schema.define(version: 20160401171459) do
     t.string   "formatted_address", default: ""
     t.string   "domain",            default: ""
     t.float    "sales_tax",         default: 0.0, null: false
+    t.string   "timezone_name"
+    t.float    "timezone_offset"
   end
 
   create_table "custom_filters", force: true do |t|

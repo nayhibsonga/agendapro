@@ -41,7 +41,11 @@
 				Producto
 			</label>
 			<div class="col-md-7">
-				<%= @internal_sale.product.full_name %>
+				<% if @internal_sale.product.nil? %>
+          Sin información
+        <% else %>
+          <%= @internal_sale.product.full_name %>
+        <% end %>
 			</div>
 		</div>
 	</div>
@@ -77,6 +81,16 @@
 			<div class="col-md-7">
 				<%= number_to_currency(@internal_sale.price * @internal_sale.quantity, currency: ' $', separator: ',', delimeter: '.', precision: 0) %>
 			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<label class="control-label col-md-2">
+		Comentarios
+	</label>
+	<div class="col-md-10">
+		<div style="margin-left: 5%;">
+			<%= @internal_sale.get_notes %>
 		</div>
 	</div>
 </div>

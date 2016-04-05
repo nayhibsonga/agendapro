@@ -37,7 +37,8 @@ class PayedBookingsController < ApplicationController
 	  				end
 	  			end
 
-	  			limit_date = limit_date + eval(ENV["TIME_ZONE_OFFSET"])
+					timezone = CustomTimezone.from_company(company)
+	  			limit_date = limit_date + timezone.offset
 
 	  			pending_payed_bookings = PayedBooking.where(:transfer_complete => false, :canceled => false, :id => Booking.where('"bookings".created_at < ?', limit_date).where(:location_id => Location.where(:company_id => company.id)).pluck('distinct payed_booking_id'))
 	  			if pending_payed_bookings.count > 0

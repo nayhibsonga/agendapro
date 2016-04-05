@@ -2,6 +2,7 @@ class PaymentProduct < ActiveRecord::Base
   belongs_to :payment
   belongs_to :product
   belongs_to :receipt
+  has_one :product_log, dependent: :nullify
 
   # after_create :set_stock_create
   #after_save :set_stock_update
@@ -22,7 +23,7 @@ class PaymentProduct < ActiveRecord::Base
   end
 
   def seller
-    
+
     if self.seller_id.nil?
       return nil
     end
@@ -38,7 +39,7 @@ class PaymentProduct < ActiveRecord::Base
   end
 
   #Has seller:
-  #    seller_id: 
+  #    seller_id:
   # => id for service_provider or user
   #    seller_type:
   # => 0: service_provider

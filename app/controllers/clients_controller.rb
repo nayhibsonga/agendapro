@@ -131,7 +131,7 @@ class ClientsController < ApplicationController
     @service_provider_ids = params[:service_provider_ids] ? params[:service_provider_ids].split(',') : ServiceProvider.where(company_id: current_user.company_id).accessible_by(current_ability).pluck(:id)
     @status_ids = params[:status_ids] ? params[:status_ids].split(',') : Status.all.pluck(:id)
 
-    @bookings = @client.bookings.where(start: @from.beginning_of_day..@to.end_of_day, service_id: @service_ids, service_provider_id: @service_provider_ids, status_id: @status_ids).where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc).paginate(:page => params[:page], :per_page => 25)
+    @bookings = @client.bookings.where(start: @from.beginning_of_day..@to.end_of_day, service_id: @service_ids, service_provider_id: @service_provider_ids, status_id: @status_ids).where('is_session = false or (is_session = true and (is_session_booked = true or status_id = ?))', Status.find_by_name("Cancelado").id).order(start: :desc).paginate(:page => params[:page], :per_page => 25)
 
     @booked = @bookings.where(status: Status.find_by(name: 'Reservado')).count
     @confirmed = @bookings.where(status: Status.find_by(name: 'Confirmado')).count

@@ -59,7 +59,7 @@ class PaymentsController < ApplicationController
 
     #   if !@paymentItems.include?("products")
     #     @payments = @payments.where.not(id: PaymentProduct.where('payment_id is not null'))
-    #   end      
+    #   end
 
     # end
 
@@ -215,9 +215,12 @@ class PaymentsController < ApplicationController
       @client = Client.find(params[:client_id])
       @location = Location.find(params[:location_id])
       @payment = Payment.new
-      @elegible_bookings = Booking.where.not(is_session: true, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where(start: (Time.now - eval(ENV["TIME_ZONE_OFFSET"])).beginning_of_day..(Time.now - eval(ENV["TIME_ZONE_OFFSET"])).end_of_day).order(:start)
+
+      timezone = CustomTimezone.from_company(@location.company)
+
+      @elegible_bookings = Booking.where.not(is_session: true, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where(start: (Time.now + timezone.offset).beginning_of_day..(Time.now + timezone.offset).end_of_day).order(:start)
       @past_bookings = Booking.where.not(is_session: true, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where.not(id: @elegible_bookings).order(start: :desc).limit(100).pluck(:id)
-      @elegible_sessions = Booking.where.not(is_session: false, session_booking_id: nil, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where(start: (Time.now - eval(ENV["TIME_ZONE_OFFSET"])).beginning_of_day..(Time.now - eval(ENV["TIME_ZONE_OFFSET"])).end_of_day).order(:start)
+      @elegible_sessions = Booking.where.not(is_session: false, session_booking_id: nil, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where(start: (Time.now + timezone.offset).beginning_of_day..(Time.now + timezone.offset).end_of_day).order(:start)
       @past_sessions = Booking.where.not(is_session: false, session_booking_id: nil, status_id: Status.find_by_name("Cancelado")).where(location_id: @location.id, client_id: @client.id, payment_id: nil).where.not(id: @elegible_sessions).order(start: :desc).limit(100).pluck(:id)
     else
 
@@ -411,16 +414,16 @@ class PaymentsController < ApplicationController
     payment = Payment.new
 
     #Find or create a client (update if necessary)
-    
+
 
     if params[:set_client] == "1"
-      
+
       client = Client.new
-      
+
       if params[:client_id] && !params[:client_id].blank?
         client = Client.find(params[:client_id])
       end
-        
+
       first_name = ""
       last_name = ""
       client_name = params[:client_name]
@@ -448,7 +451,7 @@ class PaymentsController < ApplicationController
       client.phone = params[:client_phone]
       client.gender = params[:client_gender]
       client.company_id = location.company_id
-      
+
       if client.save
         payment.client_id = client.id
       else
@@ -460,7 +463,7 @@ class PaymentsController < ApplicationController
         @json_response << @errors
         render :json => @json_response
         return
-      end   
+      end
 
     else
       payment.client_id = nil
@@ -638,8 +641,13 @@ class PaymentsController < ApplicationController
           if location_product.nil?
             @errors << "No existe el producto para el local."
           else
+
             location_product.stock = location_product.stock - payment_product.quantity
             location_product.save
+
+            product_log = ProductLog.new(product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: nil, user_id: nil, client_id: payment.client_id, change: "Decremento de " + (location_product.stock + payment_product.quantity).to_s + " a " + location_product.stock.to_s, cause: "Venta a cliente.")
+            product_log.payment_product = payment_product
+            product_log.save
           end
 
           @paymentProducts << payment_product
@@ -647,7 +655,7 @@ class PaymentsController < ApplicationController
       end
 
       new_receipt.payment = payment
-      
+
       unless new_receipt.save
         @errors << new_receipt.errors
       end
@@ -676,6 +684,7 @@ class PaymentsController < ApplicationController
         mock_booking.delete
       end
       payment.payment_products.each do |payment_product|
+        ProductLog.where(payment_product_id: payment_product.id).delete_all
         payment_product.delete
       end
       payment.bookings.each do |booking|
@@ -725,9 +734,9 @@ class PaymentsController < ApplicationController
 
     #Find or create a client (update if necessary)
     if params[:set_client] == "1"
-      
+
       client = Client.new
-      
+
       if params[:client_id] && !params[:client_id].blank?
         client = Client.find(params[:client_id])
       end
@@ -752,14 +761,14 @@ class PaymentsController < ApplicationController
       if !params[:client_email].blank?
         client_email = params[:client_email]
       end
-        
+
       client.first_name = first_name
       client.last_name = last_name
       client.email = client_email
       client.phone = params[:client_phone]
       client.gender = params[:client_gender]
       client.company_id = location.company_id
-      
+
       if client.save
         payment.client_id = client.id
       else
@@ -769,7 +778,7 @@ class PaymentsController < ApplicationController
         @json_response << @errors
         render :json => @json_response
         return
-      end   
+      end
 
     else
       if params[:client_id].present?
@@ -825,6 +834,7 @@ class PaymentsController < ApplicationController
       else
         location_product.stock = location_product.stock + payment_product.quantity
         location_product.save
+        ProductLog.where(payment_product_id: payment_product.id).delete_all
       end
 
       payment_product.delete
@@ -998,6 +1008,9 @@ class PaymentsController < ApplicationController
           else
             location_product.stock = location_product.stock - payment_product.quantity
             location_product.save
+            product_log = ProductLog.new(product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: nil, user_id: nil, client_id: payment.client_id, change: "Decremento de " + (location_product.stock + payment_product.quantity).to_s + " a " + location_product.stock.to_s, cause: "Venta a cliente.")
+            product_log.payment_product = payment_product
+            product_log.save
           end
 
           new_receipt.payment_products << payment_product
@@ -1007,7 +1020,7 @@ class PaymentsController < ApplicationController
       end
 
       new_receipt.payment = payment
-      
+
       unless new_receipt.save
         @errors << new_receipt.errors
       end
@@ -1051,7 +1064,7 @@ class PaymentsController < ApplicationController
   end
 
   def receipt_pdf
-    
+
     @receipt = Receipt.find(params[:receipt_id])
     @filename = @receipt.receipt_type.name + "_" + @receipt.number.to_s
 
@@ -1085,7 +1098,7 @@ class PaymentsController < ApplicationController
 
     @payment = Payment.find(params[:payment_id])
     @json_response = []
-    
+
     if @payment.send_receipts_email(params[:emails])
       @json_response << "ok"
       @json_response << @payment
@@ -1136,25 +1149,25 @@ class PaymentsController < ApplicationController
     payment = Payment.find(params[:payment_id])
 
     if params[:set_client] == "1"
-      
+
       client = Client.new
-      
+
       if params[:client_id] && !params[:client_id].blank?
         client = Client.find(params[:client_id])
       end
-        
+
       client.first_name = params[:client_first_name]
       client.last_name = params[:client_last_name]
       client.email = params[:client_email]
       client.phone = params[:client_phone]
       client.gender = params[:client_gender]
       client.company_id = payment.location.company_id
-      
+
       if client.save
         payment.client_id = client.id
       else
         errors << "No se pudo guardar al cliente"
-      end   
+      end
 
     else
       payment.client_id = nil
@@ -1197,7 +1210,7 @@ class PaymentsController < ApplicationController
 
   #Responds if a booking has a payment or not
   def check_booking_payment
-    
+
     booking = Booking.find(params[:booking_id])
     json_response = []
 
@@ -1233,6 +1246,7 @@ class PaymentsController < ApplicationController
         if !location_product.nil?
           location_product.stock = location_product.stock + payment_product.quantity
           location_product.save
+          product_log = ProductLog.create(product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: nil, user_id: nil, client_id: payment.client_id, change: "Incremento de " + (location_product.stock - payment_product.quantity).to_s + " a " + location_product.stock.to_s, cause: "Eliminación de Venta a cliente.")
         end
       else
         errors << payment_product.errors
@@ -1392,7 +1406,7 @@ class PaymentsController < ApplicationController
     elsif params[:filter_option] == "inactive"
       services = provider.services.where(active: false)
     end
-      
+
 
     service_commissions = []
 
@@ -1421,7 +1435,7 @@ class PaymentsController < ApplicationController
   def set_default_commission
 
     @errors = []
-    @json_response = [] 
+    @json_response = []
     service = Service.find(params[:service_id])
 
     service.comission_value = params[:comission_value]
@@ -1484,7 +1498,7 @@ class PaymentsController < ApplicationController
   def set_provider_default_commissions
 
     @errors = []
-    @json_response = [] 
+    @json_response = []
 
     provider = ServiceProvider.find(params[:provider_id])
 
@@ -1617,7 +1631,7 @@ class PaymentsController < ApplicationController
   end
 
   def get_product_for_payment_or_sale
-    
+
     json_response = []
     errors = []
 
@@ -1731,6 +1745,9 @@ class PaymentsController < ApplicationController
       @errors << "No existe el producto para el local ingresado."
     end
 
+    if !params[:notes].blank?
+      internal_sale.notes = params[:notes]
+    end
     internal_sale.list_price = params[:price].to_f
     internal_sale.discount = params[:discount].to_f
     internal_sale.quantity = params[:quantity].to_i
@@ -1741,12 +1758,15 @@ class PaymentsController < ApplicationController
       if internal_sale.save
 
         if is_edit && !old_location_product.nil?
-          logger.debug "Entra a old_location"       
+          logger.debug "Entra a old_location"
           if old_location_product.id == location_product.id
             location_product.stock = location_product.stock - internal_sale.quantity + old_quantity
           else
             old_location_product.stock += old_quantity
-            old_location_product.save
+            if old_location_product.save
+              change = "Incremento de " + (old_location_product.stock - old_quantity).to_s + " a " + old_location_product.stock.to_s
+              ProductLog.create(internal_sale_id: internal_sale.id, product_id: old_location_product.product.id, location_id: old_location_product.location.id, service_provider_id: internal_sale.service_provider_id, user_id: internal_sale.user_id, change: change, cause: "Modificación de venta interna.")
+            end
             location_product.stock = location_product.stock - internal_sale.quantity
           end
         else
@@ -1754,6 +1774,9 @@ class PaymentsController < ApplicationController
         end
 
         if location_product.save
+          change = "Decremento de " + (location_product.stock + internal_sale.quantity).to_s + " a " + location_product.stock.to_s
+
+          ProductLog.create(internal_sale_id: internal_sale.id, product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: internal_sale.service_provider_id, user_id: internal_sale.user_id, change: change, cause: "Venta interna.")
           @json_response[0] = "ok"
           @json_response[1] = internal_sale
         else
@@ -1793,7 +1816,9 @@ class PaymentsController < ApplicationController
     if internal_sale.delete
       if !location_product.nil?
         location_product.stock += quantity
-        location_product.save
+        if location_product.save
+          ProductLog.create(product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: internal_sale.service_provider_id, user_id: internal_sale.user_id, change: "Incremento de " + (location_product.stock - internal_sale.quantity).to_s + " a " + location_product.stock.to_s, cause: "Eliminación de Venta interna.")
+        end
       end
       json_response[0] = "ok"
     else
@@ -1964,7 +1989,7 @@ class PaymentsController < ApplicationController
     end
 
     if petty_transaction.save
-      
+
       if petty_cash.save_with_cash
         @json_response << "ok"
         @json_response << petty_transaction
@@ -2076,7 +2101,7 @@ class PaymentsController < ApplicationController
   end
 
   def petty_cash_report
-    
+
     @petty_cash = PettyCash.find(params[:petty_cash_id])
     @start_date = params[:start_date].to_datetime
     @end_date = params[:end_date].to_datetime
@@ -2111,8 +2136,9 @@ class PaymentsController < ApplicationController
 
     @sales_cash.cash = 0.0
 
-    start_date = @sales_cash.last_reset_date - eval(ENV["TIME_ZONE_OFFSET"])
-    end_date = DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])
+    timezone = CustomTimezone.from_sales_cash(@sales_cash)
+    start_date = @sales_cash.last_reset_date + timezone.offset
+    end_date = DateTime.now + timezone.offset
 
     @sales_cash_transactions = SalesCashTransaction.where(sales_cash_id: @sales_cash.id, open: true, date: start_date..end_date)
 
@@ -2208,10 +2234,11 @@ class PaymentsController < ApplicationController
 
     @sales_cash_log = SalesCashLog.find(params[:sales_cash_log_id])
 
-    start_date = @sales_cash_log.start_date - eval(ENV["TIME_ZONE_OFFSET"])
-    end_date = @sales_cash_log.end_date - eval(ENV["TIME_ZONE_OFFSET"])
-
     @sales_cash = @sales_cash_log.sales_cash
+
+    timezone = CustomTimezone.from_sales_cash(@sales_cash)
+    start_date = @sales_cash_log.start_date + timezone.offset
+    end_date = @sales_cash_log.end_date + timezone.offset
 
     @sales_cash_transactions = SalesCashTransaction.where(sales_cash_id: @sales_cash.id, open: false, date: start_date..end_date)
 
@@ -2235,7 +2262,8 @@ class PaymentsController < ApplicationController
 
     @sales_cash = SalesCash.find(params[:sales_cash_id])
 
-    start_date = @sales_cash.last_reset_date - eval(ENV["TIME_ZONE_OFFSET"])
+    timezone = CustomTimezone.from_sales_cash(@sales_cash)
+    start_date = @sales_cash.last_reset_date + timezone.offset
     end_date = DateTime.now
 
     @sales_cash_transactions = SalesCashTransaction.where(sales_cash_id: @sales_cash.id, open: true, date: start_date..end_date)
@@ -2309,7 +2337,7 @@ class PaymentsController < ApplicationController
   end
 
   def close_sales_cash
-    
+
     json_response = []
     errors = []
 
@@ -2324,7 +2352,7 @@ class PaymentsController < ApplicationController
     end
 
     now = DateTime.now
-    
+
     sales_cash.sales_cash_incomes.where('date <= ?', now).each do |income|
       income.open = false
       income.save
@@ -2432,9 +2460,9 @@ class PaymentsController < ApplicationController
       if !params[:receipt_number].blank?
         sales_cash_transaction.receipt_number = params[:receipt_number]
       end
-      
+
       sales_cash_transaction.receipt_number = params[:receipt_number]
-      
+
       petty_transaction = PettyTransaction.new
       petty_transaction.petty_cash_id = petty_cash.id
       petty_transaction.transactioner_type = 1
@@ -2493,7 +2521,7 @@ class PaymentsController < ApplicationController
   end
 
   def delete_sales_cash_transaction
-    
+
     json_response = []
     errors = []
 
@@ -2557,7 +2585,7 @@ class PaymentsController < ApplicationController
   end
 
   def save_sales_cash_income
-    
+
     json_response = []
     errors = []
 

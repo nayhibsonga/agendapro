@@ -1,0 +1,137 @@
+<style type="text/css">
+.multiselect-container.dropdown-menu{
+  left: auto;
+}
+</style>
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-green">Historial de movimientos</h2>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="row" style="margin-top: 10px;">
+        <div class="col-md-12">
+          <table>
+            <tr>
+              <td style="width: 100px;">
+                Desde:&nbsp;&nbsp;
+              </td>
+              <td style="width: 200px;">
+                <input type="text" class="form-control datepicker" id="from" value="<%= (DateTime.now - 1.months).strftime('%d/%m/%Y') %>" />
+              </td>
+              <td style="width: 100px; padding-left: 20px;">
+                Hasta:&nbsp;&nbsp;
+              </td>
+              <td style="width: 200px;">
+                <input type="text" class="form-control datepicker" id="to" value="<%= (DateTime.now).strftime('%d/%m/%Y') %>" />
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 10px;">
+        <div class="col-md-12">
+          <table>
+            <tr>
+              <td style="width: 100px;">
+                Locales:&nbsp;&nbsp;
+              </td>
+              <td style="min-width: 200px;">
+                <div>
+                  <select id="location-select" multiple="multiple" class="form-control" style="display: none;">
+                    <optgroup label="Activos">
+                      <% @locations.where(active: true).each do |location|
+                      %>
+                        <option value="<%= location.id %>" selected="selected">
+                          <%= location.name %>
+                        </option>
+                      <% end %>
+                    </optgroup>
+                    <optgroup label="Inactivos">
+                      <% @locations.where(active: false).each do |location|
+                      %>
+                        <option value="<%= location.id %>">
+                          <%= location.name %>
+                        </option>
+                      <% end %>
+                    </optgroup>
+                  </select>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="row" style="margin-top: 10px;">
+        <div class="col-md-12">
+          <table>
+            <tr>
+              <td style="width: 100px;">
+                Categoría(s):&nbsp;&nbsp;
+              </td>
+              <td style="width: 200px;">
+                <select id="category-select" multiple="multiple" class="form-control" style="display: none;">
+                  <% @product_categories.each do |product_category|
+                  %>
+                    <option value="<%= product_category.id %>">
+                      <%= product_category.name %>
+                    </option>
+                  <% end %>
+                </select>
+              </td>
+              <td style="width: 100px; padding-left: 20px;">
+                Producto(s):&nbsp;&nbsp;
+              </td>
+              <td style="width: 200px;">
+                <select id="product-select" multiple="multiple" class="form-control" style="display: none;">
+
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 100px; padding-top: 10px;">
+                Orden:&nbsp;&nbsp;
+              </td>
+              <td style="width: 200px; padding-top: 10px;">
+                <select id="order-select" class="form-control">
+                  <option value="recent">Más reciente (todos)</option>
+                  <option value="old">Más antiguo (todos)</option>
+                  <option value="by_products_recent">Por productos (más reciente)</option>
+                  <option value="by_products_old">Por productos (más antiguo)</option>
+                </select>
+              </td>
+              <td style="width: 100px; padding-left: 20px;">
+
+              </td>
+              <td style="min-width: 200px;">
+                <a href="" id="download-history-link" target="_blank"><button id="download_stats_btn" class="btn btn-green" style="display: none; width: 200px; margin-top: 10px;"><i class="fa fa-file-excel-o"></i>&nbsp;Descargar</button></a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="render_content">
+
+  </div>
+
+</div>
+
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/bootstrap-multiselect" %>
+  <%= javascript_include_tag "admin/products-history" %>
+<% end %>
