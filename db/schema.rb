@@ -1102,6 +1102,13 @@ ActiveRecord::Schema.define(version: 20160404103728) do
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
   add_index "payment_products", ["product_id"], name: "index_payment_products_on_product_id", using: :btree
 
+  create_table "payment_sendings", force: true do |t|
+    t.integer "payment_id"
+    t.string  "emails"
+  end
+
+  add_index "payment_sendings", ["payment_id"], name: "index_payment_sendings_on_payment_id", using: :btree
+
   create_table "payment_statuses", force: true do |t|
     t.string   "name",        null: false
     t.text     "description", null: false

@@ -13,7 +13,10 @@ class BookingMailer < Base::CustomMailer
 
     # layout variables
     @title = "Nueva Reserva en #{@company.name}"
-    attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
+    attachments["#{book.service.name}-#{@company.name}.ics"] = {
+      mime_type: 'text/calendar',
+      content: book.generate_ics.export()
+    }
     unless options[:horachic] # layout green
       @url = @company.web_url
       @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
@@ -49,8 +52,6 @@ class BookingMailer < Base::CustomMailer
     @company = book.location.company
 
     # layout variables
-    @title = "Reserva Cancelada en #{@company.name}"
-    attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
     unless options[:horachic] # layout green
       @url = @company.web_url
       @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
@@ -88,7 +89,10 @@ class BookingMailer < Base::CustomMailer
 
     # layout variables
     @title = "#{options[:client] ? 'Confirma' : 'Recuerda'} tu Reserva en #{@company.name}"
-    attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
+    attachments["#{book.service.name}-#{@company.name}.ics"] = {
+      mime_type: 'text/calendar',
+      content: book.generate_ics.export()
+    }
     unless options[:horachic] # layout green
       @url = @company.web_url
       @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
@@ -153,7 +157,10 @@ class BookingMailer < Base::CustomMailer
 
     # layout variables
     @title = "Reserva Actualizada en #{@company.name}"
-    attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
+    attachments["#{book.service.name}-#{@company.name}.ics"] = {
+      mime_type: 'text/calendar',
+      content: book.generate_ics.export()
+    }
     unless options[:horachic] # layout green
       @url = @company.web_url
       @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
@@ -193,7 +200,10 @@ class BookingMailer < Base::CustomMailer
     @title = "Nueva Reserva en #{@company.name}"
     @url = @company.web_url
     @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
-    attachments["#{book.service.name}-#{@company.name}.ics"] = book.generate_ics.export()
+    attachments["#{book.service.name}-#{@company.name}.ics"] = {
+      mime_type: 'text/calendar',
+      content: book.generate_ics.export()
+    }
 
     # view variables
     @book = book

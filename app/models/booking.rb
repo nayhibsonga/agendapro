@@ -774,22 +774,20 @@ class Booking < ActiveRecord::Base
       address = "A domicilio"
     end
     timezone = CustomTimezone.from_booking(self)
-    event = RiCal.Calendar do |cal|
-      cal.event do |event|
-        event.summary = "#{self.service.name} en #{self.location.company.name}"
-        event.description = "Datos de tu reserva:\n
-          \t- Fecha: #{date}\n
-          \t- Servicio: #{self.service.name}\n
-          \t- Prestador: #{self.service_provider.public_name}\n
-          \t- Lugar: #{address}.\n
-          NOTA: por favor asegúrate que el calendario de tu celular esté en la zona horario correcta. En caso contrario, este recordatorio podría quedar guardado para otra hora."
-        event.dtstart =  Time.parse(self.start.strftime("%Y%m%dT%H%M%S #{timezone.name}")).utc
-        event.dtend = Time.parse(self.end.strftime("%Y%m%dT%H%M%S #{timezone.name}")).utc
-        event.location = self.location.long_address_with_second_address
-        event.add_attendee self.client.email
-        event.alarm do
-          description "Recuerda tu hora de #{booking.service.name} en #{booking.location.company.name}"
-        end
+    event = RiCal.Event do |event|
+      event.summary = "#{self.service.name} en #{self.location.company.name}"
+      event.description = "Datos de tu reserva:\n
+      \t- Fecha: #{date}\n
+      \t- Servicio: #{self.service.name}\n
+      \t- Prestador: #{self.service_provider.public_name}\n
+      \t- Lugar: #{address}.\n
+      NOTA: por favor asegúrate que el calendario de tu celular esté en la zona horario correcta. En caso contrario, este recordatorio podría quedar guardado para otra hora."
+      event.dtstart =  Time.parse(self.start.strftime("%Y%m%dT%H%M%S #{timezone.name}")).utc
+      event.dtend = Time.parse(self.end.strftime("%Y%m%dT%H%M%S #{timezone.name}")).utc
+      event.location = self.location.long_address_with_second_address
+      event.add_attendee self.client.email
+      event.alarm do
+        description "Recuerda tu hora de #{booking.service.name} en #{booking.location.company.name}"
       end
     end
     return event
