@@ -51,6 +51,7 @@ class LocationsController < ApplicationController
     respond_to do |format|
       if @location.save
         flash[:notice] = 'Local creado exitosamente.'
+        flash.keep(:notice)
         format.html { redirect_to locations_path }
         format.json { render :json => @location }
       else
@@ -72,6 +73,7 @@ class LocationsController < ApplicationController
             location[:warnings] = warnings
           end
           flash[:notice] = 'Local actualizado exitosamente.'
+          flash.keep(:notice)
           format.html { redirect_to locations_path }
           format.json { render :json => location }
         else
@@ -96,6 +98,7 @@ class LocationsController < ApplicationController
             location[:warnings] = warnings
           end
           flash[:notice] = 'Local actualizado exitosamente.'
+          flash.keep(:notice)
           format.html { redirect_to locations_path }
           format.json { render :json => location }
         else

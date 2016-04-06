@@ -75,6 +75,7 @@ class ServicesController < ApplicationController
     respond_to do |format|
       if @service.save
         format.html { redirect_to services_path, notice: 'Servicio creado exitosamente.' }
+        flash.keep(:notice)
         format.json { render action: 'show', status: :created, location: @service }
       else
         format.html { render action: 'new' }
@@ -153,6 +154,7 @@ class ServicesController < ApplicationController
           @service.check_online_discount
           @service_times.destroy_all
           format.html { redirect_to services_path, notice: 'Servicio actualizado exitosamente.' }
+          flash.keep(:notice)
           format.json { head :no_content }
         else
           @service_times.each do |service_time|
@@ -744,7 +746,7 @@ class ServicesController < ApplicationController
           if treatment_promo.save
             @treatment_promos << treatment_promo
 
-            @treatment_locations.each do |treatment_location|      
+            @treatment_locations.each do |treatment_location|
               treatment_promo_location = TreatmentPromoLocation.create(:treatment_promo_id => treatment_promo.id, :location_id => treatment_location.id)
             end
 
@@ -776,7 +778,7 @@ class ServicesController < ApplicationController
             if treatment_promo.save
               @treatment_promos << treatment_promo
 
-              @treatment_locations.each do |treatment_location|      
+              @treatment_locations.each do |treatment_location|
                 treatment_promo_location = TreatmentPromoLocation.create(:treatment_promo_id => treatment_promo.id, :location_id => treatment_location.id)
               end
 
@@ -1280,13 +1282,13 @@ class ServicesController < ApplicationController
 
   def last_minute_hours
     @service = Service.find(params[:id])
-    
+
     @location = Location.find(params[:location_id])
-    
+
     @serviceStaff = []
-    
+
     @serviceStaff[0] = {:service => @service.id, :provider => params[:service_provider_id]}
-    
+
     @last_minute_promo = @service.active_last_minute_promo
 
     @selected_date = params[:date]

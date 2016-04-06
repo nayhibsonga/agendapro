@@ -79,6 +79,7 @@ class ServiceProvidersController < ApplicationController
     respond_to do |format|
       if @service_provider.save
         flash[:notice] = 'Prestador creado exitosamente.'
+        flash.keep(:notice)
         format.html { redirect_to service_providers_path }
         format.json { render :json => @service_provider }
       else
@@ -104,6 +105,7 @@ class ServiceProvidersController < ApplicationController
       if @service_provider.update(service_provider_params)
         @provider_times.destroy_all
         flash[:notice] = 'Prestador actualizado exitosamente.'
+        flash.keep(:notice)
         format.html { redirect_to service_providers_path }
         format.json { render :json => @service_provider }
       else
