@@ -225,6 +225,7 @@ class ClientsController < ApplicationController
           @company = current_user.company
           @activeBookings = Array.new
           @lastBookings = Array.new
+          @folders = Array.new
           @client_comment = ClientComment.new
           @sessionBookings = []
           render action: 'new' }
