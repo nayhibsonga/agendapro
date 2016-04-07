@@ -1357,9 +1357,25 @@ class BookingsController < ApplicationController
       # =>    If not, we just need to update the booking
       # => End
       old_service_id = @booking.service_id
+      old_client_id = @booking.client_id
       old_session_booking_id = @booking.session_booking_id
       was_session = @booking.is_session
       session_booking = nil
+
+      #TODO:
+      #Check if client changed. If so:
+      # If old_session && new_session
+          #Cancel old session, and check if new client has a treatment (should be given in params)
+            #If he has, book a session
+            #If not, create a new treatment
+      # Elsif !old_session && new _session
+          #Check if new client has a treatment (should be given in params)
+            #If he has, book a session
+            #If not, create a new treatment
+      # Elsif old_session && !new_session
+        #Cancel old session.
+      # Else
+      #   Nothing to do
 
       if !booking_params[:status_id].blank?
         @booking.status_id = booking_params[:status_id]
