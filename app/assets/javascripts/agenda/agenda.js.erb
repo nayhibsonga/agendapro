@@ -674,7 +674,10 @@ $("#nextButton").click(function(){
       });
   }
   else {
-      swal('Debes seleccionar una hora');
+      swal({
+        title: "Debes seleccionar una hora",
+        type: "error"
+      });
   }
 });
 

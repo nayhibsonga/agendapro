@@ -457,6 +457,7 @@ ActiveRecord::Schema.define(version: 20160404103728) do
     t.boolean  "mandatory_mock_booking_info", default: false
     t.boolean  "strict_booking",              default: false,                 null: false
     t.integer  "mails_base_capacity",         default: 5000
+    t.integer  "booking_leap",                default: 15
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -1615,6 +1616,7 @@ ActiveRecord::Schema.define(version: 20160404103728) do
     t.integer  "order",          default: 0
     t.integer  "block_length",   default: 15
     t.boolean  "online_booking", default: true
+    t.integer  "booking_leap",   default: 15
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree

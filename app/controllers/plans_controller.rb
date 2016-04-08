@@ -150,12 +150,12 @@ class PlansController < ApplicationController
     end
 
     if @billing_wire_transfer.save
-      flash[:notice] = 'Transferencia guardada correctamente y en espera de aprobación.'
+      flash[:success] = 'Transferencia guardada correctamente y en espera de aprobación.'
       @billing_wire_transfer.sendings.build(method: 'transfer').save
 
       redirect_to :action => 'select_plan'
     else
-      flash[:alert] = 'Ocurrió un error al tratar de guardar la transferencia.'
+      flash[:error] = 'Ocurrió un error al tratar de guardar la transferencia.'
       redirect_to :action => 'select_plan'
     end
 

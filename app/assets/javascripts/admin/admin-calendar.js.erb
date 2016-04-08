@@ -1359,7 +1359,10 @@ function editDrag(event) {
             $('#calendar').fullCalendar('updateEvent', event);
             if(!booking.is_session || (booking.is_session && booking.user_session_confirmed))
             {
-              swal("Reserva actualizada exitosamente.");
+              swal({
+                title: "Reserva actualizada exitosamente.",
+                type: "success"
+              });
             }
             else
             {
@@ -1448,7 +1451,10 @@ function editDrag(event) {
               $('#calendar').fullCalendar('updateEvent', event);
               if(!booking.is_session || (booking.is_session && booking.user_session_confirmed))
               {
-                swal("Reserva actualizada exitosamente.");
+                swal({
+                  title: "Reserva actualizada exitosamente.",
+                  type: "success"
+                });
               }
               else
               {
@@ -1829,7 +1835,10 @@ function saveBreak (typeURL, extraURL) {
 
   if (startDate.getTime() >= endDate.getTime())
   {
-    swal("La fecha de fin no puede ser anterior o igual a la de inicio.");
+    swal({
+      title: "La fecha de fin no puede ser anterior o igual a la de inicio.",
+      type: "error"
+    });
     return false;
   }
 
@@ -2025,7 +2034,10 @@ function editRepeatBreak(breakId) {
 
   if (startDate.getTime() >= endDate.getTime())
   {
-    swal("La fecha de fin no puede ser anterior o igual a la de inicio.");
+    swal({
+      title: "La fecha de fin no puede ser anterior o igual a la de inicio.",
+      type: "error"
+    });
     return false;
   }
 
@@ -2841,7 +2853,7 @@ function checkClientSessions(service_change) {
         if(parseInt($("#booking_service_id").val()) > 0)
         {
 
-          if(openedBooking.service_id != null && parseInt($('#booking_service_id').val()) == openedBooking.service_id)
+          if(openedBooking.service_id != null && parseInt($('#booking_service_id').val()) == openedBooking.service_id && openedBooking.client_id == parseInt($('#booking_client_id').val()))
           {
             $("#sessions-info").empty();
             $("#sessions-info").append("Esta reserva corresponde a la " + openedBooking.sessions_ratio + " del servicio.");
@@ -3014,7 +3026,7 @@ function offsetDate(date, offset) {
 }
 
 $(function() {
-  clearTimeout(alertDismiss);
+  // clearTimeout(alertDismiss);
 
   $('form input, form select').bind('keypress keydown keyup', function(e){
     if(e.keyCode == 13) {
@@ -3200,7 +3212,7 @@ $(function() {
       $('#xButton').prop('disabled', false);
       $("#full_name").prop('disabled', true);
       loadClientHistory(0);
-      checkClientSessions(false);
+      checkClientSessions(true);
     },
     focus: function (event, ui) {
       event.preventDefault();
@@ -3264,7 +3276,7 @@ $(function() {
       $('#xButton').prop('disabled', false);
       $("#full_name").prop('disabled', true);
       loadClientHistory(0);
-      checkClientSessions(false);
+      checkClientSessions(true);
     },
     focus: function (event, ui) {
       event.preventDefault();
@@ -3329,7 +3341,7 @@ $(function() {
       $('#full_name').prop('disabled', true);
       $('#full_name').val(client.first_name+' '+client.last_name);
       loadClientHistory(0);
-      checkClientSessions(false);
+      checkClientSessions(true);
     },
     focus: function (event, ui) {
       event.preventDefault();
@@ -3426,7 +3438,7 @@ $(function() {
     $('label[for=booking_send_mail]').addClass('disabled');
     $('#client-history-tbody').empty();
     $('#client-history-tbody').append('<tr><td colspan="6">No hay un cliente seleccionado...</td></tr>');
-    checkClientSessions(false);
+    checkClientSessions(true);
     $('#xButton').prop('disabled', true);
   });
 

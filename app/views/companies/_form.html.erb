@@ -1,14 +1,18 @@
 <%= form_for @company, :html => {:class => 'form-horizontal', :multipart => true} do |f| %>
   <% if @company.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
-
-      <ul>
+    <% content_for :scripts do %>
+      <% message = '' %>
       <% @company.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
+        <%= message += '* ' + msg + '\n' %>
       <% end %>
-      </ul>
-    </div>
+      <script type="text/javascript">
+        swal({
+          title: "Error al guardar la empresa",
+          text: "<%= message %>",
+          type: "error"
+        });
+      </script>
+    <% end %>
   <% end %>
 
   <% if current_user.role == Role.find_by(name: "Super Admin") %>

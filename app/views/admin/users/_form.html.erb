@@ -4,14 +4,19 @@
       <div class="well">
         <%= form_for [:admin, @user], html: {class: "form-horizontal" } do |f| %>
           <% if @user.errors.any? %>
-          <div id="error_explanation">
-            <h3><%= pluralize(@user.errors.count, "error") %> no permitió que el usuario fuera creado:</h3>
-            <ul>
+            <% content_for :scripts do %>
+              <% message = '' %>
               <% @user.errors.full_messages.each do |msg| %>
-                <li><%= msg %></li>
+                <%= message += '* ' + msg + '\n' %>
               <% end %>
-            </ul>
-          </div>
+              <script type="text/javascript">
+                swal({
+                  title: "Error al guardar el usuario",
+                  text: "<%= message %>",
+                  type: "error"
+                });
+              </script>
+            <% end %>
           <% end %>
 
           <%= f.hidden_field :first_name %>
