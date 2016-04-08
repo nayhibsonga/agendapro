@@ -340,7 +340,7 @@
 
         </div>
       </nav>
-      <!-- start: Alerts -->
+      <!-- start: Alerts
       <% unless current_page?(bookings_path) %>
       <% if notice %>
         <div class="alert alert-info alert-dismissable fade in">
@@ -355,7 +355,7 @@
         </div>
       <% end %>
       <% end %>
-      <!-- end: Alerts -->
+      end: Alerts -->
     </header>
     <!-- end: Header -->
 
@@ -490,6 +490,7 @@
         window.jQuery || document.write("<script src='/assets/jquery-2.1.1.min.js'>" + "<" + "/script>");
       </script>
     <!--<![endif]-->
+    <%= render 'layouts/alerts' %>
     <%= yield :scripts %>
     <script type="text/javascript">
       $.rails.allowAction = function(link) {

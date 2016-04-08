@@ -1,4 +1,9 @@
 class Email::ContentController < ApplicationController
+  before_action :authenticate_user!
+  before_action :quick_add
+  before_action :verify_blocked_status
+  layout "admin"
+
   layout "admin"
 
   def new

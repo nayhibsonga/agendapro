@@ -85,7 +85,10 @@ $(function() {
   $('#wireTransferBtn').on('click', function(){
     if($('#amount_select').val() == "0" || $('.mp_radio:checked').length < 1)
     {
-      swal("Elige una opción de pago primero.");
+      swal({
+        title: "Elige una opción de pago primero.",
+        type: "error"
+      });
       return false;
     }
     $('#transferModal').modal('show');
@@ -459,7 +462,10 @@ $(function() {
   $('#payBtn').on('click', function(e){
     if($('.mp_radio:checked').length < 1 || $('#amount_select').val() == "0")
     {
-      swal("Elige cantidad y medio de pago antes de pagar.");
+      swal({
+        title: "Elige cantidad y medio de pago antes de pagar.",
+        type: "error"
+      });
       e.preventDefault();
     }
     $(this).attr('disabled', true);
@@ -469,7 +475,10 @@ $(function() {
   $('#reactivatePayBtn').on('click', function(e){
     if($('.reactivate_mp_radio:checked').length < 1)
     {
-      swal("Elige medio de pago antes de pagar.");
+      swal({
+        title: "Elige medio de pago antes de pagar.",
+        type: "error"
+      });
       e.preventDefault();
     }
     $(this).attr('disabled', true);
@@ -479,7 +488,10 @@ $(function() {
   $('#changePlanPayBtn').on('click', function(e){
     if($('.change_plan_mp_radio:checked').length < 1)
     {
-      swal('Elige un medio de pago primero.');
+      swal({
+        title: "Elige un medio de pago primero.",
+        type: "error"
+      });
       e.preventDefault();
     }
     $(this).attr('disabled', true);

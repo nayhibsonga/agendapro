@@ -586,10 +586,10 @@ class CompaniesController < ApplicationController
 		@record = BillingRecord.find(params[:record_id])
 		@company = Company.find(params[:id])
 		if @record.delete
-			flash[:notice] = 'Pago eliminado correctamente.'
+			flash[:success] = 'Pago eliminado correctamente.'
 			redirect_to :action => 'manage_company', :id => @company.id
 		else
-			flash[:alert] = 'Ocurrió un error al eliminar el pago.'
+			flash[:error] = 'Ocurrió un error al eliminar el pago.'
 			redirect_to :action => 'manage_company', :id => @company.id
 		end
 	end
@@ -680,10 +680,10 @@ class CompaniesController < ApplicationController
 		end
 
 		if @company.save
-			flash[:notice] = 'Companía editada correctamente.'
+			flash[:success] = 'Companía editada correctamente.'
 			redirect_to :action => 'manage_company', :id => @company.id
 		else
-			flash[:alert] = 'Ocurrió un error al editar la compañía.'
+			flash[:error] = 'Ocurrió un error al editar la compañía.'
 			redirect_to :action => 'manage_company', :id => @company.id
 		end
 
@@ -1016,10 +1016,10 @@ class CompaniesController < ApplicationController
 		@company.months_active_left = 0
 		@company.payment_status_id = PaymentStatus.find_by_name("Inactivo").id
 		if @company.save
-			flash[:notice] = 'Companía editada correctamente.'
+			flash[:success] = 'Companía editada correctamente.'
 			redirect_to :action => 'manage_company', :id => @company.id
 		else
-			flash[:alert] = 'Ocurrió un error al editar la compañía.'
+			flash[:error] = 'Ocurrió un error al editar la compañía.'
 			redirect_to :action => 'manage_company', :id => @company.id
 		end
 	end
@@ -1048,11 +1048,11 @@ class CompaniesController < ApplicationController
         company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
           CompanyCronLog.create(company_id: company.id, action_ref: 9, details: "OK add_admin_month")
-          flash[:notice] = 'Mes agregado exitosamente.'
+          flash[:success] = 'Mes agregado exitosamente.'
           redirect_to edit_payment_company_path(company)
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 9, details: "ERROR add_admin_month "+company.errors.full_messages.inspect)
-          flash[:alert] = 'Error al agregar mes.'
+          flash[:error] = 'Error al agregar mes.'
           redirect_to edit_payment_company_path(company)
         end
 	end
@@ -1217,7 +1217,7 @@ class CompaniesController < ApplicationController
 		end
 
 		if @company.plan_id == Plan.find_by_name("Gratis").id
-      		redirect_to localized_root_path, alert: "Esta compañía no tiene minisitio."
+      		redirect_to localized_root_path, error: "Esta compañía no tiene minisitio."
       		return
     	end
 
@@ -1267,7 +1267,7 @@ class CompaniesController < ApplicationController
 			return
 
 		elsif params[:serviceStaff].blank? or params[:datepicker].blank?
-			flash[:alert] = "Error ingresando los datos."
+			flash[:error] = "Error ingresando los datos."
 			redirect_to workflow_path(:local => params[:location])
 			return
 		end
@@ -1276,7 +1276,7 @@ class CompaniesController < ApplicationController
 		if serviceStaffAux[0][:bundle] || serviceStaffAux[0][:bundle] == "true"
 			bundle = Bundle.find(serviceStaffAux[0][:service])
 			if Location.find(params[:location]).company_id != bundle.company_id
-				flash[:alert] = "Error ingresando los datos."
+				flash[:error] = "Error ingresando los datos."
 				redirect_to workflow_path(:local => params[:location])
 				return
 			end
@@ -1287,7 +1287,7 @@ class CompaniesController < ApplicationController
 			end
 		else
 			if Location.find(params[:location]).company_id != Service.find(serviceStaffAux[0][:service]).company_id
-				flash[:alert] = "Error ingresando los datos."
+				flash[:error] = "Error ingresando los datos."
 				redirect_to workflow_path(:local => params[:location])
 				return
 			end
@@ -1313,7 +1313,7 @@ class CompaniesController < ApplicationController
 			return
 
 		elsif params[:serviceStaff].blank? or params[:datepicker].blank?
-			flash[:alert] = "Error ingresando los datos."
+			flash[:error] = "Error ingresando los datos."
 			redirect_to workflow_path(:local => params[:location])
 			return
 		end
@@ -1323,7 +1323,7 @@ class CompaniesController < ApplicationController
 		if serviceStaffAux[0][:bundle] || serviceStaffAux[0][:bundle] == "true"
 			bundle = Bundle.find(serviceStaffAux[0][:service])
 			if Location.find(params[:location]).company_id != bundle.company_id
-				flash[:alert] = "Error ingresando los datos."
+				flash[:error] = "Error ingresando los datos."
 				redirect_to workflow_path(:local => params[:location])
 				return
 			end
@@ -1334,7 +1334,7 @@ class CompaniesController < ApplicationController
 			end
 		else
 			if Location.find(params[:location]).company_id != Service.find(serviceStaffAux[0][:service]).company_id
-				flash[:alert] = "Error ingresando los datos."
+				flash[:error] = "Error ingresando los datos."
 				redirect_to workflow_path(:local => params[:location])
 				return
 			end
@@ -1360,7 +1360,7 @@ class CompaniesController < ApplicationController
 			return
 
 		elsif params[:serviceStaff].blank? or params[:datepicker].blank?
-			flash[:alert] = "Error ingresando los datos."
+			flash[:error] = "Error ingresando los datos."
 			redirect_to workflow_path(:local => params[:location])
 			return
 		end
@@ -1387,7 +1387,7 @@ class CompaniesController < ApplicationController
 			redirect_to :action => "overview"
 			return
 		elsif params[:service].blank? or params[:staff].blank? or params[:start].blank? or params[:end].blank? or params[:time_discount].blank? or params[:discount].blank? or params[:service_promo_id].blank? or params[:origin].blank? or params[:provider_lock].blank?
-			flash[:alert] = "Error ingresando los datos."
+			flash[:error] = "Error ingresando los datos."
 			redirect_to workflow_path(:local => params[:location])
 			return
 		end
@@ -1831,10 +1831,10 @@ class CompaniesController < ApplicationController
 
 		if @company.save
 			@company.company_plan_setting.save
-			flash[:notice] = 'Plan guardado correctamente. Puedes cambiarlo cuantas veces quieras hasta que acabe tu período de prueba.'
+			flash[:success] = 'Plan guardado correctamente. Puedes cambiarlo cuantas veces quieras hasta que acabe tu período de prueba.'
 			redirect_to :action => 'select_plan', :controller => 'plans'
 		else
-			flash[:alert] = 'Ocurrió un error al elegir el plan.'
+			flash[:error] = 'Ocurrió un error al elegir el plan.'
 			redirect_to :action => 'select_plan', :controller => 'plans'
 		end
 

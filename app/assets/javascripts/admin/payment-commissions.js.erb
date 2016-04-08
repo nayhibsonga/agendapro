@@ -167,18 +167,27 @@ $(document).ready(function(){
 			success: function(response){
 				if(response[0] == "ok")
 				{
-					swal("Comisiones guardadas exitosamente.");
+					swal({
+            title: "Comisiones guardadas exitosamente.",
+            type: "success"
+          });
 				}
 				else
 				{
-					swal("Ocurrió un error al editar las comisiones.");
+					swal({
+		        title: "Ocurrió un error al editar las comisiones.",
+		        type: "error"
+		      });
 				}
 				$("#serviceCommissionsModalDiv").empty();
 				$("#serviceCommissionsModal").modal('hide');
 			},
 			error: function(){
 
-				swal("Ocurrió un error al editar las comisiones.");
+				swal({
+	        title: "Ocurrió un error al editar las comisiones.",
+	        type: "error"
+	      });
 				$("#serviceCommissionsModalDiv").empty();
 				$("#serviceCommissionsModal").modal('hide');
 
@@ -211,11 +220,17 @@ $(document).ready(function(){
 					{
 						$('.service_comission_value[service_id="' + response[1].id + '"]').text("$ " + comission_value);
 					}
-					swal("Comisiones actualizadas correctamente.");
+					swal({
+            title: "Comisiones guardadas exitosamente.",
+            type: "success"
+          });
 				}
 				else
 				{
-					swal("Ocurrió un error al actualizar las comisiones.");
+					swal({
+		        title: "Ocurrió un error al editar las comisiones.",
+		        type: "error"
+		      });
 				}
 				$("#defaultCommissionServiceId").val("");
 				$("#defaultComissionValue").val("");
@@ -224,7 +239,10 @@ $(document).ready(function(){
 
 			},
 			error: function(response){
-				swal("Ocurrió un error al actualizar las comisiones.");
+				swal({
+	        title: "Ocurrió un error al editar las comisiones.",
+	        type: "error"
+	      });
 				$("#defaultCommissionServiceId").val("");
 				$("#defaultComissionValue").val("");
 				$("#defaultComissionOption").val("");
@@ -249,11 +267,17 @@ $(document).ready(function(){
 
 				if(response[0] == "ok")
 				{
-					swal("Comisiones actualizadas correctamente.");
+					swal({
+            title: "Comisiones guardadas exitosamente.",
+            type: "success"
+          });
 				}
 				else
 				{
-					swal("Ocurrió un error al actualizar las comisiones.");
+					swal({
+		        title: "Ocurrió un error al editar las comisiones.",
+		        type: "error"
+		      });
 				}
 				$("#defaultCommissionProviderId").val("");
 				$("#providerDefaultAmount").val("");
@@ -262,7 +286,10 @@ $(document).ready(function(){
 
 			},
 			error: function(response){
-				swal("Ocurrió un error al actualizar las comisiones.");
+				swal({
+	        title: "Ocurrió un error al editar las comisiones.",
+	        type: "error"
+	      });
 				$("#defaultCommissionProviderId").val("");
 				$("#providerDefaultAmount").val("");
 				$("#providerDefaultIsPercent").val("");

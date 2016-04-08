@@ -140,7 +140,7 @@
         </div>
       </nav>
 
-      <%= alerts(alert, notice) %>
+      <!-- <%= alerts(alert, notice) %> -->
 
     </header>
 
@@ -151,6 +151,7 @@
     <% javascript_include_tag "browser-detect" %>
 
     <%= javascript_include_tag "search" %>
+    <%= render 'layouts/alerts' %>
     <%= yield :scripts %>
     <%= javascript_include_tag 'zopim' %>
     <%= javascript_include_tag 'crazy_egg' %>

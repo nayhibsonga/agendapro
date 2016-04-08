@@ -22,21 +22,21 @@ class AttributeCategoriesController < ApplicationController
 
   def create
     @attribute_category = AttributeCategory.new(attribute_category_params)
-    flash[:notice] = "Categoría creada." if @attribute_category.save
+    flash[:success] = "Categoría creada." if @attribute_category.save
     respond_with(@attribute_category) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
     end
   end
 
   def update
-    flash[:notice] = "Categoría editada." if @attribute_category.update(attribute_category_params)
+    flash[:success] = "Categoría editada." if @attribute_category.update(attribute_category_params)
     respond_with(@attribute_category) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
     end
   end
 
   def destroy
-    flash[:notice] = "Categoría eliminada." if @attribute_category.destroy
+    flash[:success] = "Categoría eliminada." if @attribute_category.destroy
     respond_with(@attribute_category) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
       format.json {
