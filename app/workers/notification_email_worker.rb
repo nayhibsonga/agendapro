@@ -28,7 +28,7 @@ class NotificationEmailWorker < BaseEmailWorker
         end
       end
     when 2 # Service Provider summary
-      ServiceProvider.where(id: notification.service_providers.actives.each do |provider|
+      ServiceProvider.where(id: notification.service_providers.actives).each do |provider|
         today_bookings = Booking.where(service_provider: provider).where("DATE(start) = DATE(?)", Time.now).where.not(status: Status.find_by(name: 'Cancelado')).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
         summary_bookings = Booking.where(service_provider: provider, updated_at: (Time.now - 1.day)..Time.now).where('is_session = false or (is_session = true and is_session_booked = true)').order(:start)
         name = provider.public_name
