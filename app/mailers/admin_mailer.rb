@@ -7,7 +7,7 @@ class AdminMailer < Base::CustomMailer
     # layout variables
     @title = "Creación o edición de promoción en #{@company.name}"
     @url = @company.web_url
-    attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
+    attacht_logo("public#{@company.logo.email.url}") unless @company.logo.email.url.include?("logo_vacio")
 
     # view variables
     @service = service
