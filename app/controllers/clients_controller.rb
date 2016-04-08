@@ -82,8 +82,8 @@ class ClientsController < ApplicationController
     @clients = @clients.filter(current_user.company_id, params)
     #@clients_export = @clients_export.filter(current_user.company_id, params)
 
-    @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
     @clients_export = @clients.order(sort_column + " " + sort_direction)
+    @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
 
     @custom_filters = current_user.company.custom_filters
 
@@ -225,6 +225,7 @@ class ClientsController < ApplicationController
           @company = current_user.company
           @activeBookings = Array.new
           @lastBookings = Array.new
+          @folders = Array.new
           @client_comment = ClientComment.new
           @sessionBookings = []
           render action: 'new' }
