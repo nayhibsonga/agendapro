@@ -1952,7 +1952,7 @@ class BookingsController < ApplicationController
         @booking.send_validate_mail
 
       else
-        flash[:alert] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
+        flash[:error] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
         @errors = @booking.errors
       end
     end
@@ -2318,7 +2318,7 @@ class BookingsController < ApplicationController
       redirect_to root_path
       return
     elsif params[:bookings].blank?
-      flash[:alert] = "Error ingresando los datos."
+      flash[:error] = "Error ingresando los datos."
       redirect_to workflow_path(:local => params[:location])
       return
     end
@@ -3342,7 +3342,7 @@ class BookingsController < ApplicationController
     host = request.host_with_port
     @url = @location.get_web_address + '.' + host[host.index(request.domain)..host.length]
 
-    flash[:notice] = "Reserva cancelada"
+    flash[:success] = "Reserva cancelada"
     redirect_to @url
   end
 
@@ -3664,7 +3664,7 @@ class BookingsController < ApplicationController
       current_user ? user = current_user.id : user = 0
       BookingHistory.create(booking_id: @booking.id, action: "Modificada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
     else
-      #flash[:alert] = "Hubo un error actualizando tu reserva. Inténtalo nuevamente."
+      #flash[:error] = "Hubo un error actualizando tu reserva. Inténtalo nuevamente."
       @errors = @booking.errors
     end
 
@@ -3893,12 +3893,12 @@ class BookingsController < ApplicationController
       #     @booking.payed_booking.canceled = true
       #     @booking.payed_booking.save
       #   end
-      #   #flash[:notice] = "Reserva cancelada exitosamente."
+      #   #flash[:success] = "Reserva cancelada exitosamente."
       #   # BookingMailer.cancel_booking(@booking)
       #   current_user ? user = current_user.id : user = 0
       #   BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user)
       # else
-      #   flash[:alert] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
+      #   flash[:error] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
       #   @errors = @booking.errors
       # end
 
@@ -3996,12 +3996,12 @@ class BookingsController < ApplicationController
           @booking.payed_booking.canceled = true
           @booking.payed_booking.save
         end
-        #flash[:notice] = "Reserva cancelada exitosamente."
+        #flash[:success] = "Reserva cancelada exitosamente."
         # BookingMailer.cancel_booking(@booking)
         current_user ? user = current_user.id : user = 0
         BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
       else
-        flash[:alert] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
+        flash[:error] = "Hubo un error cancelando tu reserva. Inténtalo nuevamente."
         @errors = @booking.errors
       end
 

@@ -26,21 +26,21 @@ class CompanyPaymentMethodsController < ApplicationController
 
   def create
     @company_payment_method = CompanyPaymentMethod.new(company_payment_method_params)
-    flash[:notice] = "Medio de Pago creado." if @company_payment_method.save
+    flash[:success] = "Medio de Pago creado." if @company_payment_method.save
     respond_with(@company_payment_method) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'cashier') }
     end
   end
 
   def update
-    flash[:notice] = "Medio de Pago editado." if @company_payment_method.update(company_payment_method_params)
+    flash[:success] = "Medio de Pago editado." if @company_payment_method.update(company_payment_method_params)
     respond_with(@company_payment_method) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'cashier') }
     end
   end
 
   def destroy
-    flash[:notice] = "Medio de Pago eliminado." if @company_payment_method.destroy
+    flash[:success] = "Medio de Pago eliminado." if @company_payment_method.destroy
     respond_with(@company_payment_method) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'cashier') }
     end
@@ -48,7 +48,7 @@ class CompanyPaymentMethodsController < ApplicationController
 
   def activate
     @company_payment_method.active = true
-    flash[:notice] = "Medio de Pago activado." if @company_payment_method.save
+    flash[:success] = "Medio de Pago activado." if @company_payment_method.save
     respond_with(@company_payment_method) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'cashier') }
     end
@@ -56,7 +56,7 @@ class CompanyPaymentMethodsController < ApplicationController
 
   def deactivate
     @company_payment_method.active = false
-    flash[:notice] = "Medio de Pago desactivado." if @company_payment_method.save
+    flash[:success] = "Medio de Pago desactivado." if @company_payment_method.save
     respond_with(@company_payment_method) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'cashier') }
     end

@@ -22,13 +22,13 @@ class CustomFiltersController < ApplicationController
 
   def create
     @custom_filter = CustomFilter.new(custom_filter_params)
-    
+
     respond_with(@custom_filter) do |format|
       if @custom_filter.save && @custom_filter.create_filters(params)
-        flash[:notice] = "Filtro creado." 
+        flash[:success] = "Filtro creado."
         format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
       else
-        flash[:alert] = "Filtro no pudo ser creado." 
+        flash[:error] = "Filtro no pudo ser creado."
         format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
       end
     end
@@ -36,13 +36,13 @@ class CustomFiltersController < ApplicationController
 
   def update
     @custom_filter.update(custom_filter_params)
-    
+
     respond_with(@custom_filter) do |format|
       if @custom_filter.update(custom_filter_params) && @custom_filter.create_filters(params)
-        flash[:notice] = "Filtro actualizado."
+        flash[:success] = "Filtro actualizado."
         format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
       else
-        flash[:alert] = "Filtro no pudo ser actualizado."
+        flash[:error] = "Filtro no pudo ser actualizado."
         format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
       end
     end
@@ -51,10 +51,10 @@ class CustomFiltersController < ApplicationController
   def destroy
     respond_with(@custom_filter) do |format|
       if @custom_filter.destroy
-        flash[:notice] = "Filtro eliminado."
+        flash[:success] = "Filtro eliminado."
         format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
       else
-        flash[:alert] = "Filtro no pudo ser eliminado."
+        flash[:error] = "Filtro no pudo ser eliminado."
         format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
       end
     end

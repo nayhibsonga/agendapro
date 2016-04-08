@@ -74,8 +74,8 @@ class ServicesController < ApplicationController
 
     respond_to do |format|
       if @service.save
-        format.html { redirect_to services_path, notice: 'Servicio creado exitosamente.' }
-        flash.keep(:notice)
+        format.html { redirect_to services_path, success: 'Servicio creado exitosamente.' }
+        flash.keep(:success)
         format.json { render action: 'show', status: :created, location: @service }
       else
         format.html { render action: 'new' }
@@ -153,8 +153,8 @@ class ServicesController < ApplicationController
           end
           @service.check_online_discount
           @service_times.destroy_all
-          format.html { redirect_to services_path, notice: 'Servicio actualizado exitosamente.' }
-          flash.keep(:notice)
+          format.html { redirect_to services_path, success: 'Servicio actualizado exitosamente.' }
+          flash.keep(:success)
           format.json { head :no_content }
         else
           @service_times.each do |service_time|
