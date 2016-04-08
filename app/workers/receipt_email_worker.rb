@@ -38,11 +38,13 @@ class ReceiptEmailWorker < BaseEmailWorker
           billing_log = BillingLog.find_by_trx_id(receipt.reference_sale).company_id
         elsif PlanLog.find_by_trx_id(receipt.reference_sale)
           plan_log = PlanLog.find_by_trx_id(receipt.reference_sale).company_id
+        end
       when "PuntoPagosConfirmation"
         if BillingLog.find_by_trx_id(receipt.trx_id)
           billing_log = BillingLog.find_by_trx_id(receipt.trx_id).company_id
         elsif PlanLog.find_by_trx_id(receipt.trx_id)
           plan_log = PlanLog.find_by_trx_id(receipt.trx_id).company_id
+        end
       end
       company = Company.find(company_id)
     end
