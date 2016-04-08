@@ -43,7 +43,7 @@ class PayedBookingMailer < Base::CustomMailer
     # layout variables
     @title = "Cancelación de pago en Agendapro"
     @url = @company.web_url
-    attacht_logo("public#{@company.logo.email.url}" unless @company.logo.email.url.include?("logo_vacio"))
+    attacht_logo("public#{@company.logo.email.url}") unless @company.logo.email.url.include?("logo_vacio")
 
     # view variables
     @client_present = options[:client]
