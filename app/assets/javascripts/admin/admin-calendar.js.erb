@@ -2841,7 +2841,7 @@ function checkClientSessions(service_change) {
         if(parseInt($("#booking_service_id").val()) > 0)
         {
 
-          if(openedBooking.service_id != null && parseInt($('#booking_service_id').val()) == openedBooking.service_id)
+          if(openedBooking.service_id != null && parseInt($('#booking_service_id').val()) == openedBooking.service_id && openedBooking.client_id == parseInt($('#booking_client_id').val()))
           {
             $("#sessions-info").empty();
             $("#sessions-info").append("Esta reserva corresponde a la " + openedBooking.sessions_ratio + " del servicio.");
@@ -3200,7 +3200,7 @@ $(function() {
       $('#xButton').prop('disabled', false);
       $("#full_name").prop('disabled', true);
       loadClientHistory(0);
-      checkClientSessions(false);
+      checkClientSessions(true);
     },
     focus: function (event, ui) {
       event.preventDefault();
@@ -3264,7 +3264,7 @@ $(function() {
       $('#xButton').prop('disabled', false);
       $("#full_name").prop('disabled', true);
       loadClientHistory(0);
-      checkClientSessions(false);
+      checkClientSessions(true);
     },
     focus: function (event, ui) {
       event.preventDefault();
@@ -3329,7 +3329,7 @@ $(function() {
       $('#full_name').prop('disabled', true);
       $('#full_name').val(client.first_name+' '+client.last_name);
       loadClientHistory(0);
-      checkClientSessions(false);
+      checkClientSessions(true);
     },
     focus: function (event, ui) {
       event.preventDefault();
@@ -3426,7 +3426,7 @@ $(function() {
     $('label[for=booking_send_mail]').addClass('disabled');
     $('#client-history-tbody').empty();
     $('#client-history-tbody').append('<tr><td colspan="6">No hay un cliente seleccionado...</td></tr>');
-    checkClientSessions(false);
+    checkClientSessions(true);
     $('#xButton').prop('disabled', true);
   });
 
