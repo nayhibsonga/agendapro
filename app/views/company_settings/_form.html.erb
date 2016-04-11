@@ -318,6 +318,14 @@
                       </div>
                     </div>
                     <div class="form-group">
+                      <%= f.label :booking_leap, 'Ofrecer horas cada' %>
+                      <span class="help-block">Esta opción determina cada cuánto hay una hora disponible para reservar si es que no se permite optimización.</span>
+                      <div class="input-group">
+                        <%= f.select :booking_leap, options_for_select({ "5" => "5", "10" => "10", "15" => "15", "20" => "20", "30" => "30", "45" => "45", "60" => "60" }, @company_setting.calendar_duration), {}, {class: "form-control"} %>
+                        <span class="input-group-addon">minutos</span>
+                      </div>
+                    </div>
+                    <div class="form-group">
                       <div class="checkbox">
                         <label>
                           <%= f.check_box :client_exclusive %> Exclusivo para Clientes
