@@ -223,7 +223,7 @@ class Product < ActiveRecord::Base
           else
             if !row[loc_index].blank?
               location_product = LocationProduct.create(:location_id => location.id, :product_id => product.id, :stock => row[loc_index].to_i)
-              ProductLog.create(product_id: product.id, location_id: location.id, user_id: current_user.id, change: "Creación de producto con stock de " + row[loc_index], cause: "Importación de productos.")
+              ProductLog.create(product_id: product.id, location_id: location.id, user_id: current_user.id, change: "Creación de producto con stock de " + row[loc_index].to_s, cause: "Importación de productos.")
             else
               location_product = LocationProduct.create(:location_id => location.id, :product_id => product.id, :stock => 0)
               ProductLog.create(product_id: product.id, location_id: location.id, user_id: current_user.id, change: "Creación de producto con stock de 0", cause: "Importación de productos.")
