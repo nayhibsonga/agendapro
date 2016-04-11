@@ -123,7 +123,7 @@ class Ability
     can :show_treatment_promo, Service
     can :treatment_promo_hours, Service
     can :get_treatment_price, Booking
-
+    can :hours_test, Booking
 
     if user.role_id == Role.find_by_name("Super Admin").id
 

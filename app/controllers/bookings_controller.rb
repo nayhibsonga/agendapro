@@ -6566,6 +6566,20 @@ class BookingsController < ApplicationController
 
   end
 
+  def hours_test
+    first_date = "2016-04-17T00:00:00-03:00".to_date.beginning_of_day
+    json_response = []
+    json_response[0] = "Done"
+    for i in 0..6
+      start_date = first_date + i.days
+      end_date = start_date.end_of_day
+      ActiveRecord::Base.connection.execute("SELECT * FROM available_hours(136, 167, ARRAY[0, 0], ARRAY[823, 824], ARRAY[0, 0], '#{start_date}', '#{end_date}', false, ARRAY[339, 340])").each do |row|
+        json_response << row
+      end
+    end
+    render :json => json_response
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
