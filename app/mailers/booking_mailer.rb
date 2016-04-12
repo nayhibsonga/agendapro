@@ -2,6 +2,7 @@ class BookingMailer < Base::CustomMailer
   layout :select_layout
 
   def new_booking (book, recipient, options = {})
+    puts "entra"
     # defaults
     options = {
       client: true,

@@ -60,8 +60,10 @@
     </div>
   </td>
 </tr>
+<% if @company_setting.signature.present? %>
 <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
   <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
     <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;"><%= @company_setting.signature.html_safe %></p>
   </td>
 </tr>
+<% end %>
