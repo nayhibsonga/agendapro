@@ -29,6 +29,7 @@ $(function () {
 
   $('#company_setting_allows_optimization').change(function () {
     $('#booking_leap_div').toggle();
+    $('#booking_overlaps_div').toggle();
   });
 
   $("#company_logo").change(function (){
