@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160404103728) do
+ActiveRecord::Schema.define(version: 20160401171459) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "attribute_categories", force: true do |t|
@@ -458,7 +458,7 @@ ActiveRecord::Schema.define(version: 20160404103728) do
     t.boolean  "strict_booking",              default: false,                 null: false
     t.integer  "mails_base_capacity",         default: 5000
     t.integer  "booking_leap",                default: 15
-  end
+    t.boolean  "allows_overlap_hours",        default: false
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
 

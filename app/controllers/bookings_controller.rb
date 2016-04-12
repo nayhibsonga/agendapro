@@ -1357,9 +1357,25 @@ class BookingsController < ApplicationController
       # =>    If not, we just need to update the booking
       # => End
       old_service_id = @booking.service_id
+      old_client_id = @booking.client_id
       old_session_booking_id = @booking.session_booking_id
       was_session = @booking.is_session
       session_booking = nil
+
+      #TODO:
+      #Check if client changed. If so:
+      # If old_session && new_session
+          #Cancel old session, and check if new client has a treatment (should be given in params)
+            #If he has, book a session
+            #If not, create a new treatment
+      # Elsif !old_session && new _session
+          #Check if new client has a treatment (should be given in params)
+            #If he has, book a session
+            #If not, create a new treatment
+      # Elsif old_session && !new_session
+        #Cancel old session.
+      # Else
+      #   Nothing to do
 
       if !booking_params[:status_id].blank?
         @booking.status_id = booking_params[:status_id]
@@ -6548,6 +6564,20 @@ class BookingsController < ApplicationController
 
     render :json => @json_response
 
+  end
+
+  def hours_test
+    first_date = "2016-04-17T00:00:00-03:00".to_date.beginning_of_day
+    json_response = []
+    json_response[0] = "Done"
+    for i in 0..6
+      start_date = first_date + i.days
+      end_date = start_date.end_of_day
+      ActiveRecord::Base.connection.execute("SELECT * FROM available_hours(136, 167, ARRAY[0, 0], ARRAY[823, 824], ARRAY[0, 0], '#{start_date}', '#{end_date}', false, ARRAY[339, 340])").each do |row|
+        json_response << row
+      end
+    end
+    render :json => json_response
   end
 
 

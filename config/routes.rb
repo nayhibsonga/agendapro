@@ -596,6 +596,8 @@ Agendapro::Application.routes.draw do
     get '/stock_change', :to => 'products#stock_change'
     post '/update_stock', :to => 'products#update_stock'
 
+    get '/hours_test', :to => 'bookings#hours_test'
+
 
   end
 
