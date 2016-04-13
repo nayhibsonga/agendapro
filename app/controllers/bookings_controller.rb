@@ -1403,13 +1403,13 @@ class BookingsController < ApplicationController
                 #Do this by changing their session_booking_ids
                 if !booking_params[:session_booking_id].blank? && booking_params[:session_booking_id].to_i != 0
 
-                  
+
 
                   session_booking = SessionBooking.find(booking_params[:session_booking_id])
 
                   if !session_booking.nil?
 
-                    
+
 
                     #There is session_booking, book a session, unbook for old_treatment
                     @booking.session_booking_id = session_booking.id
@@ -2248,8 +2248,9 @@ class BookingsController < ApplicationController
     end
     # @booking.destroy
     respond_to do |format|
-      if @bookings.update_all(status_id: status, is_session_booked: false) >= @bookings.count
-        @bookings.each do |booking|
+      no_error = true
+      @bookings.each do |booking|
+        if booking.update(status_id: status, is_session_booked: false)
           BookingHistory.create(booking_id: booking.id, action: "Cancelada por Calendario", start: booking.start, status_id: booking.status_id, service_id: booking.service_id, service_provider_id: booking.service_provider_id, user_id: current_user.id, notes: booking.notes, company_comment: booking.company_comment)
           if booking.is_session
             booking.session_booking.sessions_taken -= 1
@@ -2258,7 +2259,11 @@ class BookingsController < ApplicationController
               booking.send_session_cancel_mail
             end
           end
+        else
+          no_error = false
         end
+      end
+      if no_error
         format.html { redirect_to bookings_url }
         format.json { render :json => @bookings.pluck(:id) }
       else

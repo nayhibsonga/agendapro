@@ -2,7 +2,6 @@ class BookingMailer < Base::CustomMailer
   layout :select_layout
 
   def new_booking (book, recipient, options = {})
-    puts "entra"
     # defaults
     options = {
       client: true,
@@ -53,6 +52,7 @@ class BookingMailer < Base::CustomMailer
     @company = book.location.company
 
     # layout variables
+    @title = "Reserva Cancelada en #{@company.name}"
     unless options[:horachic] # layout green
       @url = @company.web_url
       @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
