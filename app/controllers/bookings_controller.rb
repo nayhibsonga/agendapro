@@ -4401,13 +4401,11 @@ class BookingsController < ApplicationController
 
       status = @booking.status.id
       payed = @booking.payed
-      is_booked = @booking.is_session_booked
+      is_booked = false
       if !@booking.is_session
-        status = Status.find_by(:name => 'Cancelado').id
         payed = false
-      else
-        is_booked = false
       end
+      status = Status.find_by(:name => 'Cancelado').id
 
       if @booking.update(status_id: status, payed: payed, is_session_booked: is_booked)
 

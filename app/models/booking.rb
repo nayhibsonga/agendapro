@@ -692,8 +692,8 @@ class Booking < ActiveRecord::Base
     if !self.id.nil?
       timezone = CustomTimezone.from_booking(self)
       if self.start > Time.now + timezone.offset
-        if !self.is_session_booked
-          if changed_attributes['is_session_booked']
+        if !self.is_session_booked || self.status_id == Status.find_by_name("Cancelado").id
+          if changed_attributes['is_session_booked'] || changed_attributes['status_id']
             sendings.build(method: 'cancel_booking').save
           end
         else
@@ -719,6 +719,7 @@ class Booking < ActiveRecord::Base
 
   def send_update_mail
     if self.is_session
+      send_session_update_mail
       return
     end
     timezone = CustomTimezone.from_booking(self)
