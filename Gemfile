@@ -197,3 +197,6 @@ gem 'aws-sdk', '~> 2'
 
 #Mysql2 para migración
 gem 'mysql2'
+
+#Parses para postgres
+gem 'pg_array_parser'

@@ -117,6 +117,7 @@ class Ability
 
     can :get_promotions_popover, Service
     can :promotion_hours, Booking
+    can :available_hours, Booking
     can :show_time_promo, Service
     can :show_last_minute_promo, Service
     can :last_minute_hours, Service
