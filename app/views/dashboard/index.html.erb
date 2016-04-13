@@ -217,6 +217,11 @@
         <%= line_chart Booking.where(web_origin: true).group_by_week(:created_at).count, id: "web-bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Web Semanales" } %>
       </div>
     </div>
+    <div class="row">
+      <div class="col-md-12">
+        <%= line_chart Booking.all.group_by_week(:created_at).select(:location_id).uniq.count, id: "location-bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Locales con Reservas" } %>
+      </div>
+    </div>
   <% end %>
 </div>
 
