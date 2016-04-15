@@ -2874,23 +2874,27 @@ class CompaniesController < ApplicationController
 				#logger.debug bookings[bookings.length-1][:end].to_s
 				#logger.debug bookings[0][:start].to_s
 				#logger.debug ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f.to_s
+				status = "available"
+
+				if has_time_discount
+				    if session_booking.nil?
+				      status = "discount"
+				    end
+				end
+
 				hour_time_diff = ((bookings[bookings.length-1][:end] - bookings[0][:start])*24*60).to_f
 
 				if hour_time_diff > max_time_diff
-				  max_time_diff = hour_time_diff
+				    max_time_diff = hour_time_diff
 				end
 
 				curr_promo_discount = 0
 
 				if bookings.length == 1
-				  if has_time_discount
 				    curr_promo_discount = bookings[0][:time_discount]
-				  elsif has_treatment_discount
-				    curr_promo_discount = bookings[0][:treatment_discount]
-				  end
 				end
 
-				if params[:mandatory_discount]
+				if @mandatory_discount
 
 				  if has_time_discount || has_treatment_discount
 
