@@ -2801,9 +2801,10 @@ class CompaniesController < ApplicationController
 				    :has_sessions => services[index].has_sessions,
 				    :sessions_amount => book_sessions_amount,
 				    :must_be_paid_online => services[index].must_be_paid_online,
-				    :bundled => bundles_arr[index] != 0,
-				    :bundle_id => (bundles_arr[index] != 0) ? bundles_arr[index] : nil
+				    :bundled => @bundle.present?,
+				    :bundle_id => @bundle.present? ? @bundle.id : nil
 				  }
+
 				end
 				  
 
@@ -2986,9 +2987,9 @@ class CompaniesController < ApplicationController
 
 
 
-			###################
-			###     END     ###
-			###################
+				###################
+				###     END     ###
+				###################
 
 			end
 
