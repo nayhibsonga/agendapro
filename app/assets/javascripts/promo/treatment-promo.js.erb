@@ -409,10 +409,10 @@
       }
 
       if (promoCalendar) {
-        promoCalendar.rebuild('/promotion_hours', data);
+        promoCalendar.rebuild('/available_hours', data);
       }
       else {
-        promoCalendar = new PromoCalendar('/promotion_hours', data);
+        promoCalendar = new PromoCalendar('/available_hours', data);
       }
 
       $(document).on('hourClick', function (e) {
@@ -991,10 +991,10 @@
       }
 
       if (promoCalendar) {
-        promoCalendar.rebuild('/promotion_hours', data);
+        promoCalendar.rebuild('/available_hours', data);
       }
       else {
-        promoCalendar = new PromoCalendar('/promotion_hours', data);
+        promoCalendar = new PromoCalendar('/available_hours', data);
       }
 
       $("#loader-div").hide();
@@ -1040,10 +1040,10 @@
 
 
             if (promoCalendar) {
-              promoCalendar.rebuild('/promotion_hours', data);
+              promoCalendar.rebuild('/available_hours', data);
             }
             else {
-              promoCalendar = new PromoCalendar('/promotion_hours', data);
+              promoCalendar = new PromoCalendar('/available_hours', data);
             }
 
             $("#loader-div").hide();
@@ -1109,10 +1109,10 @@
 
 
           if (promoCalendar) {
-            promoCalendar.rebuild('/promotion_hours', data);
+            promoCalendar.rebuild('/available_hours', data);
           }
           else {
-            promoCalendar = new PromoCalendar('/promotion_hours', data);
+            promoCalendar = new PromoCalendar('/available_hours', data);
           }
 
           $("#loader-div").hide();
