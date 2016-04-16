@@ -20,7 +20,7 @@
 				<% content_for :scripts do %>
           <% message = '' %>
           <% @company_setting.errors.full_messages.each do |msg| %>
-            <%= message += '* ' + msg + '\n' %>
+            <% message += '* ' + msg + '\n' %>
           <% end %>
           <script type="text/javascript">
             swal({

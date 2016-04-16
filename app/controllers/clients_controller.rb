@@ -218,7 +218,8 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client.save
         @client.save_attributes(params)
-        format.html { redirect_to clients_path, notice: 'Cliente creado exitosamente.' }
+        flash[:success] = "Cliente creado exitosamente."
+        format.html { redirect_to clients_path}
         format.json { render action: 'edit', status: :created, location: @client }
       else
         format.html {
@@ -243,8 +244,9 @@ class ClientsController < ApplicationController
         #Check for custom attributes
 
         @client.save_attributes(params)
+        flash[:success] = "Cliente actualizado exitosamente."
 
-        format.html { redirect_to edit_client_path(id: @client.id), notice: 'Cliente actualizado exitosamente.' }
+        format.html { redirect_to edit_client_path(id: @client.id) }
         format.json { head :no_content }
       else
         format.html {

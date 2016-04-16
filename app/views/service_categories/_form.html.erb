@@ -7,7 +7,7 @@
             <% content_for :scripts do %>
               <% message = '' %>
               <% @service_category.errors.full_messages.each do |msg| %>
-                <%= message += '* ' + msg + '\n' %>
+                <% message += '* ' + msg + '\n' %>
               <% end %>
               <script type="text/javascript">
                 swal({

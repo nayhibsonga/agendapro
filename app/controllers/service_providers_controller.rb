@@ -21,12 +21,14 @@ class ServiceProvidersController < ApplicationController
     unless @service_provider.save
       flash[:alert] = "El horario del prestador no coincide con el horario del local"
     end
+    flash[:success] = "Prestador de servicios activado exitosamente."
     redirect_to inactive_service_providers_path
   end
 
   def deactivate
     @service_provider.active = false
     @service_provider.save
+    flash[:success] = "Prestador de servicios desactivado exitosamente."
     redirect_to service_providers_path
   end
 

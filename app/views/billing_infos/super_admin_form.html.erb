@@ -13,7 +13,7 @@
           <% content_for :scripts do %>
             <% message = '' %>
             <% @billing_info.errors.full_messages.each do |msg| %>
-              <%= message += '* ' + msg + '\n' %>
+              <% message += '* ' + msg + '\n' %>
             <% end %>
             <script type="text/javascript">
               swal({
