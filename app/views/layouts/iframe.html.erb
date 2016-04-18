@@ -26,6 +26,11 @@
         <!-- start: JavaScript-->
         <%= javascript_include_tag "home-head" %>
 
+
+        <!-- start: Facebook Tracker-->
+        <%= render 'layouts/facebook_tracker' %>
+        <!-- end: Facebook Tracker-->
+
         <%= yield :head_scripts %>
 
         <%= render 'layouts/icons' %>

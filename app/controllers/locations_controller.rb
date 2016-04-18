@@ -117,7 +117,8 @@ class LocationsController < ApplicationController
     @location.active = true
     if @location.save
       @location.add_due
-      redirect_to inactive_locations_path, success: "Local activado exitosamente."
+      flash[:success] = "Local activado exitosamente."
+      redirect_to inactive_locations_path
     else
       redirect_to inactive_locations_path, error: @location.errors.full_messages.inspect
     end
@@ -128,7 +129,8 @@ class LocationsController < ApplicationController
     if @location.save
       @location.substract_due
       @location.active_service_providers.update_all(active: false)
-      redirect_to locations_path, success: "Local desactivado exitosamente."
+      flash[:success] = "Local desactivado exitosamente."
+      redirect_to locations_path
     else
       redirect_to inactive_locations_path, error: @location.errors.full_messages.inspect
     end
