@@ -28,8 +28,8 @@ class CustomTimezone
 
     def from_clients(client_ids)
       countries = Country.where(id: Company.where(id: Client.where(id: client_ids).pluck(:company_id)).pluck(:country_id))
-      country = countries.group_by{|i| i}.values.max_by(&:size).first
-      CustomTimezone.new(country.timezone_name, country.timezone_offset)
+      country = countries.group_by{|i| i}.values.max_by(&:size).try(:first)
+      country.present? ? CustomTimezone.new(country.timezone_name, country.timezone_offset) : CustomTimezone.new
     end
 
     def from_sales_cash(sales_cash)
@@ -46,12 +46,12 @@ class CustomTimezone
 
     def first_timezone
       country = Country.all.order(:timezone_offset).first
-      CustomTimezone.new(country.timezone_name, country.timezone_offset)
+      country.present? ? CustomTimezone.new(country.timezone_name, country.timezone_offset) : CustomTimezone.new
     end
 
     def last_timezone
       country = Country.all.order(:timezone_offset).last
-      CustomTimezone.new(country.timezone_name, country.timezone_offset)
+      country.present? ? CustomTimezone.new(country.timezone_name, country.timezone_offset) : CustomTimezone.new
     end
   end
 end
