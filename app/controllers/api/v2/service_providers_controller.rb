@@ -3,60 +3,72 @@ module Api
   	class ServiceProvidersController < V2Controller
   	  before_action :check_available_hours_params, only: [:available_hours]
 
-      def available_hours
-		@service = Service.find(params[:service_id])
-		service_duration = @service.duration
-		@date = Date.parse(params[:date])
-		@location = Location.find(params[:location_id])
-		company_setting = CompanySetting.find(Company.find(@location.company_id).company_setting)
-		company_id = company_setting.company_id
-		cancelled_id = Status.find_by(name: 'Cancelado').id
-		location_times_first = @location.location_times.order(:open).first
-		location_times_final = @location.location_times.order(close: :desc).first
-		location_times = @location.location_times.where(day_id: day).order(:open)
-		location_times_first_open = location_times_first.open
-		location_times_final_close = location_times_final.close
+    	def available_hours
 
-		@available_time = []
+      		parser = PostgresParser.new
+      		
+			@service = Service.find(params[:service_id])
+			service_duration = @service.duration
+			@date = Date.parse(params[:date])
+			day = @date.cwday
+			@location = Location.find(params[:location_id])
+			company_setting = CompanySetting.find(Company.find(@location.company_id).company_setting)
+			company_id = company_setting.company_id
+			cancelled_id = Status.find_by(name: 'Cancelado').id
+			location_times_first = @location.location_times.order(:open).first
+			location_times_final = @location.location_times.order(close: :desc).first
+			location_times = @location.location_times.where(day_id: day).order(:open)
+			location_times_first_open = location_times_first.open
+			location_times_final_close = location_times_final.close
 
-		if location_times.length > 0
+			providers = []
+		    if params[:id] != "0"
+				providers << ServiceProvider.find(params[:id])
+		    else
+		      providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(:order, :public_name)
+		    end
 
-			start_date = DateTime.new(@date.year, @date.month, @date.day, location_times_first_open.hour, location_times_first_open.min)
-			end_date = DateTime.new(@date.year, @date.month, @date.day, location_times_final_close.hour, location_times_final_close.min)
 
-			ActiveRecord::Base.connection.execute("SELECT * FROM available_hours(#{company_id}, #{@location.id}, ARRAY#{[0]}, ARRAY#{[@service.id]}, ARRAY#{[0]}, '#{start_date}', '#{end_date}', false, ARRAY#{providers.pluck(:id)})").each do |row|
+			@available_time = []
 
-    			db_hours = parser.parse_pg_array(row["hour_array"])
+			if location_times.length > 0
 
-    			db_hours.each_with_index do |db_hour, index|
-          			pg_hour = parser.parse_pg_array(db_hour)
+				start_date = DateTime.new(@date.year, @date.month, @date.day, location_times_first_open.hour, location_times_first_open.min)
+				end_date = DateTime.new(@date.year, @date.month, @date.day, location_times_final_close.hour, location_times_final_close.min)
 
-          			hour = {
-          				:start => pg_hour[0].to_datetime,
-          				:end => pg_hour[1].to_datetime
-          			}
+				ActiveRecord::Base.connection.execute("SELECT * FROM available_hours(#{company_id}, #{@location.id}, ARRAY#{[params[:id].to_i]}, ARRAY#{[@service.id]}, ARRAY#{[0]}, '#{start_date}', '#{end_date}', false, ARRAY#{providers.pluck(:id)})").each do |row|
 
-          			block_hour = Hash.new
-          			block_hour[:date] = @date
-          			block_hour[:hour] = hour
-          			block_hour[:service_provider_id] = pg_hour[2].to_i
+	    			db_hours = parser.parse_pg_array(row["hour_array"])
 
-          			@available_time << block_hour
+	    			db_hours.each_with_index do |db_hour, index|
+	          			pg_hour = parser.parse_pg_array(db_hour)
 
-          		end
+	          			hour = {
+	          				:start => pg_hour[0].to_datetime,
+	          				:end => pg_hour[1].to_datetime
+	          			}
 
-    		end
+	          			block_hour = Hash.new
+	          			block_hour[:date] = @date
+	          			block_hour[:hour] = hour
+	          			block_hour[:service_provider_id] = pg_hour[2].to_i
+
+	          			@available_time << block_hour
+
+	          		end
+
+	    		end
+			end
+
+			if params[:id] == "0"
+				@lock = false
+			else
+				@lock = true
+			end
+			@lock
+			@company = @location.company
+			@available_time
 		end
-
-		if params[:id] == "0"
-			@lock = false
-		else
-			@lock = true
-		end
-		@lock
-		@company = @location.company
-		@available_time
-	end
 
 	def available_days
 		@service = Service.find(params[:service_id])

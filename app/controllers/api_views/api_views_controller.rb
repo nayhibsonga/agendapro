@@ -1,6 +1,6 @@
 class ApiViews::ApiViewsController < ApplicationController
 	skip_before_action :verify_authenticity_token
-	#before_filter :check_auth_token
+	before_filter :check_auth_token
 
 	def check_auth_token
 		if !request.headers['X-Auth-Token'].present?
