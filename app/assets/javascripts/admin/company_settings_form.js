@@ -402,15 +402,15 @@ $(function () {
       success: function(response){
         $.each(response, function(i, attribute_category){
 
-          if(attribute_category.category != "Otra")
+          /*if(attribute_category.category != "Otra")
           {
-
+  */
             $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + attribute_category.id + '">' + attribute_category.category + '<a style="float: right;" class="btn btn-red btn-xs category-delete" data-confirm="¿Estás seguro de eliminar la categoría?" data-method="delete" data-remote="true" data-type="json" href="/attribute_categories/' + attribute_category.id + '" rel="nofollow"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</a></div>');
-          }
+          /*}
           else
           {
             $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + attribute_category.id + '">' + attribute_category.category + '</div>');
-          }
+          }*/
 
         });
       }
@@ -461,15 +461,15 @@ $(function () {
 
   $("#attribute_category_form").on("ajax:success", function(e, data, status, xhr){
 
-    if(data.category != "Otra")
+    /*if(data.category != "Otra")
     {
-
+    */
       $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + data.id + '">' + data.category + '<a style="float: right;" class="btn btn-red btn-xs category-delete" data-confirm="¿Estás seguro de eliminar la categoría?" data-method="delete" data-remote="true" data-type="json" href="/attribute_categories/' + data.id + '" rel="nofollow"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</a></div>');
-    }
+    /*}
     else
     {
       $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + data.id + '">' + data.category + '</div>');
-    }
+    }*/
 
     $('#attribute_category_category').val("");
 
