@@ -12,8 +12,14 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		    END IF;
 		END$$;
 
+		DROP FUNCTION IF EXISTS provider_day_occupation(int, timestamp, timestamp);
+		DROP FUNCTION IF EXISTS check_hour(local_id int, provider_id int, serv_id int, start_date timestamp, end_date timestamp);
+	 	DROP FUNCTION IF EXISTS check_hour(local_id int, provider_id int, serv_id int, start_date timestamp, end_date timestamp, boolean);
+	 	DROP FUNCTION IF EXISTS get_hour_promo_details(timestamp, timestamp, int, int, int, boolean);
+	 	DROP FUNCTION IF EXISTS available_hours(int, int, int[], int[], int[], timestamp, timestamp, boolean, int[]);
 
-		CREATE OR REPLACE FUNCTION check_hour(local_id int, provider_id int, serv_id int, start_date timestamp, end_date timestamp)
+
+		CREATE OR REPLACE FUNCTION check_hour(local_id int, provider_id int, serv_id int, start_date timestamp, end_date timestamp, admin boolean)
 		returns BOOLEAN
 		AS 
 		$$
@@ -28,8 +34,10 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  resources_max int;
 		  r_id int;
 		  current_start timestamp;
+		  time_offset double precision;
 		BEGIN
-		  current_start := localtimestamp;
+		  time_offset := (select countries.timezone_offset from countries where id = (select companies.country_id from companies where id = (select locations.company_id from locations where id = local_id)));
+  		  current_start := localtimestamp + interval '1hr' * time_offset;
 		  cancelled_id := (select id from statuses where name = 'Cancelado');
 
 		  --Check location_times
@@ -37,9 +45,15 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  	return false;
 		  	END IF;
 
-		  --Check after and before settings
-		  IF start_date < current_start + ((select before_booking from company_settings where company_settings.company_id = (select company_id from locations where locations.id = local_id)) * interval '1 hour') OR end_date > current_start + ((select after_booking from company_settings where company_settings.company_id = (select company_id from locations where locations.id = local_id)) * interval '1 month') THEN
-		  	return false;
+		  --Check after and before settings if not admin
+		  IF (admin = false) THEN
+			  IF start_date < current_start + ((select before_booking from company_settings where company_settings.company_id = (select company_id from locations where locations.id = local_id)) * interval '1 hour') OR end_date > current_start + ((select after_booking from company_settings where company_settings.company_id = (select company_id from locations where locations.id = local_id)) * interval '1 month') THEN
+			  	return false;
+			  END IF;
+		  ELSE
+		  	IF start_date < current_start THEN
+			  	return false;
+			END IF;
 		  END IF;
 
 		  --Check provider_times
@@ -539,12 +553,12 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		       --RAISE NOTICE 'CHECKING FOR % - %', dtp, dtp + interval '1' minute * durations[service_staff_pos];
 
-		        service_valid := check_hour(local_id, providers_ids[service_staff_pos], service_ids[service_staff_pos], dtp, dtp + interval '1' minute * durations[service_staff_pos]);
+		        service_valid := check_hour(local_id, providers_ids[service_staff_pos], service_ids[service_staff_pos], dtp, dtp + interval '1' minute * durations[service_staff_pos], admin);
 
 		        selected_provider_id := providers_ids[service_staff_pos];
 
 		      ELSE
-		        select into elegible_ids id from (select id, provider_day_occupation(id, start_date, end_date) from service_providers where check_hour(local_id, service_providers.id, service_ids[service_staff_pos], dtp, dtp + interval '1' minute * durations[service_staff_pos]) = TRUE AND active = true AND online_booking = true AND id IN (select service_staffs.service_provider_id from service_staffs where service_staffs.service_id = service_ids[service_staff_pos]) AND id IN (select provider_times.service_provider_id from provider_times where day_id = day) ORDER BY provider_day_occupation(id, start_date, end_date)) AS elegible_providers limit 1;
+		        select into elegible_ids id from (select id, provider_day_occupation(id, start_date, end_date) from service_providers where check_hour(local_id, service_providers.id, service_ids[service_staff_pos], dtp, dtp + interval '1' minute * durations[service_staff_pos], admin) = TRUE AND active = true AND online_booking = true AND id IN (select service_staffs.service_provider_id from service_staffs where service_staffs.service_id = service_ids[service_staff_pos]) AND id IN (select provider_times.service_provider_id from provider_times where day_id = day) ORDER BY provider_day_occupation(id, start_date, end_date)) AS elegible_providers limit 1;
 		        GET DIAGNOSTICS elegible_ids_count = ROW_COUNT;
 		        --RAISE NOTICE 'Elegible ids: % - Count: %', elegible_ids, elegible_ids_count;
 		        --RAISE NOTICE 'ELEGIBLE IDS: %', elegible_ids;

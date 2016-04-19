@@ -44,8 +44,8 @@ module Api
 	          			pg_hour = parser.parse_pg_array(db_hour)
 
 	          			hour = {
-	          				:start => pg_hour[0].to_datetime,
-	          				:end => pg_hour[1].to_datetime
+	          				:start => pg_hour[0].to_datetime.strftime("%R"),
+	          				:end => pg_hour[1].to_datetime.strftime("%R")
 	          			}
 
 	          			block_hour = Hash.new
