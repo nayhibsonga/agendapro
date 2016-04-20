@@ -346,10 +346,10 @@ function loadCalendar()
     }
 
     if (promoCalendar) {
-      promoCalendar.rebuild('/promotion_hours', data);
+      promoCalendar.rebuild('/available_hours', data);
     }
     else {
-      promoCalendar = new PromoCalendar('/promotion_hours', data);
+      promoCalendar = new PromoCalendar('/available_hours', data);
     }
 
 
@@ -423,10 +423,10 @@ $('body').on('click', '[name="changeProvider"]', function(event){
   }
 
   if (promoCalendar) {
-    promoCalendar.rebuild('/promotion_hours', data);
+    promoCalendar.rebuild('/available_hours', data);
   }
   else {
-    promoCalendar = new PromoCalendar('/promotion_hours', data);
+    promoCalendar = new PromoCalendar('/available_hours', data);
   }
 
   $(document).on('hourClick', function (e) {
@@ -497,10 +497,10 @@ $('body').on('click', '[name="changeProvider"]', function(event){
         data = {local: localId, serviceStaff: JSON.stringify(selects), date: newDate, session_booking_id: $("#session_booking_id").val()}
 
         if (promoCalendar) {
-          promoCalendar.rebuild('/promotion_hours', data);
+          promoCalendar.rebuild('/available_hours', data);
         }
         else {
-          promoCalendar = new PromoCalendar('/promotion_hours', data);
+          promoCalendar = new PromoCalendar('/available_hours', data);
         }
 
 
@@ -729,10 +729,10 @@ $(document).on('calendarBuilded', function (e) {
       data = {local: localId, serviceStaff: JSON.stringify(selects), date: day_str, session_booking_id: $("#session_booking_id").val()}
 
       if (promoCalendar) {
-        promoCalendar.rebuild('/promotion_hours', data);
+        promoCalendar.rebuild('/available_hours', data);
       }
       else {
-        promoCalendar = new PromoCalendar('/promotion_hours', data);
+        promoCalendar = new PromoCalendar('/available_hours', data);
       }
 
       $("#past_date_alert").show();

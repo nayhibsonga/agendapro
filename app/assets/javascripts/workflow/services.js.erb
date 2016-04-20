@@ -416,7 +416,7 @@ function loadStep2 () {
 
 					staffSelected = $(this).val();
 					if (calendar) {
-						calendar.rebuild('/promotion_hours', data);
+						calendar.rebuild('/available_hours', data);
 					}
 					else {
 						calendar = new Calendar('/available_hours_week_html', data);
@@ -605,10 +605,10 @@ function loadStep2() {
 	}
 
 	if (promoCalendar) {
-		promoCalendar.rebuild('/promotion_hours', data);
+		promoCalendar.rebuild('/available_hours', data);
 	}
 	else {
-		promoCalendar = new PromoCalendar('/promotion_hours', data);
+		promoCalendar = new PromoCalendar('/available_hours', data);
 	}
 
 
@@ -2341,10 +2341,10 @@ $('#changeProviderSelect').on('change', function(event){
   	}
 
   	if (promoCalendar) {
-    	promoCalendar.rebuild('/promotion_hours', data);
+    	promoCalendar.rebuild('/available_hours', data);
   	}
   	else {
-    	promoCalendar = new PromoCalendar('/promotion_hours', data);
+    	promoCalendar = new PromoCalendar('/available_hours', data);
   	}
 
   	$("#loader-div").hide();
@@ -2390,10 +2390,10 @@ $('body').on('click', '[name="changeProvider"]', function(event){
   	}
 
   	if (promoCalendar) {
-    	promoCalendar.rebuild('/promotion_hours', data);
+    	promoCalendar.rebuild('/available_hours', data);
   	}
   	else {
-    	promoCalendar = new PromoCalendar('/promotion_hours', data);
+    	promoCalendar = new PromoCalendar('/available_hours', data);
   	}
 
   	$("#loader-div").hide();
@@ -2858,10 +2858,10 @@ $(function () {
 			data = {local: localId, serviceStaff: JSON.stringify(selects), date: day_str};
 
 			if (promoCalendar) {
-				promoCalendar.rebuild('/promotion_hours', data);
+				promoCalendar.rebuild('/available_hours', data);
 			}
 			else {
-				promoCalendar = new PromoCalendar('/promotion_hours', data);
+				promoCalendar = new PromoCalendar('/available_hours', data);
 			}
 
 
