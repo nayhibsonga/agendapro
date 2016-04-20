@@ -8,11 +8,51 @@ class ClientsController < ApplicationController
   load_and_authorize_resource
   layout "admin"
 
+  include ApplicationHelper
+
   helper_method :sort_column, :sort_direction
 
   # GET /clients
   # GET /clients.json
   def index
+
+
+    # if mobile_request?
+    #   @company = current_user.company
+    # end
+    # @monthly_mails = current_user.company.company_setting.get_mails_capacity #.plan.monthly_mails
+    # @monthly_mails_sent = current_user.company.company_setting.monthly_mails
+    # @from_collection = current_user.company.company_from_email.where(confirmed: true)
+
+    # @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
+    # @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
+    # @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
+
+    # selected_custom_filters = []
+    # if !params[:custom_filters].blank?
+    #   selected_custom_filters = CustomFilter.find(params[:custom_filters])
+    # end
+
+    # @clients = Client.accessible_by(current_ability).filter(current_user.company_id, params)
+    # @clients_export = Client.accessible_by(current_ability).filter(current_user.company_id, params)
+
+    # #Custom filters
+    # selected_custom_filters.each do |custom_filter|
+    #   @clients = Client.custom_filter(@clients, custom_filter)
+    #   @clients_export = Client.custom_filter(@clients_export, custom_filter)
+    # end
+
+    # @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
+    # @clients_export = @clients_export.order(sort_column + " " + sort_direction)
+
+    # @custom_filters = current_user.company.custom_filters
+
+    # respond_to do |format|
+    #   format.html
+    #   format.csv
+    #   format.xls
+    # end
+
     if mobile_request?
       @company = current_user.company
     end
@@ -29,17 +69,21 @@ class ClientsController < ApplicationController
       selected_custom_filters = CustomFilter.find(params[:custom_filters])
     end
 
-    @clients = Client.accessible_by(current_ability).filter(current_user.company_id, params)
-    @clients_export = Client.accessible_by(current_ability).filter(current_user.company_id, params)
+    @clients = Client.accessible_by(current_ability)
+    #@clients_export = Client.accessible_by(current_ability)
 
     #Custom filters
     selected_custom_filters.each do |custom_filter|
       @clients = Client.custom_filter(@clients, custom_filter)
-      @clients_export = Client.custom_filter(@clients_export, custom_filter)
+      #@clients_export = Client.custom_filter(@clients_export, custom_filter)
     end
 
+
+    @clients = @clients.filter(current_user.company_id, params)
+    #@clients_export = @clients_export.filter(current_user.company_id, params)
+
+    @clients_export = @clients.order(sort_column + " " + sort_direction)
     @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
-    @clients_export = @clients_export.order(sort_column + " " + sort_direction)
 
     @custom_filters = current_user.company.custom_filters
 
@@ -48,6 +92,7 @@ class ClientsController < ApplicationController
       format.csv
       format.xls
     end
+
   end
 
   # GET /clients/1
@@ -86,7 +131,7 @@ class ClientsController < ApplicationController
     @service_provider_ids = params[:service_provider_ids] ? params[:service_provider_ids].split(',') : ServiceProvider.where(company_id: current_user.company_id).accessible_by(current_ability).pluck(:id)
     @status_ids = params[:status_ids] ? params[:status_ids].split(',') : Status.all.pluck(:id)
 
-    @bookings = @client.bookings.where(start: @from.beginning_of_day..@to.end_of_day, service_id: @service_ids, service_provider_id: @service_provider_ids, status_id: @status_ids).where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc).paginate(:page => params[:page], :per_page => 25)
+    @bookings = @client.bookings.where(start: @from.beginning_of_day..@to.end_of_day, service_id: @service_ids, service_provider_id: @service_provider_ids, status_id: @status_ids).where('is_session = false or (is_session = true and (is_session_booked = true or status_id = ?))', Status.find_by_name("Cancelado").id).order(start: :desc).paginate(:page => params[:page], :per_page => 25)
 
     @booked = @bookings.where(status: Status.find_by(name: 'Reservado')).count
     @confirmed = @bookings.where(status: Status.find_by(name: 'Confirmado')).count
@@ -173,13 +218,15 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client.save
         @client.save_attributes(params)
-        format.html { redirect_to clients_path, notice: 'Cliente creado exitosamente.' }
+        flash[:success] = "Cliente creado exitosamente."
+        format.html { redirect_to clients_path}
         format.json { render action: 'edit', status: :created, location: @client }
       else
         format.html {
           @company = current_user.company
           @activeBookings = Array.new
           @lastBookings = Array.new
+          @folders = Array.new
           @client_comment = ClientComment.new
           @sessionBookings = []
           render action: 'new' }
@@ -197,8 +244,9 @@ class ClientsController < ApplicationController
         #Check for custom attributes
 
         @client.save_attributes(params)
+        flash[:success] = "Cliente actualizado exitosamente."
 
-        format.html { redirect_to edit_client_path(id: @client.id), notice: 'Cliente actualizado exitosamente.' }
+        format.html { redirect_to edit_client_path(id: @client.id) }
         format.json { head :no_content }
       else
         format.html {
@@ -839,6 +887,22 @@ class ClientsController < ApplicationController
     folders_prefixes.each do |folder|
       sub_str = folder.prefix[0, folder.prefix.rindex("/")]
       @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
+    end
+
+  end
+
+  def client_base_pdf
+
+    @company = current_user.company
+    @filename = "detalle_carga"
+    date = DateTime.now
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = ClientsBasePdf.new(@company.id)
+        send_data pdf.render, filename: @filename + "_" + date.to_s[0,10] + '.pdf', type: 'application/pdf'
+      end
     end
 
   end

@@ -9,7 +9,7 @@
 
       <Table>
 
-        
+
 
         <Row>
           <Cell><Data ss:Type="String"></Data></Cell>
@@ -124,7 +124,7 @@
         <Row>
           <Cell><Data ss:Type="String"></Data></Cell>
         </Row>
-        
+
 
         <Row>
           <Cell><Data ss:Type="String">Recaudaciones por fecha</Data></Cell>
@@ -133,7 +133,7 @@
         <Row>
           	<Cell><Data ss:Type="String"></Data></Cell>
 
-	        <% 
+	        <%
 	        	service_provider_totals = []
 	        	sp_index = 0
 	        	@service_providers.order('public_name asc').each do |service_provider|
@@ -182,7 +182,7 @@
         	%>
         		<Row>
         		<Cell><Data ss:Type="String"><%= current_date.strftime('%d/%m/%Y') %></Data></Cell>
-        			<% 
+        			<%
         				@service_providers.order('public_name asc').each do |service_provider|
 
 				            payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: @location_ids).pluck(:id))
@@ -215,10 +215,10 @@
 				            end
 
 
-				           	mock_bookings.each do |mock_booking|		              
+				           	mock_bookings.each do |mock_booking|
 				                mock_bookings_commissions += mock_booking.get_commission
 				            end
-				              
+
 
 				          	bookings.each do |booking|
 				                bookings_commissions += booking.get_commission
@@ -490,6 +490,7 @@
 	        <ss:Column ss:Width="150"/>
 	        <ss:Column ss:Width="150"/>
 	        <ss:Column ss:Width="150"/>
+          <ss:Column ss:Width="150"/>
 
 	        <Row>
               	<Cell><Data ss:Type="String">Fecha</Data></Cell>
@@ -502,6 +503,7 @@
               	<Cell><Data ss:Type="String">Precio (con dscto.)</Data></Cell>
               	<Cell><Data ss:Type="String">Cantidad</Data></Cell>
               	<Cell><Data ss:Type="String">Descuento</Data></Cell>
+                <Cell><Data ss:Type="String">Comentarios</Data></Cell>
               	<Cell><Data ss:Type="String">Monto total</Data></Cell>
             </Row>
 
@@ -527,6 +529,7 @@
 			                <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
 			                <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
 			                <Cell><Data ss:Type="String"><%= internal_sale.discount.to_s + "%" %></Data></Cell>
+                      <Cell><Data ss:Type="String"><%= internal_sale.get_notes %></Data></Cell>
 			                <Cell><Data ss:Type="Number"><%= internal_sale.quantity * internal_sale.price %></Data></Cell>
 			            </Row>
 
@@ -834,6 +837,7 @@
               <Cell><Data ss:Type="String">Precio</Data></Cell>
               <Cell><Data ss:Type="String">Cantidad</Data></Cell>
               <Cell><Data ss:Type="String">Descuento</Data></Cell>
+              <Cell><Data ss:Type="String">Comentarios</Data></Cell>
               <Cell><Data ss:Type="String">Cobro total</Data></Cell>
             </Row>
 
@@ -844,16 +848,31 @@
               %>
 
               <Row>
-                <Cell><Data ss:Type="String"><%= internal_sale.date.strftime('%d/%m/%Y %R') %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.product.sku %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.product.product_category.name %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.product.product_brand.name %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.product.name %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.product.product_display.name %></Data></Cell>
-                <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
-                <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= internal_sale.discount.to_s + "%" %></Data></Cell>
-                <Cell><Data ss:Type="Number"><%= internal_sale.quantity * internal_sale.price %></Data></Cell>
+                <% if internal_sale.product.nil? || Product.where(id: internal_sale.product_id).count == 0 %>
+                  <Cell><Data ss:Type="String"><%= internal_sale.date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                  <Cell><Data ss:Type="String">No existe producto</Data></Cell>
+                  <Cell><Data ss:Type="String">No existe producto</Data></Cell>
+                  <Cell><Data ss:Type="String">No existe producto</Data></Cell>
+                  <Cell><Data ss:Type="String">No existe producto</Data></Cell>
+                  <Cell><Data ss:Type="String">No existe producto</Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.discount.to_s + "%" %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.get_notes %></Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.quantity * internal_sale.price %></Data></Cell>
+                <% else %>
+                  <Cell><Data ss:Type="String"><%= internal_sale.date.strftime('%d/%m/%Y %R') %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.product.sku %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.product.product_category.name %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.product.product_brand.name %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.product.name %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.product.product_display.name %></Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.price %></Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.quantity %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.discount.to_s + "%" %></Data></Cell>
+                  <Cell><Data ss:Type="String"><%= internal_sale.get_notes %></Data></Cell>
+                  <Cell><Data ss:Type="Number"><%= internal_sale.quantity * internal_sale.price %></Data></Cell>
+                <% end %>
               </Row>
             <% end %>
 

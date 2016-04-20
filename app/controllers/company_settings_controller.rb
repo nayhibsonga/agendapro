@@ -112,7 +112,7 @@ class CompanySettingsController < ApplicationController
           @company_setting.errors.full_messages.each do |error|
             errors += error + ' '
           end
-          flash[:alert] = errors
+          flash[:error] = errors
           @company = Company.find(current_user.company_id)
           @emails = current_user.company.company_from_email
           @company_from_email = CompanyFromEmail.new

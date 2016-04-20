@@ -17,6 +17,7 @@ class ServiceProvider < ActiveRecord::Base
 
 	has_many :mock_bookings
 	has_many :internal_sales, dependent: :nullify
+	has_many :product_logs, dependent: :nullify
 
 	attr_accessor :_destroy
 

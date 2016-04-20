@@ -27,7 +27,10 @@ function loadProvidersReport()
 		data: {service_provider_ids: provider_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
-		  	swal("Error");
+		  	swal({
+          title: "Error",
+          type: "error"
+        });
 		  	$('#loader-div').hide();
 		},
 		success: function(response){
@@ -67,7 +70,10 @@ function loadUsersReport()
 		data: {user_ids: user_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
-		  	swal("Error");
+		  	swal({
+          title: "Error",
+          type: "error"
+        });
 		  	$('#loader-div').hide();
 		},
 		success: function(response){
@@ -107,7 +113,10 @@ function loadCashiersReport()
 		data: {cashier_ids: cashier_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
-		  	swal("Error");
+		  	swal({
+          title: "Error",
+          type: "error"
+        });
 		  	$('#loader-div').hide();
 		},
 		success: function(response){

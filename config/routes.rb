@@ -177,6 +177,8 @@ Agendapro::Application.routes.draw do
     get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
     get '/get_session_bookings', :to => 'users#get_session_bookings'
     get '/get_session_summary', :to => 'users#get_session_summary'
+    post '/delete_treatment', :to => 'bookings#delete_treatment'
+    post '/user_delete_treatment', :to => 'bookings#user_delete_treatment'
 
     scope controller: 'bookings' do
       post '/delete_session_booking', action: 'delete_session_booking'
@@ -518,6 +520,7 @@ Agendapro::Application.routes.draw do
 
     get '/get_treatment_price', :to => 'bookings#get_treatment_price'
     get '/payment_summary', :to => 'payments#summary'
+    get '/get_treatment_info', :to => 'bookings#get_treatment_info'
 
 
     get '/sales_cash_transaction_summary', :to => 'payments#sales_cash_transaction_summary'
@@ -575,6 +578,24 @@ Agendapro::Application.routes.draw do
     post '/rearrange_attribute_groups', :to => 'attribute_groups#rearrange'
 
     post '/select_default_plan', :to => 'companies#select_default_plan'
+
+    #Inventory reports
+    get '/products_stats', :to => 'products#stats'
+    get '/locations_products_stats', :to => 'products#locations_stats'
+    get '/seller_history', :to => 'products#seller_history'
+    get '/product_history', :to => 'products#product_history'
+    get '/products_history', :to => 'products#history'
+    get '/product_logs_history', :to => 'products#logs_history'
+    get '/locations_products_stats_excel', :to => 'products#locations_stats_excel'
+    get '/product_logs_history_excel', :to => 'products#logs_history_excel'
+
+    get '/categories_products', :to => 'product_categories#products'
+
+    get '/client_base_pdf', :to => 'clients#client_base_pdf'
+
+    get '/stock_change', :to => 'products#stock_change'
+    post '/update_stock', :to => 'products#update_stock'
+
 
   end
 

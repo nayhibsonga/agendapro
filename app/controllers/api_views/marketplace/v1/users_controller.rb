@@ -69,10 +69,10 @@ module ApiViews
 
 		    end
 
+		    timezone = CustomTimezone.from_clients(@client_ids)
 
-
-		    @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids, :status_id => Status.where(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])).order(:start)
-		    @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where("start <= ?", DateTime.now - eval(ENV["TIME_ZONE_OFFSET"])).where(:client_id => @client_ids).order(updated_at: :desc).limit(10)
+		    @activeBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(:client_id => @client_ids, :status_id => Status.where(:name => ['Reservado', 'Pagado', 'Confirmado'])).where("start > ?", DateTime.now + timezone.offset).order(:start)
+		    @lastBookings = Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where("start <= ?", DateTime.now + timezone.offset).where(:client_id => @client_ids).order(updated_at: :desc).limit(10)
 		  end
 
 		  def favorites
@@ -145,7 +145,7 @@ module ApiViews
 	      end
 
 	      private
-	      
+
 	  	  def check_login_params
 	  	  	if !params[:email].present? || !params[:password].present?
 	          render json: { error: 'Invalid User. Param(s) missing.' }, status: 500
@@ -176,7 +176,7 @@ module ApiViews
 	        elsif nameArray.length == 3
 	          params[:user][:first_name] = nameArray[0] unless nameArray[0].blank?
 	          params[:user][:last_name] = nameArray[1] + ' ' + nameArray[2]
-	        else 
+	        else
 	          params[:user][:first_name] = nameArray[0] + ' ' + nameArray[1]
 	          last_name = ''
 	          (2..nameArray.length - 1).each do |i|

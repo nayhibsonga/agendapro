@@ -214,7 +214,7 @@
                       <div class="form-group has-feedback">
                         <%= f.label :service_provider_id, "Prestador de Servicios", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
-                          <%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id, :active => true)).accessible_by(current_ability).order(public_name: :asc), :id, :public_name, {}, { class: "form-control" }%>
+                          <%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id).actives).accessible_by(current_ability).ordered, :id, :public_name, {}, { class: "form-control" }%>
                           <span class="help-block"></span>
                           <span class="form-control-feedback"></span>
                           <div class="checkbox">
@@ -404,11 +404,11 @@
                   <% if @company.is_plan_capable("Premium") %>
                     <% if @company.custom_attributes.where(show_on_calendar: true).count > 0 %>
                       <div class="row">
-                          <div class="col-md-12">
-                            <div style="font-size: 20px; padding: 10px;">
-                              Datos personalizados del cliente
-                            </div>
+                        <div class="col-md-12">
+                          <div style="font-size: 20px; padding: 10px;">
+                            Datos personalizados del cliente
                           </div>
+                        </div>
                       </div>
                     <% end %>
 
@@ -697,11 +697,11 @@
                     <% if @company.is_plan_capable("Premium") %>
                       <% if @company.custom_attributes.where(show_on_calendar: false).count > 0 %>
                         <div class="row">
-                            <div class="col-md-12">
-                              <div style="font-size: 20px; padding: 10px;">
-                                Datos personalizados del cliente
-                              </div>
+                          <div class="col-md-12">
+                            <div style="font-size: 20px; padding: 10px;">
+                              Datos personalizados del cliente
                             </div>
+                          </div>
                         </div>
                       <% end %>
 
@@ -947,43 +947,41 @@
                   </div>
                 </div>
                 <% end %>
-                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
-                  <div class="tab-pane" id="payments-pane">
-                    <input type="hidden" id="paymentBookingId" value="" />
-                    <div class="row" id="bookingPaymentEdit" style="padding-left: 12px; padding-right: 10px;" hidden>
+                <div class="tab-pane" id="payments-pane">
+                  <input type="hidden" id="paymentBookingId" value="" />
+                  <div class="row" id="bookingPaymentEdit" style="padding-left: 12px; padding-right: 10px;" hidden>
 
-                      <div class="row">
-                        <div class="col-xs-12">
-                          <% if current_user.role == Role.find_by_name("Recepcionista") %>
-                            <p>Esta reserva ya tiene asociada un pago. Ponte en contacto con el administrador de tu local si necesitas editar o borrar el pago.</p>
-                          <% else %>
-                            <button style="width: 150px; margin-right: 5px;" id="bookingPaymentEditBtn" class="edit-option-btn btn btn-default">
-                              <i class="fa fa-pencil-square-o"></i>Editar pago
-                            </button>
-                            <button style="width: 150px;" id="bookingPaymentDeleteBtn" class="edit-option-btn btn btn-red">
-                              <i class="fa fa-times"></i>Eliminar pago
-                            </button>
-                          <% end %>
-                        </div>
+                    <div class="row">
+                      <div class="col-xs-12">
+                        <% if current_user.role == Role.find_by_name("Recepcionista") %>
+                          <p>Esta reserva ya tiene asociada un pago. Ponte en contacto con el administrador de tu local si necesitas editar o borrar el pago.</p>
+                        <% else %>
+                          <button style="width: 150px; margin-right: 5px;" id="bookingPaymentEditBtn" class="edit-option-btn btn btn-default">
+                            <i class="fa fa-pencil-square-o"></i>Editar pago
+                          </button>
+                          <button style="width: 150px;" id="bookingPaymentDeleteBtn" class="edit-option-btn btn btn-red">
+                            <i class="fa fa-times"></i>Eliminar pago
+                          </button>
+                        <% end %>
                       </div>
-                      <div class="row">
-                        <div class="col-xs-12">
-                          <div id="bookingPaymentSummary" style="padding-left: 15px; padding-right: 15px;">
-
-                          </div>
-                        </div>
-                      </div>
-
                     </div>
-                    <div class="row" id="bookingPaymentCreate" hidden>
-                      <div class="col-xs-4">
-                        <button id="bookingPaymentCreateBtn" class="edit-option-btn btn btn-default">
-                          <i class="fa fa-plus"></i>&nbsp;Agregar pago
-                        </button>
+                    <div class="row">
+                      <div class="col-xs-12">
+                        <div id="bookingPaymentSummary" style="padding-left: 15px; padding-right: 15px;">
+
+                        </div>
                       </div>
+                    </div>
+
+                  </div>
+                  <div class="row" id="bookingPaymentCreate" hidden>
+                    <div class="col-xs-4">
+                      <button id="bookingPaymentCreateBtn" class="edit-option-btn btn btn-default">
+                        <i class="fa fa-plus"></i>&nbsp;Agregar pago
+                      </button>
                     </div>
                   </div>
-                <% end %>
+                </div>
               </div>
             </div>
         </div>
@@ -1034,13 +1032,13 @@
             <div class="form-group">
               <%= f.label :start, "Inicio", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
-                <%= f.datetime_select :start, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
+                <%= f.datetime_select :start, {default: @timezone.offset.ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
             <div class="form-group">
               <%= f.label :end, "Fin", class: "col-sm-3 control-label" %>
               <div class="col-sm-9">
-                <%= f.datetime_select :end, {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
+                <%= f.datetime_select :end, {default: @timezone.offset.ago, :minute_step => 5}, {class: "form-control date-select"} %>
               </div>
             </div>
             <div class="form-group form-repeat-div">
@@ -1112,7 +1110,7 @@
                 </div>
                 <div>
                   <%= radio_button_tag :repeat_option, 'date_end', false %>&nbsp;El&nbsp;
-                  <%= datetime_select "provider_break_repeat", "repeat_end", {default: eval(ENV["TIME_ZONE_OFFSET"]).ago, :minute_step => 5}, {class: "form-control date-select"} %>
+                  <%= datetime_select "provider_break_repeat", "repeat_end", {default: @timezone.offset.ago, :minute_step => 5}, {class: "form-control date-select"} %>
                 </div>
               </div>
             </div>

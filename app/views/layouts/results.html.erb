@@ -37,9 +37,9 @@
         })();
         </script>
         <!-- End Inspectlet Embed Code -->
-		<!-- start: Facebook Tracker-->
-		<%= render 'layouts/facebook_tracker' %>
-		<!-- end: Facebook Tracker-->
+      	<!-- start: Facebook Tracker-->
+      	<%= render 'layouts/facebook_tracker' %>
+      	<!-- end: Facebook Tracker-->
         <% end %>
 
 		<!-- start: JavaScript-->
@@ -173,18 +173,6 @@
 				</div>
 			</nav>
 			<!-- start: Alerts -->
-			<% if notice %>
-				<div class="alert alert-info alert-dismissable fade in">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				<%= notice %>
-				</div>
-			<% end %>
-			<% if alert %>
-				<div class="alert alert-warning alert-dismissable fade in">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				<%= alert %>
-				</div>
-			<% end %>
 			<!-- end: Alerts -->
 		</header>
 		<!-- end: Header -->
@@ -202,7 +190,7 @@
 							<h3>AgendaPro - Sistema de Reservas Online</h3>
 							<p>
 								<span class="txt-footer"><i class="fa fa-map-marker"></i> Ana María Carrera 5210, Las Condes, Santiago </span>
-								<span class="txt-footer"><i class="fa fa-phone"></i> (+56 9) 5178 5898 </span>
+								<span class="txt-footer"><i class="fa fa-phone"></i><p>Ventas: <%= t('phones.sales') %><br />Soporte: <%= t('phones.support') %></p></span>
 								<span><i class="fa fa-envelope"></i> contacto@agendapro.cl </span>
 							</p>
 						</div>
@@ -231,6 +219,7 @@
 		<% javascript_include_tag "jquery.browser.min" %><!-- Removido -->
 		<% javascript_include_tag "browser-detect" %><!-- Removido -->
 		<%= javascript_include_tag "search" %>
+		<%= render 'layouts/alerts' %>
 		<script type="text/javascript">
 			$('a').click(function() {
 				$('.alert').hide();

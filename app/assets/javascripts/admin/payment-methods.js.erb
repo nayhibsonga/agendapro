@@ -26,7 +26,10 @@ function destroyPayment() {
 		dataType: 'json',
 		success: function(payment){
 			// window.console.log(payment);
-			swal('Pago eliminado exitosamente.');
+			swal({
+				title: 'Pago eliminado exitosamente.',
+				type: 'success'
+			});
 			$("#delete_payment_button").html('Eliminar Pago');
 			$('#delete_payment_button').attr('disabled', false);
 			$('#bookingModal').modal('hide');
@@ -67,7 +70,10 @@ function checkBookingPayment(booking_id)
 		data: {booking_id: booking_id},
 		dataType: 'json',
 		error: function(response){
-			swal("Ocurrió un error inesperado al cargar la reserva.");
+			swal({
+				title: "Ocurrió un error inesperado al cargar la reserva.",
+				type: "error"
+			});
 		},
 		success: function(response){
 			if(response[0] == "yes")
@@ -110,7 +116,10 @@ function loadBookingNewPayment(booking_id)
 		data: {booking_id: booking_id},
 		dataType: 'json',
 		error: function(response){
-			swal("Ocurrió un error inesperado al cargar la reserva.");
+			swal({
+				title: "Ocurrió un error inesperado al cargar la reserva.",
+				type: "error"
+			});
 		},
 		success: function(response){
 

@@ -85,20 +85,6 @@
 					</div>
 				</div>
 			</nav>
-			<!-- start: Alerts -->
-			<% if notice %>
-				<div class="alert alert-info alert-dismissable fade in">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				<%= notice %>
-				</div>
-			<% end %>
-			<% if alert %>
-				<div class="alert alert-warning alert-dismissable fade in">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				<%= alert %>
-				</div>
-			<% end %>
-			<!-- end: Alerts -->
 		</header>
 		<!-- end: Header -->
 
@@ -109,6 +95,7 @@
 		<!-- start: JavaScript-->
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 		<%= javascript_include_tag "search" %>
+		<%= render 'layouts/alerts' %>
 		<%= yield :scripts %>
 		<script type="text/javascript">
 			$('a').click(function() {

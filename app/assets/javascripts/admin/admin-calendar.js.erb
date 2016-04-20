@@ -8,6 +8,8 @@ var dragUi = null;
 
 var bookingBuffer = [];
 
+var openedBooking;
+
 function showErrors (xhr) {
   var errors = $.parseJSON(xhr.responseText).errors;
   var errores = '';
@@ -19,6 +21,36 @@ function showErrors (xhr) {
     text: "Se produjeron los siguientes errores:\n" + errors,
     type: "error"
   });
+}
+
+function getTreatmentInfo(booking_id)
+{
+
+  $.ajax({
+    url: '/get_treatment_info',
+    method: 'get',
+    data: {id: booking_id},
+    dataType: 'json',
+    error: function(response){
+
+    },
+    success: function(response){
+      console.log(response);
+    }
+  })
+  /*swal({
+      title: "¿Estás seguro que quieres editar el servicio?",
+      text: "Estás editando el servicio de una sesión de un tratamiento. Si lo haces, se borrarán el resto de las sesiones.",
+      type: "warning",
+      showCancelButton: true
+    },
+    function(isConfirm) {
+      if (isConfirm) {
+        $('.booking-button').attr("disabled", "disabled");
+        $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+        saveBooking('DELETE','/'+eventId, bundled);
+      }
+    });*/
 }
 
 var globalResources = [];
@@ -88,7 +120,7 @@ function loadProviders () {
             loadLocationTime (localId, $('#providers-selector option:selected').data('resources'));
           }
           else {
-            loadProviderTime(parseInt($('#providers-selector').val()));
+            loadProviderTime(parseInt($('#providers-selector>option[name="providerRadio"]:last').val()));
           }
           globalResources = resources;
           return;
@@ -411,20 +443,20 @@ function loadWeekCalendar (startTime, endTime, hiddenDays, resourcesArray, provi
       $('#bookingPopover').click(function() {
         if (!bookingModalOpen) {
           bookingModalOpen = true;
-          createBookingModal(date);
+          createBookingModal(date, providerId);
         };
         $('.popover').hide();
       });
       $('#breakPopover').click(function() {
-        createBreakModal(date);
+        createBreakModal(date, providerId);
         $('.popover').hide();
       });
       $('.popover').show();
     },
 
     defaultView: 'agendaWeek',
-    defaultEventMinutes: $('#providers-selector option:selected').data("block"),
-    slotMinutes: $('#providers-selector option:selected').data("block")
+    defaultEventMinutes: $('#providers-selector option:selected').data("block") || $('#calendar-data').data('calendar-duration'),
+    slotMinutes: $('#providers-selector option:selected').data("block") || $('#calendar-data').data('calendar-duration')
   };
   loadCalendar (startTime, endTime, hiddenDays, resourcesArray, providerId, properties);
 }
@@ -473,6 +505,7 @@ function editBookingModal(eventId) {
   }
   else {
     $.getJSON('/bookings/'+eventId, function (booking) {
+      openedBooking = booking;
       var start = booking.start || 0;
       var end = booking.end || 0;
       if (start != 0) {
@@ -575,6 +608,7 @@ function editBookingModal(eventId) {
       }
 
       $('#cancelBookingDiv').remove();
+      $('#deleteTreatmentDiv').remove();
       if(booking.bundled)
       {
         window.console.log($('#booking_status_id').closest('.col-md-6'));
@@ -623,10 +657,10 @@ function editBookingModal(eventId) {
           });
           $('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
 
-          if(!booking.is_session)
-          {
-            $('#booking_service_id').removeAttr('disabled');
-          }
+          //if(!booking.is_session)
+          //{
+          $('#booking_service_id').removeAttr('disabled');
+          //}
 
           if (!booking.service_provider_active) {
             if ($('#booking_service_provider_id option[value="' + booking.service_provider_id + '"]').length == 0) {
@@ -655,7 +689,16 @@ function editBookingModal(eventId) {
         $("#sessions-info").append("Esta reserva corresponde a la " + booking.sessions_ratio + " del servicio.");
         $("#sessions-row").show();
 
+        $('#booking_status_id').closest('.col-md-6').append(
+          '<div class="form-group" id="deleteTreatmentDiv">' +
+          '<div class="col-sm-offset-4 col-sm-8">' +
+          '<button type="button" class="btn btn-red btn-ss btn-block booking-button" onclick="deleteTreatment('+eventId+')" id="deleteTreatmentButton">Eliminar Tratamiento</button>' +
+          '</div>' +
+          '</div>'
+        );
+
         checkTreatmentPrice(booking.service_id, booking.session_booking_id);
+        getTreatmentInfo(booking.id);
         //$("#xButton").attr("disabled", true);
       }
 
@@ -739,6 +782,7 @@ function createBookingModal(date, provider_id) {
   $('#booking_payed_state').val("0");
   $('#is_prepayed').text("No");
   $('#bundled_service').hide();
+  $('#deleteTreatmentDiv').remove();
 
   $.getJSON('/local_providers', {location: localId}, function (providersArray) {
     if (providersArray.length > 0) {
@@ -950,6 +994,87 @@ function booking_valid (booking) {
   });
 }
 
+function deleteTreatment(eventId){
+  var confirmation = false;
+  var isFirefox = navigator.userAgent.search("Firefox") >= 0;
+  var defaultTop = $('#bookingModal').css('top');
+
+  if ($('#calendar-data').data('staff-code')) {
+    if( isFirefox ) {
+      // TempFix for firefox input Modal Over Modal swal
+      window.console.log("asd");
+      $('#bookingModal').css('top', '-1800px');
+    }
+
+    swal({
+      title: "¿Estás seguro que quieres eliminar el tratamiento?",
+      text: "Se borrarán esta sesión y las demás del tratamiento de manera irreversible. Utiliza esta opción sólo si se agendó el tratamiento por error.\nIngrese el código de Empleado:",
+      type: "input",
+      inputType: "password",
+      showCancelButton: true,
+      closeOnConfirm: false
+    },
+    function (inputValue) {
+      if (inputValue === false) {
+        $('#bookingModal').css('top', defaultTop);
+        return false;
+      }
+      if (inputValue === "") {
+        swal.showInputError("El código no puede estar en blanco.");
+        return false;
+      };
+      $('#booking_staff_code').val(inputValue);
+      $('.booking-button').attr("disabled", "disabled");
+      $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+      //saveBooking('DELETE','/'+eventId, bundled);
+
+      destroyTreatment(eventId);
+
+      if( isFirefox ) { $('#bookingModal').css('top', defaultTop); }
+    });
+  } else{
+    swal({
+      title: "¿Estás seguro que quieres eliminar el tratamiento?",
+      text: "Se borrarán esta sesión y las demás del tratamiento de manera irreversible. Utiliza esta opción sólo si se agendó el tratamiento por error.",
+      type: "warning",
+      showCancelButton: true
+    },
+    function(isConfirm) {
+      if (isConfirm) {
+        $('.booking-button').attr("disabled", "disabled");
+        $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+        //saveBooking('DELETE','/'+eventId, bundled);
+        destroyTreatment(eventId);
+      }
+    });
+  };
+
+}
+
+function destroyTreatment(eventId){
+
+  $.ajax({
+    url: '/delete_treatment',
+    method: 'post',
+    data: {id: eventId, origin: 'admin'},
+    dataType: 'json',
+    error: function(xhr){
+      showErrors(xhr);
+      $('.booking-button').removeAttr("disabled");
+       $('#small_loader').remove();
+    },
+    success: function(booking){
+      $.each(booking, function(key, b) {
+        $('#calendar').fullCalendar('removeEvents',b);
+      });
+      swal.close();
+      $('#bookingModal').modal('hide');
+      triggerSuccess("Tratamiento eliminado exitosamente.");
+    }
+  });
+
+}
+
 function deleteBooking(eventId, bundled) {
   bundled = bundled || false;
   // Staff code
@@ -1126,10 +1251,8 @@ function editDrag(event) {
           data: { "provider_break": eventJSON },
           dataType: 'json',
           success: function(){
-            swal({
-              title: "Bloqueo actualizado exitosamente",
-              type: "success"
-            });
+            swal.close();
+            triggerSuccess("Bloqueo actualizado exitosamente");
           },
           error: function(xhr){
             swal.close();
@@ -1235,11 +1358,13 @@ function editDrag(event) {
             $('#calendar').fullCalendar('updateEvent', event);
             if(!booking.is_session || (booking.is_session && booking.user_session_confirmed))
             {
-              swal("Reserva actualizada exitosamente.");
+              swal.close();
+              triggerSuccess("Reserva actualizada exitosamente.");
             }
             else
             {
-              swal("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+              swal.close();
+              triggerInfo("Se ha enviado un correo al cliente para que valide la sesión agendada.");
             }
             $('#bookingAlerts').hide();
             if (booking.warnings.length > 0) {
@@ -1324,11 +1449,13 @@ function editDrag(event) {
               $('#calendar').fullCalendar('updateEvent', event);
               if(!booking.is_session || (booking.is_session && booking.user_session_confirmed))
               {
-                swal("Reserva actualizada exitosamente.");
+                swal.close();
+                triggerSuccess("Reserva actualizada exitosamente.");
               }
               else
               {
-                swal("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+                swal.close();
+                triggerInfo("Se ha enviado un correo al cliente para que valide la sesión agendada.");
               }
               $('#bookingAlerts').hide();
               if (booking.warnings.length > 0) {
@@ -1480,7 +1607,7 @@ function saveBooking(typeURL, extraURL, bundled) {
             }
             if(booking.is_session && !booking.user_session_confirmed)
             {
-              swal("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+              triggerInfo("Se ha enviado un correo al cliente para que valide la sesión agendada.");
             }
           }
           else {
@@ -1496,12 +1623,14 @@ function saveBooking(typeURL, extraURL, bundled) {
             $('#bookingWarnings').append(warnings);
             $('#bookingAlerts').show();
           }
+          triggerSuccess("Reserva actualizada exitosamente.");
           break;
           case 'DELETE':
           $.each(booking, function(key, b) {
             $('#calendar').fullCalendar('removeEvents',b);
           });
           swal.close();
+          triggerSuccess("Reserva eliminada exitosamente.");
           break;
         }
         $('#bookingModal').modal('hide');
@@ -1588,6 +1717,7 @@ function saveBookingBuffer () {
         $('#bookingAlerts').show();
       };
       $('#bookingModal').modal('hide');
+      triggerSuccess("Reserva creada exitosamente.");
     },
     error: function(xhr){
       var errors = $.parseJSON(xhr.responseText).errors;
@@ -1673,6 +1803,7 @@ function saveBookingBuffer () {
               $('#bookingAlerts').show();
             };
             $('#bookingModal').modal('hide');
+            triggerSuccess("Reserva creada exiitosamente.");
           });
         } else{
           $('#bookingModal').modal('hide');
@@ -1705,7 +1836,10 @@ function saveBreak (typeURL, extraURL) {
 
   if (startDate.getTime() >= endDate.getTime())
   {
-    swal("La fecha de fin no puede ser anterior o igual a la de inicio.");
+    swal({
+      title: "La fecha de fin no puede ser anterior o igual a la de inicio.",
+      type: "error"
+    });
     return false;
   }
 
@@ -1758,7 +1892,6 @@ function saveBreak (typeURL, extraURL) {
                 }
               }
               $('#calendar').fullCalendar('renderEvent', events, true);
-
             });
           }
           else
@@ -1800,6 +1933,7 @@ function saveBreak (typeURL, extraURL) {
             $('#bookingWarnings').append(warnings);
             $('#bookingAlerts').show();
           };
+          triggerSuccess("Bloqueo creado exitosamente.");
           break;
         case 'PATCH':
           var newProviderId = "0";
@@ -1852,6 +1986,7 @@ function saveBreak (typeURL, extraURL) {
             $('#bookingWarnings').append(warnings);
             $('#bookingAlerts').show();
           }
+          triggerSuccess("Bloqueo actualizado exitosamente.");
           break;
         case 'DELETE':
           $('.break-button').attr("disabled", "disabled");
@@ -1860,7 +1995,7 @@ function saveBreak (typeURL, extraURL) {
           $.each(provider_breaks, function (key, provider_break) {
             $('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
           });
-
+          triggerSuccess("Bloqueo eliminado exitosamente.");
           break;
       }
       $("#break-loader").hide();
@@ -1901,7 +2036,10 @@ function editRepeatBreak(breakId) {
 
   if (startDate.getTime() >= endDate.getTime())
   {
-    swal("La fecha de fin no puede ser anterior o igual a la de inicio.");
+    swal({
+      title: "La fecha de fin no puede ser anterior o igual a la de inicio.",
+      type: "error"
+    });
     return false;
   }
 
@@ -1982,6 +2120,7 @@ function editRepeatBreak(breakId) {
         $('#bookingWarnings').append(warnings);
         $('#bookingAlerts').show();
       }
+      triggerSuccess("Bloqueo actualizado exitosamente.");
       $("#break-loader").hide();
       $("#new_provider_break").show();
       $(".break-modal-footer").show();
@@ -2034,6 +2173,8 @@ function deleteRepeatBreak(breakId) {
       $("#new_provider_break").show();
       $(".break-modal-footer").show();
       $("#breakModal").modal('hide');
+
+      triggerSuccess("Bloqueo eliminado exitosamente.");
     }
   });
 }
@@ -2108,7 +2249,14 @@ function createBreakModal(date, providerId) {
           '<input class="check_boxes providers_check_boxes" id="provider_break_service_provider_id_' + provider.id + '" name="provider_break[service_provider_id][]" type="checkbox" value="' + provider.id + '"> ' + provider.public_name + ' ' +
           '</label></div>'
           );*/
-        $('#serviceProvidersMultiSelect').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+        if(providersArray.length == 1)
+        {
+          $('#serviceProvidersMultiSelect').append('<option value="' + provider.id + '" selected="selected">' + provider.public_name + '</option>');
+        }
+        else
+        {
+          $('#serviceProvidersMultiSelect').append('<option value="' + provider.id + '">' + provider.public_name + '</option>');
+        }
 
       });
 
@@ -2709,54 +2857,64 @@ function checkClientSessions(service_change) {
       {
         if(parseInt($("#booking_service_id").val()) > 0)
         {
-          $.ajax({
-            type: "get",
-            url: "/clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
-            success: function(response)
-            {
-              var service = response[0]
-              var sessions_bookings = response[1]
 
-              if (service.has_sessions)
+          if(openedBooking.service_id != null && parseInt($('#booking_service_id').val()) == openedBooking.service_id && openedBooking.client_id == parseInt($('#booking_client_id').val()))
+          {
+            $("#sessions-info").empty();
+            $("#sessions-info").append("Esta reserva corresponde a la " + openedBooking.sessions_ratio + " del servicio.");
+            $("#sessions-row").show();
+          }
+          else
+          {
+            $.ajax({
+              type: "get",
+              url: "/clients_check_sessions?id=" + $('#booking_client_id').val() + "&service_id=" + $("#booking_service_id").val(),
+              success: function(response)
               {
-                if (sessions_bookings.length > 0)
+                var service = response[0]
+                var sessions_bookings = response[1]
+
+                if (service.has_sessions)
                 {
-                  $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+                  if (sessions_bookings.length > 0)
+                  {
+                    $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+                  }
+                  else
+                  {
+                    $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+                  }
+                  $("#sessions-row").show();
+                  $("#add-service-btn").hide();
+                  $("#has_sessions").val("1");
+                  if(sessions_bookings.length > 0)
+                  {
+                    var index = 0;
+                    $.each(sessions_bookings, function (key, session_booking) {
+                      var nextSession = session_booking.sessions_taken + 1;
+                      if(index == 0)
+                      {
+                        $("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '" checked />&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+                      }
+                      else
+                      {
+                        $("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '">&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
+                      }
+                      index = index + 1;
+                    });
+                  }
+                  $("#treatment_price_div").show();
+                  $("#treatment_price").text("$ " + service.price);
                 }
                 else
                 {
-                  $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+                  $("#has_sessions").val("0");
+                  $("#treatment_price_div").hide();
+                  $("#treatment_price").text("");
                 }
-                $("#sessions-row").show();
-                $("#add-service-btn").hide();
-                $("#has_sessions").val("1");
-                if(sessions_bookings.length > 0)
-                {
-                  var index = 0;
-                  $.each(sessions_bookings, function (key, session_booking) {
-                    var nextSession = session_booking.sessions_taken + 1;
-                    if(index == 0)
-                    {
-                      $("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '" checked />&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
-                    }
-                    else
-                    {
-                      $("#sessions-info").append('<div session_booking_id="' + session_booking.id + '"><input type="radio" name="sessions-choice" value="' + session_booking.id + '">&nbsp;El cliente ha agendado ' + session_booking.sessions_taken + ' de un total de ' + session_booking.sessions_total +'. Agendar la sesión ' + nextSession + '.');
-                    }
-                    index = index + 1;
-                  });
-                }
-                $("#treatment_price_div").show();
-                $("#treatment_price").text("$ " + service.price);
               }
-              else
-              {
-                $("#has_sessions").val("0");
-                $("#treatment_price_div").hide();
-                $("#treatment_price").text("");
-              }
-            }
-          });
+            });
+          }
         }
       }
       else
@@ -2816,7 +2974,7 @@ function loadClientHistory(booking_id) {
             staffCode = '<td>'+booking_history.staff_code+'</td>';
           }
           var created = new Date(booking_history.created);
-          created.setHours(created.getHours() - <%= ENV["TIME_ZONE_OFFSET"].split('.')[0] %>);
+          offsetDate(created, booking_history.time_offset);
           var date = new Date(booking_history.start);
           $('#booking-history-tbody').append('<tr><td>'+booking_history.action+'</td><td>'+dateToLocal(created)+'</td><td>'+dateToLocal(date)+'</td><td>'+booking_history.service+'</td><td>'+booking_history.provider+'</td><td>'+booking_history.status+'</td><td>'+booking_history.notes+'</td><td>'+booking_history.company_comment+'</td><td>'+booking_history.user+'</td>'+staffCode+'</tr>');
         });
@@ -2866,8 +3024,14 @@ function dateFullToLocal(date) {
   return diasSemana[date.getUTCDay()] + ", " + date.getUTCDate() + " de " + meses[date.getUTCMonth()] + " de " + date.getUTCFullYear() + ' - ' + hours + ':' + minutes;
 }
 
+function offsetDate(date, offset) {
+  var hours = Math.trunc(offset);
+  var minutes = (offset % 1) * 60;
+  date.setHours(date.getHours() + hours, date.getMinutes() + minutes);
+}
+
 $(function() {
-  clearTimeout(alertDismiss);
+  // clearTimeout(alertDismiss);
 
   $('form input, form select').bind('keypress keydown keyup', function(e){
     if(e.keyCode == 13) {
@@ -3053,7 +3217,7 @@ $(function() {
       $('#xButton').prop('disabled', false);
       $("#full_name").prop('disabled', true);
       loadClientHistory(0);
-      checkClientSessions(false);
+      checkClientSessions(true);
     },
     focus: function (event, ui) {
       event.preventDefault();
@@ -3117,7 +3281,7 @@ $(function() {
       $('#xButton').prop('disabled', false);
       $("#full_name").prop('disabled', true);
       loadClientHistory(0);
-      checkClientSessions(false);
+      checkClientSessions(true);
     },
     focus: function (event, ui) {
       event.preventDefault();
@@ -3182,7 +3346,7 @@ $(function() {
       $('#full_name').prop('disabled', true);
       $('#full_name').val(client.first_name+' '+client.last_name);
       loadClientHistory(0);
-      checkClientSessions(false);
+      checkClientSessions(true);
     },
     focus: function (event, ui) {
       event.preventDefault();
@@ -3234,6 +3398,7 @@ $(function() {
     $('#booking_service_id').attr('disabled', true);
     $('#booking_status_id').parent().parent().next().remove();
     bookingModalOpen = false;
+    openedBooking = null;
     validator.resetForm();
     $('.has-success').removeClass('has-success');
     $('.fa.fa-check').removeClass('fa fa-check');
@@ -3278,7 +3443,7 @@ $(function() {
     $('label[for=booking_send_mail]').addClass('disabled');
     $('#client-history-tbody').empty();
     $('#client-history-tbody').append('<tr><td colspan="6">No hay un cliente seleccionado...</td></tr>');
-    checkClientSessions(false);
+    checkClientSessions(true);
     $('#xButton').prop('disabled', true);
   });
 

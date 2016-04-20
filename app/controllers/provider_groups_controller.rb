@@ -29,7 +29,7 @@ class ProviderGroupsController < ApplicationController
     @provider_group.company_id = current_user.company_id
     respond_with(@provider_group) do |format|
       if @provider_group.save
-        flash[:notice] = "Grupo de Prestadores creado."
+        flash[:success] = "Grupo de Prestadores creado."
         format.html { redirect_to provider_groups_path }
       end
     end
@@ -38,7 +38,7 @@ class ProviderGroupsController < ApplicationController
   def update
     respond_with(@provider_group) do |format|
       if @provider_group.update(provider_group_params)
-        flash[:notice] = "Grupo de Prestadores actualizado."
+        flash[:success] = "Grupo de Prestadores actualizado."
         format.html { redirect_to provider_groups_path }
       end
     end

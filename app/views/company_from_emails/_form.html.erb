@@ -1,14 +1,19 @@
 <%= form_for @company_from_email, :html => {:class => 'form-horizontal'} do |f| %>
 	<% if @company_from_email.errors.any? %>
 		<div id="error_explanation">
-			<h2><%= pluralize(@company_from_email.errors.count, "error") %> prohibited this company_setting from being saved:</h2>
-
-			<ul>
-			<% @company_from_email.errors.full_messages.each do |msg| %>
-				<li><%= msg %></li>
-			<% end %>
-			</ul>
-		</div>
+		<% content_for :scripts do %>
+      <% message = '' %>
+      <% @company_from_email.errors.full_messages.each do |msg| %>
+        <% message += '* ' + msg + '\n' %>
+      <% end %>
+      <script type="text/javascript">
+        swal({
+          title: "Error al guardar la configuración",
+          text: "<%= message %>",
+          type: "error"
+        });
+      </script>
+    <% end %>
 	<% end %>
 
 	<%= f.hidden_field :company_id, :value => current_user.company.id %>
@@ -22,7 +27,7 @@
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-4">
 			<%= f.submit 'Guardar', :class => 'btn btn-primary' %>
-			<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-danger" %>    
+			<%= link_to 'Cancelar', dashboard_path, :class => "btn btn-danger" %>
 		</div>
 	</div>
 <% end %>
