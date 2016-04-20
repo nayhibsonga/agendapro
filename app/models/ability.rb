@@ -136,6 +136,9 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
+        can :payments, Client, :company_id => user.company_id
+        can :payments_content, Client, :company_id => user.company_id
+
         can :stock_change, Product, :company_id => user.company_id
         can :update_stock, Product, :company_id => user.company_id
 
@@ -473,6 +476,9 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
+        can :payments, Client, :company_id => user.company_id
+        can :payments_content, Client, :company_id => user.company_id
+
         can :stock_change, Product, :company_id => user.company_id
         can :update_stock, Product, :company_id => user.company_id
 
@@ -735,6 +741,9 @@ class Ability
         can :update_custom_attributes, Client, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
+
+        can :payments, Client, :company_id => user.company_id
+        can :payments_content, Client, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id

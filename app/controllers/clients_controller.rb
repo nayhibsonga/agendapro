@@ -905,6 +905,23 @@ class ClientsController < ApplicationController
 
   end
 
+  def payments
+
+    #Check params first
+
+    
+
+  end
+
+  def payments_content
+    @from = params[:from].to_datetime
+    @to = params[:to].to_datetime
+    @payments = @client.payments.where(client_id: @client.id, payment_date: @from..@to).order(payment_date: :desc)
+    @payment_products = PaymentProduct.where(client_id: @client.id, payment_id: @payments.pluck(:id)).joins(:payments).order('"payments"."payment_date" desc')
+    @bookings = Booking.where(client_id: @client.id, payment_id: @payments.pluck(:id)).order(start: :desc).order(created_at: :desc)
+    @mock_bookings = MockBooking.where(client_id: @client.id, payment_id: @payments.pluck(:id)).joins(:payments).order('"payments"."payment_date" desc')
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_client
