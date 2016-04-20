@@ -1,0 +1,85 @@
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
+    <h4 class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-family:inherit;font-weight:500;line-height:1.1;color:inherit;margin-top:10px;margin-bottom:10px;font-size:20px;text-align:center;">Resumen de pago en <%= @payment.location.name %></h4>
+  </td>
+</tr>
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
+    <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:center;">Te enviamos el resumen del pago hecho en <%= @payment.location.name %>.</p>
+  </td>
+</tr>
+
+<tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;line-height:1.42857143;vertical-align:top;padding-top:10px;padding-bottom:10px;padding-right:20px;padding-left:20px;">
+    <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:center;font-size:20px;margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">Resumen de pago</b></p>
+  </td>
+</tr>
+
+<tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;line-height:1.42857143;vertical-align:top;padding-top:10px;padding-bottom:10px;padding-right:20px;padding-left:20px;">
+    <% @payment.receipts.each do |receipt| %>
+    <div class="receiptFinal" style="margin-bottom: 15px; border: 1px solid #fff; padding: 20px; text-align: center;">
+      <div>
+        <span class="receiptTitle" style="text-align: center; font-weight: bold; font-size: 18px;"><%= receipt.receipt_type.name %></span>
+        <span class="receiptNumber" style="font-size: 18px; float: right;">N° <%= receipt.number %></span>
+      </div>
+      <br />
+      <div>
+        <div class="responsive-table" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;min-height:.01%;overflow-x:auto;width:100%;overflow-y:hidden;-ms-overflow-style:-ms-autohiding-scrollbar;min-width:440px;">
+          <table class="table summary" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-spacing:0;border-collapse:collapse;font-family:"Roboto Condensed", sans-serif;font-size:12px;font-weight:300;width:100%;max-width:100%;color:#626262;background-color:transparent !important;background-image:none !important;background-repeat:repeat !important;background-position:top left !important;background-attachment:scroll !important;margin-bottom:0;">
+            <thead style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+              <tr  style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+                <th>Nombre</th>
+                <th>Precio unitario</th>
+                <th>Cantidad</th>
+                <th>Descuento</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% receipt.payment_products.each do |payment_product| %>
+              <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= payment_product.product.name %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$ <%= payment_product.product.price.round(2) %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= payment_product.quantity %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= payment_product.discount %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$ <%= (payment_product.price * (100 - payment_product.discount) / 100).round(2) %></td>
+              </tr>
+              <% end %>
+              <% receipt.bookings.each do |booking| %>
+              <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= booking.service.name %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$ <%= booking.list_price.round(2) %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">1</td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= booking.discount %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$ <%= booking.price.round(2) %></td>
+              </tr>
+              <% end %>
+              <% receipt.mock_bookings.each do |mock_booking| %>
+              <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= mock_booking.service.present? ? mock_booking.service.name : "Sin servicio" %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$ <%= mock_booking.price.round(2) %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">1</td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= mock_booking.discount %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">$ <%= (mock_booking.price * (100 - mock_booking.discount) / 100).round(2) %></td>
+              </tr>
+              <% end %>
+              <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">
+                  <b>Total</b>
+                </td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">
+                  <b>$ <%= receipt.amount.round(2) %></b>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <% end %>
+  </td>
+</tr>

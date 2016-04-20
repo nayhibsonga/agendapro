@@ -127,7 +127,7 @@ class ServicesController < ApplicationController
           end
           if send_promo_notification
             if @service.time_promo_active && @service.has_time_discount && !@service.active_service_promo_id.nil?
-              AdminMailer.notify_promo_creation(@service)
+              @service.sendings.build(method: 'notify_promotion').save
             end
           end
           @service.check_online_discount
@@ -150,7 +150,7 @@ class ServicesController < ApplicationController
           end
           if send_promo_notification
             if @service.time_promo_active && @service.has_time_discount && !@service.active_service_promo_id.nil?
-              AdminMailer.notify_promo_creation(@service)
+              @service.sendings.build(method: 'notify_promotion').save
             end
           end
           @service.check_online_discount
@@ -682,7 +682,7 @@ class ServicesController < ApplicationController
 
           if discounts_changed
             #Send notification for promo_activation.
-            AdminMailer.notify_promo_creation(@service)
+            @service.sendings.build(method: 'notify_promotion').save
           end
 
         else

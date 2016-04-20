@@ -14,6 +14,7 @@ class Booking < ActiveRecord::Base
   belongs_to :receipt
 
   has_many :booking_histories, dependent: :destroy
+  has_many :sendings, class_name: 'Email::Sending', as: :sendable
 
   validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :client_id, :presence => true
 
@@ -33,6 +34,9 @@ class Booking < ActiveRecord::Base
 
   after_create :send_booking_mail, :wait_for_payment, :check_session
   after_update :send_update_mail, :check_session
+
+
+  WORKER = 'BookingEmailWorker'
 
   def editable
     return self.location.company.company_setting.can_edit
@@ -664,7 +668,7 @@ class Booking < ActiveRecord::Base
         if self.start > Time.now + timezone.offset
           if self.status != Status.find_by(:name => "Cancelado")
             if self.booking_group.nil?
-              BookingMailer.book_service_mail(self)
+              sendings.build(method: 'new_booking').save
             end
           end
         end
@@ -674,13 +678,13 @@ class Booking < ActiveRecord::Base
 
   def send_validate_mail
     if !self.id.nil?
-      BookingMailer.book_service_mail(self)
+      sendings.build(method: 'new_booking').save
     end
   end
 
   def send_admin_payed_session_mail
     if !self.id.nil?
-      BookingMailer.admin_session_booking_mail(self)
+      sendings.build(method: 'admin_session_booking').save
     end
   end
 
@@ -690,17 +694,17 @@ class Booking < ActiveRecord::Base
       if self.start > Time.now + timezone.offset
         if !self.is_session_booked || self.status_id == Status.find_by_name("Cancelado").id
           if changed_attributes['is_session_booked'] || changed_attributes['status_id']
-            BookingMailer.cancel_booking(self)
+            sendings.build(method: 'cancel_booking').save
           end
         else
           #if (changed_attributes['start'] || changed_attributes['is_session_booked']) && self.user_session_confirmed
           if changed_attributes['is_session_booked']
-            BookingMailer.book_service_mail(self)
+            sendings.build(method: 'new_booking').save
           else
             if changed_attributes['start']
-              BookingMailer.update_booking(self, changed_attributes['start'])
+              sendings.build(method: 'update_booking').save
             else
-              BookingMailer.book_service_mail(self)
+              sendings.build(method: 'new_booking').save
             end
           end
           #end
@@ -710,7 +714,7 @@ class Booking < ActiveRecord::Base
   end
 
   def send_session_cancel_mail
-    BookingMailer.cancel_booking(self)
+    sendings.build(method: 'cancel_booking').save
   end
 
   def send_update_mail
@@ -722,7 +726,7 @@ class Booking < ActiveRecord::Base
     if self.start > Time.now + timezone.offset
       if self.status == Status.find_by(:name => "Cancelado")
         if changed_attributes['status_id']
-          BookingMailer.cancel_booking(self)
+          sendings.build(method: 'cancel_booking').save
         end
         #if !self.payed_booking.nil?
         # BookingMailer.cancel_payment_mail(self.payed_booking, 1)
@@ -731,9 +735,9 @@ class Booking < ActiveRecord::Base
         #end
       else
         if changed_attributes['start']
-          BookingMailer.update_booking(self, changed_attributes['start'])
+          sendings.build(method: 'update_booking').save
         elsif changed_attributes['status_id'] and self.status == Status.find_by(:name => "Confirmado")
-          BookingMailer.confirm_booking(self)
+          sendings.build(method: 'confirm_booking').save
         end
       end
     end
@@ -748,11 +752,11 @@ class Booking < ActiveRecord::Base
           if booking.send_mail
             if booking.is_session
               if booking.is_session_booked and booking.user_session_confirmed
-                BookingMailer.book_reminder_mail(booking)
+                booking.sendings.build(method: 'reminder_booking').save
                 puts 'Mail enviado a mailer booking_id: ' + booking.id.to_s
               end
             else
-              BookingMailer.book_reminder_mail(booking)
+              booking.sendings.build(method: 'reminder_booking').save
               puts 'Mail enviado a mailer booking_id: ' + booking.id.to_s
             end
           end
@@ -766,24 +770,26 @@ class Booking < ActiveRecord::Base
     address = ''
     date = I18n.l self.start
     if !self.service.outcall
-      address = self.location.name + " - " + self.location.long_address_with_second_address
+      address = "#{self.location.name} - #{self.location.long_address_with_second_address}"
     else
       address = "A domicilio"
     end
     timezone = CustomTimezone.from_booking(self)
     timezone_offset = "#{timezone.offset / 3600}#{(timezone.offset/60)%60}"
-    event = RiCal.Calendar do |cal|
-      cal.event do |event|
-        event.summary = self.service.name + ' en ' + self.location.company.name
-        event.description = "Datos de tu reserva:\n- Fecha: " + date + "\n- Servicio: " + self.service.name + "\n- Prestador: " + self.service_provider.public_name + "\n- Lugar: " + address + ".\nNOTA: por favor asegúrate que el calendario de tu celular esté en la zona horario correcta. En caso contrario, este recordatorio podría quedar guardado para otra hora."
-
-        event.dtstart =  Time.parse(self.start.strftime("%Y%m%dT%H%M%S")+timezone_offset).utc
-        event.dtend = Time.parse(self.end.strftime("%Y%m%dT%H%M%S")+timezone_offset).utc
-        event.location = self.location.long_address_with_second_address
-        event.add_attendee self.client.email
-        event.alarm do
-          description "Recuerda tu hora de " + booking.service.name + " en "  + booking.location.company.name
-        end
+    event = RiCal.Event do |event|
+      event.summary = "#{self.service.name} en #{self.location.company.name}"
+      event.description = "Datos de tu reserva:\n
+      \t- Fecha: #{date}\n
+      \t- Servicio: #{self.service.name}\n
+      \t- Prestador: #{self.service_provider.public_name}\n
+      \t- Lugar: #{address}.\n
+      NOTA: por favor asegúrate que el calendario de tu celular esté en la zona horario correcta. En caso contrario, este recordatorio podría quedar guardado para otra hora."
+      event.dtstart =  Time.parse(self.start.strftime("%Y%m%dT%H%M%S")+timezone_offset).utc
+      event.dtend = Time.parse(self.end.strftime("%Y%m%dT%H%M%S")+timezone_offset).utc
+      event.location = self.location.long_address_with_second_address
+      event.add_attendee self.client.email
+      event.alarm do
+        description "Recuerda tu hora de #{booking.service.name} en #{booking.location.company.name}"
       end
     end
     return event
@@ -1506,153 +1512,5 @@ class Booking < ActiveRecord::Base
       end
     end
 
-  end
-
-  def self.send_multiple_booking_mail(location, group)
-    helper = Rails.application.routes.url_helpers
-    @data = {}
-
-    # GENERAL
-      bookings = Booking.where(location_id: location).where(booking_group: group).order(:start)
-      @data[:company_name] = bookings[0].location.company.name
-      @data[:reply_to] = bookings[0].location.email
-      @data[:url] = bookings[0].location.get_web_address
-      @data[:signature] = bookings[0].location.company.company_setting.signature
-      @data[:domain] = bookings[0].location.company.country.domain
-      @data[:marketplace] = bookings[0].marketplace_origin
-      @data[:type] = 'image/png'
-      if bookings[0].location.company.logo.email.url.include? "logo_vacio"
-        @data[:logo] = Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
-      else
-        @data[:logo] = Base64.encode64(File.read('public' + bookings[0].location.company.logo.email.url))
-      end
-
-    # USER
-      @user = {}
-      @user[:where] = bookings[0].location.short_address
-      @user[:phone] = bookings[0].location.phone
-      @user[:name] = bookings[0].client.first_name
-      @user[:send_mail] = bookings[bookings.length - 1].send_mail
-      @user[:email] = bookings[0].client.email
-      @user[:can_cancel] = bookings[0].location.company.company_setting.can_cancel
-      @user[:cancel] = @data[:marketplace] ? bookings[0].marketplace_url('cancel_all') : helper.cancel_all_reminded_booking_url(:confirmation_code => bookings[0].confirmation_code)
-
-      @user_table = ''
-      bookings.each do |book|
-        @user_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + (book.location.company.company_setting.provider_preference == 2 ? "" : book.service_provider.public_name) + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>'
-        if bookings[0].location.company.company_setting.can_edit || bookings[0].location.company.company_setting.can_cancel
-          @user_table += '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">'
-          if bookings[0].location.company.company_setting.can_edit
-            @user_table += '<a class="btn btn-xs btn-orange" target="_blank" href="' + (book.marketplace_origin ? book.marketplace_url('edit') : helper.booking_edit_url(:confirmation_code => book.confirmation_code) ) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd9610;border-color:#db7400; width: 90%;">Editar</a>'
-          end
-          if bookings[0].location.company.company_setting.can_cancel
-            @user_table += '<a class="btn btn-xs btn-red" target="_blank" href="' + (book.marketplace_origin ? book.marketplace_url('cancel') : helper.booking_cancel_url(:confirmation_code => book.confirmation_code) ) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd633f;border-color:#e55938; width: 90%;">Cancelar</a>'
-          end
-          @user_table += '</td>'
-        end
-        @user_table += '</tr>'
-      end
-
-      @user[:user_table] = @user_table
-
-      @data[:user] = @user
-
-    # LOCATION
-      @location = {}
-      @location[:name] = bookings[0].location.name
-      @location[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
-
-      @location[:email] = []
-      location_emails = NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: bookings[0].location), receptor_type: 1, summary: false).select(:email).distinct
-      location_emails.each do |local|
-        @location[:email] << local.email
-      end
-
-      @location_table = ''
-      bookings.each do |book|
-        @location_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
-          '</tr>'
-      end
-      @location[:location_table] = @location_table
-
-      @data[:location] = @location
-
-    # SERVICE PROVIDER
-
-      #Get providers ids
-      providers_ids = []
-      bookings.each do |book|
-        if !providers_ids.include?(book.service_provider_id)
-          providers_ids << book.service_provider_id
-        end
-      end
-
-      @provider = {}
-      @providers_array = []
-      @provider[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
-
-      providers_ids.each do |id|
-        provider = ServiceProvider.find(id)
-        emails = NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: provider), receptor_type: 2, summary: false).select(:email).distinct
-        emails.each do |email|
-          @staff = {}
-          @staff[:name] = provider.public_name
-          @staff[:email] = email.email
-
-          provider_bookings = Booking.where(location_id: location).where(booking_group: group).where(service_provider: provider).order(:start)
-          @provider_table = ''
-          provider_bookings.each do |book|
-            @provider_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
-                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
-                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
-                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
-                '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
-              '</tr>'
-          end
-          @staff[:provider_table] = @provider_table
-          @providers_array << @staff
-        end
-      end
-
-      @provider[:array] = @providers_array
-      @data[:provider] = @provider
-
-    # COMPANY
-      @company = {}
-      @company[:name] = bookings[0].location.company.name
-      @company[:client_name] = bookings[0].client.first_name + ' ' + bookings[0].client.last_name
-
-      @company[:email] = []
-      company_emails = NotificationEmail.where(company:  bookings[0].location.company, receptor_type: 0, summary: false).select(:email).distinct
-      company_emails.each do |company|
-        @company[:email] << company.email
-      end
-
-      @company_table = ''
-      bookings.each do |book|
-        @company_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.notes.blank? then '' else book.notes end + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + if book.company_comment.blank? then '' else book.company_comment end + '</td>' +
-          '</tr>'
-      end
-      @company[:company_table] = @company_table
-
-      @data[:company] = @company
-
-    timezone = CustomTimezone.from_booking(bookings[0])
-    if bookings.order(:start).first.start > Time.now + timezone.offset
-      BookingMailer.multiple_booking_mail(@data)
-      # logger.debug @data.inspect
-    end
   end
 end

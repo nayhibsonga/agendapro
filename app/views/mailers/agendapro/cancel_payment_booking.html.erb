@@ -1,0 +1,47 @@
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
+    <h4 class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-family:inherit;font-weight:500;line-height:1.1;color:inherit;margin-top:10px;margin-bottom:10px;font-size:20px;text-align:center;"><%= @company.name %></h4>
+  </td>
+</tr>
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
+    <% if @cient_present %>
+      <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:center;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;"><%= "#{@client.first_name} #{@client.last_name}" %>, has cancelado una reserva paga en línea.</b></p>
+      <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:center;">Contáctanos en contacto@agendapro.co con los datos de la transferencia copiados en este correo para hacerte la devolución del dinero.</p>
+    <% elsif @company_present %>
+      <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:center;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">Se ha cancelado una reserva en <%= @company.name %> pagada en línea hecha por medio de AgendaPro.</b></p>
+      <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:center;">Nosotros efectuaremos la devolución del dinero al cliente, y la cancelación se verá reflejada en tu panel de control.</p>
+    <% elsif @agendapro %>
+      <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:center;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">Se ha cancelado una reserva en <%= @company.name %> pagada en línea hecha por medio de AgendaPro, por parte del cliente <%= "#{@client.first_name} #{@client.last_name}" %> con correo <%= @client.email %>.</b></p>
+      <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin-top:0;margin-bottom:10px;margin-right:0;margin-left:0;text-align:center;">Los datos de la transferencia se muestran a continuación.</p>
+    <% end %>
+  </td>
+</tr>
+<tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;line-height:1.42857143;vertical-align:top;padding-top:10px;padding-bottom:10px;padding-right:20px;padding-left:20px;">
+    <table class="table table-bordered" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-spacing:0;border-collapse:collapse;font-family:'Roboto Condensed', sans-serif;font-size:12px;font-weight:300;width:100%;max-width:100%;margin-bottom:20px;border-width:1px;border-style:solid;border-color:#ddd;color:#ffffff;background-color:transparent;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;">
+      <tbody style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+        <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+          <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;">Total a pagar</td>
+          <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;"><%= @punto_pagos.amount %></td>
+        </tr>
+        <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+          <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;">Número de tarjeta</td>
+          <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;">**********<%= @card_number %></td>
+        </tr>
+        <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+          <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;">Orden de compra</td>
+          <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;"><%= @punto_pagos.operation_number %></td>
+        </tr>
+        <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+          <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;">Código de autorización</td>
+          <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;"><%= @auth_code %></td>
+        </tr>
+        <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+          <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;">Fecha</td>
+          <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;border-width:1px;border-style:solid;border-color:#ddd;"><%= @punto_pagos.approvement_date %></td>
+        </tr>
+      </tbody>
+    </table>
+  </td>
+</tr>

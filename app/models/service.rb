@@ -31,6 +31,7 @@ class Service < ActiveRecord::Base
 
   has_many :service_commissions
 
+  has_many :sendings, class_name: 'Email::Sending', as: :sendable
   has_many :treatment_logs, dependent: :nullify
 
 	mount_uploader :time_promo_photo, TimePromoPhotoUploader
@@ -71,6 +72,8 @@ class Service < ActiveRecord::Base
                 }
     },
     :ignoring => :accents
+
+  WORKER = 'ServiceEmailWorker'
 
     def check_treatment_promo
     	if self.has_sessions

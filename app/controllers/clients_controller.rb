@@ -461,45 +461,27 @@ class ClientsController < ApplicationController
   end
 
   def send_mail
-    # Sumar mails eviados
-    current_sent = current_user.company.company_setting.monthly_mails
-    sent_to = params[:to].split(',').each { |mail| mail.strip! }
-    sent_now = sent_to.length
-    current_sent + sent_now >= 0 ? new_mails = current_sent + sent_now : new_mails = 0
-    current_user.company.company_setting.update_attributes :monthly_mails => (new_mails)
-    attachments = params[:attachment]
-    subject = params[:subject]
-    message = params[:message]
-    sent_from = params[:from]
+    # attachments = params[:attachment]
+    # attachment = {
+    #   :type => attachments.content_type,
+    #   :name => attachments.original_filename,
+    #   :content => Base64.encode64(File.read(attachments.tempfile))
+    # }
 
-    Thread.new do
-      clients = Array.new
-      sent_to.each do |client_mail|
-        client_info = {
-          :email => client_mail,
-          :type => 'bcc'
-        }
-        clients.push(client_info)
-      end
-
-      if attachments
-        attachment = {
-          :type => attachments.content_type,
-          :name => attachments.original_filename,
-          :content => Base64.encode64(File.read(attachments.tempfile))
-        }
-      else
-        attachment = {}
-      end
-
-      ClientMailer.send_client_mail(current_user, clients, subject, message, attachment, sent_from)
-
-      # Close database connection
-      ActiveRecord::Base.connection.close
-      Thread.exit
+    content = Email::Content.create(
+      template: Email::Template.where(name: "plantilla_02").first,
+      company: current_user.company,
+      from: params[:from],
+      to: params[:to]
+      )
+    if content.present?
+      flash[:notice] = 'E-mail enviado exitosamente'
+      content.update(subject: params[:subject], send_email: true, data: { text1: params[:message] })
+      redirect_to(action: :index)
+    else
+      flash[:error] = "Se produjo un error al crear un nuevo Email"
+      redirect_to(controller: :clients, action: :compose_mail)
     end
-
-    redirect_to '/clients', notice: 'E-mail enviado exitosamente.'
   end
 
   def suggestion

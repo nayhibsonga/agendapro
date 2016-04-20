@@ -18,13 +18,13 @@ class HomeController < ApplicationController
 
 	def post_contact
 		@contact_info = Hash.new
-		@contact_info['firstName'] = params[:inputName]
-		@contact_info['lastName'] = params[:inputLastname]
-		@contact_info['email'] = params[:inputEmail]
-		@contact_info['subject'] = params[:inputSubject]
-		@contact_info['message'] = params[:inputMessage]
+		@contact_info[:firstName] = params[:inputName]
+		@contact_info[:lastName] = params[:inputLastname]
+		@contact_info[:email] = params[:inputEmail]
+		@contact_info[:subject] = params[:inputSubject]
+		@contact_info[:message] = params[:inputMessage]
 
-		HomeMailer.contact_mail(@contact_info)
+		ContactEmailWorker.perform(@contact_info, false)
 
 		if params[:source] == "search"
 			redirect_to root_path, notice: "¡Gracias por contactarnos! Te responderemos a la brevedad."
@@ -36,12 +36,14 @@ class HomeController < ApplicationController
 	def mobile_contact
 		if params.has_key?('inputName') and params.has_key?('inputEmail')
 			@contact_info = Hash.new
-			@contact_info['name'] = params[:inputName]
-			@contact_info['email'] = params[:inputEmail]
-			@contact_info['phone'] = params[:inputPhone]
-			@contact_info['message'] = params[:inputMessage]
+			@contact_info[:firstName] = params[:inputName]
+			@contact_info[:lastName] = nil
+			@contact_info[:email] = params[:inputEmail]
+			@contact_info[:subject] = "Nueva Empresa (Sitio Móvil)"
+			@contact_info[:message] = params[:inputMessage]
+			@contact_info[:phone] = params[:inputPhone]
 
-			HomeMailer.mobile_contact(@contact_info)
+			ContactEmailWorker.perform(@contact_info, true)
 
 			redirect_to root_path, notice: "¡Gracias por contactarnos! Te responderemos a la brevedad."
 		end

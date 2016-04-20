@@ -1,0 +1,188 @@
+<table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
+  <tbody class="mcnTextBlockOuter">
+    <tr>
+      <td valign="top" class="mcnTextBlockInner">
+        <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;" class="mcnTextContentContainer">
+          <tbody>
+            <tr>
+              <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;">
+                <div style="text-align: center;">
+                  <span style="font-size:14px">
+                    <strong><%= @name %></strong>, confirma tus reservas en *|COMPANY NAME|*.
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonBlock">
+  <tbody class="mcnButtonBlockOuter">
+    <tr>
+      <td style="padding-top:0; padding-right:18px; padding-bottom:18px; padding-left:18px;" valign="top" align="center" class="mcnButtonBlockInner">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonContentContainer" style="border-collapse: separate !important;border-radius: 0px;background-color: #EE5E66;">
+          <tbody>
+            <tr>
+              <td align="center" valign="middle" class="mcnButtonContent" style="font-family: Arial; font-size: 14px; padding: 15px;">
+                <%= link_to "Confirmar mis Servicios", @bookings.first.marketplace_url('confirm_all'), class: "mcnButton", title: "Confirmar mis Servicios", target: "_blank", style: "font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;" %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonBlock">
+  <tbody class="mcnButtonBlockOuter">
+    <tr>
+      <td style="padding-top:0; padding-right:18px; padding-bottom:18px; padding-left:18px;" valign="top" align="center" class="mcnButtonBlockInner">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonContentContainer" style="border-collapse: separate !important;border: 2px solid #EE5E66;border-radius: 0px;background-color: #FFFFFF;">
+          <tbody>
+            <tr>
+              <td align="center" valign="middle" class="mcnButtonContent" style="font-family: Arial; font-size: 14px; padding: 15px;">
+                <%= link_to "Cancelar mis Servicios", @bookings.first.marketplace_url('cancel_all'), class: "mcnButton", title: "Cancelar mis Servicios", target: "_blank", style: "font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #EE5E66;" %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnImageBlock" style="min-width:100%;">
+  <tbody class="mcnImageBlockOuter">
+    <tr>
+      <td valign="top" style="padding:9px" class="mcnImageBlockInner">
+        <div class="responsive-table" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;min-height:.01%;overflow-x:auto;width:100%;overflow-y:hidden;-ms-overflow-style:-ms-autohiding-scrollbar;min-width:440px;">
+          <table class="table summary" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-spacing:0;border-collapse:collapse;font-family:'Roboto Condensed', sans-serif;font-size:12px;font-weight:300;width:100%;max-width:100%;color:#626262;background-color:transparent !important;background-image:none !important;background-repeat:repeat !important;background-position:top left !important;background-attachment:scroll !important;margin-bottom:0;">
+            <thead style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+              <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+                <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:left;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;vertical-align:bottom;border-bottom-width:2px;border-bottom-style:solid;border-bottom-color:#ddd;font-weight:bold;">Qué Reservaste</th>
+                <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:left;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;vertical-align:bottom;border-bottom-width:2px;border-bottom-style:solid;border-bottom-color:#ddd;font-weight:bold;">Cuándo</th>
+                <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:left;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;vertical-align:bottom;border-bottom-width:2px;border-bottom-style:solid;border-bottom-color:#ddd;font-weight:bold;">Con Quién</th>
+                <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:left;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;vertical-align:bottom;border-bottom-width:2px;border-bottom-style:solid;border-bottom-color:#ddd;font-weight:bold;">Notas</th>
+                <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:left;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;vertical-align:bottom;border-bottom-width:2px;border-bottom-style:solid;border-bottom-color:#ddd;font-weight:bold;">
+                </th>
+              </tr>
+            </thead>
+            <tbody style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+              <% @bookings.each do |book| %>
+              <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= book.service.name %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= l(book.start) %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= book.service_provider.public_name unless @company_setting.provider_preference == 2 %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= book.notes if book.notes.present? %></td>
+                <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">
+                  <% if @company_setting.can_edit %>
+                  <%= link_to "Editar", book.marketplace_url('edit'), class: "btn btn-xs btn-orange", target: "_blank", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd9610;border-color:#db7400; width: 90%;" %>
+                  <% end %>
+                  <% if @company_setting.can_cancel %>
+                  <%= link_to "Cancelar", book.marketplace_url('cancel'), class: "btn btn-xs btn-red", target: "_blank", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd633f;border-color:#e55938; width: 90%;" %>
+                  <% end %>
+                  <%= link_to "Confirmar", confirm_booking_url(:confirmation_code => book.confirmation_code), class: "btn btn-xs btn-green", target: "_blank", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#0f91cf;border-color:#0b587b; width: 90%;" %>
+                </td>
+              </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
+  <tbody class="mcnDividerBlockOuter">
+    <tr>
+      <td class="mcnDividerBlockInner" style="min-width:100%; padding:18px;">
+        <table class="mcnDividerContent" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%;border-top-width: 2px;border-top-style: solid;border-top-color: #EAEAEA;">
+          <tbody>
+            <tr>
+              <td>
+                <span>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnImageGroupBlock">
+  <tbody class="mcnImageGroupBlockOuter">
+    <tr>
+      <td valign="top" style="padding:9px" class="mcnImageGroupBlockInner">
+        <table align="left" width="273" border="0" cellpadding="0" cellspacing="0" class="mcnImageGroupContentContainer">
+          <tbody>
+            <tr>
+              <td class="mcnImageGroupContent" valign="top" style="padding-left: 9px; padding-top: 0; padding-bottom: 0;text-align: center;">
+                <%= image_tag "https://gallery.mailchimp.com/542f2957e9b5d351a6230de51/images/d809b8ba-b49e-47a3-ad5b-0a06eab0b8b7.png", width: "64", style="max-width:64px; padding-bottom: 0;", class: "mcnImage" %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table align="right" width="273" border="0" cellpadding="0" cellspacing="0" class="mcnImageGroupContentContainer">
+          <tbody>
+            <tr>
+              <td class="mcnImageGroupContent" valign="top" style="padding-right: 9px; padding-top: 0; padding-bottom: 0;text-align: center;">
+                <%= image_tag "https://gallery.mailchimp.com/542f2957e9b5d351a6230de51/images/7116ff95-46c7-4088-a1af-6e86d0b6afe5.png", width: "82", style="max-width:82px; padding-bottom: 0;", class: "mcnImage" %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
+  <tbody class="mcnTextBlockOuter">
+    <tr>
+      <td valign="top" class="mcnTextBlockInner">
+        <table align="left" border="0" cellpadding="0" cellspacing="0" width="282" class="mcnTextContentContainer">
+          <tbody>
+            <tr>
+              <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-left:18px; padding-bottom:9px; padding-right:0;">
+                <div style="text-align: center;">
+                  <span style="font-size:14px; line-height:20.8px">
+                    <span class="mc-toc-title">
+                      <span style="font-family:arial,helvetica neue,helvetica,sans-serif">
+                        <strong>¿Dónde?</strong>
+                        <br>
+                        <%= @company.name %>
+                        <br>
+                        <%= @bookings.first.location.short_address %>
+                      </span>
+                    </span>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table align="right" border="0" cellpadding="0" cellspacing="0" width="282" class="mcnTextContentContainer">
+          <tbody>
+            <tr>
+              <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right:18px; padding-bottom:9px; padding-left:18px;">
+                <div style="text-align: center;">
+                  <span style="font-size:14px">
+                    <span class="mc-toc-title">
+                      <span style="font-family:arial,helvetica neue,helvetica,sans-serif">
+                        <strong>Consultas</strong>
+                      </span>
+                    </span>
+                  </span>
+                  <br>
+                  <%= @bookings.first.location.phone %>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
