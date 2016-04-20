@@ -71,13 +71,13 @@ class Client < ActiveRecord::Base
       when "text"
 
         if TextAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
-          TextAttribute.create(attribute_id: attribute.id, client_id: self.id)
+          TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: "")
         end
 
       when "textarea"
 
         if TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
-          TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id)
+          TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: "")
         end
 
       when "boolean"
@@ -109,63 +109,6 @@ class Client < ActiveRecord::Base
         end
       end
 
-    end
-
-
-    company = self.company
-    company.clients.each do |client|
-      case self.datatype
-      when "float"
-
-        if FloatAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          FloatAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "integer"
-
-        if IntegerAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          IntegerAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "text"
-
-        if TextAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          TextAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "textarea"
-
-        if TextareaAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          TextareaAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "boolean"
-
-        if BooleanAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          BooleanAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "date"
-
-        if DateAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          DateAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "datetime"
-
-        if DateTimeAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          DateTimeAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "file"
-        if FileAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          FileAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-      when "categoric"
-        if CategoricAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          CategoricAttribute.create(attribute_id: self.id, client_id: client.id, attribute_category_id: attribute_category.id)
-        end
-      end
     end
 
   end
@@ -251,7 +194,7 @@ class Client < ActiveRecord::Base
         if !categoric_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = categoric_attribute.attribute_category_id
         else
-          custom_attributes[attribute.slug + "_attribute"] = attribute.attribute_categories.where(category: "Otra").first.id
+          custom_attributes[attribute.slug + "_attribute"] = nil
         end
 
       end
