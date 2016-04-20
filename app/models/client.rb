@@ -852,6 +852,121 @@ class Client < ActiveRecord::Base
     end
   end
 
+  def self.export_csv(company_id, clients)
+
+    csv_header = ["E-mail","Nombre","Apellido",(I18n.t('ci')).capitalize,"Teléfono","Dirección","Comuna","Fecha Nacimiento","Edad","Género","Fecha Creación"]
+    company = Company.find(company_id)
+    attributes = company.custom_attributes.joins(:attribute_group).order('attribute_groups.order asc').order('attributes.order asc').order('name asc')
+    attributes.each do |attribute|
+      if attribute.datatype != "file"
+        if attribute.datatype != "categoric" || (attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0)
+            csv_header << attribute.name
+        end
+      end
+    end 
+
+    client_lines = []
+
+    clients.each do |client|
+
+      client_birth = ""
+      if !client.birth_day.nil? && !client.birth_month.nil? && !client.birth_year.nil?
+        client_birth = client.birth_day.to_s + "/" + client.birth_month.to_s + "/" + client.birth_year.to_s
+      end
+
+      client_line = [client.email.to_s, client.first_name.to_s, client.last_name.to_s, client.identification_number.to_s, client.phone.to_s, client.address.to_s, client.district.to_s, client_birth, client.age.to_s]
+
+      if client.gender == 1
+        client_line << "Femenino"
+      elsif client.gender == 2
+        client_line << "Masculino"
+      else
+        client_line << ""
+      end 
+      client_line << client.created_at.strftime("%d/%m/%Y %R")
+
+      attributes.each do |attribute|
+        if attribute.datatype != "file"
+          if attribute.datatype == "float"
+            float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            float_attribute_value = ""
+            if !float_attribute.nil? && !float_attribute.value.nil?
+              float_attribute_value = float_attribute.value
+            end
+              client_line << float_attribute_value.to_s
+          elsif attribute.datatype == "integer"
+            integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            integer_attribute_value = ""
+            if !integer_attribute.nil? && !integer_attribute.value.nil?
+              integer_attribute_value = integer_attribute.value
+            end
+            client_line << integer_attribute_value.to_s
+          elsif attribute.datatype == "text"
+            text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            text_attribute_value = ""
+            if !text_attribute.nil? && !text_attribute.value.nil?
+              text_attribute_value = text_attribute.value
+            end
+            client_line << text_attribute_value.to_s
+          elsif attribute.datatype == "textarea"
+            textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            textarea_attribute_value = ""
+            if !textarea_attribute.nil? && !textarea_attribute.value.nil?
+              textarea_attribute_value = textarea_attribute.value
+            end
+            client_line << textarea_attribute_value.to_s
+          elsif attribute.datatype == "boolean"
+            boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            boolean_attribute_value = ""
+            if !boolean_attribute.nil? && !boolean_attribute.value.nil?
+              if boolean_attribute.value == true
+                boolean_attribute_value = "Sí"
+              else
+                boolean_attribute_value = "No"
+              end
+            end
+            client_line << boolean_attribute_value.to_s
+          elsif attribute.datatype == "date"
+            date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            date_attribute_value = ""
+            if !date_attribute.nil? && !date_attribute.value.nil?
+              date_attribute_value = date_attribute.value.strftime('%d/%m/%Y')
+            end
+            client_line << date_attribute_value.to_s
+          elsif attribute.datatype == "datetime"
+            date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            date_time_attribute_date = ""
+            date_time_attribute_hour = "00"
+            date_time_attribute_minute = "00"
+            if !date_time_attribute.nil? && !date_time_attribute.value.nil?
+              date_time_attribute_value = date_time_attribute.value.strftime("%d/%m/%Y %R")
+            end
+            client_line << date_time_attribute_value.to_s
+          elsif attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0
+            categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            category_value = ""
+            if !categoric_attribute.attribute_category.nil?
+              category_value = categoric_attribute.attribute_category.category
+            end
+            client_line << category_value.to_s
+          end
+        end
+      end
+
+      client_lines << client_line
+
+    end
+
+    csv_string = CSV.generate() do |csv|
+      csv << csv_header
+      client_lines.each do |line|
+        csv << line
+      end
+    end
+
+
+  end
+
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
 
