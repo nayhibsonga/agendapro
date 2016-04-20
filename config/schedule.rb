@@ -63,3 +63,8 @@ end
 every 1.days, :at => '0:15 am' do
   runner 'PettyCash.close_on_schedule'
 end
+
+environment = ENV['RAILS_ENV'] || 'production'
+every :reboot do
+    command "cd #{path} && #{environment_variable}=#{environment} bin/delayed_job restart"
+end
