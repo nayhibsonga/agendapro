@@ -523,6 +523,3 @@ DEPENDENCIES
   validation_scopes!
   whenever
   will_paginate-bootstrap
-
-BUNDLED WITH
-   1.11.2
