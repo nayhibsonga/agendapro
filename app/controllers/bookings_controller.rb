@@ -1381,6 +1381,9 @@ class BookingsController < ApplicationController
 
       if !booking_params[:status_id].blank?
         @booking.status_id = booking_params[:status_id]
+        if @booking.status_id == Status.find_by_name("Cancelado").id
+          @booking.is_session_booked = false
+        end
       end
       if @booking.update(new_booking_params)
 
