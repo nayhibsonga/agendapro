@@ -42,4 +42,10 @@ class StockMailer < Base::CustomMailer
       )
   end
 
+  private
+    def attacht_logo(url=nil)
+      url ||= "app/assets/images/logos/logodoble2.png"
+      attachments.inline['logo.png'] = File.read(url)
+    end
+
 end
