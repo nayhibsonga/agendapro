@@ -706,8 +706,20 @@ function editBookingModal(eventId) {
 
       for(var key in custom_attributes)
       {
+        console.log("KEY");
         console.log(key);
         console.log(custom_attributes[key]);
+        if($('[name="' + key + '"]').is('select'))
+        {
+          if(custom_attributes[key] == false)
+          {
+            custom_attributes[key] = "0";
+          }
+          else if(custom_attributes[key] == true)
+          {
+            custom_attributes[key] = "1";
+          }
+        }
         $('[name="' + key + '"]').val(custom_attributes[key]);
       }
 
@@ -3168,15 +3180,19 @@ $(function() {
 
       for(var key in custom_attributes)
       {
+        console.log("KEY");
         console.log(key);
         console.log(custom_attributes[key]);
-        if(custom_attributes[key] == false)
+        if($('[name="' + key + '"]').is('select'))
         {
-          custom_attributes[key] = "0";
-        }
-        else if(custom_attributes[key] == true)
-        {
-          custom_attributes[key] = "1";
+          if(custom_attributes[key] == false)
+          {
+            custom_attributes[key] = "0";
+          }
+          else if(custom_attributes[key] == true)
+          {
+            custom_attributes[key] = "1";
+          }
         }
         $('[name="' + key + '"]').val(custom_attributes[key]);
       }
@@ -3242,6 +3258,17 @@ $(function() {
       {
         console.log(key);
         console.log(custom_attributes[key]);
+        if($('[name="' + key + '"]').is('select'))
+        {
+          if(custom_attributes[key] == false)
+          {
+            custom_attributes[key] = "0";
+          }
+          else if(custom_attributes[key] == true)
+          {
+            custom_attributes[key] = "1";
+          }
+        }
         $('[name="' + key + '"]').val(custom_attributes[key]);
       }
 
@@ -3307,6 +3334,17 @@ $(function() {
       {
         console.log(key);
         console.log(custom_attributes[key]);
+        if($('[name="' + key + '"]').is('select'))
+        {
+          if(custom_attributes[key] == false)
+          {
+            custom_attributes[key] = "0";
+          }
+          else if(custom_attributes[key] == true)
+          {
+            custom_attributes[key] = "1";
+          }
+        }
         $('[name="' + key + '"]').val(custom_attributes[key]);
       }
 
@@ -3404,6 +3442,12 @@ $(function() {
     $('.fa.fa-check').removeClass('fa fa-check');
     $('.has-error').removeClass('has-error');
     $('#bookingModal').find('.fa.fa-times').removeClass('fa fa-times');
+    $('.custom-attribute').each(function(){
+      if(!$(this).is('select'))
+      {
+        $(this).val("");
+      }
+    });
   });
 
   $('#breakModal').on('hidden.bs.modal', function (e) {
