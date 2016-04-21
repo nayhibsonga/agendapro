@@ -16,7 +16,7 @@ class ClientMailer < Base::CustomMailer
     headers["X-MC-PreserveRecipients"] = "false"
     mail(
       from: filter_sender("#{@content.company.name.titleize} <no-reply@agendapro.co>"),
-      to: filter_recipient(recipient),
+      bcc: filter_recipient(recipient),
       subject: subject,
       reply_to: @content.from,
       template_path: Email::Template::TMPL_DIR,

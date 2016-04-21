@@ -7,7 +7,7 @@ class CompanyEmailWorker < BaseEmailWorker
     admins = company.users.where(role: Role.find_by_name('Administrador General')).pluck(:email)
 
     recipients = filter_mails(admins)
-    recipients.in_groups_of(1000).each do |group|
+    recipients.in_groups_of(50).each do |group|
       group.compact!
       total_sendings += 1
       total_recipients += group.size

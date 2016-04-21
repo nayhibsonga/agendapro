@@ -5,7 +5,7 @@ class CompanyFromEmailMailer < Base::CustomMailer
     @company = email_from.company
 
     # layout variables
-    @title = "Confirmar email #{@email_from.email}"
+    @title = "Confirmar email #{email_from.email}"
     @url = @company.web_url
     attacht_logo()
 
