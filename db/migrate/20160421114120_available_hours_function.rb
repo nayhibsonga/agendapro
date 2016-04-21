@@ -37,7 +37,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  time_offset double precision;
 		BEGIN
 		  time_offset := (select countries.timezone_offset from countries where id = (select companies.country_id from companies where id = (select locations.company_id from locations where id = local_id)));
-  		  current_start := localtimestamp + interval '1hr' * time_offset;
+		  current_start := localtimestamp + interval '1hr' * time_offset;
 		  cancelled_id := (select id from statuses where name = 'Cancelado');
 
 		  --Check location_times
@@ -74,13 +74,13 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  END IF;
 
 		  --Check cross bookings
-		IF exists (select id from bookings where bookings.service_provider_id = provider_id AND bookings.service_id <> serv_id AND bookings.status_id != 5 AND (bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)) AND ((start_date, end_date) OVERLAPS (bookings."start", bookings."end"))) THEN
-		  return false;
-		END IF;
+		  IF exists (select id from bookings where bookings.service_provider_id = provider_id AND bookings.service_id <> serv_id AND bookings.status_id != 5 AND (bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)) AND ((start_date, end_date) OVERLAPS (bookings."start", bookings."end"))) THEN
+		    return false;
+		  END IF;
 		  IF (select group_service from services where id = serv_id) = false THEN
 		  	IF exists (select id from bookings where bookings.service_provider_id = provider_id AND bookings.status_id != 5 AND (bookings.is_session = false OR (bookings.is_session = true AND bookings.is_session_booked = true)) AND ((start_date, end_date) OVERLAPS (bookings."start", bookings."end"))) THEN
-		  return false;
-		END IF;
+		      return false;
+		    END IF;
 		  ELSE
 		    count := (select count(id) from bookings where bookings.service_provider_id = provider_id AND bookings.status_id != 5 AND (bookings.is_session = false or (bookings.is_session = true AND bookings.is_session_booked = true)) AND ((start_date, end_date) OVERLAPS (bookings."start", bookings."end")));
 		    cap := (select capacity from services where id = serv_id);
@@ -392,8 +392,8 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  elegible_ids_count int;
 		  selected_provider_id int;
 
-		  po_start_date date;
-		  po_end_date date;
+		  --po_start_date date;
+		  --po_end_date date;
 
 		  --Optimized search vars
 		  positive_gaps int;
@@ -432,10 +432,11 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  before_time := localtimestamp + ((select before_booking from company_settings where company_settings.company_id = comp_id) * interval '1 hour');
 		  after_time := localtimestamp + ((select after_booking from company_settings where company_settings.company_id = comp_id) * interval '1 month');
 
-		  po_start_date := date_trunc('day', start_date);
-		  po_end_date := date_trunc('day', end_date);
+		  --po_start_date := date_trunc('day', start_date);
+		  --po_end_date := date_trunc('day', end_date);
 
 		  dtp := start_date;
+
 		  day_open_time = dtp;
 		  service_staff_length := array_length(service_ids, 1);
 		  duration := (select sum(services.duration) from services where id = ANY(service_ids));
@@ -502,7 +503,9 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		        bundle_present := TRUE;
 		      END IF;
 
-		      current_service_providers_ids := (select array(select id from service_providers as t1 where active = true and online_booking = true and location_id = local_id and id in (select service_provider_id from service_staffs as t2 where t1.id = t2.service_provider_id)));
+		      current_service_providers_ids := (select array(select id from service_providers as t1 where active = true and online_booking = true and location_id = local_id and id in (select service_provider_id from service_staffs as t2 where t1.id = t2.service_provider_id AND t2.service_id = service_ids[service_staff_pos])));
+
+		      RAISE NOTICE 'service_providers: %', current_service_providers_ids;
 
 		      --Break if there are no providers
 		      IF array_length(current_service_providers_ids, 1) < 1 THEN
@@ -522,6 +525,10 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		      min_aux := (select date_trunc('day', dtp));
 		      min_calc := (select min_aux + interval '1h' * date_part('hour', min_open) + interval '1' minute * date_part('minute', min_open));
+
+		      RAISE NOTICE 'dtp: %', dtp;
+		      RAISE NOTICE 'min_open: %', min_open;
+		      RAISE NOTICE 'min_cal: %', min_calc;
 
 		      IF min_calc > dtp THEN
 		        dtp := min_calc; -- check how to assign time
@@ -595,7 +602,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		        --RAISE NOTICE 'Promo detail: %', string_agg(promo_detail, ',');
 
-		        --RAISE NOTICE 'HOUR VALID: % - %', hour_booking.start_time, hour_booking.end_time;
+		        RAISE NOTICE 'HOUR VALID: % - %', hour_booking.start_time, hour_booking.end_time;
 
 		        --hour_bookings := array_append(hour_bookings, hour_booking);
 		        hour_bookings[service_staff_pos-1] := hour_booking;
@@ -625,7 +632,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		      ELSE
 
-		        --RAISE NOTICE 'HOUR NOT VALID: % - %', dtp, dtp + interval '1' minute * durations[service_staff_pos-1];
+		        RAISE NOTICE 'HOUR NOT VALID: % - %', dtp, dtp + interval '1' minute * durations[service_staff_pos-1];
 
 		        hour_bookings := ARRAY[]::hour_booking[];
 		        --Reset gap_hour
