@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20160419153220) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "attribute_categories", force: true do |t|
@@ -475,6 +475,8 @@ ActiveRecord::Schema.define(version: 20160419153220) do
     t.string   "formatted_address", default: ""
     t.string   "domain",            default: ""
     t.float    "sales_tax",         default: 0.0, null: false
+    t.string   "timezone_name"
+    t.float    "timezone_offset"
   end
 
   create_table "custom_filters", force: true do |t|
@@ -1617,6 +1619,7 @@ ActiveRecord::Schema.define(version: 20160419153220) do
     t.integer  "order",          default: 0
     t.integer  "block_length",   default: 15
     t.boolean  "online_booking", default: true
+    t.integer  "booking_leap",   default: 15
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree

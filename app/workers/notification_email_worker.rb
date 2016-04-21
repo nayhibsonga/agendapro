@@ -14,7 +14,7 @@ class NotificationEmailWorker < BaseEmailWorker
       if today_bookings.length > 0 || summary_bookings.length > 0
         total_sendings += 1
         total_recipients += recipients.size
-        NotificationMailer.delay.send(method, recipients.join(', '), today_bookings, summary_bookings, name)
+        NotificationMailer.delay.send(method, recipients.join(', '), today_bookings.to_a, summary_bookings, name)
       end
     when 1 # Location summary
       Location.where(id: notification.locations.actives).each do |location|
@@ -24,7 +24,7 @@ class NotificationEmailWorker < BaseEmailWorker
         if today_bookings.length > 0 || summary_bookings.length > 0
           total_sendings += 1
           total_recipients += recipients.size
-          NotificationMailer.delay.send(method, recipients.join(', '), today_bookings, summary_bookings, name)
+          NotificationMailer.delay.send(method, recipients.join(', '), today_bookings.to_a, summary_bookings, name)
         end
       end
     when 2 # Service Provider summary
@@ -35,7 +35,7 @@ class NotificationEmailWorker < BaseEmailWorker
         if today_bookings.length > 0 || summary_bookings.length > 0
           total_sendings += 1
           total_recipients += recipients.size
-          NotificationMailer.delay.send(method, recipients.join(', '), today_bookings, summary_bookings, name)
+          NotificationMailer.delay.send(method, recipients.join(', '), today_bookings.to_a, summary_bookings, name)
         end
       end
     end

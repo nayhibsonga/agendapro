@@ -6419,7 +6419,7 @@ class BookingsController < ApplicationController
             :bundle_id => (bundles_arr[index] != 0) ? bundles_arr[index] : nil
           }
         end
-          
+
         if @hours_array.length < array_length
           @hours_array << {
             :date => I18n.l(bookings[0][:start].to_date, format: :day_short),
@@ -7232,7 +7232,7 @@ class BookingsController < ApplicationController
 
   def available_hours
 
-    
+
 
     parser = PostgresParser.new
 
@@ -7451,9 +7451,9 @@ class BookingsController < ApplicationController
             :bundle_id => (bundles_arr[index] != 0) ? bundles_arr[index] : nil
           }
         end
-          
 
-          
+
+
 
         #Create hour and append to hours_array
         has_time_discount = false

@@ -97,7 +97,7 @@ class BookingEmailWorker < BaseEmailWorker
         recipients = filter_mails([booking.client.email])
         @total_sendings += 1
         @total_recipients += recipients.size
-        BookingMailer.delay.send(method, bookings, recipients.join(', '), horachic: self.horachic?(method, booking))
+        BookingMailer.delay.send(method, bookings.to_a, recipients.join(', '), horachic: self.horachic?(method, booking))
       end
 
       unless method == "reminder_multiple_booking"
@@ -109,7 +109,7 @@ class BookingEmailWorker < BaseEmailWorker
             group.compact!
             @total_sendings += 1
             @total_recipients += group.size
-            BookingMailer.delay.send(method, bookings.where(service_provider: provider), group.join(', '), client: false, name: name)
+            BookingMailer.delay.send(method, bookings.where(service_provider: provider).to_a, group.join(', '), client: false, name: name)
           end
         end
 
