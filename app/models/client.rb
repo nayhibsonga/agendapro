@@ -1145,15 +1145,71 @@ class Client < ActiveRecord::Base
     end
   end
 
-  def self.test_write(input)
-    book = Spreadsheet::Workbook.new
-    write_sheet = book.create_worksheet
-    row_num = 0
-    input.each do |row|
-      write_sheet.row(row_num).replace row
-      row_num +=1
+  def self.test_write()
+    require 'writeexcel'
+
+    # Create a new Excel Workbook
+    workbook = WriteExcel.new('ruby.xls')
+
+    # Add worksheet(s)
+    worksheet  = workbook.add_worksheet
+    worksheet2 = workbook.add_worksheet
+
+    # Add and define a format
+    format = workbook.add_format
+    format.set_bold
+    format.set_color('red')
+    format.set_align('right')
+
+    # write a formatted and unformatted string.
+    worksheet.write(1, 1, 'Hi Excel.', format)  # cell B2
+    worksheet.write(2, 1, 'Hi Excel.')          # cell B3
+
+    # write a number and formula using A1 notation
+    worksheet.write('B4', 3.14159)
+    worksheet.write('B5', '=SIN(B4/4)')
+
+    # write to file
+    workbook.close
+  end
+
+  def self.generate_import_file(company_id)
+    require 'writeexcel'
+
+    company = Company.find(company_id)
+    title = 'public/importador_empresa_' + company_id.to_s + '.xls'
+    workbook = WriteExcel.new(title)
+
+    worksheet = workbook.add_worksheet
+
+    allowed_attributes = [["email", "Email del cliente. Debe ser único."], ["first_name", "Nombres del cliente."], ["last_name", "Apellidos del cliente."], ["identification_number", "Rut o CI del cliente. Debe ser único."], ["record", "Número de cliente. Puede ser un número o una palabra seguida de un número."], ["phone", "Teléfono principal del cliente."], ["second_phone", "Teléfono secundario del cliente (oficina, casa, etc.)."], ["address", "Dirección del cliente."], ["district", "Comuna de residencia."], ["city", "Ciudad de residencia."], ["age", "Edad del cliente."], ["gender", "Género del cliente. 1 si es mujer, 2 es hombre."], ["birth_day", "Día del cumpleaños, sin fecha. Del 1 al 31."], ["birth_month", "Mes del cumpleaños, sin fecha. Del 1 al 12."], ["birth_year", "Año de nacimiento."]]
+
+    custom_attributes = []
+
+    company.custom_attributes.each do |attribute|
+      if attribute.datatype != "file"
+        if attribute.datatype != "categoric"
+          custom_attributes << [attribute.slug, attribute.datatype_to_text + ": " + attribute.description]
+        else
+          categories = attribute.attribute_categories.pluck(:category).join(", ")
+          custom_attributes << [attribute.slug, attribute.datatype_to_text + ": " + attribute.description + ". Categorías: " + categories]
+        end
+      end
     end
-    book.write "/home/zuru/AgendaPro/roo_test/to.xls"
+
+    att_count = allowed_attributes.count + custom_attributes.count
+
+    all_attributes = allowed_attributes + custom_attributes
+
+    all_attributes.each_with_index do |att, index|
+      worksheet.write(0, index, att[0])
+      worksheet.write_comment(0, index, att[1])
+    end
+
+    workbook.close
+
+    return workbook
+
   end
 
   def self.filter(company_id, params)

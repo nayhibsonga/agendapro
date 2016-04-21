@@ -108,6 +108,7 @@ gem 'puntopagos'
 # Legacy
 # Importacion de datos desde excel
 gem 'roo'
+gem 'roo-xls'
 
 #New for spreadsheets
 #gem 'roo', '~> 2.3.2'
@@ -197,3 +198,6 @@ gem 'aws-sdk', '~> 2'
 
 #Mysql2 para migración
 gem 'mysql2'
+
+#Gem for writing real excel files
+gem 'writeexcel'
