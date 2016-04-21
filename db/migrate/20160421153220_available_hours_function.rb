@@ -558,7 +558,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		        selected_provider_id := providers_ids[service_staff_pos];
 
 		      ELSE
-		        select into elegible_ids id from (select id, provider_day_occupation(id, start_date, end_date) from service_providers where check_hour(local_id, service_providers.id, service_ids[service_staff_pos], dtp, dtp + interval '1' minute * durations[service_staff_pos], admin) = TRUE AND active = true AND online_booking = true AND id IN (select service_staffs.service_provider_id from service_staffs where service_staffs.service_id = service_ids[service_staff_pos]) AND id IN (select provider_times.service_provider_id from provider_times where day_id = day) ORDER BY provider_day_occupation(id, start_date, end_date)) AS elegible_providers limit 1;
+		        select into elegible_ids id from (select id, provider_day_occupation(id, start_date, end_date) from service_providers where check_hour(local_id, service_providers.id, service_ids[service_staff_pos], dtp, dtp + interval '1' minute * durations[service_staff_pos], admin) = TRUE AND active = true AND online_booking = true AND id IN (select service_staffs.service_provider_id from service_staffs where service_staffs.service_id = service_ids[service_staff_pos]) AND id IN (select id from service_providers as t1 where active = true and online_booking = true and location_id = local_id) AND id IN (select provider_times.service_provider_id from provider_times where day_id = day) ORDER BY provider_day_occupation(id, start_date, end_date)) AS elegible_providers limit 1;
 		        GET DIAGNOSTICS elegible_ids_count = ROW_COUNT;
 		        --RAISE NOTICE 'Elegible ids: % - Count: %', elegible_ids, elegible_ids_count;
 		        --RAISE NOTICE 'ELEGIBLE IDS: %', elegible_ids;
