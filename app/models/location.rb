@@ -164,6 +164,7 @@ class Location < ActiveRecord::Base
   				location_product = LocationProduct.create(:product_id => product.id, :location_id => self.id, :stock => 0)
   			end
   		end
+      StockAlarmSetting.create(location_id: self.id, quick_send: false, has_default_stock_limit: false, default_stock_limit: 0, monthly: true, month_day: 1, week_day: 1, periodic_send: false)
   	end
 
 	def extended_schedule
