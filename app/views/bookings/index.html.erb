@@ -76,7 +76,9 @@
             <ul class="list-unstyled">
               <li><%= link_to '<i class="fa fa-calendar"></i> Agregar Reserva'.html_safe, '#', id: "createBooking" %></li>
               <li><%= link_to '<i class="fa fa-times"></i> Bloquear Horario'.html_safe, '#', id: "createBreak" %></li>
-              <li><%= link_to '<i class="fa fa-dollar"></i> Agregar Pago'.html_safe, '#', id: "createPaymentBtn" %></li>
+              <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
+                <li><%= link_to '<i class="fa fa-dollar"></i> Agregar Pago'.html_safe, '#', id: "createPaymentBtn" %></li>
+              <% end %>
             </ul>
           </div>
         </div>
@@ -100,7 +102,7 @@
             <div class="row well well-sm">
               <ul id="myTab" class="nav nav-tabs" role="tablist">
                 <li id="booking-li" class="active"><a href="#booking-pane" role="tab" data-toggle="tab" class="tab_index" id="booking-tab">Reserva</a></li>
-                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista", "Staff"]).include?(current_user.role) %>
+                <% if Role.where(name: ["Administrador General", "Administrador Local", "Recepcionista"]).include?(current_user.role) %>
                 <li id="payments-li" class=""><a href="#payments-pane" role="tab" data-toggle="tab" class="tab_index" id="payments-tab">Pago</a></li>
                 <% end %>
                 <li id="client-li" class=""><a href="#client-pane" role="tab" data-toggle="tab" class="tab_index" id="client-tab">Cliente</a></li>
