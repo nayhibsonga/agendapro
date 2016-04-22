@@ -1816,7 +1816,9 @@ class CompaniesController < ApplicationController
 
 		@company = current_user.company
 
-		respond_with(@company)
+		respond_to do |format|
+	      format.xls {render xls: Client.generate_import_file(@company.id)}
+	    end
 
 	end
 
