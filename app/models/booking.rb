@@ -689,18 +689,22 @@ class Booking < ActiveRecord::Base
       timezone = CustomTimezone.from_booking(self)
       if self.start > Time.now + timezone.offset
         if !self.is_session_booked || self.status_id == Status.find_by_name("Cancelado").id
-          if changed_attributes['is_session_booked'] || changed_attributes['status_id']
+          if self.is_session_booked_changed? || self.status_id_changed?
             BookingMailer.cancel_booking(self)
+            puts "Entró a cancel"
           end
         else
           #if (changed_attributes['start'] || changed_attributes['is_session_booked']) && self.user_session_confirmed
-          if changed_attributes['is_session_booked']
+          if self.is_session_booked_changed?
+            puts "Entró a book_service 1"
             BookingMailer.book_service_mail(self)
           else
-            if changed_attributes['start']
+            if self.start_changed?
+              puts "Entró a update"
               BookingMailer.update_booking(self, changed_attributes['start'])
-            else
-              BookingMailer.book_service_mail(self)
+            #else
+              #puts "Entró a book_service 2"
+              #BookingMailer.book_service_mail(self)
             end
           end
           #end
@@ -1651,7 +1655,7 @@ class Booking < ActiveRecord::Base
     timezone = CustomTimezone.from_booking(bookings[0])
     if bookings.order(:start).first.start > Time.now + timezone.offset
       BookingMailer.multiple_booking_mail(@data)
-      # logger.debug @data.inspect
+      # puts @data.inspect
     end
   end
 end

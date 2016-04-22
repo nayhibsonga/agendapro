@@ -163,6 +163,7 @@ class BookingsController < ApplicationController
     end
 
     session_booking = nil
+    should_create_sessions = false
 
     booking_buffer_params[:bookings].each do |pos, buffer_params|
       staff_code = nil
@@ -174,7 +175,7 @@ class BookingsController < ApplicationController
         @booking.price = 0
       end
 
-      should_create_sessions = false
+      
       if buffer_params[:session_booking_id]
         if buffer_params[:session_booking_id] != "0" && buffer_params[:session_booking_id] != 0
           session_booking = SessionBooking.find(buffer_params[:session_booking_id])
@@ -565,7 +566,9 @@ class BookingsController < ApplicationController
 
         if !session_booking.nil?
           if @booking.user_session_confirmed && @booking.send_mail
-            session_booking.send_sessions_booking_mail
+            if should_create_sessions
+              session_booking.send_sessions_booking_mail
+            end
           else
             if @booking.payed && @booking.send_mail
               @booking.send_admin_payed_session_mail
@@ -614,6 +617,7 @@ class BookingsController < ApplicationController
     end
 
     session_booking = nil
+    should_create_sessions = false
 
     booking_buffer_params[:bookings].each do |pos, buffer_params|
       staff_code = nil
@@ -624,7 +628,7 @@ class BookingsController < ApplicationController
         @booking.price = 0
       end
 
-      should_create_sessions = false
+      
       if buffer_params[:session_booking_id]
         if buffer_params[:session_booking_id] != "0" && buffer_params[:session_booking_id] != 0
           session_booking = SessionBooking.find(buffer_params[:session_booking_id])
@@ -988,12 +992,15 @@ class BookingsController < ApplicationController
       end
 
       if !session_booking.nil?
-        if @booking.user_session_confirmed
-          session_booking.send_sessions_booking_mail
+        if @booking.user_session_confirmed && @booking.send_mail
+          if should_create_sessions
+            session_booking.send_sessions_booking_mail
+          end
         else
-          if @booking.payed
+          if @booking.payed && @booking.send_mail
             @booking.send_admin_payed_session_mail
           else
+            #Send anyways, it needs validation
             @booking.send_validate_mail
           end
         end
@@ -1168,6 +1175,7 @@ class BookingsController < ApplicationController
     @company_setting = @company.company_setting
     staff_code = nil
     old_client_id = @booking.client_id
+    sessions_created = false
     new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code)
     if @company_setting.staff_code
       if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).count > 0
@@ -1437,6 +1445,7 @@ class BookingsController < ApplicationController
                     #There is no session_booking, create the rest of the sessions, unbook for old treatment
 
                     session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+                    sessions_created = true
 
                     @booking.session_booking_id = session_booking.id
 
@@ -1465,6 +1474,7 @@ class BookingsController < ApplicationController
                   #There is no session_booking, create the rest of the sessions, unbook for old treatment
 
                   session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+                  sessions_created = true
 
                     @booking.session_booking_id = session_booking.id
 
@@ -1516,7 +1526,9 @@ class BookingsController < ApplicationController
                 sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
 
                 if @booking.user_session_confirmed && @booking.send_mail
-                  @booking.session_booking.send_sessions_booking_mail
+                  if sessions_created
+                    @booking.session_booking.send_sessions_booking_mail
+                  end
                 else
                   if @booking.payed && @booking.send_mail
                     @booking.send_admin_payed_session_mail
@@ -1567,6 +1579,7 @@ class BookingsController < ApplicationController
                     session_booking.save
                   else
                     session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+                    sessions_created = true
 
                     @booking.session_booking_id = session_booking.id
 
@@ -1583,6 +1596,7 @@ class BookingsController < ApplicationController
                 else
                   #There is no session_booking, create the rest of the session
                   session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+                  sessions_created = true
 
                   @booking.session_booking_id = session_booking.id
 
@@ -1625,7 +1639,9 @@ class BookingsController < ApplicationController
                 sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
 
                 if @booking.user_session_confirmed && @booking.send_mail
-                  @booking.session_booking.send_sessions_booking_mail
+                  if sessions_created
+                    @booking.session_booking.send_sessions_booking_mail
+                  end
                 else
                   if @booking.payed && @booking.send_mail
                     @booking.send_admin_payed_session_mail
@@ -1681,6 +1697,7 @@ class BookingsController < ApplicationController
                     #There is no session_booking, create the rest of the sessions, unbook for old treatment
 
                     session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+                    sessions_created = true
 
                     @booking.session_booking_id = session_booking.id
 
@@ -1709,6 +1726,7 @@ class BookingsController < ApplicationController
                   #There is no session_booking, create the rest of the sessions, unbook for old treatment
 
                   session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+                  sessions_created = true
 
                     @booking.session_booking_id = session_booking.id
 
@@ -1760,7 +1778,9 @@ class BookingsController < ApplicationController
                 sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
 
                 if @booking.user_session_confirmed && @booking.send_mail
-                  @booking.session_booking.send_sessions_booking_mail
+                  if sessions_created
+                    @booking.session_booking.send_sessions_booking_mail
+                  end
                 else
                   if @booking.payed && @booking.send_mail
                     @booking.send_admin_payed_session_mail
@@ -1826,6 +1846,7 @@ class BookingsController < ApplicationController
                     #There is no session_booking, create the rest of the sessions, unbook for old treatment
 
                     session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+                    sessions_created = true
 
                     @booking.session_booking_id = session_booking.id
 
@@ -1854,6 +1875,7 @@ class BookingsController < ApplicationController
                   #There is no session_booking, create the rest of the sessions, unbook for old treatments
 
                   session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+                  sessions_created = true
 
                     @booking.session_booking_id = session_booking.id
 
@@ -1905,7 +1927,9 @@ class BookingsController < ApplicationController
                 sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
 
                 if @booking.user_session_confirmed && @booking.send_mail
-                  @booking.session_booking.send_sessions_booking_mail
+                  if sessions_created
+                    @booking.session_booking.send_sessions_booking_mail
+                  end
                 else
                   if @booking.payed && @booking.send_mail
                     @booking.send_admin_payed_session_mail
@@ -1956,6 +1980,7 @@ class BookingsController < ApplicationController
                     session_booking.save
                   else
                     session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+                    sessions_created = true
 
                     @booking.session_booking_id = session_booking.id
 
@@ -1972,6 +1997,7 @@ class BookingsController < ApplicationController
                 else
                   #There is no session_booking, create the rest of the session
                   session_booking = SessionBooking.create(sessions_taken: 1, service_id: @booking.service_id, user_id: @booking.user_id, client_id: @booking.client_id, sessions_amount: @booking.service.sessions_amount, max_discount: 0, treatment_promo_id: nil)
+                  sessions_created = true
 
                   @booking.session_booking_id = session_booking.id
 
@@ -2014,7 +2040,9 @@ class BookingsController < ApplicationController
                 sessions_ratio = "Sesión " + session_index.to_s + " de " + @booking.session_booking.sessions_amount.to_s
 
                 if @booking.user_session_confirmed && @booking.send_mail
-                  @booking.session_booking.send_sessions_booking_mail
+                  if sessions_created
+                    @booking.session_booking.send_sessions_booking_mail
+                  end
                 else
                   if @booking.payed && @booking.send_mail
                     @booking.send_admin_payed_session_mail
