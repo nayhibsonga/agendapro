@@ -3,14 +3,19 @@
     <div class="col-md-12">
       <%= form_for @billing_info, :html => {:class => 'form-horizontal tab-margin', :multipart => true} do |f| %>
         <% if @billing_info.errors.any? %>
-          <div id="error_explanation">
-            <h2><%= pluralize(@billing_info.errors.count, "error") %> no permitió que sea creada:</h2>
-            <ul>
-              <% @billing_info.errors.full_messages.each do |msg| %>
-                <li><%= msg %></li>
-              <% end %>
-            </ul>
-          </div>
+          <% content_for :scripts do %>
+            <% message = '' %>
+            <% @billing_info.errors.full_messages.each do |msg| %>
+              <% message += '* ' + msg + '\n' %>
+            <% end %>
+            <script type="text/javascript">
+              swal({
+                title: "Error al guardar la información",
+                text: "<%= message %>",
+                type: "error"
+              });
+            </script>
+          <% end %>
         <% end %>
 
 

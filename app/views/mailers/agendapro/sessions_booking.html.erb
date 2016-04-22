@@ -1,0 +1,125 @@
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+    <h4 class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-family:inherit;font-weight:500;line-height:1.1;color:inherit;margin-top:10px;margin-bottom:10px;font-size:20px;text-align:center;"><%= @company.name %></h4>
+    <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:center;"><%= @name %>, <%= if @client then "tus sesiones fueron reservadas exitosamente" else "se han reservado una o más sesiones contigocontigo" end %></p>
+  </td>
+</tr>
+<tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+    <p class="text-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:center;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">Resumen</b> de <%= "#{@client ? 'tu' : 'la'}" %> reserva</p>
+  </td>
+</tr>
+<% if @client %>
+<tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
+  <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+    <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+      <%= image_tag "http://bambucalendar.cl/assets/email/where.png", alt: "¿Dónde?", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-width:0;vertical-align:middle;" %>
+    </div>
+    <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+      <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">¿Dónde?</b></p>
+      <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><%= @bookings.first.location.short_address %></p>
+    </div>
+  </td>
+  <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+    <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+      <%= image_tag "http://bambucalendar.cl/assets/email/question.png", alt: "Consultas", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-width:0;vertical-align:middle;" %>
+    </div>
+    <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+      <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">Consultas</b></p>
+      <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><%= @bookings.first.location.phone %></p>
+    </div>
+  </td>
+</tr>
+<tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+    <div class="responsive-table" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;min-height:.01%;overflow-x:auto;width:100%;overflow-y:hidden;-ms-overflow-style:-ms-autohiding-scrollbar;min-width:440px;">
+      <table class="table summary" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-spacing:0;border-collapse:collapse;font-family:'Roboto Condensed', sans-serif;font-size:12px;font-weight:300;width:100%;max-width:100%;margin-bottom:20px;color:#626262;background-color:transparent !important;background-image:none !important;background-repeat:repeat !important;background-position:top left !important;background-attachment:scroll !important;">
+        <thead style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+          <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+            <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;text-align:left;">Qué reservaste</th>
+            <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;text-align:left;">Cuándo</th>
+            <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;text-align:left;">Con quién</th>
+            <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;text-align:left;">Notas</th>
+            <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;text-align:left;"></th>
+          </tr>
+        </thead>
+        <tbody style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+          <% @bookings.each do |book| %>
+          <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= book.service.name %></td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= l(book.start) %></td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= book.service_provider.public_name unless @company_setting.provider_preference == 2 %></td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= book.notes if book.notes.present? %></td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">
+              <% if @company_setting.can_edit %>
+              <%= link_to "Editar", booking_edit_url(:confirmation_code => book.confirmation_code), class: "btn btn-xs btn-orange", target: "_blank", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd9610;border-color:#db7400; width: 90%;" %>
+              <% end %>
+              <% if @company_setting.can_cancel %>
+              <%= link_to "Cancelar", booking_cancel_url(:confirmation_code => book.confirmation_code), class: "btn btn-xs btn-red", target: "_blank", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd633f;border-color:#e55938; width: 90%;" %>
+              <% end %>
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </td>
+</tr>
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+    <div>Ingresa con tu cuenta en <b><%= link_to "tu agenda", my_agenda_url, target: "_blank" %></b> para agendar y editar las sesiones del servicio. Si no tienes cuenta, crea una  <b><%= link_to "acá", new_user_session_url, target: "_blank" %></b>, o comunícate con la empresa prestadora del servicio para agendar las sesiones restantes.</div>
+  </td>
+</tr>
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+    <% if @company_setting.can_cancel %>
+    <%= link_to "Cancelar todos los Servicios", cancel_all_booking_url(:confirmation_code => @bookings.first.confirmation_code), class: "btn btn-lg btn-block btn-red", target: "_blank", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;margin-bottom:0;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:10px;padding-bottom:10px;padding-right:16px;padding-left:16px;font-size:18px;line-height:1.33;border-radius:6px;display:block;color:#ffffff;background-color:#fd633f;border-color:#e55938;" %>
+    <% end %>
+  </td>
+</tr>
+<% else %>
+<tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+    <div class="icon-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;">
+      <%= image_tag "http://bambucalendar.cl/assets/email/who.png", alt: "¿Quien?", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-width:0;vertical-align:middle;" %>
+    </div>
+    <div class="text-box" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;display:table-cell;padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;vertical-align:middle;color:#126848;">
+      <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><b style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;font-weight:bold;">¿Quién?</b></p>
+      <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><%= "#{@bookings.first.client.first_name} #{@bookings.first.client.last_name}" %></p>
+    </div>
+  </td>
+</tr>
+<tr class="background-green" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#22c488;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#ffffff;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+    <div class="responsive-table" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;min-height:.01%;overflow-x:auto;width:100%;overflow-y:hidden;-ms-overflow-style:-ms-autohiding-scrollbar;min-width:440px;">
+      <table class="table summary" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;border-spacing:0;border-collapse:collapse;font-family:'Roboto Condensed', sans-serif;font-size:12px;font-weight:300;width:100%;max-width:100%;margin-bottom:20px;color:#626262;background-color:transparent !important;background-image:none !important;background-repeat:repeat !important;background-position:top left !important;background-attachment:scroll !important;">
+        <thead style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+          <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+            <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;text-align:left;">Qué reservaron</th>
+            <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;text-align:left;">Cuándo</th>
+            <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;text-align:left;">Notas</th>
+            <th style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;text-align:left;">Comentario</th>
+          </tr>
+        </thead>
+        <tbody style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+          <% @bookings.each do |book| %>
+          <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= book.service.name %></td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= l(book.start) %></td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= book.notes if book.notes.present? %></td>
+            <td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;"><%= book.company_comment if book.company_comment.present? %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </td>
+</tr>
+<% end %>
+<% if @company_setting.signature.present? %>
+<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+  <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+    <p style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;"><%= @company_setting.signature.html_safe %></p>
+  </td>
+</tr>
+<% end %>

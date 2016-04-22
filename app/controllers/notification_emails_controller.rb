@@ -25,39 +25,39 @@ class NotificationEmailsController < ApplicationController
   def create
     @notification_email = NotificationEmail.new(notification_email_params)
     if @notification_email.save
-      flash[:notice] = "Configuración guardada"
+      flash[:success] = "Configuración guardada"
     else
       errors = ''
       @notification_email.errors.full_messages.each do |error|
         errors += error + ' '
       end
-      flash[:alert] = errors
+      flash[:error] = errors
     end
     respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting, anchor: 'notifications')) #no funciona en caso de error
   end
 
   def update
     if @notification_email.update(notification_email_params)
-      flash[:notice] = "Notificación actualizada"
+      flash[:success] = "Notificación actualizada"
     else
       errors = ''
       @notification_email.errors.full_messages.each do |error|
         errors += error + ' '
       end
-      flash[:alert] = errors
+      flash[:error] = errors
     end
     respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting, anchor: 'notifications')) #no funciona en caso de error
   end
 
   def destroy
     if @notification_email.destroy
-      flash[:notice] = "Notificación eliminada"
+      flash[:success] = "Notificación eliminada"
     else
       errors = ''
       @notification_email.errors.full_messages.each do |error|
         errors += error + ' '
       end
-      flash[:alert] = errors
+      flash[:error] = errors
     end
     respond_with(@notification_email, :location => edit_company_setting_path(User.find(current_user.id).company.company_setting, anchor: 'notifications')) #no funciona en caso de error
   end

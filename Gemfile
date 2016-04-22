@@ -201,3 +201,6 @@ gem 'mysql2'
 
 #Gem for writing real excel files
 gem 'writeexcel'
+
+#Parses para postgres
+gem 'pg_array_parser'

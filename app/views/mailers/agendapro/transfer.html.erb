@@ -1,0 +1,78 @@
+<tr>
+  <td align="center" valign="top" id="templateBody">
+    <!-- BEGIN BODY // -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr>
+        <td valign="top" class="bodyContainer">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
+            <tbody class="mcnTextBlockOuter">
+              <tr>
+                <td valign="top" class="mcnTextBlockInner">
+                  <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;" class="mcnTextContentContainer">
+                    <tbody>
+                      <tr>
+                        <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;">
+                          <h1>
+                            <span style="color:#333333">
+                              <span style="font-size:27px">Transferencia de pago</span>
+                            </span>
+                          </h1>
+                          <h4 class="null">
+                            <span style="color:#333333">
+                              <span style="line-height:20.8px">Se ha generado una nueva transferencia de pago de cuenta. Revisar para su aprobación.</span>
+                            </span>
+                          </h4>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
+            <tbody class="mcnTextBlockOuter">
+              <tr>
+                <td valign="top" class="mcnTextBlockInner">
+                  <table align="left" border="0" cellpadding="0" cellspacing="0" width="282" class="mcnTextContentContainer">
+                    <tbody>
+                      <tr>
+                        <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-left:18px; padding-bottom:9px; padding-right:0;">
+                          <strong>Nombre:</strong>
+                          <hr>
+                          <strong>Mail de contacto:</strong>
+                          <hr>
+                          <strong>Monto cancelado:</strong>
+                          <hr>
+                          <strong>Método de pago:</strong>
+                          <hr>
+                          <strong>Fecha:</strong>
+                          <hr>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <table align="right" border="0" cellpadding="0" cellspacing="0" width="282" class="mcnTextContentContainer">
+                    <tbody>
+                      <tr>
+                        <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right:18px; padding-bottom:9px; padding-left:18px;">
+                          <%= @company.name %>
+                          <hr><%= @admin.email %>
+                          <hr><%= number_to_currency(@transfer.amount, locale: @company.country.locale.to_sym) %>
+                          <hr>Transferencia electrónica
+                          <hr><%= @transfer.payment_date.strftime('%d/%m/%Y %R') %>
+                          <hr>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <!-- // END BODY -->
+  </td>
+</tr>

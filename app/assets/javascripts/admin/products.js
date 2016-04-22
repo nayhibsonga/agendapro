@@ -106,6 +106,7 @@ function saveCategory (typeURL, extraURL) {
 						$('#product_product_category_id option[value="'+extraURL.substring(1)+'"]').remove();
 						$('#productCategoryModal').modal('hide');
 						$('#saveProductCategoryButton').attr('disabled', false);
+						triggerSuccess("Categoría eliminada exitosamente.");
 					},
 					error: function(xhr){
 						showErrors(xhr);
@@ -129,9 +130,11 @@ function saveCategory (typeURL, extraURL) {
 					$('#product_product_category_id option[value="'+product_category.id+'"]').prop('selected', true);
 					$('#productCategoryModal').modal('hide');
 					$('#saveProductCategoryButton').attr('disabled', false);
+					triggerSuccess("Categoría creada exitosamente.");
 					break;
 				case 'PATCH':
 					$('#saveProductCategoryButton').attr('disabled', false);
+					triggerSuccess("Categoría actualizada exitosamente.");
 					break;
 				}
 			},
@@ -163,6 +166,7 @@ function saveBrand (typeURL, extraURL) {
 						$('#product_product_brand_id option[value="'+extraURL.substring(1)+'"]').remove();
 						$('#productBrandModal').modal('hide');
 						$('#saveProductBrandButton').attr('disabled', false);
+						triggerSuccess("Marca eliminada exitosamente.");
 					},
 					error: function(xhr){
 						showErrors(xhr);
@@ -186,9 +190,11 @@ function saveBrand (typeURL, extraURL) {
 					$('#product_product_brand_id option[value="'+product_brand.id+'"]').prop('selected', true);
 					$('#productBrandModal').modal('hide');
 					$('#saveProductBrandButton').attr('disabled', false);
+					triggerSuccess("Marca creada exitosamente.");
 					break;
 				case 'PATCH':
 					$('#saveProductBrandButton').attr('disabled', false);
+					triggerSuccess("Marca actualizada exitosamente.");
 					break;
 				}
 			},
@@ -220,6 +226,7 @@ function saveDisplay (typeURL, extraURL) {
 						$('#product_product_display_id option[value="'+extraURL.substring(1)+'"]').remove();
 						$('#productDisplayModal').modal('hide');
 						$('#saveProductDisplayButton').attr('disabled', false);
+						triggerSuccess("Cantidad eliminada exitosamente.");
 					},
 					error: function(xhr){
 						showErrors(xhr);
@@ -243,9 +250,11 @@ function saveDisplay (typeURL, extraURL) {
 							$('#product_product_display_id option[value="'+product_display.id+'"]').prop('selected', true);
 							$('#productDisplayModal').modal('hide');
 							$('#saveProductDisplayButton').attr('disabled', false);
+							triggerSuccess("Cantidad creada exitosamente.");
 							break;
 						case 'PATCH':
 							$('#saveProductDisplayButton').attr('disabled', false);
+							triggerSuccess("Cantidad actualizada exitosamente.");
 							break;
 						}
 					},
@@ -294,7 +303,7 @@ function saveProduct (typeURL, extraURL) {
 		success: function() {
 			swal({
 				title: "Producto Guardado",
-				text: "El producto se ha editado de manera correcta",
+				text: "Producto actualizado exitosamente.",
 				type: "success",
 				confirmButtonText: "Aceptar"
 			},
@@ -407,7 +416,11 @@ function checkFile()
 		var extension = file_array[file_array.length - 1];
 		if (extension != "csv" && extension != "xls" && extension != "xlsx" && extension != "xlsm" && extension != "ods" && extension != "xml")
 		{
-			swal("El archivo no tiene la extensión correcta. Por favor importa sólo archivos de tipo csv o xls.");
+			swal({
+        title: "Error",
+        text: "El archivo no tiene la extensión correcta. Por favor importa sólo archivos de tipo csv o xls.",
+        type: "error"
+      });
 			return false;
 		}
 		else
@@ -417,7 +430,11 @@ function checkFile()
 	}
 	else
 	{
-		swal("No hay archivo seleccionado.");
+		swal({
+        title: "Error",
+        text: "No hay archivo seleccionado. Por favor importa sólo archivos de tipo csv o xls.",
+        type: "error"
+      });
 		return false;
 	}
 }
@@ -576,10 +593,10 @@ $(function() {
 						text: "Se ha guardado la alarma correctamente.",
 						type: "info"
 					});
-					console.log(response[1]['stock']);
-					console.log(response[1]['stock_limit']);
-					console.log(response[1]['stock'] < response[1]['stock_limit']);
-					console.log(response[1]['product_id']);
+					// console.log(response[1]['stock']);
+					// console.log(response[1]['stock_limit']);
+					// console.log(response[1]['stock'] < response[1]['stock_limit']);
+					// console.log(response[1]['product_id']);
 					if( response[1]['stock'] < response[1]['stock_limit'] )
 					{
 						$('.inventoryRow[product_id="' + response[1]['product_id'] + '"]').removeClass("mediumStock");

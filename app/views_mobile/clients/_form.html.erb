@@ -3,14 +3,19 @@
     <div class="col-xs-12">
       <%= form_for @client, html: {class: "form-horizontal" } do |f| %>
         <% if @client.errors.any? %>
-        <div id="error_explanation">
-          <h3><%= pluralize(@client.errors.count, "error") %> no permitió que el cliente fuera guardado:</h3>
-          <ul>
+          <% content_for :scripts do %>
+            <% message = '' %>
             <% @client.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
+              <% message += '* ' + msg + '\n' %>
             <% end %>
-          </ul>
-        </div>
+            <script type="text/javascript">
+              swal({
+                title: "Error al guardar el cliente",
+                text: "<%= message %>",
+                type: "error"
+              });
+            </script>
+          <% end %>
         <% end %>
         <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
         <div class="form-group">
