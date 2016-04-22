@@ -174,7 +174,7 @@ class BookingMailer < Base::CustomMailer
     @company_setting = @company.company_setting
     @client = options[:client]
     @name = options[:name]
-    @old_booking = @book.booking_histories.second
+    @old_booking = @book.booking_histories.second ? @book.booking_histories.second : @book
 
     layout = options[:horachic] ? "horachic" : "green"
     path = options[:horachic] ? "horachic" : "agendapro"
