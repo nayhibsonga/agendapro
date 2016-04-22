@@ -14,6 +14,10 @@ $(function () {
     };
   });
 
+  $('.hours-explanation-btn').on('click', function(){
+    $('#hoursExplanationModal').modal('show');
+  })
+
   $('.company-web-address').on('change', function() {
     var tmp = $('#company_web_address').val();
     tmp = tmp.toLowerCase();

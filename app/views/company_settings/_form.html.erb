@@ -314,11 +314,12 @@
                         <label>
                           <%= f.check_box :allows_optimization %> Permitir optimización de horas
                         </label>
+                        <span class="hours-explanation-btn">&nbsp;&nbsp;<i class="fa fa-question-circle"></i></span>
                         <span class="help-block">Habilita esta opción para que tus clientes puedan elegir un horario óptimo sin importar los bloques horarios predefinidos.</span>
                       </div>
                     </div>
                     <div id="booking_leap_div" class="form-group" <%= "hidden" if @company_setting.allows_optimization %>>
-                      <%= f.label :booking_leap, 'Ofrecer horas cada' %>
+                      <%= f.label :booking_leap, 'Ofrecer horas cada' %><span class="hours-explanation-btn">&nbsp;&nbsp;<i class="fa fa-question-circle"></i></span>
                       <span class="help-block">Esta opción determina cada cuánto hay una hora disponible para reservar si es que no se permite optimización.</span>
                       <div class="input-group">
                         <%= f.select :booking_leap, options_for_select({ "5" => "5", "10" => "10", "15" => "15", "20" => "20", "30" => "30", "45" => "45", "60" => "60" }, @company_setting.booking_leap), {}, {class: "form-control"} %>
@@ -330,6 +331,7 @@
                         <label>
                           <%= f.check_box :allows_overlap_hours %> Ofrecer intercaladas
                         </label>
+                        <span class="hours-explanation-btn">&nbsp;&nbsp;<i class="fa fa-question-circle"></i></span>
                         <span class="help-block">Habilita esta opción para que tus clientes puedan elegir todas las opciones disponibles según la opción anterior, sin importar que se intercalen.</span>
                       </div>
                     </div>
@@ -1991,6 +1993,63 @@
       <div class="modal-dialog">
         <div class="modal-content">
 
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="hoursExplanationModal" tabindex="-1" role="dialog" aria-labelledby="hoursExplanationModalLabel" aria-hidden="true">
+      <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="hoursExplanationModalLabel">Opciones de oferta de horas</h4>
+          </div>
+
+          <div class="modal-body">
+            <p class="hours-explanation-title">
+              Existen 3 opciones para ofrecer horas en línea:
+            </p>
+            <p class="hours-explanation-paragraph">
+              1) La primera opción es la de optimizar horas, en la cual se ofrecen horas según la duración de el o los servicios, con la particularidad de que cuando no haya un espacio disponible, se saltará directamente al momento más próximo en que haya algún prestador válido disponible. Además, si hay un espacio de disponibilidad entre dos espacios bloqueados, se ofrecerá también una hora especial que coincida con el final del espacio disponible.
+            </p>
+            <p class="hours-explanation-paragraph">
+              2) La segunda opción es la de ofrecer horas cada X minutos, donde X tomará el valor elegido para el prestador en sus configuraciones cuando se lo elija explícitamente, o bien cuando sea la única opción válida (por ejemplo, śi es el único prestador que presta el servicio o con horario abierto durante el día); en caso contrario (por ejemplo, cuando se eligen servicios con distintos prestadores o se elige sin preferencia), se optará por el valor definido en las configuraciones de la empresa, definido en esta opción. En cualquiera de los casos, el sistema ofrecerá horas saltando cada X minutos, siempre y cuando haya disponibilidad y no se ofrezca otra hora anterior que tope con ésta. Gracias a su simplicidad, ésta es la opción más rápida en cuanto a tiempo de carga para el cliente que quiere reservar.
+            </p>
+            <p class="hours-explanation-paragraph">
+              3) La última opción es similar a la anterior, con la salvedad de que no toma en cuenta los topes. Por ejemplo, si tenemos un servicio de 45 minutos y ofrecemos horas cada 60 minutos, empezando desde las 09:00, para la opción anterior el sistema ofrecería las horas 09:00-09:45, 10:00-10:45, 11:00-11-45 etc., "perdiendo" esos espacios de 15 minutos entre horas ofrecidas. En cambio, la opción de intercalar ofrecería las horas 09:00-09:45, 09:15-10:00, 09:30-10:15, 09:45-10:30, 10:00-10:45, etc. Debido a que se generan muchas más horas que en las opciones anteriores, ésta puede demorar un poco más en cargar cuando el cliente esté reservando.
+            </p>
+            <p class="hours-explanation-paragraph">
+              La elección de la opción dependerá de varios factores, como la cantidad y las duraciones de los distintos servicios, la cantidad de prestadores y sus horarios, horario de los locales, etc.
+            </p>
+            <p class="hours-explanation-paragraph">
+              Es importante mencionar que la opción elegida será utilizada también en el "Buscador de horas" del calendario de la empresa.
+            </p>
+            <p class="hours-explanation-paragraph">
+              A continuación se pueden ver ejemplos para las 3 opciones, para un servicio de 40 minutos, que se ofrece cada 15 minutos cuando no hay optimización y cuyo prestador tiene un horario que comienza a las 09:00, tienes reservas entre 10:15 y 11:00 el día martes, y tiene un bloqueo entre 09:40 y 10:00 el día miércoles:
+            </p>
+            <p class="hours-explanation-title">
+              Opción 1: Optimizadas
+            </p>
+            <p class="hours-explanation-img-container">
+              <%= image_tag 'admin/optimizacion.png', class: 'hours-explanation-img' %>
+            </p>
+            <p class="hours-explanation-title">
+              Opción 2: Cada 15 minutos
+            </p>
+            <p class="hours-explanation-img-container">
+              <%= image_tag 'admin/cadaX.png', class: 'hours-explanation-img' %>
+            </p>
+            <p class="hours-explanation-title">
+              Opción 3: cada 15 minutos e intercaladas
+            </p>
+            <p class="hours-explanation-img-container">
+              <%= image_tag 'admin/cadaXintercaladas.png', class: 'hours-explanation-img' %>
+            </p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
         </div>
       </div>
     </div>
