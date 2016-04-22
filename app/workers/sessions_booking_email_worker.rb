@@ -26,7 +26,7 @@ class SessionsBookingEmailWorker < BaseEmailWorker
 
     # Location
     recipients = filter_mails(NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: bookings.first.location), receptor_type: 1).distinct.pluck(:email))
-    name = booking.location.name
+    name = bookings.first.location.name
     recipients.in_groups_of(1000).each do |group|
       group.compact!
       total_sendings += 1
@@ -36,7 +36,7 @@ class SessionsBookingEmailWorker < BaseEmailWorker
 
     # Company
     recipients = filter_mails(NotificationEmail.where(company:  bookings.first.location.company, receptor_type: 0).distinct.pluck(:email))
-    name = booking.location.company.name
+    name = bookings.first.location.company.name
     recipients.in_groups_of(1000).each do |group|
       group.compact!
       total_sendings += 1
