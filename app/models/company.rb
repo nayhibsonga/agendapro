@@ -61,7 +61,7 @@ class Company < ActiveRecord::Base
 
 	has_many :sendings, class_name: 'Email::Sending', as: :sendable
 
-	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
+	scope :collectables, -> { where(active: true, id: 136).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
@@ -376,6 +376,27 @@ class Company < ActiveRecord::Base
 
 	end
 
+	def account_used_all
+		
+		if self.account_used
+			return true
+		end
+
+		if Payment.where(company_id: self.id).where('created_at > ?', DateTime.now - 1.weeks).count > 0
+			return true
+		end
+
+		if Product.where(company_id: self.id).where('updated_at > ?', DateTime.now - 1.weeks).count > 0
+			return true
+		end
+
+		if Email::Content.where(company_id: self.id).where('updated_at > ?', DateTime.now - 1.weeks).count > 0
+			return true		
+		end
+
+		return false
+	end
+
 	#Calculate debt amount for former trial companies.
 	#Get days count till end of month, divide by month length and multiply by company's plan price.
 	def calculate_trial_debt
@@ -569,7 +590,7 @@ class Company < ActiveRecord::Base
 				company.save
 
 				#Send invoice_email
-				if company.created_at > (DateTime.now - 2.months) && !company.account_used
+				if !company.account_used_all
 					sendings.build(method: 'recovery_trial').save
 				else
 					company.sendings.build(method: 'insistence_message_invoice').save
@@ -606,8 +627,8 @@ class Company < ActiveRecord::Base
 			if company.payment_status_id == status_emitido.id
 
 				#Send first reminder
-				if company.created_at > (DateTime.now - 2.months) && !company.account_used
-					#Was in trial and hasn't used
+				if !company.account_used_all
+					#Hasn't used
 				else
 					company.sendings.build(method: 'message_invoice').save
 				end
@@ -642,7 +663,9 @@ class Company < ActiveRecord::Base
 				if company.save
 					#DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
 					#Send mail alerting their plan changed
-					company.sendings.build(method: 'close_message_invoice').save
+					if company.account_used_all
+						company.sendings.build(method: 'close_message_invoice').save
+					end
 				end
 
 			end
@@ -662,8 +685,8 @@ class Company < ActiveRecord::Base
 		collectables.where(payment_status_id: status_emitido.id).each do |company|
 
 			#Send second reminder (insistence)
-			if company.created_at > (DateTime.now - 2.months) && !company.account_used
-				#Was in trial and hasn't used
+			if !company.account_used_all
+				#Hasn't used
 			else
 				company.sendings.build(method: 'reminder_message_invoice').save
 			end
@@ -685,8 +708,8 @@ class Company < ActiveRecord::Base
 		collectables.where(payment_status_id: status_emitido.id).each do |company|
 
 			#Send ultimatum saying they will be downgraded on failure to pay
-			if company.created_at > (DateTime.now - 2.months) && !company.account_used
-				#Was in trial and hasn't used
+			if !company.account_used_all
+				#Hasn't used
 			else
 				company.sendings.build(method: 'warning_message_invoice').save
 			end
