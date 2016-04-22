@@ -1,4 +1,4 @@
-class ClientEmailWorker
+class ClientEmailWorker < BaseEmailWorker
 
   def self.perform(sending)
     content = Email::Content.find(sending.sendable_id)
@@ -18,14 +18,6 @@ class ClientEmailWorker
       sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)
       company.settings.update(monthly_mails: company.settings.monthly_mails + total_recipients)
     end
-  end
-
-  def self.filter_mails(recipients)
-    filtered = []
-    recipients.each do |mail|
-      filtered << mail if mail =~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
-    end
-    filtered
   end
 
 end

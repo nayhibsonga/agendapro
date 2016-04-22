@@ -108,7 +108,11 @@ function checkFile() {
   }
   else
   {
-    swal("No hay archivo seleccionado.");
+    swal({
+      title: "No hay archivo seleccionado.",
+      text: "Por favor importa sólo archivos de tipo csv o xls.",
+      type: "error"
+    });
     return false;
   }
 }

@@ -18,15 +18,19 @@
 		<div class="col-sm-8 col-md-9">
 			<%= form_for @company, :html => { :class => 'form-horizontal', :multipart => true } do |f| %>
 				<% if @company.errors.any? %>
-					<div id="error_explanation">
-						<h2><%= pluralize(@company.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
-
-						<ul>
-						<% @company.errors.full_messages.each do |msg| %>
-							<li><%= msg %></li>
-						<% end %>
-						</ul>
-					</div>
+          <% content_for :scripts do %>
+            <% message = '' %>
+            <% @company.errors.full_messages.each do |msg| %>
+              <% message += '* ' + msg + '\n' %>
+            <% end %>
+            <script type="text/javascript">
+              swal({
+                title: "Error al guardar la empresa",
+                text: "<%= message %>",
+                type: "error"
+              });
+            </script>
+          <% end %>
 				<% end %>
 				<!-- start: Company -->
 				<!-- start: Company Setting -->
@@ -55,17 +59,17 @@
 				</div>
 				<div class="form-group">
 					<%= f.label :web_address, 'Dirección Web', :class => 'col-sm-4 control-label' %>
-						<div class="col-sm-8">	
+						<div class="col-sm-8">
 							<div class="input-group">
 								<%= f.text_field :web_address, :required => true, :class => 'form-control', placeholder: 'misitio' %>
 								<span class="input-group-addon">.agendapro<%= I18n.t 'country.domain' %></span>
 							</div>
-						</div>	
+						</div>
 					<div class="col-sm-offset-4 col-sm-8">
 						<span class="help-block"></span>
 					</div>
 				</div>
-				
+
 				<!-- end: Company -->
 				<div class="form-group">
 					<div class="col-sm-offset-4 col-sm-8">

@@ -10,10 +10,10 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = 'no-reply@agendapro.cl'
+  config.mailer_sender = 'AgendaPro <no-reply@agendapro.cl>'
 
   # Configure the class responsible to send e-mails.
-  config.mailer = 'DeviseMandrill'
+  config.mailer = 'CustomDeviseMailer'
 
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default) and
@@ -257,7 +257,7 @@ Devise.setup do |config|
   # config.omniauth_path_prefix = '/my_engine/users/auth'
   require "omniauth-facebook"
   require 'omniauth-google-oauth2'
-  
+
   #FACEBOOK
   #Bambu
   config.omniauth :facebook, ENV["FACEBOOK_APP_ID"], ENV["FACEBOOK_APP_SECRET"]

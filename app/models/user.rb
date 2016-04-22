@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
 
 	has_many :internal_sales, dependent: :nullify
 	has_many :product_logs, dependent: :nullify
+	has_many :sendings, class_name: 'Email::Sending', as: :sendable
 	has_many :treatment_logs, dependent: :nullify
 
 	accepts_nested_attributes_for :company
@@ -31,8 +32,10 @@ class User < ActiveRecord::Base
 
 	after_create :send_welcome_mail, :get_past_bookings
 
+	WORKER = 'UserEmailWorker'
+
 	def send_welcome_mail
-		UserMailer.welcome_email(self)
+		sendings.build(method: 'welcome_email').save
 	end
 
 	def get_past_bookings

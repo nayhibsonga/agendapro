@@ -9,7 +9,7 @@ class Email::Sending < ActiveRecord::Base
   scope :of_this_month, -> { where(sent_date: Date.today.beginning_of_month..Date.today.end_of_month) }
 
   def deliver
-    ClientEmailWorker.perform(self)
+    class_eval(sendable.class::WORKER).perform(self)
   end
 
   def remove_job

@@ -4,14 +4,19 @@
       <div class="well">
         <%= form_for @service_category, :html => {:class => 'form-horizontal'} do |f| %>
           <% if @service_category.errors.any? %>
-            <div id="error_explanation">
-              <h2><%= pluralize(@service_category.errors.count, "error") %> no permitió que la empresa sea creada:</h2>
-              <ul>
-                <% @service_category.errors.full_messages.each do |msg| %>
-                  <li><%= msg %></li>
-                <% end %>
-              </ul>
-            </div>
+            <% content_for :scripts do %>
+              <% message = '' %>
+              <% @service_category.errors.full_messages.each do |msg| %>
+                <% message += '* ' + msg + '\n' %>
+              <% end %>
+              <script type="text/javascript">
+                swal({
+                  title: "Error al guardar la categoría",
+                  text: "<%= message %>",
+                  type: "error"
+                });
+              </script>
+            <% end %>
           <% end %>
           <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
           <div class="form-group">
