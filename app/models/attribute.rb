@@ -97,13 +97,13 @@ class Attribute < ActiveRecord::Base
 			when "text"
 				
 				if TextAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-					TextAttribute.create(attribute_id: self.id, client_id: client.id)
+					TextAttribute.create(attribute_id: self.id, client_id: client.id, value: "")
 				end
 
 			when "textarea"
 				
 				if TextareaAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-					TextareaAttribute.create(attribute_id: self.id, client_id: client.id)
+					TextareaAttribute.create(attribute_id: self.id, client_id: client.id, value: "")
 				end
 
 			when "boolean"
@@ -175,14 +175,14 @@ class Attribute < ActiveRecord::Base
 		if self.datatype != "categoric"
 			return nil
 		elsif cat_str.nil? || cat_str == ""
-			return self.attribute_categories.find_by_category("Otra").id
+			return nil
 		else
 			self.attribute_categories.each do |category|
 				if cat_str.downcase == category.category.downcase
 					return category.id
 				end
 			end
-			return self.attribute_categories.find_by_category("Otra").id
+			return nil
 		end
 	end
 

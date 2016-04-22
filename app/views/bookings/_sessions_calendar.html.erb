@@ -122,10 +122,10 @@ var hoursSelected = false;
         }
 
         if (calendar) {
-          calendar.rebuild('/promotion_hours', data);
+          calendar.rebuild('/available_hours', data);
         }
         else {
-          calendar = new Calendar('/promotion_hours', data);
+          calendar = new Calendar('/available_hours', data);
         }
 
         $(document).on('hourClick', function (e) {
@@ -242,10 +242,10 @@ function loadCalendar () {
 
           staffSelected = $(this).val();
           if (calendar) {
-            calendar.rebuild('/promotion_hours', data);
+            calendar.rebuild('/available_hours', data);
           }
           else {
-            calendar = new Calendar('/promotion_hours', data);
+            calendar = new Calendar('/available_hours', data);
           }
 
           // $("#calendar-loader").hide();
@@ -313,10 +313,10 @@ function loadCalendar () {
         }
 
         if (calendar) {
-          calendar.rebuild('/promotion_hours', data);
+          calendar.rebuild('/available_hours', data);
         }
         else {
-          calendar = new Calendar('/promotion_hours', data);
+          calendar = new Calendar('/available_hours', data);
         }
 
         $('#foo4').trigger('updateSizes');

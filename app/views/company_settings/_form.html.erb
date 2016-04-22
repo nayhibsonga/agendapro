@@ -317,6 +317,22 @@
                         <span class="help-block">Habilita esta opción para que tus clientes puedan elegir un horario óptimo sin importar los bloques horarios predefinidos.</span>
                       </div>
                     </div>
+                    <div id="booking_leap_div" class="form-group" <%= "hidden" if @company_setting.allows_optimization %>>
+                      <%= f.label :booking_leap, 'Ofrecer horas cada' %>
+                      <span class="help-block">Esta opción determina cada cuánto hay una hora disponible para reservar si es que no se permite optimización.</span>
+                      <div class="input-group">
+                        <%= f.select :booking_leap, options_for_select({ "5" => "5", "10" => "10", "15" => "15", "20" => "20", "30" => "30", "45" => "45", "60" => "60" }, @company_setting.booking_leap), {}, {class: "form-control"} %>
+                        <span class="input-group-addon">minutos</span>
+                      </div>
+                    </div>
+                    <div class="form-group" id="booking_overlaps_div" <%= "hidden" if @company_setting.allows_optimization %>>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :allows_overlap_hours %> Ofrecer intercaladas
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tus clientes puedan elegir todas las opciones disponibles según la opción anterior, sin importar que se intercalen.</span>
+                      </div>
+                    </div>
                     <div class="form-group">
                       <div class="checkbox">
                         <label>

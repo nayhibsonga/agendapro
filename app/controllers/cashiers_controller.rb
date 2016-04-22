@@ -26,21 +26,21 @@ class CashiersController < ApplicationController
 
   def create
     @cashier = Cashier.new(cashier_params)
-    flash[:notice] = "Cajero creado." if @cashier.save
+    flash[:success] = "Cajero creado." if @cashier.save
     respond_with(@cashier) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'cashier') }
     end
   end
 
   def update
-    flash[:notice] = "Cajero editado." if @cashier.update(cashier_params)
+    flash[:success] = "Cajero editado." if @cashier.update(cashier_params)
     respond_with(@cashier) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'cashier') }
     end
   end
 
   def destroy
-    flash[:notice] = "Cajero eliminado." if @cashier.destroy
+    flash[:success] = "Cajero eliminado." if @cashier.destroy
     respond_with(@cashier) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'cashier') }
     end
@@ -48,7 +48,7 @@ class CashiersController < ApplicationController
 
   def activate
     @cashier.active = true
-    flash[:notice] = "Cajero activado." if @cashier.save
+    flash[:success] = "Cajero activado." if @cashier.save
     respond_with(@cashier) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'cashier') }
     end
@@ -56,7 +56,7 @@ class CashiersController < ApplicationController
 
   def deactivate
     @cashier.active = false
-    flash[:notice] = "Cajero desactivado." if @cashier.save
+    flash[:success] = "Cajero desactivado." if @cashier.save
     respond_with(@cashier) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'cashier') }
     end
