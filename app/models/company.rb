@@ -61,7 +61,7 @@ class Company < ActiveRecord::Base
 
 	has_many :sendings, class_name: 'Email::Sending', as: :sendable
 
-	scope :collectables, -> { where(active: true, id: 136).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
+	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
@@ -591,7 +591,7 @@ class Company < ActiveRecord::Base
 
 				#Send invoice_email
 				if !company.account_used_all
-					sendings.build(method: 'recovery_trial').save
+					company.sendings.build(method: 'recovery_trial').save
 				else
 					company.sendings.build(method: 'insistence_message_invoice').save
 				end
