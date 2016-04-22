@@ -9,7 +9,7 @@ class SessionBooking < ActiveRecord::Base
 	belongs_to :client
 	belongs_to :treatment_promo
 
-  WORKER = 'SessionBookingEmailWorker'
+  WORKER = 'SessionsBookingEmailWorker'
 
 	def send_sessions_booking_mail
 		bookings = self.booked_bookings.order(:start)
