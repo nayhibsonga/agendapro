@@ -89,7 +89,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.csv
+      format.csv { render text: Client.export_csv(current_user.company_id, @clients_export) }
       format.xls
     end
 
