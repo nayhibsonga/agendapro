@@ -444,9 +444,9 @@ class Company < ActiveRecord::Base
 		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where('created_at BETWEEN ? AND ?', (1.months.ago + 5.days).beginning_of_day, (1.months.ago + 5.days).end_of_day).each do |company|
 
 			if company.account_used
-				sendings.build(method: 'warning_trial').save
+				company.sendings.build(method: 'warning_trial').save
 			else
-				sendings.build(method: 'recovery_trial').save
+				company.sendings.build(method: 'recovery_trial').save
 			end
 
 		end
@@ -496,9 +496,9 @@ class Company < ActiveRecord::Base
 
 				#Check if account was used.
 				if company.account_used
-					sendings.build(method: 'end_trial').save
+					company.sendings.build(method: 'end_trial').save
 				else
-					sendings.build(method: 'recovery_trial').save
+					company.sendings.build(method: 'recovery_trial').save
 				end
 
 				#if company.country_id == 1
@@ -591,7 +591,7 @@ class Company < ActiveRecord::Base
 
 				#Send invoice_email
 				if !company.account_used_all
-					sendings.build(method: 'recovery_trial').save
+					company.sendings.build(method: 'recovery_trial').save
 				else
 					company.sendings.build(method: 'insistence_message_invoice').save
 				end
