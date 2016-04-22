@@ -239,7 +239,7 @@
                   </table>
                 </div>
               </div>
-            <% elsif attribute.datatype == "categoric" %>
+            <% elsif attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0 %>
               <div class="form-group">
                 <label class="control-label col-xs-3">
                   <%= attribute.name %>
