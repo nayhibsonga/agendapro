@@ -61,7 +61,7 @@ class Company < ActiveRecord::Base
 
 	has_many :sendings, class_name: 'Email::Sending', as: :sendable
 
-	scope :collectables, -> { where(active: true, id: 136).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
+	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
@@ -377,7 +377,7 @@ class Company < ActiveRecord::Base
 	end
 
 	def account_used_all
-		
+
 		if self.account_used
 			return true
 		end
@@ -391,7 +391,7 @@ class Company < ActiveRecord::Base
 		end
 
 		if Email::Content.where(company_id: self.id).where('updated_at > ?', DateTime.now - 1.weeks).count > 0
-			return true		
+			return true
 		end
 
 		return false
