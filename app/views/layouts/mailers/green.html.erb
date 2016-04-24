@@ -293,7 +293,7 @@
         <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
           <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
             <div class="pull-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:center;margin-left:auto;margin-right:auto;">
-              <%= image_tag attachments['logo.png'].url, class: "logo", alt: "Logo", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;" %>
+              <%= image_tag attachments['logo.png'].url, class: "logo", alt: "Logo", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;" if attachments['logo.png'] %>
             </div>
           </td>
         </tr>
