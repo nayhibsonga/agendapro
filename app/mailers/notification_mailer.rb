@@ -2,7 +2,7 @@ class NotificationMailer < Base::CustomMailer
   layout "mailers/green"
 
   def summary (recipient, today_bookings, summary_bookings, name)
-    @company = self.get_company(today_bookings, summary_bookings)
+    @company = get_company(today_bookings, summary_bookings)
 
     # layout variables
     @title = "Resumen de Reservas"
