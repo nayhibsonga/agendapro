@@ -31,7 +31,7 @@ class SessionsBookingEmailWorker < BaseEmailWorker
       group.compact!
       total_sendings += 1
       total_recipients += group.size
-      SessionsBookingMailer.delay.send(sending.method, bookings, group.join(', '), client: false, name: name)
+      SessionsBookingMailer.delay.send(sending.method, bookings.to_a, group.join(', '), client: false, name: name)
     end
 
     # Company
@@ -41,7 +41,7 @@ class SessionsBookingEmailWorker < BaseEmailWorker
       group.compact!
       total_sendings += 1
       total_recipients += group.size
-      SessionsBookingMailer.delay.send(sending.method, bookings, group.join(', '), client: false, name: name)
+      SessionsBookingMailer.delay.send(sending.method, bookings.to_a, group.join(', '), client: false, name: name)
     end
 
     sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)
