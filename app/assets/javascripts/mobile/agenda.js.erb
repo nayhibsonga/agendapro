@@ -29,7 +29,10 @@ function loadSessions()
         },
         error: function()
         {
-            swal("error");
+            swal({
+                title: "Error",
+                type: "error"
+            });
         }
     });
 
@@ -44,7 +47,10 @@ function loadSessions()
         },
         error: function()
         {
-            swal("error");
+            swal({
+                title: "Error",
+                type: "error"
+            });
         }
     });
 }

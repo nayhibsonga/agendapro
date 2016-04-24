@@ -25,14 +25,19 @@
           <div class="tab-pane fade in active" id="personalTab">
             <%= form_for @client, html: {class: "form-horizontal", multipart: true} do |f| %>
               <% if @client.errors.any? %>
-                <div id="error_explanation">
-                  <h2 class="text-green"><%= pluralize(@client.errors.count, "error") %> no permitió que el cliente fuera guardado:</h2>
-                  <ul>
-                    <% @client.errors.full_messages.each do |msg| %>
-                    <li><%= msg %></li>
-                    <% end %>
-                  </ul>
-                </div>
+                <% content_for :scripts do %>
+                  <% message = '' %>
+                  <% @client.errors.full_messages.each do |msg| %>
+                    <% message += '* ' + msg + '\n' %>
+                  <% end %>
+                  <script type="text/javascript">
+                    swal({
+                      title: "Error al guardar el cliente",
+                      text: "<%= message %>",
+                      type: "error"
+                    });
+                  </script>
+                <% end %>
               <% end %>
               <div class="well">
                 <div class="col-md-6">
@@ -690,14 +695,19 @@
     <% else %>
       <%= form_for @client, html: {class: "form-horizontal", multipart: true} do |f| %>
         <% if @client.errors.any? %>
-          <div id="error_explanation">
-            <h2 class="text-green"><%= pluralize(@client.errors.count, "error") %> no permitió que el cliente fuera guardado:</h2>
-            <ul>
-              <% @client.errors.full_messages.each do |msg| %>
-              <li><%= msg %></li>
-              <% end %>
-            </ul>
-          </div>
+          <% content_for :scripts do %>
+            <% message = '' %>
+            <% @client.errors.full_messages.each do |msg| %>
+              <% message += '* ' + msg + '\n' %>
+            <% end %>
+            <script type="text/javascript">
+              swal({
+                title: "Error al guardar el cliente",
+                text: "<%= message %>",
+                type: "error"
+              });
+            </script>
+          <% end %>
         <% end %>
         <div class="new-client-title">
           Datos personales

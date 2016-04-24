@@ -14,6 +14,10 @@ $(function () {
     };
   });
 
+  $('.hours-explanation-btn').on('click', function(){
+    $('#hoursExplanationModal').modal('show');
+  })
+
   $('.company-web-address').on('change', function() {
     var tmp = $('#company_web_address').val();
     tmp = tmp.toLowerCase();
@@ -25,6 +29,11 @@ $(function () {
     tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
     tmp = tmp.replace(/[^a-z0-9]/gi,'');
     $(this).val(tmp);
+  });
+
+  $('#company_setting_allows_optimization').change(function () {
+    $('#booking_leap_div').toggle();
+    $('#booking_overlaps_div').toggle();
   });
 
   $("#company_logo").change(function (){

@@ -31,7 +31,6 @@ class CompanyFromEmailsController < ApplicationController
 
     respond_to do |format|
       if @company_from_email.save
-        CompanyFromEmailMailer.confirm_email(@company_from_email, current_user)
         format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'emails'), notice: 'E-mail agregado exitosamente. Se ha enviado un correo para verificar la nueva dirección.' }
         format.json { render action: 'show', status: :created, location: @company_from_email }
       else

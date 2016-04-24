@@ -14,6 +14,8 @@ class Email::Content < ActiveRecord::Base
   scope :actives, -> { where(active: true) }
   scope :inactives, -> { where(active: false) }
 
+  WORKER = 'ClientEmailWorker'
+
   def generate_sending
     Email::Sending.create(
       sendable_id: self.id,
