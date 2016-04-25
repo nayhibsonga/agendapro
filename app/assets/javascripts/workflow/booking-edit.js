@@ -48,7 +48,7 @@ function loadCalendar()
 
 	console.log(data);
 
-	calendar = new PromoCalendar('/promotion_hours', data);
+	calendar = new PromoCalendar('/available_hours', data);
 
 	$(document).on('hourClick', function (e) {
 
@@ -113,7 +113,7 @@ $("#datepicker").datepicker({
 
       console.log(data);
 
-      calendar.rebuild('/promotion_hours', data);
+      calendar.rebuild('/available_hours', data);
 
       $(document).on('hourClick', function (e) {
 
@@ -236,10 +236,10 @@ $(function () {
 			data = {local: localId, serviceStaff: JSON.stringify(selects), date: day_str, edit: true};
 
 			if (calendar) {
-				calendar.rebuild('/promotion_hours', data);
+				calendar.rebuild('/available_hours', data);
 			}
 			else {
-				calendar = new PromoCalendar('/promotion_hours', data);
+				calendar = new PromoCalendar('/available_hours', data);
 			}
 
       swal({

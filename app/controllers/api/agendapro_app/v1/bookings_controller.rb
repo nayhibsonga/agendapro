@@ -632,7 +632,6 @@ module Api
 			  @booking.payed_booking.save
 			end
 			#flash[:success] = "Reserva cancelada exitosamente."
-			# BookingMailer.cancel_booking(@booking)
 			@mobile_user ? user = @mobile_user.id : user = 0
 			BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
 		else

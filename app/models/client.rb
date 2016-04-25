@@ -71,13 +71,13 @@ class Client < ActiveRecord::Base
       when "text"
 
         if TextAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
-          TextAttribute.create(attribute_id: attribute.id, client_id: self.id)
+          TextAttribute.create(attribute_id: attribute.id, client_id: self.id, value: "")
         end
 
       when "textarea"
 
         if TextareaAttribute.where(attribute_id: attribute.id, client_id: self.id).count == 0
-          TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id)
+          TextareaAttribute.create(attribute_id: attribute.id, client_id: self.id, value: "")
         end
 
       when "boolean"
@@ -109,63 +109,6 @@ class Client < ActiveRecord::Base
         end
       end
 
-    end
-
-
-    company = self.company
-    company.clients.each do |client|
-      case self.datatype
-      when "float"
-
-        if FloatAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          FloatAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "integer"
-
-        if IntegerAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          IntegerAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "text"
-
-        if TextAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          TextAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "textarea"
-
-        if TextareaAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          TextareaAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "boolean"
-
-        if BooleanAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          BooleanAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "date"
-
-        if DateAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          DateAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "datetime"
-
-        if DateTimeAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          DateTimeAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-
-      when "file"
-        if FileAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          FileAttribute.create(attribute_id: self.id, client_id: client.id)
-        end
-      when "categoric"
-        if CategoricAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-          CategoricAttribute.create(attribute_id: self.id, client_id: client.id, attribute_category_id: attribute_category.id)
-        end
-      end
     end
 
   end
@@ -251,7 +194,7 @@ class Client < ActiveRecord::Base
         if !categoric_attribute.nil?
           custom_attributes[attribute.slug + "_attribute"] = categoric_attribute.attribute_category_id
         else
-          custom_attributes[attribute.slug + "_attribute"] = attribute.attribute_categories.where(category: "Otra").first.id
+          custom_attributes[attribute.slug + "_attribute"] = nil
         end
 
       end
@@ -596,69 +539,17 @@ class Client < ActiveRecord::Base
             end
 
             #Send multiple bookings reminder
-            send_multiple_reminder(bookings)
+            bookings.first.sendings.build(method: 'reminder_multiple_booking').save
           else
             #Send regular reminder
             puts "Booking " + single_booking.id.to_s + " will be sent alone."
-            BookingMailer.book_reminder_mail(single_booking)
+            single_booking.sendings.build(method: 'reminder_booking').save
           end
         end
 
       end
 
     end
-
-  end
-
-  def self.send_multiple_reminder(bookings)
-
-    helper = Rails.application.routes.url_helpers
-    @data = {}
-
-    # GENERAL
-      @data[:company_name] = bookings[0].location.company.name
-      @data[:reply_to] = bookings[0].location.email
-      @data[:url] = bookings[0].location.get_web_address
-      @data[:signature] = bookings[0].location.company.company_setting.signature
-      @data[:domain] = bookings[0].location.company.country.domain
-      @data[:marketplace] = bookings[0].marketplace_origin
-      @data[:type] = 'image/png'
-      if bookings[0].location.company.logo.email.url.include? "logo_vacio"
-        @data[:logo] = Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
-      else
-        @data[:logo] = Base64.encode64(File.read('public' + bookings[0].location.company.logo.email.url))
-      end
-
-    # USER
-      @user = {}
-      @user[:where] = bookings[0].location.short_address
-      @user[:phone] = bookings[0].location.phone
-      @user[:name] = bookings[0].client.first_name
-      @user[:send_mail] = bookings[bookings.length - 1].send_mail
-      @user[:email] = bookings[0].client.email
-      @user[:cancel_all] = @data[:marketplace] ? bookings[0].marketplace_url('cancel_all') : helper.cancel_all_reminded_booking_url(:confirmation_code => bookings[0].confirmation_code)
-      @user[:confirm_all] = @data[:marketplace] ? bookings[0].marketplace_url('confirm_all') : helper.confirm_all_bookings_url(:confirmation_code => bookings[0].confirmation_code)
-
-      @user_table = ''
-      bookings.each do |book|
-        @user_table += '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + book.service.name + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + I18n.l(book.start) + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + (book.location.company.company_setting.provider_preference == 2 ? "" : book.service_provider.public_name) + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + (book.notes.blank? ? '' : book.notes) + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' +
-              '<a class="btn btn-xs btn-orange" target="_blank" href="' + (book.marketplace_origin ? book.marketplace_url('edit') : helper.booking_edit_url(:confirmation_code => book.confirmation_code) ) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd9610;border-color:#db7400; width: 90%;">Editar</a>' +
-              '<a class="btn btn-xs btn-red" target="_blank" href="' + (book.marketplace_origin ? book.marketplace_url('cancel') : helper.booking_cancel_url(:confirmation_code => book.confirmation_code) ) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#fd633f;border-color:#e55938; width: 90%;">Cancelar</a>' +
-              '<a class="btn btn-xs btn-red" target="_blank" href="' + (book.marketplace_origin ? book.marketplace_url('confirm') : helper.confirm_booking_url(:confirmation_code => book.confirmation_code) ) + '" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-decoration:none;display:inline-block;margin-bottom:5px;font-weight:normal;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:1px;padding-right:5px;padding-left:5px;font-size:12px;line-height:1.5;border-radius:3px;color:#ffffff;background-color:#0f91cf;border-color:#0b587b; width: 90%;">Confirmar</a>' +
-            '</td>' +
-          '</tr>'
-      end
-
-      @user[:user_table] = @user_table
-
-      @data[:user] = @user
-
-      BookingMailer.multiple_booking_reminder(@data)
 
   end
 
@@ -909,6 +800,121 @@ class Client < ActiveRecord::Base
     end
   end
 
+  def self.export_csv(company_id, clients)
+
+    csv_header = ["E-mail","Nombre","Apellido",(I18n.t('ci')).capitalize,"Teléfono","Dirección","Comuna","Fecha Nacimiento","Edad","Género","Fecha Creación"]
+    company = Company.find(company_id)
+    attributes = company.custom_attributes.joins(:attribute_group).order('attribute_groups.order asc').order('attributes.order asc').order('name asc')
+    attributes.each do |attribute|
+      if attribute.datatype != "file"
+        if attribute.datatype != "categoric" || (attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0)
+            csv_header << attribute.name
+        end
+      end
+    end 
+
+    client_lines = []
+
+    clients.each do |client|
+
+      client_birth = ""
+      if !client.birth_day.nil? && !client.birth_month.nil? && !client.birth_year.nil?
+        client_birth = client.birth_day.to_s + "/" + client.birth_month.to_s + "/" + client.birth_year.to_s
+      end
+
+      client_line = [client.email.to_s, client.first_name.to_s, client.last_name.to_s, client.identification_number.to_s, client.phone.to_s, client.address.to_s, client.district.to_s, client_birth, client.age.to_s]
+
+      if client.gender == 1
+        client_line << "Femenino"
+      elsif client.gender == 2
+        client_line << "Masculino"
+      else
+        client_line << ""
+      end 
+      client_line << client.created_at.strftime("%d/%m/%Y %R")
+
+      attributes.each do |attribute|
+        if attribute.datatype != "file"
+          if attribute.datatype == "float"
+            float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            float_attribute_value = ""
+            if !float_attribute.nil? && !float_attribute.value.nil?
+              float_attribute_value = float_attribute.value
+            end
+              client_line << float_attribute_value.to_s
+          elsif attribute.datatype == "integer"
+            integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            integer_attribute_value = ""
+            if !integer_attribute.nil? && !integer_attribute.value.nil?
+              integer_attribute_value = integer_attribute.value
+            end
+            client_line << integer_attribute_value.to_s
+          elsif attribute.datatype == "text"
+            text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            text_attribute_value = ""
+            if !text_attribute.nil? && !text_attribute.value.nil?
+              text_attribute_value = text_attribute.value
+            end
+            client_line << text_attribute_value.to_s
+          elsif attribute.datatype == "textarea"
+            textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            textarea_attribute_value = ""
+            if !textarea_attribute.nil? && !textarea_attribute.value.nil?
+              textarea_attribute_value = textarea_attribute.value
+            end
+            client_line << textarea_attribute_value.to_s
+          elsif attribute.datatype == "boolean"
+            boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            boolean_attribute_value = ""
+            if !boolean_attribute.nil? && !boolean_attribute.value.nil?
+              if boolean_attribute.value == true
+                boolean_attribute_value = "Sí"
+              else
+                boolean_attribute_value = "No"
+              end
+            end
+            client_line << boolean_attribute_value.to_s
+          elsif attribute.datatype == "date"
+            date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            date_attribute_value = ""
+            if !date_attribute.nil? && !date_attribute.value.nil?
+              date_attribute_value = date_attribute.value.strftime('%d/%m/%Y')
+            end
+            client_line << date_attribute_value.to_s
+          elsif attribute.datatype == "datetime"
+            date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            date_time_attribute_date = ""
+            date_time_attribute_hour = "00"
+            date_time_attribute_minute = "00"
+            if !date_time_attribute.nil? && !date_time_attribute.value.nil?
+              date_time_attribute_value = date_time_attribute.value.strftime("%d/%m/%Y %R")
+            end
+            client_line << date_time_attribute_value.to_s
+          elsif attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0
+            categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+            category_value = ""
+            if !categoric_attribute.attribute_category.nil?
+              category_value = categoric_attribute.attribute_category.category
+            end
+            client_line << category_value.to_s
+          end
+        end
+      end
+
+      client_lines << client_line
+
+    end
+
+    csv_string = CSV.generate() do |csv|
+      csv << csv_header
+      client_lines.each do |line|
+        csv << line
+      end
+    end
+
+
+  end
+
   def self.import(file, company_id)
     allowed_attributes = ["email", "first_name", "last_name", "identification_number", "phone", "address", "district", "city", "age", "gender", "birth_day", "birth_month", "birth_year", "record", "second_phone"]
 
@@ -1145,15 +1151,71 @@ class Client < ActiveRecord::Base
     end
   end
 
-  def self.test_write(input)
-    book = Spreadsheet::Workbook.new
-    write_sheet = book.create_worksheet
-    row_num = 0
-    input.each do |row|
-      write_sheet.row(row_num).replace row
-      row_num +=1
+  def self.test_write()
+    require 'writeexcel'
+
+    # Create a new Excel Workbook
+    workbook = WriteExcel.new('ruby.xls')
+
+    # Add worksheet(s)
+    worksheet  = workbook.add_worksheet
+    worksheet2 = workbook.add_worksheet
+
+    # Add and define a format
+    format = workbook.add_format
+    format.set_bold
+    format.set_color('red')
+    format.set_align('right')
+
+    # write a formatted and unformatted string.
+    worksheet.write(1, 1, 'Hi Excel.', format)  # cell B2
+    worksheet.write(2, 1, 'Hi Excel.')          # cell B3
+
+    # write a number and formula using A1 notation
+    worksheet.write('B4', 3.14159)
+    worksheet.write('B5', '=SIN(B4/4)')
+
+    # write to file
+    workbook.close
+  end
+
+  def self.generate_import_file(company_id)
+    require 'writeexcel'
+
+    company = Company.find(company_id)
+    title = 'public/importador_empresa_' + company_id.to_s + '.xls'
+    workbook = WriteExcel.new(title)
+
+    worksheet = workbook.add_worksheet
+
+    allowed_attributes = [["email", "Email del cliente. Debe ser único."], ["first_name", "Nombres del cliente."], ["last_name", "Apellidos del cliente."], ["identification_number", "Rut o CI del cliente. Debe ser único."], ["record", "Número de cliente. Puede ser un número o una palabra seguida de un número."], ["phone", "Teléfono principal del cliente."], ["second_phone", "Teléfono secundario del cliente (oficina, casa, etc.)."], ["address", "Dirección del cliente."], ["district", "Comuna de residencia."], ["city", "Ciudad de residencia."], ["age", "Edad del cliente."], ["gender", "Género del cliente. 1 si es mujer, 2 es hombre."], ["birth_day", "Día del cumpleaños, sin fecha. Del 1 al 31."], ["birth_month", "Mes del cumpleaños, sin fecha. Del 1 al 12."], ["birth_year", "Año de nacimiento."]]
+
+    custom_attributes = []
+
+    company.custom_attributes.each do |attribute|
+      if attribute.datatype != "file"
+        if attribute.datatype != "categoric"
+          custom_attributes << [attribute.slug, attribute.datatype_to_text + ": " + attribute.description]
+        else
+          categories = attribute.attribute_categories.pluck(:category).join(", ")
+          custom_attributes << [attribute.slug, attribute.datatype_to_text + ": " + attribute.description + ". Categorías: " + categories]
+        end
+      end
     end
-    book.write "/home/zuru/AgendaPro/roo_test/to.xls"
+
+    att_count = allowed_attributes.count + custom_attributes.count
+
+    all_attributes = allowed_attributes + custom_attributes
+
+    all_attributes.each_with_index do |att, index|
+      worksheet.write(0, index, att[0])
+      worksheet.write_comment(0, index, att[1])
+    end
+
+    workbook.close
+
+    return workbook
+
   end
 
   def self.filter(company_id, params)

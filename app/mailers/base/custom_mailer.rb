@@ -2,6 +2,10 @@ class Base::CustomMailer < ActionMailer::Base
   require 'mandrill'
   require 'base64'
 
+  default reply_to: 'contacto@agendapro.cl'
+
+  before_action :default_options
+
   def send_mail(template_name, template_content, message, async=true)
 
     mandrill = Mandrill::API.new Agendapro::Application.config.api_key
@@ -21,7 +25,21 @@ class Base::CustomMailer < ActionMailer::Base
     ENV['EMAIL_FILTER'] || recipients
   end
 
-  def filter_sender(email)
-    email.present? ? email : "AgendaPro <no-reply@agendapro.cl>"
+  def filter_sender(email=nil)
+    email.present? ? email : "AgendaPro <no-reply@agendapro.co>"
   end
+
+  def check_mail(mail_object)
+    if mail_object[:to].value.empty? && mail_object[:cc].nil? && mail_object[:bcc].nil? && mail_object[:smtp_envelope_to].nil?
+      puts "blocked"
+      message.perform_deliveries = false
+    end
+  end
+
+  private
+    def default_options
+      @title = "AgendaPro"
+      @url = "www.agendapro.co"
+      headers["X-MC-PreserveRecipients"] = "false"
+    end
 end

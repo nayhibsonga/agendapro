@@ -37,13 +37,13 @@ Agendapro::Application.configure do
   config.action_mailer.default :charset => "utf-8"
 
   config.action_mailer.smtp_settings = {
-    :address   => "smtp.mandrillapp.com",
-    :port      => 25, # ports 587 and 2525 are also supported with STARTTLS
+    :address   => "email-smtp.us-west-2.amazonaws.com",
+    :port      => 587, # 25, 465 or 587
     :enable_starttls_auto => true, # detects and uses STARTTLS
-    :user_name => "shevia@agendapro.cl",
-    :password  => "UhM-Y7RNxHZJeJa4ajil6Q", # SMTP password is any valid API key
-    :authentication => 'login', # Mandrill supports 'plain' or 'login'
-    :domain => 'lvh.me:3000', # your domain to identify your server when connecting
+    :user_name => "AKIAJQYQTMWK6D6SETSQ",
+    :password  => "Aqlc24cxA8qnQKLgg6ODWRPaQqcVESskGkhoALqWhGrz", # SMTP password is any valid API key
+    :authentication => :login, # Mandrill supports 'plain' or 'login'
+    :domain => 'agendapro.co', # your domain to identify your server when connecting
   }
 
 end

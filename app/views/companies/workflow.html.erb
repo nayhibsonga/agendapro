@@ -961,11 +961,11 @@
                               </div>
                             </div>
 
-                          <% elsif attribute.datatype == "categoric" %>
+                          <% elsif attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0 %>
 
                             <%
 
-                              attribute_value = attribute.attribute_categories.find_by_category("Otra").id
+                              attribute_value = nil
                               if !att_client.nil?
 
                                 if !att_client.categoric_attributes.find_by_attribute_id(attribute.id).nil?
@@ -1445,10 +1445,10 @@
             data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#datepicker").val()};
 
             if (promoCalendar) {
-              promoCalendar.rebuild('/promotion_hours', data);
+              promoCalendar.rebuild('/available_hours', data);
             }
             else {
-              promoCalendar = new PromoCalendar('/promotion_hours', data);
+              promoCalendar = new PromoCalendar('/available_hours', data);
             }
 
             /*$(document).on('hourClick', function (e) {
