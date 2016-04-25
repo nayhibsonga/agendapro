@@ -417,6 +417,7 @@ Agendapro::Application.routes.draw do
     get "/get_promotions_popover", :to => 'services#get_promotions_popover'
     get "/get_online_discount_popover", :to => 'services#get_online_discount_popover'
     get "/promotion_hours", :to => 'bookings#promotion_hours'
+    get '/available_hours', :to => 'bookings#available_hours'
     #post '/admin_update_promo', :to => 'services#admin_update_promo'
     get "/show_time_promo", :to => 'services#show_time_promo'
     get '/show_last_minute_promo', :to => 'services#show_last_minute_promo'
@@ -598,6 +599,7 @@ Agendapro::Application.routes.draw do
 
     get '/client/:id/payments', :to => 'clients#payments'
     get '/client/:id/payments_content', :to => 'clients#payments_content'
+    get '/hours_test', :to => 'bookings#hours_test'
 
 
   end

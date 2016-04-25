@@ -2,7 +2,7 @@ module Api
 	module AgendaproApp
   module V1
   	class BookingsController < V1Controller
-      
+
       def book_service
 
       	nameArray = []
@@ -21,7 +21,7 @@ module Api
         elsif nameArray.length == 3
           first_name = nameArray[0] unless nameArray[0].blank?
           last_name = nameArray[1] + ' ' + nameArray[2]
-        else 
+        else
           first_name = nameArray[0] + ' ' + nameArray[1]
           last_name = ''
           (2..nameArray.length - 1).each do |i|
@@ -296,7 +296,7 @@ module Api
 	    #       sessions_missing = @session_booking.sessions_amount - @bookings.size
 	    #       @session_booking.sessions_taken = @bookings.size
 	    #       @session_booking.save
-	          
+
 
 	    #       for i in 0..sessions_missing-1
 
@@ -361,7 +361,7 @@ module Api
 	      sessions_missing = @session_booking.sessions_amount - 1
 	      @session_booking.sessions_taken = 1
 	      @session_booking.save
-	      
+
 
 	      for i in 0..sessions_missing-1
 
@@ -631,8 +631,7 @@ module Api
 			  @booking.payed_booking.canceled = true
 			  @booking.payed_booking.save
 			end
-			#flash[:notice] = "Reserva cancelada exitosamente."
-			# BookingMailer.cancel_booking(@booking)
+			#flash[:success] = "Reserva cancelada exitosamente."
 			@mobile_user ? user = @mobile_user.id : user = 0
 			BookingHistory.create(booking_id: @booking.id, action: "Cancelada por Cliente", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: user, notes: @booking.notes, company_comment: @booking.company_comment)
 		else

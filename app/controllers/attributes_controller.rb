@@ -31,21 +31,21 @@ class AttributesController < ApplicationController
 
   def create
     @attribute = Attribute.new(attribute_params)
-    flash[:notice] = "Campo creado." if @attribute.save
+    flash[:success] = "Campo creado." if @attribute.save
     respond_with(@attribute) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
     end
   end
 
   def update
-    flash[:notice] = "Campo editado." if @attribute.update(attribute_params)
+    flash[:success] = "Campo editado." if @attribute.update(attribute_params)
     respond_with(@attribute) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
     end
   end
 
   def destroy
-    flash[:notice] = "Campo eliminado." if @attribute.destroy
+    flash[:success] = "Campo eliminado." if @attribute.destroy
     respond_with(@attribute) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
     end
@@ -78,7 +78,7 @@ class AttributesController < ApplicationController
   end
 
   private
-    def set_attribute      
+    def set_attribute
       @attribute = Attribute.find(params[:id])
     end
 

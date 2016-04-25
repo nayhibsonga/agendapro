@@ -54,6 +54,7 @@ function loadHistory()
 
 function loadProducts()
 {
+  console.log("Se ejecuta");
   //categories_products
   var categories_ids = [];
   $("#category-select option").each(function(){
@@ -67,6 +68,7 @@ function loadProducts()
 
   if(categories_ids.length == 0)
   {
+    $('#product-select').multiselect('rebuild');
     loadHistory();
     return;
   }
@@ -151,7 +153,7 @@ $(function(){
   $('#category-select').multiselect({
       includeSelectAllOption: true,
       selectAllText: 'Todos',
-      buttonContainer: '<div style="min-width: 200px;"></div>',
+      buttonContainer: '<div style="min-width: 200px;" class="multiselect-div"></div>',
       buttonText: function(options, select) {
 
           if (options.length === 0) {
@@ -192,7 +194,7 @@ $(function(){
   $('#product-select').multiselect({
       includeSelectAllOption: true,
       selectAllText: 'Todos',
-      buttonContainer: '<div style="min-width: 200px;"></div>',
+      buttonContainer: '<div style="min-width: 200px;" class="multiselect-div"></div>',
       buttonText: function(options, select) {
 
           if (options.length === 0) {

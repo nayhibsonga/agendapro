@@ -15,7 +15,7 @@ class ClientFilesController < ApplicationController
   # GET /client_files/1
   # GET /client_files/1.json
   def show
-    
+
     json_response = []
 
     s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
@@ -54,11 +54,11 @@ class ClientFilesController < ApplicationController
   # POST /client_files.json
   def create
     @client_file = ClientFile.new(client_file_params)
-    
+
     respond_with(@client_file) do |format|
-      format.html { 
-        flash[:notice] = "Archivo creado." if @client_file.save
-        redirect_to client_files_path() 
+      format.html {
+        flash[:success] = "Archivo creado." if @client_file.save
+        redirect_to client_files_path()
       }
     end
   end
@@ -67,9 +67,9 @@ class ClientFilesController < ApplicationController
   # PATCH/PUT /client_files/1.json
   def update
     respond_with(@client_file) do |format|
-      format.html { 
-        flash[:notice] = "Archivo editado." if @client_file.update(client_file_params)
-        redirect_to client_files_path() 
+      format.html {
+        flash[:success] = "Archivo editado." if @client_file.update(client_file_params)
+        redirect_to client_files_path()
       }
     end
   end
@@ -77,20 +77,20 @@ class ClientFilesController < ApplicationController
   # DELETE /client_files/1
   # DELETE /client_files/1.json
   def destroy
-    
+
     respond_with(@client_file) do |format|
       if @client_file.destroy
-        format.html { 
-          flash[:notice] = "Archivo eliminado."
-          redirect_to client_files_path() 
+        format.html {
+          flash[:success] = "Archivo eliminado."
+          redirect_to client_files_path()
         }
         format.json {
           render json: @client_file
         }
       else
-        format.html { 
-          flash[:notice] = "Archivo no pudo ser eliminado."
-          redirect_to client_files_path() 
+        format.html {
+          flash[:error] = "Archivo no pudo ser eliminado."
+          redirect_to client_files_path()
         }
         format.json {
           render json: @client_file

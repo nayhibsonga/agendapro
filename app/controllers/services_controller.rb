@@ -28,12 +28,14 @@ class ServicesController < ApplicationController
   def activate
     @service.active = true
     @service.save
+    flash[:success] = "Servicio activado exitosamente."
     redirect_to inactive_services_path
   end
 
   def deactivate
     @service.active = false
     @service.save
+    flash[:success] = "Servicio activado exitosamente."
     redirect_to services_path
   end
 
@@ -74,7 +76,8 @@ class ServicesController < ApplicationController
 
     respond_to do |format|
       if @service.save
-        format.html { redirect_to services_path, notice: 'Servicio creado exitosamente.' }
+        format.html { redirect_to services_path, success: 'Servicio creado exitosamente.' }
+        flash.keep(:success)
         format.json { render action: 'show', status: :created, location: @service }
       else
         format.html { render action: 'new' }
@@ -124,7 +127,7 @@ class ServicesController < ApplicationController
           end
           if send_promo_notification
             if @service.time_promo_active && @service.has_time_discount && !@service.active_service_promo_id.nil?
-              AdminMailer.notify_promo_creation(@service)
+              @service.sendings.build(method: 'notify_promotion').save
             end
           end
           @service.check_online_discount
@@ -147,12 +150,13 @@ class ServicesController < ApplicationController
           end
           if send_promo_notification
             if @service.time_promo_active && @service.has_time_discount && !@service.active_service_promo_id.nil?
-              AdminMailer.notify_promo_creation(@service)
+              @service.sendings.build(method: 'notify_promotion').save
             end
           end
           @service.check_online_discount
           @service_times.destroy_all
-          format.html { redirect_to services_path, notice: 'Servicio actualizado exitosamente.' }
+          format.html { redirect_to services_path, success: 'Servicio actualizado exitosamente.' }
+          flash.keep(:success)
           format.json { head :no_content }
         else
           @service_times.each do |service_time|
@@ -678,7 +682,7 @@ class ServicesController < ApplicationController
 
           if discounts_changed
             #Send notification for promo_activation.
-            AdminMailer.notify_promo_creation(@service)
+            @service.sendings.build(method: 'notify_promotion').save
           end
 
         else
@@ -744,7 +748,7 @@ class ServicesController < ApplicationController
           if treatment_promo.save
             @treatment_promos << treatment_promo
 
-            @treatment_locations.each do |treatment_location|      
+            @treatment_locations.each do |treatment_location|
               treatment_promo_location = TreatmentPromoLocation.create(:treatment_promo_id => treatment_promo.id, :location_id => treatment_location.id)
             end
 
@@ -776,7 +780,7 @@ class ServicesController < ApplicationController
             if treatment_promo.save
               @treatment_promos << treatment_promo
 
-              @treatment_locations.each do |treatment_location|      
+              @treatment_locations.each do |treatment_location|
                 treatment_promo_location = TreatmentPromoLocation.create(:treatment_promo_id => treatment_promo.id, :location_id => treatment_location.id)
               end
 
@@ -1280,13 +1284,13 @@ class ServicesController < ApplicationController
 
   def last_minute_hours
     @service = Service.find(params[:id])
-    
+
     @location = Location.find(params[:location_id])
-    
+
     @serviceStaff = []
-    
+
     @serviceStaff[0] = {:service => @service.id, :provider => params[:service_provider_id]}
-    
+
     @last_minute_promo = @service.active_last_minute_promo
 
     @selected_date = params[:date]

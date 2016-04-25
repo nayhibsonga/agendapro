@@ -706,8 +706,20 @@ function editBookingModal(eventId) {
 
       for(var key in custom_attributes)
       {
+        console.log("KEY");
         console.log(key);
         console.log(custom_attributes[key]);
+        if($('[name="' + key + '"]').is('select'))
+        {
+          if(custom_attributes[key] == false)
+          {
+            custom_attributes[key] = "0";
+          }
+          else if(custom_attributes[key] == true)
+          {
+            custom_attributes[key] = "1";
+          }
+        }
         $('[name="' + key + '"]').val(custom_attributes[key]);
       }
 
@@ -1069,6 +1081,7 @@ function destroyTreatment(eventId){
       });
       swal.close();
       $('#bookingModal').modal('hide');
+      triggerSuccess("Tratamiento eliminado exitosamente.");
     }
   });
 
@@ -1250,10 +1263,8 @@ function editDrag(event) {
           data: { "provider_break": eventJSON },
           dataType: 'json',
           success: function(){
-            swal({
-              title: "Bloqueo actualizado exitosamente",
-              type: "success"
-            });
+            swal.close();
+            triggerSuccess("Bloqueo actualizado exitosamente");
           },
           error: function(xhr){
             swal.close();
@@ -1359,11 +1370,13 @@ function editDrag(event) {
             $('#calendar').fullCalendar('updateEvent', event);
             if(!booking.is_session || (booking.is_session && booking.user_session_confirmed))
             {
-              swal("Reserva actualizada exitosamente.");
+              swal.close();
+              triggerSuccess("Reserva actualizada exitosamente.");
             }
             else
             {
-              swal("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+              swal.close();
+              triggerInfo("Se ha enviado un correo al cliente para que valide la sesión agendada.");
             }
             $('#bookingAlerts').hide();
             if (booking.warnings.length > 0) {
@@ -1448,11 +1461,13 @@ function editDrag(event) {
               $('#calendar').fullCalendar('updateEvent', event);
               if(!booking.is_session || (booking.is_session && booking.user_session_confirmed))
               {
-                swal("Reserva actualizada exitosamente.");
+                swal.close();
+                triggerSuccess("Reserva actualizada exitosamente.");
               }
               else
               {
-                swal("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+                swal.close();
+                triggerInfo("Se ha enviado un correo al cliente para que valide la sesión agendada.");
               }
               $('#bookingAlerts').hide();
               if (booking.warnings.length > 0) {
@@ -1604,7 +1619,7 @@ function saveBooking(typeURL, extraURL, bundled) {
             }
             if(booking.is_session && !booking.user_session_confirmed)
             {
-              swal("Se ha enviado un correo al cliente para que valide la sesión agendada.");
+              triggerInfo("Se ha enviado un correo al cliente para que valide la sesión agendada.");
             }
           }
           else {
@@ -1620,12 +1635,14 @@ function saveBooking(typeURL, extraURL, bundled) {
             $('#bookingWarnings').append(warnings);
             $('#bookingAlerts').show();
           }
+          triggerSuccess("Reserva actualizada exitosamente.");
           break;
           case 'DELETE':
           $.each(booking, function(key, b) {
             $('#calendar').fullCalendar('removeEvents',b);
           });
           swal.close();
+          triggerSuccess("Reserva eliminada exitosamente.");
           break;
         }
         $('#bookingModal').modal('hide');
@@ -1712,6 +1729,7 @@ function saveBookingBuffer () {
         $('#bookingAlerts').show();
       };
       $('#bookingModal').modal('hide');
+      triggerSuccess("Reserva creada exitosamente.");
     },
     error: function(xhr){
       var errors = $.parseJSON(xhr.responseText).errors;
@@ -1797,6 +1815,7 @@ function saveBookingBuffer () {
               $('#bookingAlerts').show();
             };
             $('#bookingModal').modal('hide');
+            triggerSuccess("Reserva creada exiitosamente.");
           });
         } else{
           $('#bookingModal').modal('hide');
@@ -1829,7 +1848,10 @@ function saveBreak (typeURL, extraURL) {
 
   if (startDate.getTime() >= endDate.getTime())
   {
-    swal("La fecha de fin no puede ser anterior o igual a la de inicio.");
+    swal({
+      title: "La fecha de fin no puede ser anterior o igual a la de inicio.",
+      type: "error"
+    });
     return false;
   }
 
@@ -1882,7 +1904,6 @@ function saveBreak (typeURL, extraURL) {
                 }
               }
               $('#calendar').fullCalendar('renderEvent', events, true);
-
             });
           }
           else
@@ -1924,6 +1945,7 @@ function saveBreak (typeURL, extraURL) {
             $('#bookingWarnings').append(warnings);
             $('#bookingAlerts').show();
           };
+          triggerSuccess("Bloqueo creado exitosamente.");
           break;
         case 'PATCH':
           var newProviderId = "0";
@@ -1976,6 +1998,7 @@ function saveBreak (typeURL, extraURL) {
             $('#bookingWarnings').append(warnings);
             $('#bookingAlerts').show();
           }
+          triggerSuccess("Bloqueo actualizado exitosamente.");
           break;
         case 'DELETE':
           $('.break-button').attr("disabled", "disabled");
@@ -1984,7 +2007,7 @@ function saveBreak (typeURL, extraURL) {
           $.each(provider_breaks, function (key, provider_break) {
             $('#calendar').fullCalendar('removeEvents','b'+provider_break.id);
           });
-
+          triggerSuccess("Bloqueo eliminado exitosamente.");
           break;
       }
       $("#break-loader").hide();
@@ -2025,7 +2048,10 @@ function editRepeatBreak(breakId) {
 
   if (startDate.getTime() >= endDate.getTime())
   {
-    swal("La fecha de fin no puede ser anterior o igual a la de inicio.");
+    swal({
+      title: "La fecha de fin no puede ser anterior o igual a la de inicio.",
+      type: "error"
+    });
     return false;
   }
 
@@ -2106,6 +2132,7 @@ function editRepeatBreak(breakId) {
         $('#bookingWarnings').append(warnings);
         $('#bookingAlerts').show();
       }
+      triggerSuccess("Bloqueo actualizado exitosamente.");
       $("#break-loader").hide();
       $("#new_provider_break").show();
       $(".break-modal-footer").show();
@@ -2158,6 +2185,8 @@ function deleteRepeatBreak(breakId) {
       $("#new_provider_break").show();
       $(".break-modal-footer").show();
       $("#breakModal").modal('hide');
+
+      triggerSuccess("Bloqueo eliminado exitosamente.");
     }
   });
 }
@@ -3014,7 +3043,7 @@ function offsetDate(date, offset) {
 }
 
 $(function() {
-  clearTimeout(alertDismiss);
+  // clearTimeout(alertDismiss);
 
   $('form input, form select').bind('keypress keydown keyup', function(e){
     if(e.keyCode == 13) {
@@ -3151,15 +3180,19 @@ $(function() {
 
       for(var key in custom_attributes)
       {
+        console.log("KEY");
         console.log(key);
         console.log(custom_attributes[key]);
-        if(custom_attributes[key] == false)
+        if($('[name="' + key + '"]').is('select'))
         {
-          custom_attributes[key] = "0";
-        }
-        else if(custom_attributes[key] == true)
-        {
-          custom_attributes[key] = "1";
+          if(custom_attributes[key] == false)
+          {
+            custom_attributes[key] = "0";
+          }
+          else if(custom_attributes[key] == true)
+          {
+            custom_attributes[key] = "1";
+          }
         }
         $('[name="' + key + '"]').val(custom_attributes[key]);
       }
@@ -3225,6 +3258,17 @@ $(function() {
       {
         console.log(key);
         console.log(custom_attributes[key]);
+        if($('[name="' + key + '"]').is('select'))
+        {
+          if(custom_attributes[key] == false)
+          {
+            custom_attributes[key] = "0";
+          }
+          else if(custom_attributes[key] == true)
+          {
+            custom_attributes[key] = "1";
+          }
+        }
         $('[name="' + key + '"]').val(custom_attributes[key]);
       }
 
@@ -3290,6 +3334,17 @@ $(function() {
       {
         console.log(key);
         console.log(custom_attributes[key]);
+        if($('[name="' + key + '"]').is('select'))
+        {
+          if(custom_attributes[key] == false)
+          {
+            custom_attributes[key] = "0";
+          }
+          else if(custom_attributes[key] == true)
+          {
+            custom_attributes[key] = "1";
+          }
+        }
         $('[name="' + key + '"]').val(custom_attributes[key]);
       }
 
@@ -3387,6 +3442,12 @@ $(function() {
     $('.fa.fa-check').removeClass('fa fa-check');
     $('.has-error').removeClass('has-error');
     $('#bookingModal').find('.fa.fa-times').removeClass('fa fa-times');
+    $('.custom-attribute').each(function(){
+      if(!$(this).is('select'))
+      {
+        $(this).val("");
+      }
+    });
   });
 
   $('#breakModal').on('hidden.bs.modal', function (e) {
