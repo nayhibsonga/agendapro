@@ -7,7 +7,7 @@ module Api
     	def available_hours
 
       		parser = PostgresParser.new
-      		
+
 			@service = Service.find(params[:service_id])
 			service_duration = @service.duration
 			@date = Date.parse(params[:date])
@@ -23,11 +23,11 @@ module Api
 			location_times_final_close = location_times_final.close
 
 			providers = []
-		    if params[:id] != "0"
-				providers << ServiceProvider.find(params[:id])
-		    else
-		      providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(:order, :public_name)
-		    end
+		  if params[:id] != "0"
+				providers = ServiceProvider.where(id: params[:id])
+		  else
+		    providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(:order, :public_name)
+		  end
 
 
 			@available_time = []
@@ -78,7 +78,7 @@ module Api
 		@location = Location.find(params[:location_id])
 		company_setting = CompanySetting.find(Company.find(@location.company_id).company_setting)
 		cancelled_id = Status.find_by(name: 'Cancelado').id
-		
+
 		if params[:id] == "0"
 			# Data
 			provider_breaks = ProviderBreak.where(:service_provider_id => @location.service_providers.pluck(:id))
@@ -411,7 +411,7 @@ module Api
 	end
 
       private
-      
+
   	  def check_available_hours_params
   	  	if !params[:service_id].present? || !params[:date].present?
           render json: { error: 'Invalid User. Param(s) missing.' }, status: 500

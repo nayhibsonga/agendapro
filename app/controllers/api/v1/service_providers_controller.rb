@@ -6,7 +6,7 @@ module Api
       	def available_hours
 
       		parser = PostgresParser.new
-      		
+
 			@service = Service.find(params[:service_id])
 			service_duration = @service.duration
 			@date = Date.parse(params[:date])
@@ -22,11 +22,11 @@ module Api
 			location_times_final_close = location_times_final.close
 
 			providers = []
-		    if params[:id] != "0"
-				providers << ServiceProvider.find(params[:id])
-		    else
-		      providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(:order, :public_name)
-		    end
+		  if params[:id] != "0"
+				providers = ServiceProvider.where(id: params[:id])
+		  else
+		    providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(:order, :public_name)
+		  end
 
 
 			@available_time = []
@@ -41,23 +41,23 @@ module Api
 	    			db_hours = parser.parse_pg_array(row["hour_array"])
 
 	    			db_hours.each_with_index do |db_hour, index|
-	          			pg_hour = parser.parse_pg_array(db_hour)
+      			pg_hour = parser.parse_pg_array(db_hour)
 
-	          			hour = {
-	          				:start => pg_hour[0].to_datetime.strftime("%R"),
-	          				:end => pg_hour[1].to_datetime.strftime("%R")
-	          			}
+      			hour = {
+      				:start => pg_hour[0].to_datetime.strftime("%R"),
+      				:end => pg_hour[1].to_datetime.strftime("%R")
+      			}
 
-	          			block_hour = Hash.new
-	          			block_hour[:date] = @date
-	          			block_hour[:hour] = hour
-	          			block_hour[:service_provider_id] = pg_hour[2].to_i
+      			block_hour = Hash.new
+      			block_hour[:date] = @date
+      			block_hour[:hour] = hour
+      			block_hour[:service_provider_id] = pg_hour[2].to_i
 
-	          			@available_time << block_hour
+      			@available_time << block_hour
 
-	          		end
+      		end
 
-	    		end
+	    	end
 			end
 
 			if params[:id] == "0"
