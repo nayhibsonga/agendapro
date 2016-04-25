@@ -16,7 +16,7 @@ class HomeMailer < Base::CustomMailer
 
     mail(
       from: filter_sender("#{@content[:client][:name].titleize} <contacto@agendapro.cl>"),
-      to: filter_recipient(recipient),
+      to: recipient,
       reply_to: "#{@content[:client][:name]} <#{@content[:client][:email]}>",
       subject: subject,
       template_path: "mailers"

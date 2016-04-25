@@ -16,7 +16,7 @@ class StockMailer < Base::CustomMailer
     mail(
       from: filter_sender(),
       reply_to: filter_sender(),
-      to: filter_recipient(recipient),
+      to: recipient,
       subject: @title,
       template_path: "mailers/agendapro"
       )
@@ -36,7 +36,7 @@ class StockMailer < Base::CustomMailer
     mail(
       from: filter_sender(),
       reply_to: filter_sender(),
-      to: filter_recipient(recipient),
+      to: recipient,
       subject: @title,
       template_path: "mailers/agendapro"
       )

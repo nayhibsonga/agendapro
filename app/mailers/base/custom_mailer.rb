@@ -29,13 +29,6 @@ class Base::CustomMailer < ActionMailer::Base
     email.present? ? email : "AgendaPro <no-reply@agendapro.co>"
   end
 
-  def check_mail(mail_object)
-    if mail_object[:to].value.empty? && mail_object[:cc].nil? && mail_object[:bcc].nil? && mail_object[:smtp_envelope_to].nil?
-      puts "blocked"
-      message.perform_deliveries = false
-    end
-  end
-
   private
     def default_options
       @title = "AgendaPro"

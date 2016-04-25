@@ -10,17 +10,17 @@ class PayedBookingEmailWorker < BaseEmailWorker
     recipients = filter_mails([client.email])
     total_sendings += 1
     total_recipients += recipients.size
-    PayedBookingMailer.delay.send(sending.method, payed_booking, recipients.join(', '), client: true)
+    PayedBookingMailer.delay.send(sending.method, payed_booking, recipients.join(', '), client: true) if recipients.size > 0
 
     recipients = filter_mails([owner.email])
     total_sendings += 1
     total_recipients += recipients.size
-    PayedBookingMailer.delay.send(sending.method, payed_booking, recipients.join(', '), client: false, company: true)
+    PayedBookingMailer.delay.send(sending.method, payed_booking, recipients.join(', '), client: false, company: true) if recipients.size > 0
 
     recipients = filter_mails(["contacto@agendapro.cl"])
     total_sendings += 1
     total_recipients += recipients.size
-    PayedBookingMailer.delay.send(sending.method, payed_booking, recipients.join(', '), client: false, agendapro: true)
+    PayedBookingMailer.delay.send(sending.method, payed_booking, recipients.join(', '), client: false, agendapro: true) if recipients.size > 0
 
     sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)
   end
