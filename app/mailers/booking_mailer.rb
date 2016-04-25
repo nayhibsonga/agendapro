@@ -32,13 +32,16 @@ class BookingMailer < Base::CustomMailer
 
     path = options[:horachic] ? "horachic" : "agendapro"
 
-    mail(
+    mail_object = mail(
       from: filter_sender(),
       reply_to: filter_sender(@book.location.email),
       to: filter_recipient(recipient),
       subject: @title,
       template_path: "mailers/#{path}"
       )
+
+    check_mail(mail_object)
+
   end
 
   def cancel_booking (book, recipient, options = {})
