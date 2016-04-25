@@ -1,0 +1,89 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10">
+      <h2 class="text-green">Pagos del cliente</h2>
+      <p>Revisa el historial de pagos del cliente.</p>
+    </div>
+    <div class="col-md-2">
+      <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Cliente</span>'.html_safe, client_path(@client), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 140px;" %><br />
+      <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar Cliente</span>'.html_safe, edit_client_path(@client), :class => "btn btn-orange", :style => "width: 140px;" %>
+    </div>
+  </div>
+
+  <div class="row" style="margin-bottom: 15px;">
+    <div class="col-md-12">
+
+      <div class="row">
+        <label for="from" class="col-sm-1 control-label">Desde:</label>
+        <div class="col-sm-5">
+          <input type="text" id="from" name="from" class="form-control client_select" value="<%= @start_date %>">
+        </div>
+        <label for="from" class="col-sm-1 control-label">Hasta:</label>
+        <div class="col-sm-5">
+          <input type="text" id="to" name="to" class="form-control client_select" value="<%= @end_date %>">
+        </div>
+        <div style="clear: both;">
+        </div>
+      </div>
+      <div class="row">
+        <label for="serviceMultiSelect" class="col-sm-1 control-label" style="margin-top: 5px;">Servicios:</label>
+        <div class="col-sm-3">
+
+          <select id="serviceMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
+            <% for service in @services.accessible_by(current_ability) do %>
+              <option value="<%= service.id %>">
+                <%= service.name %>
+              </option>
+            <% end %>
+          </select>
+
+        </div>
+
+        <label for="serviceProviderMultiSelect" class="col-sm-1 control-label" style="margin-top: 5px;">Prestadores:</label>
+        <div class="col-sm-3">
+
+          <select id="serviceProviderMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
+            <% for service_provider in @service_providers.accessible_by(current_ability) do %>
+              <option value="<%= service_provider.id %>">
+                <%= service_provider.public_name %>
+              </option>
+            <% end %>
+          </select>
+
+        </div>
+
+        <label for="statusMultiSelect" class="col-sm-1 control-label" style="margin-top: 5px;">Estado:</label>
+        <div class="col-sm-3">
+
+          <select id="statusMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
+            <% for status in Status.all do %>
+              <option value="<%= status.id %>">
+                <%= status.name %>
+              </option>
+            <% end %>
+          </select>
+
+        </div>
+
+        <div style="clear: both;">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="client_payments_div">
+
+  </div>
+</div>
+
+<input type="hidden" id="client_id" value="<%= @client.id %>" />
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/bootstrap-multiselect" %>
+  <%= javascript_include_tag "admin/clients-payments" %>
+<% end %>

@@ -6380,7 +6380,6 @@ class BookingsController < ApplicationController
 
       ActiveRecord::Base.connection.execute("SELECT * FROM available_hours(#{company_id}, #{local.id}, ARRAY#{providers_arr}, ARRAY#{services_arr}, ARRAY#{bundles_arr}, '#{start_date}', '#{end_date}', true, ARRAY#{first_providers_ids})").each do |row|
 
-        logger.debug row.inspect
 
         db_hours = parser.parse_pg_array(row["hour_array"])
         db_gap = row["positive_gap"].to_i
