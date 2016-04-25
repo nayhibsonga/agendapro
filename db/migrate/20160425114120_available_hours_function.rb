@@ -127,11 +127,11 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		DECLARE
 		  start_time time;
 		  end_time time;
-		  used_time time;
-		  available_time time;
-		  break_time time;
-		  partial_start_break_time time;
-		  partial_end_break_time time;
+		  used_time interval;
+		  available_time interval;
+		  break_time interval;
+		  partial_start_break_time interval;
+		  partial_end_break_time interval;
 		  used_epoch decimal;
 		  available_epoch decimal;
 		  break_epoch decimal;
@@ -152,7 +152,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  end_break_epoch := 0;
 		  available_sum := 0;
 
-		  select into used_time SUM(bookings."end" - bookings."start") from bookings where bookings."start" >= start_date AND bookings."end" <= end_date AND bookings.service_provider_id = provider_id;
+		  select into used_time SUM(bookings."end" - bookings."start") from bookings where bookings.status_id NOT IN (select id from statuses where statuses.name = 'Cancelado') AND (bookings.is_session = false OR (bookings.is_session = TRUE AND bookings.is_session_booked = TRUE)) AND bookings."start" >= start_date AND bookings."end" <= end_date AND bookings.service_provider_id = provider_id;
 		  select into available_time SUM(provider_times.close - provider_times.open) from provider_times where provider_times.day_id = day and provider_times.service_provider_id = provider_id;
 		  select into break_time SUM(provider_breaks."end" - provider_breaks."start") from provider_breaks where provider_breaks."start" >= start_date and provider_breaks."end" <= end_date and provider_breaks.service_provider_id = provider_id;
 		  select into partial_start_break_time SUM(provider_breaks."end" - start_date) from provider_breaks where provider_breaks."start" < start_date and provider_breaks."end" <= end_date and provider_breaks."end" > start_date and provider_breaks.service_provider_id = provider_id;
@@ -187,7 +187,6 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  END IF;
 		END
 		$$ LANGUAGE plpgsql;
-
 
 		CREATE OR REPLACE FUNCTION get_hour_promo_details(start_time timestamp, end_time timestamp, service_id int, local_id int, day int, bundle_present boolean)
 		returns hour_promo_detail
