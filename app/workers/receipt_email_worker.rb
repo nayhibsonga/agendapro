@@ -11,11 +11,11 @@ class ReceiptEmailWorker < BaseEmailWorker
     admins << "cuentas@agendapro.cl"
 
     recipients = filter_mails(admins)
-    recipients.in_groups_of(1000).each do |group|
+    recipients.in_groups_of(50).each do |group|
       group.compact!
       total_sendings += 1
       total_recipients += group.size
-      ReceiptMailer.delay.send(sending.method, receipt, group.join(', '))
+      ReceiptMailer.delay.send(sending.method, receipt, group.join(', ')) if group.size > 0
     end
 
     sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)

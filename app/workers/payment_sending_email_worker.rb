@@ -8,11 +8,11 @@ class PaymentSendingEmailWorker < BaseEmailWorker
     recipients = filter_mails(payment_sending.emails.split(','))
     payment = payment_sending.payment
 
-    recipients.in_groups_of(1000).each do |group|
+    recipients.in_groups_of(50).each do |group|
       group.compact!
       total_sendings += 1
       total_recipients += group.size
-      PaymentsSystemMailer.delay.send(sending.method, payment, group.join(', '))
+      PaymentsSystemMailer.delay.send(sending.method, payment, group.join(', ')) if group.size > 0
     end
 
     sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: @total_sendings, total_recipients: @total_recipients)

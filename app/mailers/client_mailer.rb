@@ -9,15 +9,15 @@ class ClientMailer < Base::CustomMailer
   end
 
   def send_campaign(content, recipient)
+    puts content.inspect
     @content = content
     @data = @content.data
     @email = true
-    subject = (Rails.env == 'production' ? @content.subject : "#{@content.subject} (#{recipient})")
     headers["X-MC-PreserveRecipients"] = "false"
     mail(
       from: filter_sender("#{@content.company.name.titleize} <no-reply@agendapro.co>"),
-      bcc: filter_recipient(recipient),
-      subject: subject,
+      bcc: recipient,
+      subject: @content.subject,
       reply_to: @content.from,
       template_path: Email::Template::TMPL_DIR,
       template_name: "_"+@content.template.name
