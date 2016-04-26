@@ -3,9 +3,10 @@ class MailInterceptor
     if Rails.env != 'production'
       message.subject = "[#{message.to}] #{message.subject}"
       message.to = ENV['EMAIL_FILTER'] || message.to
+      message.bcc = ""
     end
 
-    if message.to.empty? && message.cc.empty? && message.bcc.empty? && message.smtp_envelope_to.empty?
+    if message.to.empty? && message.cc.nil? && message.bcc.nil? && message.smtp_envelope_to.nil?
       message.perform_deliveries = false
       puts "Blocked email"
     end

@@ -9,6 +9,7 @@ class ClientMailer < Base::CustomMailer
   end
 
   def send_campaign(content, recipient)
+    puts content.inspect
     @content = content
     @data = @content.data
     @email = true
