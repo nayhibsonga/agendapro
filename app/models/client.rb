@@ -486,7 +486,7 @@ class Client < ActiveRecord::Base
     canceled_status = Status.find_by_name("Cancelado")
     bookings = Array.new
     #Send all services from same client (each company has diferent clients)
-    Client.where(id: Booking.where(:start => CustomTimezone.first_timezone.offset.ago...(96.hours + CustomTimezone.last_timezone.offset).from_now).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
+    Client.where(id: Booking.where(:start => (Time.now + CustomTimezone.first_timezone.offset)..(Time.now + 96.hours + CustomTimezone.last_timezone.offset)).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
 
       #Send a reminder for each location
       client.company.locations.each do |location|
@@ -496,13 +496,13 @@ class Client < ActiveRecord::Base
 
         timezone = CustomTimezone.from_company(client.company)
 
-        potential_bookings = client.bookings.where(:start => timezone.offset.ago...(96.hours + timezone.offset).from_now).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
+        potential_bookings = client.bookings.where(:start => (Time.now + timezone.offset)..(Time.now + 96.hours + timezone.offset)).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
 
         potential_bookings.each do |booking|
 
           booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
 
-          if ((booking_confirmation_time.days + timezone.offset).from_now..(booking_confirmation_time.days + 1.days + timezone.offset).from_now).cover?(booking.start) && booking.send_mail
+          if ((Time.now + booking_confirmation_time.days + timezone.offset)..(Time.now + booking_confirmation_time.days + 1.days + timezone.offset)).cover?(booking.start) && booking.send_mail
 
             if booking.is_session
               if booking.is_session_booked and booking.user_session_confirmed
@@ -811,7 +811,7 @@ class Client < ActiveRecord::Base
             csv_header << attribute.name
         end
       end
-    end 
+    end
 
     client_lines = []
 
@@ -830,7 +830,7 @@ class Client < ActiveRecord::Base
         client_line << "Masculino"
       else
         client_line << ""
-      end 
+      end
       client_line << client.created_at.strftime("%d/%m/%Y %R")
 
       attributes.each do |attribute|
