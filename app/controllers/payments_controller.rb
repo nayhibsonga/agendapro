@@ -1989,14 +1989,20 @@ class PaymentsController < ApplicationController
     end
 
     if petty_transaction.save
-
-      if petty_cash.save_with_cash
+      if petty_transaction.is_income
+        petty_cash.cash += petty_transaction.amount
+      else
+        petty_cash.cash -= petty_transaction.amount
+      end
+      if petty_cash.cash > 0 && petty_cash.save
         @json_response << "ok"
         @json_response << petty_transaction
       else
         @json_response << "error"
         @json_response << "No se puede hacer un retiro mayor que la cantidad de dinero en caja."
+        petty_transaction.delete
       end
+
     else
       @json_response << "error"
       @json_response << petty_transaction.errors
