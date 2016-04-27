@@ -31,7 +31,6 @@ class BookingEmailWorker < BaseEmailWorker
       recipients = case method
       when "new_booking" then booking.web_origin ? recipients.where(new_web: true) : recipients.where(new: true)
       when "cancel_booking" then booking.web_origin ? recipients.where(canceled_web: true) : recipients.where(canceled: true)
-      when "reminder_booking" then recipients.where(summary: false)
       when "confirm_booking" then booking.web_origin ? recipients.where(confirmed_web: true) : recipients.where(confirmed: true)
       when "update_booking" then booking.web_origin ? recipients.where(modified_web: true) : recipients.where(modified: true)
       else NotificationEmail.none
