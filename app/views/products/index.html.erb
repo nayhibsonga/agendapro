@@ -23,7 +23,9 @@
               <td>
                 <select id="locationsSelect" class="form-control">
                   <% if current_user.role_id == administrador_general_id %>
-                    <option value="0">Todos</option>
+                    <% if current_user.company.locations.where(:active => true).count > 1 %>
+                      <option value="0">Todos</option>
+                    <% end %>
                     <% current_user.company.locations.where(:active => true).order(name: :asc).each do |location| %>
                       <option value="<%= location.id %>"><%= location.name %></option>
                     <% end %>
@@ -35,26 +37,55 @@
                 </select>
               </td>
               <td style="padding-left: 5px; ">
-                <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, '/products.xls', :target => :blank, class: "btn btn-white" %>
-                <%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, '/products.csv', :target => :blank, class: "btn btn-white" %>
+
+                <div class="dropdown">
+                  <button class="btn btn-white dropdown-toggle" type="button" id="downloadDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="min-width: 160px;">
+                    <i class="fa fa-download"></i> Descargar
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="downloadDropdown">
+                    <li><%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, '/products.xls', :target => :blank, class: "" %></li>
+                    <li><%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, '/products.csv', :target => :blank, class: "" %></li>
+                  </ul>
+                </div>
+
+              </td>
+              <td style="padding-left: 5px; ">
                 <% if current_user.role_id == administrador_general_id || current_user.role_id == administrador_local_id %>
                   <a href="#" class="btn btn-red" id="openAlarmsBtn" style="display: none;"><i class="fa fa-exclamation-triangle"></i> Alarmas</a>
                 <% end %>
               </td>
             </tr>
-          </table>     
+          </table>
         </div>
       </div>
     </div>
     <div class="col-md-7">
-      <div class="pull-right" style="margin: 10px 0;">
+      <div class="pull-right" style="margin: 10px 0; display: inline-block;">
+
         <% if current_user.role_id == administrador_general_id || current_user.role_id == administrador_local_id %>
-          <%= link_to '<i class="fa fa-plus"></i> Nueva Categoría'.html_safe, "#", :class => "btn btn-green", :id => "openCategoriesBtn" %>
-          <%= link_to '<i class="fa fa-plus"></i> Nueva Marca'.html_safe, "#", :class => "btn btn-green", :id => "openBrandsBtn" %>
-          <%= link_to '<i class="fa fa-plus"></i> Nueva Cantidad'.html_safe, "#", :class => "btn btn-green", :id => "openDisplaysBtn" %>
-          &nbsp;&nbsp;
-          <%= link_to '<i class="fa fa-upload"></i> Importar productos'.html_safe, "#", :class => "btn btn-green", :id => "openImportBtn" %>
-          <%= link_to '<i class="fa fa-plus"></i> Nuevo Producto'.html_safe, new_product_path, :class => "btn btn-green" %>
+          <table>
+            <tr>
+              <td style="padding-left: 5px; padding-right: 5px;">
+                <div class="dropdown">
+                  <button class="btn btn-green dropdown-toggle" type="button" id="btnNewDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="min-width: 160px;">
+                    <i class="fa fa-plus"></i> Nuevo
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="btnNewDropdown">
+                    <li><%= link_to '<i class="fa fa-plus"></i> Nueva Categoría'.html_safe, "#", :class => "", :id => "openCategoriesBtn" %></li>
+                    <li><%= link_to '<i class="fa fa-plus"></i> Nueva Marca'.html_safe, "#", :class => "", :id => "openBrandsBtn" %></li>
+                    <li><%= link_to '<i class="fa fa-plus"></i> Nueva Cantidad'.html_safe, "#", :class => "", :id => "openDisplaysBtn" %></li>
+                    <li><%= link_to '<i class="fa fa-plus"></i> Nuevo Producto'.html_safe, new_product_path, :class => "" %></li>
+                  </ul>
+                </div>
+              </td>
+              <td style="padding-left: 5px; padding-right: 5px;">
+                <%= link_to '<i class="fa fa-upload"></i> Importar productos'.html_safe, "#", :class => "btn btn-green", :id => "openImportBtn" %>
+              </td>
+            </tr>
+          </table>
+
         <% end %>
       </div>
     </div>
@@ -67,7 +98,7 @@
       <div class="pull-right">
         <table id="inventoryFiltersTable">
           <tr>
-            <td style="width: 22%;">
+            <td style="width: 20%;">
               <div class="form-group">
                 <div class="col-md-12">
                   <div class="input-group">
@@ -80,12 +111,25 @@
                 </div>
               </div>
             </td>
-            <td style="width: 26%;">
+            <td style="width: 20%;">
               <div class="form-group">
-                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px; padding-left: 5px !important; padding-right: 5px !important;">
+                Orden:
+                </div>
+                <div class="col-md-7" style="padding-left: 0px !important; padding-right: 0px !important;">
+                  <select id="orderSelect" class="form-control filterSelect">
+                    <option value="product">Producto</option>
+                    <option value="stock">Stock</option>
+                  </select>
+                </div>
+              </div>
+            </td>
+            <td style="width: 20%;">
+              <div class="form-group">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px; padding-left: 5px !important; padding-right: 5px !important;">
                 Categoría:
                 </div>
-                <div class="col-md-7">
+                <div class="col-md-7" style="padding-left: 0px !important; padding-right: 0px !important;">
                   <select id="categoryFilterSelect" class="form-control filterSelect">
                     <option value="0">Todas</option>
                     <% current_user.company.product_categories.order(:name).each do |category| %>
@@ -95,12 +139,12 @@
                 </div>
               </div>
             </td>
-            <td style="width: 26%;">
+            <td style="width: 20%;">
               <div class="form-group">
-                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px; padding-left: 5px !important; padding-right: 5px !important;">
                   Marca:
                 </div>
-                <div class="col-md-7">
+                <div class="col-md-7" style="padding-left: 0px !important; padding-right: 0px !important;">
                   <select id="brandFilterSelect" class="form-control filterSelect">
                     <option value="0">Todas</option>
                     <% current_user.company.product_brands.order(:name).each do |brand| %>
@@ -110,12 +154,12 @@
                 </div>
               </div>
             </td>
-            <td style="width: 26%;">
+            <td style="width: 20%;">
               <div class="form-group">
-                <div class="col-md-5" style="text-align: right; padding-top: 5px;">
+                <div class="col-md-5" style="text-align: right; padding-top: 5px; padding-left: 5px !important; padding-right: 5px !important;">
                   Cantidad:
                 </div>
-                <div class="col-md-7">
+                <div class="col-md-7" style="padding-left: 0px !important; padding-right: 0px !important;">
                   <select id="displayFilterSelect" class="form-control filterSelect">
                     <option value="0">Todas</option>
                     <% current_user.company.product_displays.order(:name).each do |display| %>
@@ -133,7 +177,7 @@
       </div>
     </div>
   </div>
-  
+
   <div id="locationInventory">
 
   </div>
@@ -159,7 +203,7 @@
               <label for="location_product_stock_limit" class="col-md-4 control-label">Límite de stock</label>
               <div class="col-md-8">
                 <input type="number" id="location_product_stock_limit" class="form-control" value="" />
-                <span class="help-block"></span>
+                <span class="help-block" style="font-size: 15px;">La alarma se activará si el stock está bajo este límite.</span>
                 <span class="form-control-feedback"></span>
               </div>
             </div>
@@ -168,7 +212,7 @@
               <label for="location_product_alarm_email" class="col-md-4 control-label">Emails para avisos</label>
               <div class="col-md-8">
                 <input type="text" id="location_product_alarm_email" class="form-control" value="" />
-                <span class="help-block">Ingresa los correos a los que quieras enviar el aviso de stock bajo separados por coma: ejemplo1@agendapro.cl, ejemplo2@agendapro.cl, ejemplo3@agendapro.cl</span>
+                <span class="help-block" style="font-size: 15px;">Ingresa los correos a los que quieras enviar el aviso de stock bajo separados por coma: ejemplo1@agendapro.cl, ejemplo2@agendapro.cl, ejemplo3@agendapro.cl</span>
                 <span class="form-control-feedback"></span>
               </div>
             </div>
@@ -201,7 +245,7 @@
             <li>Usar las plantillas con los productos existentes como base para la importación. Todos los campos son obligatorios.</li>
             <li><strong>No se pueden cambiar los nombres de las columnas</strong> de las plantillas bases.</li>
             <li><strong>No cambies el orden del stock de los locales</strong> de las plantillas bases.</li>
-            <li><strong>Las extensiones de archivo permitidas son .xls y .csv.</strong>No trates de importar otros formatos.</li>
+            <li><strong>Los tipos de archivos permitidos son: Excel 2003 hacia adelante, OpenOffice, Csv. Esto incluye las extensiones .xls, .xlsx, .xml, .xlsm, .ods y .csv.</strong> No trates de importar otros formatos.</li>
             <li>
               El identificador único para los productos es el <strong>SKU</strong>:
               <ul>
@@ -379,6 +423,14 @@
             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             <button type="button" class="btn btn-green" id="saveGeneralAlarmsBtn">Guardar</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="stockChangeModal" tabindex="-1" role="dialog" aria-labelledby="stockChangeModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
         </div>
       </div>
     </div>

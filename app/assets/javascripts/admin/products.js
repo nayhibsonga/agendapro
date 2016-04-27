@@ -1,3 +1,69 @@
+function loadStockChange(type, product_id)
+{
+	$('#stockChangeModal .modal-content').empty();
+	var location_id = $('#locationsSelect').val();
+	$.ajax({
+		url: '/stock_change',
+		method: 'get',
+		data: {type: type, location_id: location_id, product_id: product_id},
+		error: function(response){
+			$('#stockChangeModal .modal-content').empty();
+			swal({
+				title: "Error",
+				text: "Se produjo un error inesperado",
+				type: "error"
+			});
+		},
+		success: function(response){
+			$('#stockChangeModal .modal-content').empty();
+			$('#stockChangeModal .modal-content').append(response);
+			$('#stockChangeModal').modal('show');
+		}
+	})
+}
+
+function saveStockChange()
+{
+	var data = $('#products_update_stock').serialize();
+	$('#stockChangeModal .modal-body').empty();
+	$('#stockChangeModal .modal-body').append('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+	$.ajax({
+		url: '/update_stock',
+		method: 'post',
+		dataType: 'json',
+		data: data,
+		error: function(response){
+			$('#stockChangeModal').modal('hide');
+			swal({
+				title: "Error",
+				text: "Se produjo un error inesperado",
+				type: "error"
+			});
+		},
+		success: function(response){
+			$('#stockChangeModal').modal('hide');
+			if(response[0] == "ok")
+			{
+				swal({
+					title: "Stock actualizado",
+					text: "El stock se ha actualizado correctamente",
+					type: "success",
+					confirmButtonText: "Aceptar"
+				});
+				getInventory();
+			}
+			else
+			{
+				swal({
+					title: "Error",
+					text: "Se produjo un error inesperado",
+					type: "error"
+				});
+			}
+		}
+	});
+}
+
 function changeLocationStatus(location_id) {
 	if( $('#location_product_ids_'+location_id).prop('checked')) {
 		$('#location_product_ids_stock_'+location_id).prop('disabled', false);
@@ -40,6 +106,7 @@ function saveCategory (typeURL, extraURL) {
 						$('#product_product_category_id option[value="'+extraURL.substring(1)+'"]').remove();
 						$('#productCategoryModal').modal('hide');
 						$('#saveProductCategoryButton').attr('disabled', false);
+						triggerSuccess("Categoría eliminada exitosamente.");
 					},
 					error: function(xhr){
 						showErrors(xhr);
@@ -63,9 +130,11 @@ function saveCategory (typeURL, extraURL) {
 					$('#product_product_category_id option[value="'+product_category.id+'"]').prop('selected', true);
 					$('#productCategoryModal').modal('hide');
 					$('#saveProductCategoryButton').attr('disabled', false);
+					triggerSuccess("Categoría creada exitosamente.");
 					break;
 				case 'PATCH':
 					$('#saveProductCategoryButton').attr('disabled', false);
+					triggerSuccess("Categoría actualizada exitosamente.");
 					break;
 				}
 			},
@@ -97,6 +166,7 @@ function saveBrand (typeURL, extraURL) {
 						$('#product_product_brand_id option[value="'+extraURL.substring(1)+'"]').remove();
 						$('#productBrandModal').modal('hide');
 						$('#saveProductBrandButton').attr('disabled', false);
+						triggerSuccess("Marca eliminada exitosamente.");
 					},
 					error: function(xhr){
 						showErrors(xhr);
@@ -120,9 +190,11 @@ function saveBrand (typeURL, extraURL) {
 					$('#product_product_brand_id option[value="'+product_brand.id+'"]').prop('selected', true);
 					$('#productBrandModal').modal('hide');
 					$('#saveProductBrandButton').attr('disabled', false);
+					triggerSuccess("Marca creada exitosamente.");
 					break;
 				case 'PATCH':
 					$('#saveProductBrandButton').attr('disabled', false);
+					triggerSuccess("Marca actualizada exitosamente.");
 					break;
 				}
 			},
@@ -154,6 +226,7 @@ function saveDisplay (typeURL, extraURL) {
 						$('#product_product_display_id option[value="'+extraURL.substring(1)+'"]').remove();
 						$('#productDisplayModal').modal('hide');
 						$('#saveProductDisplayButton').attr('disabled', false);
+						triggerSuccess("Cantidad eliminada exitosamente.");
 					},
 					error: function(xhr){
 						showErrors(xhr);
@@ -177,9 +250,11 @@ function saveDisplay (typeURL, extraURL) {
 							$('#product_product_display_id option[value="'+product_display.id+'"]').prop('selected', true);
 							$('#productDisplayModal').modal('hide');
 							$('#saveProductDisplayButton').attr('disabled', false);
+							triggerSuccess("Cantidad creada exitosamente.");
 							break;
 						case 'PATCH':
 							$('#saveProductDisplayButton').attr('disabled', false);
+							triggerSuccess("Cantidad actualizada exitosamente.");
 							break;
 						}
 					},
@@ -228,7 +303,7 @@ function saveProduct (typeURL, extraURL) {
 		success: function() {
 			swal({
 				title: "Producto Guardado",
-				text: "El producto se ha editado de manera correcta",
+				text: "Producto actualizado exitosamente.",
 				type: "success",
 				confirmButtonText: "Aceptar"
 			},
@@ -289,21 +364,25 @@ function getProductDisplays() {
 
 function getInventory()
 {
+	$('#orderSelect').prop('disabled', false);
 	var location_id = $("#locationsSelect").val();
 	var location_name = $("#locationsSelect option:selected").text();
 	var category = $("#categoryFilterSelect").val();
 	var brand = $("#brandFilterSelect").val();
 	var display = $("#displayFilterSelect").val();
 	var searchInput = $('#productSearch').val();
+	var order = $('#orderSelect').val();
 
 	$("#locationInventory").html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
 
 	if(location_id == "0")
 	{
+		$('#orderSelect').val('product');
+		$('#orderSelect').prop('disabled', true);
 		$.ajax({
 			url: '/company_inventory',
 			type: 'get',
-			data: {category: category, brand: brand, display: display, searchInput: searchInput},
+			data: {category: category, brand: brand, display: display, searchInput: searchInput, order: order},
 			success: function(response)
 			{
 				$("#locationInventory").empty();
@@ -314,10 +393,11 @@ function getInventory()
 	}
 	else
 	{
+		$('#orderSelect').prop('disabled', false);
 		$.ajax({
 			url: '/inventory',
 			type: 'get',
-			data: {id: location_id, category: category, brand: brand, display: display, searchInput: searchInput},
+			data: {id: location_id, category: category, brand: brand, display: display, searchInput: searchInput, order: order},
 			success: function(response)
 			{
 				$("#locationInventory").empty();
@@ -334,9 +414,13 @@ function checkFile()
 	if(file_array.length > 0)
 	{
 		var extension = file_array[file_array.length - 1];
-		if (extension != "csv" && extension != "xls")
+		if (extension != "csv" && extension != "xls" && extension != "xlsx" && extension != "xlsm" && extension != "ods" && extension != "xml")
 		{
-			swal("El archivo no tiene la extensión correcta. Por favor importa sólo archivos de tipo csv o xls.");
+			swal({
+        title: "Error",
+        text: "El archivo no tiene la extensión correcta. Por favor importa sólo archivos de tipo csv o xls.",
+        type: "error"
+      });
 			return false;
 		}
 		else
@@ -346,7 +430,11 @@ function checkFile()
 	}
 	else
 	{
-		swal("No hay archivo seleccionado.");
+		swal({
+        title: "Error",
+        text: "No hay archivo seleccionado. Por favor importa sólo archivos de tipo csv o xls.",
+        type: "error"
+      });
 		return false;
 	}
 }
@@ -370,6 +458,19 @@ function initialize() {
 }
 
 $(function() {
+
+	$('body').on('click', '.add-stock-btn', function(){
+		loadStockChange("add", $(this).attr("product_id"));
+	});
+
+	$('body').on('click', '.substract-stock-btn', function(){
+		loadStockChange("substract", $(this).attr("product_id"));
+	});
+
+	$('body').on('click', '#stockChangeSaveBtn', function(e){
+		e.preventDefault();
+		saveStockChange();
+	});
 
 	$('form input, form select').bind('keypress keydown keyup', function(e){
     	if(e.keyCode == 13) {
@@ -492,10 +593,10 @@ $(function() {
 						text: "Se ha guardado la alarma correctamente.",
 						type: "info"
 					});
-					console.log(response[1]['stock']);
-					console.log(response[1]['stock_limit']);
-					console.log(response[1]['stock'] < response[1]['stock_limit']);
-					console.log(response[1]['product_id']);
+					// console.log(response[1]['stock']);
+					// console.log(response[1]['stock_limit']);
+					// console.log(response[1]['stock'] < response[1]['stock_limit']);
+					// console.log(response[1]['product_id']);
 					if( response[1]['stock'] < response[1]['stock_limit'] )
 					{
 						$('.inventoryRow[product_id="' + response[1]['product_id'] + '"]').removeClass("mediumStock");

@@ -14,6 +14,10 @@ $(function () {
     };
   });
 
+  $('.hours-explanation-btn').on('click', function(){
+    $('#hoursExplanationModal').modal('show');
+  })
+
   $('.company-web-address').on('change', function() {
     var tmp = $('#company_web_address').val();
     tmp = tmp.toLowerCase();
@@ -25,6 +29,11 @@ $(function () {
     tmp = tmp.replace(/ñ/gi, 'n');  //Special ñ
     tmp = tmp.replace(/[^a-z0-9]/gi,'');
     $(this).val(tmp);
+  });
+
+  $('#company_setting_allows_optimization').change(function () {
+    $('#booking_leap_div').toggle();
+    $('#booking_overlaps_div').toggle();
   });
 
   $("#company_logo").change(function (){
@@ -368,6 +377,10 @@ $(function () {
     $('#attributeModal').modal('show');
   });
 
+  $('#new_attribute_group_button').on('click', function(){
+    $('#attributeGroupModal').modal('show');
+  });
+
   $('#attribute_datatype').on('change', function(){
     if($(this).val() == "file")
     {
@@ -398,15 +411,15 @@ $(function () {
       success: function(response){
         $.each(response, function(i, attribute_category){
 
-          if(attribute_category.category != "Otra")
+          /*if(attribute_category.category != "Otra")
           {
-
+  */
             $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + attribute_category.id + '">' + attribute_category.category + '<a style="float: right;" class="btn btn-red btn-xs category-delete" data-confirm="¿Estás seguro de eliminar la categoría?" data-method="delete" data-remote="true" data-type="json" href="/attribute_categories/' + attribute_category.id + '" rel="nofollow"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</a></div>');
-          }
+          /*}
           else
           {
             $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + attribute_category.id + '">' + attribute_category.category + '</div>');
-          }
+          }*/
 
         });
       }
@@ -435,17 +448,37 @@ $(function () {
     })
   });
 
+  $('.edit_attribute_group_btn').on('click', function(e){
+    var attribute_group_id = $(e.currentTarget).data('attributegroupid');
+    $('#editAttributeGroupModal .modal-content').empty();
+    $.ajax({
+      url: '/attribute_groups/' + attribute_group_id + '/edit',
+      method: 'get',
+      error: function(response){
+        swal({
+          title: "Error",
+          text: "Se produjo un error",
+          type: "error"
+        });
+      },
+      success: function(response){
+        $('#editAttributeGroupModal .modal-content').append(response);
+        $('#editAttributeGroupModal').modal('show');
+      }
+    })
+  });
+
   $("#attribute_category_form").on("ajax:success", function(e, data, status, xhr){
 
-    if(data.category != "Otra")
+    /*if(data.category != "Otra")
     {
-
+    */
       $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + data.id + '">' + data.category + '<a style="float: right;" class="btn btn-red btn-xs category-delete" data-confirm="¿Estás seguro de eliminar la categoría?" data-method="delete" data-remote="true" data-type="json" href="/attribute_categories/' + data.id + '" rel="nofollow"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</a></div>');
-    }
+    /*}
     else
     {
       $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + data.id + '">' + data.category + '</div>');
-    }
+    }*/
 
     $('#attribute_category_category').val("");
 
@@ -481,8 +514,119 @@ $(function () {
     });
   });
 
+
   $('#blocked_clients_link').on('click', function(e){
     e.preventDefault();
+  });
+
+
+  $('#new_filter_button').on('click', function(){
+    $('#addFilterModal .modal-dialog').empty()
+    $.ajax({
+      url: '/new_filter_form',
+      method: 'get',
+      data: {},
+      error: function(response){
+
+      },
+      success: function(response){
+        $('#addFilterModal .modal-dialog').append(response);
+        $('#addFilterModal').modal('show');
+        initializeFilters();
+      }
+    })
+  });
+
+  $("#attribute-groups-tbody").sortable({
+    revert: true,
+    axis: "y",
+    handle: ".move-attribute-group",
+    containment: "#attribute-groups-tbody",
+    tolerance: 'pointer',
+    scroll: true,
+    stop: function(){
+
+      var rearrangement = [];
+      var index = 0;
+      $('#attribute-groups-tbody').children().each(function(){
+        rearrangement[index] = $(this).attr("attribute_group_id");
+        index++;
+      });
+
+      company_id = $('#company_id').val();
+
+      $.ajax({
+        url: '/rearrange_attribute_groups',
+        method: 'post',
+        dataType: 'json',
+        data: {company_id: company_id, rearrangement: rearrangement},
+        error: function(response){
+          swal({
+            title: "Error",
+            text: "Se produjo un error al reordenar.",
+            type: "error"
+          });
+        },
+        success: function(response){
+          if(response[0] != "ok")
+          {
+            swal({
+              title: "Error",
+              text: "Se produjo un error al reordenar.",
+              type: "error"
+            });
+          }
+        }
+      });
+
+    }
+
+  });
+
+  $(".attributes-tbody").sortable({
+    revert: true,
+    axis: "y",
+    handle: ".move-attribute",
+    containment: "parent",
+    tolerance: 'pointer',
+    scroll: true,
+    stop: function(){
+
+      var rearrangement = [];
+      var index = 0;
+      $(this).children().each(function(){
+        rearrangement[index] = $(this).attr("attribute_id");
+        index++;
+      });
+
+      company_id = $('#company_id').val();
+
+      $.ajax({
+        url: '/rearrange_attributes',
+        method: 'post',
+        dataType: 'json',
+        data: {company_id: company_id, rearrangement: rearrangement},
+        error: function(response){
+          swal({
+            title: "Error",
+            text: "Se produjo un error al reordenar.",
+            type: "error"
+          });
+        },
+        success: function(response){
+          if(response[0] != "ok")
+          {
+            swal({
+              title: "Error",
+              text: "Se produjo un error al reordenar.",
+              type: "error"
+            });
+          }
+        }
+      });
+
+    }
+
   });
 
   var $btn = $('.submit-block');

@@ -737,7 +737,7 @@
 
 </div>
 
-<%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
+<%= content_tag "div", id: "selectedLocal", data: {local: @location.as_json(methods: :short_address, except: [:address])} do %>
 <% end %>
 <%= content_tag "div", id: "clientExclusive", data: {client_exclusive: @location.company.company_setting.client_exclusive} do %>
 <% end %>
@@ -906,10 +906,10 @@
             data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#datepicker").val()};
 
             if (promoCalendar) {
-              promoCalendar.rebuild('/promotion_hours', data);
+              promoCalendar.rebuild('/available_hours', data);
             }
             else {
-              promoCalendar = new PromoCalendar('/promotion_hours', data);
+              promoCalendar = new PromoCalendar('/available_hours', data);
             }
 
             /*$(document).on('hourClick', function (e) {

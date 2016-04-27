@@ -1,5 +1,6 @@
 Agendapro::Application.routes.draw do
 
+
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -16,9 +17,11 @@ Agendapro::Application.routes.draw do
     post "mandrill/unsubscribe"
     get "mandrill/resuscribe"
 
+    resources :custom_filters
     resources :company_plan_settings
     resources :attribute_categories
     resources :attributes
+    resources :attribute_groups
 
     resources :countries
     resources :regions
@@ -90,26 +93,25 @@ Agendapro::Application.routes.draw do
     end
 
     # Quick Add
-    get '/quick_add', :to => 'quick_add#quick_add', :as => 'quick_add'
-    get '/quick_add/load_location/:id', :to => 'quick_add#load_location'
-      # Validation
-    # post '/quick_add/location_valid', :to => 'quick_add#location_valid'
-    # post '/quick_add/services_valid', :to => 'quick_add#services_valid'
-    # post '/quick_add/service_provider_valid', :to => 'quick_add#service_provider_valid'
-      # POST
-    post '/quick_add/location', :to => 'quick_add#create_location'
-    patch '/quick_add/location/:id', :to => 'quick_add#update_location'
-    post '/quick_add/service_category', :to => 'quick_add#create_service_category'
-    delete '/quick_add/service_category/:id', :to => 'quick_add#delete_service_category'
-    post '/quick_add/service', :to => 'quick_add#create_service'
-    delete '/quick_add/service/:id', :to => 'quick_add#delete_service'
-    post '/quick_add/service_provider', :to => 'quick_add#create_service_provider'
-    delete '/quick_add/service_provider/:id', :to => 'quick_add#delete_service_provider'
-    patch '/quick_add/update_company', :to => 'quick_add#update_company'
+    scope controller: 'quick_add' do
+      get '/quick_add', action: 'quick_add', as: 'quick_add'
+      patch '/quick_add/update_company', action: 'update_company'
+      post '/quick_add/location', action: 'create_location'
+      patch '/quick_add/location/:id', action: 'update_location'
+      get '/quick_add/load_location/:id', action: 'load_location'
+      post '/quick_add/service_category', action: 'create_service_category'
+      delete '/quick_add/service_category/:id', action: 'delete_service_category'
+      post '/quick_add/service', action: 'create_service'
+      delete '/quick_add/service/:id', action: 'delete_service'
+      get '/quick_add/list_services', action: 'list_services'
+      post '/quick_add/service_provider', action: 'create_service_provider'
+      delete '/quick_add/service_provider/:id', action: 'delete_service_provider'
+      patch '/save_configurations', action: 'save_configurations'
+      get '/quick_add/load_notification_email_data', action: 'load_notification_email_data'
+      post '/create_notification_email', action: 'create_notification_email'
+      post '/delete_notification_email', action: 'delete_notification_email'
+    end
 
-    post '/create_notification_email', :to => 'quick_add#create_notification_email'
-    post '/delete_notification_email', :to => 'quick_add#delete_notification_email'
-    patch '/save_configurations', :to => 'quick_add#save_configurations'
 
     # Reporting
     get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
@@ -175,6 +177,8 @@ Agendapro::Application.routes.draw do
     get '/my_agenda', :to => 'users#agenda', :as => 'my_agenda'
     get '/get_session_bookings', :to => 'users#get_session_bookings'
     get '/get_session_summary', :to => 'users#get_session_summary'
+    post '/delete_treatment', :to => 'bookings#delete_treatment'
+    post '/user_delete_treatment', :to => 'bookings#user_delete_treatment'
 
     scope controller: 'bookings' do
       post '/delete_session_booking', action: 'delete_session_booking'
@@ -413,6 +417,7 @@ Agendapro::Application.routes.draw do
     get "/get_promotions_popover", :to => 'services#get_promotions_popover'
     get "/get_online_discount_popover", :to => 'services#get_online_discount_popover'
     get "/promotion_hours", :to => 'bookings#promotion_hours'
+    get '/available_hours', :to => 'bookings#available_hours'
     #post '/admin_update_promo', :to => 'services#admin_update_promo'
     get "/show_time_promo", :to => 'services#show_time_promo'
     get '/show_last_minute_promo', :to => 'services#show_last_minute_promo'
@@ -516,6 +521,7 @@ Agendapro::Application.routes.draw do
 
     get '/get_treatment_price', :to => 'bookings#get_treatment_price'
     get '/payment_summary', :to => 'payments#summary'
+    get '/get_treatment_info', :to => 'bookings#get_treatment_info'
 
 
     get '/sales_cash_transaction_summary', :to => 'payments#sales_cash_transaction_summary'
@@ -549,6 +555,7 @@ Agendapro::Application.routes.draw do
     post '/delete_company_folder', :to => 'companies#delete_folder'
     post '/move_company_file', :to => 'companies#move_file'
     post '/change_company_file', :to => 'companies#edit_file'
+    post '/client_update_attributes', :to => 'clients#update_custom_attributes'
 
     post '/upload_client_file', :to => 'clients#upload_file'
     post '/create_client_folder', :to => 'clients#create_folder'
@@ -565,6 +572,32 @@ Agendapro::Application.routes.draw do
     get '/billing_info_admin_edit', :to => 'billing_infos#super_admin_edit'
     post '/billing_info_admin_create', :to => 'billing_infos#super_admin_create'
     patch '/billing_info_admin_update', :to => 'billing_infos#super_admin_update'
+
+    get '/new_filter_form', :to => 'custom_filters#new_filter_form'
+    get '/edit_filter_form', :to => 'custom_filters#edit_filter_form'
+    post '/rearrange_attributes', :to => 'attributes#rearrange'
+    post '/rearrange_attribute_groups', :to => 'attribute_groups#rearrange'
+
+    post '/select_default_plan', :to => 'companies#select_default_plan'
+
+    #Inventory reports
+    get '/products_stats', :to => 'products#stats'
+    get '/locations_products_stats', :to => 'products#locations_stats'
+    get '/seller_history', :to => 'products#seller_history'
+    get '/product_history', :to => 'products#product_history'
+    get '/products_history', :to => 'products#history'
+    get '/product_logs_history', :to => 'products#logs_history'
+    get '/locations_products_stats_excel', :to => 'products#locations_stats_excel'
+    get '/product_logs_history_excel', :to => 'products#logs_history_excel'
+
+    get '/categories_products', :to => 'product_categories#products'
+
+    get '/client_base_pdf', :to => 'clients#client_base_pdf'
+
+    get '/stock_change', :to => 'products#stock_change'
+    post '/update_stock', :to => 'products#update_stock'
+
+    get '/hours_test', :to => 'bookings#hours_test'
 
 
   end
@@ -631,6 +664,105 @@ Agendapro::Application.routes.draw do
 
       get 'promotions', to: 'promotions#index'
       get 'promotions/:id', to: 'promotions#show'
+    end
+    namespace :agendapro do
+      namespace :v1 do
+
+        resources :locations, only: [:index, :show]
+        get 'locations_search', to: 'locations#search'
+        post 'locations/:id/favorite', to: 'locations#favorite'
+
+        resources :services, only: [:show]
+        get 'services/:id/service_providers', to: 'services#service_providers'
+
+        get 'service_providers/:id/available_hours', to: 'service_providers#available_hours'
+        get 'service_providers/:id/available_days', to: 'service_providers#available_days'
+
+        post 'users/session', to: 'users#login'
+        post 'users/registration', to: 'users#create'
+        put 'users/me', to: 'users#edit'
+        get 'users/me', to: 'users#mobile_user'
+        get 'users/bookings', to: 'users#bookings'
+        get 'users/favorites', to: 'users#favorites'
+        get 'users/searches', to: 'users#searches'
+        post 'users/oauth', to: 'users#oauth'
+
+        resources :economic_sectors
+
+        post 'bookings', to: 'bookings#book_service'
+        get 'bookings/:id', to: 'bookings#show'
+        put 'bookings/:id', to: 'bookings#edit_booking'
+        delete 'bookings/:id', to: 'bookings#destroy'
+
+        get 'promotions', to: 'promotions#index'
+        get 'promotions/:id', to: 'promotions#show'
+      end
+    end
+    namespace :horachic do
+      namespace :v1 do
+
+        resources :locations, only: [:index, :show]
+        get 'locations_search', to: 'locations#search'
+        post 'locations/:id/favorite', to: 'locations#favorite'
+
+        resources :services, only: [:show]
+        get 'services/:id/service_providers', to: 'services#service_providers'
+
+        get 'service_providers/:id/available_hours', to: 'service_providers#available_hours'
+        get 'service_providers/:id/available_days', to: 'service_providers#available_days'
+
+        post 'users/session', to: 'users#login'
+        post 'users/registration', to: 'users#create'
+        put 'users/me', to: 'users#edit'
+        get 'users/me', to: 'users#mobile_user'
+        get 'users/bookings', to: 'users#bookings'
+        get 'users/favorites', to: 'users#favorites'
+        get 'users/searches', to: 'users#searches'
+        post 'users/oauth', to: 'users#oauth'
+
+        resources :economic_sectors
+
+        post 'bookings', to: 'bookings#book_service'
+        get 'bookings/:id', to: 'bookings#show'
+        put 'bookings/:id', to: 'bookings#edit_booking'
+        delete 'bookings/:id', to: 'bookings#destroy'
+
+        get 'promotions', to: 'promotions#index'
+        get 'promotions/:id', to: 'promotions#show'
+      end
+    end
+    namespace :custom_app do
+      namespace :v1 do
+
+        resources :locations, only: [:index, :show]
+        get 'locations_search', to: 'locations#search'
+        post 'locations/:id/favorite', to: 'locations#favorite'
+
+        resources :services, only: [:show]
+        get 'services/:id/service_providers', to: 'services#service_providers'
+
+        get 'service_providers/:id/available_hours', to: 'service_providers#available_hours'
+        get 'service_providers/:id/available_days', to: 'service_providers#available_days'
+
+        post 'users/session', to: 'users#login'
+        post 'users/registration', to: 'users#create'
+        put 'users/me', to: 'users#edit'
+        get 'users/me', to: 'users#mobile_user'
+        get 'users/bookings', to: 'users#bookings'
+        get 'users/favorites', to: 'users#favorites'
+        get 'users/searches', to: 'users#searches'
+        post 'users/oauth', to: 'users#oauth'
+
+        resources :economic_sectors
+
+        post 'bookings', to: 'bookings#book_service'
+        get 'bookings/:id', to: 'bookings#show'
+        put 'bookings/:id', to: 'bookings#edit_booking'
+        delete 'bookings/:id', to: 'bookings#destroy'
+
+        get 'promotions', to: 'promotions#index'
+        get 'promotions/:id', to: 'promotions#show'
+      end
     end
   end
 

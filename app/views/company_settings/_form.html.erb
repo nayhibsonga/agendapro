@@ -5,7 +5,10 @@
       cursor: hand;
     }
   </style>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
 <% end %>
+
+<input type="hidden" id="company_id" value="@company.id" />
 
 <div class="container-fluid">
   <div class="row">
@@ -117,10 +120,10 @@
               <div class="col-md-6">
                 <div onclick="$('#clients_link').click();" class="media">
                   <div class="media-left">
-                    <%= image_tag 'admin/6.png', class: 'media-object media-image' %>
+                    <%= image_tag 'admin/clients_customize.png', class: 'media-object media-image' %>
                   </div>
                   <div class="media-body">
-                    <span class="text-green">Clientes:</span> configura campos personalizados y filtros para tus clientes.
+                    <span class="text-green">Personalización de Clientes:</span> configura campos personalizados y filtros para tus clientes.
                   </div>
                 </div>
               </div>
@@ -132,7 +135,7 @@
                     &nbsp;&nbsp;<i class="fa fa-lock fa-3x lock-image"></i>
                   </div>
                   <div class="media-body">
-                    <span style="color: #ababab;">&nbsp;Clientes:</span> sección no disponible para tu plan actual.
+                    <span style="color: #ababab;">&nbsp;Personalización de Clientes:</span> sección no disponible para tu plan actual.
                   </div>
                 </div>
               </div>
@@ -311,7 +314,25 @@
                         <label>
                           <%= f.check_box :allows_optimization %> Permitir optimización de horas
                         </label>
+                        <span class="hours-explanation-btn">&nbsp;&nbsp;<i class="fa fa-question-circle"></i></span>
                         <span class="help-block">Habilita esta opción para que tus clientes puedan elegir un horario óptimo sin importar los bloques horarios predefinidos.</span>
+                      </div>
+                    </div>
+                    <div id="booking_leap_div" class="form-group" <%= "hidden" if @company_setting.allows_optimization %>>
+                      <%= f.label :booking_leap, 'Ofrecer horas cada' %><span class="hours-explanation-btn">&nbsp;&nbsp;<i class="fa fa-question-circle"></i></span>
+                      <span class="help-block">Esta opción determina cada cuánto hay una hora disponible para reservar si es que no se permite optimización.</span>
+                      <div class="input-group">
+                        <%= f.select :booking_leap, options_for_select({ "5" => "5", "10" => "10", "15" => "15", "20" => "20", "30" => "30", "45" => "45", "60" => "60" }, @company_setting.booking_leap), {}, {class: "form-control"} %>
+                        <span class="input-group-addon">minutos</span>
+                      </div>
+                    </div>
+                    <div class="form-group" id="booking_overlaps_div" <%= "hidden" if @company_setting.allows_optimization %>>
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :allows_overlap_hours %> Ofrecer intercaladas
+                        </label>
+                        <span class="hours-explanation-btn">&nbsp;&nbsp;<i class="fa fa-question-circle"></i></span>
+                        <span class="help-block">Habilita esta opción para que tus clientes puedan elegir todas las opciones disponibles según la opción anterior, sin importar que se intercalen.</span>
                       </div>
                     </div>
                     <div class="form-group">
@@ -1397,6 +1418,51 @@
         <% if current_user.company.is_plan_capable("Premium") %>
           <div class="tab-pane" id="clients">
 
+            <!-- Attributes Groups -->
+
+            <div class="row" style="margin-top: 40px;">
+              <div class="col-md-12">
+                <div class="background-grey">
+                  <h3 class="text-green">
+                    Listado de categorías de campos
+                    <button class="btn btn-green pull-right" id="new_attribute_group_button"><i class="fa fa-plus"></i> Agregar categoría</button>
+                  </h3>
+                </div>
+                <table class="table table-hover table-green">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Opciones</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="attribute-groups-tbody">
+                    <% @attribute_groups.each do |attribute_group| %>
+                      <tr class="attribute-group-row" attribute_group_id="<%= attribute_group.id.to_s %>">
+                        <td>
+                          <%= attribute_group.name %>
+                        </td>
+                        <td>
+                          <% if attribute_group.name != "Otros" %>
+                            <button class="btn btn-orange edit_attribute_group_btn" data-attributegroupid="<%= attribute_group.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
+
+                            <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, attribute_group, method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo seleccionado?' }, class: 'btn btn-red' %>
+                          <% end %>
+                        </td>
+                        <td>
+                          <i class="fa fa-bars move-attribute-group"></i>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- End Attributes Groups -->
+
+
+            <!-- Attributes -->
             <div class="row" style="margin-top: 40px;">
               <div class="col-md-12">
                 <div class="background-grey">
@@ -1405,45 +1471,107 @@
                     <button class="btn btn-green pull-right" id="new_attribute_button"><i class="fa fa-plus"></i> Agregar campo</button>
                   </h3>
                 </div>
-                <table class="table table-hover table-green">
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Descripción</th>
-                      <th>Tipo</th>
-                      <th>Obligatorio</th>
-                      <th>Opciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% @attributes.each do |attribute| %>
-                      <tr>
-                        <td>
-                          <%= attribute.name %>
-                        </td>
-                        <td>
-                          <%= attribute.description %>
-                        </td>
-                        <td>
-                          <%= attribute.datatype_to_text %>
-                        </td>
-                        <td>
-                          <%= attribute.mandatory_to_text %>
-                        </td>
-                        <td>
-                          <!--<button class="btn btn-orange edit_attribute_button" data-name="<%= attribute.name %>" data-mandatory="<%= attribute.mandatory %>" data-name="<%= attribute.name %>" data-datatype="<%= attribute.datatype %>" data-description="<%= attribute.description %>" data-id="<%= attribute.id %>"><i class="fa fa-pencil"></i> Editar</button>-->
-                          <button class="btn btn-orange edit_attribute_btn" data-attributeid="<%= attribute.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
-                          <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, attribute, method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo seleccionado?' }, class: 'btn btn-red' %>
-                          <% if attribute.datatype == "categoric" %>
-                            <button class="btn btn-green add_attribute_category_button" data-attributeid="<%= attribute.id %>"><i class="fa fa-bars"></i>&nbsp;Categorías</button>
-                          <% end %>
-                        </td>
-                      </tr>
-                    <% end %>
-                  </tbody>
-                </table>
+
+                <div class="panel-group" id="groupsAccordion" style="margin-top: 5px;">
+
+                  <% @attribute_groups.each do |attribute_group| %>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title" data-toggle="collapse" data-parent="#groupsAccordion" href="#collapse-group-<%= attribute_group.id %>">
+                          <a><%= attribute_group.name %></a>
+                        </h4>
+                      </div>
+                      <div id="collapse-group-<%= attribute_group.id %>" class="panel-collapse collapse<% if @attribute_groups.count == 1%> in<% end %>">
+
+
+                        <table class="table table-hover table-green">
+                          <thead>
+                            <tr>
+                              <th>Nombre</th>
+                              <th>Descripción</th>
+                              <th>Tipo</th>
+                              <th>Obligatorio</th>
+                              <th>Opciones</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody class="attributes-tbody">
+                            <% attribute_group.custom_attributes.order(:order).order(:name).each do |attribute| %>
+                              <tr class="attribute-row" attribute_id="<%= attribute.id.to_s %>">
+                                <td>
+                                  <%= attribute.name %>
+                                </td>
+                                <td>
+                                  <%= attribute.description %>
+                                </td>
+                                <td>
+                                  <%= attribute.datatype_to_text %>
+                                </td>
+                                <td>
+                                  <%= attribute.mandatory_to_text %>
+                                </td>
+                                <td>
+                                  <!--<button class="btn btn-orange edit_attribute_button" data-name="<%= attribute.name %>" data-mandatory="<%= attribute.mandatory %>" data-name="<%= attribute.name %>" data-datatype="<%= attribute.datatype %>" data-description="<%= attribute.description %>" data-id="<%= attribute.id %>"><i class="fa fa-pencil"></i> Editar</button>-->
+                                  <button class="btn btn-orange edit_attribute_btn" data-attributeid="<%= attribute.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
+                                  <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, attribute, method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo seleccionado?' }, class: 'btn btn-red' %>
+                                  <% if attribute.datatype == "categoric" %>
+                                    <button class="btn btn-green add_attribute_category_button" data-attributeid="<%= attribute.id %>"><i class="fa fa-bars"></i>&nbsp;Categorías</button>
+                                  <% end %>
+                                </td>
+                                <td>
+                                  <i class="fa fa-bars move-attribute"></i>
+                                </td>
+                              </tr>
+                            <% end %>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
               </div>
             </div>
+            <!-- End Attributes -->
+
+            <!-- Filters -->
+            <!-- Show only if there are custom_attributes -->
+
+            <% if current_user.company.custom_attributes.count > 0 %>
+              <div class="row" style="margin-top: 40px; margin-bottom: 30px;">
+                <div class="col-md-12">
+                  <div class="background-grey">
+                    <h3 class="text-green">
+                      Listado de filtros
+                      <button class="btn btn-green pull-right" id="new_filter_button"><i class="fa fa-plus"></i> Agregar filtro</button>
+                    </h3>
+                  </div>
+                  <table class="table table-hover table-green">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Opciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% @custom_filters.each do |custom_filter| %>
+                        <tr>
+                          <td>
+                            <%= custom_filter.name %>
+                          </td>
+                          <td>
+                            <button class="btn btn-orange edit_filter_btn" filter_id="<%= custom_filter.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
+                            <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, custom_filter, method: :delete, data: { confirm: '¿Estás seguro de eliminar el filtro seleccionado?' }, class: 'btn btn-red' %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <% end %>
+
+            <!-- End Filters -->
+
           </div>
         <% end %>
         <!-- End Clients -->
@@ -1669,6 +1797,14 @@
             <div class="modal-body">
               <%= f.hidden_field :company_id, :value => current_user.company.id %>
               <div class="form-group has-feedback">
+                <%= f.label :attribute_group_id, 'Categoría', :class => 'control-label col-xs-4' %>
+                <div class="col-xs-8">
+                  <%= f.select :attribute_group_id, options_for_select(@attribute_groups.map{ |c| ["#{c.name}", c.id] }), {}, { class: 'form-control', required: true } %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
                 <%= f.label :name, 'Nombre', :class => 'control-label col-xs-4' %>
                 <div class="col-xs-8">
                   <%= f.text_field :name, { class: 'form-control', required: true }%>
@@ -1690,6 +1826,16 @@
                   <%= f.select :datatype, CompanySetting::DATATYPES, {}, { class: 'form-control' } %>
                 </div>
               </div>
+              <!--
+              <div class="form-group has-feedback">
+                <%= f.label :order, 'Orden', :class => 'control-label col-xs-4' %>
+                <div class="col-xs-8">
+                  <%= f.number_field :order, value: nil, class: 'form-control' %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              -->
               <div class="form-group">
                 <div class="col-xs-offset-4 col-xs-8">
                   <label for="attribute_mandatory">
@@ -1748,7 +1894,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title" id="attributeCategoryModalLabel">Cajero</h4>
+            <h4 class="modal-title" id="attributeCategoryModalLabel">Categoría</h4>
           </div>
 
             <div class="modal-body">
@@ -1786,11 +1932,134 @@
         </div>
       </div>
     </div>
+
+
+
+    <div class="modal fade" id="addFilterModal" tabindex="-1" role="dialog" aria-labelledby="addFilterModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+
+      </div>
+    </div>
+
+    <div class="modal fade" id="editFilterModal" tabindex="-1" role="dialog" aria-labelledby="editFilterModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="attributeGroupModal" tabindex="-1" role="dialog" aria-labelledby="attributeGroupModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <%= form_for @attribute_group, :html => {:class => 'form-horizontal attribute_group_form', :id => 'attribute_group_form'} do |f| %>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              <h4 class="modal-title" id="attributeGroupModalLabel">Categoría</h4>
+            </div>
+
+            <div class="modal-body">
+
+              <%= f.hidden_field :company_id, :value => current_user.company.id %>
+              <div class="form-group has-feedback">
+                <%= f.label :name, 'Categoría', :class => 'control-label col-xs-4' %>
+                <div class="col-xs-8">
+                  <%= f.text_field :name, { class: 'form-control', required: true } %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              <!--
+              <div class="form-group has-feedback">
+                <%= f.label :order, 'Orden', :class => 'control-label col-xs-4' %>
+                <div class="col-xs-8">
+                  <%= f.number_field :order, value: @attribute_group_otros.get_greatest_order + 1, class: 'form-control'  %>
+                  <span class="help-block"></span>
+                  <span class="form-control-feedback"></span>
+                </div>
+              </div>
+              -->
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              <%= f.submit 'Guardar', :class => 'btn btn-green submit-block' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="editAttributeGroupModal" tabindex="-1" role="dialog" aria-labelledby="editAttributeGroupModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="hoursExplanationModal" tabindex="-1" role="dialog" aria-labelledby="hoursExplanationModalLabel" aria-hidden="true">
+      <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="hoursExplanationModalLabel">Opciones de oferta de horas</h4>
+          </div>
+
+          <div class="modal-body">
+            <p class="hours-explanation-title">
+              Existen 3 opciones para ofrecer horas en línea:
+            </p>
+            <p class="hours-explanation-paragraph">
+              1) La primera opción es la de optimizar horas, en la cual se ofrecen horas según la duración de el o los servicios, con la particularidad de que cuando no haya un espacio disponible, se saltará directamente al momento más próximo en que haya algún prestador válido disponible. Además, si hay un espacio de disponibilidad entre dos espacios bloqueados, se ofrecerá también una hora especial que coincida con el final del espacio disponible.
+            </p>
+            <p class="hours-explanation-paragraph">
+              2) La segunda opción es la de ofrecer horas cada X minutos, donde X tomará el valor elegido para el prestador en sus configuraciones cuando se lo elija explícitamente, o bien cuando sea la única opción válida (por ejemplo, śi es el único prestador que presta el servicio o con horario abierto durante el día); en caso contrario (por ejemplo, cuando se eligen servicios con distintos prestadores o se elige sin preferencia), se optará por el valor definido en las configuraciones de la empresa, definido en esta opción. En cualquiera de los casos, el sistema ofrecerá horas saltando cada X minutos, siempre y cuando haya disponibilidad y no se ofrezca otra hora anterior que tope con ésta. Gracias a su simplicidad, ésta es la opción más rápida en cuanto a tiempo de carga para el cliente que quiere reservar.
+            </p>
+            <p class="hours-explanation-paragraph">
+              3) La última opción es similar a la anterior, con la salvedad de que no toma en cuenta los topes. Por ejemplo, si tenemos un servicio de 45 minutos y ofrecemos horas cada 60 minutos, empezando desde las 09:00, para la opción anterior el sistema ofrecería las horas 09:00-09:45, 10:00-10:45, 11:00-11-45 etc., "perdiendo" esos espacios de 15 minutos entre horas ofrecidas. En cambio, la opción de intercalar ofrecería las horas 09:00-09:45, 09:15-10:00, 09:30-10:15, 09:45-10:30, 10:00-10:45, etc. Debido a que se generan muchas más horas que en las opciones anteriores, ésta puede demorar un poco más en cargar cuando el cliente esté reservando.
+            </p>
+            <p class="hours-explanation-paragraph">
+              La elección de la opción dependerá de varios factores, como la cantidad y las duraciones de los distintos servicios, la cantidad de prestadores y sus horarios, horario de los locales, etc.
+            </p>
+            <p class="hours-explanation-paragraph">
+              Es importante mencionar que la opción elegida será utilizada también en el "Buscador de horas" del calendario de la empresa.
+            </p>
+            <p class="hours-explanation-paragraph">
+              A continuación se pueden ver ejemplos para las 3 opciones, para un servicio de 40 minutos, que se ofrece cada 15 minutos cuando no hay optimización y cuyo prestador tiene un horario que comienza a las 09:00, tienes reservas entre 10:15 y 11:00 el día martes, y tiene un bloqueo entre 09:40 y 10:00 el día miércoles:
+            </p>
+            <p class="hours-explanation-title">
+              Opción 1: Optimizadas
+            </p>
+            <p class="hours-explanation-img-container">
+              <%= image_tag 'admin/optimizacion.png', class: 'hours-explanation-img' %>
+            </p>
+            <p class="hours-explanation-title">
+              Opción 2: Cada 15 minutos
+            </p>
+            <p class="hours-explanation-img-container">
+              <%= image_tag 'admin/cadaX.png', class: 'hours-explanation-img' %>
+            </p>
+            <p class="hours-explanation-title">
+              Opción 3: cada 15 minutos e intercaladas
+            </p>
+            <p class="hours-explanation-img-container">
+              <%= image_tag 'admin/cadaXintercaladas.png', class: 'hours-explanation-img' %>
+            </p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   <% end %>
 
 <% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "validations/identification_number/" + I18n.locale.to_s %>
+  <%= javascript_include_tag "admin/custom-filter" %>
   <%= javascript_include_tag "admin/company_settings" %>
 <% end %>

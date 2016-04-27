@@ -521,7 +521,10 @@ function saveTreatmentPromotions()
     data: {service_id: service_id, has_treatment_promo: has_treatment_promo, treatment_max_bookings: treatment_max_bookings, treatment_locations: treatment_locations, treatment_finish_date: treatment_finish_date, treatment_limit_booking: treatment_limit_booking, treatment_discount: treatment_discount},
     dataType: 'json',
     error: function(response){
-      swal("Ocurrió un error.");
+      swal({
+          title: "Error",
+          type: "error"
+      });
     },
     success: function(response){
       if(response[0] == "ok")

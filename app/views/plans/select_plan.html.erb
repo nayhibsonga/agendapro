@@ -15,7 +15,7 @@
           Estado de cuenta
         </div>
       </div>
-      <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
+      <% if @company.plan_id != Plan.find_by_name("Gratis").id && @company.payment_status_id != PaymentStatus.find_by_name("Trial").id %>
         <div class="plan-section-link" targetdiv="pay_div">
           <div class="plan-section-link-title">
             Pagar
@@ -23,7 +23,7 @@
         </div>
       <% end %>
       <div class="plan-section-link" targetdiv="billing_info_div">
-        <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
+        <% if @company.plan_id != Plan.find_by_name("Gratis").id && @company.payment_status_id != PaymentStatus.find_by_name("Trial").id %>
           <div class="plan-section-link-title">
         <% else %>
           <div class="plan-section-link-title last">
@@ -31,7 +31,7 @@
           Datos de facturación
         </div>
       </div>
-      <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
+      <% if @company.plan_id != Plan.find_by_name("Gratis").id && @company.payment_status_id != PaymentStatus.find_by_name("Trial").id %>
         <div class="plan-section-link" targetdiv="change_plan_div">
           <div class="plan-section-link-title last">
             Cambio de plan
@@ -75,7 +75,11 @@
                       <%= @company.country.currency_code %>
                     </div>
                     <div style="color: #22c488 !important;">
-                      <%= number_to_currency(plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier, {unit: '$', separator: ',', delimiter: '.', precision: 0})%>
+                      <% if plan.name != "Personal" %>
+                        <%= number_to_currency(plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier, {unit: '$', separator: ',', delimiter: '.', precision: 0})%>
+                      <% else %>
+                        <%= number_to_currency(plan.plan_countries.find_by(country_id: @company.country.id).price, {unit: '$', separator: ',', delimiter: '.', precision: 0})%>
+                      <% end %>
                     </div>
                     <div>
                       (+ IVA)
@@ -98,7 +102,7 @@
                         <% end %>
                       </div>
                       <div>
-                        <%= plan.monthly_mails.to_s %> emails mensuales
+                        <%= plan.monthly_mails.to_s %> emails mensuales por local
                       </div>
                     <% else %>
                       <% if plan.name == "Personal" %>
@@ -109,17 +113,17 @@
                             1 prestador
                         </div>
                         <div>
-                          <%= plan.monthly_mails.to_s %> emails mensuales
+                          <%= plan.monthly_mails.to_s %> emails mensuales por local
                         </div>
                       <% else %>
                         <div>
-                            1 local base (+ 0,5 por cada local)
+                            <%= @company.locations.where(active: true).count.to_s %> local(es)
                         </div>
                         <div>
                           Staff ilimitado
                         </div>
                         <div>
-                          <%= plan.monthly_mails.to_s %> emails mensuales
+                          <%= plan.monthly_mails.to_s %> emails mensuales por local
                         </div>
                       <% end %>
                     <% end %>
@@ -148,7 +152,7 @@
                       <%= @company.country.currency_code %>
                     </div>
                     <div style="color: #22c488 !important;">
-                      <%= number_to_currency(@company.plan.plan_countries.find_by(country_id: @company.country.id).price, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %>
+                      <%= number_to_currency(@company.plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier, {unit: '$', separator: ',', delimiter: '.', precision: 0}) %>
                     </div>
                     <div>
                       (+ IVA)
@@ -170,7 +174,7 @@
                       <% end %>
                     </div>
                     <div>
-                      <%= @company.plan.monthly_mails.to_s %> emails mensuales
+                      <%= @company.plan.monthly_mails.to_s %> emails mensuales por local
                     </div>
                   </div>
 
@@ -204,7 +208,7 @@
                     
                       <% if @company.plan.name == "Trial" %>
                         <%
-                          suggested_plan = Plan.where(name: "Personal", custom: false)
+                          suggested_plan = Plan.where(name: "Personal", custom: false).first
                           if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
                           suggested_plan = Plan.where(name: "Normal", custom: false).first
                           end
@@ -234,12 +238,12 @@
                   <td class="right">
                     <% if @company.plan.name == "Trial" %>
                       <%
-                        suggested_plan = Plan.where(name: "Personal", custom: false)
+                        suggested_plan = Plan.where(name: "Personal", custom: false).first
                         if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
                         suggested_plan = Plan.where(name: "Normal", custom: false).first
                         end
                       %>
-                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;1 local base + 0,5 por cada local extra
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.locations.where(active: true).count.to_s %> local(es)
                       <br />
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;Staff ilimitado
                       <br />
@@ -249,7 +253,7 @@
                       <br />
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.service_providers.to_s %> prestadores
                       <br />
-                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales por local
                     <% elsif @company.plan.name == "Personal" %>
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;1 local
                       <br />
@@ -257,11 +261,11 @@
                       <br />
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales
                     <% else %>
-                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;1 local base + 0,5 por cada local extra
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.locations.where(active: true).count.to_s %> local(es)
                       <br />
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;Staff ilimitado
                       <br />
-                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales por local
                     <% end %>
                   </td>
                 </tr>
@@ -541,7 +545,11 @@
                   </div>
                 </td>
               </tr>
-              <tr>
+              <% if @company.payment_status_id != PaymentStatus.find_by_name("Trial").id %>
+                <tr>
+              <% else %>
+                <tr class="last">
+              <% end %>
                 <td class="left">
                   <div class="col-md-6 td-title">
                     Teléfono
@@ -551,56 +559,101 @@
                   </div>
                 </td>
                 <td>
-                  <div class="col-md-6 td-title">
-                    <%= @company.months_active_left > 0 ? "Agregar Mes Adicional" : "Pagar Mes Actual" %>
-                  </div>
-                  <div class="col-md-6">
-                    <%= number_to_currency(@plan_1 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
-                  </div>
+                  <% if @company.payment_status_id != PaymentStatus.find_by_name("Trial").id %>
+                    <div class="col-md-6 td-title">
+                      <%= @company.months_active_left > 0 ? "Agregar Mes Adicional" : "Pagar Mes Actual" %>
+                    </div>
+                    <div class="col-md-6">
+                      <%= number_to_currency(@plan_1 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
+                    </div>
+                  <% end %>
                 </td>
               </tr>
-              <tr class="last">
-                <td class="left">
-                  <div class="col-md-6 td-title">
+              <% if @company.payment_status_id != PaymentStatus.find_by_name("Trial").id %>
+                <tr class="last">
+                  <td class="left">
+                    <div class="col-md-6 td-title">
 
-                  </div>
-                  <div class="col-md-6">
+                    </div>
+                    <div class="col-md-6">
 
-                  </div>
-                </td>
-                <td>
-                  <div class="col-md-6 td-title">
-                    <% if @company.due_amount.nil? || @company.due_amount >= 0 %>
-                      Deuda actual:
-                    <% else %>
-                      Monto abonado:
-                    <% end %>
-                  </div>
-                  <div class="col-md-6">
-                    <% if @company.due_amount.nil? %>
-                      <%= number_to_currency(0 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
-                    <% elsif @company.due_amount >= 0 %>
-                      <%= number_to_currency(@company.due_amount , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
-                    <% else %>
-                      <%= number_to_currency(-1 * @company.due_amount , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
-                    <% end %>
-                  </div>
-                </td>
-              </tr>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="col-md-6 td-title">
+                      <% if @company.due_amount.nil? || @company.due_amount >= 0 %>
+                        Deuda actual:
+                      <% else %>
+                        Monto abonado:
+                      <% end %>
+                    </div>
+                    <div class="col-md-6">
+                      <% if @company.due_amount.nil? %>
+                        <%= number_to_currency(0 , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
+                      <% elsif @company.due_amount >= 0 %>
+                        <%= number_to_currency(@company.due_amount , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
+                      <% else %>
+                        <%= number_to_currency(-1 * @company.due_amount , {unit: '$', separator: ',', delimiter: '.', precision: 0}) %> <%= @company.country.currency_code %>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
             </table> 
           </div>
 
-          <% if @company.plan_id != Plan.find_by_name("Gratis").id %>
-            <div style="margin-top: 20px;">
-              <p style="text-align: center;">
+          <% if @company.plan_id != Plan.find_by_name("Gratis").id &&  %>
+            <% if @company.payment_status_id != PaymentStatus.find_by_name("Trial").id %>
+              <div style="margin-top: 20px;">
+                <p style="text-align: center;">
 
-                <button id="openPayDiv" class="btn btn-green" style="width: 260px; font-size: 24px;">
-                    Pagar
-                </button>
+                  <button id="openPayDiv" class="btn btn-green" style="width: 260px; font-size: 24px;">
+                      Pagar
+                  </button>
 
-              </p>
-            </div>
-
+                </p>
+              </div>
+            <% else %>
+              <div style="margin-top: 20px;">
+                <p style="text-align: justify;">
+                  Tu período de prueba expira el <%= (@company.created_at + 1.months).strftime("%d/%m/%Y") %>. Durante este período, tienes todas las funciones disponbiles hasta el plan Premium. Puedes revisar los planes <%= link_to "aquí", :controller => "plans", :action => "view_plans" %>, y luego elegir el plan al cual quieres pasar una vez finalice tu período de prueba. Si no estás seguro, elegiremos el plan más económico que se ajuste a tus necesidades.
+                </p>
+                <p style="text-align: justify; font-weight: bold;">
+                  Elige tu plan: <%= link_to "Ver planes", :controller => "plans", :action => "view_plans" %>
+                </p>
+                <p style="text-align: justify;">
+                  <%= form_tag(:controller => "companies", :action => "select_default_plan", :method => "post") do %>
+                    <input type="hidden" name="company_id" value="<%= @company.id %>">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <select name="plan_id" class="form-control">
+                          <% Plan.where(custom: false).where.not(name: "Gratis").each do |plan| %>
+                            <% if plan.name == "Personal" %>
+                              <% if @company.locations.where(active: true).count < 2 && @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active: true).count < 2 %>
+                                <% if @company.default_plan_id == plan.id %>
+                                  <option value="<%= plan.id %>" selected><%= plan.name %></option>
+                                <% else %>
+                                  <option value="<%= plan.id %>"><%= plan.name %></option>
+                                <% end %>
+                              <% end %>
+                            <% else %>
+                              <% if @company.default_plan_id == plan.id %>
+                                  <option value="<%= plan.id %>" selected><%= plan.name %></option>
+                                <% else %>
+                                  <option value="<%= plan.id %>"><%= plan.name %></option>
+                                <% end %>
+                            <% end %>
+                          <% end %>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <button type="submit" class="submitBtn btn btn-default btn-green" style="width: 120px;">Guardar</button>
+                      </div>
+                    </div>
+                  <% end %>
+                </p>
+              </div>
+            <% end %>
           <% else %>
 
             <div id="reactivate_div_payment_method" style="margin-top: 10px;">

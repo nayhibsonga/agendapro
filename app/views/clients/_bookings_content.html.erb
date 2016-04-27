@@ -56,45 +56,32 @@
         </thead>
         <tbody>
           <% @bookings.each do |booking| %>
-          <%
-            tr_class = ""
-            if booking.start.utc > DateTime.now
-              tr_class = "success"
-              if booking.is_session
-                tr_class = "info"
-              end
-            end
-            if booking.status == Status.find_by(name: 'Cancelado')
-              tr_class = 'warning'
-            end
-            if booking.status == Status.find_by(name: 'No Asiste')
-              tr_class = 'danger'
-            end
-          %>
-          <tr class="<%= tr_class %>">
+          <tr>
             <td><%= l booking.start, format: :long %></td>
             <td><%= booking.location.name %></td>
             <td>
               <%= booking.service.name %>
-              <% if booking.is_session %>
+              <% if booking.is_session && booking.status_id != Status.find_by_name("Cancelado").id %>
                 <%
                   index = 1
-                  session_index = "Sesión "
+                  session_index = ""
                   session_booking = booking.session_booking
                   session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
                     if b.id == booking.id
-                      session_index = session_index + index.to_s
+                      session_index = "Sesión #{index}"
                       break
                     end
                     index = index + 1
                   end
-                  session_index = session_index + " de " + session_booking.sessions_amount.to_s
+                  session_index = "#{session_index} de #{session_booking.sessions_amount}"
                 %>
-                <br /><%= "(" + session_index + ")" %>
+                <span class="label label-session"><%= "(#{session_index})" %></span>
               <% end %>
             </td>
             <td><%= booking.service_provider.public_name %></td>
-            <td><%= booking.status.name %></td>
+            <td>
+              <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
+            </td>
             <td><%= booking.notes %></td>
             <td><%= booking.company_comment %></td>
             <% if @client.company.company_setting.staff_code %>

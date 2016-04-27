@@ -2,7 +2,7 @@ class Location < ActiveRecord::Base
   require 'pg_search'
   include PgSearch
 
-  belongs_to :district
+  belongs_to :country
   belongs_to :company
 
   has_many :location_times, dependent: :destroy
@@ -11,9 +11,6 @@ class Location < ActiveRecord::Base
   has_many :active_service_providers, -> { where active: true}, class_name: "ServiceProvider"
 
   has_many :bookings, dependent: :destroy
-
-  has_many :location_outcall_districts, dependent: :destroy
-  has_many :districts, :through => :location_outcall_districts
 
   has_many :resource_locations, dependent: :destroy
   has_many :resources, :through => :resource_locations
@@ -52,6 +49,7 @@ class Location < ActiveRecord::Base
   has_many :products, through: :location_products
   has_one :stock_alarm_setting, dependent: :destroy
   has_one :sales_cash, dependent: :destroy
+  has_many :sendings, class_name: 'Email::Sending', as: :sendable
 
   mount_uploader :image1, LocationImagesUploader
   mount_uploader :image2, LocationImagesUploader
@@ -61,7 +59,7 @@ class Location < ActiveRecord::Base
 
   scope :ordered, -> { order(:order, :name) }
 
-  validates :name, :phone, :company, :district, :email, :presence => true
+  validates :name, :phone, :company, :country, :email, :presence => true
 
   validate :times_overlap, :time_empty_or_negative, :plan_locations, :outcall_services, :active_countries
   validate :new_plan_locations, :on => :create
@@ -130,6 +128,8 @@ class Location < ActiveRecord::Base
   },
   :ignoring => :accents
 
+  WORKER = 'StockEmailWorker'
+
   	#Add due if plan is not custom and locations increased by one
   	def add_due
   		if !self.company.plan.custom
@@ -160,6 +160,7 @@ class Location < ActiveRecord::Base
   				location_product = LocationProduct.create(:product_id => product.id, :location_id => self.id, :stock => 0)
   			end
   		end
+      StockAlarmSetting.create(location_id: self.id, quick_send: false, has_default_stock_limit: false, default_stock_limit: 0, monthly: true, month_day: 1, week_day: 1, periodic_send: false)
   	end
 
 	def extended_schedule
@@ -266,154 +267,193 @@ class Location < ActiveRecord::Base
 	end
 
 	def active_countries
-		if self.active && CompanyCountry.where(country_id: self.district.city.region.country.id, company_id: self.company_id).count < 1
+		if self.active && CompanyCountry.where(country_id: self.country_id, company_id: self.company_id).count < 1
 			errors.add(:base, "No puedes guardar el local ya que no tienes ese país activo en tus configuraciones.")
 		end
 	end
 
-	def categorized_services
+  def categorized_services
 
-	    location_resources = self.resource_locations.pluck(:resource_id)
-	    service_providers = self.service_providers.where(active: true, online_booking: true)
+    location_resources = self.resource_locations.pluck(:resource_id)
+    service_providers = self.service_providers.where(active: true, online_booking: true)
 
-	    categories = ServiceCategory.where(:company_id => self.company_id).order(:order, :name)
-	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
-	    service_resources_unavailable = ServiceResource.where(service_id: services)
-	    if location_resources.any?
-	      if location_resources.length > 1
-	        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
-	      else
-	        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
-	      end
-	    end
-	    if service_resources_unavailable.any?
-	      if service_resources_unavailable.length > 1
-	        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
-	      else
-	        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
-	      end
-	    end
+    categories = ServiceCategory.where(:company_id => self.company_id).order(:order, :name)
+    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
+    service_resources_unavailable = ServiceResource.where(service_id: services)
+    if location_resources.any?
+      if location_resources.length > 1
+        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
+      else
+        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
+      end
+    end
+    if service_resources_unavailable.any?
+      if service_resources_unavailable.length > 1
+        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
+      else
+        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
+      end
+    end
 
-	    categorized_services = Array.new
-	    categories.each do |category|
-	      services_array = Array.new
-	      services.each do |service|
-	        if service.service_category_id == category.id
-	          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
-	          services_array.push(serviceJSON)
-	        end
-	      end
-	      service_hash = {
-	        :id => category.id,
-	        :category => category.name,
-	        :services => services_array
-	      }
-	      categorized_services.push(service_hash)
-	    end
-
-
-	    return categorized_services
+    categorized_services = Array.new
+    categories.each do |category|
+      services_array = Array.new
+      services.each do |service|
+        if service.service_category_id == category.id
+          serviceJSON = service.attributes.merge({'name_with_small_outcall' => service.name_with_small_outcall })
+          services_array.push(serviceJSON)
+        end
+      end
+      service_hash = {
+        :id => category.id,
+        :category => category.name,
+        :services => services_array
+      }
+      categorized_services.push(service_hash)
+    end
 
 
-	    # service_providers = self.service_providers
+    return categorized_services
 
-	    # services_ids = Array.new
-	    # services = Array.new
-	    # categories = Array.new
-	    # service_providers.each do |sp|
-	    # 	sp.services.where(active: true).each do |s|
-	    # 		services_ids.push(s.id)
-	    # 		services.push(s)
-	    # 		if(!categories.include?(s.service_category))
-	    # 			categories.push(s.service_category)
-	    # 		end
-	    # 	end
-	    # end
+    # service_providers = self.service_providers
+    # services_ids = Array.new
+    # services = Array.new
+    # categories = Array.new
+    # service_providers.each do |sp|
+    #   sp.services.where(active: true).each do |s|
+    #     services_ids.push(s.id)
+    #     services.push(s)
+    #     if(!categories.include?(s.service_category))
+    #       categories.push(s.service_category)
+    #     end
+    #   end
+    # end
 
-	    # return categories
+  end
 
-	end
+	def api_categorized_services(bundle = false)
 
-	def api_categorized_services
+    location_resources = self.resource_locations.pluck(:resource_id)
+    service_providers = self.service_providers.where(active: true, online_booking: true)
 
-	    location_resources = self.resource_locations.pluck(:resource_id)
-	    service_providers = self.service_providers.where(active: true, online_booking: true)
+    categories = ServiceCategory.where(:company_id => self.company_id).order(:order, :name)
+      services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
+      service_resources_unavailable = ServiceResource.where(service_id: services)
+      if location_resources.any?
+        if location_resources.length > 1
+          service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
+        else
+          service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
+        end
+      end
+      if service_resources_unavailable.any?
+        if service_resources_unavailable.length > 1
+          services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
+        else
+          services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
+        end
+      end
+      bundles = Bundle.where(id: ServiceBundle.where(service_id: services.pluck(:id)).pluck(:bundle_id))
 
-	    categories = ServiceCategory.where(:company_id => self.company_id).order(:order, :name)
-	    services = Service.where(:active => true, online_booking: true, :id => ServiceStaff.where(service_provider_id: service_providers.pluck(:id)).pluck(:service_id)).order(:order, :name)
-	    service_resources_unavailable = ServiceResource.where(service_id: services)
-	    if location_resources.any?
-	      if location_resources.length > 1
-	        service_resources_unavailable = service_resources_unavailable.where('resource_id NOT IN (?)', location_resources)
-	      else
-	        service_resources_unavailable = service_resources_unavailable.where('resource_id <> ?', location_resources)
-	      end
-	    end
-	    if service_resources_unavailable.any?
-	      if service_resources_unavailable.length > 1
-	        services = services.where('services.id NOT IN (?)', service_resources_unavailable.pluck(:service_id))
-	      else
-	        services = services.where('id <> ?', service_resources_unavailable.pluck(:service_id))
-	      end
-	    end
+      puts bundles.inspect
 
-	    categorized_services = Array.new
-	    categories.each do |category|
-	      services_array = Array.new
-	      services.each do |service|
-	        if service.service_category_id == category.id
-				service_providers_array = []
-				service.service_providers.where(active: true, online_booking: true, location_id: self.id).each do |service_provider|
-					service_providers_array.push({id: service_provider.id, public_name: service_provider.public_name})
-				end
-	          service_info = {
-	          	id: service.id,
-	          	name: service.name,
-	          	price: service.show_price && service.price > 0 ? service.price : "",
-	          	duration: service.duration,
-	          	service_category_id: service.service_category_id,
-	          	order: service.order,
-	          	description: service.description,
-	          	service_providers: service_providers_array,
-	          	promo_active: service.has_time_discount && service.online_payable && service.time_promo_active,
-	          	promo_hours: service.active_service_promo_id && ServicePromo.find(service.active_service_promo_id) ? ServicePromo.select(:id, :morning_start, :morning_end, :afternoon_start, :afternoon_end, :night_start, :night_end).find(service.active_service_promo_id) : "",
-	          	promo_days: service.active_service_promo_id ? Promo.select(:id, :day_id, :morning_discount, :afternoon_discount, :night_discount).where(:service_promo_id => service.active_service_promo_id, :location_id => self.id): ""
-	          }
-	          services_array.push(service_info)
-	        end
-	      end
-	      service_hash = {
-	        :id => category.id,
-	        :category => category.name,
-	        :services => services_array
-	      }
-	      if services_array.count > 0
-		    categorized_services.push(service_hash)
-		  end
-	    end
+      categorized_services = Array.new
+      categories.each do |category|
+        services_array = Array.new
+        services.each do |service|
+          if service.service_category_id == category.id
+            service_providers_array = []
+            service.service_providers.where(active: true, online_booking: true, location_id: self.id).each do |service_provider|
+              service_providers_array.push({id: service_provider.id, public_name: service_provider.public_name})
+            end
+            service_info = {
+              id: service.id,
+              name: service.name,
+              price: service.show_price && service.price > 0 ? service.price : "",
+              duration: service.duration,
+              service_category_id: service.service_category_id,
+              order: service.order,
+              bundled: false,
+              bundle: [],
+              description: service.description,
+              service_providers: service_providers_array,
+              promo_active: service.has_time_discount && service.online_payable && service.time_promo_active,
+              promo_hours: service.active_service_promo_id && ServicePromo.find(service.active_service_promo_id) ? ServicePromo.select(:id, :morning_start, :morning_end, :afternoon_start, :afternoon_end, :night_start, :night_end).find(service.active_service_promo_id) : "",
+              promo_days: service.active_service_promo_id ? Promo.select(:id, :day_id, :morning_discount, :afternoon_discount, :night_discount).where(:service_promo_id => service.active_service_promo_id, :location_id => self.id) : "",
+              has_session: service.has_sessions,
+              sessions_amount: service.sessions_amount
+            }
+            services_array.push(service_info)
+          end
+        end
+        bundles.each do |bundle|
+          if bundle.service_category_id == category.id
+            bundle_array = []
+            bundle.service_bundles.each do |service_bundle|
+              service_providers_array = []
+              service_bundle.service.service_providers.where(active: true, online_booking: true, location_id: self.id).each do |service_provider|
+                service_providers_array.push({id: service_provider.id, public_name: service_provider.public_name})
+              end
+              bundle_info = {
+                id: service_bundle.service.id,
+                name: service_bundle.service.name,
+                price: service_bundle.service.show_price && service_bundle.price > 0 ? service_bundle.price : "",
+                duration: service_bundle.service.duration,
+                order: service_bundle.order,
+                service_providers: service_providers_array
+              }
+              bundle_array.push(bundle_info)
+            end
+            service_info = {
+              id: bundle.id,
+              name: bundle.name,
+              price: bundle.show_price && bundle.price > 0 ? bundle.price : "",
+              duration: bundle.services.sum(:duration),
+              service_category_id: bundle.service_category_id,
+              order: 0,
+              bundled: true,
+              bundle: bundle_array,
+              description: bundle.description,
+              service_providers: [],
+              promo_active: false,
+              promo_hours: "",
+              promo_days: "",
+              has_session: false,
+              sessions_amount: 1
+            }
+            services_array.push(service_info)
+          end
+        end
+        service_hash = {
+          :id => category.id,
+          :category => category.name,
+          :services => services_array
+        }
+        if services_array.count > 0
+        categorized_services.push(service_hash)
+      end
+    end
 
+    return categorized_services
 
-	    return categorized_services
+    # service_providers = self.service_providers
 
+    # services_ids = Array.new
+    # services = Array.new
+    # categories = Array.new
+    # service_providers.each do |sp|
+    # 	sp.services.where(active: true).each do |s|
+    # 		services_ids.push(s.id)
+    # 		services.push(s)
+    # 		if(!categories.include?(s.service_category))
+    # 			categories.push(s.service_category)
+    # 		end
+    # 	end
+    # end
 
-	    # service_providers = self.service_providers
+    # return categories
 
-	    # services_ids = Array.new
-	    # services = Array.new
-	    # categories = Array.new
-	    # service_providers.each do |sp|
-	    # 	sp.services.where(active: true).each do |s|
-	    # 		services_ids.push(s.id)
-	    # 		services.push(s)
-	    # 		if(!categories.include?(s.service_category))
-	    # 			categories.push(s.service_category)
-	    # 		end
-	    # 	end
-	    # end
-
-	    # return categories
-
-	end
+  end
 
 	def categories
 		# def location_categorized_services
@@ -482,29 +522,11 @@ class Location < ActiveRecord::Base
 	end
 
 	def get_web_address
-		return self.company.company_countries.find_by(country_id: self.district.city.region.country.id).web_address
+		return self.company.company_countries.find_by(country_id: self.country_id).web_address
 	end
 
 	def get_locale
-		return self.district.city.region.country.locale
-	end
-
-	def get_full_address
-		full_address = self.address
-		full_address += " " + self.second_address if !self.second_address.blank?
-		full_address += ", " + self.district.name
-		full_address += ", " + self.district.city.name
-		return full_address
-	end
-
-	def get_full_address_country
-		full_address = self.address
-		full_address += " " + self.second_address if !self.second_address.blank?
-		full_address += ", " + self.district.name
-		full_address += ", " + self.district.city.name
-		full_address += ", " + self.district.city.region.name
-		full_address += ", " + self.district.city.region.country.name
-		return full_address
+		return self.country.locale
 	end
 
 	def opened_days_zero_index
@@ -548,7 +570,7 @@ class Location < ActiveRecord::Base
 
 			location_products = []
 
-			location.location_products.where('product_id is not null').where('product_id > 0').each do |location_product|
+			location.location_products.where.not(product_id: nil).where('product_id > 0').each do |location_product|
 				if location_product.check_stock_for_reminder
 					if !location_product.product.nil?
 						location_products << location_product
@@ -558,43 +580,10 @@ class Location < ActiveRecord::Base
 
 			if location_products.count > 0
 				#Send reminder
-				location.send_stock_reminders(location_products)
+        location.sendings.build(method: 'reminder_stock').save
 			end
 
 		end
-
-	end
-
-	def send_stock_reminders(location_products)
-
-		stocks = ''
-
-		emails = []
-		self.stock_alarm_setting.stock_setting_emails.each do |stock_email|
-			emails << stock_email.email
-		end
-
-		location_products.each do |location_product|
-
-			stock_limit = location_product.stock_limit
-			puts "LocationProduct: "
-			puts location_product.inspect
-		    if stock_limit.nil?
-		      stock_limit = location_product.location.stock_alarm_setting.default_stock_limit
-		  	else
-		  		puts "No era nulo. Stock limit: " + stock_limit.to_s
-		    end
-		    puts "Stock limit: " + stock_limit.to_s
-
-		    stocks = stocks + '<tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.product.full_name + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + location_product.stock.to_s + '</td>' +
-            '<td style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:8px;padding-left:8px;line-height:1.42857143;vertical-align:top;border-top-width:1px;border-top-style:solid;border-top-color:#ddd;">' + stock_limit.to_s + '</td>' +
-            '</tr>'
-
-		end
-
-		PaymentsSystemMailer.stock_reminder_email(self, stocks, emails)
 
 	end
 
@@ -616,6 +605,46 @@ class Location < ActiveRecord::Base
 
 		return top4
 	end
+
+  def short_address
+    location_address = LocationAddress.new read_attribute(:address)
+    "#{location_address.route} #{location_address.street_number}, #{location_address.district}"
+  end
+
+  def long_address
+    location_address = LocationAddress.new read_attribute(:address)
+    "#{location_address.route} #{location_address.street_number}, #{location_address.district}, #{location_address.city}, #{location_address.country}"
+  end
+
+  def full_address
+    location_address = LocationAddress.new read_attribute(:address)
+    address = "#{location_address.route} #{location_address.street_number}, #{location_address.district}, #{location_address.administrative_area}, #{location_address.city}, #{location_address.region}, #{location_address.country}"
+    address.length <= 11 ? "" : address
+  end
+
+  def short_address_with_second_address
+    if self.second_address.present?
+      "#{self.short_address} - #{self.second_address}"
+    else
+      "#{self.short_address}"
+    end
+  end
+
+  def long_address_with_second_address
+    if self.second_address.present?
+      "#{self.long_address} - #{self.second_address}"
+    else
+      "#{self.long_address}"
+    end
+  end
+
+  def full_address_with_second_address
+    if self.second_address.present?
+      "#{self.full_address} - #{self.second_address}"
+    else
+      "#{self.full_address}"
+    end
+  end
 
 end
 

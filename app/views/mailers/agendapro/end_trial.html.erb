@@ -1,0 +1,295 @@
+<tr>
+  <td align="center" valign="top" id="templateBody">
+    <!-- BEGIN BODY // -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr>
+        <td valign="top" class="bodyContainer">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
+            <tbody class="mcnTextBlockOuter">
+              <tr>
+                <td valign="top" class="mcnTextBlockInner">
+                  <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;" class="mcnTextContentContainer">
+                    <tbody>
+                      <tr>
+                        <td valign="top" class="mcnTextContent" style="padding-top:9px; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;">
+                          <h2 class="null">Última oportunidad para conservar tu cuenta AgendaPro</h2>
+                          &nbsp;
+                          <h4 class="null">
+                            <span style="color:#333333">
+                              <span style="line-height:20.8px">El período de prueba de tu cuenta ha expirado. Por favor activa tu cuenta para seguir usando AgendaPro.</span>
+                            </span>
+                          </h4>
+                          <p style="margin-top:1em;margin-bottom:1em;margin-right:0;margin-left:0;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#606060;font-family:Helvetica;font-size:15px;line-height:150%;text-align:left;">Si deseas continuar con nosotros, el monto a pagar para el mes de <%= (l DateTime.now, :format => '%B').capitalize %> es de&nbsp;<span style="font-size:19px;">
+                            <strong><%= number_to_currency(@company.calculate_trial_debt, locale: @company.country.locale.to_sym) %></strong>.</span>
+                          </p>
+                          <hr/>
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
+                            <tbody class="mcnDividerBlockOuter">
+                              <tr>
+                                <td class="mcnDividerBlockInner" style="min-width:100%; padding:8px;">
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonBlock" style="min-width:100%;">
+                            <tbody class="mcnButtonBlockOuter">
+                              <tr>
+                                <td style="padding-top:0; padding-right:18px; padding-bottom:18px; padding-left:18px;" valign="top" align="center" class="mcnButtonBlockInner">
+                                  <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonContentContainer" style="border-collapse: separate !important;border-radius: 3px;background-color: #22C488;">
+                                    <tbody>
+                                      <tr>
+                                        <td align="center" valign="middle" class="mcnButtonContent" style="font-family: Arial; font-size: 16px; padding: 15px;">
+                                          <%= link_to "Activar mi cuenta", select_plan_url, class: "mcnButton", title: "Activar mi cuenta", target: "_blank", style: "font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;" %>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <hr/>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
+            <tbody class="mcnDividerBlockOuter">
+              <tr>
+                <td class="mcnDividerBlockInner" style="min-width:100%; padding:18px;">
+                  <table class="mcnDividerContent" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%;border-top-width: 2px;border-top-style: solid;border-top-color: #EAEAEA;">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <span>
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonBlock" style="min-width:100%;">
+            <tbody class="mcnButtonBlockOuter">
+              <tr>
+                <td style="padding-top:0; padding-right:18px; padding-bottom:18px; padding-left:18px;" valign="top" align="center" class="mcnButtonBlockInner">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                    <tbody class="mcnTextBlockOuter">
+                      <tr>
+                        <td valign="top" class="mcnTextBlockInner" style="mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                          <table align="left" border="0" cellpadding="0" cellspacing="0" width="282" class="mcnTextContentContainer" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                            <tbody>
+                              <tr>
+                                <td valign="top" class="mcnTextContent" style="padding-top:9px;padding-left:18px;padding-bottom:9px;padding-right:0;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#606060;font-family:Helvetica;font-size:15px;line-height:150%;text-align:left;">
+                                  Nombre Empresa:
+                                  <hr>Mail de contacto:
+                                  <hr>Período:
+                                  <hr>Valor Plan:
+                                  <hr>Deuda anterior:
+                                  <hr>Total a Pagar:
+                                  <hr>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <table align="right" border="0" cellpadding="0" cellspacing="0" width="282" class="mcnTextContentContainer" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                            <tbody>
+                            <tr>
+                              <td valign="top" class="mcnTextContent" style="padding-top:9px;padding-right:18px;padding-bottom:9px;padding-left:0;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#606060;font-family:Helvetica;font-size:15px;line-height:150%;text-align:left;">
+                                  <%= @company.name %>
+                                  <hr><%= @admin.email %>
+                                  <hr><%= (l DateTime.now, :format => '%B').capitalize %>
+                                  <hr><%= number_to_currency(@plan_amount, locale: @company.country.locale.to_sym) %>
+                                  <hr><%= number_to_currency(@company.due_amount, locale: @company.country.locale.to_sym) %>
+                                  <hr><%= number_to_currency(@company.calculate_trial_debt, locale: @company.country.locale.to_sym) %>
+                                  <hr>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
+            <tbody class="mcnDividerBlockOuter">
+              <tr>
+                <td class="mcnDividerBlockInner" style="min-width:100%; padding:18px;">
+                  <table class="mcnDividerContent" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%;border-top-width: 2px;border-top-style: solid;border-top-color: #EAEAEA;">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <span>
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <!-- // END BODY -->
+  </td>
+</tr>
+<tr>
+  <!-- BEGIN 3 COLUMNS // -->
+  <!-- BEGIN 3 COLUMNS // -->
+  <td align="center" valign="top" id="templateUpperColumns" style="mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;background-color:#FFFFFF;border-top-width:0;border-bottom-width:0;">
+    <% if @chile %>
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+      <tr>
+        <td align="center" valign="top" style="text-align:center;display:inline-block;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+          <!-- BEGIN INDIVIDUAL COLUMNS // -->
+          <!--[if gte mso 9]>
+          <table align="center" border="0" cellspacing="0" cellpadding="0"  width="600" style="width:600px;border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+          <tr>
+          <td align="center" valign="top"  width="200" style="width:200px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+          <![endif]-->
+          <div class="upperColumnWidth" style="display:inline-block;vertical-align:top;width: 30%;">
+            <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" class="upperColumnsContainer" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:197px;">
+              <tr>
+                <td valign="top" class="upperLeftColumnContainer" style="mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnCaptionBlock" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                    <tbody class="mcnCaptionBlockOuter">
+                      <tr>
+                        <td class="mcnCaptionBlockInner" valign="top" style="padding-top:9px;padding-bottom:9px;padding-right:9px;padding-left:9px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                          <table align="left" border="0" cellpadding="0" cellspacing="0" class="mcnCaptionBottomContent" width="false" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                            <tbody>
+                              <tr>
+                                <td class="mcnCaptionBottomImageContent" align="left" valign="top" style="padding-top:0;padding-bottom:9px;padding-right:9px;padding-left:9px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                                  <%= image_tag "http://bambucalendar.cl/assets/mailers/invoice_date.png", width: "161", class: "mcnImage", style: "max-width:255px;border-width:0;height:auto;outline-style:none;text-decoration:none;-ms-interpolation-mode:bicubic;vertical-align:bottom;" %>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="mcnTextContent" valign="top" width="161" style="padding-top:0;padding-bottom:0;padding-right:9px;padding-left:9px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#606060;font-family:Helvetica;font-size:15px;line-height:150%;text-align:justify;">
+                                  <strong>Paga antes del día 10 del mes</strong>. Esto para evitar cualquier tipo de problemas y  asegurar el funcionamiento del sistema.
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!--[if gte mso 9]>
+          </td>
+          <td align="center" valign="top"  width="200" style="width:200px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+          <![endif]-->
+          <div class="upperColumnWidth" style="display:inline-block;vertical-align:top;width: 30%;">
+            <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" class="upperColumnsContainer" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:197px;">
+              <tr>
+                <td valign="top" class="upperCenterColumnContainer" style="mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnCaptionBlock" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                    <tbody class="mcnCaptionBlockOuter">
+                      <tr>
+                        <td class="mcnCaptionBlockInner" valign="top" style="padding-top:9px;padding-bottom:9px;padding-right:9px;padding-left:9px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                          <table align="left" border="0" cellpadding="0" cellspacing="0" class="mcnCaptionBottomContent" width="false" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                            <tbody>
+                              <tr>
+                                <td class="mcnCaptionBottomImageContent" align="left" valign="top" style="padding-top:0;padding-bottom:9px;padding-right:9px;padding-left:9px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                                  <%= image_tag "http://bambucalendar.cl/assets/mailers/invoice_method.png", width: "161", class: "mcnImage", style: "max-width:253px;border-width:0;height:auto;outline-style:none;text-decoration:none;-ms-interpolation-mode:bicubic;vertical-align:bottom;" %>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="mcnTextContent" valign="top" width="161" style="padding-top:0;padding-bottom:0;padding-right:9px;padding-left:9px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#606060;font-family:Helvetica;font-size:15px;line-height:150%;text-align:justify;">
+                                  <strong>Pagar a través del Sistema o PAC es más fácil.</strong>&nbsp;Si pagas a través de PAC o del sistema de AgendaPro, tu cuenta quedará activada al instante.
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!--[if gte mso 9]>
+          </td>
+          <td align="center" valign="top"  width="200" style="width:200px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;" >
+          <![endif]-->
+          <div class="upperColumnWidth" style="display:inline-block;vertical-align:top;width: 30%;">
+            <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" class="upperColumnsContainer" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;max-width:197px;">
+              <tr>
+                <td align="center" valign="top" class="upperRightColumnContainer" style="mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnCaptionBlock" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                    <tbody class="mcnCaptionBlockOuter">
+                      <tr>
+                        <td class="mcnCaptionBlockInner" valign="top" style="padding-top:9px;padding-bottom:9px;padding-right:9px;padding-left:9px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                          <table align="left" border="0" cellpadding="0" cellspacing="0" class="mcnCaptionBottomContent" width="false" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                            <tbody>
+                              <tr>
+                                <td class="mcnCaptionBottomImageContent" align="left" valign="top" style="padding-top:0;padding-bottom:9px;padding-right:9px;padding-left:9px;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+                                  <%= image_tag "http://bambucalendar.cl/assets/mailers/invoice_billing.png", width: "161", class: "mcnImage", style: "max-width:251px;border-width:0;height:auto;outline-style:none;text-decoration:none;-ms-interpolation-mode:bicubic;vertical-align:bottom;" %>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="mcnTextContent" valign="top" width="161" style="padding-top:0px;padding-bottom:0px;padding-right:9px;padding-left:9px;font-size:16px;text-align:justify;mso-line-height-rule:exactly;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#606060;font-family:Helvetica;line-height:150%;">
+                                  <strong>Envío de facturas.</strong>&nbsp; Enviaremos tu factura dentro de los próximos días hábiles siguientes al recibo del pago.
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!--[if gte mso 9]>
+          </td>
+          </tr>
+          </table>
+          <![endif]-->
+          <!-- // END INDIVIDUAL COLUMNS -->
+        </td>
+      </tr>
+    </table>
+    <% end %>
+  </td>
+  <!-- // END 3 COLUMNS -->
+</tr>
+
+<% content_for :footer do %>
+  <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;" class="mcnBoxedTextContentContainer">
+    <tbody>
+      <tr>
+        <td style="padding-top:9px; padding-left:18px; padding-bottom:9px; padding-right:18px;">
+          <table border="0" cellpadding="18" cellspacing="0" class="mcnTextContentContainer" width="100%" style="min-width: 100% !important;border: 1px solid #999999;background-color: #EBEBEB;">
+            <tbody>
+              <tr>
+                <td valign="top" class="mcnTextContent" style="text-align: justify;">
+                  <div style="text-align: center;">
+                    <span style="font-size:15px">Para dudas sobre el sistema de gestión o de facturación escríbenos a:&nbsp;<%= mail_to "cuentas@agendapro.cl?subject=Soporte%20AgendaPro", "cuentas@agendapro.cl", target: "_blank" %>
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+<% end %>

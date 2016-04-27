@@ -1,6 +1,7 @@
 class Attribute < ActiveRecord::Base
 
 	belongs_to :company
+	belongs_to :attribute_group
 
 	has_many :attribute_categories, dependent: :destroy
 	has_many :float_attributes, dependent: :destroy
@@ -13,9 +14,49 @@ class Attribute < ActiveRecord::Base
 	has_many :categoric_attributes, dependent: :destroy
 	has_many :textarea_attributes, dependent: :destroy
 
+	has_many :numeric_custom_filters, dependent: :destroy
+	has_many :categoric_custom_filters, dependent: :destroy
+	has_many :date_custom_filters, dependent: :destroy
+	has_many :text_custom_filters, dependent: :destroy
+	has_many :boolean_custom_filters, dependent: :destroy
+
 	after_create :create_clients_attributes
-	after_save :check_file
-	after_save :generate_slug
+	after_save :check_file, :generate_slug, :rearrange
+	after_destroy :check_left
+
+	def check_left
+		if self.company.custom_attributes.count < 1
+			company.custom_filters.destroy_all
+		end
+	end
+
+	def rearrange
+
+		#Check order isn't past current gratest order
+		greatest_order = ::Attribute.where(company_id: self.company_id, attribute_group_id: self.attribute_group_id).where.not(id: self.id).maximum(:order)
+		if greatest_order.nil?
+			greatest_order = 0
+		end
+		if self.order.nil? || self.order < 1 || self.order > greatest_order + 1
+			self.update_column(:order, greatest_order + 1)
+		end
+
+		#Check if order exists and rearrange
+		if ::Attribute.where(company_id: self.company_id, attribute_group_id: self.attribute_group_id, order: self.order).where.not(id: self.id).count > 0
+			later_attributes = ::Attribute.where(company_id: self.company_id, attribute_group_id: self.attribute_group_id).where('attributes.order >= ?', self.order).where.not(id: self.id)
+			later_attributes.each do |att|
+				att.update_column(:order, att.order + 1)
+			end
+		end
+	end
+
+	def get_greatest_order
+		greatest_order = ::Attribute.where(company_id: self.company_id, attribute_group_id: self.attribute_group_id).maximum(:order)
+		if greatest_order.nil?
+			greatest_order = 0
+		end
+		return greatest_order
+	end
 
 	def generate_slug
 		new_slug = self.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').squish.downcase.tr(" ","_").to_s
@@ -56,13 +97,13 @@ class Attribute < ActiveRecord::Base
 			when "text"
 				
 				if TextAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-					TextAttribute.create(attribute_id: self.id, client_id: client.id)
+					TextAttribute.create(attribute_id: self.id, client_id: client.id, value: "")
 				end
 
 			when "textarea"
 				
 				if TextareaAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
-					TextareaAttribute.create(attribute_id: self.id, client_id: client.id)
+					TextareaAttribute.create(attribute_id: self.id, client_id: client.id, value: "")
 				end
 
 			when "boolean"
@@ -134,14 +175,14 @@ class Attribute < ActiveRecord::Base
 		if self.datatype != "categoric"
 			return nil
 		elsif cat_str.nil? || cat_str == ""
-			return self.attribute_categories.find_by_category("Otra").id
+			return nil
 		else
 			self.attribute_categories.each do |category|
 				if cat_str.downcase == category.category.downcase
 					return category.id
 				end
 			end
-			return self.attribute_categories.find_by_category("Otra").id
+			return nil
 		end
 	end
 

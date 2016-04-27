@@ -23,7 +23,7 @@
 										<dt>Código de la Transacción</dt>
 										<dd><%= @billing_log.trx_id %></dd>
 										<dt>¿Dudas o consultas?</dt>
-										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
+										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al <%= t('phones.support') %></dd>
 									</dl>
 									<% elsif @success_page == "plan" %>
 									<h4>Resumen de tu Pago</h4>
@@ -37,7 +37,7 @@
 										<dt>Código de la Transacción</dt>
 										<dd><%= @plan_log.trx_id %></dd>
 										<dt>¿Dudas o consultas?</dt>
-										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al (+56 9) 5178 5898</dd>
+										<dd>Por favor envíanos un e-mail a contacto@agendapro.cl o llamanos al <%= t('phones.support') %></dd>
 									</dl>
 									<% end %>
 									<% if current_user && @company %>
@@ -99,9 +99,8 @@
 						                      </dd>
 
 						                      <dt class="dark-gray">¿Dónde?</dt>
-						                      <% @second_address = @bookings.first.location.second_address.blank? ? '' : ', ' + @bookings.first.location.second_address %>
 						                      <dd class="light-gray">
-						                        <p><%= if !@bookings.first.location.outcall then @bookings.first.location.address+@second_address+', '+@bookings.first.location.district.name else "A Domicilio" end %></p>
+						                        <p><%= if !@bookings.first.location.outcall then "#{@bookings.first.location.short_address_with_second_address}" else "A Domicilio" end %></p>
 						                      </dd>
 
 						                      <dt class="dark-gray">¿Cuántas sesiones?</dt>
@@ -134,7 +133,7 @@
 													<% end %>
 												</dd>
 												<dt class="dark-gray">¿Dónde?</dt>
-												<dd class="light-gray"><%= @bookings.first.location.address %>, <%= @bookings.first.location.district.name %></dd>
+												<dd class="light-gray"><%= @bookings.first.location.short_address %></dd>
 												<dt class="dark-gray">¿Con quién?</dt>
 												<dd class="light-gray">
 													<% @bookings.each do |booking| %>
@@ -218,7 +217,7 @@
 
 						<% if @try_register %>
 				            <div class="col-md-5">
-				              
+
 				              <div class="suggest-register" style="height: 100%;">
 				                <div class="row">
 				                  <div class="col-md-12">
@@ -278,7 +277,7 @@
 
 				                      <div class="row">
 				                        <div class="col-sm-2">
-				                          
+
 				                        </div>
 				                        <div class="col-sm-8">
 				                          <div class="has-feedback">
@@ -339,7 +338,7 @@
 
 				                        </div>
 				                      </div>
-				        
+
 				                      <div class="form-group">
 				                        <div class="col-sm-offset-2 col-sm-8">
 				                          <%= f.submit 'Regístrate', :class => 'btn btn-orange pull-right', onclick: "ga('send', 'event', 'Usuarios', 'Sign-Up Usuarios', 'Registro desde Pago');" %>

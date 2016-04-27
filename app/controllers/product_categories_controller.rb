@@ -62,6 +62,12 @@ class ProductCategoriesController < ApplicationController
     end
   end
 
+  def products
+    @categories = ProductCategory.find(params[:categories_ids])
+    @products = Product.where(product_category_id: @categories).joins(:product_category).order('product_categories.name asc').joins(:product_brand).order('product_brands.name asc').order(name: :asc)
+    render :json => @products
+  end
+
   private
     def set_product_category
       @product_category = ProductCategory.find(params[:id])

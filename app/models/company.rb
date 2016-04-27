@@ -3,6 +3,7 @@ class Company < ActiveRecord::Base
 	belongs_to :plan
 	belongs_to :payment_status
 	belongs_to :country
+	belongs_to :default_plan, class_name: 'Plan', foreign_key: "default_plan_id"
 
 	has_many :company_economic_sectors
 	has_many :economic_sectors, :through => :company_economic_sectors
@@ -14,6 +15,9 @@ class Company < ActiveRecord::Base
 	has_many :email_contents, dependent: :destroy, class_name: 'Email::Content'
 
 	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
+	has_many :attribute_groups
+
+	has_many :custom_filters, dependent: :destroy
 
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
 
@@ -55,6 +59,8 @@ class Company < ActiveRecord::Base
 
 	has_many :client_files, :through => :clients
 
+	has_many :sendings, class_name: 'Email::Sending', as: :sendable
+
 	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
@@ -69,11 +75,21 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
-	after_create :create_cashier
+	after_create :create_cashier, :create_plan_setting, :create_attribute_group
 
-	after_create :create_plan_setting
+	WORKER = 'CompanyEmailWorker'
+
+	def create_attribute_group
+		if AttributeGroup.where(name: "Otros", company_id: self.id).count < 1
+			AttributeGroup.create(name: "Otros", company_id: self.id, order: 1)
+		end
+	end
 
 	def is_plan_capable(name)
+
+		if self.plan.name == "Trial" || self.payment_status.name == "Trial"
+			return true
+		end
 
 		if self.plan.custom
 			return false
@@ -144,6 +160,15 @@ class Company < ActiveRecord::Base
 		return encrypted_data
 	end
 
+	def encode_company_token
+		return (self.id * 12345678).to_s(30)
+	end
+
+	def self.api_decode_and_find(token)
+		id = token.to_i(30) / 12345678
+		return Company.find_by_id(id)
+	end
+
 	def self.substract_month
 		month_days = Time.now.days_in_month
 		where(payment_status_id: PaymentStatus.find_by_name("Activo").id).each do |company|
@@ -157,7 +182,7 @@ class Company < ActiveRecord::Base
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
 				if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id && company.country_id == 1
-					CompanyMailer.invoice_email(company.id)
+					company.sendings.build(method: 'invoice').save
 				end
 			else
 				errors = ""
@@ -175,7 +200,7 @@ class Company < ActiveRecord::Base
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 2, details: "OK payment_expiry")
 				if company.country_id == 1
-					CompanyMailer.invoice_email(company.id)
+					company.sendings.build(method: 'invoice').save
 				end
 			else
 				errors = ""
@@ -261,7 +286,7 @@ class Company < ActiveRecord::Base
 
 	def self.invoice_email
 		where(payment_status_id: PaymentStatus.where(name: ["Emitido", "Vencido"]).pluck(:id), due_date: [10.days.ago, 15.days.ago, 20.days.ago], country_id: 1).each do |company|
-			CompanyMailer.invoice_email(company.id)
+			company.sendings.build(method: 'invoice').save
 		end
 	end
 
@@ -351,6 +376,27 @@ class Company < ActiveRecord::Base
 
 	end
 
+	def account_used_all
+
+		if self.account_used
+			return true
+		end
+
+		if Payment.where(company_id: self.id).where('created_at > ?', DateTime.now - 1.weeks).count > 0
+			return true
+		end
+
+		if Product.where(company_id: self.id).where('updated_at > ?', DateTime.now - 1.weeks).count > 0
+			return true
+		end
+
+		if Email::Content.where(company_id: self.id).where('updated_at > ?', DateTime.now - 1.weeks).count > 0
+			return true
+		end
+
+		return false
+	end
+
 	#Calculate debt amount for former trial companies.
 	#Get days count till end of month, divide by month length and multiply by company's plan price.
 	def calculate_trial_debt
@@ -398,9 +444,9 @@ class Company < ActiveRecord::Base
 		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where('created_at BETWEEN ? AND ?', (1.months.ago + 5.days).beginning_of_day, (1.months.ago + 5.days).end_of_day).each do |company|
 
 			if company.account_used
-				CompanyMailer.trial_warning(company.id)
+				company.sendings.build(method: 'warning_trial').save
 			else
-				CompanyMailer.trial_recovery(company.id)
+				company.sendings.build(method: 'recovery_trial').save
 			end
 
 		end
@@ -415,16 +461,23 @@ class Company < ActiveRecord::Base
 
 		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
 
-			#plan_id = Plan.where.not(id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where(custom: false).where('locations >= ?', company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.id
-			plan = Plan.where(name: "Personal", custom: false).first
-			if company.locations.where(active: true).count > 1 || company.service_providers.where(location_id: company.locations.where(active: true).pluck(:id), active:true).count > 1
-				plan = Plan.where(name: "Normal", custom: false).first
-			end
+			#New plan should be the default one
+			plan = company.default_plan
+
+			#If default wasn't changed, then set plan by locations and providers number
+			if plan.name == "Normal" || plan.name == "Personal"
+				if company.locations.where(active: true).count > 1 || company.service_providers.where(location_id: company.				locations.where(active: true).pluck(:id), active:true).count > 1
+					plan = Plan.where(name: "Normal", custom: false).first
+				else
+					plan = Plan.where(name: "Personal", custom: false).first
+				end
+ 			end
 
 			sales_tax = company.country.sales_tax
 
 			company.plan_id = plan.id
 			company.company_plan_setting.base_price = plan.plan_countries.find_by_country_id(company.country.id).price
+			company.company_setting.mails_base_capacity = plan.monthly_mails
 
 			company.due_date = Time.now
 			#company.due_amount = - 1 * ((day_number - 1).to_f / month_days.to_f) * company.plan.plan_countries.find_by(country_id: company.country.id).price * (1 + sales_tax)
@@ -437,14 +490,15 @@ class Company < ActiveRecord::Base
 			if company.save
 
 				company.company_plan_setting.save
+				company.company_setting.save
 
 				CompanyCronLog.create(company_id: company.id, action_ref: 5, details: "OK end_trial")
 
 				#Check if account was used.
 				if company.account_used
-					CompanyMailer.trial_end(company.id)
+					company.sendings.build(method: 'end_trial').save
 				else
-					CompanyMailer.trial_recovery(company.id)
+					company.sendings.build(method: 'recovery_trial').save
 				end
 
 				#if company.country_id == 1
@@ -472,7 +526,6 @@ class Company < ActiveRecord::Base
 		status_emitido = PaymentStatus.find_by_name("Emitido")
 		status_vencido = PaymentStatus.find_by_name("Vencido")
 		plan_gratis = Plan.find_by_name("Gratis")
-		message_emitido = "Tu cuenta está atrasada de pago por un mes. Si quieres continuar usando tu plan con todas sus características, por favor ponte al día en el pago"
 
 		collectables.where.not(payment_status_id: status_vencido.id).each do |company|
 
@@ -496,7 +549,7 @@ class Company < ActiveRecord::Base
 				if company.save
 					CompanyCronLog.create(company_id: company.id, action_ref: 1, details: "OK substract_month")
 					if company.payment_status_id == PaymentStatus.find_by_name("Emitido").id && company.country_id == 1
-						CompanyMailer.invoice_email(company.id, "")
+						company.sendings.build(method: 'invoice').save
 					end
 				else
 					errors = ""
@@ -537,10 +590,10 @@ class Company < ActiveRecord::Base
 				company.save
 
 				#Send invoice_email
-				if company.created_at > (DateTime.now - 2.months) && !company.account_used
-					CompanyMailer.trial_recovery(company.id)
+				if !company.account_used_all
+					company.sendings.build(method: 'recovery_trial').save
 				else
-					CompanyMailer.invoice_email(company.id, message_emitido)
+					company.sendings.build(method: 'insistence_message_invoice').save
 				end
 
 
@@ -567,9 +620,6 @@ class Company < ActiveRecord::Base
 		month_end = Time.now.days_in_month
 		month_prop = (month_day - 1).to_f / month_end.to_f
 
-		message_emitido = "Recuerda que tu cuenta ya fue enviada. Por favor paga a la brevedad para que no tengas problemas con tu servicio"
-		message_vencido = "Tu plan se ha desactivado por no pago. Aún puedes entrar a tu cuenta, pero sólo tendrás disponible el uso del calendario para revisar tus reservas. Si quieres reactivar tu plan, por favor cancela la deuda y el proporcional para el mes actual"
-
 		collectables.where.not(payment_status_id: status_activo.id).each do |company|
 
 			sales_tax = company.country.sales_tax
@@ -577,10 +627,10 @@ class Company < ActiveRecord::Base
 			if company.payment_status_id == status_emitido.id
 
 				#Send first reminder
-				if company.created_at > (DateTime.now - 2.months) && !company.account_used
-					#Was in trial and hasn't used
+				if !company.account_used_all
+					#Hasn't used
 				else
-					CompanyMailer.invoice_email(company.id, message_emitido)
+					company.sendings.build(method: 'message_invoice').save
 				end
 
 			elsif company.payment_status_id == status_vencido.id
@@ -613,7 +663,9 @@ class Company < ActiveRecord::Base
 				if company.save
 					#DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
 					#Send mail alerting their plan changed
-					CompanyMailer.invoice_email(company.id, message_vencido)
+					if company.account_used_all
+						company.sendings.build(method: 'close_message_invoice').save
+					end
 				end
 
 			end
@@ -630,15 +682,13 @@ class Company < ActiveRecord::Base
 		status_vencido = PaymentStatus.find_by_name("Vencido")
 		plan_gratis = Plan.find_by_name("Gratis")
 
-		message_emitido = "Tu cuenta fue enviada el 1° del mes. Por favor paga a la brevedad para que no tengas problemas con tu servicio"
-
 		collectables.where(payment_status_id: status_emitido.id).each do |company|
 
 			#Send second reminder (insistence)
-			if company.created_at > (DateTime.now - 2.months) && !company.account_used
-				#Was in trial and hasn't used
+			if !company.account_used_all
+				#Hasn't used
 			else
-				CompanyMailer.invoice_email(company.id, message_emitido)
+				company.sendings.build(method: 'reminder_message_invoice').save
 			end
 
 		end
@@ -658,10 +708,10 @@ class Company < ActiveRecord::Base
 		collectables.where(payment_status_id: status_emitido.id).each do |company|
 
 			#Send ultimatum saying they will be downgraded on failure to pay
-			if company.created_at > (DateTime.now - 2.months) && !company.account_used
-				#Was in trial and hasn't used
+			if !company.account_used_all
+				#Hasn't used
 			else
-				CompanyMailer.invoice_email(company.id, message_emitido)
+				company.sendings.build(method: 'warning_message_invoice').save
 			end
 
 		end
@@ -742,11 +792,17 @@ class Company < ActiveRecord::Base
 	end
 
 	def reached_mailing_limit?
-		self.settings.monthly_mails >= self.plan.monthly_mails
+		self.settings.monthly_mails >= self.settings.get_mails_capacity #plan.monthly_mails
 	end
 
 	def mails_left
-		self.plan.monthly_mails - self.settings.monthly_mails
+		self.settings.get_mails_capacity - self.settings.monthly_mails
+	end
+
+	def web_url
+		countries = self.company_countries.where(country_id: Country.find_by(locale: I18n.locale.to_s)).first
+		countries = self.company_countries.first if countries.blank?
+		"#{countries.web_address}.agendapro#{countries.country.domain}"
 	end
 
 end

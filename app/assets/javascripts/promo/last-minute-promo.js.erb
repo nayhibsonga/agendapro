@@ -229,7 +229,10 @@ function loadAvailableHours(date)
     error: function(response){
       $("#loader-div").hide();
       $("#hours-selection-div").empty();
-      swal("Ocurrió un error.");
+      swal({
+          title: "Error",
+          type: "error"
+      });
     }
   });
 }
@@ -344,7 +347,7 @@ function loadPaymentForm()
         '</tr>' +
         '<tr>' +
           '<td class="dark-gray">¿Dónde?</td>' +
-          '<td class="light-gray">' + $('#locationAddress').val() + ', ' + $('#locationDistrict').val() + '</td>' +
+          '<td class="light-gray">' + $('#locationAddress').val() + '</td>' +
         '</tr>'
       );
 
@@ -388,7 +391,7 @@ function loadPaymentForm()
         '</tr>' +
         '<tr>' +
           '<td class="dark-gray">¿Dónde?</td>' +
-          '<td class="light-gray">' + $('#locationAddress').val() + ', ' + $('#locationDistrict').val() + '</td>' +
+          '<td class="light-gray">' + $('#locationAddress').val() + '</td>' +
         '</tr>'
       );
 

@@ -1,3 +1,4 @@
+
 <input type="hidden" id="after_booking" value="<%= @company.company_setting.after_booking %>" />
 
 <div class="modal fade" id="hoursOptimizer" tabindex="-1" role="dialog" aria-labelledby="optimizador de Horas" aria-hidden="true">
@@ -82,8 +83,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_second_address}" else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -128,8 +128,7 @@
               </span><br />
               <%= image_tag 'ubicacion.png', :alt => '', :size => "12x14", :class=>"loc-icon" %>&nbsp;
               <span id="phone-address">
-                <% @second_address = @selectedLocation.second_address.blank? ? '' : ', ' + @selectedLocation.second_address %>
-                <%= if !@selectedLocation.outcall then @selectedLocation.address+@second_address+', '+@selectedLocation.district.name else "A Domicilio" end %>
+                <%= if !@selectedLocation.outcall then "#{@selectedLocation.short_address_with_second_address}" else "A Domicilio" end %>
               </span>
             </div>
           <% else %>
@@ -177,7 +176,7 @@
           </div>
         </div>
         <div id="foo4" style="visibility: collapse;">
-          <div class="box-step" id="box-step-1">
+          <div class="box-step bug-fix" id="box-step-1">
             <div class="row">
               <div class="col-md-5 col-sm-10 col-sm-offset-1 col-md-offset-0 hidden-sm hidden-xs">
                 <div class="services-title light-green">
@@ -227,7 +226,7 @@
                   </div>
               </div>
 
-              <div class="col-md-5 col-sm-10 col-sm-offset-1 col-md-offset-0 bug-fix">
+              <div class="col-md-5 col-sm-10 col-sm-offset-1 col-md-offset-0">
                 <div class="panel-group" id="services-selector" style="border-radius: 4px; border: 1px solid #acacac; margin-left: 10px !important;">
                   <span style="color: #ccc;"><i class="fa fa-spinner fa-spin fa-lg"></i></span>
                 </div>
@@ -962,11 +961,11 @@
                               </div>
                             </div>
 
-                          <% elsif attribute.datatype == "categoric" %>
+                          <% elsif attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0 %>
 
                             <%
 
-                              attribute_value = attribute.attribute_categories.find_by_category("Otra").id
+                              attribute_value = nil
                               if !att_client.nil?
 
                                 if !att_client.categoric_attributes.find_by_attribute_id(attribute.id).nil?
@@ -1277,7 +1276,7 @@
 
 </div>
 
-<%= content_tag "div", id: "selectedLocal", data: {local: @location, district: @location.district.name} do %>
+<%= content_tag "div", id: "selectedLocal", data: {local: @location.as_json(methods: :short_address, except: [:address])} do %>
 <% end %>
 <%= content_tag "div", id: "clientExclusive", data: {client_exclusive: @location.company.company_setting.client_exclusive} do %>
 <% end %>
@@ -1446,10 +1445,10 @@
             data = {local: localId, serviceStaff: JSON.stringify(selects), date: $("#datepicker").val()};
 
             if (promoCalendar) {
-              promoCalendar.rebuild('/promotion_hours', data);
+              promoCalendar.rebuild('/available_hours', data);
             }
             else {
-              promoCalendar = new PromoCalendar('/promotion_hours', data);
+              promoCalendar = new PromoCalendar('/available_hours', data);
             }
 
             /*$(document).on('hourClick', function (e) {

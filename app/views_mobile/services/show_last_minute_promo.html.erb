@@ -436,7 +436,7 @@
                               <div class="row">
                                 <div class="col-md-12">
                                   <div class="form-group">
-                                    
+
                                       <input type="number" class="form-control light-gray" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" value="<%= attribute_value %>" <%= "required" if attribute.mandatory_on_workflow %> />
                                       <span class="help-block"></span>
 
@@ -469,7 +469,7 @@
                               <div class="row">
                                 <div class="col-md-12">
                                   <div class="form-group">
-                                    
+
                                       <input type="number" class="form-control light-gray" name="<%= attribute.slug %>_attribute" id="<%= attribute.slug %>_attribute" placeholder="<%= attribute.name %>" value="<%= attribute_value %>" <%= "required" if attribute.mandatory_on_workflow %> />
                                       <span class="help-block"></span>
 
@@ -652,7 +652,7 @@
                                           </td>
                                           <td style="width: 25%;">
                                             <select class="form-control light-gray" name="<%= attribute.slug %>_attribute_hour" id="<%= attribute.slug %>_attribute_hour">
-                                              <% 
+                                              <%
                                                 for i in 0..23
                                                   str_hour = i.to_s
                                                   if str_hour.length == 1
@@ -663,7 +663,7 @@
                                                     <option value="<%= str_hour %>" <%= "selected" if str_hour == attr_hour %> ><%= str_hour %></option>
 
                                                   <%
-                                                end 
+                                                end
                                               %>
                                             </select>
                                           </td>
@@ -672,7 +672,7 @@
                                           </td>
                                           <td style="width: 25%;">
                                             <select class="form-control light-gray" name="<%= attribute.slug %>_attribute_minute" id="<%= attribute.slug %>_attribute_minute">
-                                              <% 
+                                              <%
                                                 for i in 0..59
                                                   str_minute = i.to_s
                                                   if str_minute.length == 1
@@ -681,7 +681,7 @@
                                                   %>
                                                     <option value="<%= str_minute %>" <%= "selected" if str_minute == attr_minute %> ><%= str_minute %></option>
                                                   <%
-                                                end 
+                                                end
                                               %>
                                             </select>
                                           </td>
@@ -691,11 +691,11 @@
                                 </div>
                               </div>
 
-                            <% elsif attribute.datatype == "categoric" %>
+                            <% elsif attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0 %>
 
                               <%
 
-                                attribute_value = attribute.attribute_categories.find_by_category("Otra").id
+                                attribute_value = nil
                                 if !att_client.nil?
 
                                   if !att_client.categoric_attributes.find_by_attribute_id(attribute.id).nil?
@@ -730,7 +730,7 @@
                                 </div>
                               </div>
 
-                            <% end %>                      
+                            <% end %>
                           <% end %>
                         <% end %>
                       <!-- CUSTOM ATTRIBUTES END -->
@@ -846,8 +846,7 @@
 <input type="hidden" id="servicePrice" value="<%= @service.price %>" />
 <input type="hidden" id="currentDate" value="<%= DateTime.now.strftime('%d/%m/%Y') %>" />
 <input type="hidden" id="last_minute_discount" value="<%= @last_minute_promo.discount %>" />
-<input type="hidden" id="locationAddress" value="<%= @location.address %>" />
-<input type="hidden" id="locationDistrict" value="<%= @location.district.name %>" />
+<input type="hidden" id="locationAddress" value="<%= @location.short_address %>" />
 <input type="hidden" id="companyId" value="<%= @location.company.id %>" />
 
 <!-- Localization inputs -->

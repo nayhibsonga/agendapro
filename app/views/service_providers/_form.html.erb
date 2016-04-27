@@ -23,7 +23,15 @@
             <%= f.label :block_length, "Bloque Itinerario", class: "col-md-4 control-label" %>
             <div class="col-md-8">
               <%= f.select :block_length, options_for_select({ "15 minutos" => "15", "20 minutos" => "20", "30 minutos" => "30", "40 minutos" => "40", "45 minutos" => "45", "50 minutos" => "50", "60 minutos" => "60" }, @service_provider.block_length), {}, {class: "form-control"} %>
-              <span class="help-block"></span>
+              <span class="help-block">Esta opción determina el largo de los bloques al visualizar el itinerario del prestador.</span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group has-feedback" <%= "hidden" if current_user.company.company_setting.allows_optimization %> >
+            <%= f.label :booking_leap, "Bloque para reservas", class: "col-md-4 control-label" %>
+            <div class="col-md-8">
+              <%= f.select :booking_leap, options_for_select({ "15 minutos" => "15", "20 minutos" => "20", "30 minutos" => "30", "40 minutos" => "40", "45 minutos" => "45", "50 minutos" => "50", "60 minutos" => "60" }, @service_provider.block_length), {}, {class: "form-control"} %>
+              <span class="help-block">Esta opción determina cada cuánto se ofrecen horas con este prestador a los clientes que reservan en línea.</span>
               <span class="form-control-feedback"></span>
             </div>
           </div>
@@ -99,7 +107,7 @@
 </div>
 <% content_for :scripts do %>
   <script>
-    $(function() {
+    /*$(function() {
       var $btn = $('.submit-block'),
           $form = $btn.closest('form'),
           BtnBehaviour = {
@@ -135,7 +143,7 @@
 
         if( $form.valid() ) {
           BtnBehaviour.unbind();
-          $btn.click();
+          $form.submit();
           BtnBehaviour.disable();
         } else {
           BtnBehaviour.enable();
@@ -144,6 +152,19 @@
 
       BtnBehaviour.bind();
 
+    });*/
+    $(function(){
+      $(".submit-block").on('click', function(e){
+        e.preventDefault();
+        if($(this).closest('form').valid())
+        {
+          $(this).attr("disabled", true);
+        }
+        else
+        {
+          $(this).attr("disabled", false);
+        }
+      });
     });
   </script>
 <% end %>

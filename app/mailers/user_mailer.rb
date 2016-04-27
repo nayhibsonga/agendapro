@@ -1,57 +1,41 @@
 class UserMailer < Base::CustomMailer
+  layout :select_layout
 
-  def welcome_email(user)
-    # => Template
-    template_name = user.api_token.present? ? 'User - Marketplace' : 'User'
-    template_content = []
-
-    @user_name = user.email
-    if (!user.last_name.blank? && !user.first_name.blank?)
-      @user_name = user.first_name + ' ' + user.last_name
+  def welcome_email(user, recipient)
+    # layout variables
+    @title = "Bienvenido a AgendaPro"
+    unless user.api_token.present?
+      @header = "¡Bienvenido a HoraChic"
+    else
+      attacht_logo()
     end
 
-    # => Message
-    message = {
-      :from_email => 'no-reply@agendapro.cl',
-      :from_name => 'AgendaPro',
-      :to => [
-        {
-          :email => user.email,
-          :name => @user_name,
-          :type => 'to'
-        }
-      ],
-      :headers => { 'Reply-To' => "contacto@agendapro.cl" },
-      :global_merge_vars => [
-        {
-          :name => 'URL',
-          :content => 'www'
-        },
-        {
-          :name => 'EMAIL',
-          :content => user.email
-        },
-        {
-          :name => 'PASSWORD',
-          :content => user.password
-        },
-        {
-          :name => 'NAME',
-          :content => @user_name
-        }
-      ],
-      :tags => ['user', 'new_user'],
-      :images => [
-        {
-          :type => 'image/png',
-          :name => 'LOGO',
-          :content => Base64.encode64(File.read('app/assets/images/logos/logodoble2.png'))
-        }
-      ]
-    }
+    # view variables
+    @user = user
 
-    # => Send mail
-    send_mail(template_name, template_content, message)
+    path = user.api_token.present? ? "horachic" : "agendapro"
+
+    mail(
+      from: filter_sender(),
+      reply_to: filter_sender(),
+      to: recipient,
+      subject: @title,
+      template_path: "mailers/#{path}"
+      )
   end
+
+  private
+    def attacht_logo(url=nil)
+      url ||= "app/assets/images/logos/logodoble2.png"
+      attachments.inline['logo.png'] = File.read(url)
+    end
+
+    def select_layout
+      if @user.api_token.present?
+        "mailers/horachic"
+      else
+        "mailers/green"
+      end
+    end
 
 end

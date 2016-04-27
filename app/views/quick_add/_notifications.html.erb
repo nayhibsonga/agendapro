@@ -10,8 +10,6 @@
   <section>
     <div class="container">
       <div class="row">
-
-
         <div class="col-md-6">
           <%= form_for @notification_email do |f| %>
             <%= f.hidden_field :company_id, value: @company.id %>
@@ -33,7 +31,7 @@
               <div class="col-md-12 hidden" id="local-notification">
                 <div class="form-group">
                   <%= f.label :location_ids, @company.name %>
-                  <%= f.collection_check_boxes :location_ids, @company.locations.where(active: true), :id, :name, {}, {class: "check_boxes"} do |b|%>
+                  <%= f.collection_check_boxes :location_ids, @company.locations.actives.ordered, :id, :name, {}, {class: "check_boxes"} do |b|%>
                     <div class="checkbox">
                       <label>
                         <%= b.check_box %> <%= b.text %>
@@ -44,11 +42,11 @@
               </div>
               <div class="col-md-12 hidden" id="provider-notification">
                 <div class="row">
-                  <% for local in @company.locations.where(active: true) %>
+                  <% @company.locations.actives.ordered.each do |local| %>
                   <div class="col-sm-4">
                     <div class="form-group">
                       <%= f.label :service_provider_ids, local.name %>
-                      <%= f.collection_check_boxes :service_provider_ids, local.service_providers.where(active: true), :id, :public_name, {}, {class: "check_boxes"} do |b|%>
+                      <%= f.collection_check_boxes :service_provider_ids, local.service_providers.actives.ordered, :id, :public_name, {}, {class: "check_boxes"} do |b|%>
                         <div class="checkbox">
                           <label>
                             <%= b.check_box %> <%= b.text %>
@@ -63,7 +61,7 @@
             </div>
             <div class="row">
               <div class="col-md-12">
-                <div class="form-group background-green">
+                <div class="form-group background-green" style="padding: 10px 15px;">
                   <div class="row">
                     <div class="col-md-12">
                       <label style="margin: 0;">Cuando recibir la Notificación</label>
@@ -166,7 +164,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <% for notification in @notifications %>
+                  <% @notifications.each do |notification| %>
                   <tr class="notification-email-row" notification_id="<%= notification.id %>">
                     <td><%= notification.email %></td>
                     <td>
@@ -183,7 +181,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </section>

@@ -10,10 +10,8 @@ class LocationsController < ApplicationController
   def index
     if current_user.role == Role.find_by(name: "Super Admin")
       @companies = Company.where(active: true, owned: true).order(payment_status_id: :desc)
-      # @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(order: :asc)
-      @locations = Location.where(company_id: Company.where(owned: false).pluck(:id)).order(:order, :name)
     else
-      @locations = Location.where(company_id: current_user.company_id, :active => true).order(:order, :name).accessible_by(current_ability)
+      @locations = Location.where(company_id: current_user.company_id).actives.ordered.accessible_by(current_ability)
     end
   end
 
@@ -52,7 +50,8 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       if @location.save
-        flash[:notice] = 'Local actualizado exitosamente.'
+        flash[:success] = 'Local creado exitosamente.'
+        flash.keep(:success)
         format.html { redirect_to locations_path }
         format.json { render :json => @location }
       else
@@ -73,7 +72,8 @@ class LocationsController < ApplicationController
             location = @location.as_json
             location[:warnings] = warnings
           end
-          flash[:notice] = 'Local actualizado exitosamente.'
+          flash[:success] = 'Local actualizado exitosamente.'
+          flash.keep(:success)
           format.html { redirect_to locations_path }
           format.json { render :json => location }
         else
@@ -97,7 +97,8 @@ class LocationsController < ApplicationController
             location = @location.as_json
             location[:warnings] = warnings
           end
-          flash[:notice] = 'Local actualizado exitosamente.'
+          flash[:success] = 'Local actualizado exitosamente.'
+          flash.keep(:success)
           format.html { redirect_to locations_path }
           format.json { render :json => location }
         else
@@ -116,9 +117,10 @@ class LocationsController < ApplicationController
     @location.active = true
     if @location.save
       @location.add_due
-      redirect_to inactive_locations_path, notice: "Local activado exitosamente."
+      flash[:success] = "Local activado exitosamente."
+      redirect_to inactive_locations_path
     else
-      redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
+      redirect_to inactive_locations_path, error: @location.errors.full_messages.inspect
     end
   end
 
@@ -126,9 +128,11 @@ class LocationsController < ApplicationController
     @location.active = false
     if @location.save
       @location.substract_due
-      redirect_to locations_path, notice: "Local desactivado exitosamente."
+      @location.active_service_providers.update_all(active: false)
+      flash[:success] = "Local desactivado exitosamente."
+      redirect_to locations_path
     else
-      redirect_to inactive_locations_path, notice: @location.errors.full_messages.inspect
+      redirect_to inactive_locations_path, error: @location.errors.full_messages.inspect
     end
   end
 
@@ -149,7 +153,7 @@ class LocationsController < ApplicationController
 
   def location_districts
     location = Location.find(params[:id])
-    render :json => { :districts => location.districts, :country => location.district.city.region.country.name, :region => location.district.city.region.name, :city => location.district.city.name }
+    render :json => { :districts => location.outcall_places }
   end
 
   def location_time
@@ -599,21 +603,37 @@ class LocationsController < ApplicationController
     end
 
     if params[:category] != "0" && params[:brand] != "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id))
     elsif params[:category] != "0" && params[:brand] != "0" && params[:display] == "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_brand_id => params[:brand]).pluck(:id))
     elsif params[:category] != "0" && params[:brand] == "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category], :product_display_id => params[:display]).pluck(:id))
     elsif params[:category] != "0" && params[:brand] == "0" && params[:display] == "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_category_id => params[:category]).pluck(:id))
     elsif params[:category] == "0" && params[:brand] != "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand], :product_display_id => params[:display]).pluck(:id))
     elsif params[:category] == "0" && params[:brand] != "0" && params[:display] == "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_brand_id => params[:brand]).pluck(:id))
     elsif params[:category] == "0" && params[:brand] == "0" && params[:display] != "0"
-      @location_products = location_products.where(:product_id => @location.company.products.where(:product_display_id => params[:display]).pluck(:id)).order('stock asc')
+      @location_products = location_products.where(:product_id => @location.company.products.where(:product_display_id => params[:display]).pluck(:id))
     else
-      @location_products = location_products.order('stock asc')
+      @location_products = location_products
+    end
+
+    if normalized_search != ""
+      if params[:order].blank? || params[:order] == "product"
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"product_categories"."name", "product_brands"."name", "location_products"."stock"')
+        #ActiveRecord::Associations::Preloader.new.preload
+      else
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"location_products"."stock","product_categories"."name", "product_brands"."name"')
+      end
+    else
+      if params[:order].blank? || params[:order] == "product"
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"product_categories"."name", "product_brands"."name", "products"."name", "location_products"."stock"')
+        #ActiveRecord::Associations::Preloader.new.preload
+      else
+        @location_products = @location_products.joins(:product => [:product_category, :product_brand]).order('"location_products"."stock","product_categories"."name", "product_brands"."name", "products"."name"')
+      end
     end
 
     respond_to do |format|
@@ -749,6 +769,6 @@ class LocationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def location_params
-      params.require(:location).permit(:name, :address, :second_address, :phone, :outcall, :longitude, :latitude, :company_id, :online_booking, :email, :district_id, :image1, :remove_image1, :image2, :remove_image2, :image3, :remove_image3, district_ids: [], location_times_attributes: [:id, :open, :close, :day_id, :location_id])
+      params.require(:location).permit(:name, :country_id, :address, :second_address, :phone, :outcall, :outcall_places, :longitude, :latitude, :company_id, :online_booking, :email, :image1, :remove_image1, :image2, :remove_image2, :image3, :remove_image3, location_times_attributes: [:id, :open, :close, :day_id, :location_id])
     end
 end

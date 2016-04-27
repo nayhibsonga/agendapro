@@ -18,13 +18,17 @@ class ServiceProvidersController < ApplicationController
 
   def activate
     @service_provider.active = true
-    @service_provider.save
+    unless @service_provider.save
+      flash[:alert] = "El horario del prestador no coincide con el horario del local"
+    end
+    flash[:success] = "Prestador de servicios activado exitosamente."
     redirect_to inactive_service_providers_path
   end
 
   def deactivate
     @service_provider.active = false
     @service_provider.save
+    flash[:success] = "Prestador de servicios desactivado exitosamente."
     redirect_to service_providers_path
   end
 
@@ -76,7 +80,8 @@ class ServiceProvidersController < ApplicationController
 
     respond_to do |format|
       if @service_provider.save
-        flash[:notice] = 'Prestador creado exitosamente.'
+        flash[:success] = 'Prestador creado exitosamente.'
+        flash.keep(:success)
         format.html { redirect_to service_providers_path }
         format.json { render :json => @service_provider }
       else
@@ -101,7 +106,8 @@ class ServiceProvidersController < ApplicationController
     respond_to do |format|
       if @service_provider.update(service_provider_params)
         @provider_times.destroy_all
-        flash[:notice] = 'Prestador actualizado exitosamente.'
+        flash[:success] = 'Prestador actualizado exitosamente.'
+        flash.keep(:success)
         format.html { redirect_to service_providers_path }
         format.json { render :json => @service_provider }
       else
@@ -136,7 +142,8 @@ class ServiceProvidersController < ApplicationController
 
   def provider_service
     provider = ServiceProvider.find(params[:id])
-    services = provider.services.where(:active => true).order(:order, :name)
+    services = provider.services.where(:active => true).joins(:service_category).order('"service_categories"."order", "service_categories"."name", "services"."order", "services"."name"')
+
     bundles = Bundle.where(id: ServiceBundle.where(service_id: services.pluck(:id)).pluck(:bundle_id))
     services_array = Array.new
     services.each do |service|

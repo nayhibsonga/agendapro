@@ -1,7 +1,7 @@
 class CompanyFilesController < ApplicationController
   before_action :set_company_file, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
-  
+
   load_and_authorize_resource
 
   respond_to :html, :json
@@ -84,17 +84,17 @@ class CompanyFilesController < ApplicationController
   def destroy
     respond_with(@company_file) do |format|
       if @company_file.destroy
-        format.html { 
-          flash[:notice] = "Archivo eliminado." 
-          redirect_to get_company_files_path() 
+        format.html {
+          flash[:success] = "Archivo eliminado."
+          redirect_to get_company_files_path()
         }
         format.json {
           render json: @company_file
         }
       else
-        format.html { 
-          flash[:notice] = "Archivo no pudo ser eliminado." 
-          redirect_to get_company_files_path() 
+        format.html {
+          flash[:error] = "Archivo no pudo ser eliminado."
+          redirect_to get_company_files_path()
         }
         format.json {
           render json: @company_file

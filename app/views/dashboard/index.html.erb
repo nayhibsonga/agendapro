@@ -1,5 +1,5 @@
 
-<div class="container-fluid" style="padding-top: 10px;">
+<div class="container-fluid" id="dashboard">
   <% unless current_user.role == Role.find_by(name: "Super Admin") || current_user.role == Role.find_by_name("Ventas") %>
     <div class="row">
       <div class="col-sm-4">
@@ -7,7 +7,7 @@
           <div class="col-md-6">
             <div class="square-green">
               <h2><%= @monthBookings.count %></h2>
-              <p>Reservas últimos 7 días</p>
+              <p>Reservas creadas en los últimos 7 días</p>
             </div>
           </div>
           <div class="col-md-6">
@@ -43,7 +43,7 @@
           <div class="col-md-3">
             <div class="square-highlight">
               <h2 class="text-green">
-                <% occupation = booking_occupation(Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
+                <% occupation = booking_occupation(Time.now.beginning_of_day - 7.days + @timezone.offset, Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
                 <%= number_to_percentage occupation * 100, precision: 1, strip_insignificant_zeros: true %>
               </h2>
               <p data-toggle="tooltip" title="Ocupación estimada de la agenda los prestadores. Se calcula dividiendo la cantidad de horas reservadas sobre la cantidad de horas disponibles por horario." data-placement="top" role="button">
@@ -59,7 +59,7 @@
           <div class="col-md-3">
             <div class="square-highlight">
               <h2 class="text-green">
-                <% incomes = booking_revenue(Time.now.beginning_of_day - 7.days - eval(ENV["TIME_ZONE_OFFSET"]), Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
+                <% incomes = booking_revenue(Time.now.beginning_of_day - 7.days + @timezone.offset, Time.now, [1, 2, 3, 4], 0, current_user.company_id) %>
                 <%= number_to_currency incomes %>
               </h2>
               <p data-toggle="tooltip" title="La suma de los precios de todas las reservas y sesiones agendadas. No considera pagos ingresados o no ingresados." data-placement="top" role="button">
@@ -103,6 +103,7 @@
           </div>
           <table class="table">
             <thead>
+              <th>Estado</th>
               <th>Hora</th>
               <th>Cliente</th>
               <th>Teléfono</th>
@@ -112,6 +113,9 @@
             <tbody>
               <% @todayBookings.each do |booking| %>
               <tr>
+                <td>
+                  <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
+                </td>
                 <td><%= booking.start.strftime("%I:%M%p") %> - <%= booking.end.strftime("%I:%M%p") %></td>
                 <td><%= booking.client.first_name %> <%= booking.client.last_name %></td>
                 <td><%= booking.client.phone %></td>
@@ -136,39 +140,31 @@
           <div class="tab-content">
             <div class="panel-body panel-scrollable tab-pane fade in active" id="summary">
               <div class="tab-content">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Estado</th>
-                  <th>Cliente</th>
-                  <th>Servicio</th>
-                  <th>Prestador</th>
-                  <th>Horario</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @lastBookings.each do |booking| %>
-                <tr>
-                  <td>
-                    <% if booking.status == Status.find_by_name('Cancelado') %>
-                    <span class="label label-danger">Cancelado</span>
-                    <% elsif booking.status == Status.find_by_name('Confirmado') %>
-                    <span class="label label-primary">Confirmado</span>
-                    <% elsif booking.created_at != booking.updated_at %>
-                    <span class="label label-warning">Modificado</span>
-                    <% else %>
-                    <span class="label label-agendapro">Reservado</span>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Estado</th>
+                      <th>Cliente</th>
+                      <th>Servicio</th>
+                      <th>Prestador</th>
+                      <th>Horario</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @lastBookings.each do |booking| %>
+                    <tr>
+                      <td>
+                        <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
+                      </td>
+                      <td><%= booking.client.first_name %> <%= booking.client.last_name %></td>
+                      <td><%= booking.service.name %></td>
+                      <td><%= booking.service_provider.public_name %></td>
+                      <td><span class="badge"><%= l booking.start %></span></td>
+                    </tr>
                     <% end %>
-                  </td>
-                  <td><%= booking.client.first_name %> <%= booking.client.last_name %></td>
-                  <td><%= booking.service.name %></td>
-                  <td><%= booking.service_provider.public_name %></td>
-                  <td><span class="badge"><%= l booking.start %></span></td>
-                </tr>
-                <% end %>
-              </tbody>
-            </table>
-            </div>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             <div class="panel-body panel-scrollable tab-pane fade" id="sessions">
@@ -219,6 +215,11 @@
     <div class="row">
       <div class="col-md-12">
         <%= line_chart Booking.where(web_origin: true).group_by_week(:created_at).count, id: "web-bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Web Semanales" } %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <%= line_chart Booking.all.group_by_week(:created_at).select(:location_id).uniq.count, id: "location-bookings-chart", library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Locales con Reservas" } %>
       </div>
     </div>
   <% end %>

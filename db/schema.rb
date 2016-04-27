@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160127191741) do
+ActiveRecord::Schema.define(version: 20160426155303) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,14 @@ ActiveRecord::Schema.define(version: 20160127191741) do
   create_table "attribute_categories", force: true do |t|
     t.integer  "attribute_id"
     t.string   "category"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "attribute_groups", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.integer  "order"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -39,6 +47,8 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.boolean  "show_on_workflow",      default: false
     t.boolean  "mandatory_on_calendar", default: false
     t.boolean  "mandatory_on_workflow", default: false
+    t.integer  "attribute_group_id"
+    t.integer  "order"
   end
 
   create_table "banks", force: true do |t|
@@ -191,6 +201,14 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.datetime "updated_at"
   end
 
+  create_table "boolean_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.boolean  "option"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "bundles", force: true do |t|
     t.string   "name",                default: "",   null: false
     t.decimal  "price",               default: 0.0,  null: false
@@ -218,6 +236,14 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.integer  "client_id"
     t.integer  "attribute_id"
     t.integer  "attribute_category_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "categoric_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.string   "categories_ids"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -296,6 +322,7 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
     t.integer  "trial_months_left",   default: 0
+    t.integer  "default_plan_id",     default: 15
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
@@ -429,6 +456,9 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.boolean  "editable_payment_prices",     default: true
     t.boolean  "mandatory_mock_booking_info", default: false
     t.boolean  "strict_booking",              default: false,                 null: false
+    t.integer  "mails_base_capacity",         default: 5000
+    t.integer  "booking_leap",                default: 15
+    t.boolean  "allows_overlap_hours",        default: false
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -445,6 +475,15 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.string   "formatted_address", default: ""
     t.string   "domain",            default: ""
     t.float    "sales_tax",         default: 0.0, null: false
+    t.string   "timezone_name"
+    t.float    "timezone_offset"
+  end
+
+  create_table "custom_filters", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "date_attributes", force: true do |t|
@@ -453,6 +492,18 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.date     "value"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "date_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.datetime "date1"
+    t.datetime "date2"
+    t.string   "option"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "exclusive1",       default: true
+    t.boolean  "exclusive2",       default: true
   end
 
   create_table "date_time_attributes", force: true do |t|
@@ -544,6 +595,14 @@ ActiveRecord::Schema.define(version: 20160127191741) do
 
   add_index "economic_sectors_dictionaries", ["economic_sector_id"], name: "index_economic_sectors_dictionaries_on_economic_sector_id", using: :btree
 
+  create_table "email_blacklists", force: true do |t|
+    t.string   "email"
+    t.string   "sender"
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "email_contents", force: true do |t|
     t.integer  "template_id"
     t.json     "data",                             null: false
@@ -571,7 +630,8 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.datetime "updated_at"
     t.integer  "total_sendings",   default: 0
     t.integer  "total_recipients", default: 0
-    t.string   "detail"
+    t.json     "detail"
+    t.string   "method"
   end
 
   create_table "email_templates", force: true do |t|
@@ -670,6 +730,7 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.datetime "updated_at"
     t.datetime "date",                default: '2015-10-27 17:17:43'
     t.integer  "user_id"
+    t.text     "notes",               default: ""
   end
 
   create_table "last_minute_promo_locations", force: true do |t|
@@ -686,16 +747,6 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "location_outcall_districts", force: true do |t|
-    t.integer  "location_id"
-    t.integer  "district_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "location_outcall_districts", ["district_id"], name: "index_location_outcall_districts_on_district_id", using: :btree
-  add_index "location_outcall_districts", ["location_id"], name: "index_location_outcall_districts_on_location_id", using: :btree
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
@@ -724,11 +775,10 @@ ActiveRecord::Schema.define(version: 20160127191741) do
 
   create_table "locations", force: true do |t|
     t.string   "name",                           null: false
-    t.string   "address",                        null: false
+    t.json     "address",                        null: false
     t.string   "phone",                          null: false
     t.float    "latitude"
     t.float    "longitude"
-    t.integer  "district_id",                    null: false
     t.integer  "company_id",                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -741,10 +791,12 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.string   "image1"
     t.string   "image2"
     t.string   "image3"
+    t.text     "outcall_places"
+    t.integer  "country_id"
   end
 
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
-  add_index "locations", ["district_id"], name: "index_locations_on_district_id", using: :btree
+  add_index "locations", ["country_id"], name: "index_locations_on_country_id", using: :btree
 
   create_table "mailing_lists", force: true do |t|
     t.string   "first_name",     default: ""
@@ -814,6 +866,18 @@ ActiveRecord::Schema.define(version: 20160127191741) do
 
   add_index "notification_providers", ["notification_email_id"], name: "index_notification_providers_on_notification_email_id", using: :btree
   add_index "notification_providers", ["service_provider_id"], name: "index_notification_providers_on_service_provider_id", using: :btree
+
+  create_table "numeric_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.float    "value1"
+    t.float    "value2"
+    t.string   "option"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "exclusive1",       default: true
+    t.boolean  "exclusive2",       default: true
+  end
 
   create_table "numeric_parameters", force: true do |t|
     t.string   "name"
@@ -1048,6 +1112,13 @@ ActiveRecord::Schema.define(version: 20160127191741) do
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
   add_index "payment_products", ["product_id"], name: "index_payment_products_on_product_id", using: :btree
 
+  create_table "payment_sendings", force: true do |t|
+    t.integer "payment_id"
+    t.string  "emails"
+  end
+
+  add_index "payment_sendings", ["payment_id"], name: "index_payment_sendings_on_payment_id", using: :btree
+
   create_table "payment_statuses", force: true do |t|
     t.string   "name",        null: false
     t.text     "description", null: false
@@ -1170,6 +1241,28 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "product_logs", force: true do |t|
+    t.integer  "product_id"
+    t.integer  "internal_sale_id"
+    t.integer  "payment_product_id"
+    t.integer  "service_provider_id"
+    t.integer  "client_id"
+    t.string   "change"
+    t.text     "cause"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "location_id"
+    t.integer  "user_id"
+  end
+
+  add_index "product_logs", ["client_id"], name: "index_product_logs_on_client_id", using: :btree
+  add_index "product_logs", ["internal_sale_id"], name: "index_product_logs_on_internal_sale_id", using: :btree
+  add_index "product_logs", ["location_id"], name: "index_product_logs_on_location_id", using: :btree
+  add_index "product_logs", ["payment_product_id"], name: "index_product_logs_on_payment_product_id", using: :btree
+  add_index "product_logs", ["product_id"], name: "index_product_logs_on_product_id", using: :btree
+  add_index "product_logs", ["service_provider_id"], name: "index_product_logs_on_service_provider_id", using: :btree
+  add_index "product_logs", ["user_id"], name: "index_product_logs_on_user_id", using: :btree
 
   create_table "products", force: true do |t|
     t.integer  "company_id"
@@ -1532,6 +1625,7 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.integer  "order",          default: 0
     t.integer  "block_length",   default: 15
     t.boolean  "online_booking", default: true
+    t.integer  "booking_leap",   default: 15
   end
 
   add_index "service_providers", ["company_id"], name: "index_service_providers_on_company_id", using: :btree
@@ -1711,6 +1805,14 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.datetime "updated_at"
   end
 
+  create_table "text_custom_filters", force: true do |t|
+    t.integer  "custom_filter_id"
+    t.integer  "attribute_id"
+    t.text     "text"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "textarea_attributes", force: true do |t|
     t.integer  "attribute_id"
     t.integer  "client_id"
@@ -1731,6 +1833,19 @@ ActiveRecord::Schema.define(version: 20160127191741) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "treatment_logs", force: true do |t|
+    t.integer  "client_id"
+    t.integer  "user_id"
+    t.integer  "service_id"
+    t.text     "detail"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "treatment_logs", ["client_id"], name: "index_treatment_logs_on_client_id", using: :btree
+  add_index "treatment_logs", ["service_id"], name: "index_treatment_logs_on_service_id", using: :btree
+  add_index "treatment_logs", ["user_id"], name: "index_treatment_logs_on_user_id", using: :btree
 
   create_table "treatment_promo_locations", force: true do |t|
     t.integer  "treatment_promo_id"

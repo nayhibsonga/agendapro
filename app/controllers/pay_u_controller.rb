@@ -3,7 +3,7 @@ class PayUController < ApplicationController
   require "net/https"
   require "uri"
   require 'digest/md5'
-  
+
   skip_before_action :verify_authenticity_token
   before_action :authenticate_user!, :only => [:generate_company_transaction, :generate_plan_transaction]
   before_action :verify_is_admin, :only => [:generate_company_transaction, :generate_plan_transaction]
@@ -23,8 +23,8 @@ class PayUController < ApplicationController
     task = crypt.decrypt_and_verify(params[:encrypted_task])
     task = task.to_hash
 
-    @merchantId = "540049"
-    @accountId = "547737"
+    @merchantId = "558490"
+    @accountId = "560923"
     @description = task[:description]
     @referenceCode = task[:reference]
     @amount = task[:amount]
@@ -36,7 +36,7 @@ class PayUController < ApplicationController
     @sourceUrl = task[:source_url]
     @buttonType = "SIMPLE"
     # “ApiKey~merchantId~referenceCode~amount~currency”.
-    @signature = Digest::MD5.hexdigest('5LG9s41B7yZWmYuLPs74I79dQE~' + @merchantId + '~' + @referenceCode + '~' + @amount + '~' + @currency)
+    @signature = Digest::MD5.hexdigest('lcYvfI1vUATdee2D70HJLbh8Xp~' + @merchantId + '~' + @referenceCode + '~' + @amount + '~' + @currency)
 
     render layout: "empty"
   end
@@ -49,7 +49,7 @@ class PayUController < ApplicationController
       redirect_to select_plan_path, notice: "No se pudo completar la operación ya que hubo un error en la solicitud de pago. Por favor refresca la página para volver a intentarlo. Escríbenos a contacto@agendapro.cl si el problema persiste. (11)"
       return
     end
-    
+
     #company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(custom: false, locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).order(:service_providers).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 
     price = 0
@@ -153,7 +153,7 @@ class PayUController < ApplicationController
     accepted_plans = Plan.where(custom: false).pluck(:id)
     if accepted_plans.include?(plan_id) && company
       if (company.service_providers.where(active: true, location_id: company.locations.where(active: true).pluck(:id)).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || (!new_plan.custom && new_plan.name != "Personal")
-      
+
         previous_plan_id = company.plan.id
         months_active_left = company.months_active_left
         plan_value_left = (month_days - day_number + 1)*price/month_days + price*(months_active_left - 1)
@@ -176,16 +176,18 @@ class PayUController < ApplicationController
           if plan_value_left > (plan_month_value + due_amount)
 
             new_active_months_left = ((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price).floor + 1
-            
+
             new_amount_due = (-1 * (((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price) % 1 )) * plan_price * (1 + sales_tax)
 
             company.plan_id = plan_id
             company.months_active_left = new_active_months_left
             company.due_amount = (new_amount_due).round(0)
-            
+
             if company.save
               company.company_plan_setting.base_price = company.plan.plan_countries.find_by_country_id(company.country.id).price
               company.company_plan_setting.save
+              company.company_setting.mails_base_capacity = company.plan.monthly_mails
+              company.company_setting.save
               PlanLog.create(trx_id: trx_id, new_plan_id: plan_id, prev_plan_id: previous_plan_id, company_id: company.id, amount: 0.0)
               redirect_to select_plan_path, notice: "El plan nuevo plan fue seleccionado exitosamente."
               return
@@ -314,7 +316,7 @@ class PayUController < ApplicationController
 
         encrypted_data = crypt.encrypt_and_sign({reference: trx_id, description: "Cambio a plan " + mockCompany.plan.name, amount: due, source_url: select_plan_path})
 
-        
+
         if encrypted_data
           PlanLog.create(trx_id: trx_id, new_plan_id: new_plan.id, prev_plan_id: previous_plan.id, company_id: mockCompany.id, amount: due)
           PayUCreation.create(trx_id: trx_id, payment_method: '', amount: due, details: "Creación de reactivación de plan empresa id "+mockCompany.id.to_s+", nombre "+mockCompany.name+". Cambia de plan "+mockCompany.plan.name+"("+mockCompany.plan.id.to_s+"), por un costo de "+due+". trx_id: "+trx_id+" - mp: "+mockCompany.id.to_s+". Resultado: Se procesa")
@@ -383,7 +385,7 @@ class PayUController < ApplicationController
         not_payed_bookings = Booking.where(:booking_group => @bookings.first.booking_group, :payed => false)
         not_payed_bookings.each do |not_payed_booking|
           @bookings << not_payed_booking
-        end 
+        end
       end
 
       @try_register = false
@@ -451,7 +453,7 @@ class PayUController < ApplicationController
                 service_promo = ServicePromo.find(booking.service_promo_id)
                 service_promo.max_bookings = service_promo.max_bookings + 1
                 service_promo.save
-              end       
+              end
               booking.delete
             end
           end
@@ -495,11 +497,11 @@ class PayUController < ApplicationController
               service_promo = ServicePromo.find(booking.service_promo_id)
               service_promo.max_bookings = service_promo.max_bookings + 1
               service_promo.save
-            end       
+            end
             booking.delete
           end
         end
-        
+
         #@bookings = Array.new
         #bookings.each do |failed_booking|
           #failed_booking = Booking.find_by_token(params[:token])
@@ -527,7 +529,7 @@ class PayUController < ApplicationController
         company.payment_status_id = PaymentStatus.find_by_name("Activo").id
         if company.save
           CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "OK notification_billing")
-          CompanyMailer.pay_u_online_receipt_email(company.id, pay_u_notification.id)
+          pay_u_notification.sendings.build(method: 'online_receipt').save
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 7, details: "ERROR notification_billing "+company.errors.full_messages.inspect)
         end
@@ -542,8 +544,10 @@ class PayUController < ApplicationController
         if company.save
           company.company_plan_setting.base_price = company.plan.plan_countries.find_by_country_id(company.country.id).price
           company.company_plan_setting.save
+          company.company_setting.mails_base_capacity = company.plan.monthly_mails
+          company.company_setting.save
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "OK notification_plan")
-          CompanyMailer.pay_u_online_receipt_email(company.id, pay_u_notification.id)
+          pay_u_notification.sendings.build(method: 'online_receipt').save
         else
           CompanyCronLog.create(company_id: company.id, action_ref: 8, details: "ERROR notification_plan "+company.errors.full_messages.inspect)
         end
@@ -569,10 +573,10 @@ class PayUController < ApplicationController
         if bookings.count > 0
 
           if bookings.first.booking_group.nil?
-            BookingMailer.book_service_mail(bookings.first)
+            bookings.first.sendings.build(method: 'new_booking').save
           else
             if bookings.first.session_booking.nil?
-              Booking.send_multiple_booking_mail(bookings.first.location_id, bookings.first.booking_group)
+              bookings.first.sendings.build(method: 'multiple_booking').save
             else
               bookings.first.session_booking.send_sessions_booking_mail
             end
@@ -582,10 +586,8 @@ class PayUController < ApplicationController
           return
         end
         #Enviar comprobantes de pago
-        BookingMailer.book_payment_mail(payed_booking)
-        BookingMailer.book_payment_company_mail(payed_booking)
-        BookingMailer.book_payment_agendapro_mail(payed_booking)
-        
+        payed_booking.payment_email
+
       end
     elsif pay_u_notification && pay_u_notification.id
       CompanyCronLog.create(company_id: nil, action_ref: 7, details: "ERROR notification_billing "+pay_u_notification.id.to_s)

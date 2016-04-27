@@ -1569,7 +1569,7 @@ class SearchsController < ApplicationController
 			last_minute_locs = Array.new
 			last_minute_ordered_locs = Array.new
 
-			
+
 			@last_minute_results = Array.new
 			@last_minute_locations = Array.new
 

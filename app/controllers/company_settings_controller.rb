@@ -56,8 +56,15 @@ class CompanySettingsController < ApplicationController
 
     @attribute = Attribute.new
     @attribute_category = AttributeCategory.new
+    @attribute_group = AttributeGroup.new
 
-    @attributes = @company.custom_attributes
+    @attribute_group_otros = AttributeGroup.where(name: "Otros", company_id: @company.id).first
+
+    @attributes = @company.custom_attributes.joins(:attribute_group).order('attribute_groups.order asc').order('attributes.order asc').order('name asc')
+    @attribute_groups = @company.attribute_groups.order(order: :asc).order(name: :asc)
+
+    @custom_filter = CustomFilter.new
+    @custom_filters = @company.custom_filters
 
     @notification_email = NotificationEmail.new
     @notifications = NotificationEmail.where(company: @company).order(:receptor_type)
@@ -105,7 +112,7 @@ class CompanySettingsController < ApplicationController
           @company_setting.errors.full_messages.each do |error|
             errors += error + ' '
           end
-          flash[:alert] = errors
+          flash[:error] = errors
           @company = Company.find(current_user.company_id)
           @emails = current_user.company.company_from_email
           @company_from_email = CompanyFromEmail.new
@@ -161,6 +168,6 @@ class CompanySettingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def company_setting_params
-      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time, :page_id, :booking_history, :use_identification_number, :staff_code, :booking_configuration_email, :max_changes, :deal_name, :deal_activate, :deal_overcharge, :deal_exclusive, :deal_quantity, :deal_constraint_option, :deal_constraint_quantity, :deal_identification_number, :deal_required, :allows_online_payment, :bank_id, :account_number, :company_rut, :account_name, :account_type, :allows_optimization, :activate_notes, :receipt_required, :can_edit, :can_cancel, :payment_client_required, :show_cashes, :editable_payment_prices, :mandatory_mock_booking_info, :strict_booking, :preset_notes, online_cancelation_policy_attributes: [:cancelable, :cancel_max, :cancel_unit, :min_hours, :modifiable, :modification_max, :modification_unit], payment_method_settings_attributes: [:id, :payment_method_id, :company_setting_id, :active, :number_required], promo_time_attributes: [:morning_start, :morning_end, :afternoon_start, :afternoon_end, :night_start, :night_end, :morning_default, :afternoon_default, :night_default, :active])
+      params.require(:company_setting).permit(:email, :sms, :signature, :company_id, :before_booking, :after_booking, :before_edit_booking, :activate_workflow, :activate_search, :client_exclusive, :provider_preference, :calendar_duration, :extended_schedule_bool, :extended_min_hour, :extended_max_hour, :schedule_overcapacity, :provider_overcapacity, :resource_overcapacity, :booking_confirmation_time, :page_id, :booking_history, :use_identification_number, :staff_code, :booking_configuration_email, :max_changes, :deal_name, :deal_activate, :deal_overcharge, :deal_exclusive, :deal_quantity, :deal_constraint_option, :deal_constraint_quantity, :deal_identification_number, :deal_required, :allows_online_payment, :bank_id, :account_number, :company_rut, :account_name, :account_type, :allows_optimization, :activate_notes, :receipt_required, :can_edit, :can_cancel, :payment_client_required, :show_cashes, :editable_payment_prices, :mandatory_mock_booking_info, :strict_booking, :preset_notes, :booking_leap, :allows_overlap_hours, online_cancelation_policy_attributes: [:cancelable, :cancel_max, :cancel_unit, :min_hours, :modifiable, :modification_max, :modification_unit], payment_method_settings_attributes: [:id, :payment_method_id, :company_setting_id, :active, :number_required], promo_time_attributes: [:morning_start, :morning_end, :afternoon_start, :afternoon_end, :night_start, :night_end, :morning_default, :afternoon_default, :night_default, :active])
     end
 end

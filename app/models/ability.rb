@@ -106,6 +106,7 @@ class Ability
     can :book_session_form, Booking
     can :update_book_session, Booking
     can :sessions_calendar, Booking
+    can :user_delete_treatment, Booking
 
     can :pdf, ServiceProvider
 
@@ -116,13 +117,14 @@ class Ability
 
     can :get_promotions_popover, Service
     can :promotion_hours, Booking
+    can :available_hours, Booking
     can :show_time_promo, Service
     can :show_last_minute_promo, Service
     can :last_minute_hours, Service
     can :show_treatment_promo, Service
     can :treatment_promo_hours, Service
     can :get_treatment_price, Booking
-
+    can :hours_test, Booking
 
     if user.role_id == Role.find_by_name("Super Admin").id
 
@@ -134,6 +136,21 @@ class Ability
         can :create, Company
 
     elsif user.role_id == Role.find_by_name("Administrador General").id
+
+        can :stock_change, Product, :company_id => user.company_id
+        can :update_stock, Product, :company_id => user.company_id
+
+        can :delete_treatment, Booking, :company_id => user.company_id
+        can :get_treatment_info, Booking, :company_id => user.company_id
+
+        can :new_filter_form, CustomFilter, :company_id => user.company_id
+        can :edit_filter_form, CustomFilter, :company_id => user.company_id
+        can :client_base_pdf, Client, :company_id => user.company_id
+
+        can :select_default_plan, Company, :company_id => user.company_id
+
+        can :rearrange, Attribute, :company_id => user.company_id
+        can :rearrange, AttributeGroup, :company_id => user.company_id
 
         can :select_plan, Plan
         can :use_email_templates, Client #FIXME
@@ -164,6 +181,15 @@ class Ability
         can :create, Company, :id => user.company_id
         can :update, Company, :id => user.company_id
 
+        can :locations_stats_excel, Product, :company_id => user.company_id
+        can :logs_history_excel, Product, :company_id => user.company_id
+        can :logs_history, Product, :company_id => user.company_id
+        can :products, ProductCategory, :company_id => user.company_id
+        can :history, Product, :company_id => user.company_id
+        can :seller_history, Product, :company_id => user.company_id
+        can :product_history, Product, :company_id => user.company_id
+        can :stats, Product, :company_id => user.company_id
+        can :locations_stats, Product, :company_id => user.company_id
         can :location_products, Location, :company_id => user.company_id
         can :get_staff_by_code, StaffCode, :company_id => user.company_id
         can :create_new_payment, Payment, :company_id => user.company_id
@@ -397,6 +423,12 @@ class Ability
         can :update, AttributeCategory, :company_id => user.company_id
         can :destroy, AttributeCategory, :company_id => user.company_id
 
+        can :show, AttributeGroup, :company_id => user.company_id
+        can :create, AttributeGroup, :company_id => user.company_id
+        can :update, AttributeGroup, :company_id => user.company_id
+        can :destroy, AttributeGroup, :company_id => user.company_id
+        can :edit_form, AttributeGroup, :company_id => user.company.id
+
         can :show, ClientFile, :client => {:company_id => user.company_id}
         can :create, ClientFile, :client => {:company_id => user.company_id}
         can :update, ClientFile, :client => {:company_id => user.company_id}
@@ -408,6 +440,7 @@ class Ability
         can :destroy, CompanyFile, :company_id => user.company_id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
+        can :update_custom_attributes, Client, :company_id => user.company_id
 
         can :files, Company, :company_id => user.company_id
         can :upload_file, Company, :company_id => user.company_id
@@ -440,6 +473,15 @@ class Ability
 
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
+
+        can :stock_change, Product, :company_id => user.company_id
+        can :update_stock, Product, :company_id => user.company_id
+
+        can :delete_treatment, Booking, :company_id => user.company_id
+        can :get_treatment_info, Booking, :company_id => user.company_id
+
+        can :rearrange, Attribute, :company_id => user.company_id
+        can :rearrange, AttributeGroup, :company_id => user.company_id
 
         can :upload_file, Client
 
@@ -499,6 +541,15 @@ class Ability
         can :create, Product, :company_id => user.company_id
         can :update, Product, :company_id => user.company_id
 
+        can :locations_stats_excel, Product, :company_id => user.company_id
+        can :logs_history_excel, Product, :company_id => user.company_id
+        can :logs_history, Product, :company_id => user.company_id
+        can :products, ProductCategory, :company_id => user.company_id
+        can :history, Product, :company_id => user.company_id
+        can :seller_history, Product, :company_id => user.company_id
+        can :product_history, Product, :company_id => user.company_id
+        can :stats, Product, :company_id => user.company_id
+        can :locations_stats, Product, :company_id => user.company_id
         can :location_products, Location, :company_id => user.company_id
         can :get_staff_by_code, StaffCode, :company_id => user.company_id
         can :create_new_payment, Payment, :company_id => user.company_id
@@ -681,8 +732,13 @@ class Ability
         can :move_file, Client, :company_id => user.company_id
         can :edit_file, Client, :company_id => user.company_id
 
+        can :get_attribute_categories, Attribute, :company_id => user.company_id
+        can :update_custom_attributes, Client, :company_id => user.company_id
+
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
+        can :delete_treatment, Booking, :company_id => user.company_id
+        can :get_treatment_info, Booking, :company_id => user.company_id
         can :location_users, User, :company_id => user.company_id
 
         can :index_content, Payment
@@ -745,6 +801,15 @@ class Ability
         can :send_mail, Client, :company_id => user.company_id
         can :import, Client
 
+        can :locations_stats_excel, Product, :company_id => user.company_id
+        can :logs_history_excel, Product, :company_id => user.company_id
+        can :logs_history, Product, :company_id => user.company_id
+        can :products, ProductCategory, :company_id => user.company_id
+        can :history, Product, :company_id => user.company_id
+        can :seller_history, Product, :company_id => user.company_id
+        can :product_history, Product, :company_id => user.company_id
+        can :stats, Product, :company_id => user.company_id
+        can :locations_stats, Product, :company_id => user.company_id
         can :location_products, Location, :company_id => user.company_id
         can :get_staff_by_code, StaffCode, :company_id => user.company_id
         can :create_new_payment, Payment, :company_id => user.company_id
@@ -803,6 +868,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Staff").id
 
+        can :delete_treatment, Booking, :company_id => user.company_id
+        can :get_treatment_info, Booking, :company_id => user.company_id
         can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
 
         can :read, ServiceProvider, :id => user.service_providers.pluck(:id)

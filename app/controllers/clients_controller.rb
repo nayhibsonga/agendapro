@@ -8,15 +8,55 @@ class ClientsController < ApplicationController
   load_and_authorize_resource
   layout "admin"
 
+  include ApplicationHelper
+
   helper_method :sort_column, :sort_direction
 
   # GET /clients
   # GET /clients.json
   def index
+
+
+    # if mobile_request?
+    #   @company = current_user.company
+    # end
+    # @monthly_mails = current_user.company.company_setting.get_mails_capacity #.plan.monthly_mails
+    # @monthly_mails_sent = current_user.company.company_setting.monthly_mails
+    # @from_collection = current_user.company.company_from_email.where(confirmed: true)
+
+    # @locations = Location.where(company_id: current_user.company_id, active: true).order(:order, :name)
+    # @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
+    # @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
+
+    # selected_custom_filters = []
+    # if !params[:custom_filters].blank?
+    #   selected_custom_filters = CustomFilter.find(params[:custom_filters])
+    # end
+
+    # @clients = Client.accessible_by(current_ability).filter(current_user.company_id, params)
+    # @clients_export = Client.accessible_by(current_ability).filter(current_user.company_id, params)
+
+    # #Custom filters
+    # selected_custom_filters.each do |custom_filter|
+    #   @clients = Client.custom_filter(@clients, custom_filter)
+    #   @clients_export = Client.custom_filter(@clients_export, custom_filter)
+    # end
+
+    # @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
+    # @clients_export = @clients_export.order(sort_column + " " + sort_direction)
+
+    # @custom_filters = current_user.company.custom_filters
+
+    # respond_to do |format|
+    #   format.html
+    #   format.csv
+    #   format.xls
+    # end
+
     if mobile_request?
       @company = current_user.company
     end
-    @monthly_mails = current_user.company.plan.monthly_mails
+    @monthly_mails = current_user.company.company_setting.get_mails_capacity #.plan.monthly_mails
     @monthly_mails_sent = current_user.company.company_setting.monthly_mails
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
 
@@ -24,36 +64,35 @@ class ClientsController < ApplicationController
     @service_providers = ServiceProvider.where(company_id: current_user.company_id, active: true).order(:order, :public_name)
     @services = Service.where(company_id: current_user.company_id, active: true).order(:order, :name)
 
-    if [:locations, :providers, :services, :range_from, :range_to].any? {|s| params.key?(s) && !params[s].blank? }
-      attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
-      @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
-
-      @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(sort_column + " " + sort_direction)
-
-      logger.debug "Clients:"
-      logger.debug @clients.inspect
-
-      logger.debug "Clients export:"
-      logger.debug @clients_export.inspect
-
-    else
-      @clients = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
-
-      @clients_export = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(sort_column + " " + sort_direction)
-
-      logger.debug "Clients:"
-      logger.debug @clients.inspect
-
-      logger.debug "Clients export:"
-      logger.debug @clients_export.inspect
-      
+    selected_custom_filters = []
+    if !params[:custom_filters].blank?
+      selected_custom_filters = CustomFilter.find(params[:custom_filters])
     end
+
+    @clients = Client.accessible_by(current_ability)
+    #@clients_export = Client.accessible_by(current_ability)
+
+    #Custom filters
+    selected_custom_filters.each do |custom_filter|
+      @clients = Client.custom_filter(@clients, custom_filter)
+      #@clients_export = Client.custom_filter(@clients_export, custom_filter)
+    end
+
+
+    @clients = @clients.filter(current_user.company_id, params)
+    #@clients_export = @clients_export.filter(current_user.company_id, params)
+
+    @clients_export = @clients.order(sort_column + " " + sort_direction)
+    @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
+
+    @custom_filters = current_user.company.custom_filters
 
     respond_to do |format|
       format.html
-      format.csv
+      format.csv { render text: Client.export_csv(current_user.company_id, @clients_export) }
       format.xls
     end
+
   end
 
   # GET /clients/1
@@ -92,7 +131,7 @@ class ClientsController < ApplicationController
     @service_provider_ids = params[:service_provider_ids] ? params[:service_provider_ids].split(',') : ServiceProvider.where(company_id: current_user.company_id).accessible_by(current_ability).pluck(:id)
     @status_ids = params[:status_ids] ? params[:status_ids].split(',') : Status.all.pluck(:id)
 
-    @bookings = @client.bookings.where(start: @from.beginning_of_day..@to.end_of_day, service_id: @service_ids, service_provider_id: @service_provider_ids, status_id: @status_ids).where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc).paginate(:page => params[:page], :per_page => 25)
+    @bookings = @client.bookings.where(start: @from.beginning_of_day..@to.end_of_day, service_id: @service_ids, service_provider_id: @service_provider_ids, status_id: @status_ids).where('is_session = false or (is_session = true and (is_session_booked = true or status_id = ?))', Status.find_by_name("Cancelado").id).order(start: :desc).paginate(:page => params[:page], :per_page => 25)
 
     @booked = @bookings.where(status: Status.find_by(name: 'Reservado')).count
     @confirmed = @bookings.where(status: Status.find_by(name: 'Confirmado')).count
@@ -179,13 +218,15 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client.save
         @client.save_attributes(params)
-        format.html { redirect_to clients_path, notice: 'Cliente creado exitosamente.' }
+        flash[:success] = "Cliente creado exitosamente."
+        format.html { redirect_to clients_path}
         format.json { render action: 'edit', status: :created, location: @client }
       else
         format.html {
           @company = current_user.company
           @activeBookings = Array.new
           @lastBookings = Array.new
+          @folders = Array.new
           @client_comment = ClientComment.new
           @sessionBookings = []
           render action: 'new' }
@@ -203,7 +244,69 @@ class ClientsController < ApplicationController
         #Check for custom attributes
 
         @client.save_attributes(params)
+        flash[:success] = "Cliente actualizado exitosamente."
 
+        format.html { redirect_to edit_client_path(id: @client.id) }
+        format.json { head :no_content }
+      else
+        format.html {
+          @activeBookings = Booking.where(:client_id => @client).where("start > ?", DateTime.now).order(start: :asc)
+          @lastBookings = Booking.where(:client_id => @client).where("start <= ?", DateTime.now).order(start: :desc)
+          @next_bookings = Booking
+          @client_comment = ClientComment.new
+          @client_comments = ClientComment.where(client_id: @client).order(created_at: :desc)
+          @company = current_user.company
+
+          @preSessionBookings = SessionBooking.where(:client_id => @client)
+
+          @sessionBookings = []
+
+          @files = @client.client_files.order('updated_at desc').limit(5)
+
+          s3 = Aws::S3::Client.new
+          resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/', delimiter: '/')
+
+          @s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+          folders_prefixes = resp.common_prefixes
+          @folders = []
+
+          folders_prefixes.each do |folder|
+            sub_str = folder.prefix[0, folder.prefix.rindex("/")]
+            @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
+          end
+
+          @preSessionBookings.each do |session_booking|
+
+            include_sb = false
+
+            if session_booking.sessions_taken < session_booking.sessions_amount
+              include_sb = true
+            else
+              session_booking.bookings.each do |booking|
+                if booking.start > DateTime.now
+                  include_sb = true
+                end
+              end
+            end
+
+            if include_sb
+              @sessionBookings << session_booking
+            end
+
+          end
+          render action: 'edit' }
+        format.json { render json: @client.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def update_custom_attributes
+
+    @client = Client.find(params[:client_id])
+
+    respond_to do |format|
+      if @client.save_attributes(params)
         format.html { redirect_to edit_client_path(id: @client.id), notice: 'Cliente actualizado exitosamente.' }
         format.json { head :no_content }
       else
@@ -218,6 +321,21 @@ class ClientsController < ApplicationController
           @preSessionBookings = SessionBooking.where(:client_id => @client)
 
           @sessionBookings = []
+
+          @files = @client.client_files.order('updated_at desc').limit(5)
+
+          s3 = Aws::S3::Client.new
+          resp = s3.list_objects(bucket: ENV['S3_BUCKET'], prefix: 'companies/' +  @client.company_id.to_s + '/clients/' + @client.id.to_s + '/', delimiter: '/')
+
+          @s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+          folders_prefixes = resp.common_prefixes
+          @folders = []
+
+          folders_prefixes.each do |folder|
+            sub_str = folder.prefix[0, folder.prefix.rindex("/")]
+            @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
+          end
 
           @preSessionBookings.each do |session_booking|
 
@@ -329,12 +447,7 @@ class ClientsController < ApplicationController
   def compose_mail
     attendance = params[:attendance].blank? || params[:attendance] == 'true'
     @from_collection = current_user.company.company_from_email.where(confirmed: true)
-    if [:locations, :providers, :services, :range_from, :range_to].any? {|s| params.key?(s) && !params[s].blank? }
-      attendance = if params[:attendance].blank? then true else params[:attendance] == 'true' end
-      mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_location(params[:locations], attendance).filter_provider(params[:providers], attendance).filter_service(params[:services], attendance).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).filter_range(params[:range_from], params[:range_to], attendance).order(:last_name, :first_name).pluck(:email).uniq
-    else
-      mail_list = Client.accessible_by(current_ability).search(params[:search], current_user.company_id).filter_attendance(params[:attendance], current_user.company_id).filter_gender(params[:gender]).filter_birthdate(params[:birth_from], params[:birth_to]).filter_status(params[:statuses]).order(:last_name, :first_name).pluck(:email).uniq
-    end
+    mail_list = Client.accessible_by(current_ability).filter(current_user.company_id, params).order(:last_name, :first_name).pluck(:email).uniq
 
     @tmpl = 'basic'
 
@@ -342,51 +455,33 @@ class ClientsController < ApplicationController
 
     tmp_to = Array.new
     mail_list.each do |email|
-      tmp_to.push(email) if email=~ /([^\s]+)@([^\s]+)/
+      tmp_to.push(email) if email=~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
     end
     @to = tmp_to.join(', ')
   end
 
   def send_mail
-    # Sumar mails eviados
-    current_sent = current_user.company.company_setting.monthly_mails
-    sent_to = params[:to].split(',').each { |mail| mail.strip! }
-    sent_now = sent_to.length
-    current_sent + sent_now >= 0 ? new_mails = current_sent + sent_now : new_mails = 0
-    current_user.company.company_setting.update_attributes :monthly_mails => (new_mails)
-    attachments = params[:attachment]
-    subject = params[:subject]
-    message = params[:message]
-    sent_from = params[:from]
+    # attachments = params[:attachment]
+    # attachment = {
+    #   :type => attachments.content_type,
+    #   :name => attachments.original_filename,
+    #   :content => Base64.encode64(File.read(attachments.tempfile))
+    # }
 
-    Thread.new do
-      clients = Array.new
-      sent_to.each do |client_mail|
-        client_info = {
-          :email => client_mail,
-          :type => 'bcc'
-        }
-        clients.push(client_info)
-      end
-
-      if attachments
-        attachment = {
-          :type => attachments.content_type,
-          :name => attachments.original_filename,
-          :content => Base64.encode64(File.read(attachments.tempfile))
-        }
-      else
-        attachment = {}
-      end
-
-      ClientMailer.send_client_mail(current_user, clients, subject, message, attachment, sent_from)
-
-      # Close database connection
-      ActiveRecord::Base.connection.close
-      Thread.exit
+    content = Email::Content.create(
+      template: Email::Template.where(name: "plantilla_02").first,
+      company: current_user.company,
+      from: params[:from],
+      to: params[:to]
+      )
+    if content.present?
+      flash[:notice] = 'E-mail enviado exitosamente'
+      content.update(subject: params[:subject], send_email: true, data: { text1: params[:message] })
+      redirect_to(action: :index)
+    else
+      flash[:error] = "Se produjo un error al crear un nuevo Email"
+      redirect_to(controller: :clients, action: :compose_mail)
     end
-
-    redirect_to '/clients', notice: 'E-mail enviado exitosamente.'
   end
 
   def suggestion
@@ -489,7 +584,7 @@ class ClientsController < ApplicationController
     filename_arr = params[:file].original_filename.split(".")
     if filename_arr.length > 0
       extension = filename_arr[filename_arr.length - 1]
-      if extension == "csv" || extension == "xls"
+      if extension == "csv" || extension == "xls" || extension == "xlsx" || extension == "xlsm" || extension == "ods" || extension == "xml"
         message = Client.import(params[:file], current_user.company_id)
       else
         message = "La extensión del archivo no es correcta. Sólo se pueden importar archivos xls y csv."
@@ -774,6 +869,22 @@ class ClientsController < ApplicationController
     folders_prefixes.each do |folder|
       sub_str = folder.prefix[0, folder.prefix.rindex("/")]
       @folders << sub_str[sub_str.rindex("/") + 1, sub_str.length]
+    end
+
+  end
+
+  def client_base_pdf
+
+    @company = current_user.company
+    @filename = "detalle_carga"
+    date = DateTime.now
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = ClientsBasePdf.new(@company.id)
+        send_data pdf.render, filename: @filename + "_" + date.to_s[0,10] + '.pdf', type: 'application/pdf'
+      end
     end
 
   end
