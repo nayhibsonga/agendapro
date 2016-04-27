@@ -127,11 +127,11 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		DECLARE
 		  start_time time;
 		  end_time time;
-		  used_time time;
-		  available_time time;
-		  break_time time;
-		  partial_start_break_time time;
-		  partial_end_break_time time;
+		  used_time interval;
+		  available_time interval;
+		  break_time interval;
+		  partial_start_break_time interval;
+		  partial_end_break_time interval;
 		  used_epoch decimal;
 		  available_epoch decimal;
 		  break_epoch decimal;
@@ -152,7 +152,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  end_break_epoch := 0;
 		  available_sum := 0;
 
-		  select into used_time SUM(bookings."end" - bookings."start") from bookings where bookings."start" >= start_date AND bookings."end" <= end_date AND bookings.service_provider_id = provider_id;
+		  select into used_time SUM(bookings."end" - bookings."start") from bookings where bookings.status_id NOT IN (select id from statuses where statuses.name = 'Cancelado') AND (bookings.is_session = false OR (bookings.is_session = TRUE AND bookings.is_session_booked = TRUE)) AND bookings."start" >= start_date AND bookings."end" <= end_date AND bookings.service_provider_id = provider_id;
 		  select into available_time SUM(provider_times.close - provider_times.open) from provider_times where provider_times.day_id = day and provider_times.service_provider_id = provider_id;
 		  select into break_time SUM(provider_breaks."end" - provider_breaks."start") from provider_breaks where provider_breaks."start" >= start_date and provider_breaks."end" <= end_date and provider_breaks.service_provider_id = provider_id;
 		  select into partial_start_break_time SUM(provider_breaks."end" - start_date) from provider_breaks where provider_breaks."start" < start_date and provider_breaks."end" <= end_date and provider_breaks."end" > start_date and provider_breaks.service_provider_id = provider_id;
@@ -187,7 +187,6 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  END IF;
 		END
 		$$ LANGUAGE plpgsql;
-
 
 		CREATE OR REPLACE FUNCTION get_hour_promo_details(start_time timestamp, end_time timestamp, service_id int, local_id int, day int, bundle_present boolean)
 		returns hour_promo_detail
@@ -362,6 +361,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  day int;
 		  comp_id int;
 		  dtp timestamp;
+		  base_dtp timestamp;
 		  day_open_time timestamp;
 		  service_staff_pos int;
 		  service_staff_length int;
@@ -492,6 +492,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  LOOP
 		    service_staff_pos := 1;
 		    hour_bookings := ARRAY[]::hour_booking[];
+		    base_dtp := dtp;
 		    <<staff_loop>>
 		      LOOP
 		      service_valid := false;
@@ -504,8 +505,6 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		      END IF;
 
 		      current_service_providers_ids := (select array(select id from service_providers as t1 where active = true and online_booking = true and location_id = local_id and id in (select service_provider_id from service_staffs as t2 where t1.id = t2.service_provider_id AND t2.service_id = service_ids[service_staff_pos])));
-
-		      RAISE NOTICE 'service_providers: %', current_service_providers_ids;
 
 		      --Break if there are no providers
 		      IF array_length(current_service_providers_ids, 1) < 1 THEN
@@ -526,30 +525,38 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		      min_aux := (select date_trunc('day', dtp));
 		      min_calc := (select min_aux + interval '1h' * date_part('hour', min_open) + interval '1' minute * date_part('minute', min_open));
 
-		      RAISE NOTICE 'dtp: %', dtp;
-		      RAISE NOTICE 'min_open: %', min_open;
-		      RAISE NOTICE 'min_cal: %', min_calc;
-
 		      IF min_calc > dtp THEN
 		        dtp := min_calc; -- check how to assign time
+		        base_dtp := dtp;
 		      END IF;
 
 		      --This is to overlaps hours when not optimized
 		     --RAISE NOTICE 'BEFORE STATE: service_staff_pos: % - allows_optimization: % - last_check % - allows_overlap %', service_staff_pos, allows_optimization, last_check, allows_overlap;
-		      IF ((service_staff_pos = 1) AND (allows_optimization = false) AND (last_check = true) AND (allows_overlap = TRUE)) THEN
+
+		      --RAISE NOTICE 'dtp_before1: %', dtp;
+
+		      --IF ((service_staff_pos = 1) AND (allows_optimization = false) AND (last_check = true) AND (allows_overlap = TRUE)) THEN
 		       --RAISE NOTICE 'ENTERS WITH % - DURATION IS % - LEAP IS %', dtp, duration, leap;
-		        dtp := (select dtp - interval '1' minute * duration + interval '1' minute * leap);
+		        --dtp := (select dtp - interval '1' minute * duration + interval '1' minute * leap);
 		       --RAISE NOTICE 'LEAVES WITH %', dtp;
-		      END IF;
+		      --END IF;
+
+		      --RAISE NOTICE 'dtp_before2: %', dtp;
 
 		      --This is for calculating jump when there is no optimization
-		      IF ((service_staff_pos = 1) AND (allows_optimization = false)) THEN
-		        offset_diff := (select (date_part('minute', dtp) - date_part('minute', day_open_time)));
-		        offset_rem := offset_diff % leap;
-		        IF offset_rem != 0 THEN
-		          dtp:= dtp + interval '1' minute * (leap - offset_rem);
-		        END IF;
-		      END IF;
+		      --IF ((service_staff_pos = 1) AND (allows_optimization = false)) THEN
+		        --RAISE NOTICE 'minute_dtp: %', date_part('minute', dtp);
+		        --RAISE NOTICE 'minute_min_calc: %', date_part('minute', min_calc);
+		        --offset_diff := (select (date_part('minute', dtp) - date_part('minute', min_calc)));
+		        --RAISE NOTICE 'offset_diff: %', offset_diff;
+		        --offset_rem := offset_diff % leap;
+		        --RAISE NOTICE 'offset_rem: %', offset_diff;
+		        --IF offset_rem != 0 THEN
+		        --  dtp:= dtp + interval '1' minute * (leap - offset_rem);
+		        --END IF;
+		      --END IF;
+
+		      --RAISE NOTICE 'dtp_after: %', dtp;
 
 		      IF dtp >= before_time THEN
 		        service_valid := true;
@@ -602,7 +609,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		        --RAISE NOTICE 'Promo detail: %', string_agg(promo_detail, ',');
 
-		        RAISE NOTICE 'HOUR VALID: % - %', hour_booking.start_time, hour_booking.end_time;
+		        --RAISE NOTICE 'HOUR VALID: % - %', hour_booking.start_time, hour_booking.end_time;
 
 		        --hour_bookings := array_append(hour_bookings, hour_booking);
 		        hour_bookings[service_staff_pos-1] := hour_booking;
@@ -632,7 +639,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		      ELSE
 
-		        RAISE NOTICE 'HOUR NOT VALID: % - %', dtp, dtp + interval '1' minute * durations[service_staff_pos-1];
+		        --RAISE NOTICE 'HOUR NOT VALID: % - %', dtp, dtp + interval '1' minute * durations[service_staff_pos-1];
 
 		        hour_bookings := ARRAY[]::hour_booking[];
 		        --Reset gap_hour
@@ -749,9 +756,10 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		        ELSE
 		          current_gap := 0;
 		          dtp := (dtp + interval '1' minute * smallest_diff);
+
 		        END IF;
 
-		        service_staff_pos := 1;
+		        service_staff_pos := service_staff_length + 1;
 		        last_check := false;
 
 		      END IF;
@@ -764,9 +772,26 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		      hour_array := hour_bookings;--array_append(hours_array, hour_bookings);
 		      positive_gap := positive_gaps;
+		      IF (allows_optimization = FALSE) THEN
+		        IF (allows_overlap = TRUE) THEN
+		          dtp := base_dtp + interval '1' minute * leap;
+		        ELSE
+
+		            offset_diff := (select extract( epoch from (dtp - min_calc) ) / 60 );
+
+		            offset_rem := offset_diff % leap;
+
+		            IF offset_rem != 0 THEN
+		              dtp:= dtp + interval '1' minute * (leap - offset_rem);
+		            END IF;
+
+		        END IF;
+		      END IF;
 		      RETURN NEXT;
 		    ELSE
-
+		      IF (allows_optimization = FALSE) THEN
+		        dtp := base_dtp + interval '1' minute * leap;
+		      END IF;
 		    END IF;
 
 		    EXIT day_loop WHEN dtp >= end_date;
@@ -776,6 +801,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		END
 		$$ LANGUAGE plpgsql;
+
 
 
 	  __EOI

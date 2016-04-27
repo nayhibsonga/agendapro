@@ -31,6 +31,8 @@ module Agendapro
       end
     }
 
+    config.autoload_paths << Rails.root.join('lib')
+
     # config.encoding = "utf-8"
 
     # config.assets.precompile += %w( ckeditor/* )
@@ -40,7 +42,7 @@ module Agendapro
       YAML.load_file(env_file).each do |key, value|
         ENV[key.to_s] = value
       end if File.exists?(env_file)
-      
+
     end
 
     # Settings in config/environments/* take precedence over those specified here.

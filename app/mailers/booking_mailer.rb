@@ -35,10 +35,11 @@ class BookingMailer < Base::CustomMailer
     mail(
       from: filter_sender(),
       reply_to: filter_sender(@book.location.email),
-      to: filter_recipient(recipient),
+      to: recipient,
       subject: @title,
       template_path: "mailers/#{path}"
       )
+
   end
 
   def cancel_booking (book, recipient, options = {})
@@ -72,7 +73,7 @@ class BookingMailer < Base::CustomMailer
     mail(
       from: filter_sender(),
       reply_to: filter_sender(@book.location.email),
-      to: filter_recipient(recipient),
+      to: recipient,
       subject: @title,
       template_path: "mailers/#{path}"
       )
@@ -113,7 +114,7 @@ class BookingMailer < Base::CustomMailer
     mail(
       from: filter_sender(),
       reply_to: filter_sender(@book.location.email),
-      to: filter_recipient(recipient),
+      to: recipient,
       subject: @title,
       template_path: "mailers/#{path}"
       )
@@ -140,7 +141,7 @@ class BookingMailer < Base::CustomMailer
     mail(
       from: filter_sender(),
       reply_to: filter_sender(@book.location.email),
-      to: filter_recipient(recipient),
+      to: recipient,
       subject: @title,
       template_path: "mailers/agendapro"
       )
@@ -182,7 +183,7 @@ class BookingMailer < Base::CustomMailer
     mail(
       from: filter_sender(),
       reply_to: filter_sender(@book.location.email),
-      to: filter_recipient(recipient),
+      to: recipient,
       subject: @title,
       template_path: "mailers/#{path}"
       )
@@ -215,7 +216,7 @@ class BookingMailer < Base::CustomMailer
     mail(
       from: filter_sender(),
       reply_to: filter_sender(@book.location.email),
-      to: filter_recipient(recipient),
+      to: recipient,
       subject: @title,
       template_path: "mailers/agendapro"
       )
@@ -252,7 +253,7 @@ class BookingMailer < Base::CustomMailer
     mail(
       from: filter_sender(),
       reply_to: filter_sender(book.location.email),
-      to: filter_recipient(recipient),
+      to: recipient,
       subject: @title,
       template_path: "mailers/#{path}"
       )
@@ -287,7 +288,7 @@ class BookingMailer < Base::CustomMailer
     mail(
       from: filter_sender(),
       reply_to: filter_sender(book.location.email),
-      to: filter_recipient(recipient),
+      to: recipient,
       subject: @title,
       template_path: "mailers/#{path}"
       )

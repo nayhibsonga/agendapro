@@ -701,7 +701,9 @@ class Booking < ActiveRecord::Base
           if self.is_session_booked_changed?
             sendings.build(method: 'new_booking').save
           else
-            if self.start_changed?
+            if self.status_id_changed? && self.status_id == Status.find_by_name("Confirmado").id
+              sendings.build(method: 'confirm_booking').save
+            elsif self.start_changed?
               sendings.build(method: 'update_booking').save
             end
           end
@@ -723,7 +725,7 @@ class Booking < ActiveRecord::Base
     timezone = CustomTimezone.from_booking(self)
     if self.start > Time.now + timezone.offset
       if self.status == Status.find_by(:name => "Cancelado")
-        if changed_attributes['status_id']
+        if self.status_id_changed?
           sendings.build(method: 'cancel_booking').save
         end
         #if !self.payed_booking.nil?
@@ -732,9 +734,9 @@ class Booking < ActiveRecord::Base
         # BookingMailer.cancel_payment_mail(self.payed_booking, 3)
         #end
       else
-        if changed_attributes['start']
+        if self.start_changed?
           sendings.build(method: 'update_booking').save
-        elsif changed_attributes['status_id'] and self.status == Status.find_by(:name => "Confirmado")
+        elsif self.status_id_changed? and self.status == Status.find_by(:name => "Confirmado")
           sendings.build(method: 'confirm_booking').save
         end
       end

@@ -15,8 +15,9 @@ class HomeMailer < Base::CustomMailer
     attachments.inline['logo.png'] = File.read('app/assets/images/logos/logodoble2.png')
 
     mail(
-      from: filter_sender("#{@content[:client][:name].titleize} <#{@content[:client][:email]}>"),
-      to: filter_recipient(recipient),
+      from: filter_sender("#{@content[:client][:name].titleize} <contacto@agendapro.cl>"),
+      to: recipient,
+      reply_to: "#{@content[:client][:name]} <#{@content[:client][:email]}>",
       subject: subject,
       template_path: "mailers"
       )

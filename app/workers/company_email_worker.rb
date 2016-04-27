@@ -11,7 +11,7 @@ class CompanyEmailWorker < BaseEmailWorker
       group.compact!
       total_sendings += 1
       total_recipients += group.size
-      CompanyMailer.delay.send(sending.method, company, group.join(', '))
+      CompanyMailer.delay.send(sending.method, company, group.join(', ')) if group.size > 0
     end
 
     sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)

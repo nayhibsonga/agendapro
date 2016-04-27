@@ -7371,7 +7371,9 @@ class BookingsController < ApplicationController
     # end
     for i in 0..serviceStaff.length-1
       services_arr[i] = serviceStaff[i][:service].to_i
-      services << Service.find(services_arr[i])
+      cur_serv = Service.find(services_arr[i])
+      total_services_duration += cur_serv.duration
+      services << cur_serv
       bundles_arr[i] = serviceStaff[i][:bundle_id].nil? ? 0 : serviceStaff[i][:bundle_id].to_i
       providers_arr[i] = serviceStaff[i][:provider].to_i
     end
@@ -7730,9 +7732,11 @@ class BookingsController < ApplicationController
       time_prop = hours_diff/max_time_diff
     end
 
-    logger.debug "time_prop: " + time_prop.to_s
-    logger.debug "max_time_diff: " + max_time_diff.to_s
-    logger.debug "hours_diff: " + hours_diff.to_s
+
+    leap_duration_diff = 0
+    if booking_leap > total_services_duration
+      leap_duration_diff = booking_leap - total_services_duration
+    end
 
 
     #logger.debug "Max gaps: " + day_positive_gaps.max.to_s
@@ -7740,11 +7744,19 @@ class BookingsController < ApplicationController
       calendar_height = time_prop*67
       adjusted_calendar_height = calendar_height + calendar_height*day_positive_gaps.max.to_f/hours_diff
     else
-      time_prop = hours_diff/booking_leap
-      logger.debug "booking_leap: " + booking_leap.to_s
-      logger.debug "time_prop: " + time_prop.to_s
-      calendar_height = time_prop*67
-      adjusted_calendar_height = calendar_height
+      if leap_duration_diff == 0
+        time_prop = hours_diff/booking_leap
+        calendar_height = time_prop*67
+        adjusted_calendar_height = calendar_height
+      else
+        time_prop = hours_diff.to_f/booking_leap.to_f
+        aux_time_prop = time_prop
+
+        calendar_height = time_prop * 67
+        aux_m = (leap_duration_diff.to_f / booking_leap.to_f) * 67
+
+        adjusted_calendar_height = aux_time_prop * (67 + aux_m) # + (calendar_height.to_f * leap_duration_diff.to_f/(60.to_f * hours_diff.to_f) ) * 67
+      end
     end
     #(day_positive_gaps.max.to_f * 100 / (60 * 100))*67
 
@@ -7754,6 +7766,7 @@ class BookingsController < ApplicationController
 
 
     #logger.debug "Time prop: " + time_prop.to_s
+    
 
 
     if time_prop != 0
@@ -7776,25 +7789,31 @@ class BookingsController < ApplicationController
             span_diff = hour_diff - 8
             top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
             if company_setting.allows_overlap_hours && !company_setting.allows_optimization
-              #top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time + booking_leap)/(60 * hours_diff) ).round(2)
-              #logger.debug "Start: " + hour[:start_block].to_time.to_s
-              #logger.debug "Previous: " + previous_hour.to_s
-              #if hour[:start_block].to_time.strftime("%H:%M") > previous_hour
-              #  top_margin += 67
-              #end
-              logger.debug "start_block: " + hour[:start_block].to_time.strftime("%H:%M")
-              logger.debug "previous_start: " + previous_start
-              logger.debug "min_block: " + min_block_str
-              if hour[:start_block].to_time.strftime("%H:%M") > (previous_start.to_time + booking_leap.minutes).strftime("%H:%M")
-                if previous_start == min_block_str
-                  top_margin = 67.to_f * ((hour[:start_block].to_time.to_f - previous_start.to_time.to_f) / (60.to_f * booking_leap.to_f))
+
+              if leap_duration_diff == 0
+                if hour[:start_block].to_time.strftime("%H:%M") > (previous_start.to_time + booking_leap.minutes).strftime("%H:%M")
+                  if previous_start == min_block_str
+                    top_margin = 67.to_f * ((hour[:start_block].to_time.to_f - previous_start.to_time.to_f) / (60.to_f * booking_leap.to_f))
+                  else
+                    top_margin = 67.to_f * ((hour[:start_block].to_time - (previous_start.to_time + booking_leap.minutes)) / (60.to_f * booking_leap.to_f))
+
+                  end
                 else
-                  top_margin = 67.to_f * ((hour[:start_block].to_time - (previous_start.to_time + booking_leap.minutes)) / (60.to_f * booking_leap.to_f))
-                  logger.debug "Diff: " + (hour[:start_block].to_time - (previous_start.to_time + booking_leap.minutes)).to_s
-                  logger.debug "start: " + hour[:start_block].to_time.to_s
-                  logger.debug "previous: " + previous_start.to_time.to_s
-                  logger.debug "leap: " + booking_leap.to_s
+
                 end
+              else
+
+                  if previous_start == min_block_str && previous_hour == min_block_str
+
+                    top_margin = 67.to_f * ((hour[:start_block].to_time.to_f - previous_start.to_time.to_f) / (60.to_f * booking_leap.to_f)) + ((hour[:start_block].to_time - previous_start.to_time) / (60.to_f * booking_leap.to_f) ) * (calendar_height.to_f * leap_duration_diff.to_f/(60.to_f * hours_diff.to_f) ) * 67.to_f
+                  else
+
+                    
+                    #top_margin = 67.to_f * ((hour[:start_block].to_time - (previous_start.to_time + booking_leap.minutes)) / (60.to_f * booking_leap.to_f))
+                    top_margin = 67.to_f * ( ((hour[:start_block].to_time - (previous_start.to_time + booking_leap.minutes)) / (60.to_f * booking_leap.to_f)) ) + ((hour[:start_block].to_time - previous_start.to_time) / (60.to_f * booking_leap.to_f) ) * (calendar_height.to_f * leap_duration_diff.to_f/(60.to_f * hours_diff.to_f) ) * 67.to_f
+
+                  end
+
               end
             end
           else
@@ -7831,17 +7850,28 @@ class BookingsController < ApplicationController
             span_diff = hour_diff - 8
             top_margin = (calendar_height * (hour[:start_block].to_time - previous_hour.to_time)/(60 * hours_diff) ).round(2)
             if company_setting.allows_overlap_hours && !company_setting.allows_optimization
-              logger.debug "start_block: " + hour[:start_block].to_time.strftime("%H:%M")
-              logger.debug "previous_start: " + previous_start
-              if hour[:start_block].to_time.strftime("%H:%M") > (previous_start.to_time + booking_leap.minutes).strftime("%H:%M")
-                if previous_start == min_block
-                  top_margin = 67.to_f * ((hour[:start_block].to_time.to_f - previous_start.to_time.to_f) / (60.to_f * booking_leap.to_f))
-                else
-                  top_margin = 67.to_f * ((hour[:start_block].to_time.to_f - (previous_start.to_time.to_f + booking_leap)) / (60.to_f * booking_leap.to_f))
-                  logger.debug "start: " + hour[:start_block].to_time.to_s
-                  logger.debug "previous: " + previous_start.to_time.to_s
-                  logger.debug "leap: " + booking_leap.to_s
+              if leap_duration_diff == 0
+
+                if hour[:start_block].to_time.strftime("%H:%M") > (previous_start.to_time + booking_leap.minutes).strftime("%H:%M")
+                  if previous_start == min_block
+                    top_margin = 67.to_f * ((hour[:start_block].to_time.to_f - previous_start.to_time.to_f) / (60.to_f * booking_leap.to_f))
+                  else
+                    top_margin = 67.to_f * ((hour[:start_block].to_time.to_f - (previous_start.to_time.to_f + booking_leap)) / (60.to_f * booking_leap.to_f))
+
+                  end
                 end
+              else
+
+                  if previous_start == min_block_str && previous_hour == min_block_str
+
+                    top_margin = 67.to_f * ((hour[:start_block].to_time.to_f - previous_start.to_time.to_f) / (60.to_f * booking_leap.to_f)) + ((hour[:start_block].to_time - previous_start.to_time) / (60.to_f * booking_leap.to_f) ) * (calendar_height.to_f * leap_duration_diff.to_f/(60.to_f * hours_diff.to_f) ) * 67.to_f
+                  else
+
+                    #top_margin = 67.to_f * ((hour[:start_block].to_time - (previous_start.to_time + booking_leap.minutes)) / (60.to_f * booking_leap.to_f))
+                    top_margin = 67.to_f * ( ((hour[:start_block].to_time - (previous_start.to_time + booking_leap.minutes)) / (60.to_f * booking_leap.to_f)) ) + ((hour[:start_block].to_time - previous_start.to_time) / (60.to_f * booking_leap.to_f) ) * (calendar_height.to_f * leap_duration_diff.to_f/(60.to_f * hours_diff.to_f) ) * 67.to_f
+
+                  end
+
               end
             end
           end
