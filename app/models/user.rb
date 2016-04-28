@@ -35,7 +35,9 @@ class User < ActiveRecord::Base
 	WORKER = 'UserEmailWorker'
 
 	def send_welcome_mail
-		sendings.build(method: 'welcome_email').save
+		unless Role.where(name: ["Staff", "Recepcionista", "Admnistrador Local", "Staff (sin edición)"]).include? self.role
+			sendings.build(method: 'welcome_email').save
+		end
 	end
 
 	def get_past_bookings

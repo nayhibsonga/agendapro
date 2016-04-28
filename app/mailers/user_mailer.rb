@@ -1,7 +1,7 @@
 class UserMailer < Base::CustomMailer
   layout :select_layout
 
-  def welcome_email(user, recipient)
+  def welcome_email(user, recipient, password)
     # layout variables
     @title = "Bienvenido a AgendaPro"
     unless user.api_token.present?
@@ -12,6 +12,7 @@ class UserMailer < Base::CustomMailer
 
     # view variables
     @user = user
+    @password = password
 
     path = user.api_token.present? ? "horachic" : "agendapro"
 
