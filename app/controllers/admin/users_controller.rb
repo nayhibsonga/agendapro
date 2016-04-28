@@ -4,7 +4,7 @@ class  Admin::UsersController < ApplicationController
   before_action :quick_add
   layout "admin"
   load_and_authorize_resource
-  
+
   # GET /users
   # GET /users.json
   def index
@@ -34,10 +34,13 @@ class  Admin::UsersController < ApplicationController
     if current_user.role_id != Role.find_by_name("Super Admin").id
       @user.company_id = current_user.company_id
     end
-    @user.password = rand(36**15).to_s(36)
+    generated_password = rand(36**15).to_s(36)
+    @user.password = generated_password
+
 
     respond_to do |format|
       if @user.save
+        UserMailer.delay.send('welcome_email', @user, @user.email, generated_password)
         if current_user.role_id == Role.find_by_name("Super Admin").id
           @user.company.owned = true
           @user.company.save
