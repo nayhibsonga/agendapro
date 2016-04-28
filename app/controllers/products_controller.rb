@@ -536,6 +536,7 @@ class ProductsController < ApplicationController
 
   def logs_history
 
+    @company = current_user.company
     @locations = Location.find(params[:location_ids])
     @products = Product.find(params[:product_ids])
     @from = params[:from].to_datetime.beginning_of_day
@@ -561,6 +562,8 @@ class ProductsController < ApplicationController
   end
 
   def logs_history_excel
+
+    @company = current_user.company
     @locations = Location.find(params[:location_ids].split(","))
     @products = Product.find(params[:product_ids].split(","))
     @from = params[:from].to_datetime.beginning_of_day

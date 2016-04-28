@@ -541,6 +541,7 @@ function editBookingModal(eventId) {
       $('#booking_price').val(booking.price);
       $('#booking_client_id').val(booking.client_id);
       loadClientHistory(eventId);
+      loadClientPayments(booking.client_id);
       $('#booking_client_first_name').val(booking.first_name);
       $('#booking_client_last_name').val(booking.last_name);
       $('#booking_client_identification_number').val(booking.identification_number);
@@ -795,6 +796,8 @@ function createBookingModal(date, provider_id) {
   $('#is_prepayed').text("No");
   $('#bundled_service').hide();
   $('#deleteTreatmentDiv').remove();
+  loadClientPayments(0);
+  $('#booking-history-tbody').empty();
 
   $.getJSON('/local_providers', {location: localId}, function (providersArray) {
     if (providersArray.length > 0) {
@@ -2999,6 +3002,41 @@ function loadClientHistory(booking_id) {
   return false;
 }
 
+function loadClientPayments(client_id) {
+
+  if(client_id > 0)
+  {
+    $.ajax({
+        url: '/clients/' + client_id + '/last_payments?&from=' + $('#from').val() + '&to=' + $('#to').val() + '&items=bookings,mock_bookings_products',
+        cache: false,
+        success: function(html){
+          $('#client-payments-div').html(html);
+        }
+    });
+  }
+  else
+  {
+    $('#client-payments-div').html('<p>No se ha seleccionado cliente...</p>');
+  }
+}
+
+function openPaymentSummary(payment_id)
+{
+  $.ajax({
+    url: '/payment_summary',
+    method: 'get',
+    data: {payment_id: payment_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#paymentSummaryModalBody').empty();
+      $('#paymentSummaryModalBody').append(response);
+      $('#paymentSummaryModal').modal('show');
+    }
+  });
+}
+
 function checkTreatmentPrice(service_id, session_booking_id) {
   $.ajax({
     url: '/get_treatment_price',
@@ -3233,6 +3271,7 @@ $(function() {
       $('#xButton').prop('disabled', false);
       $("#full_name").prop('disabled', true);
       loadClientHistory(0);
+      loadClientPayments(client.id);
       checkClientSessions(true);
     },
     focus: function (event, ui) {
@@ -3308,6 +3347,7 @@ $(function() {
       $('#xButton').prop('disabled', false);
       $("#full_name").prop('disabled', true);
       loadClientHistory(0);
+      loadClientPayments(client.id);
       checkClientSessions(true);
     },
     focus: function (event, ui) {
@@ -3384,6 +3424,7 @@ $(function() {
       $('#full_name').prop('disabled', true);
       $('#full_name').val(client.first_name+' '+client.last_name);
       loadClientHistory(0);
+      loadClientPayments(client.id);
       checkClientSessions(true);
     },
     focus: function (event, ui) {
