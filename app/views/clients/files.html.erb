@@ -1,15 +1,18 @@
 <div class="container-fluid background-grey">
   <div class="row">
-    <div class="col-md-10">
+    <div class="col-md-8">
       <h2 class="text-green">Archivos del cliente</h2>
       <p>Agrega, revisa y maneja los archivos del cliente <%= @client.full_name %>.</p>
       <p>Ocupación actual: <%= bytes_to_text(@client.get_storage_occupation) %></p>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2" style="text-align: right">
       <button class="btn btn-green" id="addFolderBtn" style="margin-bottom: 3px; width: 140px;"><i class="fa fa-folder-o"></i>&nbsp;Agregar carpeta</button><br />
-      <button class="btn btn-green" id="addFileBtn" style="margin-bottom: 3px; width: 140px;"><i class="fa fa-file-o"></i>&nbsp;Agregar archivo</button><br />
-      <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Cliente</span>'.html_safe, client_path(@client), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 140px;" %><br />
-      <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar Cliente</span>'.html_safe, edit_client_path(@client), :class => "btn btn-orange", :style => "width: 140px;" %>
+      <button class="btn btn-green" id="addFileBtn" style="width: 140px;"><i class="fa fa-file-o"></i>&nbsp;Agregar archivo</button><br />
+    </div>
+    <div class="col-md-2">
+      <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Cliente</span>'.html_safe, client_path(@client), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 150px;" %><br />
+      <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar Cliente</span>'.html_safe, edit_client_path(@client), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 150px;" %><br />
+      <%= link_to '<i class="fa fa-money"></i> <span class="hidden-xs">Historial de pagos</span>'.html_safe, client_payments_path(@client), :class => "btn btn-orange", :style => "min-width: 150px;" %>
     </div>
   </div>
 </div>

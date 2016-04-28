@@ -1,8 +1,13 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-10">
       <h2 class="text-green">Edición de Cliente</h2>
       <p>Edita los datos del cliente seleccionado.</p>
+    </div>
+    <div class="col-md-2" style="padding-top: 15px;">
+      <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Cliente</span>'.html_safe, client_path(@client), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 150px;" %><br />
+      <%= link_to '<i class="fa fa-money"></i> <span class="hidden-xs">Historial de pagos</span>'.html_safe, client_payments_path(@client), :class => "btn btn-orange", :style => "margin-bottom: 3px; min-width: 150px;" %><br />
+      <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Archivos</span>'.html_safe, get_client_files_path(client_id: @client.id), :class => "btn btn-orange", :style => "min-width: 150px;" %>
     </div>
   </div>
 </div>
