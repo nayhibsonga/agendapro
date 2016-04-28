@@ -797,6 +797,7 @@ function createBookingModal(date, provider_id) {
   $('#bundled_service').hide();
   $('#deleteTreatmentDiv').remove();
   loadClientPayments(0);
+  $('#booking-history-tbody').empty();
 
   $.getJSON('/local_providers', {location: localId}, function (providersArray) {
     if (providersArray.length > 0) {
