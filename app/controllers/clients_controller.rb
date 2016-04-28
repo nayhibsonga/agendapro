@@ -904,30 +904,40 @@ class ClientsController < ApplicationController
   end
 
   def payments_content
-    @from = params[:from].to_datetime
-    @to = params[:to].to_datetime
+    @from = params[:from].to_datetime.beginning_of_day
+    @to = params[:to].to_datetime.end_of_day
     @payments = []
     
     if params[:items].present?
       items = params[:items].split(",").sort()
       logger.debug items.inspect
       if items == ["bookings", "mock_bookings", "products"]
-        @payments = @client.payments.where(client_id: @client.id, payment_date: @from..@to).order(payment_date: :desc)
+        @payments = @client.payments.where(payment_date: @from..@to).order(payment_date: :desc)
       elsif items == ["bookings"]
-        @payments = @client.payments.where(client_id: @client.id, payment_date: @from..@to, id: Booking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
+        @payments = @client.payments.where(payment_date: @from..@to, id: Booking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
       elsif items == ["mock_bookings"]
-        @payments = @client.payments.where(client_id: @client.id, payment_date: @from..@to, id: MockBooking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
+        @payments = @client.payments.where(payment_date: @from..@to, id: MockBooking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
       elsif items == ["products"]
-        @payments = @client.payments.where(client_id: @client.id, payment_date: @from..@to, id: PaymentProduct.where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
+        @payments = @client.payments.where(payment_date: @from..@to, id: PaymentProduct.where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
       elsif items == ["bookings", "mock_bookings"]
-        @payments = @client.payments.where(client_id: @client.id, payment_date: @from..@to).where('((id IN (?)) OR (id IN (?)))', Booking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id), MockBooking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
+        @payments = @client.payments.where(payment_date: @from..@to).where('((id IN (?)) OR (id IN (?)))', Booking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id), MockBooking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
       elsif items == ["bookings", "products"]
-        @payments = @client.payments.where(client_id: @client.id, payment_date: @from..@to).where('((id IN (?)) OR (id IN (?)))', Booking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id), PaymentProduct.where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
+        @payments = @client.payments.where(payment_date: @from..@to).where('((id IN (?)) OR (id IN (?)))', Booking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id), PaymentProduct.where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
       elsif items == ["mock_bookings", "products"]
-        @payments = @client.payments.where(client_id: @client.id, payment_date: @from..@to).where('((id IN (?)) OR (id IN (?)))', MockBooking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id), PaymentProduct.where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
+        @payments = @client.payments.where(payment_date: @from..@to).where('((id IN (?)) OR (id IN (?)))', MockBooking.where(client_id: @client.id).where.not(:payment_id => nil).pluck(:payment_id), PaymentProduct.where.not(:payment_id => nil).pluck(:payment_id)).order(payment_date: :desc)
       end
     end
     render "_payments_content", layout: false
+  end
+
+  def last_payments
+
+    @payments = []
+
+    @payments = @client.payments.order(payment_date: :desc).limit(10)
+
+    render "_payments_content", layout: false
+
   end
 
   private
