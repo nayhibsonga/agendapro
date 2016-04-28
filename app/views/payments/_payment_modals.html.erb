@@ -14,7 +14,7 @@
   <input type="hidden" id="mandatory_mock_booking_info" value="0" />
 <% end %>
 <div class="modal fade paymentModal" id="paymentModalIntro" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
-  <div class="modal-dialog" style="width: auto;">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
@@ -26,67 +26,77 @@
 
             <form id="fakePaymentIntroForm" action="">
 
-              <div class="payment-form-div form-group has-feedback">
-                <label for="payment_location" class="col-xs-3 control-label">Local</label>
-                <div class="col-xs-9">
-                  <select id="payment_location" name="payment_location" class="form-control">
-                    <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) %>
-                      <option value="<%= location.id %>">
-                        <%= location.name.humanize %>
-                      </option>
-                    <% end %>
-                  </select>
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="payment-form-div form-group has-feedback">
+                    <label for="payment_location" class="col-xs-2 control-label left-label">Local</label>
+                    <div class="col-xs-10">
+                      <select id="payment_location" name="payment_location" class="form-control">
+                        <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) %>
+                          <option value="<%= location.id %>">
+                            <%= location.name.humanize %>
+                          </option>
+                        <% end %>
+                      </select>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+
+                  <div class="payment-form-div form-group">
+                    <label for="payment_date" class="col-xs-2 control-label left-label">Fecha</label>
+                    <div class="col-xs-6">
+                      <input type="text" class="form-control payment_date_ignore" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                    </div>
+                    <div class="col-xs-4" style="text-align: right;">
+                      <%= time_select 'payment_date', 'time', {minute_step: 1}, {:class => 'form-control date-select payment_date_ignore', required: true} %>
+                    </div>
+
+                  </div>
                 </div>
-              </div>
+                <div class="col-md-6">
 
-              <div class="payment-form-div form-group">
-                <label for="payment_date" class="col-xs-3 control-label">Fecha</label>
-                <div class="col-xs-5">
-                  <input type="text" class="form-control payment_date_ignore" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                  <div class="payment-form-div form-group has-feedback">
+                    <label for="payment_cashier_code" class="col-xs-2 control-label left-label">Cajero</label>
+                    <div class="col-xs-10">
+                      <input type="password" class="form-control" id="payment_cashier_code" name="payment_cashier_code" value="" />
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+
+                  </div>
+
+                  <div class="payment-form-div form-group has-feedback">
+                    <input type="hidden" id="payment_cashier_id" value="" />
+                    <label for="payment_cashier_name" class="col-xs-2 control-label left-label">Código</label>
+                    <div class="col-xs-10">
+                      <input type="text" class="form-control" id="payment_cashier_name" name="payment_cashier_name" value="" disabled />
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+
+                  </div>
                 </div>
-                <div class="col-xs-4">
-                <%= time_select 'payment_date', 'time', {minute_step: 1}, {:class => 'form-control date-select payment_date_ignore', required: true} %>
-                </div>
-
-              </div>
-
-              <div style="clear: both; margin-bottom: 8px;">
-              </div>
-
-              <div class="payment-form-div form-group has-feedback">
-                <label for="payment_cashier_code" class="col-xs-3 control-label">Cajero</label>
-                <div class="col-xs-9">
-                  <input type="password" class="form-control" id="payment_cashier_code" name="payment_cashier_code" value="" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
-                </div>
-
-              </div>
-
-              <div class="payment-form-div form-group has-feedback">
-                <input type="hidden" id="payment_cashier_id" value="" />
-                <label for="payment_cashier_name" class="col-xs-3 control-label"></label>
-                <div class="col-xs-9">
-                  <input type="text" class="form-control" id="payment_cashier_name" name="payment_cashier_name" value="" disabled />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
-                </div>
-
               </div>
 
               <% if !current_user.company.company_setting.payment_client_required %>
-                <div class="payment-form-div form-group">
+                <div class="row">
+                  <div class="col-md-6">
 
-                  <div class="col-xs-3">
                   </div>
-                  <div class="col-xs-9" id="openClient">
-                    <span>Asociar o agregar cliente </span><span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
-                  </div>
-                  <div style="clear: both;">
-                  </div>
+                  <div class="col-md-6">
+                    <div class="payment-form-div form-group">
+                      <div class="col-xs-2">
 
+                      </div>
+                      <div class="col-xs-8 openClient">
+                        <span>Asociar o agregar cliente </span>
+                      </div>
+                      <div class="col-xs-2 pull-right openClient">
+                        <span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               <% end %>
 
@@ -98,60 +108,73 @@
 
               <input type="hidden" id="set_client" value="0" />
 
-              <div class="payment-form-div form-group has-feedback client-option" hidden>
-                <label for="payment_client_name" class="col-xs-3 control-label">Cliente</label>
-                <div class="col-xs-9">
-                  <input type="hidden" id="payment_client_id" name="payment_client_id" value="" />
-                  <input type="hidden" id="payment_client_first_name" name="payment_client_first_name" value="" />
-                  <input type="hidden" id="payment_client_last_name" name="payment_client_last_name" value="" />
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="payment_client_name" name="payment_client_name" value="" />
-                    <span class="input-group-btn">
-                      <button class="btn btn-red" type="button" id="payment_client_xButton"><i class="fa fa-times-circle"></i></button>
-                    </span>
+              <div class="row">
+                <div class="col-md-12 client-option" hidden>
+                  <div style="border-bottom: 1px solid #949292; margin-bottom: 25px; margin-left: 15px; margin-right: 15px;">
+                    <h4>Cliente</h4>
                   </div>
-                  <!--<span class="help-block"></span>-->
-                  <ul id="payment_client_suggestions"></ul>
                 </div>
-
               </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="payment-form-div form-group has-feedback client-option" hidden>
+                    <label for="payment_client_name" class="col-xs-2 control-label left-label">Cliente</label>
+                    <div class="col-xs-10">
+                      <input type="hidden" id="payment_client_id" name="payment_client_id" value="" />
+                      <input type="hidden" id="payment_client_first_name" name="payment_client_first_name" value="" />
+                      <input type="hidden" id="payment_client_last_name" name="payment_client_last_name" value="" />
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="payment_client_name" name="payment_client_name" value="" />
+                        <span class="input-group-btn">
+                          <button class="btn btn-red" type="button" id="payment_client_xButton"><i class="fa fa-times-circle"></i></button>
+                        </span>
+                      </div>
+                      <!--<span class="help-block"></span>-->
+                      <ul id="payment_client_suggestions"></ul>
+                    </div>
 
-              <div class="payment-form-div form-group client-option" hidden>
-                <label for="payment_client_email" class="col-xs-3 control-label">Email</label>
-                <div class="col-xs-9">
-                  <input type="text" class="form-control" id="payment_client_email" name="payment_client_email" value="" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                  </div>
+
+                  <div class="payment-form-div form-group client-option" hidden>
+                    <label for="payment_client_email" class="col-xs-2 control-label left-label">Email</label>
+                    <div class="col-xs-10">
+                      <input type="text" class="form-control" id="payment_client_email" name="payment_client_email" value="" />
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+
+                  </div>
                 </div>
+                <div class="col-md-6">
 
-              </div>
+                  <div class="payment-form-div form-group client-option" hidden>
+                    <label for="payment_client_phone" class="col-xs-2 control-label left-label">Teléfono</label>
+                    <div class="col-xs-10">
+                      <input type="text" class="form-control" id="payment_client_phone" name="payment_client_phone" value="" />
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
 
-              <div class="payment-form-div form-group client-option" hidden>
-                <label for="payment_client_phone" class="col-xs-3 control-label">Teléfono</label>
-                <div class="col-xs-9">
-                  <input type="text" class="form-control" id="payment_client_phone" name="payment_client_phone" value="" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
-                </div>
+                  </div>
 
-              </div>
-
-              <div class="payment-form-div form-group has-feedback client-option" hidden>
-                <label for="payment_client_gender" class="col-xs-3 control-label">Género</label>
-                <div class="col-xs-9">
-                  <select id="payment_client_gender" name="payment_client_gender" class="form-control">
-                    <option value="0">
-                      Indefinido
-                    </option>
-                    <option value="1">
-                      Femenino
-                    </option>
-                    <option value="2">
-                      Masculino
-                    </option>
-                  </select>
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                  <div class="payment-form-div form-group has-feedback client-option" hidden>
+                    <label for="payment_client_gender" class="col-xs-2 control-label left-label">Género</label>
+                    <div class="col-xs-10">
+                      <select id="payment_client_gender" name="payment_client_gender" class="form-control">
+                        <option value="0">
+                          Indefinido
+                        </option>
+                        <option value="1">
+                          Femenino
+                        </option>
+                        <option value="2">
+                          Masculino
+                        </option>
+                      </select>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -161,9 +184,13 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
-        <button type="button" class="btn payment-btn-next" id="paymentIntroNextBtn" aria-label="Siguiente">Siguiente</button>
-        <button type="button" class="btn" id="paymentIntroSaveBtn" aria-label="Guardar">Guardar</button>
+        <div class="col-md-6" style="text-align: left;">
+          <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+        </div>
+        <div class="col-md-6 pull-right">
+          <button type="button" class="btn payment-btn-next" id="paymentIntroNextBtn" aria-label="Siguiente">Siguiente</button>
+          <button type="button" class="btn" id="paymentIntroSaveBtn" aria-label="Guardar">Guardar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -482,9 +509,13 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default payment-btn-back" id="paymentStep1BackBtn" aria-label="Atrás">Atrás</button>
-        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
-        <button type="button" class="btn payment-btn-next" aria-label="Siguiente">Siguiente</button>
+        <div class="col-md-6" style="text-align: left;">
+          <button type="button" class="btn btn-default payment-btn-back" id="paymentStep1BackBtn" aria-label="Atrás">Atrás</button>
+          <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
+        </div>
+        <div class="col-md-6 pull-right">
+          <button type="button" class="btn payment-btn-next" aria-label="Siguiente">Siguiente</button>
+        </div>
       </div>
     </div>
   </div>
@@ -652,9 +683,13 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
-        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
-        <button type="button" class="btn payment-btn-next" id="transactionsReadyBtn" aria-label="Siguiente" disabled>Siguiente</button>
+        <div class="col-md-6" style="text-align: left;">
+          <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
+          <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
+        </div>
+        <div class="col-md-6 pull-right">
+          <button type="button" class="btn payment-btn-next" id="transactionsReadyBtn" aria-label="Siguiente" disabled>Siguiente</button>
+        </div>
       </div>
     </div>
   </div>
@@ -688,14 +723,34 @@
         </div>
 
         <div class="row">
-          <div class="col-xs-3">
-            <div id="addedReceipts">
-
-            </div>
-          </div>
-          <div class="col-xs-9">
+          <div class="col-xs-8">
 
             <div id="paymentReceiptsForms">
+              <div class="col-xs-5">
+                <div id="receiptsItemsDiv">
+
+                  <div class="receiptTitle">
+                    Servicios/Productos
+                  </div>
+
+                  <table id="receiptsItemsTable">
+                    <tr class="paymentItemsHeaders">
+                      <th>
+                        <input type="checkbox" id="checkAllItems" />
+                      </th>
+                      <th>
+                        ID
+                      </th>
+                      <th>
+                        Tipo
+                      </th>
+                      <th>
+                        Nombre
+                      </th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
               <div class="col-xs-7">
                 <form id="fakePaymentStep3Form" action="">
 
@@ -761,31 +816,7 @@
 
                 </form>
               </div>
-              <div class="col-xs-5">
-                <div id="receiptsItemsDiv">
-
-                  <div class="receiptTitle">
-                    Servicios/Productos
-                  </div>
-
-                  <table id="receiptsItemsTable">
-                    <tr class="paymentItemsHeaders">
-                      <th>
-                        <input type="checkbox" id="checkAllItems" />
-                      </th>
-                      <th>
-                        ID
-                      </th>
-                      <th>
-                        Tipo
-                      </th>
-                      <th>
-                        Nombre
-                      </th>
-                    </tr>
-                  </table>
-                </div>
-              </div>
+              
             </div>
 
             <div id="paymentReceiptsFinal" hidden>
@@ -793,17 +824,29 @@
             </div>
 
           </div>
+          <div class="col-xs-4">
+            <div class="receiptTitle">
+              Comprobantes
+            </div>
+            <div id="addedReceipts">
+
+            </div>
+          </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <div style="display: block; text-align: left;">
-          <button type="button" class="btn btn-default" id="openReceiptForm">Nuevo comprobante&nbsp;<i class="fa fa-plus"></i></button><br />
+      <div class="modal-footer">   
+        <div class="col-md-6" style="text-align: left;">
+          <div style="display: block; text-align: left;">
+            <button type="button" class="btn btn-default" id="openReceiptForm">Nuevo comprobante&nbsp;<i class="fa fa-plus"></i></button><br />
+          </div>
+          <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
+          <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
         </div>
-        <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
-        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
-        <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnPrint" aria-label="Imprimir" hidden>Imprimir</button>
-        <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnSendEmail" aria-label="Enviar por email" hidden>Enviar por email</button>
-        <button type="button" class="btn payment-btn-next payment-btn-end" id="paymentBtnSave" aria-label="Guardar" hidden>Guardar</button>
+        <div class="col-md-6 pull-right">
+          <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnPrint" aria-label="Imprimir" hidden>Imprimir</button>
+          <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnSendEmail" aria-label="Enviar por email" hidden>Enviar por email</button>
+          <button type="button" class="btn payment-btn-next payment-btn-end" id="paymentBtnSave" aria-label="Guardar" hidden>Guardar</button>
+        </div>
       </div>
     </div>
   </div>

@@ -62,85 +62,82 @@ class PaymentsController < ApplicationController
     #   end
 
     # end
+    @payments = []
+    @payment_products = []
+    items = params[:payment_items].split(",").sort()
+    # if items == ["bookings", "mock_bookings", "products"]
+    #   @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).order('payment_date desc')
+    # elsif items == ["bookings"]
+    #   @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).where(id: Booking.where.not(:payment_id => nil).pluck(:payment_id)).order('payment_date desc')
+    # elsif items == ["mock_bookings"]
+    #   @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).where(id: MockBooking.where.not(:payment_id => nil).pluck(:payment_id)).order('payment_date desc')
+    # elsif items == ["products"]
+    #   @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).where(id: PaymentProduct.where.not(:payment_id => nil).pluck(:payment_id)).order('payment_date desc')
+    # elsif items == ["bookings", "mock_bookings"]
+    #   @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).where('((id IN (?)) OR (id IN (?)))', Booking.where.not(:payment_id => nil).pluck(:payment_id), MockBooking.where.not(:payment_id => nil).pluck(:payment_id)).order('payment_date desc')
+    # elsif items == ["bookings", "products"]
+    #   @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).where('((id IN (?)) OR (id IN (?)))', Booking.where.not(:payment_id => nil).pluck(:payment_id), PaymentProduct.where.not(:payment_id => nil).pluck(:payment_id)).order('payment_date desc')
+    # elsif items == ["mock_bookings", "products"]
+    #   @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).where('((id IN (?)) OR (id IN (?)))', MockBooking.where.not(:payment_id => nil).pluck(:payment_id), PaymentProduct.where.not(:payment_id => nil).pluck(:payment_id)).order('payment_date desc')
+    # end
 
     @payments = Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: @location_ids).where(id: PaymentTransaction.where('(payment_method_id in (?) or company_payment_method_id in (?))', @payment_method_ids, @company_payment_method_ids).pluck(:payment_id)).order('payment_date desc')
 
-    @products_sum = 0.0
-    @products_average_discount = 0.0
-    @products_total = 0
-    @products_discount = 0
 
-    @payments.each do |payment|
-      payment.payment_products.each do |payment_product|
-        @products_total += payment_product.quantity
-        @products_sum += payment_product.price * payment_product.quantity
-        @products_discount += payment_product.discount
-      end
+    @products_sum = 0.0
+    @payments_sum = 0.0
+    @products_list_sum = 0.0
+    @internal_sales_sum = 0.0
+    @products_discount = 0.0
+    @services_sum = 0.0
+    @services_list_sum = 0.0
+    @services_discount = 0.0
+    @price_total = 0.0
+    @list_total = 0.0
+    @payments_discount = 0.0
+
+    if @payments.count == 0
+      @payment_products = []
+      @mock_bookings = []
+      @bookings = []
+      @internal_sales = []
+      render "_index_content", layout: false
+      return
     end
 
+    @payment_products = PaymentProduct.where(payment_id: @payments.pluck(:id))
+    @mock_bookings = MockBooking.where(payment_id: @payments.pluck(:id))
+    @bookings = Booking.where(payment_id: @payments.pluck(:id))    
     @internal_sales = InternalSale.where(location_id: @location_ids, date: @from.beginning_of_day..@to.end_of_day)
 
-    @internal_sales_sum = 0.0
-    @internal_sales_total = 0
-    @internal_sales_discount = 0
 
-    @internal_sales.each do |internal_sale|
-      @products_total += internal_sale.quantity
-      @products_sum += internal_sale.price*internal_sale.quantity
-      @products_discount += internal_sale.discount
-      @internal_sales_total += 1
-      @internal_sales_sum += internal_sale.price*internal_sale.quantity
-      @internal_sales_discount += internal_sale.discount
+    @internal_sales_sum = @internal_sales.sum('price * quantity')
+    @products_sum = @payment_products.sum('price * quantity') + @internal_sales.sum('price * quantity')
+    @payments_sum = @payments.sum(:amount) + @internal_sales_sum
+    @services_sum = @bookings.sum(:price) + @mock_bookings.sum(:price)
+    @services_list_sum = @bookings.sum(:list_price) + @mock_bookings.sum(:list_price)
+    @products_list_sum = @payment_products.sum('list_price * quantity') + @internal_sales.sum('list_price * quantity')
+    @price_total = @products_sum + @services_sum
+    @list_total = @services_list_sum + @products_list_sum
+
+    if @products_list_sum != 0.0
+      @products_discount = (100.to_f * (1 - @products_sum / @products_list_sum)).round(1)
     end
 
-    if @products_total > 0
-      @products_average_discount = (@products_discount/@products_total).round(2)
-    else
-      @products_average_discount = 0
+    if @services_list_sum != 0.0
+      @services_discount = (100.to_f * (1 - @services_sum / @services_list_sum)).round(1)
     end
 
-    products_total_price = 0
-    products_actual_price = 0
-
-    @payments.each do |payment|
-      payment.payment_products.each do |payment_product|
-        products_total_price += payment_product.list_price * payment_product.quantity
-        products_actual_price += payment_product.price * payment_product.quantity
-      end
+    if @list_total != 0.0
+      @payments_discount = (100.to_f * (1 - @price_total / @list_total)).round(1)
     end
 
-    @internal_sales.each do |internal_sale|
-      products_total_price += internal_sale.quantity*internal_sale.list_price
-      products_actual_price += internal_sale.quantity*internal_sale.price
-    end
-
-    logger.debug "Total: " + products_total_price.to_s
-    logger.debug "Pagado: " + products_actual_price.to_s
-
-    @products_actual_discount = 0
-    if products_total_price != 0
-      @products_actual_discount = ((1 - (products_actual_price/products_total_price))*100).round(1)
-    end
-
-    logger.debug "Descuento: " + @products_actual_discount.to_s + "%"
-
-    @payments_sum = 0
-    @payments_discount = 0
-    @payments_total = 0
-
-    if @payments.count > 0
-
-      @payments_sum = @payments.sum(:amount) + @internal_sales_sum
-      @payments_discount = @payments.sum(:discount) + @internal_sales_discount
-      @payments_total = @payments.count + @internal_sales_total
-
-    end
-
-    @payments_average_discount = 0
-    if @payments_total > 0
-      @payments_average_discount = (@payments_discount/@payments_total).round(2)
-    end
-
+    logger.debug 'Real productos: ' + @products_sum.to_s
+    logger.debug 'Total productos: ' + @products_list_sum.to_s
+    logger.debug "Dscto productos: " + @products_discount.to_s
+    logger.debug 'Real servicios: ' + @services_sum.to_s
+    logger.debug 'Total servicios: ' + @services_list_sum.to_s
+    logger.debug 'Dscto servicios: ' + @services_discount.to_s
 
     render "_index_content", layout: false
   end

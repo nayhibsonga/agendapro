@@ -26,11 +26,20 @@
           <div class="col-sm-4">
             <input type="radio" id="person_type_provider" name="person_type" value="service_provider" checked />&nbsp;&nbsp;<label for="person_type_provider" class="control-label" style="margin-top: 5px; cursor:pointer;">Prestadores:</label><br />
             <select id="serviceProvidersMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
-              <% @service_providers.each do |service_provider| %>
-                <option value="<%= service_provider.id %>">
-                  <%= service_provider.public_name %>
-                </option>
-              <% end %>
+              <optgroup label="Activos">
+                <% @service_providers.where(active: true).each do |service_provider| %>
+                  <option value="<%= service_provider.id %>">
+                    <%= service_provider.public_name %>
+                  </option>
+                <% end %>
+              </optgroup>
+              <optgroup label="Inactivos">
+                <% @service_providers.where(active: false).each do |service_provider| %>
+                  <option value="<%= service_provider.id %>">
+                    <%= service_provider.public_name %>
+                  </option>
+                <% end %>
+              </optgroup>
             </select>
 
           </div>
@@ -55,11 +64,20 @@
           <div class="col-sm-4">
             <input type="radio" id="person_type_cashier" name="person_type" value="cashier" />&nbsp;&nbsp;<label for="person_type_cashier" class="control-label" style="margin-top: 5px; cursor:pointer;">Cajeros:</label>
             <select id="cashiersMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
-              <% @cashiers.each do |cashier| %>
-                <option value="<%= cashier.id %>">
-                  <%= cashier.name %>
-                </option>
-              <% end %>
+              <optgroup label="Activos">
+                <% @cashiers.where(active: true).each do |cashier| %>
+                  <option value="<%= cashier.id %>">
+                    <%= cashier.name %>
+                  </option>
+                <% end %>
+              </optgroup>
+              <optgroup label="Inactivos">
+                <% @cashiers.where(active: false).each do |cashier| %>
+                  <option value="<%= cashier.id %>">
+                    <%= cashier.name %>
+                  </option>
+                <% end %>
+              </optgroup>
             </select>
 
           </div>
