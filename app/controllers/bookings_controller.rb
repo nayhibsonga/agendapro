@@ -519,7 +519,7 @@ class BookingsController < ApplicationController
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
 
         prepayed = "No"
-        if @booking.payed
+        if @booking.payed || @booking.payed_state
           prepayed = "Sí"
         end
 
@@ -949,7 +949,7 @@ class BookingsController < ApplicationController
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
           prepayed = "No"
-          if @booking.payed
+          if @booking.payed || @booking.payed_state
             prepayed = "Sí"
           end
         @bookings << {

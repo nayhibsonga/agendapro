@@ -587,7 +587,11 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		      service_staff_pos := service_staff_pos + 1;
 
-		      IF service_valid THEN
+		      RAISE NOTICE 'service_valid: %', service_valid;
+		      RAISE NOTICE 'end_date: %', end_date;
+		      RAISE NOTICE 'hour_end: %', (dtp + interval '1' minute * durations[service_staff_pos-1]);
+
+		      IF (service_valid and ((dtp + interval '1' minute * durations[service_staff_pos-1]) < end_date)) THEN
 
 		        -- asign booking
 		        hour_booking.start_time := dtp;
@@ -801,6 +805,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		END
 		$$ LANGUAGE plpgsql;
+
 
 
 
