@@ -76,11 +76,11 @@ Agendapro::Application.configure do
   config.action_mailer.default :charset => "utf-8"
 
   config.action_mailer.smtp_settings = {
-    :address   => "smtp.sparkpostmail.com",
+    :address   => "email-smtp.us-west-2.amazonaws.com",
     :port      => 587, # ports 587 and 2525 are also supported with STARTTLS
     :enable_starttls_auto => true, # detects and uses STARTTLS
-    :user_name => "SMTP_Injection",
-    :password  => "ba9959858c917439ef4403556427a811703be9f8", # SMTP password is any valid API key
+    :user_name => "AKIAJQYQTMWK6D6SETSQ",
+    :password  => "Aqlc24cxA8qnQKLgg6ODWRPaQqcVESskGkhoALqWhGrz", # SMTP password is any valid API key
     :authentication => :login, # Mandrill supports 'plain' or 'login'
     :domain => 'agendapro.co', # your domain to identify your server when connecting
   }
