@@ -21,9 +21,12 @@
         <Cell><Data ss:Type="String">Causa</Data></Cell>
         <Cell><Data ss:Type="String">Detalle</Data></Cell>
       </Row>
+      <% 
+          timezone = CustomTimezone.from_company(@company)
+      %>
       <% @product_logs.each do |product_log| %>
         <Row>
-          <Cell><Data ss:Type="String"><%= product_log.created_at.strftime("%d/%m/%Y %R") %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= (product_log.created_at +  timezone.offset).strftime("%d/%m/%Y %R") %></Data></Cell>
           <Cell><Data ss:Type="String"><%= product_log.product.name %></Data></Cell>
           <Cell><Data ss:Type="String"><%= product_log.change %></Data></Cell>
           <Cell><Data ss:Type="String"><%= product_log.cause %></Data></Cell>

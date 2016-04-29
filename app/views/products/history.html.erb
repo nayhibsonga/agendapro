@@ -13,22 +13,36 @@
 <div class="container-fluid">
 
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12 col-sm-9 col-xs-6">
       <div class="row" style="margin-top: 10px;">
         <div class="col-md-12">
           <table>
             <tr>
-              <td style="width: 100px;">
+              <td style="width: 120px;">
                 Desde:&nbsp;&nbsp;
               </td>
-              <td style="width: 200px;">
+              <td style="width: 220px;">
                 <input type="text" class="form-control datepicker" id="from" value="<%= (DateTime.now - 1.months).strftime('%d/%m/%Y') %>" />
               </td>
-              <td style="width: 100px; padding-left: 20px;">
+              <td style="width: 120px; padding-left: 20px;">
                 Hasta:&nbsp;&nbsp;
               </td>
-              <td style="width: 200px;">
+              <td style="width: 220px;">
                 <input type="text" class="form-control datepicker" id="to" value="<%= (DateTime.now).strftime('%d/%m/%Y') %>" />
+              </td>
+              <td style="width: 120px; padding-left: 20px;">
+                Orden:&nbsp;&nbsp;
+              </td>
+              <td style="width: 220px;">
+                <select id="order-select" class="form-control">
+                  <option value="recent">Más reciente (todos)</option>
+                  <option value="old">Más antiguo (todos)</option>
+                  <option value="by_products_recent">Por productos (más reciente)</option>
+                  <option value="by_products_old">Por productos (más antiguo)</option>
+                </select>
+              </td>
+              <td style="width: 220px; padding-left: 20px;">
+
               </td>
             </tr>
           </table>
@@ -38,10 +52,10 @@
         <div class="col-md-12">
           <table>
             <tr>
-              <td style="width: 100px;">
+              <td style="width: 120px;">
                 Locales:&nbsp;&nbsp;
               </td>
-              <td style="min-width: 200px;">
+              <td style="min-width: 220px;">
                 <div>
                   <select id="location-select" multiple="multiple" class="form-control" style="display: none;">
                     <optgroup label="Activos">
@@ -63,55 +77,39 @@
                   </select>
                 </div>
               </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="row" style="margin-top: 10px;">
-        <div class="col-md-12">
-          <table>
-            <tr>
-              <td style="width: 100px;">
+              <td style="width: 120px; padding-left: 20px;">
                 Categoría(s):&nbsp;&nbsp;
               </td>
-              <td style="width: 200px;">
+              <td style="width: 220px;">
                 <select id="category-select" multiple="multiple" class="form-control" style="display: none;">
                   <% @product_categories.each do |product_category|
                   %>
-                    <option value="<%= product_category.id %>">
+                    <option value="<%= product_category.id %>" selected="selected">
                       <%= product_category.name %>
                     </option>
                   <% end %>
                 </select>
               </td>
-              <td style="width: 100px; padding-left: 20px;">
+              <td style="width: 120px; padding-left: 20px;">
                 Producto(s):&nbsp;&nbsp;
               </td>
-              <td style="width: 200px;">
+              <td style="width: 220px;">
                 <select id="product-select" multiple="multiple" class="form-control" style="display: none;">
-
+                  <% 
+                    @product_categories.each do |product_category|
+                      product_category.products.order(:name).each do |product|
+                  %>
+                        <option value="<%= product.id %>" selected="selected">
+                          <%= product.name %>
+                        </option>
+                  <% 
+                      end
+                    end 
+                  %>
                 </select>
               </td>
-            </tr>
-            <tr>
-              <td style="width: 100px; padding-top: 10px;">
-                Orden:&nbsp;&nbsp;
-              </td>
-              <td style="width: 200px; padding-top: 10px;">
-                <select id="order-select" class="form-control">
-                  <option value="recent">Más reciente (todos)</option>
-                  <option value="old">Más antiguo (todos)</option>
-                  <option value="by_products_recent">Por productos (más reciente)</option>
-                  <option value="by_products_old">Por productos (más antiguo)</option>
-                </select>
-              </td>
-              <td style="width: 100px; padding-left: 20px;">
-
-              </td>
-              <td style="min-width: 200px;">
-                <a href="" id="download-history-link" target="_blank"><button id="download_stats_btn" class="btn btn-green" style="display: none; width: 200px; margin-top: 10px;"><i class="fa fa-file-excel-o"></i>&nbsp;Descargar</button></a>
+              <td style="min-width: 220px; padding-left: 20px;">
+                <a href="" id="download-history-link" target="_blank"><button id="download_stats_btn" class="btn btn-green" style="display: none; width: 200px;"><i class="fa fa-file-excel-o"></i>&nbsp;Descargar</button></a>
               </td>
             </tr>
           </table>
