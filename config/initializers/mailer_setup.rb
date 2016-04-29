@@ -1,1 +1,1 @@
-Mail.register_interceptor(MailInterceptor)
+# Mail.register_interceptor(MailInterceptor)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160426155303) do
+ActiveRecord::Schema.define(version: 20160429114120) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1723,6 +1723,12 @@ ActiveRecord::Schema.define(version: 20160426155303) do
     t.integer  "sessions_amount",    default: 0
     t.float    "max_discount",       default: 0.0
     t.integer  "treatment_promo_id"
+  end
+
+  create_table "sparkpost_email_logs", force: true do |t|
+    t.text     "raw_message"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "staff_codes", force: true do |t|
