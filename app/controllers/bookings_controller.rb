@@ -175,7 +175,7 @@ class BookingsController < ApplicationController
         @booking.price = 0
       end
 
-      
+
       if buffer_params[:session_booking_id]
         if buffer_params[:session_booking_id] != "0" && buffer_params[:session_booking_id] != 0
           session_booking = SessionBooking.find(buffer_params[:session_booking_id])
@@ -628,7 +628,7 @@ class BookingsController < ApplicationController
         @booking.price = 0
       end
 
-      
+
       if buffer_params[:session_booking_id]
         if buffer_params[:session_booking_id] != "0" && buffer_params[:session_booking_id] != 0
           session_booking = SessionBooking.find(buffer_params[:session_booking_id])
@@ -7414,6 +7414,8 @@ class BookingsController < ApplicationController
         end_date = DateTime.new(start_date.year, start_date.mon, start_date.mday, loc_close.close.hour, loc_close.close.min)
       end
 
+      logger.debug "SELECT * FROM available_hours(#{company_id}, #{local.id}, ARRAY#{providers_arr}, ARRAY#{services_arr}, ARRAY#{bundles_arr}, '#{start_date}', '#{end_date}', false, ARRAY#{first_providers_ids})"
+
       ActiveRecord::Base.connection.execute("SELECT * FROM available_hours(#{company_id}, #{local.id}, ARRAY#{providers_arr}, ARRAY#{services_arr}, ARRAY#{bundles_arr}, '#{start_date}', '#{end_date}', false, ARRAY#{first_providers_ids})").each do |row|
         db_hours = parser.parse_pg_array(row["hour_array"])
         db_gap = row["positive_gap"].to_i
@@ -7766,7 +7768,7 @@ class BookingsController < ApplicationController
 
 
     #logger.debug "Time prop: " + time_prop.to_s
-    
+
 
 
     if time_prop != 0
@@ -7808,7 +7810,7 @@ class BookingsController < ApplicationController
                     top_margin = 67.to_f * ((hour[:start_block].to_time.to_f - previous_start.to_time.to_f) / (60.to_f * booking_leap.to_f)) + ((hour[:start_block].to_time - previous_start.to_time) / (60.to_f * booking_leap.to_f) ) * (calendar_height.to_f * leap_duration_diff.to_f/(60.to_f * hours_diff.to_f) ) * 67.to_f
                   else
 
-                    
+
                     #top_margin = 67.to_f * ((hour[:start_block].to_time - (previous_start.to_time + booking_leap.minutes)) / (60.to_f * booking_leap.to_f))
                     top_margin = 67.to_f * ( ((hour[:start_block].to_time - (previous_start.to_time + booking_leap.minutes)) / (60.to_f * booking_leap.to_f)) ) + ((hour[:start_block].to_time - previous_start.to_time) / (60.to_f * booking_leap.to_f) ) * (calendar_height.to_f * leap_duration_diff.to_f/(60.to_f * hours_diff.to_f) ) * 67.to_f
 
