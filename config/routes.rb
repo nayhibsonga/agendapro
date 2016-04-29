@@ -815,6 +815,12 @@ Agendapro::Application.routes.draw do
     end
   end
 
+  namespace :webhooks, defaults: {format: 'json'} do
+    namespace :sparkpost do
+      post 'email_raw_message', to: 'emails#consume_raw'
+    end
+  end
+
   root :to => 'searchs#index'
 
 
