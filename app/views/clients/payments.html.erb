@@ -1,0 +1,75 @@
+<div class="container-fluid background-grey">
+  <div class="row">
+    <div class="col-md-10">
+      <h2 class="text-green">Historial de pagos del cliente</h2>
+      <p>Revisa el historial de pagos de <%= @client.full_name %>.</p>
+    </div>
+    <div class="col-md-2">
+      <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Cliente</span>'.html_safe, client_path(@client), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 150px;" %><br />
+      <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar Cliente</span>'.html_safe, edit_client_path(@client), :class => "btn btn-orange", :style => "margin-bottom: 3px; width: 150px;" %><br />
+      <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Archivos</span>'.html_safe, get_client_files_path(client_id: @client.id), :class => "btn btn-orange", :style => "min-width: 150px;" %>
+    </div>
+  </div>
+</div>
+<div class="container-fluid" style="margin-top: 10px;">
+  <div class="row" style="margin-bottom: 15px;">
+    <div class="col-md-12">
+
+      <div class="row">
+        <label for="from" class="col-sm-1 control-label">Desde:</label>
+        <div class="col-sm-3">
+          <input type="text" id="from" name="from" class="form-control option_select" value="<%= @start_date %>">
+        </div>
+        <label for="from" class="col-sm-1 control-label">Hasta:</label>
+        <div class="col-sm-3">
+          <input type="text" id="to" name="to" class="form-control option_select" value="<%= @end_date %>">
+        </div>
+        <label for="itemsMultiSelect" class="col-sm-1 control-label">Incluye:</label>
+        <div class="col-sm-3">
+          <select id="itemsMultiSelect" multiple="multiple" hidden>
+            <option value="bookings">Reservas</option>
+            <option value="mock_bookings">Servicios sin reserva</option>
+            <option value="products">Productos</option>
+          </select>
+        </div>
+        <div style="clear: both;">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <input type="hidden" id="client_id" value="<%= @client.id %>" />
+
+  <div id="client_payments_div">
+
+  </div>
+</div>
+
+<div class="modal fade paymentModal" id="paymentSummaryModal" tabindex="-1" role="dialog" aria-labelledby="Resumen de pago" aria-hidden="true">
+  <div class="modal-dialog" style="width: 70%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="paymentSummaryModalTitle" style="line-height: 1.1;">Resumen de pago</h3>
+      </div>
+      <div class="modal-body" id="paymentSummaryModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="hidden" id="client_id" value="<%= @client.id %>" />
+
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
+<% end %>
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/bootstrap-multiselect" %>
+  <%= javascript_include_tag "admin/clients-payments" %>
+<% end %>

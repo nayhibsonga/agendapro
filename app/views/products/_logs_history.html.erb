@@ -16,11 +16,11 @@
           <th>Causa</th>
           <th>Detalle</th>
         </tr>
+        <% 
+          timezone = CustomTimezone.from_company(@company)
+        %>
         <% @product_logs.each do |product_log| %>
-          <% 
-            company = product_log.product.company
-            timezone = CustomTimezone.from_company(company)
-          %>
+          
           <tr>
             <td>
               <%= (product_log.created_at +  timezone.offset).strftime("%d/%m/%Y %R") %>
