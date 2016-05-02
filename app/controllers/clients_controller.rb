@@ -470,7 +470,7 @@ class ClientsController < ApplicationController
 
     s3 = Aws::S3::Client.new
 
-    full_name = 'email_temp' + DateTime.now.to_i.to_s + '_' + params[:attachment].original_filename
+    full_name = 'email_temp/' + current_user.company + '_' + DateTime.now.to_i.to_s + '_' + params[:attachment].original_filename
 
     s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
 
