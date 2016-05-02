@@ -636,6 +636,7 @@ class CompaniesController < ApplicationController
 		@company.payment_status_id = params[:new_payment_status_id]
 		@company.sales_user_id = params[:sales_user_id]
 		@company.plan_id = params[:new_plan_id]
+		@company.default_plan_id = params[:new_default_plan_id]
 		if params[:new_due_amount].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
 			@company.due_amount = params[:new_due_amount]
 		end
