@@ -468,6 +468,17 @@ class ClientsController < ApplicationController
     #   :content => Base64.encode64(File.read(attachments.tempfile))
     # }
 
+    s3 = Aws::S3::Client.new
+
+    full_name = 'email_temp' + DateTime.now.to_i.to_s + '_' + params[:attachment].original_filename
+
+    s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+    obj = s3_bucket.object(full_name)
+
+    obj.upload_file(params[:attachment].path(), {acl: 'public-read', content_type: content_type})
+
+
     content = Email::Content.create(
       template: Email::Template.where(name: "plantilla_00").first,
       company: current_user.company,
@@ -475,7 +486,7 @@ class ClientsController < ApplicationController
       to: params[:to],
       attachment_type: attachments.content_type,
       attachment_name: attachments.original_filename,
-      attachment_content: Base64.encode64(File.read(attachments.tempfile))
+      attachment_content: obj.public_url
       )
     if content.present?
       flash[:notice] = 'E-mail enviado exitosamente'

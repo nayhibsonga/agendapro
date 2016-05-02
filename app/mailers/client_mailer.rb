@@ -15,7 +15,7 @@ class ClientMailer < Base::CustomMailer
     @email = true
     headers["X-MC-PreserveRecipients"] = "false"
     if @content.attachment_name.present?
-      attachments[@content.attachment_name] = { mime_type: @content.attachment_type, content: @content.attachment_content, encoding: 'Base64' }
+      attachments[@content.attachment_name] = open(@content.attachment_content).read
     end
     if content.template == Email::Template.where(name: "plantilla_00").first
       @company = @content.company
