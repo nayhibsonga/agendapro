@@ -1538,6 +1538,7 @@ function loadPaymentModal2(booking_id) {
   $("#paymentModal1").modal('hide');
   $("#paymentModal2").modal('show');
   $("#paymentModal3").modal('hide');
+  animateBox($('.payment_method_amount').first());
   paymentModalState = 'Step2';
 }
 
