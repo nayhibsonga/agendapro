@@ -1,0 +1,65 @@
+<center style="background-color: #FAFAFA">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable">
+    <tr>
+      <td align="center" valign="top" id="bodyCell">
+        <!-- BEGIN TEMPLATE // -->
+        <!--[if gte mso 9]>
+        <table align="center" border="0" cellspacing="0" cellpadding="0" width="600" style="width:600px;">
+        <tr>
+        <td align="center" valign="top" width="600" style="width:600px;">
+        <![endif]-->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="templateContainer">
+          <tr class="header" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:#f1f4f5;background-image:none;background-repeat:repeat;background-position:top left;background-attachment:scroll;color:#727171;font-size:10px;min-height:24px;">
+            <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;line-height:1.42857143;vertical-align:top;padding-top:5px;padding-bottom:5px;padding-right:30px;padding-left:30px;text-align:center;">
+              <a href="http://<%= @url %>" target="_blank" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;background-color:transparent;color:#727171;text-decoration:none;"><%= @url %></a>
+            </td>
+          </tr>
+          <tr style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;">
+            <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
+              <div class="pull-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:center;margin-left:auto;margin-right:auto;">
+                <%= image_tag attachments['logo.png'].url, class: "logo", alt: "Logo", style: "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;vertical-align:middle;" if attachments['logo.png'] %>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding-top:8px;padding-bottom:8px;padding-right:15px;padding-left:15px;line-height:1.42857143;vertical-align:top;">
+              <div class="pull-center" style="-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;text-align:center;margin-left:auto;margin-right:auto;">
+                <h3 style="color:#656565"><%= @company.name %></h3>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top" id="templateBody">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
+                <tbody class="mcnTextBlockOuter">
+                  <tr>
+                    <td valign="top" class="mcnTextBlockInner">
+                      <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;" class="mcnTextContentContainer">
+                        <tbody>
+                          <tr>
+                            <td valign="top" class="mcnTextContent" style="padding:9px;">
+                              <%= editor_text @content, 'text1' %>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <%= render partial: '/clients/email/full/templates/footer' %>
+          </tr>
+        </table>
+        <!--[if gte mso 9]>
+        </td>
+        </tr>
+        </table>
+        <![endif]-->
+        <!-- // END TEMPLATE -->
+      </td>
+    </tr>
+  </table>
+</center>
