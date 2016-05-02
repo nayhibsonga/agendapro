@@ -43,7 +43,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  --Check location_times
 		  IF not exists(select id from location_times where location_times.location_id = local_id AND location_times.day_id = extract(dow from start_date) AND location_times.open <= (select "time"(start_date)) AND location_times.close >= (select "time"(end_date))) THEN
 		  	return false;
-		  	END IF;
+		  END IF;
 
 		  --Check after and before settings if not admin
 		  IF (admin = false) THEN
@@ -587,11 +587,12 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		      service_staff_pos := service_staff_pos + 1;
 
+		      RAISE NOTICE 'dtp: %', dtp;
 		      RAISE NOTICE 'service_valid: %', service_valid;
 		      RAISE NOTICE 'end_date: %', end_date;
 		      RAISE NOTICE 'hour_end: %', (dtp + interval '1' minute * durations[service_staff_pos-1]);
 
-		      IF (service_valid and ((dtp + interval '1' minute * durations[service_staff_pos-1]) < end_date)) THEN
+		      IF (service_valid and ((dtp + interval '1' minute * durations[service_staff_pos-1]) <= end_date)) THEN
 
 		        -- asign booking
 		        hour_booking.start_time := dtp;
@@ -667,7 +668,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		          --IMPORTANT
 		          --When they are times, add date
 
-		          book_gap := (select bookings.start from bookings where service_provider_id = ANY(first_providers_ids) and bookings.end >= dtp and bookings.start <= (dtp + interval '1' minute * first_duration) order by bookings.start limit 1);
+		          book_gap := (select bookings.start from bookings where service_provider_id = ANY(first_providers_ids) and bookings.end >= dtp and bookings.start <= (dtp + interval '1' minute * first_duration) AND (bookings.service_id NOT IN (SELECT services.id from services where services.group_service = TRUE AND services.company_id = comp_id)) order by bookings.start limit 1);
 
 		          break_gap := (select provider_breaks.start from provider_breaks where service_provider_id = ANY(first_providers_ids) and provider_breaks.end >= dtp and provider_breaks.start <= (dtp + interval '1' minute * first_duration) order by provider_breaks.start limit 1);
 
@@ -695,7 +696,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		          END IF;
 
-		          IF exists(select bookings.start from bookings where service_provider_id = ANY(first_providers_ids) and bookings.end >= dtp and bookings.start <= (dtp + interval '1' minute * first_duration) order by bookings.start limit 1) THEN
+		          IF exists(select bookings.start from bookings where service_provider_id = ANY(first_providers_ids) and bookings.end >= dtp and bookings.start <= (dtp + interval '1' minute * first_duration) AND (bookings.service_id NOT IN (SELECT services.id from services where services.group_service = TRUE AND services.company_id = comp_id)) order by bookings.start limit 1) THEN
 		            gap_diff := (select extract( epoch from (book_gap - dtp) ) / 60);
 		            IF gap_diff > time_gap THEN
 		                time_gap := gap_diff;
@@ -718,9 +719,9 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		        --When there is no gap, calculate smalles_diff.
 		        IF ((allows_optimization) AND (time_gap = 0)) THEN
 
-		          book_blocking := (select bookings.end from bookings where service_provider_id = ANY(first_providers_ids) and bookings.end >= dtp and bookings.start <= (dtp + interval '1' minute * first_duration) order by bookings.end limit 1);
+		          book_blocking := (select bookings.end from bookings where service_provider_id = ANY(first_providers_ids) and bookings.end >= dtp and bookings.start <= (dtp + interval '1' minute * first_duration) AND (bookings.service_id NOT IN (SELECT services.id from services where services.group_service = TRUE AND services.company_id = comp_id)) order by bookings.end limit 1);
 
-		          IF exists(select bookings.end from bookings where service_provider_id = ANY(first_providers_ids) and bookings.end >= dtp and bookings.start <= (dtp + interval '1' minute * first_duration) order by bookings.end limit 1) THEN
+		          IF exists(select bookings.end from bookings where service_provider_id = ANY(first_providers_ids) and bookings.end >= dtp and bookings.start <= (dtp + interval '1' minute * first_duration) AND (bookings.service_id NOT IN (SELECT services.id from services where services.group_service = TRUE AND services.company_id = comp_id)) order by bookings.end limit 1) THEN
 
 		            book_diff := (select (extract (epoch from (book_blocking - dtp) ) ) / 60);
 		            IF book_diff < smallest_diff THEN
@@ -763,12 +764,14 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		        END IF;
 
+		        RAISE NOTICE 'next_dtp: %', dtp;
+
 		        service_staff_pos := service_staff_length + 1;
 		        last_check := false;
 
 		      END IF;
 
-		      EXIT staff_loop WHEN ((service_staff_pos > service_staff_length) OR (dtp >= end_date));
+		      EXIT staff_loop WHEN ((service_staff_pos > service_staff_length) OR (dtp > end_date));
 		    END LOOP staff_loop;
 
 		    --Add hour_bookings to hours_array if length is equal to service_staff_length
@@ -798,11 +801,10 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		      END IF;
 		    END IF;
 
-		    EXIT day_loop WHEN dtp >= end_date;
+		    EXIT day_loop WHEN dtp > end_date;
 		  END LOOP day_loop;
 
 		  --return hours_array;
-
 		END
 		$$ LANGUAGE plpgsql;
 
