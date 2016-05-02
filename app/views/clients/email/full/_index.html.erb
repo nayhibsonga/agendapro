@@ -12,7 +12,7 @@
   <!-- Tab panes -->
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="templates">
-      <% @templates.each do |template| %>
+      <% @templates.where.not(name: "plantilla_00").each do |template| %>
         <%= render partial: '/clients/email/full/template_list', locals: {template: template} %>
       <% end %>
     </div>
