@@ -9,11 +9,12 @@ class ClientMailer < Base::CustomMailer
   end
 
   def send_campaign(content, recipient)
-    puts content.inspect
+    # puts content.inspect
     @content = content
     @data = @content.data
     @email = true
     headers["X-MC-PreserveRecipients"] = "false"
+    attachments[@content.attachment_name] = { mime_type: @content.attachment_type, content: @content.attachment_content }
     mail(
       from: filter_sender("#{@content.company.name.titleize} <no-reply@agendapro.co>"),
       bcc: recipient,
@@ -21,6 +22,6 @@ class ClientMailer < Base::CustomMailer
       reply_to: @content.from,
       template_path: Email::Template::TMPL_DIR,
       template_name: "_"+@content.template.name
-      )
+    )
   end
 end
