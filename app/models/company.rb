@@ -75,7 +75,7 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
-	after_create :create_cashier, :create_plan_setting, :create_attribute_group
+	after_create :create_cashier, :create_plan_setting, :create_attribute_group, 
 
 	WORKER = 'CompanyEmailWorker'
 
@@ -121,6 +121,8 @@ class Company < ActiveRecord::Base
 
 	def create_plan_setting
 		CompanyPlanSetting.create(company_id: self.id, base_price: self.plan.plan_countries.find_by(country_id: self.country.id).price, locations_multiplier: NumericParameter.find_by_name("locations_multiplier").value)
+		#Set default plan
+		self.update(:default_plan_id => Plan.where(custom: false, name: "Normal").first.id)
 	end
 
 	def computed_multiplier
@@ -459,19 +461,19 @@ class Company < ActiveRecord::Base
     	month_number = Time.now.month
     	month_days = Time.now.days_in_month
 
-		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
+		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.minutes.ago).each do |company|
 
 			#New plan should be the default one
 			plan = company.default_plan
 
 			#If default wasn't changed, then set plan by locations and providers number
-			if plan.name == "Normal" || plan.name == "Personal"
-				if company.locations.where(active: true).count > 1 || company.service_providers.where(location_id: company.				locations.where(active: true).pluck(:id), active:true).count > 1
-					plan = Plan.where(name: "Normal", custom: false).first
-				else
-					plan = Plan.where(name: "Personal", custom: false).first
-				end
- 			end
+			# if plan.name == "Normal" || plan.name == "Personal"
+			# 	if company.locations.where(active: true).count > 1 || company.service_providers.where(location_id: company.				locations.where(active: true).pluck(:id), active:true).count > 1
+			# 		plan = Plan.where(name: "Normal", custom: false).first
+			# 	else
+			# 		plan = Plan.where(name: "Personal", custom: false).first
+			# 	end
+ 		# 	end
 
 			sales_tax = company.country.sales_tax
 

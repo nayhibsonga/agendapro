@@ -536,7 +536,7 @@
                     </div>
                     <div class="col-md-4">
                       <select name="new_plan_id" class="form-control">
-                        <% Plan.all.each do |plan| %>
+                        <% Plan.where('custom = false or name = ?', 'Trial').each do |plan| %>
                           <% if plan.id == @company.plan_id %>
                             <option value="<%= plan.id %>" selected><%= plan.name %></option>
                           <% else %>
@@ -546,6 +546,25 @@
                       </select>
                     </div>
                   </div>
+                  <% if @company.payment_status_id == PaymentStatus.find_by_name("Trial").id %>
+                    <div class="form-group">
+                      <label class="control-label col-md-2">Plan post trial</label>
+                      <div class="col-md-4">
+                        <p class="form-control-static"><%= @company.default_plan.name %></p>
+                      </div>
+                      <div class="col-md-4">
+                        <select name="new_default_plan_id" class="form-control">
+                          <% Plan.where(custom: false).each do |plan| %>
+                            <% if plan.id == @company.default_plan_id %>
+                              <option value="<%= plan.id %>" selected><%= plan.name %></option>
+                            <% else %>
+                              <option value="<%= plan.id %>"><%= plan.name %></option>
+                            <% end %>
+                          <% end %>
+                        </select>
+                      </div>
+                    </div>
+                  <% end %>
                   <div class="form-group">
                     <label class="col-md-2 control-label">Estado actual</label>
                     <div class="col-md-4">

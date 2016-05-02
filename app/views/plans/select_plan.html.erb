@@ -51,6 +51,9 @@
           <div class="row">
             <% @plans.where.not(name: "Gratis").where(custom: false).order(:locations, :service_providers).each do |plan| %>
 
+              <% if @company.plan_id != Plan.find_by_name("Personal").id && plan.name == "Personal"
+                next
+              end %>
               <div class="col-md-3" style="margin-bottom: 20px;">
 
                 <%= content_tag "div", id: "plan_" + plan.id.to_s, data: { plan_price: plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier, plan_month_value: (@month_days - @day_number + 1) * plan.plan_countries.find_by(country_id: @company.country.id).price * @company.computed_multiplier / @month_days } do %>
@@ -113,7 +116,7 @@
                             1 prestador
                         </div>
                         <div>
-                          <%= plan.monthly_mails.to_s %> emails mensuales por local
+                          <%= @company.company_setting.mails_base_capacity.to_s %> emails mensuales por local
                         </div>
                       <% else %>
                         <div>
@@ -123,7 +126,7 @@
                           Staff ilimitado
                         </div>
                         <div>
-                          <%= plan.monthly_mails.to_s %> emails mensuales por local
+                          <%= @company.company_setting.mails_base_capacity.to_s %> emails mensuales por local
                         </div>
                       <% end %>
                     <% end %>
@@ -174,7 +177,7 @@
                       <% end %>
                     </div>
                     <div>
-                      <%= @company.plan.monthly_mails.to_s %> emails mensuales por local
+                      <%= @company.company_setting.mails_base_capacity.to_s %> emails mensuales por local
                     </div>
                   </div>
 
@@ -208,10 +211,10 @@
                     
                       <% if @company.plan.name == "Trial" %>
                         <%
-                          suggested_plan = Plan.where(name: "Personal", custom: false).first
-                          if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
                           suggested_plan = Plan.where(name: "Normal", custom: false).first
-                          end
+                          #if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
+                            #suggested_plan = Plan.where(name: "Normal", custom: false).first
+                          #end
                         %>
                         <div style="color: #22c488; font-weight: bold; font-size: 18px;">
                           <%= suggested_plan.name %>
@@ -238,10 +241,10 @@
                   <td class="right">
                     <% if @company.plan.name == "Trial" %>
                       <%
-                        suggested_plan = Plan.where(name: "Personal", custom: false).first
-                        if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
                         suggested_plan = Plan.where(name: "Normal", custom: false).first
-                        end
+                        #if @company.locations.where(active: true).count > 1 || @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active:true).count > 1
+                        #suggested_plan = Plan.where(name: "Normal", custom: false).first
+                        #end
                       %>
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.locations.where(active: true).count.to_s %> local(es)
                       <br />
@@ -259,13 +262,13 @@
                       <br />
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;1 prestador
                       <br />
-                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.company_setting.mails_base_capacity.to_s %> correos mensuales
                     <% else %>
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.locations.where(active: true).count.to_s %> local(es)
                       <br />
                       <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;Staff ilimitado
                       <br />
-                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.plan.monthly_mails.to_s %> correos mensuales por local
+                      <i class="fa fa-check-circle-o green-icon"></i>&nbsp;&nbsp;<%= @company.company_setting.mails_base_capacity.to_s %> correos mensuales por local
                     <% end %>
                   </td>
                 </tr>
@@ -627,7 +630,7 @@
                     <div class="row">
                       <div class="col-md-6">
                         <select name="plan_id" class="form-control">
-                          <% Plan.where(custom: false).where.not(name: "Gratis").each do |plan| %>
+                          <% Plan.where(custom: false).where.not(name: "Gratis").where.not(name: "Personal").each do |plan| %>
                             <% if plan.name == "Personal" %>
                               <% if @company.locations.where(active: true).count < 2 && @company.service_providers.where(location_id: @company.locations.where(active: true).pluck(:id), active: true).count < 2 %>
                                 <% if @company.default_plan_id == plan.id %>
