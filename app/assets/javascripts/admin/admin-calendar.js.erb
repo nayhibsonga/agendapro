@@ -1338,9 +1338,11 @@ function editDrag(event) {
             };
 
             var payedState = '';
+            var new_payed_state = "No"
             if (booking.payed_state)
             {
               payedState = ' payed';
+              new_payed_state = "Sí";
             }
 
             var bundleState = '';
@@ -1366,7 +1368,7 @@ function editDrag(event) {
             event.service_qtip = booking.service_name;
             event.phone_qtip = booking.phone;
             event.email_qtip = booking.email;
-            event.prepayed_qtip = booking.prepayed;
+            event.prepayed_qtip = new_payed_state;
             event.comment_qtip = booking.company_comment;
             event.is_session_qtip = booking.is_session_booked;
             event.sessions_ratio_qtip = booking.sessions_ratio;
@@ -1429,9 +1431,12 @@ function editDrag(event) {
               };
 
               var payedState = '';
+
+              var new_payed_state = "No";
               if (booking.payed_state)
               {
                 payedState = ' payed';
+                new_payed_state = "Sí";
               }
 
               var bundleState = '';
@@ -1457,7 +1462,7 @@ function editDrag(event) {
               event.service_qtip = booking.service_name;
               event.phone_qtip = booking.phone;
               event.email_qtip = booking.email;
-              event.prepayed_qtip = booking.prepayed;
+              event.prepayed_qtip = new_payed_state;
               event.comment_qtip = booking.company_comment;
               event.is_session_qtip = booking.is_session_booked;
               event.sessions_ratio_qtip = booking.sessions_ratio;
@@ -1555,9 +1560,11 @@ function saveBooking(typeURL, extraURL, bundled) {
             };
 
             var payedState = '';
+            var new_payed_state = "No";
             if (booking.payed_state)
             {
               payedState = ' payed';
+              new_payed_state = "Sí";
             }
 
             var bundleState = '';
@@ -1583,7 +1590,7 @@ function saveBooking(typeURL, extraURL, bundled) {
             event.phone_qtip = booking.phone;
             event.email_qtip = booking.email;
             event.comment_qtip = booking.company_comment;
-            event.prepayed_qtip = booking.prepayed;
+            event.prepayed_qtip = new_payed_state;
             event.is_session_qtip = booking.is_session_booked;
             event.sessions_ratio_qtip = booking.sessions_ratio;
 
@@ -1679,9 +1686,11 @@ function saveBookingBuffer () {
           var originClass = 'origin-manual';
 
           var payedState = '';
+          var new_payed_state = "No";
           if (booking.payed_state)
           {
             payedState = ' payed';
+            new_payed_state = "Sí";
           }
 
           var bundleState = '';
@@ -1710,7 +1719,8 @@ function saveBookingBuffer () {
             email_qtip: booking.email,
             comment_qtip: booking.company_comment,
             is_session_qtip: booking.is_session_booked,
-            sessions_ratio_qtip: booking.sessions_ratio
+            sessions_ratio_qtip: booking.sessions_ratio,
+            prepayed_qtip: new_payed_state
           };
 
           $('#calendar').fullCalendar('renderEvent', events, true);
@@ -1765,9 +1775,11 @@ function saveBookingBuffer () {
                 };
 
                 var payedState = '';
+                var new_payed_state = "No";
                 if (booking.payed_state)
                 {
                   payedState = ' payed';
+                  new_payed_state = "Sí";
                 }
 
                 var bundleState = '';
@@ -1797,7 +1809,8 @@ function saveBookingBuffer () {
                   email_qtip: booking.email,
                   comment_qtip: booking.company_comment,
                   is_session_qtip: booking.is_session_booked,
-                  sessions_ratio_qtip: booking.sessions_ratio
+                  sessions_ratio_qtip: booking.sessions_ratio,
+                  prepayed_qtip: new_payed_state
                 };
                 $('#calendar').fullCalendar('renderEvent', events, true);
                 if(booking.is_session && !booking.user_session_confirmed)
