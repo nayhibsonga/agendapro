@@ -469,7 +469,7 @@ class ClientsController < ApplicationController
     # }
 
     content = Email::Content.create(
-      template: Email::Template.where(name: "plantilla_02").first,
+      template: Email::Template.where(name: "plantilla_00").first,
       company: current_user.company,
       from: params[:from],
       to: params[:to],
