@@ -61,7 +61,8 @@ class Company < ActiveRecord::Base
 
 	has_many :sendings, class_name: 'Email::Sending', as: :sendable
 
-	scope :collectables, -> { where(active: true).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
+	scope :collectables, -> { where(active: true).where('created_at <= ?', DateTime.now - 2.months).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
+	scope :former_trials, -> { where(active: true).where('created_at > ?', DateTime.now - 2.months).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
@@ -517,6 +518,37 @@ class Company < ActiveRecord::Base
 		end
 	end
 
+	def self.former_trials_process
+		#First, remind after 5 days
+		former_trials.where('created_at = ?', DateTime.now - 1.months - 5.days).each do |company|
+			if !company.account_used_all
+				#Hasn't used
+			else
+				company.sendings.build(method: 'message_invoice').save
+			end
+		end
+
+		#Then, insist after 15 days
+		#Send second reminder (insistence)
+		former_trials.where('created_at = ?', DateTime.now - 1.months - 15.days).each do |company|
+			if !company.account_used_all
+				#Hasn't used
+			else
+				company.sendings.build(method: 'reminder_message_invoice').save
+			end
+		end
+
+		#Send ultimatum saying they will be downgraded on failure to pay
+		former_trials.where('created_at = ?', DateTime.now - 1.months - 25.days).each do |company|
+			if !company.account_used_all
+				#Hasn't used
+			else
+				company.sendings.build(method: 'warning_message_invoice').save
+			end
+		end
+		#Finally, send ultimatum after 25 days
+	end
+
 	#
 	# 1st of month:
 	# Collect active companies that don't have months payed in advance and leave them in issued state
@@ -602,6 +634,29 @@ class Company < ActiveRecord::Base
 			end
 
 		end
+
+		#Collect for former_trials too, but don't send them an email
+		former_trials.each do |company|
+			sales_tax = company.country.sales_tax
+			company.months_active_left = 0
+			company.payment_status_id = status_emitido.id
+			if company.due_amount.nil?
+				if company.plan.custom
+					company.due_amount = company.company_plan_setting.base_price * (1 + sales_tax)
+				else
+					company.due_amount = company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+				end
+			else
+				if company.plan.custom
+					company.due_amount += company.company_plan_setting.base_price * (1 + sales_tax)
+				else
+					company.due_amount += company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+				end
+			end
+			company.due_date = DateTime.now
+			company.save
+		end
+
 	end
 
 	#
