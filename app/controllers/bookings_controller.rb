@@ -4160,7 +4160,7 @@ class BookingsController < ApplicationController
     crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
     id = crypt.decrypt_and_verify(params[:confirmation_code])
     booking = Booking.find(id)
-    @bookings = Booking.where(location_id: booking.location_id).where(reminder_group: booking.reminder_group)
+    @bookings = Booking.where(location_id: booking.location_id).where.not(:reminder_group => nil).where(reminder_group: booking.reminder_group)
     @company = Location.find(booking.location_id).company
     @selectedLocation = Location.find(booking.location_id)
 
