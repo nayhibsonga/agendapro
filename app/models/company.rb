@@ -461,7 +461,7 @@ class Company < ActiveRecord::Base
     	month_number = Time.now.month
     	month_days = Time.now.days_in_month
 
-		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.minutes.ago).each do |company|
+		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
 
 			#New plan should be the default one
 			plan = company.default_plan
