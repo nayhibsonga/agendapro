@@ -4,7 +4,7 @@ var userForm = "#hoursOptimizer #new_booking ";
 // Generals
 var serviceTitle = "Elegir servicio y staff<br><small>Elige los servicios y prestadores para encontrar el mejor horario para realizarlos</small>";
 var serviceButton = "Agregar otro servicio";
-var hourTitle = "Resultado de la busqueda<br><small>Selecciona una fecha y hora</small>";
+var hourTitle = "Resultado de la búsqueda<br><small>Selecciona una fecha y hora</small>";
 var hourButton = "Ver mas resultados";
 var userTitle = "Datos del cliente";
 var resultsLength = 6;
