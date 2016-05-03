@@ -486,7 +486,7 @@ class Client < ActiveRecord::Base
     canceled_status = Status.find_by_name("Cancelado")
     bookings = Array.new
     #Send all services from same client (each company has diferent clients)
-    Client.where(id: Booking.where(:start => (Time.now + CustomTimezone.first_timezone.offset)..(Time.now + 96.hours + CustomTimezone.last_timezone.offset)).where.not(:status_id => canceled_status.id).pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
+    Client.where(id: Booking.where(:start => (Time.now + CustomTimezone.first_timezone.offset)..(Time.now + 96.hours + CustomTimezone.last_timezone.offset)).where.not(:status_id => canceled_status.id).where('(is_session = false or (is_session = true and is_session_booked = true))').pluck(:client_id)).where.not(email: [nil, ""]).each do |client|
 
       #Send a reminder for each location
       client.company.locations.each do |location|
@@ -496,7 +496,7 @@ class Client < ActiveRecord::Base
 
         timezone = CustomTimezone.from_company(client.company)
 
-        potential_bookings = client.bookings.where(:start => (Time.now + timezone.offset)..(Time.now + 96.hours + timezone.offset)).where.not(:status_id => canceled_status.id).where(:location_id => location.id)
+        potential_bookings = client.bookings.where(:start => (Time.now + timezone.offset)..(Time.now + 96.hours + timezone.offset)).where.not(:status_id => canceled_status.id).where(:location_id => location.id).where('(is_session = false or (is_session = true and is_session_booked = true))')
 
         potential_bookings.each do |booking|
 
@@ -517,6 +517,7 @@ class Client < ActiveRecord::Base
           end
 
         end
+
 
         if bookings.count > 0
           if bookings.count > 1
