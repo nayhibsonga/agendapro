@@ -461,7 +461,7 @@ class Company < ActiveRecord::Base
     	month_number = Time.now.month
     	month_days = Time.now.days_in_month
 
-		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.minutes.ago).each do |company|
+		where(active: true, payment_status_id: PaymentStatus.find_by_name("Trial").id).where.not(plan_id: Plan.find_by_name("Gratis").id).where('created_at <= ?', 1.months.ago).each do |company|
 
 			#New plan should be the default one
 			plan = company.default_plan
@@ -725,10 +725,10 @@ class Company < ActiveRecord::Base
 	#response[1] = Last payment amount (or 0 if nil)
 	def last_payment_detail
 
-		bl = BillingLog.where.not(transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id).where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
+		bl = BillingLog.where.not(transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id).where(:company_id => self.id).where('trx_id in (?) or trx_id in (?)', PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id), PayUNotification.where(:state_pol => "4").pluck(:reference_sale)).order('created_at desc').first
 		rec = BillingRecord.where(:company_id => self.id).order('date desc').first
 		bwt = BillingWireTransfer.where(:company_id => self.id, :approved => true).order('payment_date desc').first
-		pl = PlanLog.where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
+		pl = PlanLog.where(:company_id => self.id).where('trx_id in (?) or trx_id in (?)', PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id), PayUNotification.where(:state_pol => "4").pluck(:reference_sale)).order('created_at desc').first
 
 		last_payment_date = ""
 		paid_amount = "0"
