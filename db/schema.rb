@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160502162340) do
+ActiveRecord::Schema.define(version: 20160504161209) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -459,6 +459,7 @@ ActiveRecord::Schema.define(version: 20160502162340) do
     t.integer  "mails_base_capacity",         default: 5000
     t.integer  "booking_leap",                default: 15
     t.boolean  "allows_overlap_hours",        default: false
+    t.boolean  "require_cashier_code",        default: true
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -605,7 +606,7 @@ ActiveRecord::Schema.define(version: 20160502162340) do
 
   create_table "email_contents", force: true do |t|
     t.integer  "template_id"
-    t.json     "data",                             null: false
+    t.json     "data",                              null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "from"
@@ -613,8 +614,11 @@ ActiveRecord::Schema.define(version: 20160502162340) do
     t.string   "subject"
     t.integer  "company_id"
     t.string   "name"
-    t.boolean  "active",            default: true
+    t.boolean  "active",             default: true
     t.datetime "deactivation_date"
+    t.text     "attachment_content"
+    t.string   "attachment_type"
+    t.string   "attachment_name"
   end
 
   add_index "email_contents", ["company_id"], name: "index_email_contents_on_company_id", using: :btree

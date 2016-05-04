@@ -515,22 +515,25 @@ $(function() {
       }
       if($("#fakePaymentIntroForm").valid())
       {
-        var location_id = parseInt($('#payment_location').val());
-        var cashier_code = $("#payment_cashier_code").val();
+        if($('#require_cashier_code').val() == "1")
+        {
+          var location_id = parseInt($('#payment_location').val());
+          var cashier_code = $("#payment_cashier_code").val();
 
-        $.getJSON('/get_cashier_by_code', { location_id: location_id, payment_cashier_code: cashier_code }, function (response) {
-          if(response[0] != "error")
-          {
-            $("#payment_cashier_name").val(response[0]['name']);
-            $("#payment_cashier_id").val(response[0]['id']);
-            loadPaymentModal1();
-          }
-          else
-          {
-            triggerAlert("El código de cajero ingresado es incorrecto.");
-            $("#payment_cashier_name").val("");
-          }
-        });
+          $.getJSON('/get_cashier_by_code', { location_id: location_id, payment_cashier_code: cashier_code }, function (response) {
+            if(response[0] != "error")
+            {
+              $("#payment_cashier_name").val(response[0]['name']);
+              $("#payment_cashier_id").val(response[0]['id']);
+              loadPaymentModal1();
+            }
+            else
+            {
+              triggerAlert("El código de cajero ingresado es incorrecto.");
+              $("#payment_cashier_name").val("");
+            }
+          });
+        }
 
       }
     }

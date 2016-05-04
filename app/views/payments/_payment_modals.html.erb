@@ -13,6 +13,11 @@
 <% else %>
   <input type="hidden" id="mandatory_mock_booking_info" value="0" />
 <% end %>
+<% if current_user.company.company_setting.require_cashier_code %>
+  <input type="hidden" id="require_cashier_code" value="1" />
+<% else %>
+  <input type="hidden" id="require_cashier_code" value="0" />
+<% end %>
 <div class="modal fade paymentModal" id="paymentModalIntro" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -25,26 +30,26 @@
         <div class="payment-modals-bar row">
           <div class="col-md-2">
             <div  style="text-align: center; width: 100%">
-              <%= image_tag 'admin/header_pago_1b.png', :class => 'img-responsive', :size => "132x60" %>
-              Inicio
+              <%= image_tag 'admin/v1.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Inicio</span>
             </div>
           </div>
           <div class="col-md-4">
             <div style="text-align: center; width: 100%">
-              <%= image_tag 'admin/header_pago_2a.png', :class => 'img-responsive center-block', :size => "132x60" %>
-              Productos y servicios
+              <%= image_tag 'admin/g2.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Productos y servicios</span>
             </div>
           </div>
           <div class="col-md-4">
             <div style="text-align: center; width: 100%">
-              <%= image_tag 'admin/header_pago_2a.png', :class => 'img-responsive center-block', :size => "132x60" %>
-              Métodos de pago
+              <%= image_tag 'admin/g3.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Métodos de pago</span>
             </div>
           </div>
           <div class="col-md-2">
             <div style="text-align: center; width: 100%">
-              <%= image_tag 'admin/header_pago_3a.png', :class => 'img-responsive pull-right', :size => "132x60" %>
-              Comprobantes
+              <%= image_tag 'admin/g4.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Comprobantes</span>
             </div>
           </div>
         </div>
@@ -83,47 +88,62 @@
                   </div>
                 </div>
                 <div class="col-md-6">
+                  <% if current_user.company.company_setting.require_cashier_code %>
+                    <div class="payment-form-div form-group has-feedback">
+                      <label for="payment_cashier_code" class="col-xs-2 control-label left-label">Cajero</label>
+                      <div class="col-xs-10">
+                        <input type="password" class="form-control" id="payment_cashier_code" name="payment_cashier_code" value="" />
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
 
-                  <div class="payment-form-div form-group has-feedback">
-                    <label for="payment_cashier_code" class="col-xs-2 control-label left-label">Cajero</label>
-                    <div class="col-xs-10">
-                      <input type="password" class="form-control" id="payment_cashier_code" name="payment_cashier_code" value="" />
-                      <span class="help-block"></span>
-                      <span class="form-control-feedback"></span>
                     </div>
 
-                  </div>
+                    <div class="payment-form-div form-group has-feedback">
+                      <input type="hidden" id="payment_cashier_id" value="" />
+                      <label for="payment_cashier_name" class="col-xs-2 control-label left-label">Código</label>
+                      <div class="col-xs-10">
+                        <input type="text" class="form-control" id="payment_cashier_name" name="payment_cashier_name" value="" disabled />
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
 
-                  <div class="payment-form-div form-group has-feedback">
-                    <input type="hidden" id="payment_cashier_id" value="" />
-                    <label for="payment_cashier_name" class="col-xs-2 control-label left-label">Código</label>
-                    <div class="col-xs-10">
-                      <input type="text" class="form-control" id="payment_cashier_name" name="payment_cashier_name" value="" disabled />
-                      <span class="help-block"></span>
-                      <span class="form-control-feedback"></span>
                     </div>
-
-                  </div>
+                  <% end %>
                 </div>
               </div>
 
               <% if !current_user.company.company_setting.payment_client_required %>
                 <div class="row">
                   <div class="col-md-6">
+                    <% if !current_user.company.company_setting.require_cashier_code %>
+                      <div class="payment-form-div form-group">
+                        <div class="col-xs-2">
 
+                        </div>
+                        <div class="col-xs-8 openClient">
+                          <span>Asociar o agregar cliente </span>
+                        </div>
+                        <div class="col-xs-2 pull-right openClient">
+                          <span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
+                        </div>
+                      </div>
+                    <% end %>
                   </div>
                   <div class="col-md-6">
-                    <div class="payment-form-div form-group">
-                      <div class="col-xs-2">
+                    <% if current_user.company.company_setting.require_cashier_code %>
+                      <div class="payment-form-div form-group">
+                        <div class="col-xs-2">
 
+                        </div>
+                        <div class="col-xs-8 openClient">
+                          <span>Asociar o agregar cliente </span>
+                        </div>
+                        <div class="col-xs-2 pull-right openClient">
+                          <span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
+                        </div>
                       </div>
-                      <div class="col-xs-8 openClient">
-                        <span>Asociar o agregar cliente </span>
-                      </div>
-                      <div class="col-xs-2 pull-right openClient">
-                        <span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
-                      </div>
-                    </div>
+                    <% end %>
                   </div>
                 </div>
               <% end %>
@@ -234,19 +254,28 @@
       <div class="modal-body" id="paymentModal1Body">
 
         <div class="payment-modals-bar row">
-          <div class="col-md-4">
-            <div  style="text-align: left; width: 100%">
-              <%= image_tag 'admin/header_pago_1b.png', :class => 'img-responsive', :size => "132x60" %>
+          <div class="col-md-2">
+            <div  style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g1.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Inicio</span>
             </div>
           </div>
           <div class="col-md-4">
             <div style="text-align: center; width: 100%">
-              <%= image_tag 'admin/header_pago_2a.png', :class => 'img-responsive center-block', :size => "132x60" %>
+              <%= image_tag 'admin/v2.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Productos y servicios</span>
             </div>
           </div>
           <div class="col-md-4">
-            <div style="text-align: right; width: 100%">
-              <%= image_tag 'admin/header_pago_3a.png', :class => 'img-responsive pull-right', :size => "132x60" %>
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g3.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Métodos de pago</span>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g4.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Comprobantes</span>
             </div>
           </div>
         </div>
@@ -559,19 +588,28 @@
       <div class="modal-body" id="paymentModal2Body">
 
         <div class="payment-modals-bar row">
-          <div class="col-md-4">
-            <div  style="text-align: left; width: 100%">
-              <%= image_tag 'admin/header_pago_1a.png', :class => 'img-responsive', :size => "132x60" %>
+          <div class="col-md-2">
+            <div  style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g1.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Inicio</span>
             </div>
           </div>
           <div class="col-md-4">
             <div style="text-align: center; width: 100%">
-              <%= image_tag 'admin/header_pago_2b.png', :class => 'img-responsive center-block', :size => "132x60" %>
+              <%= image_tag 'admin/g2.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Productos y servicios</span>
             </div>
           </div>
           <div class="col-md-4">
-            <div style="text-align: right; width: 100%">
-              <%= image_tag 'admin/header_pago_3a.png', :class => 'img-responsive pull-right', :size => "132x60" %>
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/v3.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Métodos de pago</span>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g4.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Comprobantes</span>
             </div>
           </div>
         </div>
@@ -734,19 +772,28 @@
       <div class="modal-body" id="paymentModal3Body">
 
         <div class="payment-modals-bar row">
-          <div class="col-md-4">
-            <div  style="text-align: left; width: 100%">
-              <%= image_tag 'admin/header_pago_1a.png', :class => 'img-responsive', :size => "132x60" %>
+          <div class="col-md-2">
+            <div  style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g1.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Inicio</span>
             </div>
           </div>
           <div class="col-md-4">
             <div style="text-align: center; width: 100%">
-              <%= image_tag 'admin/header_pago_2a.png', :class => 'img-responsive center-block', :size => "132x60" %>
+              <%= image_tag 'admin/g2.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Productos y servicios</span>
             </div>
           </div>
           <div class="col-md-4">
-            <div style="text-align: right; width: 100%">
-              <%= image_tag 'admin/header_pago_3b.png', :class => 'img-responsive pull-right', :size => "132x60" %>
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g3.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Métodos de pago</span>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/v4.png', :class => 'img-responsive center-block', :size => "50x50" %>
+              <span style="font-size: 16px;">Comprobantes</span>
             </div>
           </div>
         </div>

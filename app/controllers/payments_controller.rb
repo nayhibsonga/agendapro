@@ -1670,7 +1670,12 @@ class PaymentsController < ApplicationController
     @json_response = []
     @errors = []
 
-    if params[:location_id].blank? || params[:cashier_id].blank? || params[:buyer_id].blank? || params[:buyer_type].blank? || params[:product_id].blank? || params[:date].blank? || params[:price].blank? || params[:discount].blank? || params[:quantity].blank?
+    if params[:location_id].blank? || params[:buyer_id].blank? || params[:buyer_type].blank? || params[:product_id].blank? || params[:date].blank? || params[:price].blank? || params[:discount].blank? || params[:quantity].blank?
+      @json_response[0] = "error"
+      @json_response[1] = "No se ingresaron correctamente los datos."
+      render :json => @json_response
+      return
+    elsif params[:cashier_id].blank? && current_user.company.company_setting.require_cashier_code
       @json_response[0] = "error"
       @json_response[1] = "No se ingresaron correctamente los datos."
       render :json => @json_response
@@ -1701,8 +1706,10 @@ class PaymentsController < ApplicationController
 
     if Cashier.where(id: params[:cashier_id]).count > 0
       internal_sale.cashier_id = params[:cashier_id]
-    else
+    elsif current_user.company.company_setting.require_cashier_code
       @errors << "No existe el cajero ingresado."
+    else
+      internal_sale.cashier_id = nil
     end
 
     if params[:buyer_id].blank? || params[:buyer_type].blank?
