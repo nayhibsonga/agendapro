@@ -930,7 +930,7 @@ class Client < ActiveRecord::Base
         row = Hash[[header, spreadsheet.row(i)].transpose]
 
         if row["email"].present?
-          row["email"] = row["email"].to_s
+          row["email"] = row["email"].gsub(/mailto:/, '').downcase.to_s
         end
 
         if row["first_name"].present?
