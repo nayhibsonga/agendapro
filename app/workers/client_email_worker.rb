@@ -9,7 +9,7 @@ class ClientEmailWorker < BaseEmailWorker
     else
       total_sendings = 0
       total_recipients = 0
-      recipients.in_groups_of(14).each do |group|
+      recipients.in_groups_of(30).each do |group|
         group.compact!
         total_sendings += 1
         total_recipients += group.size

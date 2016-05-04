@@ -461,19 +461,43 @@ class ClientsController < ApplicationController
   end
 
   def send_mail
-    # attachments = params[:attachment]
+    attachments = params[:attachment]
     # attachment = {
     #   :type => attachments.content_type,
     #   :name => attachments.original_filename,
     #   :content => Base64.encode64(File.read(attachments.tempfile))
     # }
 
-    content = Email::Content.create(
-      template: Email::Template.where(name: "plantilla_02").first,
-      company: current_user.company,
-      from: params[:from],
-      to: params[:to]
-      )
+    if attachments.present?
+      s3 = Aws::S3::Client.new
+
+      full_name = 'email_temp/' + current_user.company.id.to_s + '_' + DateTime.now.to_i.to_s + '_' + attachments.original_filename
+
+      s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+      obj = s3_bucket.object(full_name)
+
+      obj.upload_file(attachments.path(), {acl: 'public-read', content_type: attachments.content_type})
+
+
+      content = Email::Content.create(
+        template: Email::Template.where(name: "plantilla_00").first,
+        company: current_user.company,
+        from: params[:from],
+        to: params[:to],
+        attachment_type: attachments.content_type,
+        attachment_name: attachments.original_filename,
+        attachment_content: obj.public_url
+        )
+    else
+      content = Email::Content.create(
+        template: Email::Template.where(name: "plantilla_00").first,
+        company: current_user.company,
+        from: params[:from],
+        to: params[:to]
+        )
+    end
+
     if content.present?
       flash[:notice] = 'E-mail enviado exitosamente'
       content.update(subject: params[:subject], send_email: true, data: { text1: params[:message] })
@@ -893,13 +917,13 @@ class ClientsController < ApplicationController
 
     #Check params first
 
-    @start_date = DateTime.now - 1.months  
+    @start_date = DateTime.now - 1.months
 
     @end_date = DateTime.now
 
     @start_date = @start_date.strftime("%d/%m/%Y")
     @end_date = @end_date.strftime("%d/%m/%Y")
-    
+
 
   end
 
@@ -907,7 +931,7 @@ class ClientsController < ApplicationController
     @from = params[:from].to_datetime.beginning_of_day
     @to = params[:to].to_datetime.end_of_day
     @payments = []
-    
+
     if params[:items].present?
       items = params[:items].split(",").sort()
       logger.debug items.inspect

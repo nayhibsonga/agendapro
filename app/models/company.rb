@@ -75,7 +75,7 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
-	after_create :create_cashier, :create_plan_setting, :create_attribute_group
+	after_create :create_cashier, :create_plan_setting, :create_attribute_group, 
 
 	WORKER = 'CompanyEmailWorker'
 
@@ -121,6 +121,8 @@ class Company < ActiveRecord::Base
 
 	def create_plan_setting
 		CompanyPlanSetting.create(company_id: self.id, base_price: self.plan.plan_countries.find_by(country_id: self.country.id).price, locations_multiplier: NumericParameter.find_by_name("locations_multiplier").value)
+		#Set default plan
+		self.update(:default_plan_id => Plan.where(custom: false, name: "Normal").first.id)
 	end
 
 	def computed_multiplier
@@ -465,13 +467,13 @@ class Company < ActiveRecord::Base
 			plan = company.default_plan
 
 			#If default wasn't changed, then set plan by locations and providers number
-			if plan.name == "Normal" || plan.name == "Personal"
-				if company.locations.where(active: true).count > 1 || company.service_providers.where(location_id: company.				locations.where(active: true).pluck(:id), active:true).count > 1
-					plan = Plan.where(name: "Normal", custom: false).first
-				else
-					plan = Plan.where(name: "Personal", custom: false).first
-				end
- 			end
+			# if plan.name == "Normal" || plan.name == "Personal"
+			# 	if company.locations.where(active: true).count > 1 || company.service_providers.where(location_id: company.				locations.where(active: true).pluck(:id), active:true).count > 1
+			# 		plan = Plan.where(name: "Normal", custom: false).first
+			# 	else
+			# 		plan = Plan.where(name: "Personal", custom: false).first
+			# 	end
+ 		# 	end
 
 			sales_tax = company.country.sales_tax
 
@@ -723,10 +725,10 @@ class Company < ActiveRecord::Base
 	#response[1] = Last payment amount (or 0 if nil)
 	def last_payment_detail
 
-		bl = BillingLog.where.not(transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id).where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
+		bl = BillingLog.where.not(transaction_type_id: TransactionType.find_by_name("Transferencia Formulario").id).where(:company_id => self.id).where('trx_id in (?) or trx_id in (?)', PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id), PayUNotification.where(:state_pol => "4").pluck(:reference_sale)).order('created_at desc').first
 		rec = BillingRecord.where(:company_id => self.id).order('date desc').first
 		bwt = BillingWireTransfer.where(:company_id => self.id, :approved => true).order('payment_date desc').first
-		pl = PlanLog.where(:company_id => self.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
+		pl = PlanLog.where(:company_id => self.id).where('trx_id in (?) or trx_id in (?)', PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id), PayUNotification.where(:state_pol => "4").pluck(:reference_sale)).order('created_at desc').first
 
 		last_payment_date = ""
 		paid_amount = "0"
