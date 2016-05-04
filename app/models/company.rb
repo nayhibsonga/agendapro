@@ -61,7 +61,7 @@ class Company < ActiveRecord::Base
 
 	has_many :sendings, class_name: 'Email::Sending', as: :sendable
 
-	scope :collectables, -> { where(active: true, id: 136).where('created_at <= ?', DateTime.now - 2.months).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
+	scope :collectables, -> { where(active: true).where('created_at <= ?', DateTime.now - 2.months).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 	scope :former_trials, -> { where(active: true).where('created_at > ?', DateTime.now - 2.months).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
