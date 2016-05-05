@@ -484,7 +484,7 @@ class ClientsController < ApplicationController
         template: Email::Template.where(name: "plantilla_00").first,
         company: current_user.company,
         from: params[:from],
-        to: params[:to],
+        to: params[:to].squish,
         attachment_type: attachments.content_type,
         attachment_name: attachments.original_filename,
         attachment_content: obj.public_url
@@ -494,7 +494,7 @@ class ClientsController < ApplicationController
         template: Email::Template.where(name: "plantilla_00").first,
         company: current_user.company,
         from: params[:from],
-        to: params[:to]
+        to: params[:to].squish
         )
     end
 

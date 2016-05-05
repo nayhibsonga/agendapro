@@ -510,15 +510,14 @@ function editBookingModal(eventId) {
       var end = booking.end || 0;
       if (start != 0) {
         dateArray = start.toString().split('T');
-        date = new Date(start)
-        console.log(start);
+        date = new Date(start);
 
         month = date.getMonth()+1;
         day = date.getDate();
 
         output = (day<10 ? '0' : '') + day + '/' + (month<10 ? '0' : '') + month + '/' + date.getFullYear();
 
-        $('#datePicker').val(output);
+        $('#datePicker').datepicker("setDate", date );
         $('#bookingStartHour option[value="'+dateArray[1].split(':')[0]+'"]').attr("selected",true);
         $('#bookingStartMinute option[value="'+dateArray[1].split(':')[1]+'"]').attr("selected",true);
       }
@@ -821,7 +820,7 @@ function createBookingModal(date, provider_id) {
         var year_str = date_str[0];
 
         //Falta revisar el tema de las fechas, deberían ser contantes en la app
-        $('#datePicker').val(day_str+'/'+month_str+'/'+year_str);
+        $('#datePicker').datepicker("setDate", date );
         $('#bookingStartHour option[value="'+timeArray.split(":")[0]+'"]').attr("selected",true);
         $('#bookingStartMinute option[value="'+timeArray.split(":")[1]+'"]').attr("selected",true);
         modalChange();
