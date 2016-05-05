@@ -364,19 +364,28 @@ $(function() {
     }
   });
 
+  $('body').on('change', '.receipt_item_checkbox', function(){
+    var check_all = false;
+    if($('.receipt_item_checkbox:checked').length == $('.receipt_item_checkbox').length)
+    {
+      check_all = true;
+    }
+    $("#checkAllItems").prop('checked', check_all);
+  });
+
   $("#addReceiptBtn").click(function(e){
 
     addReceipt();
 
   });
 
-  $("#openReceiptForm").click(function(e){
+  /*$("#openReceiptForm").click(function(e){
     $("#payment_receipt_notes").val("");
     $("#payment_receipt_number").val("");
     $("#receiptsItemsDiv").show();
     $("#fakePaymentStep3Form").show();
     $("#paymentReceiptsForms").show();
-  });
+  });*/
 
   $('body').on('click', '.removeReceipt', function(){
     var receipt_id = $(this).attr('receipt_id');
@@ -533,6 +542,10 @@ $(function() {
               $("#payment_cashier_name").val("");
             }
           });
+        }
+        else
+        {
+          loadPaymentModal1();
         }
 
       }
@@ -959,72 +972,128 @@ function saveInternalSale()
   var cashier_code = $('#internal_sale_cashier_code').val();
   var internal_sale_id = $('#internal_sale_id').val();
 
-  $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
-    if(response[0] != "error")
-    {
-      $("#internal_sale_cashier_name").val(response[0]['name']);
-      $("#internal_sale_cashier_id").val(response[0]['id']);
-
-      if($('#internalSaleForm').valid())
+  if($('#require_cashier_code').val() == "1")
+  {
+    $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
+      if(response[0] != "error")
       {
-        var location_id = $('#internal_sale_location').val();
-        var cashier_id = $('#internal_sale_cashier_id').val();
-        var product_id = $('#internal_sale_product').val();
-        var buyer_id = $('#internal_sale_service_provider').val();
-        var buyer_type = $('#internal_sale_service_provider option:selected').attr("buyer_type");
-        var price = $('#internal_sale_price').val();
-        var quantity = $('#internal_sale_quantity').val();
-        var discount = $('#internal_sale_discount').val();
-        var date = $('#internal_sale_date').val();
-        var time = $('#internal_sale_time_4i').val() + ":" + $('#internal_sale_time_5i').val() + ":00";
-        var notes = $('#internal_sale_notes').val();
-        date = date + " " + time;
+        $("#internal_sale_cashier_name").val(response[0]['name']);
+        $("#internal_sale_cashier_id").val(response[0]['id']);
 
-        if(internal_sale_id == "")
+        if($('#internalSaleForm').valid())
         {
-          internal_sale_id = "-1";
-        }
+          var location_id = $('#internal_sale_location').val();
+          var cashier_id = $('#internal_sale_cashier_id').val();
+          var product_id = $('#internal_sale_product').val();
+          var buyer_id = $('#internal_sale_service_provider').val();
+          var buyer_type = $('#internal_sale_service_provider option:selected').attr("buyer_type");
+          var price = $('#internal_sale_price').val();
+          var quantity = $('#internal_sale_quantity').val();
+          var discount = $('#internal_sale_discount').val();
+          var date = $('#internal_sale_date').val();
+          var time = $('#internal_sale_time_4i').val() + ":" + $('#internal_sale_time_5i').val() + ":00";
+          var notes = $('#internal_sale_notes').val();
+          date = date + " " + time;
 
-        $.ajax({
-          url: '/save_internal_sale',
-          method: 'post',
-          data: {location_id: location_id, cashier_id: cashier_id, product_id: product_id, buyer_id: buyer_id, buyer_type: buyer_type, price: price, quantity: quantity, discount: discount, date: date, internal_sale_id: internal_sale_id, notes: notes},
-          dataType: 'json',
-          error: function(response){
-            triggerAlert("Ocurrió un error al guardar la venta.");
-            $('#internalSaleModal').modal('hide');
-          },
-          success: function(response){
-            if(response[0] == "ok")
-            {
-              triggerSuccess("Venta ingresada exitosamente.");
-              $('#internalSaleModal').modal('hide');
-            }
-            else
-            {
+          if(internal_sale_id == "")
+          {
+            internal_sale_id = "-1";
+          }
+
+          $.ajax({
+            url: '/save_internal_sale',
+            method: 'post',
+            data: {location_id: location_id, cashier_id: cashier_id, product_id: product_id, buyer_id: buyer_id, buyer_type: buyer_type, price: price, quantity: quantity, discount: discount, date: date, internal_sale_id: internal_sale_id, notes: notes},
+            dataType: 'json',
+            error: function(response){
               triggerAlert("Ocurrió un error al guardar la venta.");
               $('#internalSaleModal').modal('hide');
+            },
+            success: function(response){
+              if(response[0] == "ok")
+              {
+                triggerSuccess("Venta ingresada exitosamente.");
+                $('#internalSaleModal').modal('hide');
+                loadPayments();
+              }
+              else
+              {
+                triggerAlert("Ocurrió un error al guardar la venta.");
+                $('#internalSaleModal').modal('hide');
+              }
             }
-          }
-        });
+          });
+
+        }
+        else
+        {
+          triggerAlert("Hay campos que no has llenado correctamente.");
+          return;
+        }
 
       }
       else
       {
-        triggerAlert("Hay campos que no has llenado correctamente.");
+        triggerAlert("El código de cajero ingresado es incorrecto.");
         return;
       }
+
+      loadPayments();
+
+    });
+  }
+  else
+  {
+    if($('#internalSaleForm').valid())
+    {
+      var location_id = $('#internal_sale_location').val();
+      var product_id = $('#internal_sale_product').val();
+      var buyer_id = $('#internal_sale_service_provider').val();
+      var buyer_type = $('#internal_sale_service_provider option:selected').attr("buyer_type");
+      var price = $('#internal_sale_price').val();
+      var quantity = $('#internal_sale_quantity').val();
+      var discount = $('#internal_sale_discount').val();
+      var date = $('#internal_sale_date').val();
+      var time = $('#internal_sale_time_4i').val() + ":" + $('#internal_sale_time_5i').val() + ":00";
+      var notes = $('#internal_sale_notes').val();
+      date = date + " " + time;
+
+      if(internal_sale_id == "")
+      {
+        internal_sale_id = "-1";
+      }
+
+      $.ajax({
+        url: '/save_internal_sale',
+        method: 'post',
+        data: {location_id: location_id, product_id: product_id, buyer_id: buyer_id, buyer_type: buyer_type, price: price, quantity: quantity, discount: discount, date: date, internal_sale_id: internal_sale_id, notes: notes},
+        dataType: 'json',
+        error: function(response){
+          triggerAlert("Ocurrió un error al guardar la venta.");
+          $('#internalSaleModal').modal('hide');
+        },
+        success: function(response){
+          if(response[0] == "ok")
+          {
+            triggerSuccess("Venta ingresada exitosamente.");
+            $('#internalSaleModal').modal('hide');
+            loadPayments();
+          }
+          else
+          {
+            triggerAlert("Ocurrió un error al guardar la venta.");
+            $('#internalSaleModal').modal('hide');
+          }
+        }
+      });
 
     }
     else
     {
-      triggerAlert("El código de cajero ingresado es incorrecto.");
+      triggerAlert("Hay campos que no has llenado correctamente.");
       return;
     }
-
-    loadPayments();
-
-  });
+  }
 }
 
 function deleteInternalSale(internal_sale_id)
@@ -1054,6 +1123,7 @@ function deleteInternalSale(internal_sale_id)
             if(response[0] == "ok")
             {
               triggerSuccess("Venta eliminada correctamente.");
+              loadPayments();
             }
             else
             {
@@ -1184,9 +1254,12 @@ function getPaymentIntro(payment_id)
 
       $("#payment_location").val(response.payment.location_id);
       $("#payment_location").prop("disabled", true);
-      $("#payment_cashier_code").val(response.cashier.code);
-      $("#payment_cashier_name").val(response.cashier.name);
-      $("#payment_cashier_id").val(response.cashier.id);
+      if(response.cashier != null)
+      {
+        $("#payment_cashier_code").val(response.cashier.code);
+        $("#payment_cashier_name").val(response.cashier.name);
+        $("#payment_cashier_id").val(response.cashier.id);
+      }
 
       var complete_date_array = response.payment.payment_date.split("T");
       var edit_date_array = complete_date_array[0].split("-");
@@ -1555,7 +1628,12 @@ function loadPaymentModal3(booking_id) {
   fillReceiptsItemsTable();
   $("#paymentModal2").modal('hide');
   $("#paymentModal3").modal('show');
-  $("#openReceiptForm").trigger("click");
+  //$("#openReceiptForm").trigger("click");
+  $("#payment_receipt_notes").val("");
+  $("#payment_receipt_number").val("");
+  $("#receiptsItemsDiv").show();
+  $("#fakePaymentStep3Form").show();
+  $("#paymentReceiptsForms").show();
   paymentModalState = 'Step3';
 }
 
@@ -2019,7 +2097,7 @@ function fillReceiptsItemsTable(){
       {
         $("#receiptsItemsTable").append(
           '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' +
-          '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" /></td>' +
+          '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" checked /></td>' +
           '<td>' + paymentItems[x]['item_id'] + '</td>' +
           '<td>Producto</td>' +
           '<td>' + paymentItems[x]['name'] + '</td>' +
@@ -2030,7 +2108,7 @@ function fillReceiptsItemsTable(){
       {
         $("#receiptsItemsTable").append(
           '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' +
-          '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" /></td>' +
+          '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" checked /></td>' +
           '<td>' + paymentItems[x]['item_id'] + '</td>' +
           '<td>Reserva existente</td>' +
           '<td>' + paymentItems[x]['service_name'] + '</td>' +
@@ -2041,7 +2119,7 @@ function fillReceiptsItemsTable(){
       {
         $("#receiptsItemsTable").append(
           '<tr class="receiptsItemsRow" item_id="' + paymentItems[x]['item_id'] + '">' +
-          '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" /></td>' +
+          '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + paymentItems[x]['item_id'] + '" checked /></td>' +
           '<td>' + paymentItems[x]['item_id'] + '</td>' +
           '<td>Servicio</td>' +
           '<td>' + paymentItems[x]['service_name'] + '</td>' +
@@ -2143,7 +2221,7 @@ function removeReceipt(receipt_id)
     {
       $("#receiptsItemsTable").append(
         '<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' +
-        '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" /></td>' +
+        '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" checked /></td>' +
         '<td>' + current_item['item_id'] + '</td>' +
         '<td>Producto</td>' +
         '<td>' + current_item['name'] + '</td>' +
@@ -2154,7 +2232,7 @@ function removeReceipt(receipt_id)
     {
       $("#receiptsItemsTable").append(
         '<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' +
-        '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" /></td>' +
+        '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" checked /></td>' +
         '<td>' + current_item['item_id'] + '</td>' +
         '<td>Reserva existente</td>' +
         '<td>' + current_item.service_name + '</td>' +
@@ -2165,7 +2243,7 @@ function removeReceipt(receipt_id)
     {
       $("#receiptsItemsTable").append(
         '<tr class="receiptsItemsRow" item_id="' + current_item['item_id'] + '">' +
-        '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" /></td>' +
+        '<td><input type="checkbox" class="receipt_item_checkbox" item_id="' + current_item['item_id'] + '" checked /></td>' +
         '<td>' + current_item['item_id'] + '</td>' +
         '<td>Servicio</td>' +
         '<td>' + current_item['service_name'] + '</td>' +
@@ -2177,10 +2255,16 @@ function removeReceipt(receipt_id)
   $('.addedReceipt[receipt_id="' + receipt['receipt_id'] + '"]').remove();
   $("#paymentReceiptsFinal").hide();
   $("#paymentReceiptsFinal").empty();
-  $("#openReceiptForm").show();
-  $("#checkAllItems").prop('checked', false);
+  //$("#openReceiptForm").show();
+  
+  $('.receipt_item_checkbox').prop('checked', true);
+  $("#checkAllItems").prop('checked', true);
   $('.payment-btn-end').hide();
   paymentReceipts[receipt_index] = null;
+  $("#paymentReceiptsForms").show();
+  clearValidations("#payment_receipt_number");
+  clearValidations("#payment_receipt_date");
+  $('#payment_receipt_type').val("1");
 }
 
 /*
@@ -2253,9 +2337,9 @@ function addReceiptSummary(receipt)
 {
   $("#payment_receipt_notes").val("");
   $("#payment_receipt_number").val("");
-  $("#receiptsItemsDiv").hide();
-  $("#fakePaymentStep3Form").hide();
-  $("#paymentReceiptsForms").hide();
+  //$("#receiptsItemsDiv").hide();
+  //$("#fakePaymentStep3Form").hide();
+  //$("#paymentReceiptsForms").hide();
 
   $("#addedReceipts").append(
     '<div class="addedReceipt" receipt_id="' + receipt['receipt_id'] + '">' +
@@ -2267,6 +2351,9 @@ function addReceiptSummary(receipt)
 
   clearValidations("#payment_receipt_number");
   clearValidations("#payment_receipt_date");
+  $('#payment_receipt_type').val("1");
+  $('.receipt_item_checkbox').prop('checked', true);
+  $('#checkAllItems').prop('checked', true);
 
   //Add to column for edit/remove.
 }
@@ -2344,7 +2431,7 @@ function checkReceiptsReady()
     $('.payment-btn-end').show();
     $("#paymentReceiptsForms").hide();
     $("#paymentReceiptsFinal").show();
-    $("#openReceiptForm").hide();
+    //$("#openReceiptForm").hide();
   }
   else
   {
@@ -2828,10 +2915,10 @@ function resetPaymentStep3()
 
   $("#addedReceipts").empty();
 
-  $("#checkAllItems").prop('checked', false);
+  $("#checkAllItems").prop('checked', true);
 
   $(".receiptsItemsRow").remove();
-  $("#openReceiptForm").show();
+  //$("#openReceiptForm").show();
 
   $("#receiptsItemsDiv").hide();
   $("#paymentReceiptsFinal").empty();

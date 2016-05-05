@@ -466,7 +466,20 @@ class PaymentsController < ApplicationController
       payment.client_id = nil
     end
 
-    payment.cashier_id = params[:cashier_id]
+    if params[:cashier_id].present?
+      payment.cashier_id = params[:cashier_id]
+    else
+      if !current_user.company.company_setting.require_cashier_code
+        payment.cashier_id = nil
+      else
+        @errors << "No se pudo guardar el pago sin cajero."
+        @json_response[0] = "error"
+        @json_response << @errors
+        render :json => @json_response
+        return
+      end
+    end
+
     payment.company_id = current_user.company.id
 
     payment.payed = true
@@ -785,7 +798,19 @@ class PaymentsController < ApplicationController
       end
     end
 
-    payment.cashier_id = params[:cashier_id]
+    if params[:cashier_id].present?
+      payment.cashier_id = params[:cashier_id]
+    else
+      if !current_user.company.company_setting.require_cashier_code
+        payment.cashier_id = nil
+      else
+        @errors << "No se pudo guardar el pago sin cajero."
+        @json_response[0] = "error"
+        @json_response << @errors
+        render :json => @json_response
+        return
+      end
+    end
 
     payment.payed = true
     payment.payment_date = params[:payment_date].to_datetime
@@ -1170,7 +1195,11 @@ class PaymentsController < ApplicationController
       payment.client_id = nil
     end
 
-    payment.cashier_id = params[:cashier_id]
+    if params[:cashier_id].present?
+      payment.cashier_id = params[:cashier_id]
+    else
+      payment.cashier_id = nil
+    end
     payment.payment_date = params[:payment_date].to_datetime
 
     payment.mock_bookings.each do |mock_booking|
@@ -1704,10 +1733,12 @@ class PaymentsController < ApplicationController
       @errors << "No existe el local ingresado."
     end
 
-    if Cashier.where(id: params[:cashier_id]).count > 0
-      internal_sale.cashier_id = params[:cashier_id]
-    elsif current_user.company.company_setting.require_cashier_code
-      @errors << "No existe el cajero ingresado."
+    if current_user.company.company_setting.require_cashier_code
+      if params[:cashier_id].present? && Cashier.where(id: params[:cashier_id]).count > 0
+        internal_sale.cashier_id = params[:cashier_id]
+      else
+        @errors << "No existe el cajero ingresado."
+      end
     else
       internal_sale.cashier_id = nil
     end
@@ -2039,11 +2070,13 @@ class PaymentsController < ApplicationController
         return
       end
     elsif transactioner_type == 2
-      if Cashier.where(:id => transactioner_id).count == 0
-        @json_response << "error"
-        @json_response << "El autor de la transacción es inválido."
-        render :json => @json_response
-        return
+      if current_user.company.company_setting.require_cashier_code
+        if Cashier.where(:id => transactioner_id).count == 0
+          @json_response << "error"
+          @json_response << "El autor de la transacción es inválido."
+          render :json => @json_response
+          return
+        end
       end
     else
         @json_response << "error"

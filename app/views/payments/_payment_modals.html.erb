@@ -90,7 +90,7 @@
                 <div class="col-md-6">
                   <% if current_user.company.company_setting.require_cashier_code %>
                     <div class="payment-form-div form-group has-feedback">
-                      <label for="payment_cashier_code" class="col-xs-2 control-label left-label">Cajero</label>
+                      <label for="payment_cashier_code" class="col-xs-2 control-label left-label">Código Cajero</label>
                       <div class="col-xs-10">
                         <input type="password" class="form-control" id="payment_cashier_code" name="payment_cashier_code" value="" />
                         <span class="help-block"></span>
@@ -101,7 +101,28 @@
 
                     <div class="payment-form-div form-group has-feedback">
                       <input type="hidden" id="payment_cashier_id" value="" />
-                      <label for="payment_cashier_name" class="col-xs-2 control-label left-label">Código</label>
+                      <label for="payment_cashier_name" class="col-xs-2 control-label left-label">Nombre</label>
+                      <div class="col-xs-10">
+                        <input type="text" class="form-control" id="payment_cashier_name" name="payment_cashier_name" value="" disabled />
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+
+                    </div>
+                  <% else %>
+                    <div class="payment-form-div form-group has-feedback" hidden>
+                      <label for="payment_cashier_code" class="col-xs-2 control-label left-label">Código Cajero</label>
+                      <div class="col-xs-10">
+                        <input type="password" class="form-control" id="payment_cashier_code" name="payment_cashier_code" value="" />
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+
+                    </div>
+
+                    <div class="payment-form-div form-group has-feedback" hidden>
+                      <input type="hidden" id="payment_cashier_id" value="" />
+                      <label for="payment_cashier_name" class="col-xs-2 control-label left-label">Nombre</label>
                       <div class="col-xs-10">
                         <input type="text" class="form-control" id="payment_cashier_name" name="payment_cashier_name" value="" disabled />
                         <span class="help-block"></span>
@@ -293,82 +314,82 @@
             <div class="row">
 
               <% if current_user.company.plan_id != Plan.find_by_name("Gratis").id %>
-                <div class="col-xs-4">
+                <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
 
-                <div id="paymentModalBookingForm" hidden>
+                  <div id="paymentModalBookingForm" hidden>
 
-                  <div class="mbf-title">
-                    Agregar servicio
-                  </div>
-
-                  <div class="payment-form-div">
-                    <label for="service" class="col-xs-3 control-label">Categoría</label>
-                    <div class="col-xs-9">
-                      <select class="form-control" id="payment_not_booked_category" name="payment_not_booked_category">
-                        <option value=""></option>
-                      </select>
+                    <div class="mbf-title">
+                      Agregar servicio
                     </div>
-                    <div style="clear: both;"></div>
-                  </div>
 
-                  <div class="payment-form-div">
-                    <label for="service" class="col-xs-3 control-label">Servicio</label>
-                    <div class="col-xs-9">
-                      <select class="form-control" id="payment_not_booked_service" name="payment_not_booked_service">
-                        <option value=""></option>
-                      </select>
-                    </div>
-                    <div style="clear: both;"></div>
-                  </div>
-
-                  <div class="payment-form-div">
-                    <label for="provider" class="col-xs-3 control-label">Prestador</label>
-                    <div class="col-xs-9">
-                      <select class="form-control" id="payment_not_booked_provider" name="payment_not_booked_provider">
+                    <div class="payment-form-div">
+                      <label for="service" class="col-xs-3 control-label">Categoría</label>
+                      <div class="col-xs-9">
+                        <select class="form-control" id="payment_not_booked_category" name="payment_not_booked_category">
                           <option value=""></option>
-                      </select>
-                    </div>
-                    <div style="clear: both;"></div>
-                  </div>
-
-                  <div class="payment-form-div">
-                    <label for="price" class="col-xs-3 control-label">Precio</label>
-                    <div class="col-xs-9">
-                      <div class="input-group">
-                        <span class="input-group-addon">$</span>
-                        <% if current_user.company.company_setting.editable_payment_prices %>
-                          <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" />
-                        <% else %>
-                          <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" disabled />
-                        <% end %>
+                        </select>
                       </div>
+                      <div style="clear: both;"></div>
                     </div>
-                    <div style="clear: both;"></div>
-                  </div>
 
-                  <div class="payment-form-div">
-                    <label for="discount" class="col-xs-3 control-label">Descuento</label>
-                    <div class="col-xs-9">
-                      <div class="input-group">
-                        <input class="form-control" type="number" id="payment_not_booked_discount" name="payment_not_booked_discount" value="0" />
-                        <span class="input-group-addon">%</span>
+                    <div class="payment-form-div">
+                      <label for="service" class="col-xs-3 control-label">Servicio</label>
+                      <div class="col-xs-9">
+                        <select class="form-control" id="payment_not_booked_service" name="payment_not_booked_service">
+                          <option value=""></option>
+                        </select>
                       </div>
+                      <div style="clear: both;"></div>
                     </div>
-                    <div style="clear: both;"></div>
-                  </div>
 
-                  <div class="payment-form-div">
-                    <div class="col-xs-9 col-xs-offset-3">
-                      <button id="addNotBooked" class="btn">Agregar</button>
+                    <div class="payment-form-div">
+                      <label for="provider" class="col-xs-3 control-label">Prestador</label>
+                      <div class="col-xs-9">
+                        <select class="form-control" id="payment_not_booked_provider" name="payment_not_booked_provider">
+                            <option value=""></option>
+                        </select>
+                      </div>
+                      <div style="clear: both;"></div>
                     </div>
-                    <div style="clear: both;"></div>
-                  </div>
 
-                </div>
+                    <div class="payment-form-div">
+                      <label for="price" class="col-xs-3 control-label">Precio</label>
+                      <div class="col-xs-9">
+                        <div class="input-group">
+                          <span class="input-group-addon">$</span>
+                          <% if current_user.company.company_setting.editable_payment_prices %>
+                            <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" />
+                          <% else %>
+                            <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" disabled />
+                          <% end %>
+                        </div>
+                      </div>
+                      <div style="clear: both;"></div>
+                    </div>
+
+                    <div class="payment-form-div">
+                      <label for="discount" class="col-xs-3 control-label">Descuento</label>
+                      <div class="col-xs-9">
+                        <div class="input-group">
+                          <input class="form-control" type="number" id="payment_not_booked_discount" name="payment_not_booked_discount" value="0" />
+                          <span class="input-group-addon">%</span>
+                        </div>
+                      </div>
+                      <div style="clear: both;"></div>
+                    </div>
+
+                    <div class="payment-form-div">
+                      <div class="col-xs-9 col-xs-offset-3">
+                        <button id="addNotBooked" class="btn">Agregar</button>
+                      </div>
+                      <div style="clear: both;"></div>
+                    </div>
+
+                  </div>
                 </div>
               <% end %>
 
-              <div class="col-xs-8">
+              <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
 
                 <div id="paymentClientPastBookings" hidden>
                   <div class="cpb-title">
@@ -405,7 +426,7 @@
             </div>
 
             <div class="row">
-              <div class="col-xs-6">
+              <div class="col-lg-6 col-md-11 col-sm-11 col-xs-11">
 
                 <div id="paymentModalProductForm" hidden>
 
@@ -507,7 +528,7 @@
                 </div>
 
               </div>
-              <div class="col-xs-6">
+              <div class="col-lg-6 col-md-1 col-sm-1 col-xs-1">
 
               </div>
             </div>
@@ -799,10 +820,10 @@
         </div>
 
         <div class="row">
-          <div class="col-xs-8">
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
 
             <div id="paymentReceiptsForms">
-              <div class="col-xs-5">
+              <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
                 <div id="receiptsItemsDiv">
 
                   <div class="receiptTitle">
@@ -812,7 +833,7 @@
                   <table id="receiptsItemsTable">
                     <tr class="paymentItemsHeaders">
                       <th>
-                        <input type="checkbox" id="checkAllItems" />
+                        <input type="checkbox" id="checkAllItems" checked />
                       </th>
                       <th>
                         ID
@@ -827,7 +848,7 @@
                   </table>
                 </div>
               </div>
-              <div class="col-xs-7">
+              <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
                 <form id="fakePaymentStep3Form" action="">
 
                   <div class="receiptTitle">
@@ -849,7 +870,7 @@
                   </div>
 
                   <div class="payment-form-div">
-                    <label for="payment_receipt_number" class="col-xs-5 control-label">Número de comprobante</label>
+                    <label for="payment_receipt_number" class="col-xs-5 control-label">Número de boleta o factura</label>
                     <div class="col-xs-7">
                       <% if current_user.company.company_setting.receipt_required %>
                         <input type="hidden" id="payment_receipt_number_required" name="payment_receipt_number_required" value="1" />
@@ -864,8 +885,8 @@
                   </div>
 
                   <div class="payment-form-div">
-                    <label for="payment_receipt_date" class="col-xs-5 control-label">Fecha de pago</label>
-                    <div class="col-xs-4">
+                    <label for="payment_receipt_date" class="col-xs-5 control-label">Fecha de boleta o factura</label>
+                    <div class="col-xs-7">
                       <input type="text" class="form-control" id="payment_receipt_date" name="payment_receipt_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
                       <span class="help-block"></span>
                       <span class="form-control-feedback"></span>
@@ -886,7 +907,7 @@
                     <div class="col-xs-5">
                     </div>
                     <div class="col-xs-7">
-                      <button type="button" class="btn btn-default" id="addReceiptBtn">Guardar</button>
+                      <button type="button" class="btn btn-default" id="addReceiptBtn">Añadir comprobante</button>
                     </div>
                   </div>
 
@@ -900,7 +921,7 @@
             </div>
 
           </div>
-          <div class="col-xs-4">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
             <div class="receiptTitle">
               Comprobantes
             </div>
@@ -912,9 +933,9 @@
       </div>
       <div class="modal-footer">   
         <div class="col-md-6" style="text-align: left;">
-          <div style="display: block; text-align: left;">
+          <!--<div style="display: block; text-align: left;">
             <button type="button" class="btn btn-default" id="openReceiptForm">Nuevo comprobante&nbsp;<i class="fa fa-plus"></i></button><br />
-          </div>
+          </div>-->
           <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
           <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
         </div>
@@ -1081,26 +1102,49 @@
                 </div>
               </div>
 
-              <div class="payment-form-div form-group has-feedback">
-                <label for="internal_sale_cashier_code" class="col-xs-3 control-label">Cajero</label>
-                <div class="col-xs-9">
-                  <input type="password" class="form-control" id="internal_sale_cashier_code" name="internal_sale_cashier_code" value="" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+              <% if current_user.company.company_setting.require_cashier_code %>
+                <div class="payment-form-div form-group has-feedback">
+                  <label for="internal_sale_cashier_code" class="col-xs-3 control-label">Código Cajero</label>
+                  <div class="col-xs-9">
+                    <input type="password" class="form-control" id="internal_sale_cashier_code" name="internal_sale_cashier_code" value="" />
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+
                 </div>
 
-              </div>
+                <div class="payment-form-div form-group has-feedback">
+                  <input type="hidden" id="internal_sale_cashier_id" value="" />
+                  <label for="internal_sale_cashier_name" class="col-xs-3 control-label">Nombre</label>
+                  <div class="col-xs-9">
+                    <input type="text" class="form-control" id="internal_sale_cashier_name" name="internal_sale_cashier_name" value="" disabled />
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
 
-              <div class="payment-form-div form-group has-feedback">
-                <input type="hidden" id="internal_sale_cashier_id" value="" />
-                <label for="internal_sale_cashier_name" class="col-xs-3 control-label"></label>
-                <div class="col-xs-9">
-                  <input type="text" class="form-control" id="internal_sale_cashier_name" name="internal_sale_cashier_name" value="" disabled />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                </div>
+              <% else %>
+                <div class="payment-form-div form-group has-feedback" hidden>
+                  <label for="internal_sale_cashier_code" class="col-xs-3 control-label">Código Cajero</label>
+                  <div class="col-xs-9">
+                    <input type="password" class="form-control" id="internal_sale_cashier_code" name="internal_sale_cashier_code" value="" />
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+
                 </div>
 
-              </div>
+                <div class="payment-form-div form-group has-feedback" hidden>
+                  <input type="hidden" id="internal_sale_cashier_id" value="" />
+                  <label for="internal_sale_cashier_name" class="col-xs-3 control-label">Nombre</label>
+                  <div class="col-xs-9">
+                    <input type="text" class="form-control" id="internal_sale_cashier_name" name="internal_sale_cashier_name" value="" disabled />
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+
+                </div>
+              <% end %>
 
               <div class="payment-form-div">
                 <label for="internal_sale_service_provider" class="col-xs-3 control-label">Comprador</label>
