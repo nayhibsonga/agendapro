@@ -11,7 +11,7 @@ class ReceiptMailer < Base::CustomMailer
     @company = company(@receipt, type)
     @chile = @company.country.name == "Chile"
     @admin = @company.users.where(role_id: Role.find_by_name('Administrador General')).first
-    @amount = type == "PayUNotification" ? @receipt.amount : @receipt.value
+    @amount = type == "PayUNotification" ? @receipt.value : @receipt.amount
     card_number = type == "PayUNotification" ? @receipt.cc_number : @receipt.card_number
     @card_number = card_number.present? ? "********#{card_number}" : "NA"
     @auth_code = @receipt.authorization_code.present? ? @receipt.authorization_code : "NA"
