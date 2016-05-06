@@ -32,7 +32,7 @@ class BookingMailer < Base::CustomMailer
 
     path = options[:horachic] ? "horachic" : "agendapro"
 
-    headers["X-MSYS-API"] = { "metadata" => { "booking_ids" => "[#{@book.id}]" } }
+    headers["X-MSYS-API"] = { "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json
 
     mail(
       from: filter_sender(),
