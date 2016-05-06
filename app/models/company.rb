@@ -75,7 +75,7 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
-	after_create :create_cashier, :create_plan_setting, :create_attribute_group, 
+	after_create :create_cashier, :create_plan_setting, :create_attribute_group,
 
 	WORKER = 'CompanyEmailWorker'
 
@@ -771,7 +771,7 @@ class Company < ActiveRecord::Base
 		  paid_amount = "$" + bl.payment.to_s
 		  last_payment_method = "Automático"
 		elsif date2 >= date1 && date2 >= date3 && date2 >= date4
-		  last_payment_date = rec.date.strftime('%d/%m/%Y')
+		  last_payment_date = rec.date.strftime('%d/%m/%Y %R')
 		  paid_amount = "$" + rec.amount.to_s
 		  last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
 		elsif date3 >= date1 && date3 >= date2 && date3 >= date4
