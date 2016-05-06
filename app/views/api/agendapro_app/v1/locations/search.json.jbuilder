@@ -1,4 +1,5 @@
 json.array!(@results) do |location|
+  location_address = LocationAddress.new location.address
   json.extract! location, :id, :second_address, :phone, :latitude, :longitude, :email, :company_id
   json.name location.company.name
   json.address "#{location_address.route} #{location_address.street_number}"
