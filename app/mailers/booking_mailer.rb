@@ -32,6 +32,8 @@ class BookingMailer < Base::CustomMailer
 
     path = options[:horachic] ? "horachic" : "agendapro"
 
+    headers["X-MSYS-API"] = "{\"options\" : { \"metadata\" : { \"booking_ids\" : \"[#{@book.id}]\" } }"
+
     mail(
       from: filter_sender(),
       reply_to: filter_sender(@book.location.email),

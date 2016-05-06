@@ -26,7 +26,7 @@ class Base::CustomMailer < ActionMailer::Base
   end
 
   def filter_sender(email=nil)
-    email.present? ? email : "AgendaPro <no-reply@agendapro.co>"
+    email.present? ? email : "AgendaPro <no-reply@#{ENV['EMAIL_SENDING_DOMAIN']}>"
   end
 
   private
