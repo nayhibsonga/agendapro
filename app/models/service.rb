@@ -51,7 +51,7 @@ class Service < ActiveRecord::Base
 
 	validate :group_service_capacity, :outcall_providers, :times_overlap, :time_empty_or_negative
 
-	after_save :check_treatment_promo
+	after_save :check_treatment_promo, :update_commissions
 
 	pg_search_scope :search,
 	:against => :name,
@@ -74,6 +74,24 @@ class Service < ActiveRecord::Base
     :ignoring => :accents
 
   WORKER = 'ServiceEmailWorker'
+
+  	def update_commissions
+  		if self.comission_value_changed? || self.comission_option_changed?
+  			was_percent = true
+  			is_percent = true
+  			if self.comission_option_was != 0
+  				was_percent = false
+  			end
+  			if self.comission_option != 0
+  				is_percent = false
+  			end
+  			self.service_commissions.where(amount: self.comission_value_was, is_percent: was_percent).each do |service_commission|
+  				service_commission.amount = self.comission_value
+  				service_commission.is_percent = is_percent
+  				service_commission.save
+  			end
+  		end
+  	end
 
     def check_treatment_promo
     	if self.has_sessions
