@@ -1098,6 +1098,14 @@
                     <span class="help-block">Habilita esta opción para que al añadir un servicio sin reserva a un pago, sea obligatorio ingresar el servicio y el prestador asociado.</span>
                   </div>
                 </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <label>
+                      <%= f.check_box :require_cashier_code %> Requerir código de cajero para acciones de cajas
+                    </label>
+                    <span class="help-block">Habilita esta opción para que al ingresar un pago o venta interna, o manipular las cajas, se exija un código de cajero válido.</span>
+                  </div>
+                </div>
                 <br />
                 <table class="table table-hover table-green">
                   <thead>

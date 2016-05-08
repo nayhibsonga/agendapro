@@ -545,12 +545,12 @@ class PuntoPagosController < ApplicationController
         payment.paid_amount = params[:monto]
         payment.change_amount = 0.0
 
-        cashier = first_booking.service.company.cashiers.first
-        if cashier.nil?
-          cashier = Cashier.create(company_id: first_booking.service.company.id, name: "Cajero por defecto", active: true, code: "12345678")
-        end
+        #cashier = first_booking.service.company.cashiers.first
+        #if cashier.nil?
+        #  cashier = Cashier.create(company_id: first_booking.service.company.id, name: "Cajero por defecto", active: true, code: "12345678")
+        #end
 
-        payment.cashier_id = cashier.id
+        payment.cashier_id = nil
 
         payment_transaction = PaymentTransaction.new
 

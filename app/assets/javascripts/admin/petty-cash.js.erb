@@ -6,28 +6,35 @@
 function loadPettyCash()
 {
 
-  var cashier_code = $("#petty_cash_cashier_code").val();
+  if($('#require_cashier_code').val() == "1")
+  {
+    var cashier_code = $("#petty_cash_cashier_code").val();
+    $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
+      if(response[0] != "error")
+      {
+        $("#petty_cash_cashier_name").val(response[0]['name']);
+        $("#petty_cash_cashier_id").val(response[0]['id']);
+        $("#pettyCashModalIntro").modal('hide');
+        getPettyCash();
+      }
+      else
+      {
+        swal({
+          title: "Error",
+          text: "El código de cajero ingresado es incorrecto.",
+          type: "error"
+        });
 
-  $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
-    if(response[0] != "error")
-    {
-      $("#petty_cash_cashier_name").val(response[0]['name']);
-      $("#petty_cash_cashier_id").val(response[0]['id']);
-      $("#pettyCashModalIntro").modal('hide');
-      getPettyCash();
-    }
-    else
-    {
-      swal({
-        title: "Error",
-        text: "El código de cajero ingresado es incorrecto.",
-        type: "error"
-      });
-
-      $("#petty_cash_cashier_name").val("");
-      $("#petty_cash_cashier_id").val("");
-    }
-  });
+        $("#petty_cash_cashier_name").val("");
+        $("#petty_cash_cashier_id").val("");
+      }
+    });
+  }
+  else
+  {
+    $("#pettyCashModalIntro").modal('hide');
+    getPettyCash();
+  }
 
 }
 
