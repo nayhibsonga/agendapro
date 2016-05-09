@@ -322,7 +322,7 @@ ActiveRecord::Schema.define(version: 20160504161209) do
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
     t.integer  "trial_months_left",   default: 0
-    t.integer  "default_plan_id",     default: 10
+    t.integer  "default_plan_id",     default: 15
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
@@ -1464,7 +1464,7 @@ ActiveRecord::Schema.define(version: 20160504161209) do
 
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
-    t.integer  "country_id", null: false
+    t.integer  "country_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
