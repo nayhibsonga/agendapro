@@ -2772,9 +2772,9 @@ class CompaniesController < ApplicationController
 				  # 10: treatment_promo_id
 
 				  provider_lock = false
-				  if pg_hour[2].to_i != 0
-				    provider_lock = true
-				  end
+		          if providers_arr[index].to_i != 0
+		            provider_lock = true
+		          end
 
 				  book_sessions_amount = 0
 				  if services[index].has_sessions && services[index].sessions_amount > 0

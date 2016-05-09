@@ -6,9 +6,9 @@ class FileAttribute < ActiveRecord::Base
 	before_destroy :delete_file
 
 	def delete_file
-
-		self.client_file.destroy
-
+		if !self.client_file_id.nil? && !self.client_file.nil?
+			self.client_file.destroy
+		end
 	end
 
 end
