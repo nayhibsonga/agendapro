@@ -6410,7 +6410,7 @@ class BookingsController < ApplicationController
           # 10: treatment_promo_id
 
           provider_lock = false
-          if pg_hour[2].to_i != 0
+          if providers_arr[index].to_i != 0
             provider_lock = true
           end
 
@@ -7446,7 +7446,7 @@ class BookingsController < ApplicationController
           # 10: treatment_promo_id
 
           provider_lock = false
-          if pg_hour[2].to_i != 0
+          if providers_arr[index].to_i != 0
             provider_lock = true
           end
 

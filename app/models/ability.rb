@@ -956,6 +956,33 @@ class Ability
         can :users_report, Payment, :company_id => user.company_id
         can :service_providers_report_file, Payment, :company_id => user.company_id
 
+        can :read, ClientFile, :client => {:company_id => user.company_id}
+        can :create, ClientFile, :client => {:company_id => user.company_id}
+        can :update, ClientFile, :client => {:company_id => user.company_id}
+        can :destroy, ClientFile, :client => {:company_id => user.company_id}
+
+        can :files, Client, :company_id => user.company_id
+        can :upload_file, Client, :company_id => user.company_id
+        can :create_folder, Client, :company_id => user.company_id
+        can :rename_folder, Client, :company_id => user.company_id
+        can :delete_folder, Client, :company_id => user.company_id
+        can :move_file, Client, :company_id => user.company_id
+        can :edit_file, Client, :company_id => user.company_id
+
+        can :payments, Client, :company_id => user.company_id
+        can :payments_content, Client, :company_id => user.company_id
+        can :last_payments, Client, :company_id => user.company_id
+
+        can :update_custom_attributes, Client, :company_id => user.company_id
+        can :create_comment, Client
+        can :update_comment, Client
+        can :destroy_comment, Client
+        can :edit, Client, :company_id => user.company_id
+        can :update, Client, :company_id => user.company_id
+        can :history, Client, :company_id => user.company_id
+        can :read, Client, :company_id => user.company_id
+        can :bookings_content, Client, :company_id => user.company_id
+
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 
         can :last_payments, Client, :company_id => user.company_id
