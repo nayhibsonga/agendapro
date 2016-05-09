@@ -4,7 +4,7 @@ class PettyTransaction < ActiveRecord::Base
 	has_one :sales_cash_transaction
 
 	def get_transactioner_details
-	    if !self.transactioner_id.nil?
+	    if !self.transactioner_id.nil? && self.transactioner_id > 0
 	      if self.transactioner_type == 0
 	        return self.transactioner.public_name + " (prestador)"
 	      elsif self.transactioner_type == 1
@@ -19,7 +19,7 @@ class PettyTransaction < ActiveRecord::Base
 
 	def transactioner
 	    
-	    if self.transactioner_id.nil?
+	    if self.transactioner_id.nil? || self.transactioner_id < 1
 	      return nil
 	    end
 
