@@ -31,6 +31,7 @@
 <input type="hidden" id="from" value="<%= DateTime.now.strftime('%d/%m/%Y %R') %>" />
 <input type="hidden" id="to" value="<%= (DateTime.now - 1.months).strftime('%d/%m/%Y %R') %>" />
 
+
 <%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required, preset_notes: @company_setting.preset_notes, strict_booking: @company_setting.strict_booking, id_number: @company_setting.use_identification_number } do %>
 <% end %>
 
@@ -318,14 +319,20 @@
                         </div>
                       <% end %>
                       <% if current_user.role_id != Role.find_by_name("Staff").id %>
-                          <div class="form-group" style="margin-top: 5px; width: 100%;">
-                            <div class="col-sm-8 col-sm-offset-4" style="padding-left: 25px;">
-                              <a href='/clients' class='open_client_link' target='_blank'>Ir a fichas de clientes</a>
-                            </div>
+                        <div class="form-group" style="margin-top: 5px;">
+                          <div class="col-sm-4">
+                          &nbsp;
                           </div>
+                          <div class="col-sm-8">
+                            <a href='/clients' class='open_client_link' target='_blank'>Ir a fichas de clientes</a>
+                          </div>
+                        </div>
                       <% else %>
-                        <div class="form-group" style="margin-top: 5px; width: 100%;">
-                          <div class="col-sm-8 col-sm-offset-4" style="padding-left: 25px;">
+                        <div class="form-group" style="margin-top: 5px;">
+                          <div class="col-sm-4">
+                            &nbsp;
+                          </div>
+                          <div class="col-sm-8">
                             <a href='#' class='open_client_link staff_client_link' target='_blank'>Ir a ficha del cliente</a>
                           </div>
                         </div>
@@ -417,8 +424,8 @@
                     <% if @company.custom_attributes.where(show_on_calendar: true).count > 0 %>
                       <div class="row">
                         <div class="col-md-12">
-                          <div style="font-size: 20px; padding: 10px; border-bottom: 1px solid #505050;">
-                            Datos personalizados del cliente
+                          <div style="font-size: 18px; padding: 10px; border-bottom: 1px solid #505050;">
+                            Campos personalizados adicionales
                           </div>
                         </div>
                       </div>
@@ -427,14 +434,18 @@
                       <% if attribute_group.custom_attributes.where(show_on_calendar: true).count > 0 %>
                         <div class="row">
                           <div class="col-md-12">
-                            <div style="font-size: 18px; padding: 10px;">
+                            <div style="font-size: 16px; padding-left: 10px; padding-top: 5px;">
                               <%= attribute_group.name %>
                             </div>
                           </div>
                         </div>
                         <div class="row">
                           <% attribute_group.custom_attributes.where(show_on_calendar: true).order(:order).each do |attribute| %>
-                            
+                            <% 
+                              if attribute.datatype == "file" || (attribute.datatype == "categoric" && (attribute.attribute_categories.nil? || attribute.attribute_categories.count < 1))
+                                next
+                              end
+                            %>
                             <div class="col-md-6">
                               <% if attribute.datatype == "float" %>
                                 <div class="row">
@@ -626,7 +637,7 @@
                 </div>
                 <div class="tab-pane" id="client-pane">
                   <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                       <ul id="client-attributes-tab" class="nav nav-pills nav-stacked" role="tablist">
                         <li id="client-attributes-0-li" class="active booking-client-li"><a href="#client-attributes-0" role="tab" data-toggle="tab" class="client_tab_index" id="client-attributes-0-tab">Datos personales</a></li>
                         <% @company.attribute_groups.each do |attribute_group| %>
@@ -647,7 +658,7 @@
                         </div>
                       <% end %>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-10">
                       <%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
                         <%= f.fields_for :client do |builder| %>
 
@@ -750,6 +761,13 @@
                                     <div class="row">
 
                                       <% attribute_group.custom_attributes.where(show_on_calendar: false).each do |attribute| %>
+
+                                        <% 
+                                          if attribute.datatype == "file" || (attribute.datatype == "categoric" && (attribute.attribute_categories.nil? || attribute.attribute_categories.count < 1))
+                                            next
+                                          end
+                                        %>
+
                                         <div class="col-md-6">
                                           <% if attribute.datatype == "float" %>
                                             <div class="row">

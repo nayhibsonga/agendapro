@@ -26,7 +26,7 @@
         <h3 class="modal-title" id="paymentModalIntroTitle" style="line-height: 1.1;">Pago</h3>
       </div>
       <div class="modal-body" id="paymentModalIntroBody">
-        
+
         <div class="payment-modals-bar row">
           <div class="col-md-2">
             <div  style="text-align: center; width: 100%">
@@ -82,7 +82,7 @@
                       <input type="text" class="form-control payment_date_ignore" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
                     </div>
                     <div class="col-xs-4" style="text-align: right;">
-                      <%= time_select 'payment_date', 'time', {minute_step: 1}, {:class => 'form-control date-select payment_date_ignore', required: true} %>
+                      <%= time_select 'payment_date', 'time', {minute_step: 1}, {:class => 'form-control payment-date-select payment_date_ignore', required: true} %>
                     </div>
 
                   </div>
@@ -913,7 +913,7 @@
 
                 </form>
               </div>
-              
+
             </div>
 
             <div id="paymentReceiptsFinal" hidden>
@@ -931,7 +931,7 @@
           </div>
         </div>
       </div>
-      <div class="modal-footer">   
+      <div class="modal-footer">
         <div class="col-md-6" style="text-align: left;">
           <!--<div style="display: block; text-align: left;">
             <button type="button" class="btn btn-default" id="openReceiptForm">Nuevo comprobante&nbsp;<i class="fa fa-plus"></i></button><br />
