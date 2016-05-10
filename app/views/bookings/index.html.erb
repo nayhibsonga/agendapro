@@ -31,6 +31,7 @@
 <input type="hidden" id="from" value="<%= DateTime.now.strftime('%d/%m/%Y %R') %>" />
 <input type="hidden" id="to" value="<%= (DateTime.now - 1.months).strftime('%d/%m/%Y %R') %>" />
 
+
 <%= content_tag "div", id: "calendar-data", data: { calendar_duration: @company_setting.calendar_duration, extended_schedule: @company_setting.extended_schedule_bool, extended_min_hour: @company_setting.extended_min_hour.strftime('%H:%M'), extended_max_hour: @company_setting.extended_max_hour.strftime('%H:%M'), booking_history: @company_setting.booking_history, staff_code: @company_setting.staff_code, deal_identification_number: @company_setting.deal_identification_number, deal_required: @company_setting.deal_required, preset_notes: @company_setting.preset_notes, strict_booking: @company_setting.strict_booking, id_number: @company_setting.use_identification_number } do %>
 <% end %>
 
@@ -417,8 +418,8 @@
                     <% if @company.custom_attributes.where(show_on_calendar: true).count > 0 %>
                       <div class="row">
                         <div class="col-md-12">
-                          <div style="font-size: 20px; padding: 10px; border-bottom: 1px solid #505050;">
-                            Datos personalizados del cliente
+                          <div style="font-size: 18px; padding: 10px; border-bottom: 1px solid #505050;">
+                            Campos personalizados adicionales
                           </div>
                         </div>
                       </div>
@@ -427,14 +428,18 @@
                       <% if attribute_group.custom_attributes.where(show_on_calendar: true).count > 0 %>
                         <div class="row">
                           <div class="col-md-12">
-                            <div style="font-size: 18px; padding: 10px;">
+                            <div style="font-size: 16px; padding-left: 10px; padding-top: 5px;">
                               <%= attribute_group.name %>
                             </div>
                           </div>
                         </div>
                         <div class="row">
                           <% attribute_group.custom_attributes.where(show_on_calendar: true).order(:order).each do |attribute| %>
-                            
+                            <% 
+                              if attribute.datatype == "file" || (attribute.datatype == "categoric" && (attribute.attribute_categories.nil? || attribute.attribute_categories.count < 1))
+                                next
+                              end
+                            %>
                             <div class="col-md-6">
                               <% if attribute.datatype == "float" %>
                                 <div class="row">
@@ -750,6 +755,13 @@
                                     <div class="row">
 
                                       <% attribute_group.custom_attributes.where(show_on_calendar: false).each do |attribute| %>
+
+                                        <% 
+                                          if attribute.datatype == "file" || (attribute.datatype == "categoric" && (attribute.attribute_categories.nil? || attribute.attribute_categories.count < 1))
+                                            next
+                                          end
+                                        %>
+
                                         <div class="col-md-6">
                                           <% if attribute.datatype == "float" %>
                                             <div class="row">
