@@ -3227,28 +3227,39 @@ $(function() {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
 
-      var custom_attributes = ui.item.custom_attributes;
-
-      for(var key in custom_attributes)
-      {
-        console.log("KEY");
-        console.log(key);
-        console.log(custom_attributes[key]);
-        if($('[name="' + key + '"]').is('select'))
+      $.ajax({
+        url: '/client_custom_attributes',
+        method: 'get',
+        data: {id: client.id},
+        dataType: 'json',
+        success: function(response)
         {
-          if(custom_attributes[key] == false)
-          {
-            custom_attributes[key] = "0";
-          }
-          else if(custom_attributes[key] == true)
-          {
-            custom_attributes[key] = "1";
-          }
-        }
-        $('[name="' + key + '"]').val(custom_attributes[key]);
-      }
+          var custom_attributes = response;
 
-      console.log(custom_attributes);
+          for(var key in custom_attributes)
+          {
+            console.log(key);
+            console.log(custom_attributes[key]);
+            if($('[name="' + key + '"]').is('select'))
+            {
+              if(custom_attributes[key] == false)
+              {
+                custom_attributes[key] = "0";
+              }
+              else if(custom_attributes[key] == true)
+              {
+                custom_attributes[key] = "1";
+              }
+            }
+            $('[name="' + key + '"]').val(custom_attributes[key]);
+          }
+
+          console.log(custom_attributes);
+        },
+        error: function(){
+          console.log("Error");
+        }
+      });
 
       $('#booking_client_first_name').val(client.first_name);
       $('#booking_client_last_name').val(client.last_name);
@@ -3304,27 +3315,39 @@ $(function() {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
 
-      var custom_attributes = ui.item.custom_attributes;
-
-      for(var key in custom_attributes)
-      {
-        console.log(key);
-        console.log(custom_attributes[key]);
-        if($('[name="' + key + '"]').is('select'))
+      $.ajax({
+        url: '/client_custom_attributes',
+        method: 'get',
+        data: {id: client.id},
+        dataType: 'json',
+        success: function(response)
         {
-          if(custom_attributes[key] == false)
-          {
-            custom_attributes[key] = "0";
-          }
-          else if(custom_attributes[key] == true)
-          {
-            custom_attributes[key] = "1";
-          }
-        }
-        $('[name="' + key + '"]').val(custom_attributes[key]);
-      }
+          var custom_attributes = response;
 
-      console.log(custom_attributes);
+          for(var key in custom_attributes)
+          {
+            console.log(key);
+            console.log(custom_attributes[key]);
+            if($('[name="' + key + '"]').is('select'))
+            {
+              if(custom_attributes[key] == false)
+              {
+                custom_attributes[key] = "0";
+              }
+              else if(custom_attributes[key] == true)
+              {
+                custom_attributes[key] = "1";
+              }
+            }
+            $('[name="' + key + '"]').val(custom_attributes[key]);
+          }
+
+          console.log(custom_attributes);
+        },
+        error: function(){
+          console.log("Error");
+        }
+      });
 
       $('#booking_client_first_name').val(client.first_name);
       $('#booking_client_last_name').val(client.last_name);
@@ -3381,27 +3404,41 @@ $(function() {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
 
-      var custom_attributes = ui.item.custom_attributes;
-
-      for(var key in custom_attributes)
-      {
-        console.log(key);
-        console.log(custom_attributes[key]);
-        if($('[name="' + key + '"]').is('select'))
+      $.ajax({
+        url: '/client_custom_attributes',
+        method: 'get',
+        data: {id: client.id},
+        dataType: 'json',
+        success: function(response)
         {
-          if(custom_attributes[key] == false)
-          {
-            custom_attributes[key] = "0";
-          }
-          else if(custom_attributes[key] == true)
-          {
-            custom_attributes[key] = "1";
-          }
-        }
-        $('[name="' + key + '"]').val(custom_attributes[key]);
-      }
+          var custom_attributes = response;
 
-      console.log(custom_attributes);
+          for(var key in custom_attributes)
+          {
+            console.log(key);
+            console.log(custom_attributes[key]);
+            if($('[name="' + key + '"]').is('select'))
+            {
+              if(custom_attributes[key] == false)
+              {
+                custom_attributes[key] = "0";
+              }
+              else if(custom_attributes[key] == true)
+              {
+                custom_attributes[key] = "1";
+              }
+            }
+            $('[name="' + key + '"]').val(custom_attributes[key]);
+          }
+
+          console.log(custom_attributes);
+        },
+        error: function(){
+          console.log("Error");
+        }
+      });
+
+      
 
       $('#booking_client_first_name').val(client.first_name);
       $('#booking_client_last_name').val(client.last_name);

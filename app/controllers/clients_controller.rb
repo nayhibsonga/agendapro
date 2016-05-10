@@ -1,5 +1,5 @@
 class ClientsController < ApplicationController
-  before_action :set_client, only: [:show, :edit, :update, :destroy, :payments_content, :payments, :last_payments]
+  before_action :set_client, only: [:show, :edit, :update, :destroy, :payments_content, :payments, :last_payments, :get_custom_attributes]
   before_action :authenticate_user!, except: [:client_loader]
   before_action :quick_add
   before_action -> (source = "clients") { verify_free_plan source }, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :new, :edit, :create, :update]
@@ -530,7 +530,7 @@ class ClientsController < ApplicationController
         desc += client.phone
       end
 
-      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json, :custom_attributes => client.get_custom_attributes})
+      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})#, :custom_attributes => client.get_custom_attributes})
     end
 
     render :json => @clients_arr
@@ -567,7 +567,7 @@ class ClientsController < ApplicationController
       if client.phone
         desc += client.phone
       end
-      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json, :custom_attributes => client.get_custom_attributes})
+      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})#, :custom_attributes => client.get_custom_attributes})
     end
 
     render :json => @clients_arr
@@ -591,10 +591,14 @@ class ClientsController < ApplicationController
       if client.identification_number
         label = client.identification_number
       end
-      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json, :custom_attributes => client.get_custom_attributes})
+      @clients_arr.push({:label => label, :desc => desc, :value => client.to_json})#, :custom_attributes => client.get_custom_attributes})
     end
 
     render :json => @clients_arr
+  end
+
+  def get_custom_attributes
+    render :json => @client.get_custom_attributes
   end
 
   def client_loader
