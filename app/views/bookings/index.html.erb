@@ -319,14 +319,20 @@
                         </div>
                       <% end %>
                       <% if current_user.role_id != Role.find_by_name("Staff").id %>
-                          <div class="form-group" style="margin-top: 5px; width: 100%;">
-                            <div class="col-sm-8 col-sm-offset-4" style="padding-left: 25px;">
-                              <a href='/clients' class='open_client_link' target='_blank'>Ir a fichas de clientes</a>
-                            </div>
+                        <div class="form-group" style="margin-top: 5px;">
+                          <div class="col-sm-4">
+                          &nbsp;
                           </div>
+                          <div class="col-sm-8">
+                            <a href='/clients' class='open_client_link' target='_blank'>Ir a fichas de clientes</a>
+                          </div>
+                        </div>
                       <% else %>
-                        <div class="form-group" style="margin-top: 5px; width: 100%;">
-                          <div class="col-sm-8 col-sm-offset-4" style="padding-left: 25px;">
+                        <div class="form-group" style="margin-top: 5px;">
+                          <div class="col-sm-4">
+                            &nbsp;
+                          </div>
+                          <div class="col-sm-8">
                             <a href='#' class='open_client_link staff_client_link' target='_blank'>Ir a ficha del cliente</a>
                           </div>
                         </div>
@@ -631,7 +637,7 @@
                 </div>
                 <div class="tab-pane" id="client-pane">
                   <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                       <ul id="client-attributes-tab" class="nav nav-pills nav-stacked" role="tablist">
                         <li id="client-attributes-0-li" class="active booking-client-li"><a href="#client-attributes-0" role="tab" data-toggle="tab" class="client_tab_index" id="client-attributes-0-tab">Datos personales</a></li>
                         <% @company.attribute_groups.each do |attribute_group| %>
@@ -652,7 +658,7 @@
                         </div>
                       <% end %>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-10">
                       <%= form_for @booking, html: {class: "form-horizontal"} do |f| %>
                         <%= f.fields_for :client do |builder| %>
 
