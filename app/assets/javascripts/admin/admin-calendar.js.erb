@@ -538,6 +538,7 @@ function editBookingModal(eventId) {
       $('#booking_service_provider_id option[value="'+booking.service_provider_id+'"]').attr("selected",true);
       $('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
       $('#booking_price').val(booking.price);
+      $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + booking.client_id);
       $('#booking_client_id').val(booking.client_id);
       loadClientHistory(eventId);
@@ -850,6 +851,7 @@ function createBookingModal(date, provider_id) {
         $('#booking_service_provider_id').val('');
       }
 
+      $('.staff_client_link').hide();
       $('.staff_client_link').attr("href", "#");
       $('#booking_status_id').val('1');
       $('#booking_price').val('');
@@ -3252,6 +3254,7 @@ $(function() {
 
       console.log(custom_attributes);
 
+      $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + client.id);
       $('#booking_client_first_name').val(client.first_name);
       $('#booking_client_last_name').val(client.last_name);
@@ -3329,6 +3332,7 @@ $(function() {
 
       console.log(custom_attributes);
 
+      $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + client.id);
       $('#booking_client_first_name').val(client.first_name);
       $('#booking_client_last_name').val(client.last_name);
@@ -3407,6 +3411,7 @@ $(function() {
 
       console.log(custom_attributes);
 
+      $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + client.id);
       $('#booking_client_first_name').val(client.first_name);
       $('#booking_client_last_name').val(client.last_name);
@@ -3520,6 +3525,7 @@ $(function() {
       $(this).val('');
     });
 
+    $('.staff_client_link').hide();
     $('.staff_client_link').attr("href", "#");
     $('#booking_client_first_name').val('');
     $('#booking_client_last_name').val('');
