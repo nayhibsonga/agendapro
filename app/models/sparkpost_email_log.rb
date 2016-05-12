@@ -35,34 +35,10 @@ class SparkpostEmailLog < ActiveRecord::Base
             log = ClientEmailLog.find_by(transmission_id: message_event["transmission_id"], campaign_id: message_event["rcpt_meta"]["campaign_id"], client_id: Client.find_by(email: message_event["rcpt_to"], company_id: Email::Content.find_by(id: message_event["rcpt_meta"]["campaign_id"]).company.id).id)
             if log && message_event["type"] == "open"
               log.update(opens: log.opens + 1)
-            elsif message_event["type"] == "click"
-              log && log.update(clicks: log.clicks + 1)
+            elsif log && message_event["type"] == "click"
+              log.update(clicks: log.clicks + 1)
             end
           end
-        # elsif gen_event.present?
-        #   if message_event["rcpt_meta"]["booking_ids"].present?
-        #     message_event["rcpt_meta"]["booking_ids"].each do |booking_id|
-
-        #     end
-        #   elsif message_event["rcpt_meta"]["campaign_id"].present?
-
-        #   end
-        # elsif unsubscribe_event.present?
-        #   if message_event["rcpt_meta"]["booking_ids"].present?
-        #     message_event["rcpt_meta"]["booking_ids"].each do |booking_id|
-
-        #     end
-        #   elsif message_event["rcpt_meta"]["campaign_id"].present?
-
-        #   end
-        # elsif relay_event.present?
-        #   if message_event["rcpt_meta"]["booking_ids"].present?
-        #     message_event["rcpt_meta"]["booking_ids"].each do |booking_id|
-
-        #     end
-        #   elsif message_event["rcpt_meta"]["campaign_id"].present?
-
-        #   end
         end
       end
     end
