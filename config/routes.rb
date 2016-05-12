@@ -603,6 +603,7 @@ Agendapro::Application.routes.draw do
 
     get '/hours_test', :to => 'bookings#hours_test'
 
+    get '/client_custom_attributes', :to => 'clients#get_custom_attributes'
 
   end
 

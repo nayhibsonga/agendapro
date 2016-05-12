@@ -668,8 +668,21 @@ $(function() {
 
   $('#payment_method_select').on('change', function(){
 
+    current_sum = parseInt($('#payment_transactions_sum').val());
+    total_cost = parseInt($('#payment_total_cost').val());
     $('#payment_transaction_number').val("");
-    $("#payment_transaction_amount").val($('#payment_total_cost').val());
+    if(total_cost > current_sum)
+    {
+      $("#payment_transaction_amount").val(total_cost - current_sum);
+    }
+    else
+    {
+      $("#payment_transaction_amount").val("");
+    }
+    if($('#payment_method_select option:selected').text() == "Efectivo")
+    {
+      $('#payment_transaction_amount').val("");
+    }
     $("#payment_transaction_installments").val("");
     $("#selected_method_number_required").val("");
     clearValidations('#payment_transaction_number');
@@ -702,7 +715,7 @@ $(function() {
 
     if(payment_method_type == "0")
     {
-      animateBox($('.payment_method_amount[payment_method_id="' + payment_method_id + '"]'));
+      //animateBox($('.payment_method_amount[payment_method_id="' + payment_method_id + '"]'));
       $('.payment-transaction-div').hide();
       $('#payment_transaction_number_div').show();
       if(payment_method_name == "Efectivo")
@@ -722,7 +735,7 @@ $(function() {
     }
     else
     {
-      animateBox($('.company_payment_method_amount[company_payment_method_id="' + payment_method_id + '"]'));
+      //animateBox($('.company_payment_method_amount[company_payment_method_id="' + payment_method_id + '"]'));
       $('.payment-transaction-div').hide();
       $('#payment_transaction_number_div').show();
     }
@@ -775,6 +788,10 @@ function loadInternalSale(internal_sale)
 {
   $('#internal_sale_id').val("");
   $("#internal_sale_location").val($("#internal_sale_location option:first").val());
+  if($('#locationSelect').length > 0)
+  {
+    $("#internal_sale_location").val($("#locationSelect").val());
+  }
   $("#internal_sale_cashier_name").val("");
   $("#internal_sale_cashier_id").val("");
   $("#internal_sale_cashier_code").val("");
@@ -1167,6 +1184,15 @@ function addTransaction()
   var payment_method_name = $('#payment_method_select option:selected').text();
   var method_number_required = $(this).attr("method_number_required");
 
+  if(payment_method_type == "0")
+  {
+    animateBox($('.payment_method_amount[payment_method_id="' + payment_method_id + '"]'));
+  }
+  else
+  {
+    animateBox($('.company_payment_method_amount[company_payment_method_id="' + payment_method_id + '"]'));
+  }
+
   if(!$("#fakeMethodDetailsForm").valid())
   {
     return;
@@ -1224,9 +1250,13 @@ function addTransaction()
 
   $('.payment-transaction-div').hide();
   $("#payment_transaction_amount").val("");
-  if(total_cost < current_sum)
+  if(total_cost > current_sum)
   {
     $('#payment_transaction_amount').val((total_cost - current_sum));
+  }
+  if($('#payment_method_select option:selected').text() == "Efectivo")
+  {
+    $('#payment_transaction_amount').val("");
   }
   $("#payment_transaction_number").val("");
   $("#selected_method_number_required").val("0");
@@ -1328,7 +1358,7 @@ function savePaymentIntro()
   var client_id = $("#payment_client_id").val();
   var client_email = $("#payment_client_email").val();
   var client_phone = $("#payment_client_phone").val();
-  var client_gender = $("#payment_client_gender").val();
+  var client_gender = $("#payment_client_gender").val("0");
   var date = $("#payment_date").val();
   var time = $('#payment_date_time_4i').val() + ":" + $('#payment_date_time_5i').val() + ":00";
   var payment_date = date + " " + time;
@@ -1558,6 +1588,20 @@ function loadPaymentIntro(payment_id) {
   $("#paymentIntroNextBtn").show();
   $("#payment_location").prop("disabled", false);
 
+  $('#payment_client_gender').val("0");
+
+  if(payment_id == null || payment_id < 1)
+  {
+    if($('#locals-selector').length > 0)
+    {
+      $("#payment_location").val($('#locals-selector').val());
+    }
+    else if($('#locationSelect').length > 0)
+    {
+      $("#payment_location").val($('#locationSelect').val());
+    }
+  }
+
   var currentDate = new Date();
   var new_hour = currentDate.getHours();
   var new_minute = currentDate.getMinutes();
@@ -1607,6 +1651,10 @@ function loadPaymentModal2(booking_id) {
   $('.payment_method_amount').val("0");
   $('.company_payment_method_amount').val("0");
   $('#payment_transaction_amount').val($('#payment_total_cost').val());
+  if($('#payment_method_select option:selected').text() == "Efectivo")
+  {
+    $('#payment_transaction_amount').val("");
+  }
   $('#transactions-complete-message').hide();
   $('#transactionsReadyBtn').prop('disabled', true);
   
@@ -1614,7 +1662,7 @@ function loadPaymentModal2(booking_id) {
   $("#paymentModal1").modal('hide');
   $("#paymentModal2").modal('show');
   $("#paymentModal3").modal('hide');
-  animateBox($('.payment_method_amount').first());
+  //animateBox($('.payment_method_amount').first());
   paymentModalState = 'Step2';
 }
 
@@ -2536,7 +2584,7 @@ function createAndServePayment(option)
   var client_id = $("#payment_client_id").val();
   var client_email = $("#payment_client_email").val();
   var client_phone = $("#payment_client_phone").val();
-  var client_gender = $("#payment_client_gender").val();
+  var client_gender = $("#payment_client_gender").val("0");
   var payment_past_bookings = $("#paymentPastBookingsArray").val();
   var payment_new_bookings = $("#paymentNewBookingsArray").val();
   var payment_products = $("#paymentProductsArray").val();
@@ -2840,6 +2888,15 @@ function resetPaymentIntro()
   $("#openClientIcon").show();
 
   $("#editPaymentId").val("");
+
+  if($('#locals-selector').length > 0)
+  {
+    $("#payment_location").val($('#locals-selector').val());
+  }
+  else if($('#locationSelect').length > 0)
+  {
+    $("#payment_location").val($('#locationSelect').val());
+  }
 
 }
 

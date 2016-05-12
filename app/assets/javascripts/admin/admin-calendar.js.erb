@@ -538,7 +538,10 @@ function editBookingModal(eventId) {
       $('#booking_service_provider_id option[value="'+booking.service_provider_id+'"]').attr("selected",true);
       $('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
       $('#booking_price').val(booking.price);
+      $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + booking.client_id);
+      $('.open_client_link').attr("href", "/clients/" + booking.client_id);
+      $('.open_client_link').html("Ir a ficha del cliente");
       $('#booking_client_id').val(booking.client_id);
       loadClientHistory(eventId);
       loadClientPayments(booking.client_id);
@@ -850,7 +853,10 @@ function createBookingModal(date, provider_id) {
         $('#booking_service_provider_id').val('');
       }
 
+      $('.staff_client_link').hide();
       $('.staff_client_link').attr("href", "#");
+      $('.open_client_link').attr("href", "/clients");
+      $('.open_client_link').html("Ir a fichas de clientes");
       $('#booking_status_id').val('1');
       $('#booking_price').val('');
       $('#booking_client_id').val('');
@@ -3229,30 +3235,44 @@ $(function() {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
 
-      var custom_attributes = ui.item.custom_attributes;
-
-      for(var key in custom_attributes)
-      {
-        console.log("KEY");
-        console.log(key);
-        console.log(custom_attributes[key]);
-        if($('[name="' + key + '"]').is('select'))
+      $.ajax({
+        url: '/client_custom_attributes',
+        method: 'get',
+        data: {id: client.id},
+        dataType: 'json',
+        success: function(response)
         {
-          if(custom_attributes[key] == false)
+          var custom_attributes = response;
+
+          for(var key in custom_attributes)
           {
-            custom_attributes[key] = "0";
+            console.log(key);
+            console.log(custom_attributes[key]);
+            if($('[name="' + key + '"]').is('select'))
+            {
+              if(custom_attributes[key] == false)
+              {
+                custom_attributes[key] = "0";
+              }
+              else if(custom_attributes[key] == true)
+              {
+                custom_attributes[key] = "1";
+              }
+            }
+            $('[name="' + key + '"]').val(custom_attributes[key]);
           }
-          else if(custom_attributes[key] == true)
-          {
-            custom_attributes[key] = "1";
-          }
+
+          console.log(custom_attributes);
+        },
+        error: function(){
+          console.log("Error");
         }
-        $('[name="' + key + '"]').val(custom_attributes[key]);
-      }
+      });
 
-      console.log(custom_attributes);
-
+      $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + client.id);
+      $('.open_client_link').attr("href", "/clients/" + client.id);
+      $('.open_client_link').html("Ir a ficha del cliente");
       $('#booking_client_first_name').val(client.first_name);
       $('#booking_client_last_name').val(client.last_name);
       $('#booking_client_phone').val(client.phone);
@@ -3307,29 +3327,44 @@ $(function() {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
 
-      var custom_attributes = ui.item.custom_attributes;
-
-      for(var key in custom_attributes)
-      {
-        console.log(key);
-        console.log(custom_attributes[key]);
-        if($('[name="' + key + '"]').is('select'))
+      $.ajax({
+        url: '/client_custom_attributes',
+        method: 'get',
+        data: {id: client.id},
+        dataType: 'json',
+        success: function(response)
         {
-          if(custom_attributes[key] == false)
+          var custom_attributes = response;
+
+          for(var key in custom_attributes)
           {
-            custom_attributes[key] = "0";
+            console.log(key);
+            console.log(custom_attributes[key]);
+            if($('[name="' + key + '"]').is('select'))
+            {
+              if(custom_attributes[key] == false)
+              {
+                custom_attributes[key] = "0";
+              }
+              else if(custom_attributes[key] == true)
+              {
+                custom_attributes[key] = "1";
+              }
+            }
+            $('[name="' + key + '"]').val(custom_attributes[key]);
           }
-          else if(custom_attributes[key] == true)
-          {
-            custom_attributes[key] = "1";
-          }
+
+          console.log(custom_attributes);
+        },
+        error: function(){
+          console.log("Error");
         }
-        $('[name="' + key + '"]').val(custom_attributes[key]);
-      }
+      });
 
-      console.log(custom_attributes);
-
+      $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + client.id);
+      $('.open_client_link').attr("href", "/clients/" + client.id);
+      $('.open_client_link').html("Ir a ficha del cliente");
       $('#booking_client_first_name').val(client.first_name);
       $('#booking_client_last_name').val(client.last_name);
       $('#booking_client_phone').val(client.phone);
@@ -3385,29 +3420,46 @@ $(function() {
       event.preventDefault();
       var client = eval("(" + ui.item.value + ")");
 
-      var custom_attributes = ui.item.custom_attributes;
-
-      for(var key in custom_attributes)
-      {
-        console.log(key);
-        console.log(custom_attributes[key]);
-        if($('[name="' + key + '"]').is('select'))
+      $.ajax({
+        url: '/client_custom_attributes',
+        method: 'get',
+        data: {id: client.id},
+        dataType: 'json',
+        success: function(response)
         {
-          if(custom_attributes[key] == false)
+          var custom_attributes = response;
+
+          for(var key in custom_attributes)
           {
-            custom_attributes[key] = "0";
+            console.log(key);
+            console.log(custom_attributes[key]);
+            if($('[name="' + key + '"]').is('select'))
+            {
+              if(custom_attributes[key] == false)
+              {
+                custom_attributes[key] = "0";
+              }
+              else if(custom_attributes[key] == true)
+              {
+                custom_attributes[key] = "1";
+              }
+            }
+            $('[name="' + key + '"]').val(custom_attributes[key]);
           }
-          else if(custom_attributes[key] == true)
-          {
-            custom_attributes[key] = "1";
-          }
+
+          console.log(custom_attributes);
+        },
+        error: function(){
+          console.log("Error");
         }
-        $('[name="' + key + '"]').val(custom_attributes[key]);
-      }
+      });
 
-      console.log(custom_attributes);
+      
 
+      $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + client.id);
+      $('.open_client_link').attr("href", "/clients/" + client.id);
+      $('.open_client_link').html("Ir a ficha del cliente");
       $('#booking_client_first_name').val(client.first_name);
       $('#booking_client_last_name').val(client.last_name);
       $('#booking_client_phone').val(client.phone);
@@ -3520,7 +3572,10 @@ $(function() {
       $(this).val('');
     });
 
+    $('.staff_client_link').hide();
     $('.staff_client_link').attr("href", "#");
+    $('.open_client_link').attr("href", "/clients");
+    $('.open_client_link').html("Ir a fichas de clientes");
     $('#booking_client_first_name').val('');
     $('#booking_client_last_name').val('');
     $('#booking_client_phone').val('');

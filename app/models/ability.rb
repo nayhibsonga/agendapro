@@ -137,6 +137,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
+        can :get_custom_attributes, Client, :company_id => user.company_id
+
         can :payments, Client, :company_id => user.company_id
         can :payments_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
@@ -478,6 +480,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
+        can :get_custom_attributes, Client, :company_id => user.company_id
+
         can :payments, Client, :company_id => user.company_id
         can :payments_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
@@ -745,6 +749,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
+        can :get_custom_attributes, Client, :company_id => user.company_id
+
         can :payments, Client, :company_id => user.company_id
         can :payments_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
@@ -880,6 +886,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Staff").id
 
+        can :get_custom_attributes, Client, :company_id => user.company_id
+
         can :last_payments, Client, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
@@ -984,6 +992,8 @@ class Ability
         can :bookings_content, Client, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
+
+        can :get_custom_attributes, Client, :company_id => user.company_id
 
         can :last_payments, Client, :company_id => user.company_id
 
