@@ -7,7 +7,7 @@ class CreateClientEmailLogs < ActiveRecord::Migration
       t.string :status
       t.string :subject
       t.string :recipient
-      t.date_time :timestamp
+      t.datetime :timestamp
       t.integer :opens, default: 0
       t.integer :clicks, default: 0
 
