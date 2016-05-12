@@ -367,6 +367,7 @@ class Ability
         can :bookings_history, Client
         can :check_sessions, Client
         can :bookings_content, Client, :company_id => user.company_id
+        can :treatments_content, Client, :company_id => user.company_id
 
         can :booking_payment, Payment
         can :load_payment, Payment
@@ -535,6 +536,7 @@ class Ability
         can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
         can :bookings_content, Client, :company_id => user.company_id
+        can :treatments_content, Client, :company_id => user.company_id
         can :create, Client, :company_id => user.company_id
         can :update, Client, :company_id => user.company_id
         can :destroy, Client, :company_id => user.company_id
@@ -786,6 +788,7 @@ class Ability
         can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
         can :bookings_content, Client, :company_id => user.company_id
+        can :treatments_content, Client, :company_id => user.company_id
         can :create, Client, :company_id => user.company_id
         can :update, Client, :company_id => user.company_id
 
@@ -990,6 +993,7 @@ class Ability
         can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
         can :bookings_content, Client, :company_id => user.company_id
+        can :treatments_content, Client, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 

@@ -1,0 +1,30 @@
+
+<div class="row">
+  <div class="col-md-12">
+
+    <div class="panel-group" id="treatments_accordion" role="tablist" aria-multiselectable="true">
+
+      <% @treatments.each_with_index do |treatment, index| %>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="treatment_heading_<%= index.to_s %>">
+              <h4 class="panel-title">
+                <a role="button" class="collapsed custom-collapsed" data-toggle="collapse" data-parent="#treatments_accordion" href="#treatment_collapse_<%= index.to_s %>" aria-expanded="true" aria-controls="treatment_collapse_<%= index.to_s %>">
+                  <span class="folder-icons-closed"><i class="fa fa-caret-right"></i>&nbsp;<i class="fa fa-folder-o"></i>&nbsp;</span><span class="folder-icons-open" hidden><i class="fa fa-caret-down"></i>&nbsp;<i class="fa fa-folder-open-o"></i>&nbsp;</span><%= treatment.service.name %>
+                </a>
+                <span style="float:right;">
+                  <button class="btn btn-red btn-xs deleteTreatmentBtn" treatment_id="<%= treatment.id %>"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</button>
+                </span>
+              </h4>
+            </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-8">
+    <%= will_paginate @treatments, renderer: BootstrapPagination::Rails %>
+  </div>
+</div>

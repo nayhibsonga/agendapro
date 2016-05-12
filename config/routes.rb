@@ -567,6 +567,7 @@ Agendapro::Application.routes.draw do
 
     get '/company_clients_base', :to => 'companies#generate_clients_base'
     get '/client_bookings_content', :to => 'clients#bookings_content'
+    get '/client_treatments_content', :to => 'clients#treatments_content'
 
     get '/billing_info_admin_form', :to => 'billing_infos#super_admin_form'
     get '/billing_info_admin_edit', :to => 'billing_infos#super_admin_edit'
