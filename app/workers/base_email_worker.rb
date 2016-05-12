@@ -5,7 +5,7 @@ class BaseEmailWorker
       if mail =~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
         if EmailBlacklist.find_by_email(mail).nil?
           puts "Email ok #{mail}"
-          filtered << mail
+          filtered << mail.downcase
         else
           puts "Email Blacklisted: #{mail}"
         end

@@ -13,80 +13,159 @@
 <% else %>
   <input type="hidden" id="mandatory_mock_booking_info" value="0" />
 <% end %>
+<% if current_user.company.company_setting.require_cashier_code %>
+  <input type="hidden" id="require_cashier_code" value="1" />
+<% else %>
+  <input type="hidden" id="require_cashier_code" value="0" />
+<% end %>
 <div class="modal fade paymentModal" id="paymentModalIntro" tabindex="-1" role="dialog" aria-labelledby="Pago" aria-hidden="true">
-  <div class="modal-dialog" style="width: auto;">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
         <h3 class="modal-title" id="paymentModalIntroTitle" style="line-height: 1.1;">Pago</h3>
       </div>
       <div class="modal-body" id="paymentModalIntroBody">
+
+        <div class="payment-modals-bar row">
+          <div class="col-md-2">
+            <div  style="text-align: center; width: 100%">
+              <%= image_tag 'admin/v1.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Inicio</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g2.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Productos y servicios</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g3.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Métodos de pago</span>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g4.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Comprobantes</span>
+            </div>
+          </div>
+        </div>
+
         <div class="row">
           <div class="col-xs-12">
 
             <form id="fakePaymentIntroForm" action="">
 
-              <div class="payment-form-div form-group has-feedback">
-                <label for="payment_location" class="col-xs-3 control-label">Local</label>
-                <div class="col-xs-9">
-                  <select id="payment_location" name="payment_location" class="form-control">
-                    <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) %>
-                      <option value="<%= location.id %>">
-                        <%= location.name.humanize %>
-                      </option>
-                    <% end %>
-                  </select>
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="payment-form-div form-group has-feedback">
+                    <label for="payment_location" class="col-xs-4 col-md-3 control-label left-label">Local</label>
+                    <div class="col-xs-8 col-md-9">
+                      <select id="payment_location" name="payment_location" class="form-control">
+                        <% for location in Location.where(company_id: current_user.company_id, active: true).accessible_by(current_ability) %>
+                          <option value="<%= location.id %>">
+                            <%= location.name.humanize %>
+                          </option>
+                        <% end %>
+                      </select>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
+
+                  <div class="payment-form-div form-group">
+                    <label for="payment_date" class="col-xs-4 col-md-3 control-label left-label">Fecha</label>
+                    <div class="col-xs-3 col-md-4">
+                      <input type="text" class="form-control payment_date_ignore" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                    </div>
+                    <div class="col-xs-5" style="text-align: right;">
+                      <%= time_select 'payment_date', 'time', {minute_step: 1}, {:class => 'form-control payment-date-select payment_date_ignore', required: true} %>
+                    </div>
+
+                  </div>
                 </div>
-              </div>
+                <div class="col-md-6">
+                  <% if current_user.company.company_setting.require_cashier_code %>
+                    <div class="payment-form-div form-group has-feedback">
+                      <label for="payment_cashier_code" class="col-xs-4 col-md-3 control-label left-label" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">Código Cajero</label>
+                      <div class="col-xs-8 col-md-9">
+                        <input type="password" class="form-control" id="payment_cashier_code" name="payment_cashier_code" value="" />
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
 
-              <div class="payment-form-div form-group">
-                <label for="payment_date" class="col-xs-3 control-label">Fecha</label>
-                <div class="col-xs-5">
-                  <input type="text" class="form-control payment_date_ignore" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
+                    </div>
+
+                    <div class="payment-form-div form-group has-feedback">
+                      <input type="hidden" id="payment_cashier_id" value="" />
+                      <label for="payment_cashier_name" class="col-xs-4 col-md-3 control-label left-label">Nombre</label>
+                      <div class="col-xs-8 col-md-9">
+                        <input type="text" class="form-control" id="payment_cashier_name" name="payment_cashier_name" value="" disabled />
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+
+                    </div>
+                  <% else %>
+                    <div class="payment-form-div form-group has-feedback" hidden>
+                      <label for="payment_cashier_code" class="col-xs-4 col-md-3 control-label left-label" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">Código Cajero</label>
+                      <div class="col-xs-8 col-md-9">
+                        <input type="password" class="form-control" id="payment_cashier_code" name="payment_cashier_code" value="" />
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+
+                    </div>
+
+                    <div class="payment-form-div form-group has-feedback" hidden>
+                      <input type="hidden" id="payment_cashier_id" value="" />
+                      <label for="payment_cashier_name" class="col-xs-4 col-md-3 control-label left-label">Nombre</label>
+                      <div class="col-xs-8 col-md-9">
+                        <input type="text" class="form-control" id="payment_cashier_name" name="payment_cashier_name" value="" disabled />
+                        <span class="help-block"></span>
+                        <span class="form-control-feedback"></span>
+                      </div>
+
+                    </div>
+                  <% end %>
                 </div>
-                <div class="col-xs-4">
-                <%= time_select 'payment_date', 'time', {minute_step: 1}, {:class => 'form-control date-select payment_date_ignore', required: true} %>
-                </div>
-
-              </div>
-
-              <div style="clear: both; margin-bottom: 8px;">
-              </div>
-
-              <div class="payment-form-div form-group has-feedback">
-                <label for="payment_cashier_code" class="col-xs-3 control-label">Cajero</label>
-                <div class="col-xs-9">
-                  <input type="password" class="form-control" id="payment_cashier_code" name="payment_cashier_code" value="" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
-                </div>
-
-              </div>
-
-              <div class="payment-form-div form-group has-feedback">
-                <input type="hidden" id="payment_cashier_id" value="" />
-                <label for="payment_cashier_name" class="col-xs-3 control-label"></label>
-                <div class="col-xs-9">
-                  <input type="text" class="form-control" id="payment_cashier_name" name="payment_cashier_name" value="" disabled />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
-                </div>
-
               </div>
 
               <% if !current_user.company.company_setting.payment_client_required %>
-                <div class="payment-form-div form-group">
+                <div class="row">
+                  <div class="col-md-6">
+                    <% if !current_user.company.company_setting.require_cashier_code %>
+                      <div class="payment-form-div form-group">
+                        <div class="col-xs-4 col-md-3">
 
-                  <div class="col-xs-3">
+                        </div>
+                        <div class="col-xs-6 col-md-7 openClient">
+                          <span>Asociar o agregar cliente </span>
+                        </div>
+                        <div class="col-xs-2 pull-right openClient">
+                          <span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
+                        </div>
+                      </div>
+                    <% end %>
                   </div>
-                  <div class="col-xs-9" id="openClient">
-                    <span>Asociar o agregar cliente </span><span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
-                  </div>
-                  <div style="clear: both;">
-                  </div>
+                  <div class="col-md-6">
+                    <% if current_user.company.company_setting.require_cashier_code %>
+                      <div class="payment-form-div form-group">
+                        <div class="col-xs-4 col-md-3">
 
+                        </div>
+                        <div class="col-xs-6 col-md-7 openClient">
+                          <span>Asociar o agregar cliente </span>
+                        </div>
+                        <div class="col-xs-2 pull-right openClient">
+                          <span id="openClientIcon"><i class="fa fa-plus-square"></i></span><span id="closeClientIcon" hidden><i class="fa fa-minus-square"></i></span>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
                 </div>
               <% end %>
 
@@ -98,60 +177,73 @@
 
               <input type="hidden" id="set_client" value="0" />
 
-              <div class="payment-form-div form-group has-feedback client-option" hidden>
-                <label for="payment_client_name" class="col-xs-3 control-label">Cliente</label>
-                <div class="col-xs-9">
-                  <input type="hidden" id="payment_client_id" name="payment_client_id" value="" />
-                  <input type="hidden" id="payment_client_first_name" name="payment_client_first_name" value="" />
-                  <input type="hidden" id="payment_client_last_name" name="payment_client_last_name" value="" />
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="payment_client_name" name="payment_client_name" value="" />
-                    <span class="input-group-btn">
-                      <button class="btn btn-red" type="button" id="payment_client_xButton"><i class="fa fa-times-circle"></i></button>
-                    </span>
+              <div class="row">
+                <div class="col-md-12 client-option" hidden>
+                  <div style="border-bottom: 1px solid #949292; margin-bottom: 25px; margin-left: 15px; margin-right: 15px;">
+                    <h4>Cliente</h4>
                   </div>
-                  <!--<span class="help-block"></span>-->
-                  <ul id="payment_client_suggestions"></ul>
                 </div>
-
               </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="payment-form-div form-group has-feedback client-option" hidden>
+                    <label for="payment_client_name" class="col-xs-4 col-md-3 control-label left-label">Cliente</label>
+                    <div class="col-xs-8 col-md-9">
+                      <input type="hidden" id="payment_client_id" name="payment_client_id" value="" />
+                      <input type="hidden" id="payment_client_first_name" name="payment_client_first_name" value="" />
+                      <input type="hidden" id="payment_client_last_name" name="payment_client_last_name" value="" />
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="payment_client_name" name="payment_client_name" value="" />
+                        <span class="input-group-btn">
+                          <button class="btn btn-red" type="button" id="payment_client_xButton"><i class="fa fa-times-circle"></i></button>
+                        </span>
+                      </div>
+                      <!--<span class="help-block"></span>-->
+                      <ul id="payment_client_suggestions"></ul>
+                    </div>
 
-              <div class="payment-form-div form-group client-option" hidden>
-                <label for="payment_client_email" class="col-xs-3 control-label">Email</label>
-                <div class="col-xs-9">
-                  <input type="text" class="form-control" id="payment_client_email" name="payment_client_email" value="" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                  </div>
+
+                  <div class="payment-form-div form-group client-option" hidden>
+                    <label for="payment_client_email" class="col-xs-4 col-md-3 control-label left-label">Email</label>
+                    <div class="col-xs-8 col-md-9">
+                      <input type="text" class="form-control" id="payment_client_email" name="payment_client_email" value="" />
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+
+                  </div>
                 </div>
+                <div class="col-md-6">
 
-              </div>
+                  <div class="payment-form-div form-group client-option" hidden>
+                    <label for="payment_client_phone" class="col-xs-4 col-md-3 control-label left-label">Teléfono</label>
+                    <div class="col-xs-8 col-md-9">
+                      <input type="text" class="form-control" id="payment_client_phone" name="payment_client_phone" value="" />
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
 
-              <div class="payment-form-div form-group client-option" hidden>
-                <label for="payment_client_phone" class="col-xs-3 control-label">Teléfono</label>
-                <div class="col-xs-9">
-                  <input type="text" class="form-control" id="payment_client_phone" name="payment_client_phone" value="" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
-                </div>
+                  </div>
 
-              </div>
-
-              <div class="payment-form-div form-group has-feedback client-option" hidden>
-                <label for="payment_client_gender" class="col-xs-3 control-label">Género</label>
-                <div class="col-xs-9">
-                  <select id="payment_client_gender" name="payment_client_gender" class="form-control">
-                    <option value="0">
-                      Indefinido
-                    </option>
-                    <option value="1">
-                      Femenino
-                    </option>
-                    <option value="2">
-                      Masculino
-                    </option>
-                  </select>
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                  <div class="payment-form-div form-group has-feedback client-option" hidden>
+                    <label for="payment_client_gender" class="col-xs-4 col-md-3 control-label left-label">Género</label>
+                    <div class="col-xs-8 col-md-9">
+                      <select id="payment_client_gender" name="payment_client_gender" class="form-control">
+                        <option value="0">
+                          Indefinido
+                        </option>
+                        <option value="1">
+                          Femenino
+                        </option>
+                        <option value="2">
+                          Masculino
+                        </option>
+                      </select>
+                      <span class="help-block"></span>
+                      <span class="form-control-feedback"></span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -161,9 +253,13 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
-        <button type="button" class="btn payment-btn-next" id="paymentIntroNextBtn" aria-label="Siguiente">Siguiente</button>
-        <button type="button" class="btn" id="paymentIntroSaveBtn" aria-label="Guardar">Guardar</button>
+        <div class="col-md-6" style="text-align: left;">
+          <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+        </div>
+        <div class="col-md-6 pull-right">
+          <button type="button" class="btn payment-btn-next" id="paymentIntroNextBtn" aria-label="Siguiente">Siguiente</button>
+          <button type="button" class="btn" id="paymentIntroSaveBtn" aria-label="Guardar">Guardar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -179,19 +275,28 @@
       <div class="modal-body" id="paymentModal1Body">
 
         <div class="payment-modals-bar row">
-          <div class="col-md-4">
-            <div  style="text-align: left; width: 100%">
-              <%= image_tag 'admin/header_pago_1b.png', :class => 'img-responsive', :size => "132x60" %>
+          <div class="col-md-2">
+            <div  style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g1.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Inicio</span>
             </div>
           </div>
           <div class="col-md-4">
             <div style="text-align: center; width: 100%">
-              <%= image_tag 'admin/header_pago_2a.png', :class => 'img-responsive center-block', :size => "132x60" %>
+              <%= image_tag 'admin/v2.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Productos y servicios</span>
             </div>
           </div>
           <div class="col-md-4">
-            <div style="text-align: right; width: 100%">
-              <%= image_tag 'admin/header_pago_3a.png', :class => 'img-responsive pull-right', :size => "132x60" %>
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g3.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Métodos de pago</span>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g4.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Comprobantes</span>
             </div>
           </div>
         </div>
@@ -209,82 +314,82 @@
             <div class="row">
 
               <% if current_user.company.plan_id != Plan.find_by_name("Gratis").id %>
-                <div class="col-xs-4">
+                <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
 
-                <div id="paymentModalBookingForm" hidden>
+                  <div id="paymentModalBookingForm" hidden>
 
-                  <div class="mbf-title">
-                    Agregar servicio
-                  </div>
-
-                  <div class="payment-form-div">
-                    <label for="service" class="col-xs-3 control-label">Categoría</label>
-                    <div class="col-xs-9">
-                      <select class="form-control" id="payment_not_booked_category" name="payment_not_booked_category">
-                        <option value=""></option>
-                      </select>
+                    <div class="mbf-title">
+                      Agregar servicio
                     </div>
-                    <div style="clear: both;"></div>
-                  </div>
 
-                  <div class="payment-form-div">
-                    <label for="service" class="col-xs-3 control-label">Servicio</label>
-                    <div class="col-xs-9">
-                      <select class="form-control" id="payment_not_booked_service" name="payment_not_booked_service">
-                        <option value=""></option>
-                      </select>
-                    </div>
-                    <div style="clear: both;"></div>
-                  </div>
-
-                  <div class="payment-form-div">
-                    <label for="provider" class="col-xs-3 control-label">Prestador</label>
-                    <div class="col-xs-9">
-                      <select class="form-control" id="payment_not_booked_provider" name="payment_not_booked_provider">
+                    <div class="payment-form-div">
+                      <label for="service" class="col-xs-3 control-label">Categoría</label>
+                      <div class="col-xs-9">
+                        <select class="form-control" id="payment_not_booked_category" name="payment_not_booked_category">
                           <option value=""></option>
-                      </select>
-                    </div>
-                    <div style="clear: both;"></div>
-                  </div>
-
-                  <div class="payment-form-div">
-                    <label for="price" class="col-xs-3 control-label">Precio</label>
-                    <div class="col-xs-9">
-                      <div class="input-group">
-                        <span class="input-group-addon">$</span>
-                        <% if current_user.company.company_setting.editable_payment_prices %>
-                          <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" />
-                        <% else %>
-                          <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" disabled />
-                        <% end %>
+                        </select>
                       </div>
+                      <div style="clear: both;"></div>
                     </div>
-                    <div style="clear: both;"></div>
-                  </div>
 
-                  <div class="payment-form-div">
-                    <label for="discount" class="col-xs-3 control-label">Descuento</label>
-                    <div class="col-xs-9">
-                      <div class="input-group">
-                        <input class="form-control" type="number" id="payment_not_booked_discount" name="payment_not_booked_discount" value="0" />
-                        <span class="input-group-addon">%</span>
+                    <div class="payment-form-div">
+                      <label for="service" class="col-xs-3 control-label">Servicio</label>
+                      <div class="col-xs-9">
+                        <select class="form-control" id="payment_not_booked_service" name="payment_not_booked_service">
+                          <option value=""></option>
+                        </select>
                       </div>
+                      <div style="clear: both;"></div>
                     </div>
-                    <div style="clear: both;"></div>
-                  </div>
 
-                  <div class="payment-form-div">
-                    <div class="col-xs-9 col-xs-offset-3">
-                      <button id="addNotBooked" class="btn">Agregar</button>
+                    <div class="payment-form-div">
+                      <label for="provider" class="col-xs-3 control-label">Prestador</label>
+                      <div class="col-xs-9">
+                        <select class="form-control" id="payment_not_booked_provider" name="payment_not_booked_provider">
+                            <option value=""></option>
+                        </select>
+                      </div>
+                      <div style="clear: both;"></div>
                     </div>
-                    <div style="clear: both;"></div>
-                  </div>
 
-                </div>
+                    <div class="payment-form-div">
+                      <label for="price" class="col-xs-3 control-label">Precio</label>
+                      <div class="col-xs-9">
+                        <div class="input-group">
+                          <span class="input-group-addon">$</span>
+                          <% if current_user.company.company_setting.editable_payment_prices %>
+                            <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" />
+                          <% else %>
+                            <input class="form-control" type="number" id="payment_not_booked_price" name="payment_not_booked_price" value="0" disabled />
+                          <% end %>
+                        </div>
+                      </div>
+                      <div style="clear: both;"></div>
+                    </div>
+
+                    <div class="payment-form-div">
+                      <label for="discount" class="col-xs-3 control-label">Descuento</label>
+                      <div class="col-xs-9">
+                        <div class="input-group">
+                          <input class="form-control" type="number" id="payment_not_booked_discount" name="payment_not_booked_discount" value="0" />
+                          <span class="input-group-addon">%</span>
+                        </div>
+                      </div>
+                      <div style="clear: both;"></div>
+                    </div>
+
+                    <div class="payment-form-div">
+                      <div class="col-xs-9 col-xs-offset-3">
+                        <button id="addNotBooked" class="btn">Agregar</button>
+                      </div>
+                      <div style="clear: both;"></div>
+                    </div>
+
+                  </div>
                 </div>
               <% end %>
 
-              <div class="col-xs-8">
+              <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
 
                 <div id="paymentClientPastBookings" hidden>
                   <div class="cpb-title">
@@ -321,7 +426,7 @@
             </div>
 
             <div class="row">
-              <div class="col-xs-6">
+              <div class="col-lg-6 col-md-11 col-sm-11 col-xs-11">
 
                 <div id="paymentModalProductForm" hidden>
 
@@ -423,7 +528,7 @@
                 </div>
 
               </div>
-              <div class="col-xs-6">
+              <div class="col-lg-6 col-md-1 col-sm-1 col-xs-1">
 
               </div>
             </div>
@@ -482,9 +587,13 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default payment-btn-back" id="paymentStep1BackBtn" aria-label="Atrás">Atrás</button>
-        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
-        <button type="button" class="btn payment-btn-next" aria-label="Siguiente">Siguiente</button>
+        <div class="col-md-6" style="text-align: left;">
+          <button type="button" class="btn btn-default payment-btn-back" id="paymentStep1BackBtn" aria-label="Atrás">Atrás</button>
+          <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
+        </div>
+        <div class="col-md-6 pull-right">
+          <button type="button" class="btn payment-btn-next" aria-label="Siguiente">Siguiente</button>
+        </div>
       </div>
     </div>
   </div>
@@ -500,19 +609,28 @@
       <div class="modal-body" id="paymentModal2Body">
 
         <div class="payment-modals-bar row">
-          <div class="col-md-4">
-            <div  style="text-align: left; width: 100%">
-              <%= image_tag 'admin/header_pago_1a.png', :class => 'img-responsive', :size => "132x60" %>
+          <div class="col-md-2">
+            <div  style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g1.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Inicio</span>
             </div>
           </div>
           <div class="col-md-4">
             <div style="text-align: center; width: 100%">
-              <%= image_tag 'admin/header_pago_2b.png', :class => 'img-responsive center-block', :size => "132x60" %>
+              <%= image_tag 'admin/g2.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Productos y servicios</span>
             </div>
           </div>
           <div class="col-md-4">
-            <div style="text-align: right; width: 100%">
-              <%= image_tag 'admin/header_pago_3a.png', :class => 'img-responsive pull-right', :size => "132x60" %>
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/v3.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Métodos de pago</span>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g4.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Comprobantes</span>
             </div>
           </div>
         </div>
@@ -640,6 +758,7 @@
                 </div>
                 <div class="col-xs-6">
                   <button type="button" class="btn btn-dark-green" id="addTransactionBtn" aria-label="Agregar pago">Agregar pago</button>
+                  &nbsp;&nbsp;&nbsp;<span id="transactions-complete-message" hidden>Ya has completado el total y puedes continuar.</span>
                 </div>
                 <div style="clear: both;"></div>
               </div>
@@ -652,9 +771,13 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
-        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
-        <button type="button" class="btn payment-btn-next" id="transactionsReadyBtn" aria-label="Siguiente" disabled>Siguiente</button>
+        <div class="col-md-6" style="text-align: left;">
+          <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
+          <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Cancelar</button>
+        </div>
+        <div class="col-md-6 pull-right">
+          <button type="button" class="btn payment-btn-next" id="transactionsReadyBtn" aria-label="Siguiente" disabled>Siguiente</button>
+        </div>
       </div>
     </div>
   </div>
@@ -670,33 +793,62 @@
       <div class="modal-body" id="paymentModal3Body">
 
         <div class="payment-modals-bar row">
-          <div class="col-md-4">
-            <div  style="text-align: left; width: 100%">
-              <%= image_tag 'admin/header_pago_1a.png', :class => 'img-responsive', :size => "132x60" %>
+          <div class="col-md-2">
+            <div  style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g1.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Inicio</span>
             </div>
           </div>
           <div class="col-md-4">
             <div style="text-align: center; width: 100%">
-              <%= image_tag 'admin/header_pago_2a.png', :class => 'img-responsive center-block', :size => "132x60" %>
+              <%= image_tag 'admin/g2.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Productos y servicios</span>
             </div>
           </div>
           <div class="col-md-4">
-            <div style="text-align: right; width: 100%">
-              <%= image_tag 'admin/header_pago_3b.png', :class => 'img-responsive pull-right', :size => "132x60" %>
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/g3.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Métodos de pago</span>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div style="text-align: center; width: 100%">
+              <%= image_tag 'admin/v4.png', :class => 'img-responsive center-block', :size => "25x25" %>
+              <span style="font-size: 16px;">Comprobantes</span>
             </div>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-xs-3">
-            <div id="addedReceipts">
-
-            </div>
-          </div>
-          <div class="col-xs-9">
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
 
             <div id="paymentReceiptsForms">
-              <div class="col-xs-7">
+              <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+                <div id="receiptsItemsDiv">
+
+                  <div class="receiptTitle">
+                    Servicios/Productos
+                  </div>
+
+                  <table id="receiptsItemsTable">
+                    <tr class="paymentItemsHeaders">
+                      <th>
+                        <input type="checkbox" id="checkAllItems" checked />
+                      </th>
+                      <th>
+                        ID
+                      </th>
+                      <th>
+                        Tipo
+                      </th>
+                      <th>
+                        Nombre
+                      </th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
                 <form id="fakePaymentStep3Form" action="">
 
                   <div class="receiptTitle">
@@ -718,7 +870,7 @@
                   </div>
 
                   <div class="payment-form-div">
-                    <label for="payment_receipt_number" class="col-xs-5 control-label">Número de comprobante</label>
+                    <label for="payment_receipt_number" class="col-xs-5 control-label">Número de boleta o factura</label>
                     <div class="col-xs-7">
                       <% if current_user.company.company_setting.receipt_required %>
                         <input type="hidden" id="payment_receipt_number_required" name="payment_receipt_number_required" value="1" />
@@ -733,8 +885,8 @@
                   </div>
 
                   <div class="payment-form-div">
-                    <label for="payment_receipt_date" class="col-xs-5 control-label">Fecha de pago</label>
-                    <div class="col-xs-4">
+                    <label for="payment_receipt_date" class="col-xs-5 control-label">Fecha de boleta o factura</label>
+                    <div class="col-xs-7">
                       <input type="text" class="form-control" id="payment_receipt_date" name="payment_receipt_date" value="<%= I18n.l(DateTime.now.to_date) %>" />
                       <span class="help-block"></span>
                       <span class="form-control-feedback"></span>
@@ -755,37 +907,13 @@
                     <div class="col-xs-5">
                     </div>
                     <div class="col-xs-7">
-                      <button type="button" class="btn btn-default" id="addReceiptBtn">Guardar</button>
+                      <button type="button" class="btn btn-default" id="addReceiptBtn">Añadir comprobante</button>
                     </div>
                   </div>
 
                 </form>
               </div>
-              <div class="col-xs-5">
-                <div id="receiptsItemsDiv">
 
-                  <div class="receiptTitle">
-                    Servicios/Productos
-                  </div>
-
-                  <table id="receiptsItemsTable">
-                    <tr class="paymentItemsHeaders">
-                      <th>
-                        <input type="checkbox" id="checkAllItems" />
-                      </th>
-                      <th>
-                        ID
-                      </th>
-                      <th>
-                        Tipo
-                      </th>
-                      <th>
-                        Nombre
-                      </th>
-                    </tr>
-                  </table>
-                </div>
-              </div>
             </div>
 
             <div id="paymentReceiptsFinal" hidden>
@@ -793,17 +921,29 @@
             </div>
 
           </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="receiptTitle">
+              Comprobantes
+            </div>
+            <div id="addedReceipts">
+
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
-        <div style="display: block; text-align: left;">
-          <button type="button" class="btn btn-default" id="openReceiptForm">Nuevo comprobante&nbsp;<i class="fa fa-plus"></i></button><br />
+        <div class="col-md-6" style="text-align: left;">
+          <!--<div style="display: block; text-align: left;">
+            <button type="button" class="btn btn-default" id="openReceiptForm">Nuevo comprobante&nbsp;<i class="fa fa-plus"></i></button><br />
+          </div>-->
+          <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
+          <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
         </div>
-        <button type="button" class="btn btn-default payment-btn-back" aria-label="Atrás">Atrás</button>
-        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Cancelar">Cancelar</button>
-        <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnPrint" aria-label="Imprimir" hidden>Imprimir</button>
-        <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnSendEmail" aria-label="Enviar por email" hidden>Enviar por email</button>
-        <button type="button" class="btn payment-btn-next payment-btn-end" id="paymentBtnSave" aria-label="Guardar" hidden>Guardar</button>
+        <div class="col-md-6 pull-right">
+          <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnPrint" aria-label="Imprimir" hidden>Imprimir</button>
+          <button type="button" class="btn btn-default payment-btn-send payment-btn-end" id="paymentBtnSendEmail" aria-label="Enviar por email" hidden>Enviar por email</button>
+          <button type="button" class="btn payment-btn-next payment-btn-end" id="paymentBtnSave" aria-label="Guardar" hidden>Guardar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -962,26 +1102,49 @@
                 </div>
               </div>
 
-              <div class="payment-form-div form-group has-feedback">
-                <label for="internal_sale_cashier_code" class="col-xs-3 control-label">Cajero</label>
-                <div class="col-xs-9">
-                  <input type="password" class="form-control" id="internal_sale_cashier_code" name="internal_sale_cashier_code" value="" />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+              <% if current_user.company.company_setting.require_cashier_code %>
+                <div class="payment-form-div form-group has-feedback">
+                  <label for="internal_sale_cashier_code" class="col-xs-3 control-label">Código Cajero</label>
+                  <div class="col-xs-9">
+                    <input type="password" class="form-control" id="internal_sale_cashier_code" name="internal_sale_cashier_code" value="" />
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+
                 </div>
 
-              </div>
+                <div class="payment-form-div form-group has-feedback">
+                  <input type="hidden" id="internal_sale_cashier_id" value="" />
+                  <label for="internal_sale_cashier_name" class="col-xs-3 control-label">Nombre</label>
+                  <div class="col-xs-9">
+                    <input type="text" class="form-control" id="internal_sale_cashier_name" name="internal_sale_cashier_name" value="" disabled />
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
 
-              <div class="payment-form-div form-group has-feedback">
-                <input type="hidden" id="internal_sale_cashier_id" value="" />
-                <label for="internal_sale_cashier_name" class="col-xs-3 control-label"></label>
-                <div class="col-xs-9">
-                  <input type="text" class="form-control" id="internal_sale_cashier_name" name="internal_sale_cashier_name" value="" disabled />
-                  <span class="help-block"></span>
-                  <span class="form-control-feedback"></span>
+                </div>
+              <% else %>
+                <div class="payment-form-div form-group has-feedback" hidden>
+                  <label for="internal_sale_cashier_code" class="col-xs-3 control-label">Código Cajero</label>
+                  <div class="col-xs-9">
+                    <input type="password" class="form-control" id="internal_sale_cashier_code" name="internal_sale_cashier_code" value="" />
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+
                 </div>
 
-              </div>
+                <div class="payment-form-div form-group has-feedback" hidden>
+                  <input type="hidden" id="internal_sale_cashier_id" value="" />
+                  <label for="internal_sale_cashier_name" class="col-xs-3 control-label">Nombre</label>
+                  <div class="col-xs-9">
+                    <input type="text" class="form-control" id="internal_sale_cashier_name" name="internal_sale_cashier_name" value="" disabled />
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+
+                </div>
+              <% end %>
 
               <div class="payment-form-div">
                 <label for="internal_sale_service_provider" class="col-xs-3 control-label">Comprador</label>

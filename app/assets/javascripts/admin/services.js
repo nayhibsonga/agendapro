@@ -307,7 +307,7 @@ function servJSON() {
     "name": $('#service_name').val(),
     "price": $('#service_price').val(),
     "show_price": $('#service_show_price').prop('checked'),
-    "comission_value": $('#service_comission_vale').val(),
+    "comission_value": $('#service_comission_value').val(),
     "comission_option": $('#service_comission_option').val(),
     "duration": $('#service_duration').val(),
     "outcall": $('#service_outcall').prop('checked'),

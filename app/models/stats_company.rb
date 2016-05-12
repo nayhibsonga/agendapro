@@ -15,25 +15,9 @@ class StatsCompany < ActiveRecord::Base
   		end
   		stats.week_bookings = Booking.where(location_id: Location.where(company_id: company.id), created_at: 7.days.ago..Time.now).count
   		stats.past_week_bookings = Booking.where(location_id: Location.where(company_id: company.id), created_at: 14.days.ago..7.days.ago).count
-
-		bl = BillingLog.where(:company_id => company.id).where(:trx_id => PuntoPagosConfirmation.where(:response => "00").pluck(:trx_id)).order('created_at desc').first
-		rec = BillingRecord.where(:company_id => company.id).order('date desc').first
-		if !bl.nil? && !rec.nil?
-			if bl.created_at <= rec.date
-				stats.last_payment = rec.date
-				stats.last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
-			else
-				stats.last_payment = bl.created_at
-				stats.last_payment_method = "Automático"
-			end
-		elsif bl.nil? && !rec.nil?
-			stats.last_payment = rec.date
-			stats.last_payment_method = "Manual - " + (rec.transaction_type ? rec.transaction_type.name : "No definido")
-		elsif !bl.nil? && rec.nil?
-			stats.last_payment = bl.created_at
-			stats.last_payment_method = "Automático"
-		end
-		stats.save
+			stats.last_payment = "#{company.last_payment_detail[0]}"
+			stats.last_payment_method = "#{company.last_payment_detail[1]} #{company.last_payment_detail[2]}"
+  		stats.save
   	end
   end
 end

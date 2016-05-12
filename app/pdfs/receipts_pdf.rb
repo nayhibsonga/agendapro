@@ -45,7 +45,7 @@ class ReceiptsPdf < Prawn::Document
 				move_down 5
 			end
 		end
-		info_rows << ["Atendido por: ", @receipt.payment.cashier.name]
+		info_rows << ["Atendido por: ", @receipt.payment.cashier_details]
 
 		table(info_rows) do
 			cells.borders = []

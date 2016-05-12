@@ -77,6 +77,13 @@ h3.link_section_header {
   display: inline;
 }
 
+.payment-date-select{
+  padding-left: 6px;
+  padding-right: 6px;
+  width: 45%;
+  display: inline;
+}
+
 #wrap-admin{
   min-height: 100%;
   height: auto;
@@ -1259,7 +1266,7 @@ tr[class*="break"] {
 }
 
 #paymentModalIntro .modal-dialog{
-  width: 40% !important;
+  width: 85% !important;
 }
 
 #editPaymentModal .modal-dialog{
@@ -1268,6 +1275,16 @@ tr[class*="break"] {
 
 .paymentModalStep{
   overflow-y: auto;
+}
+
+.paymentModalStep .modal-footer{
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+#paymentModalIntro .modal-footer{
+  padding-left: 0px;
+  padding-right: 0px;
 }
 
 .paymentModalStep .modal-dialog{
@@ -1415,6 +1432,11 @@ tr[class*="break"] {
 
 .payment-form-div label{
   text-align: right;
+  margin-top: 6px !important;
+}
+
+.payment-form-div .left-label{
+  text-align: left;
   margin-top: 6px !important;
 }
 
@@ -1666,7 +1688,7 @@ tr[class*="break"] {
 }
 
 #addReceiptBtn{
-  width: 120px;
+  min-width: 160px;
   background-color: #22c488;
   color: #fff;
   text-align: center;
@@ -1786,7 +1808,7 @@ tr[class*="break"] {
   float: right;
 }
 
-#openClient{
+.openClient{
   cursor: pointer;
 }
 
@@ -2399,4 +2421,51 @@ tr[class*="break"] {
     padding-right: 3px !important;
   }
 
+}
+
+.booking-client-li a{
+  background-color: #fff !important;
+  color: #505050 !important;
+  border-radius: 0px !important;
+  font-size: 15px;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+
+.booking-client-li a:hover{
+  background-color: #1ba970 !important;
+  color: #fff !important;
+  border-radius: 0px !important;
+}
+
+.booking-client-li.active a{
+  background-color: #22c488 !important;
+  color: #fff !important;
+  border-radius: 0px !important;
+}
+
+.open_client_link{
+  padding-top: 7px;
+  padding-bottom: 7px;
+  color: #22c488;
+  border: 1px solid #22c488;
+  border-radius: 3px;
+  width: 100%;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  background-color: #f0f0f0;
+}
+
+.open_client_link:hover{
+  padding-top: 7px;
+  padding-bottom: 7px;
+  color: #22c488;
+  border: 1px solid #22c488;
+  border-radius: 3px;
+  width: 100%;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  background-color: #fff;
 }

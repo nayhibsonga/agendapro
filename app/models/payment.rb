@@ -23,6 +23,14 @@ class Payment < ActiveRecord::Base
 
   #after_save :set_numbers
 
+  def cashier_details
+    details_str = "Sin información."
+    if !self.cashier_id.nil? && Cashier.where(id: self.cashier_id).count > 0
+      details_str = self.cashier.name + "."
+    end
+    return details_str
+  end
+
   def payment_date_required
     if self.payment_date == nil
       errors.add(:base, "El pago debe estar asociado a una fecha de pago.")

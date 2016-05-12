@@ -23,7 +23,7 @@ class AdminMailer < Base::CustomMailer
     location_ids = location_ids.uniq
     location_ids.each do |l_id|
       location = Location.find(l_id)
-      locations = locations + location.name + '<br />'
+      @locations = @locations + location.name + '<br />'
     end
 
     mail(
