@@ -1358,7 +1358,7 @@ function savePaymentIntro()
   var client_id = $("#payment_client_id").val();
   var client_email = $("#payment_client_email").val();
   var client_phone = $("#payment_client_phone").val();
-  var client_gender = $("#payment_client_gender").val();
+  var client_gender = $("#payment_client_gender").val("0");
   var date = $("#payment_date").val();
   var time = $('#payment_date_time_4i').val() + ":" + $('#payment_date_time_5i').val() + ":00";
   var payment_date = date + " " + time;
@@ -1587,6 +1587,8 @@ function loadPaymentIntro(payment_id) {
   $("#paymentIntroSaveBtn").hide();
   $("#paymentIntroNextBtn").show();
   $("#payment_location").prop("disabled", false);
+
+  $('#payment_client_gender').val("0");
 
   if(payment_id == null || payment_id < 1)
   {
@@ -2582,7 +2584,7 @@ function createAndServePayment(option)
   var client_id = $("#payment_client_id").val();
   var client_email = $("#payment_client_email").val();
   var client_phone = $("#payment_client_phone").val();
-  var client_gender = $("#payment_client_gender").val();
+  var client_gender = $("#payment_client_gender").val("0");
   var payment_past_bookings = $("#paymentPastBookingsArray").val();
   var payment_new_bookings = $("#paymentNewBookingsArray").val();
   var payment_products = $("#paymentProductsArray").val();
