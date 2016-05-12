@@ -492,7 +492,14 @@ $(function() {
       $("#payment_client_last_name").val(client.last_name);
       $("#payment_client_phone").val(client.phone);
 
-      $("#payment_client_gender").val(client.gender);
+      if(client.gender != null)
+      {
+        $("#payment_client_gender").val(client.gender);
+      }
+      else
+      {
+        $('#payment_client_gender').val("0");
+      }
 
       //$('#payment_xButton').prop('disabled', false);
       //$("#payment_full_name").prop('disabled', true);
@@ -1312,7 +1319,14 @@ function getPaymentIntro(payment_id)
         $("#payment_client_name").val(response.client.first_name + " " + response.client.last_name);
         $("#payment_client_email").val(response.client.email);
         $("#payment_client_phone").val(response.client.phone);
-        $("#payment_client_gender").val(response.client.gender);
+        if(response.client.gender != null)
+        {
+          $("#payment_client_gender").val(response.client.gender);
+        }
+        else
+        {
+          $('#payment_client_gender').val("0");
+        }
         $(".client-option").show();
       }
       else
