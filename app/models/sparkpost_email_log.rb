@@ -25,17 +25,17 @@ class SparkpostEmailLog < ActiveRecord::Base
           if message_event["rcpt_meta"]["booking_ids"].present?
             message_event["rcpt_meta"]["booking_ids"].each do |booking_id|
               log = BookingEmailLog.find_by(transmission_id: message_event["transmission_id"], booking_id: booking_id)
-              if log && message_event["type"] == "open"
+              if log.present? && message_event["type"] == "open"
                 log.update(opens: log.opens + 1)
-              elsif log && message_event["type"] == "click"
+              elsif log.present? && message_event["type"] == "click"
                 log.update(clicks: log.clicks + 1)
               end
             end
           elsif message_event["rcpt_meta"]["campaign_id"].present? && Email::Content.find_by(id: message_event["rcpt_meta"]["campaign_id"]) && Client.find_by(email: message_event["rcpt_to"], company_id: Email::Content.find_by(id: message_event["rcpt_meta"]["campaign_id"]).company.id)
             log = ClientEmailLog.find_by(transmission_id: message_event["transmission_id"], campaign_id: message_event["rcpt_meta"]["campaign_id"], client_id: Client.find_by(email: message_event["rcpt_to"], company_id: Email::Content.find_by(id: message_event["rcpt_meta"]["campaign_id"]).company.id).id)
-            if log && message_event["type"] == "open"
+            if log.present? && message_event["type"] == "open"
               log.update(opens: log.opens + 1)
-            elsif log && message_event["type"] == "click"
+            elsif log.present? && message_event["type"] == "click"
               log.update(clicks: log.clicks + 1)
             end
           end
