@@ -11,7 +11,7 @@ class SparkpostEmailLog < ActiveRecord::Base
         gen_event = event["msys"]["gen_event"]
         relay_event = event["msys"]["relay_event"]
 
-        if message_event.present?
+        if message_event.present? && message_event["rcpt_meta"].present?
           if message_event["rcpt_meta"]["booking_ids"].present?
             message_event["rcpt_meta"]["booking_ids"].each do |booking_id|
               log = BookingEmailLog.find_or_initialize_by(transmission_id: message_event["transmission_id"], booking_id: booking_id)
@@ -23,7 +23,7 @@ class SparkpostEmailLog < ActiveRecord::Base
             log.assign_attributes(status: message_event["type"], recipient: message_event["rcpt_to"], timestamp: DateTime.strptime("1318996912",'%s'))
             log.save
           end
-        elsif track_event.present?
+        elsif track_event.present? && track_event["rcpt_meta"].present?
           if track_event["rcpt_meta"]["booking_ids"].present?
             track_event["rcpt_meta"]["booking_ids"].each do |booking_id|
               log = BookingEmailLog.find_by(transmission_id: track_event["transmission_id"], booking_id: booking_id)
