@@ -26,7 +26,14 @@ class Client < ActiveRecord::Base
   validate :mail_uniqueness, :record_uniqueness, :minimun_info
 
   after_update :client_notification
-  #after_create :create_client_attributes
+  # after_create :check_gender
+  # after_save :check_gender
+
+  def check_gender
+    if self.gender.nil?
+      self.update_column(:gender, 0)
+    end
+  end
 
   def get_birth_date
     if self.birth_day.nil? || self.birth_month.nil?
