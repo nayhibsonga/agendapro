@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160512114120) do
+ActiveRecord::Schema.define(version: 20160512203919) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "attribute_categories", force: true do |t|
@@ -114,6 +114,21 @@ ActiveRecord::Schema.define(version: 20160512114120) do
     t.integer  "bank_id"
     t.integer  "paid_months"
   end
+
+  create_table "booking_email_logs", force: true do |t|
+    t.integer  "booking_id"
+    t.string   "transmission_id"
+    t.string   "status"
+    t.string   "subject"
+    t.string   "recipient"
+    t.datetime "timestamp"
+    t.integer  "opens",           default: 0
+    t.integer  "clicks",          default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "booking_email_logs", ["booking_id"], name: "index_booking_email_logs_on_booking_id", using: :btree
 
   create_table "booking_histories", force: true do |t|
     t.integer  "booking_id"
@@ -266,6 +281,22 @@ ActiveRecord::Schema.define(version: 20160512114120) do
 
   add_index "client_comments", ["client_id"], name: "index_client_comments_on_client_id", using: :btree
 
+  create_table "client_email_logs", force: true do |t|
+    t.integer  "client_id"
+    t.integer  "campaign_id"
+    t.string   "transmission_id"
+    t.string   "status"
+    t.string   "subject"
+    t.string   "recipient"
+    t.datetime "timestamp"
+    t.integer  "opens",           default: 0
+    t.integer  "clicks",          default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "client_email_logs", ["client_id"], name: "index_client_email_logs_on_client_id", using: :btree
+
   create_table "client_files", force: true do |t|
     t.integer  "client_id"
     t.text     "name"
@@ -322,7 +353,7 @@ ActiveRecord::Schema.define(version: 20160512114120) do
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
     t.integer  "trial_months_left",   default: 0
-    t.integer  "default_plan_id",     default: 11
+    t.integer  "default_plan_id",     default: 10
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
