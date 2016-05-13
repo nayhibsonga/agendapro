@@ -1881,7 +1881,15 @@ function getServicePrice(){
 function loadClientPastBookings(){
 
   $('#cpb-bookings').empty();
+  $('#cpt-treatments').empty();
   if (parseInt($('#payment_client_id').val()) > 0 && parseInt($('#payment_location').val()) > 0) {
+
+      $.getJSON('/payment_client_treatments/', { client_id: parseInt($('#payment_client_id').val()), location_id: parseInt($('#payment_location').val()) }, function (response) {
+        past_treatments = response.past_treatments;
+        if (past_treatments.length > 0) {
+
+      });
+
       $.getJSON('/payment_client_bookings/', { client_id: parseInt($('#payment_client_id').val()), location_id: parseInt($('#payment_location').val()) }, function (past_bookings) {
           if (past_bookings.past_bookings.length > 0) {
             $.each(past_bookings.past_bookings, function (key, past_booking) {
@@ -1926,11 +1934,10 @@ function loadClientPastBookings(){
                 }
 
                 $("#cpb-bookings").append('<div class="pastBookingRow" session_booking_id="' + past_booking.session_booking_id + '" booking_id="' + past_booking.booking.id + '">' +
-                  '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-1 pastBookingCol"><button class="addPastBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
-                  '<div class="col-xs-2 pastBookingCol">' + treatment_btn + '</div>' +
+                  '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addPastBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
                   '<div class="col-xs-3 pastBookingCol">' + service_name + '</div>' +
                   '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_provider + '</div>' +
-                  '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_datetime + '</div>' +
+                  '<div class="col-xs-4 pastBookingCol">' + past_booking.booking_datetime + '</div>' +
                   '</div></div>'
                 );
               }
