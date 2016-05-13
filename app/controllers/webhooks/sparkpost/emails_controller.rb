@@ -18,17 +18,19 @@ module Webhooks
         gen_event = event["msys"]["gen_event"]
         relay_event = event["msys"]["relay_event"]
 
-        if message_event.present?
+        if message_event.present? && message_event["rcpt_meta"].present?
           if message_event["rcpt_meta"]["booking_ids"].present?
             message_event["rcpt_meta"]["booking_ids"].each do |booking_id|
               log = BookingEmailLog.find_or_initialize_by(transmission_id: message_event["transmission_id"], booking_id: booking_id)
-              log.assign_attributes(status: message_event["type"], email: message_event["rcpt_to"], timestamp: DateTime.strptime("1318996912",'%s'))
+              log.assign_attributes(status: message_event["type"], recipient: message_event["rcpt_to"], timestamp: DateTime.strptime("1318996912",'%s'))
+              log.save
             end
           elsif message_event["rcpt_meta"]["campaign_id"].present? && Email::Content.find_by(id: message_event["rcpt_meta"]["campaign_id"]) && Client.find_by(email: message_event["rcpt_to"], company_id: Email::Content.find_by(id: message_event["rcpt_meta"]["campaign_id"]).company.id)
             log = ClientEmailLog.find_or_initialize_by(transmission_id: message_event["transmission_id"], campaign_id: message_event["rcpt_meta"]["campaign_id"], client_id: Client.find_by(email: message_event["rcpt_to"], company_id: Email::Content.find_by(id: message_event["rcpt_meta"]["campaign_id"]).company.id).id)
-            log.assign_attributes(status: message_event["type"], email: message_event["rcpt_to"], timestamp: DateTime.strptime("1318996912",'%s'))
+            log.assign_attributes(status: message_event["type"], recipient: message_event["rcpt_to"], timestamp: DateTime.strptime("1318996912",'%s'))
+            log.save
           end
-        elsif track_event.present?
+        elsif track_event.present? && track_event["rcpt_meta"].present?
           if track_event["rcpt_meta"]["booking_ids"].present?
             track_event["rcpt_meta"]["booking_ids"].each do |booking_id|
               log = BookingEmailLog.find_by(transmission_id: track_event["transmission_id"], booking_id: booking_id)
@@ -46,30 +48,6 @@ module Webhooks
               log.update(clicks: log.clicks + 1)
             end
           end
-        # elsif gen_event.present?
-        #   if message_event["rcpt_meta"]["booking_ids"].present?
-        #     message_event["rcpt_meta"]["booking_ids"].each do |booking_id|
-
-        #     end
-        #   elsif message_event["rcpt_meta"]["campaign_id"].present?
-
-        #   end
-        # elsif unsubscribe_event.present?
-        #   if message_event["rcpt_meta"]["booking_ids"].present?
-        #     message_event["rcpt_meta"]["booking_ids"].each do |booking_id|
-
-        #     end
-        #   elsif message_event["rcpt_meta"]["campaign_id"].present?
-
-        #   end
-        # elsif relay_event.present?
-        #   if message_event["rcpt_meta"]["booking_ids"].present?
-        #     message_event["rcpt_meta"]["booking_ids"].each do |booking_id|
-
-        #     end
-        #   elsif message_event["rcpt_meta"]["campaign_id"].present?
-
-        #   end
         end
       end
     end
