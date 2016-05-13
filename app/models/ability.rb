@@ -147,6 +147,7 @@ class Ability
         can :update_stock, Product, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
+        can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
 
         can :new_filter_form, CustomFilter, :company_id => user.company_id
@@ -491,6 +492,7 @@ class Ability
         can :update_stock, Product, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
+        can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
 
         can :rearrange, Attribute, :company_id => user.company_id
@@ -758,6 +760,7 @@ class Ability
         can :last_payments, Client, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
+        can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
         can :location_users, User, :company_id => user.company_id
 
@@ -894,6 +897,7 @@ class Ability
         can :last_payments, Client, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
+        can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
         can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
 

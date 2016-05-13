@@ -1,21 +1,98 @@
 
 <div class="row">
   <div class="col-md-12">
-
-    <div class="panel-group" id="treatments_accordion" role="tablist" aria-multiselectable="true">
+    <table class="table table-hover table-green treatment-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Local</th>
+          <th>Nº de sesión</th>
+          <th>Prestador</th>
+          <th>Estado</th>
+          <th>Nota Cliente</th>
+          <th>Nota Interna</th>
+        </tr>
+      </thead>
+    </table>
+    <div class="panel-group" id="treatments_accordion" role="tablist" aria-multiselectable="true" style="padding-left: 0px; padding-right: 0px;">
 
       <% @treatments.each_with_index do |treatment, index| %>
-        <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="treatment_heading_<%= index.to_s %>">
-              <h4 class="panel-title">
-                <a role="button" class="collapsed custom-collapsed" data-toggle="collapse" data-parent="#treatments_accordion" href="#treatment_collapse_<%= index.to_s %>" aria-expanded="true" aria-controls="treatment_collapse_<%= index.to_s %>">
-                  <span class="folder-icons-closed"><i class="fa fa-caret-right"></i>&nbsp;<i class="fa fa-folder-o"></i>&nbsp;</span><span class="folder-icons-open" hidden><i class="fa fa-caret-down"></i>&nbsp;<i class="fa fa-folder-open-o"></i>&nbsp;</span><%= treatment.service.name %>
-                </a>
-                <span style="float:right;">
-                  <button class="btn btn-red btn-xs deleteTreatmentBtn" treatment_id="<%= treatment.id %>"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</button>
-                </span>
-              </h4>
+        <div class="panel panel-default treatment-panel" treatment_id="<%= treatment.id %>">
+          <div class="panel-heading" role="tab" id="treatment_heading_<%= index.to_s %>" style="padding-left: 0px; padding-right: 0px;">
+            <h4 class="panel-title">
+              <a role="button" class="collapsed custom-collapsed" data-toggle="collapse" data-parent="#treatments_accordion" href="#treatment_collapse_<%= index.to_s %>" aria-expanded="true" aria-controls="treatment_collapse_<%= index.to_s %>">
+                <%= treatment.service.name %> (<%= treatment.sessions_taken.to_s %> agendadas de <%= treatment.sessions_amount.to_s %>)
+              </a>
+              <span style="float:right;">
+                <button class="btn btn-red btn-xs deleteTreatmentBtn" treatment_id="<%= treatment.id %>" onclick="deleteTreatment(<%= treatment.id %>)"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</button>
+              </span>
+            </h4>
+          </div>
+          <div id="treatment_collapse_<%= index.to_s %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= index.to_s %>" style="padding-left: 0px; padding-right: 0px;">
+            <div class="panel-body" style="padding-left: 0px; padding-right: 0px;">
+              <% bookings = treatment.bookings.order(is_session_booked: :desc).order('start desc') %>
+              <% bookings.each do |booking| %>
+                <table class="table table-hover table-green treatment-table">
+                  <tr>
+                    <td>
+                      <% if booking.status_id == Status.find_by_name("Cancelado").id || booking.is_session_booked %>
+                        <%= l booking.start, format: :long %>
+                      <% end %>
+                    </td>
+                    <td><%= booking.location.name %></td>
+                    <td>
+                      <% if booking.status_id != Status.find_by_name("Cancelado").id && booking.is_session_booked %>
+                        <%
+                          index = 1
+                          session_index = ""
+                          session_booking = booking.session_booking
+                          session_booking.bookings.where(:is_session_booked => true).order('start asc').each do |b|
+                            if b.id == booking.id
+                              session_index = "Sesión #{index}"
+                              break
+                            end
+                            index = index + 1
+                          end
+                          session_index = "#{session_index} de #{session_booking.sessions_amount}"
+                        %>
+                        <span class="label label-session"><%= "(#{session_index})" %></span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if booking.status_id == Status.find_by_name("Cancelado").id || booking.is_session_booked %>
+                        <%= booking.service_provider.public_name %>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if booking.is_session_booked || booking.status.name == "Cancelado" %>
+                        <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
+                      <% else %>
+                        <span class="label <%= label_class(booking) %>">No agendada</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if booking.status_id == Status.find_by_name("Cancelado").id || booking.is_session_booked %>
+                        <%= booking.notes %>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if booking.status_id == Status.find_by_name("Cancelado").id || booking.is_session_booked %>
+                        <%= booking.company_comment %>
+                      <% end %>
+                    </td>
+                    <% if @client.company.company_setting.staff_code %>
+                      <td>
+                        <% if booking.status_id == Status.find_by_name("Cancelado").id || booking.is_session_booked %>
+                          <%= if booking.booking_histories.count > 0 && booking.booking_histories.order(:created_at).last.staff_code_id && StaffCode.find_by(id: booking.booking_histories.order(:created_at).last.staff_code_id) then StaffCode.find(booking.booking_histories.order(:created_at).last.staff_code_id).staff end %><%= if booking.booking_histories.count > 0 then (' <small>(' + booking.booking_histories.order(:created_at).last.action + ')</small>').html_safe end %>
+                        <% end %>
+                      </td>
+                    <% end %>
+                  </tr>
+                </table>
+              <% end %>
             </div>
+          </div>
+        </div>
       <% end %>
 
     </div>

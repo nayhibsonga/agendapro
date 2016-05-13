@@ -9,14 +9,21 @@ class SessionBooking < ActiveRecord::Base
 	belongs_to :client
 	belongs_to :treatment_promo
 
+	after_save :count_bookings
+
   WORKER = 'SessionsBookingEmailWorker'
 
 	def send_sessions_booking_mail
 		bookings = self.booked_bookings.order(:start)
-    timezone = CustomTimezone.from_booking(bookings[0])
-    if bookings.order(:start).first.start > Time.now + timezone.offset
-      self.sendings.build(method: 'sessions_booking').save
-    end
+	    timezone = CustomTimezone.from_booking(bookings[0])
+	    if bookings.order(:start).first.start > Time.now + timezone.offset
+	      self.sendings.build(method: 'sessions_booking').save
+	    end
+	end
+
+	def count_bookings
+		taken = self.bookings.where(is_session_booked: true).where.not(status_id: Status.find_by_name("Cancelado").id).count
+		self.update_column(:sessions_taken, taken)
 	end
 
 end

@@ -178,6 +178,7 @@ Agendapro::Application.routes.draw do
     get '/get_session_bookings', :to => 'users#get_session_bookings'
     get '/get_session_summary', :to => 'users#get_session_summary'
     post '/delete_treatment', :to => 'bookings#delete_treatment'
+    post '/delete_client_treatment', :to => 'bookings#delete_client_treatment'
     post '/user_delete_treatment', :to => 'bookings#user_delete_treatment'
 
     scope controller: 'bookings' do

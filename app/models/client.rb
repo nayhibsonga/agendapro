@@ -31,7 +31,7 @@ class Client < ActiveRecord::Base
 
   def check_gender
     if self.gender.nil?
-      self.update_column(:gender => 0)
+      self.update_column(:gender, 0)
     end
   end
 
