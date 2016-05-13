@@ -9,7 +9,7 @@ module Webhooks
     def consume_raw
       SparkpostEmailLog.create(raw_message: params.inspect)
 
-      json = params["_json"].to_json
+      json = eval(params["_json"])
 
       json.each do |event|
         message_event = event["msys"]["message_event"]
