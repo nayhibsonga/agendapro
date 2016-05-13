@@ -1,5 +1,5 @@
 class SparkpostEmailLog < ActiveRecord::Base
-  self.update_logs
+  def self.update_logs
     all.order(:created_at).each do |sparkpost_email_log|
 
       json = eval(sparkpost_email_log.raw_message)["_json"]
