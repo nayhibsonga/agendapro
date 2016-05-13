@@ -1272,7 +1272,7 @@ class PaymentsController < ApplicationController
         if !location_product.nil?
           location_product.stock = location_product.stock + payment_product.quantity
           location_product.save
-          product_log = ProductLog.create(product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: nil, user_id: nil, client_id: payment.client_id, change: "Incremento de " + (location_product.stock - payment_product.quantity).to_s + " a " + location_product.stock.to_s, cause: "Eliminación de Venta a cliente.")
+          product_log = ProductLog.create(product_id: location_product.product.id, location_id: location_product.location.id, service_provider_id: nil, user_id: nil, client_id: @payment.client_id, change: "Incremento de " + (location_product.stock - payment_product.quantity).to_s + " a " + location_product.stock.to_s, cause: "Eliminación de Venta a cliente.")
         end
       else
         errors << payment_product.errors
@@ -1289,6 +1289,7 @@ class PaymentsController < ApplicationController
     @payment.bookings.each do |booking|
       booking.payment_id = nil
       booking.receipt_id = nil
+      booking.payed_state = false
       if booking.save
       else
         errors << booking.errors
