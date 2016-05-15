@@ -33,12 +33,21 @@ function loadBookings()
     var client_id = $('#client_id').val();
 
     $('#client_bookings_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+    $('#treatment_bookings_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
 
     $.ajax({
         url: '/client_bookings_content?client_id=' + client_id + '&from=' + $('#from').val() + '&to=' + $('#to').val() + '&service_ids=' + services + '&service_provider_ids=' + service_providers + '&status_ids=' + statuses,
         cache: false,
         success: function(html){
           $('#client_bookings_div').html(html);
+        }
+    });
+
+    $.ajax({
+        url: '/client_treatments_content?client_id=' + client_id + '&from=' + $('#from').val() + '&to=' + $('#to').val() + '&service_ids=' + services + '&service_provider_ids=' + service_providers,
+        cache: false,
+        success: function(html){
+          $('#client_treatments_div').html(html);
         }
     });
 
@@ -61,6 +70,43 @@ function paginatedContent() {
   });
 
   return false;
+}
+
+function destroyTreatment(treatmentId){
+
+  $.ajax({
+    url: '/delete_client_treatment',
+    method: 'post',
+    data: {id: treatmentId, origin: 'admin'},
+    dataType: 'json',
+    error: function(xhr){
+      showErrors(xhr);
+      $('#small_loader').remove();
+    },
+    success: function(treatment){
+      swal.close();
+      $('.treatment-panel[treatment_id="' + treatment.id + '"]').remove();
+      triggerSuccess("Tratamiento eliminado exitosamente.");
+    }
+  });
+
+}
+
+function deleteTreatment(eventId){
+  var confirmation = false;
+  swal({
+    title: "¿Estás seguro que quieres eliminar el tratamiento?",
+    text: "Se borrarán esta sesión y las demás del tratamiento de manera irreversible. Utiliza esta opción sólo si se agendó el tratamiento por error.",
+    type: "warning",
+    showCancelButton: true
+    },
+    function(isConfirm) {
+      if (isConfirm) {
+        $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
+        destroyTreatment(eventId);
+      }
+  });
+
 }
 
 $(function() {
