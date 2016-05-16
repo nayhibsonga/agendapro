@@ -522,6 +522,7 @@ Agendapro::Application.routes.draw do
     get '/get_treatment_price', :to => 'bookings#get_treatment_price'
     get '/payment_summary', :to => 'payments#summary'
     get '/get_treatment_info', :to => 'bookings#get_treatment_info'
+    get '/get_email_logs', :to => 'bookings#get_email_logs'
 
 
     get '/sales_cash_transaction_summary', :to => 'payments#sales_cash_transaction_summary'

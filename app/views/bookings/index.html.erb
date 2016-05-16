@@ -441,7 +441,7 @@
                         </div>
                         <div class="row">
                           <% attribute_group.custom_attributes.where(show_on_calendar: true).order(:order).each do |attribute| %>
-                            <% 
+                            <%
                               if attribute.datatype == "file" || (attribute.datatype == "categoric" && (attribute.attribute_categories.nil? || attribute.attribute_categories.count < 1))
                                 next
                               end
@@ -645,8 +645,8 @@
                             <li id="client-attributes<%= attribute_group.id %>-li" class="booking-client-li"><a href="#client-attributes-<%= attribute_group.id %>" role="tab" data-toggle="tab" class="client_tab_index" id="client-attributes-<%= attribute_group.id %>-tab"><%= attribute_group.name %></a></li>
                           <% end %>
                         <% end %>
-                        
-                        
+
+
                       </ul>
                       <% if current_user.role_id != Role.find_by_name("Staff").id %>
                         <div class="form-group" style="margin-top: 5px; width: 100%;">
@@ -746,7 +746,7 @@
                                       <%= builder.text_field :record, class: "form-control" %>
                                     </div>
                                   </div>
-                                  
+
                                 </div>
                               </div>
                             </div>
@@ -762,7 +762,7 @@
 
                                       <% attribute_group.custom_attributes.where(show_on_calendar: false).each do |attribute| %>
 
-                                        <% 
+                                        <%
                                           if attribute.datatype == "file" || (attribute.datatype == "categoric" && (attribute.attribute_categories.nil? || attribute.attribute_categories.count < 1))
                                             next
                                           end
@@ -1012,6 +1012,26 @@
                           <% else %>
                           <td colspan="8">No hay modificaciones para esta reserva...</td>
                           <% end %>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="fixed-table">
+                    <h4>Correos al cliente:</h4>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Estado</th>
+                          <th>Asunto</th>
+                          <th>Email</th>
+                          <th>Visualizaciones</th>
+                          <th>Clicks</th>
+                        </tr>
+                      </thead>
+                      <tbody id="booking-email-tbody">
+                        <tr>
+                          <td colspan="6">No hay correos enviados para esta reserva...</td>
                         </tr>
                       </tbody>
                     </table>
