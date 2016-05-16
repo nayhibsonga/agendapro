@@ -7264,7 +7264,7 @@ class BookingsController < ApplicationController
     @booking_email_logs = []
     timezone = CustomTimezone.from_booking(@booking)
     @booking.booking_email_logs.each do |booking_email_log|
-      @booking_email_logs.push(booking_email_log.to_json.merge!(time_offset: timezone.offseti))
+      @booking_email_logs.push({created_at: booking_email_log.created_at, status: booking_email_log.status, timestamp: booking_email_log.timestamp, subject: booking_email_log.subject, opens: booking_email_log.opens, clicks: booking_email_log.clicks, time_offset: timezone.offseti })
     end
     render :json => @booking_email_logs
   end
