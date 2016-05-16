@@ -3024,7 +3024,7 @@ function loadClientHistory(booking_id) {
     $.getJSON('/get_email_logs', {id: parseInt(booking_id)}, function (booking_emails) {
       if (booking_emails.length > 0) {
         $.each(booking_emails, function (key, booking_email) {
-          var created = new Date(booking_email.created);
+          var created = new Date(booking_email.created_at);
           offsetDate(created, booking_email.time_offset);
           $('#booking-email-tbody').append('<tr><td>'+booking_email.status+'</td><td>'+dateToLocal(created)+'</td><td>'+booking_email.subject+'</td><td>'+booking_email.recipient+'</td><td>'+booking_email.opens+'</td><td>'+booking_email.clicks+'</td></tr>');
         });
