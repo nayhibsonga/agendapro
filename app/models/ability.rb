@@ -147,6 +147,7 @@ class Ability
         can :update_stock, Product, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
+        can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
         can :get_email_logs, Booking, :company_id => user.company_id
 
@@ -368,6 +369,7 @@ class Ability
         can :bookings_history, Client
         can :check_sessions, Client
         can :bookings_content, Client, :company_id => user.company_id
+        can :treatments_content, Client, :company_id => user.company_id
 
         can :booking_payment, Payment
         can :load_payment, Payment
@@ -491,6 +493,7 @@ class Ability
         can :update_stock, Product, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
+        can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
         can :get_email_logs, Booking, :company_id => user.company_id
 
@@ -537,6 +540,7 @@ class Ability
         can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
         can :bookings_content, Client, :company_id => user.company_id
+        can :treatments_content, Client, :company_id => user.company_id
         can :create, Client, :company_id => user.company_id
         can :update, Client, :company_id => user.company_id
         can :destroy, Client, :company_id => user.company_id
@@ -758,6 +762,7 @@ class Ability
         can :last_payments, Client, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
+        can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
         can :get_email_logs, Booking, :company_id => user.company_id
         can :location_users, User, :company_id => user.company_id
@@ -789,6 +794,7 @@ class Ability
         can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
         can :bookings_content, Client, :company_id => user.company_id
+        can :treatments_content, Client, :company_id => user.company_id
         can :create, Client, :company_id => user.company_id
         can :update, Client, :company_id => user.company_id
 
@@ -894,6 +900,7 @@ class Ability
         can :last_payments, Client, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
+        can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
         can :get_email_logs, Booking, :company_id => user.company_id
         can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
@@ -994,6 +1001,7 @@ class Ability
         can :history, Client, :company_id => user.company_id
         can :read, Client, :company_id => user.company_id
         can :bookings_content, Client, :company_id => user.company_id
+        can :treatments_content, Client, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 

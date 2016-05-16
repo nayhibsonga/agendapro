@@ -1087,8 +1087,8 @@ function destroyTreatment(eventId){
       $('.booking-button').removeAttr("disabled");
        $('#small_loader').remove();
     },
-    success: function(booking){
-      $.each(booking, function(key, b) {
+    success: function(treatment){
+      $.each(treatment.bookings, function(key, b) {
         $('#calendar').fullCalendar('removeEvents',b);
       });
       swal.close();

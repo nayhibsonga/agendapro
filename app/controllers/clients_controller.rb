@@ -144,6 +144,19 @@ class ClientsController < ApplicationController
 
   end
 
+  def treatments_content
+    @client = Client.find(params[:client_id])
+    @from = params[:from].blank? ? Date.today : Date.parse(params[:from])
+    @to = params[:to].blank? ? Date.today : Date.parse(params[:to])
+    @service_ids = params[:service_ids] ? params[:service_ids].split(',') : Service.where(company_id: current_user.company_id).accessible_by(current_ability).pluck(:id)
+    @service_provider_ids = params[:service_provider_ids] ? params[:service_provider_ids].split(',') : ServiceProvider.where(company_id: current_user.company_id).accessible_by(current_ability).pluck(:id)
+
+    @treatments = @client.session_bookings.where(id: @client.bookings.where(start: @from.beginning_of_day..@to.end_of_day, service_id: @service_ids, service_provider_id: @service_provider_ids).pluck(:session_booking_id)).order(created_at: :desc).paginate(:page => params[:page], :per_page => 25)
+
+    render "_treatments_content", layout: false
+
+  end
+
   # GET /clients/new
   def new
     @activeBookings = Array.new

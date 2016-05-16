@@ -2346,7 +2346,24 @@ class BookingsController < ApplicationController
       if @session_booking.destroy
         TreatmentLog.create(client_id: @session_booking.client_id, user_id: current_user.id, service_id: @session_booking.service_id, detail: "Eliminado por calendario.")
         format.html { redirect_to bookings_url }
-        format.json { render :json => booking_ids }
+        format.json { render :json => {id: @session_booking.id, bookings: booking_ids} }
+      else
+        format.html { redirect_to bookings_url }
+        format.json { render :json => { :errors => "No se pudo borrar el tratamiento." }, :status => 422 }
+      end
+    end
+
+  end
+
+  def delete_client_treatment
+
+    @session_booking = SessionBooking.find(params[:id])
+    booking_ids = @session_booking.bookings.pluck(:id)
+    respond_to do |format|
+      if @session_booking.destroy
+        TreatmentLog.create(client_id: @session_booking.client_id, user_id: current_user.id, service_id: @session_booking.service_id, detail: "Eliminado por calendario.")
+        format.html { redirect_to bookings_url }
+        format.json { render :json => {id: @session_booking.id, bookings: booking_ids} }
       else
         format.html { redirect_to bookings_url }
         format.json { render :json => { :errors => "No se pudo borrar el tratamiento." }, :status => 422 }
