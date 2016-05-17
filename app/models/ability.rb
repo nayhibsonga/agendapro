@@ -375,6 +375,7 @@ class Ability
         can :past_bookings, Payment
         can :past_sessions, Payment
         can :client_bookings, Payment
+        can :client_treatments, Payment
         can :client_sessions, Payment
         can :index_content, Payment
         can :read, Payment, :company_id => user.company_id
@@ -711,6 +712,7 @@ class Ability
         can :past_bookings, Payment
         can :past_sessions, Payment
         can :client_bookings, Payment
+        can :client_treatments, Payment
         can :client_sessions, Payment
         can :index_content, Payment
         can :read, Payment, :company_id => user.company_id
@@ -812,6 +814,7 @@ class Ability
         can :past_bookings, Payment
         can :past_sessions, Payment
         can :client_bookings, Payment
+        can :client_treatments, Payment
         can :client_sessions, Payment
         can :read, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
@@ -936,6 +939,7 @@ class Ability
         can :past_bookings, Payment
         can :past_sessions, Payment
         can :client_bookings, Payment
+        can :client_treatments, Payment
         can :client_sessions, Payment
         can :read, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
