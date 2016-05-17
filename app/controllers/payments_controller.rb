@@ -349,7 +349,7 @@ class PaymentsController < ApplicationController
     #Only leave out those that haven't been booked yet.
     #IMPORTANT: Leave out bookings that are already associated to a payment.
 
-    @full_past_bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado")).where('payment_id is null').where(client_id: params[:client_id], location_id: params[:location_id], payment_id: nil).order(session_booking_id: :desc).order(start: :desc)
+    @full_past_bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado")).where('payment_id is null').where(client_id: params[:client_id], location_id: params[:location_id]).where(is_session: false).where(session_booking_id: nil).order(start: :desc)
     @past_bookings = []
     @full_past_bookings.each do |b|
 
@@ -397,7 +397,7 @@ class PaymentsController < ApplicationController
           session_number = treatment.sessions_taken - index
           bookings.push({ booking: b, booking_checked: true, booking_service: b.service.name, booking_provider: b.service_provider.public_name, booking_date: weekdays[b.start.wday] + ' ' + b.start.strftime('%d-%m-%Y'), booking_time: b.start.strftime('%R'), booking_datetime: b.start.strftime('%d/%m/%Y') + ' - ' + b.start.strftime('%R'), booking_price: b.price, sessions_amount: treatment.sessions_amount, session_number: session_number, is_booked: b.is_session_booked, session_booking_id: treatment.id })
         end
-        past_treatment = {treatment: treatment, bookings: bookings}
+        past_treatment = {treatment: treatment, bookings: bookings, service: treatment.service}
         @past_treatments << past_treatment
       end
       render :json => {past_treatments: @past_treatments}
