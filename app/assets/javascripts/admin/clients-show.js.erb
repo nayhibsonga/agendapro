@@ -274,6 +274,20 @@ $(function() {
     return false;
   });
 
+  $('body').on('hide.bs.collapse', '#treatments_accordion .panel-collapse', function (e) {
+    console.log('Event fired on #' + e.currentTarget.id);
+    var treatment_id = e.currentTarget.id.split("_")[2];
+    $('#treatment_heading_' + treatment_id).find('.treatment-icons-closed').show();
+    $('#treatment_heading_' + treatment_id).find('.treatment-icons-open').hide();
+  });
+
+  $('body').on('show.bs.collapse', '#treatments_accordion .panel-collapse', function (e) {
+    console.log('Event fired on #' + e.currentTarget.id);
+    var treatment_id = e.currentTarget.id.split("_")[2];
+    $('#treatment_heading_' + treatment_id).find('.treatment-icons-closed').hide();
+    $('#treatment_heading_' + treatment_id).find('.treatment-icons-open').show();
+  });
+
   //$("#to").datepicker('setDate', new Date());
   //$("#from").datepicker('setDate', new Date());
 

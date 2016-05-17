@@ -394,6 +394,7 @@ Agendapro::Application.routes.draw do
     get '/past_bookings', :to => 'payments#past_bookings'
     get '/past_sessions', :to => 'payments#past_sessions'
     get 'payment_client_bookings', :to => 'payments#client_bookings'
+    get '/payment_client_treatments', :to => 'payments#client_treatments'
     get 'payment_client_sessions', :to => 'payments#client_sessions'
     get '/payments_index_content', :to=> 'payments#index_content'
     post '/create_new_payment', :to => 'payments#create_new_payment'
