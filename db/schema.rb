@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160512203919) do
+ActiveRecord::Schema.define(version: 20160517151735) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,6 +126,7 @@ ActiveRecord::Schema.define(version: 20160512203919) do
     t.integer  "clicks",          default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "progress",        default: 0
   end
 
   add_index "booking_email_logs", ["booking_id"], name: "index_booking_email_logs_on_booking_id", using: :btree
@@ -293,6 +294,7 @@ ActiveRecord::Schema.define(version: 20160512203919) do
     t.integer  "clicks",          default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "progress",        default: 0
   end
 
   add_index "client_email_logs", ["client_id"], name: "index_client_email_logs_on_client_id", using: :btree
@@ -1764,6 +1766,15 @@ ActiveRecord::Schema.define(version: 20160512203919) do
 
   create_table "sparkpost_email_logs", force: true do |t|
     t.text     "raw_message"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sparkpost_statuses", force: true do |t|
+    t.string   "event_type"
+    t.string   "status"
+    t.integer  "progress",   default: 0
+    t.boolean  "blacklist",  default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
