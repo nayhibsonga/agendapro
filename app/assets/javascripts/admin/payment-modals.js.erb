@@ -6,6 +6,7 @@ var paymentModalState = '';
 var paymentAmount = 0;
 var paymentItems = [];
 var paymentPastBookings = [];
+var paymentPastTreatments = [];
 var paymentNewBookings = [];
 var paymentProducts = [];
 var paymentReceipts = [];
@@ -1886,7 +1887,44 @@ function loadClientPastBookings(){
 
       $.getJSON('/payment_client_treatments/', { client_id: parseInt($('#payment_client_id').val()), location_id: parseInt($('#payment_location').val()) }, function (response) {
         past_treatments = response.past_treatments;
+
         if (past_treatments.length > 0) {
+          $.each(past_treatments, function(key, past_treatment){
+
+            
+            //Check if the treatment has any booking left
+            treatment_has_bookings = true;
+            if(past_treatment.bookings.length < 1)
+            {
+              treatment_has_bookings = false;
+            }
+
+            //Check if they've been added to paymentBookings.
+            treatment_has_not_added = false;
+            for(pb_i = 0; pb_i < paymentPastBookings.length; pb_i++)
+            {
+              if(paymentPastBookings[pb_i] != null)
+              {
+                $.each(past_treatment.bookings, function(key, booking){
+                  if(paymentPastBookings[pb_i].id == past_booking.booking.id)
+                  {
+                    treatment_has_not_added = true;
+                    break;
+                  }
+                });
+              }
+            }
+
+            if(treatment_has_bookings && treatment_has_not_added)
+            {
+
+              //Add treatment row
+
+              //Recheck for every booking before adding it
+            }
+
+          });
+        }
 
       });
 
