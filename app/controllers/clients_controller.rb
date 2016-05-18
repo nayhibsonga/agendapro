@@ -971,6 +971,16 @@ class ClientsController < ApplicationController
     render "_payments_content", layout: false
   end
 
+  def last_payments
+
+    @payments = []
+
+    @payments = @client.payments.order(payment_date: :desc).limit(10)
+
+    render "_payments_content", layout: false
+
+  end
+
   def emails
 
     #Check params first
@@ -986,23 +996,15 @@ class ClientsController < ApplicationController
   end
 
   def emails_content
-    @from = params[:from].to_datetime.beginning_of_day
-    @to = params[:to].to_datetime.end_of_day
+    @timezone = CustomTimezone.from_company(@company)
+
+    @from = params[:from].to_datetime.beginning_of_day + @timezone.offset
+    @to = params[:to].to_datetime.end_of_day + @timezone.offset
     @emails = BookingEmailLog.where(timestamp: @from..@to, booking_id: Booking.where(client_id: @client.id).pluck(:id)) + ClientEmailLog.where(timestamp: @from..@to, client_id: @client.id)
 
     @emails.sort_by(&:timestamp)
 
     render "_emails_content", layout: false
-  end
-
-  def last_payments
-
-    @payments = []
-
-    @payments = @client.payments.order(payment_date: :desc).limit(10)
-
-    render "_payments_content", layout: false
-
   end
 
   private
