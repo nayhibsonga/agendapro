@@ -3045,7 +3045,7 @@ function loadClientHistory(booking_id) {
           }
           var created = new Date(booking_email.created_at);
           offsetDate(created, booking_email.time_offset);
-          $('#booking-email-tbody').append('<tr><td><i class="fa fa-circle" aria-hidden="true" style="color: '++'"></i>'+booking_email.status+'</td><td>'+dateToLocal(created)+'</td><td>'+booking_email.subject+'</td><td>'+booking_email.recipient+'</td><td>'+booking_email.opens+'</td><td>'+booking_email.clicks+'</td></tr>');
+          $('#booking-email-tbody').append('<tr><td><i class="fa fa-circle" aria-hidden="true" style="color: '+color+'"></i>'+booking_email.status+'</td><td>'+dateToLocal(created)+'</td><td>'+booking_email.subject+'</td><td>'+booking_email.recipient+'</td><td>'+booking_email.opens+'</td><td>'+booking_email.clicks+'</td></tr>');
         });
       }
       else {
