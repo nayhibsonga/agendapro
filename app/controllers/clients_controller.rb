@@ -988,7 +988,7 @@ class ClientsController < ApplicationController
   def emails_content
     @from = params[:from].to_datetime.beginning_of_day
     @to = params[:to].to_datetime.end_of_day
-    @emails = BookingEmailLogs.where(timestamp: @from..@to, booking_id: Booking.where(client_id: @client.id).pluck(:id)) + ClientEmailLogs.where(timestamp: @from..@to, client_id: @client.id)
+    @emails = BookingEmailLog.where(timestamp: @from..@to, booking_id: Booking.where(client_id: @client.id).pluck(:id)) + ClientEmailLog.where(timestamp: @from..@to, client_id: @client.id)
 
     @emails.sort_by(&:timestamp)
 
