@@ -26,16 +26,32 @@
               <button type="submit" class="submitBtn">Cancelar Reserva</button>
             <% end %>
           <% else %>
-            <div class="panel panel-info">
-              <div class="calendar-head">
-                <div class="panel-title" style="padding-left: 10px; font-size: 22px; font-weight: bold;">
-                      Reserva cancelada
+            <% if @errors.empty? %>
+              <div class="panel panel-info">
+                <div class="calendar-head">
+                  <div class="panel-title" style="padding-left: 10px; font-size: 22px; font-weight: bold;">
+                        Reserva cancelada
+                  </div>
+                </div>
+                <div class="panel-body">
+                  <p style="padding-left: 10px; padding-top: 8px; color: #505050;">Tu reserva fue cancelada exitosamente</p>
                 </div>
               </div>
-              <div class="panel-body">
-                <p style="padding-left: 10px; padding-top: 8px; color: #505050;">Tu reserva fue cancelada exitosamente</p>
+            <% else %>
+              <div class="panel panel-info">
+                <div class="calendar-head" style="background-color: #fd6767;">
+                  <div class="panel-title" style="padding-left: 10px; font-size: 22px; font-weight: bold;">
+                    Error al cancelar la reserva
+                  </div>
+                </div>
+                <div class="panel-body">
+                  <p style="padding-left: 10px; padding-top: 8px; color: #505050;">Tu reserva no pudo ser cancelada por las siguientes razones:</p>
+                  <% @errors.each do |error| %>
+                    <p style="padding-left: 10px; padding-top: 8px; color: #505050;"><%= error %></p>
+                  <% end %>
+                </div>
               </div>
-            </div>
+            <% end %>
           <% end %>
       </div>
     </div>
