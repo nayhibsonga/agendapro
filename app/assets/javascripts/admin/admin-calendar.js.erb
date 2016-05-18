@@ -3036,9 +3036,16 @@ function loadClientHistory(booking_id) {
     $.getJSON('/get_email_logs', {id: parseInt(booking_id)}, function (booking_emails) {
       if (booking_emails.length > 0) {
         $.each(booking_emails, function (key, booking_email) {
+          var color = '#fd633f'
+          if (booking_email.progress == 2) {
+            color = '#1ba970'
+          }
+          else if (booking_email.progress == 1) {
+            color = '#fd9610'
+          }
           var created = new Date(booking_email.created_at);
           offsetDate(created, booking_email.time_offset);
-          $('#booking-email-tbody').append('<tr><td>'+booking_email.status+'</td><td>'+dateToLocal(created)+'</td><td>'+booking_email.subject+'</td><td>'+booking_email.recipient+'</td><td>'+booking_email.opens+'</td><td>'+booking_email.clicks+'</td></tr>');
+          $('#booking-email-tbody').append('<tr><td><i class="fa fa-circle" aria-hidden="true" style="color: '++'"></i>'+booking_email.status+'</td><td>'+dateToLocal(created)+'</td><td>'+booking_email.subject+'</td><td>'+booking_email.recipient+'</td><td>'+booking_email.opens+'</td><td>'+booking_email.clicks+'</td></tr>');
         });
       }
       else {

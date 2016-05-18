@@ -141,6 +141,8 @@ class Ability
 
         can :payments, Client, :company_id => user.company_id
         can :payments_content, Client, :company_id => user.company_id
+        can :emails, Client, :company_id => user.company_id
+        can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
 
         can :stock_change, Product, :company_id => user.company_id
@@ -488,6 +490,8 @@ class Ability
 
         can :payments, Client, :company_id => user.company_id
         can :payments_content, Client, :company_id => user.company_id
+        can :emails, Client, :company_id => user.company_id
+        can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
 
         can :stock_change, Product, :company_id => user.company_id
@@ -761,6 +765,8 @@ class Ability
 
         can :payments, Client, :company_id => user.company_id
         can :payments_content, Client, :company_id => user.company_id
+        can :emails, Client, :company_id => user.company_id
+        can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
@@ -994,6 +1000,8 @@ class Ability
 
         can :payments, Client, :company_id => user.company_id
         can :payments_content, Client, :company_id => user.company_id
+        can :emails, Client, :company_id => user.company_id
+        can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
 
         can :update_custom_attributes, Client, :company_id => user.company_id
