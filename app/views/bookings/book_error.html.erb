@@ -393,7 +393,7 @@
 
                   <p>
                     Lo sentimos, no fue posible agendar los servicios.<br>
-                    Si deseas agendar nuevamente haz click <a href="<%= root_url(:host => @url) %>">aquí.</a>
+                    Si deseas agendar nuevamente, haz click <a href="<%= root_url(:host => @url) %>">aquí</a>.
                   </p>
                   <div id="error">
                     <div class="book-title">Errores</div>
@@ -423,7 +423,7 @@
         <div class="col-md-5">
           <%= image_tag("backgrounds/error.png", :class => "book-center-error") %>
           <% if @payment == "book" %>
-            <div id="error">
+            <!--<div id="error">
               <div class="book-title">Errores</div>
               <ul class="list-unstyled">
                 <% if @errors %>
@@ -432,7 +432,7 @@
                   <% end %>
                 <% end %>
               </ul>
-            </div>
+            </div>-->
           <% end %>
         </div>
       </div>
