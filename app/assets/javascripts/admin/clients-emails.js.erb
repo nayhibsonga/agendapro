@@ -4,7 +4,7 @@ function loadEmails()
   var client_id = $('#client_id').val();
 
   $.ajax({
-      url: '/clients/' + client_id + '/emails_content?&from=' + $('#from').val() + '&to=' + $('#to').val() + '&items=' + items,
+      url: '/clients/' + client_id + '/emails_content?&from=' + $('#from').val() + '&to=' + $('#to').val(),
       cache: false,
       success: function(html){
         $('#client_emails_div').html(html);
@@ -49,46 +49,6 @@ function paginatedContent() {
 */
 
 $(function() {
-
-  $('#itemsMultiSelect').multiselect({
-    includeSelectAllOption: true,
-    selectAllText: 'Todos',
-    buttonContainer: '<div></div>',
-    buttonText: function(options, select) {
-      //console.log(select);
-      if (options.length === 0) {
-          return 'Ninguno';
-      }
-      else if(options.length == select[0].length)
-      {
-        return "Todos";
-      }
-      else if(options.length > 3)
-      {
-        return options.length + " seleccionados";
-      }
-      else {
-        var labels = [];
-        options.each(function() {
-           if ($(this).attr('label') !== undefined) {
-               labels.push($(this).attr('label'));
-           }
-           else {
-               labels.push($(this).html());
-           }
-        });
-        return labels.join(', ') + '';
-      }
-    },
-    onChange: function(option, checked, select){
-      loadEmails();
-    },
-    onInitialized: function(select, container){
-      $('#itemsMultiSelect').show();
-    }
-
-  });
-
 
   $("#from").datepicker({
     dateFormat: 'dd/mm/yy',
