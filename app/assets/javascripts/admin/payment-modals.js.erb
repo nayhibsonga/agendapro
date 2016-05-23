@@ -1372,7 +1372,7 @@ function savePaymentIntro()
   var client_id = $("#payment_client_id").val();
   var client_email = $("#payment_client_email").val();
   var client_phone = $("#payment_client_phone").val();
-  var client_gender = $("#payment_client_gender").val("0");
+  var client_gender = $("#payment_client_gender").val();
   var date = $("#payment_date").val();
   var time = $('#payment_date_time_4i').val() + ":" + $('#payment_date_time_5i').val() + ":00";
   var payment_date = date + " " + time;
@@ -1671,7 +1671,7 @@ function loadPaymentModal2(booking_id) {
   }
   $('#transactions-complete-message').hide();
   $('#transactionsReadyBtn').prop('disabled', true);
-  
+
 
   $("#paymentModal1").modal('hide');
   $("#paymentModal2").modal('show');
@@ -2318,7 +2318,7 @@ function removeReceipt(receipt_id)
   $("#paymentReceiptsFinal").hide();
   $("#paymentReceiptsFinal").empty();
   //$("#openReceiptForm").show();
-  
+
   $('.receipt_item_checkbox').prop('checked', true);
   $("#checkAllItems").prop('checked', true);
   $('.payment-btn-end').hide();
@@ -2893,7 +2893,8 @@ function resetPaymentIntro()
   }
 
   $("#payment_client_email").val("");
-  $("#payment_date").val($("#today_date").val());
+  var todayDate = new Date();
+  $("#payment_date").val(todayDate);
 
   clearValidations('#payment_client_phone');
   clearValidations('#payment_client_gender');

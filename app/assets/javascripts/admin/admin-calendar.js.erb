@@ -1273,6 +1273,9 @@ function editDrag(event) {
           url: '/provider_breaks/'+ event.id.substring(1) +'.json',
           data: { "provider_break": eventJSON },
           dataType: 'json',
+          headers: {
+            'Cache-Control': 'no-transform'
+          },
           success: function(){
             swal.close();
             triggerSuccess("Bloqueo actualizado exitosamente");
@@ -1335,6 +1338,9 @@ function editDrag(event) {
           url: '/bookings/'+ event.id +'.json',
           data: { "booking": eventJSON },
           dataType: 'json',
+          headers: {
+            'Cache-Control': 'no-transform'
+          },
           success: function(booking){
             var providerLock = '-unlock';
             if (booking.provider_lock) {
@@ -1428,6 +1434,9 @@ function editDrag(event) {
             url: '/bookings/'+ event.id +'.json',
             data: { "booking": eventJSON },
             dataType: 'json',
+            headers: {
+            'Cache-Control': 'no-transform'
+          },
             success: function(booking){
               var providerLock = '-unlock';
               if (booking.provider_lock) {
@@ -1553,6 +1562,9 @@ function saveBooking(typeURL, extraURL, bundled) {
       url: '/bookings'+ extraURL +'.json',
       data: { "booking": bookingJSON, "custom_attributes": attributesJSON },
       dataType: 'json',
+      headers: {
+        'Cache-Control': 'no-transform'
+      },
       success: function(booking){
         switch(typeURL) {
           case 'PATCH':
