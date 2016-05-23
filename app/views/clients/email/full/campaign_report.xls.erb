@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Worksheet ss:Name="Campaña">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Fecha</Data></Cell>
+        <Cell><Data ss:Type="String">Estado</Data></Cell>
+        <Cell><Data ss:Type="String">Asunto</Data></Cell>
+        <Cell><Data ss:Type="String">Email</Data></Cell>
+        <Cell><Data ss:Type="String">Visualizaciones</Data></Cell>
+        <Cell><Data ss:Type="String">Clicks</Data></Cell>
+      </Row>
+    <% @campaign.each do |campaign| %>
+      <Row>
+        <Cell><Data ss:Type="String"><%= campaign.timestamp %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= campaign.status %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= campaign.subject %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= campaign.recipient %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= campaign.opens %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= campaign.clicks %></Data></Cell>
+      </Row>
+    <% end %>
+    </Table>
+  </Worksheet>
+</Workbook>

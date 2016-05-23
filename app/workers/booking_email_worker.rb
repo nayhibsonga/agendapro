@@ -3,6 +3,9 @@ class BookingEmailWorker < BaseEmailWorker
   def self.perform(sending)
     @total_sendings = 0
     @total_recipients = 0
+    @targets = 0
+    @blacklisted = []
+    @formatted = []
 
     booking = Booking.find(sending.sendable_id)
 
@@ -13,10 +16,39 @@ class BookingEmailWorker < BaseEmailWorker
       self.perform_single(booking, sending.method)
     end
 
-    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: @total_sendings, total_recipients: @total_recipients)
+    @blacklisted.each do |email|
+      log = BookingEmailLog.find_or_initialize_by(transmission_id: '', booking_id: booking.id)
+      log.assign_attributes(status: 'Lista de Suprimidos', recipient: email, timestamp: Time.now, subject: 'Correo no enviado', progress: 0)
+      log.save
+    end
+    @formatted.each do |email|
+      log = BookingEmailLog.find_or_initialize_by(transmission_id: '', booking_id: booking.id)
+      log.assign_attributes(status: 'Error de Formato', recipient: email, timestamp: Time.now, subject: 'Correo no enviado', progress: 0)
+      log.save
+    end
+
+    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: @total_sendings, total_recipients: @total_recipients, total_targets: @targets)
   end
 
   private
+    def self.loggable_filter_mails(recipients)
+      filtered = []
+      recipients.each do |mail|
+        if mail =~ /\A[\w+\-.]+[\w+\-]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
+          if EmailBlacklist.find_by_email(mail).nil?
+            filtered << mail.downcase
+          else
+            Rails.logger.info "Email Blacklisted: #{mail}"
+            @blacklisted << mail.downcase
+          end
+        else
+          Rails.logger.info "Email Bad Format: #{mail}"
+          @formatted << mail.downcase
+        end
+      end
+      filtered
+    end
+
     def self.get_receipients(booking, recipient_type = "", method = "")
       # Filter recipient
       recipients = case recipient_type
@@ -51,13 +83,15 @@ class BookingEmailWorker < BaseEmailWorker
 
     def self.perform_single(booking, method)
       if booking.send_mail
-        recipients = filter_mails(self.get_receipients(booking, "client", method))
+        @targets += self.get_receipients(booking, "client", method).size
+        recipients = loggable_filter_mails(self.get_receipients(booking, "client", method))
         @total_sendings += 1
         @total_recipients += recipients.size
         BookingMailer.delay.send(method, booking, recipients.join(', '), horachic: self.horachic?(method, booking)) if recipients.size > 0
       end
 
-      recipients = filter_mails(self.get_receipients(booking, "provider", method))
+      @targets += self.get_receipients(booking, "provider", method).size
+      recipients = loggable_filter_mails(self.get_receipients(booking, "provider", method))
       name = booking.service_provider.public_name
       recipients.in_groups_of(50).each do |group|
         group.compact!
@@ -66,7 +100,8 @@ class BookingEmailWorker < BaseEmailWorker
         BookingMailer.delay.send(method, booking, group.join(', '), client: false, name: name) if group.size > 0
       end
 
-      recipients = filter_mails(self.get_receipients(booking, "location", method))
+      @targets += self.get_receipients(booking, "location", method).size
+      recipients = loggable_filter_mails(self.get_receipients(booking, "location", method))
       name = booking.location.name
       recipients.in_groups_of(50).each do |group|
         group.compact!
@@ -75,7 +110,8 @@ class BookingEmailWorker < BaseEmailWorker
         BookingMailer.delay.send(method, booking, group.join(', '), client: false, name: name) if group.size > 0
       end
 
-      recipients = filter_mails(self.get_receipients(booking, "company", method))
+      @targets += self.get_receipients(booking, "company", method).size
+      recipients = loggable_filter_mails(self.get_receipients(booking, "company", method))
       name = booking.location.company.name
       recipients.in_groups_of(50).each do |group|
         group.compact!
@@ -93,7 +129,8 @@ class BookingEmailWorker < BaseEmailWorker
       send_mail = bookings.reduce{ |t, b| t &&= b.send_mail }
 
       if send_mail
-        recipients = filter_mails([booking.client.email])
+        @targets += [booking.client.email].size
+        recipients = loggable_filter_mails([booking.client.email])
         @total_sendings += 1
         @total_recipients += recipients.size
         BookingMailer.delay.send(method, bookings.to_a, recipients.join(', '), horachic: self.horachic?(method, booking)) if recipients.size > 0 and bookings.count > 0
@@ -102,7 +139,8 @@ class BookingEmailWorker < BaseEmailWorker
       unless method == "reminder_multiple_booking"
         # Providers
         bookings.map { |b| b.service_provider }.uniq.each do |provider|
-          recipients = filter_mails(NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: provider), receptor_type: 2, summary: false).distinct.pluck(:email))
+          @targets += NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: provider), receptor_type: 2, summary: false).distinct.pluck(:email).size
+          recipients = loggable_filter_mails(NotificationEmail.where(id: NotificationProvider.select(:notification_email_id).where(service_provider: provider), receptor_type: 2, summary: false).distinct.pluck(:email))
           name = provider.public_name
           recipients.in_groups_of(50).each do |group|
             group.compact!
@@ -113,7 +151,8 @@ class BookingEmailWorker < BaseEmailWorker
         end
 
         # Location
-        recipients = filter_mails(NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: booking.location), receptor_type: 1, summary: false).distinct.pluck(:email))
+        @targets += NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: booking.location), receptor_type: 1, summary: false).distinct.pluck(:email)
+        recipients = loggable_filter_mails(NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: booking.location), receptor_type: 1, summary: false).distinct.pluck(:email))
         name = booking.location.name
         recipients.in_groups_of(50).each do |group|
           group.compact!
@@ -123,7 +162,8 @@ class BookingEmailWorker < BaseEmailWorker
         end
 
         # Company
-        recipients = filter_mails(NotificationEmail.where(company:  booking.location.company, receptor_type: 0, summary: false).distinct.pluck(:email))
+        @targets += NotificationEmail.where(company:  booking.location.company, receptor_type: 0, summary: false).distinct.pluck(:email)
+        recipients = loggable_filter_mails(NotificationEmail.where(company:  booking.location.company, receptor_type: 0, summary: false).distinct.pluck(:email))
         name = booking.location.company.name
         recipients.in_groups_of(50).each do |group|
           group.compact!

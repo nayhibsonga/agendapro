@@ -392,6 +392,7 @@ class Ability
 
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
+        can :campaigns_report_content, Client, :company_id => user.company_id
         can :import, Client
 
         can :import, Product
@@ -727,6 +728,7 @@ class Ability
 
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
+        can :campaigns_report_content, Client, :company_id => user.company_id
         can :import, Client
 
         can :import, Product
@@ -835,6 +837,7 @@ class Ability
 
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
+        can :campaigns_report_content, Client, :company_id => user.company_id
         can :import, Client
 
         can :locations_stats_excel, Product, :company_id => user.company_id

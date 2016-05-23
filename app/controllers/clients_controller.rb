@@ -471,6 +471,23 @@ class ClientsController < ApplicationController
       tmp_to.push(email) if email=~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
     end
     @to = tmp_to.join(', ')
+
+    @start_date = DateTime.now - 1.months
+
+    @end_date = DateTime.now
+
+    @start_date = @start_date.strftime("%d/%m/%Y")
+    @end_date = @end_date.strftime("%d/%m/%Y")
+  end
+
+  def campaigns_report_content
+    @timezone = CustomTimezone.from_company(@company)
+
+    @from = params[:from].to_datetime.beginning_of_day + @timezone.offset
+    @to = params[:to].to_datetime.end_of_day + @timezone.offset
+    @campaigns = Email::Sending.where(sendable_id: Email::Content.where(company_id: current_user.company_id), sendable_type: "Email::Content", sent_date: @from..@to).order(sent_date: :desc)
+
+    render "clients/email/full/_campaigns_content", layout: false
   end
 
   def send_mail

@@ -1,13 +1,13 @@
-function loadEmails()
+function loadCampaigns()
 {
-  $('#client_emails_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
+  $('#campaigns_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
   var client_id = $('#client_id').val();
 
   $.ajax({
-      url: '/clients/' + client_id + '/emails_content?&from=' + $('#from').val() + '&to=' + $('#to').val(),
+      url: '/campaigns_report_content?&from=' + $('#from').val() + '&to=' + $('#to').val(),
       cache: false,
       success: function(html){
-        $('#client_emails_div').html(html);
+        $('#campaigns_div').html(html);
       }
   });
 }
@@ -58,10 +58,10 @@ $(function() {
   });
 
   $('.option_select').on('change', function(){
-    loadEmails();
+    loadCampaigns();
   });
 
-  loadEmails();
+  loadCampaigns();
   //paginatedContent();
 
  });

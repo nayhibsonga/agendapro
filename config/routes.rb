@@ -144,6 +144,7 @@ Agendapro::Application.routes.draw do
     scope controller: 'clients' do
       get '/compose_mail', action: 'compose_mail', as: 'send_mail'
       post '/send_mail_client', action: 'send_mail'
+      get '/campaigns_report_content', action: 'campaigns_report_content'
     end
 
     # Mail Editor
