@@ -18,12 +18,12 @@ class BookingEmailWorker < BaseEmailWorker
 
     @blacklisted.each do |email|
       log = BookingEmailLog.find_or_initialize_by(transmission_id: '', booking_id: booking.id)
-      log.assign_attributes(status: 'Lista de Suprimidos', recipient: email, timestamp: Time.now, subject: 'Correo no enviado', progress: 0)
+      log.assign_attributes(status: 'Lista de Suprimidos', recipient: email, timestamp: Time.now, subject: 'Correo no enviado', progress: 0, details: 'Las direcciones de correos que se reportan como que no existen, tienen errores de formato, marcan como no deseado los correos enviados por AgendaPro o fallan varias veces al intentar entregas, se incluyen en la lista de suprimidos y AgendaPro no les enviará más correos.')
       log.save
     end
     @formatted.each do |email|
       log = BookingEmailLog.find_or_initialize_by(transmission_id: '', booking_id: booking.id)
-      log.assign_attributes(status: 'Error de Formato', recipient: email, timestamp: Time.now, subject: 'Correo no enviado', progress: 0)
+      log.assign_attributes(status: 'Error de Formato', recipient: email, timestamp: Time.now, subject: 'Correo no enviado', progress: 0, details: 'Las direcciones de correos que se reportan como que no existen, tienen errores de formato, marcan como no deseado los correos enviados por AgendaPro o fallan varias veces al intentar entregas, se incluyen en la lista de suprimidos y AgendaPro no les enviará más correos.')
       log.save
     end
 

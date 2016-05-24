@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160520114120) do
+ActiveRecord::Schema.define(version: 20160524224250) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(version: 20160520114120) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "progress",        default: 0
+    t.text     "details",         default: ""
   end
 
   add_index "booking_email_logs", ["booking_id"], name: "index_booking_email_logs_on_booking_id", using: :btree
@@ -295,6 +296,7 @@ ActiveRecord::Schema.define(version: 20160520114120) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "progress",        default: 0
+    t.text     "details",         default: ""
   end
 
   add_index "client_email_logs", ["client_id"], name: "index_client_email_logs_on_client_id", using: :btree

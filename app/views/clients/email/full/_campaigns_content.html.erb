@@ -53,7 +53,9 @@
             </p>
           </td>
           <td class="text-center">
-            <%= link_to '<i class="fa fa-download"></i> Descargar Detalle en Excel'.html_safe, campaign_details_path(campaign_id: campaign.id, format: "xls"), class: "btn btn-green" %>
+            <h4>
+              <%= link_to '<i class="fa fa-download"></i> Descargar detalle'.html_safe, campaign_details_path(campaign_id: campaign.id, format: "xls"), class: "btn btn-green" %>
+            </h4>
           </td>
           <% else %>
           <td class="text-center" colspan="3">
@@ -62,7 +64,9 @@
             </h4>
           </td>
           <td class="text-center">
-            <%= link_to '<i class="fa fa-download"></i> Descargar Detalle en Excel'.html_safe, '#', class: "btn btn-green", disabled: true %>
+            <h4>
+              <%= link_to '<i class="fa fa-download"></i> Descargar detalle'.html_safe, '#', class: "btn btn-green", disabled: true %>
+            </h4>
           </td>
           <% end %>
         </tr>

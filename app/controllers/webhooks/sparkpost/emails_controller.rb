@@ -22,12 +22,12 @@ module Webhooks
           if message_event["rcpt_meta"].present? && message_event["rcpt_meta"]["booking_ids"].present?
             message_event["rcpt_meta"]["booking_ids"].each do |booking_id|
               log = BookingEmailLog.find_or_initialize_by(transmission_id: message_event["transmission_id"], booking_id: booking_id)
-              log.assign_attributes(status: SparkpostStatus.find_by_event_type(message_event["type"]).status, recipient: message_event["rcpt_to"], timestamp: DateTime.strptime(message_event["timestamp"],'%s'), subject: message_event["subject"], progress: SparkpostStatus.find_by_event_type(message_event["type"]).progress)
+              log.assign_attributes(status: SparkpostStatus.find_by_event_type(message_event["type"]).status, recipient: message_event["rcpt_to"], timestamp: DateTime.strptime(message_event["timestamp"],'%s'), subject: message_event["subject"], progress: SparkpostStatus.find_by_event_type(message_event["type"]).progress, details: message_event["reason"])
               log.save
             end
           elsif message_event["rcpt_meta"].present? && message_event["rcpt_meta"]["campaign_id"].present? && Email::Sending.find_by(id: message_event["rcpt_meta"]["campaign_id"]) && Email::Content.find_by(id: Email::Sending.find_by(id: message_event["rcpt_meta"]["campaign_id"], sendable_type: 'Email::Content').sendable_id) && SparkpostStatus.find_by_event_type(message_event["type"]).present?
             log = ClientEmailLog.find_or_initialize_by(transmission_id: message_event["transmission_id"], campaign_id: message_event["rcpt_meta"]["campaign_id"], client_id: Client.find_by(email: message_event["rcpt_to"], company_id: Email::Content.find_by(id: Email::Sending.find_by(id: message_event["rcpt_meta"]["campaign_id"], sendable_type: 'Email::Content').sendable_id).company.id).id)
-            log.assign_attributes(status: SparkpostStatus.find_by_event_type(message_event["type"]).status, recipient: message_event["rcpt_to"], timestamp: DateTime.strptime(message_event["timestamp"],'%s'), subject: message_event["subject"], progress: SparkpostStatus.find_by_event_type(message_event["type"]).progress)
+            log.assign_attributes(status: SparkpostStatus.find_by_event_type(message_event["type"]).status, recipient: message_event["rcpt_to"], timestamp: DateTime.strptime(message_event["timestamp"],'%s'), subject: message_event["subject"], progress: SparkpostStatus.find_by_event_type(message_event["type"]).progress, details: message_event["reason"])
             log.save
           end
         elsif track_event.present? && track_event["rcpt_meta"].present?
