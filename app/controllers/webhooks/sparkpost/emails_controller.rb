@@ -7,7 +7,7 @@ module Webhooks
     end
 
     def consume_raw
-      puts request.headers.inspect
+      logger.info request.headers.inspect
 
       SparkpostEmailLog.create(raw_message: params.inspect)
 
