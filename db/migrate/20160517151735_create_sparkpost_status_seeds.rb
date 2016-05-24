@@ -4,7 +4,7 @@ class CreateSparkpostStatusSeeds < ActiveRecord::Migration
   SparkpostStatus.create(event_type: 'injection', status: 'Enviado', progress: 1, blacklist: false)
   SparkpostStatus.create(event_type: 'spam_complaint', status: 'Enviado a Spam', progress: 0, blacklist: true)
   SparkpostStatus.create(event_type: 'out_of_band', status: 'Error en la entrega', progress: 1, blacklist: false)
-  SparkpostStatus.create(event_type: 'policy_rejection', status: 'Rechazado por Protocolo', progress: 0, blacklist: false)
+  SparkpostStatus.create(event_type: 'policy_rejection', status: 'Rechazado por Protocolo', progress: 0, blacklist: true)
   SparkpostStatus.create(event_type: 'delay', status: 'Entrega Retrasada', progress: 1, blacklist: false)
   SparkpostStatus.create(event_type: 'click', status: 'Click', progress: 2, blacklist: false)
   SparkpostStatus.create(event_type: 'open', status: 'Visualización', progress: 2, blacklist: false)

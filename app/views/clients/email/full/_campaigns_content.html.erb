@@ -1,62 +1,73 @@
-<table class="table">
-  <tbody>
-    <% @campaigns.each do |campaign| %>
-    <tr>
-      <td>
-        <h4>
-          <strong><%= Email::Content.find(campaign.sendable_id).subject %></strong>
-        </h4>
-        <p>
-          <small>Enviado a una lista original de <%= campaign.total_targets %> contactos<br />Enviado el <%= campaign.sent_date.strftime("%d/%m/%Y a las %H:%M") %></small>
-        </p>
-      </td>
-      <td class="text-center">
-        <h4>
-          <strong><%= campaign.total_recipients %></strong> <small>(<%=  "%g" % ("%.2f" % (100*campaign.total_recipients/campaign.total_targets)) %>%)</small>
-        </h4>
-        <p>
-          <small>Emails Enviados</small>
-        </p>
-      </td>
-      <% if ClientEmailLog.where(campaign_id: campaign.id).count > 0 %>
-      <td class="text-center">
-        <h4>
-          <strong><%= ClientEmailLog.where(progress: 2, campaign_id: campaign.id).count %></strong> <small>(<%=  "%g" % ("%.2f" % (100*ClientEmailLog.where(progress: 2, campaign_id: campaign.id).count/campaign.total_targets)) %>%)</small>
-        </h4>
-        <p>
-          <small>Emails Entregados</small>
-        </p>
-      </td>
-      <td class="text-center">
-        <h4>
-          <strong><%= ClientEmailLog.where(progress: 2, campaign_id: campaign.id).sum(:opens) %></strong> <small>(<%=  "%g" % ("%.2f" % (100*ClientEmailLog.where(progress: 2, campaign_id: campaign.id).sum(:opens)/campaign.total_targets)) %>%)</small>
-        </h4>
-        <p>
-          <small>Visualizaciones</small>
-        </p>
-      </td>
-      <td class="text-center">
-        <h4>
-          <strong><%= ClientEmailLog.where(progress: 2, campaign_id: campaign.id).sum(:clicks) %></strong> <small>(<%=  "%g" % ("%.2f" % (100*ClientEmailLog.where(progress: 2, campaign_id: campaign.id).sum(:clicks)/campaign.total_targets)) %>%)</small>
-        </h4>
-        <p>
-          <small>Clicks</small>
-        </p>
-      </td>
-      <td class="text-center">
-        <%= link_to '<i class="fa fa-download"></i> Descargar Detalle en Excel'.html_safe, campaign_details_path(campaign_id: campaign.id, format: "xls"), class: "btn btn-green" %>
-      </td>
-      <% else %>
-      <td class="text-center" colspan="3">
-        <h4>
-          <strong>Sin información de entregas</strong> <small></small>
-        </h4>
-      </td>
-      <td class="text-center">
-        <%= link_to '<i class="fa fa-download"></i> Descargar Detalle en Excel'.html_safe, '#', class: "btn btn-green", disabled: true %>
-      </td>
-      <% end %>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
+<% campaigns_stats = [ { name: 'Enviados', data: ClientEmailLog.where(campaign_id: @campaigns.pluck(:id)).group_by_day(:timestamp).count }, { name: 'Entregados', data: ClientEmailLog.where(progress: 2, campaign_id: @campaigns.pluck(:id)).group_by_day(:timestamp).count }, { name: 'Visualizaciones', data: ClientEmailLog.where(campaign_id: @campaigns.pluck(:id)).group_by_day(:timestamp).sum(:opens) }, { name: 'Clicks', data: ClientEmailLog.where(campaign_id: @campaigns.pluck(:id)).group_by_day(:timestamp).sum(:clicks) } ] %>
+
+<div class="row">
+  <div class="col-md-12">
+    <%= line_chart campaigns_stats, discrete: true, library: {hAxis: {title: "Fecha" }, vAxis: {title: "Cantidad", format: "#"}, title: "Rendimiento de Campañas por Día" } %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <table class="table">
+      <tbody>
+        <% @campaigns.each do |campaign| %>
+        <tr>
+          <td>
+            <h4>
+              <strong><%= Email::Content.find(campaign.sendable_id).subject %></strong>
+            </h4>
+            <p>
+              <small>Enviado a una lista original de <%= campaign.total_targets %> contactos<br />Enviado el <%= campaign.sent_date.strftime("%d/%m/%Y a las %H:%M") %></small>
+            </p>
+          </td>
+          <td class="text-center">
+            <h4>
+              <strong><%= ClientEmailLog.where(campaign_id: campaign.id).count %></strong> <small>(<%=  "%g" % ("%.2f" % (100*ClientEmailLog.where(campaign_id: campaign.id).count/campaign.total_targets)) %>%)</small>
+            </h4>
+            <p>
+              <small>Emails Enviados</small>
+            </p>
+          </td>
+          <% if ClientEmailLog.where(campaign_id: campaign.id).count > 0 %>
+          <td class="text-center">
+            <h4>
+              <strong><%= ClientEmailLog.where(progress: 2, campaign_id: campaign.id).count %></strong> <small>(<%=  "%g" % ("%.2f" % (100*ClientEmailLog.where(progress: 2, campaign_id: campaign.id).count/campaign.total_targets)) %>%)</small>
+            </h4>
+            <p>
+              <small>Emails Entregados</small>
+            </p>
+          </td>
+          <td class="text-center">
+            <h4>
+              <strong><%= ClientEmailLog.where(progress: 2, campaign_id: campaign.id).sum(:opens) %></strong> <small>(<%=  "%g" % ("%.2f" % (100*ClientEmailLog.where(progress: 2, campaign_id: campaign.id).sum(:opens)/campaign.total_targets)) %>%)</small>
+            </h4>
+            <p>
+              <small>Visualizaciones</small>
+            </p>
+          </td>
+          <td class="text-center">
+            <h4>
+              <strong><%= ClientEmailLog.where(progress: 2, campaign_id: campaign.id).sum(:clicks) %></strong> <small>(<%=  "%g" % ("%.2f" % (100*ClientEmailLog.where(progress: 2, campaign_id: campaign.id).sum(:clicks)/campaign.total_targets)) %>%)</small>
+            </h4>
+            <p>
+              <small>Clicks</small>
+            </p>
+          </td>
+          <td class="text-center">
+            <%= link_to '<i class="fa fa-download"></i> Descargar Detalle en Excel'.html_safe, campaign_details_path(campaign_id: campaign.id, format: "xls"), class: "btn btn-green" %>
+          </td>
+          <% else %>
+          <td class="text-center" colspan="3">
+            <h4>
+              <strong>Sin información de entregas</strong> <small></small>
+            </h4>
+          </td>
+          <td class="text-center">
+            <%= link_to '<i class="fa fa-download"></i> Descargar Detalle en Excel'.html_safe, '#', class: "btn btn-green", disabled: true %>
+          </td>
+          <% end %>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
