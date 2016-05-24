@@ -42,8 +42,8 @@ module Webhooks
                 log.update(clicks: log.clicks + 1)
               end
             end
-          elsif track_event["rcpt_meta"]["campaign_id"].present? && Email::Sending.find_by(id: track_event["rcpt_meta"]["campaign_id"]) && Email::Content.find_by(id: Email::Sending.find_by(id: message_event["rcpt_meta"]["campaign_id"], sendable_type: 'Email::Content').sendable_id) && Client.find_by(email: message_event["rcpt_to"], company_id: Email::Content.find_by(id: Email::Sending.find_by(id: message_event["rcpt_meta"]["campaign_id"], sendable_type: 'Email::Content').sendable_id).company.id)
-            log = ClientEmailLog.find_by(transmission_id: track_event["transmission_id"], campaign_id: track_event["rcpt_meta"]["campaign_id"], client_id: Client.find_by(email: message_event["rcpt_to"], company_id: Email::Content.find_by(id: Email::Sending.find_by(id: message_event["rcpt_meta"]["campaign_id"], sendable_type: 'Email::Content').sendable_id).company.id).id)
+          elsif track_event["rcpt_meta"]["campaign_id"].present? && Email::Sending.find_by(id: track_event["rcpt_meta"]["campaign_id"]) && Email::Content.find_by(id: Email::Sending.find_by(id: track_event["rcpt_meta"]["campaign_id"], sendable_type: 'Email::Content').sendable_id) && Client.find_by(email: track_event["rcpt_to"], company_id: Email::Content.find_by(id: Email::Sending.find_by(id: track_event["rcpt_meta"]["campaign_id"], sendable_type: 'Email::Content').sendable_id).company.id)
+            log = ClientEmailLog.find_by(transmission_id: track_event["transmission_id"], campaign_id: track_event["rcpt_meta"]["campaign_id"], client_id: Client.find_by(email: track_event["rcpt_to"], company_id: Email::Content.find_by(id: Email::Sending.find_by(id: track_event["rcpt_meta"]["campaign_id"], sendable_type: 'Email::Content').sendable_id).company.id).id)
             if log.present? && track_event["type"] == "open"
               log.update(opens: log.opens + 1)
             elsif log.present? && track_event["type"] == "click"
