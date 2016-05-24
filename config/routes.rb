@@ -124,6 +124,8 @@ Agendapro::Application.routes.draw do
     get '/report_location_providers/:id', :to => 'reports#location_providers'
     get '/report_location_comission/:id', :to => 'reports#location_comission'
     get '/report_provider_services/:id', :to => 'reports#provider_services'
+    get '/report_bookings_history', :to => 'reports#bookings_history'
+    get '/report_bookings_metrics', :to => 'reports#bookings_metrics'
 
     #
     post '/client_comments', :to => 'clients#create_comment', :as => 'client_comments'

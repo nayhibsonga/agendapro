@@ -55,6 +55,14 @@ class ReportsController < ApplicationController
 	  	render "_provider_services", layout: false
 	end
 
+	def bookings_history
+		render "_bookings_history", layout: false
+	end
+
+	def bookings_metrics
+		render "_bookings_metrics", layout: false
+	end
+
 	def set_params
 		@from = params[:from].blank? ? Time.now.beginning_of_day : Time.parse(params[:from]).beginning_of_day
 		@to = params[:to].blank? ? Time.now.end_of_day : Time.parse(params[:to]).end_of_day

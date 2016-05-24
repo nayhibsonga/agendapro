@@ -1,0 +1,64 @@
+<%
+  location_ids = current_user.company.locations.pluck(:id)
+  services_ids = Service.where(company_id: current_user.company_id, active: true).pluck(:id)
+%>
+<div class="row">
+  <div class="col-md-6">
+    <div class="metric-title">
+      Confirmadas / Reservadas
+    </div>
+    <div class="metric-subtitle">
+      <%
+        confirmed_numbers = bookings_count_by_status(@from, @to, @option, location_ids, "Confirmado")
+      %>
+      <%= confirmed_numbers[:counted].to_s %> / <%= confirmed_numbers[:total].to_s %> :  <%= confirmed_numbers[:percent] %> %
+    </div>
+    <div class="metric-graph">
+      <%= pie_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "Confirmado", services_ids), library: { title: "% Confirmadas por servicio" } %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="metric-title">
+      Asiste / Reservadas
+    </div>
+    <div class="metric-subtitle">
+      <%
+        confirmed_numbers = bookings_count_by_status(@from, @to, @option, location_ids, "Asiste")
+      %>
+      <%= confirmed_numbers[:counted].to_s %> / <%= confirmed_numbers[:total].to_s %> :  <%= confirmed_numbers[:percent] %> %
+    </div>
+    <div class="metric-graph">
+      <%= pie_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "Asiste", services_ids), library: { title: "% Asiste por servicio" } %>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="metric-title">
+      Canceladas / Reservadas
+    </div>
+    <div class="metric-subtitle">
+      <%
+        confirmed_numbers = bookings_count_by_status(@from, @to, @option, location_ids, "Cancelado")
+      %>
+      <%= confirmed_numbers[:counted].to_s %> / <%= confirmed_numbers[:total].to_s %> :  <%= confirmed_numbers[:percent] %> %
+    </div>
+    <div class="metric-graph">
+      <%= pie_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "Cancelado", services_ids), library: { title: "% Canceladas por servicio" } %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="metric-title">
+      No Asiste / Reservadas
+    </div>
+    <div class="metric-subtitle">
+      <%
+        confirmed_numbers = bookings_count_by_status(@from, @to, @option, location_ids, "No Asiste")
+      %>
+      <%= confirmed_numbers[:counted].to_s %> / <%= confirmed_numbers[:total].to_s %> :  <%= confirmed_numbers[:percent] %> %
+    </div>
+    <div class="metric-graph">
+      <%= pie_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "No Asiste", services_ids), library: { title: "% No Asiste por servicio" } %>
+    </div>
+  </div>
+</div>
