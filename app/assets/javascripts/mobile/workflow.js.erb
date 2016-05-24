@@ -77,8 +77,7 @@ function loadProviders (localId, serviceId) {
                 provider: $('#provider').val(),
                 datepicker: picker.get('select', 'yyyy/mm/dd')
               },
-              null,
-              "workflow?&local=178"
+              null
             );
             $('.btn-block').attr('disabled', false);
           }
@@ -111,8 +110,7 @@ function loadProviders (localId, serviceId) {
                   provider: $('#provider').val(),
                   datepicker: picker.get('select', 'yyyy/mm/dd')
                 },
-                null,
-                "workflow?&local=178"
+                null
               );
               $('.btn-block').attr('disabled', false);
             }
@@ -155,6 +153,87 @@ function generateDate(date, time) {
   return year + '-' + month + '-' + day + ' ' + time;
 }
 
+function currency(price)
+{
+  var amount = price.toString();
+
+  var j = 0;
+  var stack = new Array();
+  for(i = amount.length-1; i>=0; i--)
+  {
+    j = j+1;
+    stack.push(amount[i]);
+    if(j == 3 && i>0)
+    {
+      stack.push('.');
+      j = 0;
+    }
+  }
+  var formatted_amount = "$ ";
+  for(i = stack.length-1; i >=0 ; i--)
+  {
+    formatted_amount = formatted_amount + stack[i];
+  }
+
+  return formatted_amount;
+}
+
+function loadServiceInfo(service_id){
+
+  var bundle = $("#service").find(':selected').data('bundle');
+  console.log(bundle);
+  var bundle_str = "" + bundle;
+  $('#serviceInfo').empty();
+  $('#serviceInfo').hide();
+  if(service_id != null && service_id > 0)
+  {
+    $.ajax({
+      url: '/service',
+      method: 'get',
+      dataType: 'json',
+      data: {id: service_id, bundle: bundle_str},
+      error: function(response){
+
+      },
+      success: function(response){
+        if(bundle)
+        {
+          var services = response.services;
+          $('#serviceInfo').append('<div class="col-xs-12"><label>Servicios:</label></div><div style="clear: both;"></div>');
+          $.each(services, function (key, service) {
+            $('#serviceInfo').append('<div class="col-xs-12">' + service.name + '</div><div style="clear: both;"></div>');
+          });
+          if(response.show_price)
+          {
+            $('#serviceInfo').append('<br /><div class="col-xs-12">Precio: ' + currency(parseInt(response.price)) + '</div><div style="clear: both;"></div>');
+          }
+          else
+          {
+            $('#serviceInfo').append('<div class="col-xs-12">Precio: Preguntar en local</div><div style="clear: both;"></div>');
+          }
+          $('#serviceInfo').append('<div class="col-xs-12">Duración: ' + response.duration + ' minutos</div><div style="clear: both;"></div>');
+          $('#serviceInfo').show();
+        }
+        else
+        {
+          var service = response;
+          if(service.show_price)
+          {
+            $('#serviceInfo').append('<div class="col-xs-12">Precio: ' + currency(parseInt(service.price)) + '</div><div style="clear: both;"></div>');
+          }
+          else
+          {
+            $('#serviceInfo').append('<div class="col-xs-12">Precio: Preguntar en local</div><div style="clear: both;"></div>');
+          }
+          $('#serviceInfo').append('<div class="col-xs-12">Duración: ' + service.duration + ' minutos</div><div style="clear: both;"></div>');
+          $('#serviceInfo').show();
+        }
+      }
+    });
+  }
+
+}
+
 $(document).ready(function(){
 
   $("#selectHourNextBtn").on('click', function(e){
@@ -170,6 +249,10 @@ $(document).ready(function(){
 
     $("#selectHourForm").submit();
 
+  });
+
+  $('#service').on('change', function(){
+    loadServiceInfo($(this).val());
   });
 
 });
