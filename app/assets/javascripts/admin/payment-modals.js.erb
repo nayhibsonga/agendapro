@@ -23,6 +23,11 @@ var disabledPrice = '';
 
 $(function() {
 
+  $('body').on('click', '.treatmentBookingsLink', function(){
+    $(this).find('.treatment-closed').toggle();
+    $(this).find('.treatment-open').toggle();
+  });
+
   $('#paymentAlertDiv .close').on('click', function(){
     $('#paymentAlertDiv').hide();
   });
@@ -1936,9 +1941,13 @@ function loadClientPastBookings(){
               $("#cpt-treatments").append('<div class="pastTreatmentRow" session_booking_id="' + past_treatment.treatment.id + '">' +
                 '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;">' +
                 '<div class="col-xs-2 pastBookingCol">' + treatment_btn + '</div>' +
-                '<div class="col-xs-9 pastBookingCol">' + past_treatment.service.name + ' (' + past_treatment.treatment.sessions_taken + ' agendada(s))</div>' +
+                '<div class="col-xs-9 pastBookingCol"><a class="treatmentBookingsLink" href="#treatmentBookingsDiv' + past_treatment.treatment.id + '" data-toggle="collapse">' + past_treatment.service.name + ' (' + past_treatment.treatment.sessions_taken + ' agendada(s)) <span class="treatment-closed"><i class="fa fa-caret-right"></i></span><span class="treatment-open" hidden><i class="fa fa-caret-down"></i></span></a></div>' +
                 '</div></div>'
               );
+
+              //$("#cpt-treatments").append('<div id="treatmentBookingsDiv' + past_treatment.treatment.id + '" class="collapse">');
+
+              var tb_str = '<div id="treatmentBookingsDiv' + past_treatment.treatment.id + '" class="collapse">';
 
               //Recheck for every booking before adding it
 
@@ -1970,16 +1979,30 @@ function loadClientPastBookings(){
                     service_name = service_name + " (no agendada)";
                   }
 
-                  $("#cpt-treatments").append('<div class="pastBookingRow" session_booking_id="' + past_treatment.treatment.id + '" booking_id="' + past_booking.booking.id + '">' +
+                  /*$("#cpt-treatments").append('<div class="pastBookingRow" session_booking_id="' + past_treatment.treatment.id + '" booking_id="' + past_booking.booking.id + '">' +
                     '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addPastBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
                     '<div class="col-xs-3 pastBookingCol">' + service_name + '</div>' +
                     '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_provider + '</div>' +
                     '<div class="col-xs-4 pastBookingCol">' + booking_date + '</div>' +
                     '</div></div>'
-                  );
+                  );*/
+
+                  tb_str += '<div class="pastBookingRow" session_booking_id="' + past_treatment.treatment.id + '" booking_id="' + past_booking.booking.id + '">' +
+                    '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addPastBooking addTreatmentBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
+                    '<div class="col-xs-3 pastBookingCol">' + service_name + '</div>' +
+                    '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_provider + '</div>' +
+                    '<div class="col-xs-4 pastBookingCol">' + booking_date + '</div>' +
+                    '</div></div>';
+
                 }
 
               });
+
+              //$('#cpt-treatments').append('</div>');
+
+              tb_str += '</div>';
+
+              $('#cpt-treatments').append(tb_str);
 
             }
 
