@@ -1,14 +1,8 @@
 module Webhooks
   class Sparkpost::EmailsController < WebhooksController
-    before_filter :check_auth_token
-
-    def check_auth_token
-
-    end
+    http_basic_authenticate_with name: "sparkpost_webhook", password: "8j1fm7b6h5ovdxhltpy0por3l5nkwxh4yi2d"
 
     def consume_raw
-      logger.info request.headers.inspect
-
       SparkpostEmailLog.create(raw_message: params.inspect)
 
       json = params["_json"]
