@@ -145,6 +145,7 @@ Agendapro::Application.routes.draw do
       get '/compose_mail', action: 'compose_mail', as: 'send_mail'
       post '/send_mail_client', action: 'send_mail'
       get '/campaigns_report_content', action: 'campaigns_report_content'
+      get '/campaign_report_details/:campaign_id', action: 'campaign_report_details', as: 'campaign_details'
     end
 
     # Mail Editor

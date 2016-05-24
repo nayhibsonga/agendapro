@@ -490,6 +490,14 @@ class ClientsController < ApplicationController
     render "clients/email/full/_campaigns_content", layout: false
   end
 
+  def campaign_report_details
+    @client_email_logs = ClientEmailLog.where(campaign_id: params[:campaign_id])
+
+    respond_to do |format|
+      format.xls
+    end
+  end
+
   def send_mail
     attachments = params[:attachment]
     # attachment = {

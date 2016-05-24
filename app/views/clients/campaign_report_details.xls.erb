@@ -14,14 +14,14 @@
         <Cell><Data ss:Type="String">Visualizaciones</Data></Cell>
         <Cell><Data ss:Type="String">Clicks</Data></Cell>
       </Row>
-    <% @campaign.each do |campaign| %>
+    <% @client_email_logs.each do |email_log| %>
       <Row>
-        <Cell><Data ss:Type="String"><%= campaign.timestamp %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= campaign.status %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= campaign.subject %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= campaign.recipient %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= campaign.opens %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= campaign.clicks %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= email_log.timestamp %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= email_log.status %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= email_log.subject %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= email_log.recipient %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= email_log.opens %></Data></Cell>
+        <Cell><Data ss:Type="String"><%= email_log.clicks %></Data></Cell>
       </Row>
     <% end %>
     </Table>

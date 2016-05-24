@@ -18,6 +18,7 @@
           <small>Emails Enviados</small>
         </p>
       </td>
+      <% if ClientEmailLog.where(campaign_id: campaign.id).count > 0 %>
       <td class="text-center">
         <h4>
           <strong><%= ClientEmailLog.where(progress: 2, campaign_id: campaign.id).count %></strong> <small>(<%=  "%g" % ("%.2f" % (100*ClientEmailLog.where(progress: 2, campaign_id: campaign.id).count/campaign.total_targets)) %>%)</small>
@@ -43,8 +44,18 @@
         </p>
       </td>
       <td class="text-center">
-        <%= link_to '<i class="fa fa-download"></i> Descargar Detalle en Excel'.html_safe, clients_path(format: "xls"), class: "btn btn-green" %>
+        <%= link_to '<i class="fa fa-download"></i> Descargar Detalle en Excel'.html_safe, campaign_details_path(campaign_id: campaign.id, format: "xls"), class: "btn btn-green" %>
       </td>
+      <% else %>
+      <td class="text-center" colspan="3">
+        <h4>
+          <strong>Sin información de entregas</strong> <small></small>
+        </h4>
+      </td>
+      <td class="text-center">
+        <%= link_to '<i class="fa fa-download"></i> Descargar Detalle en Excel'.html_safe, '#', class: "btn btn-green", disabled: true %>
+      </td>
+      <% end %>
     </tr>
     <% end %>
   </tbody>
