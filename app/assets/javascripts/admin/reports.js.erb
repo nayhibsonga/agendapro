@@ -7,6 +7,15 @@ $(function() {
         cache: false,
         success: function(html){
           $('#render_content').html(html);
+          console.log(report);
+          if(report == "bookings_metrics")
+          {
+            $('.checkbox-inline input').prop('disabled', true);
+          }
+          else
+          {
+            $('.checkbox-inline input').prop('disabled', false);
+          }
         }
     });
   });

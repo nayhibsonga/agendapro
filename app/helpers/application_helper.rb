@@ -286,6 +286,7 @@ module ApplicationHelper
 		end
 		total = status_booking_count(from, to, status, option, company_id)
 		top3 = Hash[ ranking.first(10).map{ |c| [Service.find(c[0]).name,c[1]] } ]
+		puts top3.inspect
 		return top3.merge({ "Otros" => (total - top3_count) })
 	end
 

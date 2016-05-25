@@ -15,19 +15,20 @@
                   Fecha de realización
                 <% end %>
               </th>
+              <th>Local</th>
               <th>Cliente</th>
               <th>Servicio</th>
               <th>Prestador</th>
+              <th>Estado</th>
               <th>Estado de pago</th>
-              <th>Local</th>
             </tr>
           </thead>
           <tbody>
             <% 
               if @option.to_i == 0
-                @bookings = Booking.where(created_at: @from..@to, status_id: @status_ids, location_id: current_user.company.locations.pluck(:id)).order(created_at: :desc)
+                @bookings = Booking.where(created_at: @from..@to, status_id: @status_ids, location_id: @locations.pluck(:id)).order(created_at: :desc)
               else
-                @bookings = Booking.where(start: @from..@to, status_id: @status_ids, location_id: current_user.company.locations.pluck(:id)).order(start: :desc)
+                @bookings = Booking.where(start: @from..@to, status_id: @status_ids, location_id: @locations.pluck(:id)).order(start: :desc)
               end
             %>
             <% @bookings.each do |booking| %>
@@ -40,6 +41,9 @@
                   <% end %>
                 </td>
                 <td>
+                  <%= booking.location.name %>
+                </td>
+                <td>
                   <% if booking.client.nil? %>
                     Sin información
                   <% else %>
@@ -48,6 +52,7 @@
                 </td>
                 <td><%= booking.service.name %></td>
                 <td><%= booking.service_provider.public_name %></td>
+                <td><%= booking.status.name %></td>
                 <td>
                   <% if !booking.payed_booking.nil? %>
                     Pagada (en línea)
@@ -59,14 +64,12 @@
                     No pagada
                   <% end %>
                 </td>
-                <td>
-                  <%= booking.location.name %>
-                </td>
               </tr>
             <% end %>
           </tbody>
         </table>
       </div>
     </div>
+    <a target="_blank" href="/report_bookings_history_sheet.xls?option=<%= @option %>&from=<%= @from %>&to=<%= @to %>&status_ids=<%= params[:status_ids] %>" id="downloadBookingsHistoryBtn"><button class="btn btn-green">Descargar</button></a>
   </div>
 </div>

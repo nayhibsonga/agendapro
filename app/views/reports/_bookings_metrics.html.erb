@@ -1,6 +1,7 @@
 <%
-  location_ids = current_user.company.locations.pluck(:id)
+  location_ids = @locations.pluck(:id)
   services_ids = Service.where(company_id: current_user.company_id, active: true).pluck(:id)
+  time_diff = ((@to.to_datetime - @from.to_datetime).days/1.weeks)
 %>
 <div class="row">
   <div class="col-md-6">
@@ -14,7 +15,14 @@
       <%= confirmed_numbers[:counted].to_s %> / <%= confirmed_numbers[:total].to_s %> :  <%= confirmed_numbers[:percent] %> %
     </div>
     <div class="metric-graph">
-      <%= pie_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "Confirmado", services_ids), library: { title: "% Confirmadas por servicio" } %>
+      <%= column_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "Confirmado", services_ids), library: { title: "% Confirmadas por servicio" } %>
+    </div>
+    <div class="metric-graph">
+      <% if time_diff >= 1 %>
+        <%= line_chart bookings_metrics_by_status_and_time(@from, @to, @option, location_ids, "Confirmado"), discrete: true, library: {hAxis: {title: "Semanas" }, vAxis: {title: "% Confirmado/Reservado", format: "#"}, title: "% Confirmado/Reservado por semana" } %>
+      <% else %>
+        <%= line_chart bookings_metrics_by_status_and_time(@from, @to, @option, location_ids, "Confirmado"), discrete: true, library: {hAxis: {title: "Días" }, vAxis: {title: "% Confirmado/Reservado", format: "#"}, title: "% Confirmado/Reservado por día" } %>
+      <% end %>
     </div>
   </div>
   <div class="col-md-6">
@@ -28,7 +36,14 @@
       <%= confirmed_numbers[:counted].to_s %> / <%= confirmed_numbers[:total].to_s %> :  <%= confirmed_numbers[:percent] %> %
     </div>
     <div class="metric-graph">
-      <%= pie_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "Asiste", services_ids), library: { title: "% Asiste por servicio" } %>
+      <%= column_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "Asiste", services_ids), library: { title: "% Asiste por servicio" } %>
+    </div>
+    <div class="metric-graph">
+      <% if time_diff >= 1 %>
+        <%= line_chart bookings_metrics_by_status_and_time(@from, @to, @option, location_ids, "Asiste"), discrete: true, library: {hAxis: {title: "Semanas" }, vAxis: {title: "% Asiste/Reservado", format: "#"}, title: "% Asiste/Reservado por semana" } %>
+      <% else %>
+        <%= line_chart bookings_metrics_by_status_and_time(@from, @to, @option, location_ids, "Asiste"), discrete: true, library: {hAxis: {title: "Días" }, vAxis: {title: "% Asiste/Reservado", format: "#"}, title: "% Asiste/Reservado por día" } %>
+      <% end %>
     </div>
   </div>
 </div>
@@ -44,7 +59,14 @@
       <%= confirmed_numbers[:counted].to_s %> / <%= confirmed_numbers[:total].to_s %> :  <%= confirmed_numbers[:percent] %> %
     </div>
     <div class="metric-graph">
-      <%= pie_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "Cancelado", services_ids), library: { title: "% Canceladas por servicio" } %>
+      <%= column_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "Cancelado", services_ids), library: { title: "% Canceladas por servicio" } %>
+    </div>
+    <div class="metric-graph">
+      <% if time_diff >= 1 %>
+        <%= line_chart bookings_metrics_by_status_and_time(@from, @to, @option, location_ids, "Cancelado"), discrete: true, library: {hAxis: {title: "Semanas" }, vAxis: {title: "% Cancelado/Reservado", format: "#"}, title: "% Cancelado/Reservado por semana" } %>
+      <% else %>
+        <%= line_chart bookings_metrics_by_status_and_time(@from, @to, @option, location_ids, "Cancelado"), discrete: true, library: {hAxis: {title: "Días" }, vAxis: {title: "% Cancelado/Reservado", format: "#"}, title: "% Cancelado/Reservado por día" } %>
+      <% end %>
     </div>
   </div>
   <div class="col-md-6">
@@ -58,7 +80,14 @@
       <%= confirmed_numbers[:counted].to_s %> / <%= confirmed_numbers[:total].to_s %> :  <%= confirmed_numbers[:percent] %> %
     </div>
     <div class="metric-graph">
-      <%= pie_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "No Asiste", services_ids), library: { title: "% No Asiste por servicio" } %>
+      <%= column_chart bookings_metrics_by_status_and_services(@from, @to, @option, location_ids, "No Asiste", services_ids), library: { title: "% No Asiste por servicio" } %>
+    </div>
+    <div class="metric-graph">
+      <% if time_diff >= 1 %>
+        <%= line_chart bookings_metrics_by_status_and_time(@from, @to, @option, location_ids, "No Asiste"), discrete: true, library: {hAxis: {title: "Semanas" }, vAxis: {title: "% No Asiste/Reservado", format: "#"}, title: "% No Asiste/Reservado por semana" } %>
+      <% else %>
+        <%= line_chart bookings_metrics_by_status_and_time(@from, @to, @option, location_ids, "No Asiste"), discrete: true, library: {hAxis: {title: "Días" }, vAxis: {title: "% No Asiste/Reservado", format: "#"}, title: "% No Asiste/Reservado por día" } %>
+      <% end %>
     </div>
   </div>
 </div>

@@ -897,4 +897,65 @@ class Company < ActiveRecord::Base
 		"#{countries.web_address}.agendapro#{countries.country.domain}"
 	end
 
+	def self.generate_bookings_report(company_id, location_ids, from, to, option, status_ids)
+	    require 'writeexcel'
+
+	    header = []
+
+	    if option.to_i == 0
+        	bookings = Booking.where(created_at: from..to, status_id: status_ids, location_id: location_ids).order(created_at: :desc)
+        	header << "Fecha de creación"
+      	else
+        	bookings = Booking.where(start: from..to, status_id: status_ids, location_id: location_ids).order(start: :desc)
+        	header << "Fecha de realización"
+      	end
+
+	    company = Company.find(company_id)
+	    title = 'public/reservas_' + company_id.to_s + '.xls'
+	    workbook = WriteExcel.new(title)
+
+	    worksheet = workbook.add_worksheet
+
+	    
+	    header = header + ["Local", "Cliente", "Servicio", "Prestador", "Estado", "Estado de pago"]
+
+	    worksheet.write_row(0, 0, header)
+
+	    bookings.each_with_index do |booking, index|
+
+	    	booking_date = ""
+	    	payed_state = ""
+	    	booking_client = "Sin información"
+	    	if !booking.client.nil?
+	    		booking_client = booking.client.full_name
+	    	end
+
+	    	if !booking.payed_booking.nil?
+                payed_state = "Pagada (en línea)"
+            elsif !booking.payment.nil?
+                payed_state = "Pagada (pago asociado)"
+            elsif booking.payed_state
+                payed_state = "Pagada"
+            else
+                payed_state = "No pagada"
+            end
+
+	    	if option.to_i == 0
+	    		booking_date = booking.created_at.strftime('%d/%m/%Y %R')
+	    	else
+	    		booking.start.strftime('%d/%m/%Y %R')
+	    	end
+
+	    	booking_row = [booking_date, booking.location.name, booking_client, booking.service.name, booking.service_provider.public_name, booking.status.name, payed_state]
+
+	    	worksheet.write_row(index+1, 0, booking_row)
+
+	    end
+
+	    workbook.close
+
+	    return workbook
+
+	end
+
 end
