@@ -8,6 +8,8 @@ class ReportsController < ApplicationController
 	before_action :set_params
 	layout "admin"
 
+	respond_to :html, :xls
+
 	def index
 		@locations = Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:order, :name)
 	end
@@ -53,6 +55,30 @@ class ReportsController < ApplicationController
 		@service_provider = ServiceProvider.find(params[:id])
 
 	  	render "_provider_services", layout: false
+	end
+
+	def bookings_history
+		@locations = Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:order, :name)
+		render "_bookings_history", layout: false
+	end
+
+	def bookings_metrics
+		@locations = Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:order, :name)
+		render "_bookings_metrics", layout: false
+	end
+
+	def bookings_history_sheet
+		@locations = Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:order, :name)
+		#(company_id, location_ids, from, to, option, status_ids)
+		# respond_to do |format|
+	 #      format.xls {render xls: Company.generate_bookings_report(current_user.company_id, @locations.pluck(:id), @from, @to, @option, @status_ids)}
+	 #    end
+	 	Company.generate_bookings_report(current_user.company_id, @locations.pluck(:id), @from, @to, @option, @status_ids)
+	    #respond_to do |format|
+	    #	format.xls {render :template => 'public/reservas_' + current_user.company_id.to_s + '.xls'}
+	    #end
+	    send_file "#{Rails.root}/public/reservas_" + current_user.company_id.to_s + ".xls", filename: "reporte_reservas.xls"
+	    #send_data Company.generate_bookings_report(current_user.company_id, @locations.pluck(:id), @from, @to, @option, @status_ids), filename: "reporte_reservas.xls"
 	end
 
 	def set_params
