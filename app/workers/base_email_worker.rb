@@ -1,8 +1,10 @@
 class BaseEmailWorker
+  require 'rfc822'
+
   def self.filter_mails(recipients)
     filtered = []
     recipients.each do |mail|
-      if mail =~ /\A[\w+\-.]+[\w+\-]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
+      if mail.downcase.is_email?
         if EmailBlacklist.find_by_email(mail).nil?
           puts "Email ok #{mail}"
           filtered << mail.downcase

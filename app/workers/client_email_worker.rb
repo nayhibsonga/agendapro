@@ -44,7 +44,7 @@ class ClientEmailWorker < BaseEmailWorker
     def self.loggable_filter_mails(recipients)
       filtered = []
       recipients.each do |mail|
-        if mail =~ /\A[\w+\-.]+[\w+\-]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
+        if mail.downcase.is_email?
           if EmailBlacklist.find_by_email(mail).nil?
             filtered << mail.downcase
           else
