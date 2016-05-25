@@ -25,7 +25,7 @@
       </div>
       <div class="form-group">
         <label for="status_ids[]" class="col-sm-1 control-label" style="margin-top: 20px;">Estado:</label>
-        <div class="col-sm-8">
+        <div class="col-sm-7">
           <% for status in Status.all do %>
             <label class="checkbox-inline" style="margin-top: 20px;">
               <%= check_box_tag 'status_ids[]', status.id, params[:status_ids].blank? && status.name != 'Cancelado' ? true : params[:status_ids] && params[:status_ids].includes(status.id), {class: "report_select"} %>
@@ -33,8 +33,8 @@
             </label>
           <% end %>
         </div>
-        <div class="col-sm-3">
-          <p><small>* Este reporte considera todas las reservas y sesiones agendadas, sin importar si tienen un pago asociado o no.</small></p>
+        <div class="col-sm-4">
+          <p style="color: #7d7a7a; font-style: italic; text-align: justify; margin-top: 10px; font-size: 13px;">* Este reporte considera todas las reservas y sesiones agendadas, sin importar si tienen un pago asociado o no.</p>
         </div>
       </div>
     </div>
@@ -43,6 +43,13 @@
     <div class="col-md-2">
       <ul id="myTab" class="nav nav-pills nav-stacked tab-margin" role="tablist">
         <li class="active"><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="status_details">General</a></li>
+        <li class="dropdown">
+          <a href="#" id="bookingsTabDrop" class="dropdown-toggle" data-toggle="dropdown">Reservas <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="bookingsTabDrop">
+            <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="bookings_history">Historial</a></li>
+            <li><a href="#render_content" tabindex="-1" role="tab" data-toggle="tab" class="tab_index render" id="bookings_metrics">Métricas</a></li>
+          </ul>
+        </li>
         <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="locations">Locales</a></li>
         <li class=""><a href="#render_content" role="tab" data-toggle="tab" class="tab_index render" id="services">Servicios</a></li>
         <li class="dropdown">
