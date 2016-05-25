@@ -1,15 +1,15 @@
-<% campaigns_stats = [ { name: 'Enviados', data: ClientEmailLog.where(campaign_id: @campaigns.pluck(:id)).group_by_day(:timestamp).count }, { name: 'Entregados', data: ClientEmailLog.where(progress: 2, campaign_id: @campaigns.pluck(:id)).group_by_day(:timestamp).count }, { name: 'Visualizaciones', data: ClientEmailLog.where(campaign_id: @campaigns.pluck(:id)).group_by_day(:timestamp).sum(:opens) }, { name: 'Clicks', data: ClientEmailLog.where(campaign_id: @campaigns.pluck(:id)).group_by_day(:timestamp).sum(:clicks) } ] %>
+<% campaigns_stats = [ { name: 'Enviados', data: @campaigns.group_by_day(:sent_date).sum(:total_recipients) }, { name: 'Entregados', data: ClientEmailLog.where(progress: 2, campaign_id: @campaigns.pluck(:id)).group_by_day(:timestamp).count }, { name: 'Visualizaciones', data: ClientEmailLog.where(campaign_id: @campaigns.pluck(:id)).group_by_day(:timestamp).sum(:opens) }, { name: 'Clicks', data: ClientEmailLog.where(campaign_id: @campaigns.pluck(:id)).group_by_day(:timestamp).sum(:clicks) } ] %>
 
 <div class="row">
   <div class="col-md-12">
-    <%= line_chart campaigns_stats, discrete: true, library: {hAxis: {title: "Fecha" }, vAxis: {title: "Cantidad", format: "#"}, title: "Rendimiento de Campañas por Día" } %>
+    <%= line_chart campaigns_stats, discrete: true, library: {hAxis: {title: "Fecha" }, vAxis: {title: "Cantidad", format: "#"}, title: "Rendimiento de Campañas por Día" }, height: "400px" %>
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
     <table class="table">
       <tbody>
-        <% @campaigns.each do |campaign| %>
+        <% @campaigns.order(sent_date: :desc).each do |campaign| %>
         <tr>
           <td>
             <h4>
@@ -21,7 +21,7 @@
           </td>
           <td class="text-center">
             <h4>
-              <strong><%= ClientEmailLog.where(campaign_id: campaign.id).count %></strong> <small>(<%=  "%g" % ("%.2f" % (100*ClientEmailLog.where(campaign_id: campaign.id).count/campaign.total_targets)) %>%)</small>
+              <strong><%= campaign.total_recipients %></strong> <small>(<%=  "%g" % ("%.2f" % (100*campaign.total_recipients/campaign.total_targets)) %>%)</small>
             </h4>
             <p>
               <small>Emails Enviados</small>
