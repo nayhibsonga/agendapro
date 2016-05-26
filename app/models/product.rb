@@ -254,4 +254,40 @@ class Product < ActiveRecord::Base
     end
   end
 
+  def self.generate_file(company_id, products, locations, filepath)
+    require 'writeexcel'
+
+    company = Company.find(company_id)
+    title = filepath
+    workbook = WriteExcel.new(title)
+
+    worksheet = workbook.add_worksheet
+
+    header = ["Sku", "Categoría", "Marca", "Nombre", "Cantidad/Unidad", "Costo", "Precio venta externa", "Precio venta interna", "Comisión", "Tipo de comisión (0: %, 1: $)", "Descripción"]
+
+    locations.each do |location|
+      header << "Stock " + location.name
+    end
+
+    worksheet.write_row(0, 0, header)
+
+    products.each_with_index do |product, index|
+      product_row = [product.sku, product.product_category.name, product.product_brand.name, product.name, product.product_display.name, product.cost, product.price, product.internal_price, product.comission_value, product.comission_option, product.description]
+
+      locations.each do |location|
+        location_product = LocationProduct.where(:location_id => location.id, :product_id => product.id).first
+        product_row << location_product.stock
+        worksheet.write_row(index+1, 0, product_row)
+      end
+
+    end
+
+
+    workbook.close
+
+    return workbook
+
+
+  end
+
 end

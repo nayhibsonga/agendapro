@@ -2897,6 +2897,12 @@ class PaymentsController < ApplicationController
     @location_ids = current_user.company.locations.pluck(:id)
 
     respond_with(@service_providers)
+    #filepath = "#{Rails.root}/public/payments_files/productos_" + current_user.company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+    #Payment.generate_providers_report(current_user.company_id, @service_providers, @from, @to, @location_ids, filepath)
+
+    #send_file filepath, filename: "reporte_prestadores.xls"
+
+    #Company.delay(run_at: 2.hours.from_now).delete_booking_file(filepath)
 
   end
 

@@ -451,6 +451,7 @@ Agendapro::Application.routes.draw do
     get '/location_alarms', :to => 'locations#stock_alarm_form'
     post '/save_alarms', :to => 'locations#save_stock_alarm'
     get '/location_sellers', :to => 'locations#sellers'
+    get '/products_download', :to => 'products#download'
 
     patch '/cashiers/:id/activate', :to => 'cashiers#activate', :as => 'activate_cashier'
     patch '/cashiers/:id/deactivate', :to => 'cashiers#deactivate', :as => 'deactivate_cashier'
