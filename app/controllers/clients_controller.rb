@@ -123,7 +123,7 @@ class ClientsController < ApplicationController
 
     send_file filepath, filename: "clientes.xls"
 
-    Company.delay(run_at: 1.minutes.from_now).delete_booking_file(filepath)
+    Company.delay(run_at: 2.hours.from_now).delete_booking_file(filepath)
 
   end
 
