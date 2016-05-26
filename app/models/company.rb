@@ -897,7 +897,7 @@ class Company < ActiveRecord::Base
 		"#{countries.web_address}.agendapro#{countries.country.domain}"
 	end
 
-	def self.generate_bookings_report(company_id, location_ids, from, to, option, status_ids)
+	def self.generate_bookings_report(company_id, location_ids, from, to, option, status_ids, filepath)
 	    require 'writeexcel'
 
 	    header = []
@@ -911,7 +911,7 @@ class Company < ActiveRecord::Base
       	end
 
 	    company = Company.find(company_id)
-	    title = 'public/reservas_' + company_id.to_s + '.xls'
+	    title = filepath
 	    workbook = WriteExcel.new(title)
 
 	    worksheet = workbook.add_worksheet
@@ -943,7 +943,7 @@ class Company < ActiveRecord::Base
 	    	if option.to_i == 0
 	    		booking_date = booking.created_at.strftime('%d/%m/%Y %R')
 	    	else
-	    		booking.start.strftime('%d/%m/%Y %R')
+	    		booking_date = booking.start.strftime('%d/%m/%Y %R')
 	    	end
 
 	    	booking_row = [booking_date, booking.location.name, booking_client, booking.service.name, booking.service_provider.public_name, booking.status.name, payed_state]
@@ -956,6 +956,10 @@ class Company < ActiveRecord::Base
 
 	    return workbook
 
+	end
+
+	def self.delete_booking_file(filepath)
+		File.delete(filepath)
 	end
 
 end

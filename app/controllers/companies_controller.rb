@@ -1817,9 +1817,16 @@ class CompaniesController < ApplicationController
 
 		@company = current_user.company
 
-		respond_to do |format|
-	      format.xls {render xls: Client.generate_import_file(@company.id)}
-	    end
+		#respond_to do |format|
+	    #  format.xls {render xls: Client.generate_import_file(@company.id)}
+	    #end
+
+	    filepath = "#{Rails.root}/public/clients_files/importador_" + @company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+	 	Client.generate_import_file(@company.id, filepath)
+
+	    send_file filepath, filename: "importador_clientes.xls"
+
+		Company.delay(run_at: 10.minutes.from_now).delete_booking_file(filepath)
 
 	end
 
