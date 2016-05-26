@@ -95,6 +95,38 @@ class ClientsController < ApplicationController
 
   end
 
+  def download
+
+    selected_custom_filters = []
+    if !params[:custom_filters].blank?
+      selected_custom_filters = CustomFilter.find(params[:custom_filters])
+    end
+
+    @clients = Client.accessible_by(current_ability)
+    #@clients_export = Client.accessible_by(current_ability)
+
+    #Custom filters
+    selected_custom_filters.each do |custom_filter|
+      @clients = Client.custom_filter(@clients, custom_filter)
+      #@clients_export = Client.custom_filter(@clients_export, custom_filter)
+    end
+
+
+    @clients = @clients.filter(current_user.company_id, params)
+    #@clients_export = @clients_export.filter(current_user.company_id, params)
+
+    @clients_export = @clients.order(sort_column + " " + sort_direction)
+    @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
+
+    filepath = "#{Rails.root}/public/clients_files/clientes_" + current_user.company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+    Company.generate_clients_file(current_user.company_id, @clients_export, filepath)
+
+    send_file filepath, filename: "clientes.xls"
+
+    Company.delay(run_at: 1.minutes.from_now).delete_booking_file(filepath)
+
+  end
+
   # GET /clients/1
   # GET /clients/1.json
   def show
