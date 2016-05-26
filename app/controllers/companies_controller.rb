@@ -1821,7 +1821,7 @@ class CompaniesController < ApplicationController
 	    #  format.xls {render xls: Client.generate_import_file(@company.id)}
 	    #end
 
-	    filepath = "#{Rails.root}/public/clients_files/importador_" + @company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+	    filepath = "#{Rails.root}/public/clients_files/importador_" + @company.id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
 	 	Client.generate_import_file(@company.id, filepath)
 
 	    send_file filepath, filename: "importador_clientes.xls"
