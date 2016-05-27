@@ -1,0 +1,75 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-green">
+      <div class="panel-heading">
+        <h3 class="panel-title reports-panel-title">Reservas</h3>
+      </div>
+      <div class="panel-body panel-scrollable">
+        <table class="table table-summary">
+          <thead>
+            <tr>
+              <th>
+                <% if @option.to_i == 0 %>
+                  Fecha de creación
+                <% else %>
+                  Fecha de realización
+                <% end %>
+              </th>
+              <th>Local</th>
+              <th>Cliente</th>
+              <th>Servicio</th>
+              <th>Prestador</th>
+              <th>Estado</th>
+              <th>Estado de pago</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% 
+              if @option.to_i == 0
+                @bookings = Booking.where(created_at: @from..@to, status_id: @status_ids, location_id: @locations.pluck(:id)).order(created_at: :desc)
+              else
+                @bookings = Booking.where(start: @from..@to, status_id: @status_ids, location_id: @locations.pluck(:id)).order(start: :desc)
+              end
+            %>
+            <% @bookings.each do |booking| %>
+              <tr>
+                <td>
+                  <% if @option.to_i == 0 %>
+                    <%= booking.created_at.strftime('%d/%m/%Y %R') %>
+                  <% else %>
+                    <%= booking.start.strftime('%d/%m/%Y %R') %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= booking.location.name %>
+                </td>
+                <td>
+                  <% if booking.client.nil? %>
+                    Sin información
+                  <% else %>
+                    <%= booking.client.full_name %>
+                  <% end %>
+                </td>
+                <td><%= booking.service.name %></td>
+                <td><%= booking.service_provider.public_name %></td>
+                <td><%= booking.status.name %></td>
+                <td>
+                  <% if !booking.payed_booking.nil? %>
+                    Pagada (en línea)
+                  <% elsif !booking.payment.nil? %>
+                    Pagada (pago asociado)
+                  <% elsif booking.payed_state %>
+                    Pagada
+                  <% else %>
+                    No pagada
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <a target="_blank" href="/report_bookings_history_sheet.xls?option=<%= @option %>&from=<%= @from %>&to=<%= @to %>&status_ids=<%= params[:status_ids] %>" id="downloadBookingsHistoryBtn"><button class="btn btn-green">Descargar</button></a>
+  </div>
+</div>

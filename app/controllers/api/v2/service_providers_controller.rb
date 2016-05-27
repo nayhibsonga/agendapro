@@ -22,11 +22,11 @@ module Api
 			location_times_final_close = location_times_final.close
 
 			providers = []
-		  if params[:id] != "0"
+			if params[:id] != "0"
 				providers = ServiceProvider.where(id: params[:id])
-		  else
-		    providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(:order, :public_name)
-		  end
+			else
+				providers = ServiceProvider.where(id: @service.service_providers.pluck(:id), location_id: @location.id, active: true, online_booking: true).order(:order, :public_name)
+			end
 
 
 			@available_time = []

@@ -1,0 +1,37 @@
+<div class="container-fluid background-grey">
+
+  <%= render 'client_layout' %>
+
+</div>
+<div class="container-fluid" style="margin-top: 10px;">
+  <div class="row" style="margin-bottom: 15px;">
+    <div class="col-md-12">
+
+      <div class="row">
+        <label for="from" class="col-sm-1 control-label">Desde:</label>
+        <div class="col-sm-3">
+          <input type="text" id="from" name="from" class="form-control option_select" value="<%= @start_date %>">
+        </div>
+        <label for="from" class="col-sm-1 control-label">Hasta:</label>
+        <div class="col-sm-3">
+          <input type="text" id="to" name="to" class="form-control option_select" value="<%= @end_date %>">
+        </div>
+        <div style="clear: both;">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <input type="hidden" id="client_id" value="<%= @client.id %>" />
+
+  <div id="client_emails_div">
+
+  </div>
+</div>
+
+<input type="hidden" id="client_id" value="<%= @client.id %>" />
+
+<% content_for :scripts do %>
+  <%= javascript_include_tag "admin/clients-emails" %>
+<% end %>

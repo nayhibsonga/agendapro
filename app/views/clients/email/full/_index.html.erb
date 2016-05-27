@@ -7,6 +7,9 @@
       <li role="presentation">
         <a href="#saved" aria-controls="saved" role="tab" data-toggle="tab">Guardadas</a>
       </li>
+      <li role="presentation">
+        <a href="#reports" aria-controls="reports" role="tab" data-toggle="tab">Reportes de Campañas</a>
+      </li>
   </ul>
 
   <!-- Tab panes -->
@@ -21,6 +24,10 @@
       <% @saved.each do |content| %>
          <%= render partial: '/clients/email/full/saved_list', locals: {content: content} %>
       <% end %>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="reports">
+      <%= render partial: '/clients/email/full/reports' %>
     </div>
 
   </div>

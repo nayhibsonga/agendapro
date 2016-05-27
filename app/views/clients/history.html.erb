@@ -1,10 +1,7 @@
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-12">
-      <h2 class="text-green">Historial Reservas <%= @client.email %></h2>
-      <p>En esta sección se muestran todas las reservas hechas para este cliente, identificando por el e-mail ingresado en la reserva.</p>
-    </div>
-  </div>
+
+  <%= render 'client_layout' %>
+
   <div class="row">
     <div class="col-md-12">
       <table class="table table-green">

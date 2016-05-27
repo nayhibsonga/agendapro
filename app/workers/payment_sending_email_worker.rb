@@ -5,6 +5,8 @@ class PaymentSendingEmailWorker < BaseEmailWorker
     total_recipients = 0
 
     payment_sending = PaymentSending.find(sending.sendable_id)
+
+    targets = payment_sending.emails.split(',').size
     recipients = filter_mails(payment_sending.emails.split(','))
     payment = payment_sending.payment
 
@@ -15,6 +17,6 @@ class PaymentSendingEmailWorker < BaseEmailWorker
       PaymentsSystemMailer.delay.send(sending.method, payment, group.join(', ')) if group.size > 0
     end
 
-    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: @total_sendings, total_recipients: @total_recipients)
+    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: @total_sendings, total_recipients: @total_recipients, total_targets: targets)
   end
 end
