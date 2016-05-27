@@ -4134,7 +4134,7 @@ class BookingsController < ApplicationController
 
   def cancel_booking
     require 'date'
-
+    @errors = []
     unless params[:id]
       crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
       id = crypt.decrypt_and_verify(params[:confirmation_code])
