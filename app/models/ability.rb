@@ -395,6 +395,7 @@ class Ability
         can :campaigns_report_content, Client, :company_id => user.company_id
         can :campaign_report_details, Client, :company_id => user.company_id
         can :import, Client
+        can :download, Client
 
         can :import, Product
 
@@ -732,6 +733,7 @@ class Ability
         can :campaigns_report_content, Client, :company_id => user.company_id
         can :campaign_report_details, Client, :company_id => user.company_id
         can :import, Client
+        can :download, Client
 
         can :import, Product
 
@@ -842,6 +844,7 @@ class Ability
         can :campaigns_report_content, Client, :company_id => user.company_id
         can :campaign_report_details, Client, :company_id => user.company_id
         can :import, Client
+        can :download, Client
 
         can :locations_stats_excel, Product, :company_id => user.company_id
         can :logs_history_excel, Product, :company_id => user.company_id
