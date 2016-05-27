@@ -431,7 +431,7 @@ class Ability
         can :create, Attribute, :company_id => user.company_id
         can :update, Attribute, :company_id => user.company_id
         can :destroy, Attribute, :company_id => user.company_id
-        can :edit_form, Attribute, :company_id => user.company.id
+        can :edit_form, Attribute, :company_id => user.company_id
 
         can :show, AttributeCategory, :company_id => user.company_id
         can :create, AttributeCategory, :company_id => user.company_id
@@ -442,7 +442,7 @@ class Ability
         can :create, AttributeGroup, :company_id => user.company_id
         can :update, AttributeGroup, :company_id => user.company_id
         can :destroy, AttributeGroup, :company_id => user.company_id
-        can :edit_form, AttributeGroup, :company_id => user.company.id
+        can :edit_form, AttributeGroup, :company_id => user.company_id
 
         can :show, ClientFile, :client => {:company_id => user.company_id}
         can :create, ClientFile, :client => {:company_id => user.company_id}
