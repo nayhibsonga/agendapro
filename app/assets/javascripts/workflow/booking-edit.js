@@ -46,8 +46,6 @@ function loadCalendar()
 	  edit: true
 	}
 
-	console.log(data);
-
 	calendar = new PromoCalendar('/available_hours', data);
 
 	$(document).on('hourClick', function (e) {
@@ -147,7 +145,9 @@ $("#datepicker").datepicker({
 
 function addBooking (booking) {
 	var today = new Date();
-	today.setHours(23, 59, 59, 999);
+	//today.setHours(23, 59, 59, 999);
+	console.log(today);
+	console.log(booking.objectDate);
 	if (today < booking.objectDate) {
 		selected = true;
 		$('#start').val(generateDate(booking.date, booking.start));
@@ -156,11 +156,11 @@ function addBooking (booking) {
 	else {
 		selected = false;
 		$('.hora-activo').addClass('hora-disponible').removeClass('hora-activo');
-    swal({
-      title: "Horario Inválido",
-      text: "La fecha/hora elegida es anterior a la fecha/hora actual o no cumple el tiempo mínimo requerido para agendar.",
-      type: "error"
-    });
+	    swal({
+	      title: "Horario Inválido",
+	      text: "La fecha/hora elegida es anterior a la fecha/hora actual o no cumple el tiempo mínimo requerido para agendar.",
+	      type: "error"
+	    });
 	}
 }
 

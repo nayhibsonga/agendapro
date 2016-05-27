@@ -115,6 +115,23 @@ ActiveRecord::Schema.define(version: 20160526164458) do
     t.integer  "paid_months"
   end
 
+  create_table "booking_email_logs", force: true do |t|
+    t.integer  "booking_id"
+    t.string   "transmission_id"
+    t.string   "status"
+    t.string   "subject"
+    t.string   "recipient"
+    t.datetime "timestamp"
+    t.integer  "opens",           default: 0
+    t.integer  "clicks",          default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "progress",        default: 0
+    t.text     "details",         default: ""
+  end
+
+  add_index "booking_email_logs", ["booking_id"], name: "index_booking_email_logs_on_booking_id", using: :btree
+
   create_table "booking_histories", force: true do |t|
     t.integer  "booking_id"
     t.string   "action"
@@ -265,6 +282,25 @@ ActiveRecord::Schema.define(version: 20160526164458) do
   end
 
   add_index "client_comments", ["client_id"], name: "index_client_comments_on_client_id", using: :btree
+
+  create_table "client_email_logs", force: true do |t|
+    t.integer  "client_id"
+    t.integer  "campaign_id"
+    t.string   "transmission_id"
+    t.string   "status"
+    t.string   "subject"
+    t.string   "recipient"
+    t.datetime "timestamp"
+    t.integer  "opens",           default: 0
+    t.integer  "clicks",          default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "progress",        default: 0
+    t.text     "details",         default: ""
+  end
+
+  add_index "client_email_logs", ["client_id"], name: "index_client_email_logs_on_client_id", using: :btree
+
 
   create_table "client_files", force: true do |t|
     t.integer  "client_id"
@@ -636,6 +672,7 @@ ActiveRecord::Schema.define(version: 20160526164458) do
     t.integer  "total_recipients", default: 0
     t.json     "detail"
     t.string   "method"
+    t.integer  "total_targets"
   end
 
   create_table "email_templates", force: true do |t|
@@ -1731,6 +1768,15 @@ ActiveRecord::Schema.define(version: 20160526164458) do
 
   create_table "sparkpost_email_logs", force: true do |t|
     t.text     "raw_message"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sparkpost_statuses", force: true do |t|
+    t.string   "event_type"
+    t.string   "status"
+    t.integer  "progress",   default: 0
+    t.boolean  "blacklist",  default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

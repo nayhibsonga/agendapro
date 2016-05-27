@@ -10,6 +10,8 @@ class ReceiptEmailWorker < BaseEmailWorker
     admins = company.users.where(role: Role.find_by_name('Administrador General')).pluck(:email)
     admins << "cuentas@agendapro.cl"
 
+    targets = admins.size
+
     recipients = filter_mails(admins)
     recipients.in_groups_of(50).each do |group|
       group.compact!
@@ -21,7 +23,7 @@ class ReceiptEmailWorker < BaseEmailWorker
       ReceiptMailer.delay.send(sending.method, receipt, group.join(', '), sending.sendable_type) if group.size > 0
     end
 
-    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)
+    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients, total_targets: targets)
   end
 
   private

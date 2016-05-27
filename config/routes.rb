@@ -147,6 +147,8 @@ Agendapro::Application.routes.draw do
     scope controller: 'clients' do
       get '/compose_mail', action: 'compose_mail', as: 'send_mail'
       post '/send_mail_client', action: 'send_mail'
+      get '/campaigns_report_content', action: 'campaigns_report_content'
+      get '/campaign_report_details/:campaign_id', action: 'campaign_report_details', as: 'campaign_details'
     end
 
     # Mail Editor
@@ -181,6 +183,7 @@ Agendapro::Application.routes.draw do
     get '/get_session_bookings', :to => 'users#get_session_bookings'
     get '/get_session_summary', :to => 'users#get_session_summary'
     post '/delete_treatment', :to => 'bookings#delete_treatment'
+    post '/delete_client_treatment', :to => 'bookings#delete_client_treatment'
     post '/user_delete_treatment', :to => 'bookings#user_delete_treatment'
 
     scope controller: 'bookings' do
@@ -397,6 +400,7 @@ Agendapro::Application.routes.draw do
     get '/past_bookings', :to => 'payments#past_bookings'
     get '/past_sessions', :to => 'payments#past_sessions'
     get 'payment_client_bookings', :to => 'payments#client_bookings'
+    get '/payment_client_treatments', :to => 'payments#client_treatments'
     get 'payment_client_sessions', :to => 'payments#client_sessions'
     get '/payments_index_content', :to=> 'payments#index_content'
     post '/create_new_payment', :to => 'payments#create_new_payment'
@@ -527,6 +531,7 @@ Agendapro::Application.routes.draw do
     get '/get_treatment_price', :to => 'bookings#get_treatment_price'
     get '/payment_summary', :to => 'payments#summary'
     get '/get_treatment_info', :to => 'bookings#get_treatment_info'
+    get '/get_email_logs', :to => 'bookings#get_email_logs'
 
 
     get '/sales_cash_transaction_summary', :to => 'payments#sales_cash_transaction_summary'
@@ -572,6 +577,7 @@ Agendapro::Application.routes.draw do
 
     get '/company_clients_base', :to => 'companies#generate_clients_base'
     get '/client_bookings_content', :to => 'clients#bookings_content'
+    get '/client_treatments_content', :to => 'clients#treatments_content'
 
     get '/billing_info_admin_form', :to => 'billing_infos#super_admin_form'
     get '/billing_info_admin_edit', :to => 'billing_infos#super_admin_edit'
@@ -604,6 +610,8 @@ Agendapro::Application.routes.draw do
 
     get '/clients/:id/payments', :to => 'clients#payments', :as => 'client_payments'
     get '/clients/:id/payments_content', :to => 'clients#payments_content', :as => 'client_payments_content'
+    get '/clients/:id/emails', :to => 'clients#emails', :as => 'client_emails'
+    get '/clients/:id/emails_content', :to => 'clients#emails_content', :as => 'client_emails_content'
     get '/clients/:id/last_payments', :to => 'clients#last_payments', :as => 'clients_last_payments'
 
     get '/hours_test', :to => 'bookings#hours_test'

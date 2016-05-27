@@ -6,6 +6,7 @@ var paymentModalState = '';
 var paymentAmount = 0;
 var paymentItems = [];
 var paymentPastBookings = [];
+var paymentPastTreatments = [];
 var paymentNewBookings = [];
 var paymentProducts = [];
 var paymentReceipts = [];
@@ -21,6 +22,11 @@ var disabledPrice = '';
 */
 
 $(function() {
+
+  $('body').on('click', '.treatmentBookingsLink', function(){
+    $(this).find('.treatment-closed').toggle();
+    $(this).find('.treatment-open').toggle();
+  });
 
   $('#paymentAlertDiv .close').on('click', function(){
     $('#paymentAlertDiv').hide();
@@ -251,6 +257,7 @@ $(function() {
     {
       loadClientPastBookings();
       $("#paymentClientPastBookings").show();
+      $('#paymentClientPastTreatments').show()
     }
     loadPaymentServiceCategories();
     $("#paymentModalBookingForm").show();
@@ -261,6 +268,7 @@ $(function() {
 
     $("#paymentModalBookingForm").hide();
     $("#paymentClientPastBookings").hide();
+    $('#paymentClientPastTreatments').hide()
     loadLocationProducts();
     loadProductSellers();
     $("#paymentModalProductForm").show();
@@ -1881,7 +1889,128 @@ function getServicePrice(){
 function loadClientPastBookings(){
 
   $('#cpb-bookings').empty();
+  $('#cpt-treatments').empty();
   if (parseInt($('#payment_client_id').val()) > 0 && parseInt($('#payment_location').val()) > 0) {
+
+      $.getJSON('/payment_client_treatments/', { client_id: parseInt($('#payment_client_id').val()), location_id: parseInt($('#payment_location').val()) }, function (response) {
+        past_treatments = response.past_treatments;
+
+        if (past_treatments.length > 0) {
+          $.each(past_treatments, function(key, past_treatment){
+
+            console.log("Treatment:");
+            console.log(past_treatment);
+            console.log("Service: " + past_treatment.service.name);
+            
+            //Check if the treatment has any booking left
+            var treatment_has_bookings = true;
+            console.log("Treatment bookings: " + past_treatment.bookings.length);
+            if(past_treatment.bookings.length < 1)
+            {
+              treatment_has_bookings = false;
+            }
+
+            //Check if they've been added to paymentBookings.
+            var treatment_bookings_amount = past_treatment.bookings.length;
+            var treatment_bookings_added = 0;
+
+            $.each(past_treatment.bookings, function(key, past_booking){
+              for(pb_i = 0; pb_i < paymentPastBookings.length; pb_i++)
+              {
+                if(paymentPastBookings[pb_i] != null)
+                {                  
+                  if(paymentPastBookings[pb_i].id == past_booking.booking.id)
+                  {
+                    treatment_bookings_added += 1;                    
+                  }                  
+                }
+              }
+            });
+
+            if(treatment_has_bookings && (treatment_bookings_amount != treatment_bookings_added))
+            {
+
+              //Add treatment row
+              treatment_btn = '<button class="addPastBookingTreatment" title="Haz click en este botón para agregar todas las sesiones de este tratamiento que no estén asociadas a otro pago." session_booking_id="' + past_treatment.treatment.id + '"><i class="fa fa-plus"></i></button>';
+
+              $('.addPastBookingTreatment').tooltip({
+                placement: "right",
+                template: '<div class="tooltip custom-tooltip-div" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner custom-tooltip"></div></div>'
+              });
+
+              $("#cpt-treatments").append('<div class="pastTreatmentRow" session_booking_id="' + past_treatment.treatment.id + '">' +
+                '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;">' +
+                '<div class="col-xs-2 pastBookingCol">' + treatment_btn + '</div>' +
+                '<div class="col-xs-9 pastBookingCol"><a class="treatmentBookingsLink" href="#treatmentBookingsDiv' + past_treatment.treatment.id + '" data-toggle="collapse">' + past_treatment.service.name + ' (' + past_treatment.treatment.sessions_taken + ' agendada(s)) <span class="treatment-closed"><i class="fa fa-caret-right"></i></span><span class="treatment-open" hidden><i class="fa fa-caret-down"></i></span></a></div>' +
+                '</div></div>'
+              );
+
+              //$("#cpt-treatments").append('<div id="treatmentBookingsDiv' + past_treatment.treatment.id + '" class="collapse">');
+
+              var tb_str = '<div id="treatmentBookingsDiv' + past_treatment.treatment.id + '" class="collapse">';
+
+              //Recheck for every booking before adding it
+
+              $.each(past_treatment.bookings, function(key, past_booking){
+                var past_booking_exists = false;
+                for(pb_i = 0; pb_i < paymentPastBookings.length; pb_i++)
+                {
+                  if(paymentPastBookings[pb_i] != null)
+                  {                  
+                    if(paymentPastBookings[pb_i].id == past_booking.booking.id)
+                    {
+                      past_booking_exists = true;
+                      break;                  
+                    }                  
+                  }
+                }
+
+                if(!past_booking_exists)
+                {
+                  var service_name = past_booking.booking_service;
+                  var booking_date = ""
+                  if(past_booking.is_booked)
+                  {
+                    service_name = service_name + " (" + past_booking.session_number + "/" + past_booking.sessions_amount + ")";
+                    booking_date = past_booking.booking_datetime;
+                  }
+                  else
+                  {
+                    service_name = service_name + " (no agendada)";
+                  }
+
+                  /*$("#cpt-treatments").append('<div class="pastBookingRow" session_booking_id="' + past_treatment.treatment.id + '" booking_id="' + past_booking.booking.id + '">' +
+                    '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addPastBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
+                    '<div class="col-xs-3 pastBookingCol">' + service_name + '</div>' +
+                    '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_provider + '</div>' +
+                    '<div class="col-xs-4 pastBookingCol">' + booking_date + '</div>' +
+                    '</div></div>'
+                  );*/
+
+                  tb_str += '<div class="pastBookingRow" session_booking_id="' + past_treatment.treatment.id + '" booking_id="' + past_booking.booking.id + '">' +
+                    '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addPastBooking addTreatmentBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
+                    '<div class="col-xs-3 pastBookingCol">' + service_name + '</div>' +
+                    '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_provider + '</div>' +
+                    '<div class="col-xs-4 pastBookingCol">' + booking_date + '</div>' +
+                    '</div></div>';
+
+                }
+
+              });
+
+              //$('#cpt-treatments').append('</div>');
+
+              tb_str += '</div>';
+
+              $('#cpt-treatments').append(tb_str);
+
+            }
+
+          });
+        }
+
+      });
+
       $.getJSON('/payment_client_bookings/', { client_id: parseInt($('#payment_client_id').val()), location_id: parseInt($('#payment_location').val()) }, function (past_bookings) {
           if (past_bookings.past_bookings.length > 0) {
             $.each(past_bookings.past_bookings, function (key, past_booking) {
@@ -1926,11 +2055,10 @@ function loadClientPastBookings(){
                 }
 
                 $("#cpb-bookings").append('<div class="pastBookingRow" session_booking_id="' + past_booking.session_booking_id + '" booking_id="' + past_booking.booking.id + '">' +
-                  '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-1 pastBookingCol"><button class="addPastBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
-                  '<div class="col-xs-2 pastBookingCol">' + treatment_btn + '</div>' +
+                  '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addPastBooking" booking_id="' + past_booking.booking.id + '"><i class="fa fa-plus"></i></button></div>' +
                   '<div class="col-xs-3 pastBookingCol">' + service_name + '</div>' +
                   '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_provider + '</div>' +
-                  '<div class="col-xs-3 pastBookingCol">' + past_booking.booking_datetime + '</div>' +
+                  '<div class="col-xs-4 pastBookingCol">' + past_booking.booking_datetime + '</div>' +
                   '</div></div>'
                 );
               }
@@ -2931,6 +3059,7 @@ function resetPaymentStep1()
 
   $("#paymentModalBookingForm").hide();
   $("#paymentClientPastBookings").hide();
+  $('#paymentClientPastTreatments').hide()
   $("#paymentModalProductForm").hide();
 
   $("#payment_not_booked_category").empty();

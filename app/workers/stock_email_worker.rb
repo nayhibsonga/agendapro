@@ -6,6 +6,8 @@ class StockEmailWorker < BaseEmailWorker
 
     stock = self.stock(sending)
 
+    targets = self.recipients(stock).size
+
     recipients = filter_mails(self.recipients(stock))
     recipients.in_groups_of(50).each do |group|
       group.compact!
@@ -14,7 +16,7 @@ class StockEmailWorker < BaseEmailWorker
       StockMailer.delay.send(sending.method, stock, group.join(', ')) if group.size > 0
     end
 
-    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)
+    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients, total_targets: targets)
   end
 
   private

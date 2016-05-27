@@ -26,8 +26,8 @@ class Client < ActiveRecord::Base
   validate :mail_uniqueness, :record_uniqueness, :minimun_info
 
   after_update :client_notification
-  # after_create :check_gender
-  # after_save :check_gender
+  after_create :check_gender
+  after_save :check_gender
 
   def check_gender
     if self.gender.nil?

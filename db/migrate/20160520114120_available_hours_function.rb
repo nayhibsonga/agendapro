@@ -35,13 +35,18 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  r_id int;
 		  current_start timestamp;
 		  time_offset double precision;
+		  day int;
 		BEGIN
 		  time_offset := (select countries.timezone_offset from countries where id = (select companies.country_id from companies where id = (select locations.company_id from locations where id = local_id)));
 		  current_start := localtimestamp + interval '1hr' * time_offset;
 		  cancelled_id := (select id from statuses where name = 'Cancelado');
+		  day := extract(dow from start_date);
+		  IF day = 0 THEN
+		    day := 7;
+		  END IF;
 
 		  --Check location_times
-		  IF not exists(select id from location_times where location_times.location_id = local_id AND location_times.day_id = extract(dow from start_date) AND location_times.open <= (select "time"(start_date)) AND location_times.close >= (select "time"(end_date))) THEN
+		  IF not exists(select id from location_times where location_times.location_id = local_id AND location_times.day_id = day AND location_times.open <= (select "time"(start_date)) AND location_times.close >= (select "time"(end_date))) THEN
 		  	return false;
 		  END IF;
 
@@ -57,13 +62,13 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  END IF;
 
 		  --Check provider_times
-		  IF not exists (select id from provider_times where provider_times.service_provider_id = provider_id AND provider_times.day_id = extract(dow from start_date) AND provider_times.open <= (select "time"(start_date)) AND provider_times.close >= (select "time"(end_date))) THEN
+		  IF not exists (select id from provider_times where provider_times.service_provider_id = provider_id AND provider_times.day_id = day AND provider_times.open <= (select "time"(start_date)) AND provider_times.close >= (select "time"(end_date))) THEN
 		    return false;
 		  END IF;
 
 		  --Check service_times
 		  IF (select time_restricted from services where services.id = serv_id limit 1) THEN
-		  	IF not exists(select id from service_times where service_times.service_id = serv_id AND service_times.day_id = extract(dow from start_date) AND service_times.open <= (select "time"(start_date)) AND service_times.close >= (select "time"(end_date)))  THEN
+		  	IF not exists(select id from service_times where service_times.service_id = serv_id AND service_times.day_id = day AND service_times.open <= (select "time"(start_date)) AND service_times.close >= (select "time"(end_date)))  THEN
 		  		return false;
 		  	END IF;
 		  END IF;
@@ -144,6 +149,9 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		  --used_time := 0::decimal;
 		  --available_time := 0::decimal;
 		  day := extract(dow from start_date);
+		  IF day = 0 THEN
+		    day := 7;
+		  END IF;
 
 		  used_epoch := 0;
 		  available_epoch := 0;
@@ -428,6 +436,9 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		BEGIN
 
 		  day := extract(dow from start_date);
+		  IF day = 0 THEN
+		    day := 7;
+		  END IF;
 		  comp_id := company_id;
 		  before_time := localtimestamp + ((select before_booking from company_settings where company_settings.company_id = comp_id) * interval '1 hour');
 		  after_time := localtimestamp + ((select after_booking from company_settings where company_settings.company_id = comp_id) * interval '1 month');
@@ -480,6 +491,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		  IF not exists(select id from location_times where location_times.location_id = local_id AND location_times.day_id = day) THEN
 		    -- No location_time, return from function;
+		    RAISE NOTICE 'No location_time for day %', day;
 		    RETURN;
 		  END IF;
 
@@ -512,6 +524,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		      --Break if there are no providers
 		      IF array_length(current_service_providers_ids, 1) < 1 THEN
+		        RAISE NOTICE 'No providers for current service';
 		        RETURN;
 		        EXIT staff_loop;
 		      END IF;
@@ -522,6 +535,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		      IF EXISTS(select open from provider_times where service_provider_id = ANY(current_service_providers_ids) and day_id = day order by open limit 1) THEN
 		        --Nothing
 		      ELSE
+		        RAISE NOTICE 'No open for provider';
 		        RETURN;
 		        EXIT staff_loop;
 		      END IF;
@@ -569,7 +583,7 @@ class AvailableHoursFunction < ActiveRecord::Migration
 
 		      IF providers_ids[service_staff_pos] != 0 THEN
 
-		       --RAISE NOTICE 'CHECKING FOR % - %', dtp, dtp + interval '1' minute * durations[service_staff_pos];
+		       RAISE NOTICE 'CHECKING FOR % - %', dtp, dtp + interval '1' minute * durations[service_staff_pos];
 
 		        service_valid := check_hour(local_id, providers_ids[service_staff_pos], service_ids[service_staff_pos], dtp, dtp + interval '1' minute * durations[service_staff_pos], admin);
 

@@ -1492,9 +1492,14 @@ tr[class*="break"] {
   border: 1px solid #949292;
 }
 
+#paymentClientPastTreatments{
+  margin-top: 15px;
+  border: 1px solid #949292;
+}
+
 .cpb-title{
   border-bottom: 1px solid #949292;
-  margin-bottom: 10px;
+  margin-bottom: 2px;
   padding-top: 5px;
   padding-bottom: 5px;
   text-align: center;
@@ -1503,7 +1508,7 @@ tr[class*="break"] {
 
 .cpb-headers{
   border-bottom: 1px solid #949292;
-  margin-bottom: 10px;
+  margin-bottom: 2px;
   padding-top: 5px;
   padding-bottom: 5px;
   text-align: center;
@@ -1518,7 +1523,12 @@ tr[class*="break"] {
 }
 
 #cpb-bookings{
-  max-height: 185px;
+  max-height: 158px;
+  overflow-y: auto;
+}
+
+#cpt-treatments{
+  max-height: 158px;
   overflow-y: auto;
 }
 
@@ -1528,6 +1538,7 @@ tr[class*="break"] {
   text-align: center;
   border-radius: 3px;
   border: none;
+  margin-left: 20px;
 }
 
 .addPastBooking:hover{
@@ -1552,6 +1563,7 @@ tr[class*="break"] {
   text-align: center;
   border-radius: 3px;
   border: none;
+  margin-left: 20px;
 }
 
 .addPastBookingTreatment:hover{
@@ -1568,6 +1580,25 @@ tr[class*="break"] {
   text-align: center;
   border-radius: 3px;
   border: none;
+}
+
+.addTreatmentBooking{
+  margin-left: 30px;
+}
+
+.treatmentBookingsLink{
+  text-decoration: none;
+  color: #505050;
+}
+
+.treatmentBookingsLink:hover{
+  text-decoration: none;
+  color: #949292;
+}
+
+.treatmentBookingsLink:focus{
+  text-decoration: none;
+  color: #949292;
 }
 
 .pastBookingRow{
@@ -2483,6 +2514,26 @@ tr[class*="break"] {
   text-align: center;
   text-decoration: none;
   background-color: #fff;
+}
+
+.treatment-table{
+  margin-bottom: 5px;
+}
+
+.treatment-table th{
+  width: 14%;
+  background-color: #ccc;
+  color: #fff;
+}
+
+.treatment-table td{
+  width: 14%;
+  background-color: #f5f5f5;
+}
+
+.treatment-icons-closed, .treatment-icons-open{
+  font-weight: normal;
+  font-size: 14px;
 }
 
 .reports-panel-title{
