@@ -2617,99 +2617,89 @@ class BookingsController < ApplicationController
     @bookings = Booking.where('bookings.service_provider_id IN (?)', @providers.pluck(:id)).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').includes(:client).includes(:service).includes(:session_booking)
 
     @bookings.each do |booking|
-      if booking.status_id != @cancelled_id
-        event = Hash.new
-        booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
-        booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
+      event = Hash.new
+      booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
+      booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
 
-        payedClass = ''
-        if booking.payed_state
-          payedClass = ' payed'
-        end
-        bundleClass = ''
-        if booking.bundled
-          bundleClass = ' bundle'
-        end
-        originClass += providerLock + statusIcon[booking.status_id] + payedClass + bundleClass
-
-        title = ''
-        qtip = ''
-        phone = ''
-        email = ''
-        comment = ''
-        prepayed = ''
-        is_session = false
-        sessions_ratio = ''
-
-        if booking.client.first_name
-          title += booking.client.first_name
-          qtip += booking.client.first_name
-        end
-        if booking.client.last_name
-          title += ' ' + booking.client.last_name
-          qtip += ' ' + booking.client.last_name
-        end
-        if booking.service.name
-          title += ' - ' + booking.service.name
-        end
-
-        # Se verifica que existan los datos y en caso contrario, se deja como string vacío para evitar nulos en los Qtips
-
-        phone = booking.client.phone if booking.client.phone
-
-        email = booking.client.email if booking.client.email
-
-        comment = booking.company_comment if booking.company_comment
-
-        if booking.payed_state
-          prepayed = 'Sí'
-        else
-          prepayed = 'No'
-        end
-
-        if booking.is_session && booking.session_booking
-          is_session = true
-          session_index = 1
-          Booking.where(:session_booking_id => booking.session_booking_id, :is_session_booked => true).order('start asc').each do |b|
-            if b.id == booking.id
-              break
-            else
-              session_index = session_index + 1
-            end
-          end
-          sessions_ratio = "Sesión " + session_index.to_s + " de " + booking.session_booking.sessions_amount.to_s
-        else
-          sessions_ratio = "0/0"
-          is_session = false
-        end
-
-
-        if booking.is_session && booking.is_session_booked && !booking.user_session_confirmed
-          originClass += ' session'
-        end
-
-        event = {
-          id: booking.id,
-          title: title,
-          allDay: false,
-          start: booking.start,
-          end: booking.end,
-          resourceId: booking.service_provider_id,
-          className: originClass,
-          title_qtip: qtip,
-          time_qtip: booking.start.strftime("%H:%M") + ' - ' + booking.end.strftime("%H:%M"),
-          service_qtip: booking.service.name,
-          phone_qtip: phone,
-          email_qtip: email,
-          comment_qtip: comment,
-          prepayed_qtip: prepayed,
-          is_session_qtip: is_session,
-          sessions_ratio_qtip: sessions_ratio,
-          identification_number_qtip: booking.client.identification_number ? booking.client.identification_number : ""
-        }
-
-        events.push(event)
+      payedClass = ''
+      if booking.payed_state
+        payedClass = ' payed'
       end
+      bundleClass = ''
+      if booking.bundled
+        bundleClass = ' bundle'
+      end
+      originClass += providerLock + statusIcon[booking.status_id] + payedClass + bundleClass
+
+      title = ''
+      qtip = ''
+      phone = ''
+      email = ''
+      comment = ''
+      prepayed = ''
+      is_session = false
+      sessions_ratio = ''
+
+      if booking.client.first_name
+        title += booking.client.first_name
+        qtip += booking.client.first_name
+      end
+      if booking.client.last_name
+        title += ' ' + booking.client.last_name
+        qtip += ' ' + booking.client.last_name
+      end
+      if booking.service.name
+        title += ' - ' + booking.service.name
+      end
+
+      # Se verifica que existan los datos y en caso contrario, se deja como string vacío para evitar nulos en los Qtips
+
+      phone = booking.client.phone if booking.client.phone
+
+      email = booking.client.email if booking.client.email
+
+      comment = booking.company_comment if booking.company_comment
+
+      if booking.payed_state
+        prepayed = 'Sí'
+      else
+        prepayed = 'No'
+      end
+
+      if booking.is_session && booking.session_booking
+        is_session = true
+        sessions_ratio = "Sesión #{Booking.where(:session_booking_id => booking.session_booking_id, :is_session_booked => true).where('start <= ?', booking.start).count} de #{booking.session_booking.sessions_amount}"
+      else
+        sessions_ratio = "0/0"
+        is_session = false
+      end
+
+
+      if booking.is_session && booking.is_session_booked && !booking.user_session_confirmed
+        originClass += ' session'
+      end
+
+      event = {
+        id: booking.id,
+        title: title,
+        allDay: false,
+        start: booking.start,
+        end: booking.end,
+        resourceId: booking.service_provider_id,
+        className: originClass,
+        title_qtip: qtip,
+        time_qtip: booking.start.strftime("%H:%M") + ' - ' + booking.end.strftime("%H:%M"),
+        service_qtip: booking.service.name,
+        phone_qtip: phone,
+        email_qtip: email,
+        comment_qtip: comment,
+        prepayed_qtip: prepayed,
+        is_session_qtip: is_session,
+        sessions_ratio_qtip: sessions_ratio,
+        identification_number_qtip: booking.client.identification_number ? booking.client.identification_number : ""
+      }
+
+      events.push(event)
     end
 
     @breaks = ProviderBreak.where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', start_date, end_date).where(:service_provider_id => @providers).order(:start)
@@ -3907,7 +3897,7 @@ class BookingsController < ApplicationController
     end
 
     if mobile_request?
-      
+
       parser = PostgresParser.new
 
       @service = @booking.service
