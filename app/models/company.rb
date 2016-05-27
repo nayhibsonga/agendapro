@@ -519,12 +519,16 @@ class Company < ActiveRecord::Base
 	end
 
 	def self.former_trials_process
+
+		status_activo = PaymentStatus.find_by_name("Activo")
 		#First, remind after 5 days
 		former_trials.where('created_at BETWEEN ? AND ?', (DateTime.now - 1.months - 5.days).beginning_of_day, (DateTime.now - 1.months - 5.days).end_of_day).each do |company|
 			if !company.account_used_all
 				company.sendings.build(method: 'recovery_trial').save
 			else
-				company.sendings.build(method: 'message_invoice').save
+				if company.payment_status_id != status_activo.id
+					company.sendings.build(method: 'message_invoice').save
+				end
 			end
 		end
 
@@ -534,7 +538,9 @@ class Company < ActiveRecord::Base
 			if !company.account_used_all
 				company.sendings.build(method: 'recovery_trial').save
 			else
-				company.sendings.build(method: 'reminder_message_invoice').save
+				if company.payment_status_id != status_activo.id
+					company.sendings.build(method: 'reminder_message_invoice').save
+				end
 			end
 		end
 
@@ -543,7 +549,9 @@ class Company < ActiveRecord::Base
 			if !company.account_used_all
 				company.sendings.build(method: 'recovery_trial').save
 			else
-				company.sendings.build(method: 'warning_message_invoice').save
+				if company.payment_status_id != status_activo.id
+					company.sendings.build(method: 'warning_message_invoice').save
+				end
 			end
 		end
 		#Finally, send ultimatum after 25 days
