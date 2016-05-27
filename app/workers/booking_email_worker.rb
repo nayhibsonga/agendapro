@@ -151,7 +151,7 @@ class BookingEmailWorker < BaseEmailWorker
         end
 
         # Location
-        @targets += NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: booking.location), receptor_type: 1, summary: false).distinct.pluck(:email)
+        @targets += NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: booking.location), receptor_type: 1, summary: false).distinct.pluck(:email).size
         recipients = loggable_filter_mails(NotificationEmail.where(id:  NotificationLocation.select(:notification_email_id).where(location: booking.location), receptor_type: 1, summary: false).distinct.pluck(:email))
         name = booking.location.name
         recipients.in_groups_of(50).each do |group|
@@ -162,7 +162,7 @@ class BookingEmailWorker < BaseEmailWorker
         end
 
         # Company
-        @targets += NotificationEmail.where(company:  booking.location.company, receptor_type: 0, summary: false).distinct.pluck(:email)
+        @targets += NotificationEmail.where(company:  booking.location.company, receptor_type: 0, summary: false).distinct.pluck(:email).size
         recipients = loggable_filter_mails(NotificationEmail.where(company:  booking.location.company, receptor_type: 0, summary: false).distinct.pluck(:email))
         name = booking.location.company.name
         recipients.in_groups_of(50).each do |group|
