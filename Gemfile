@@ -204,3 +204,6 @@ gem 'writeexcel'
 
 #Parses para postgres
 gem 'pg_array_parser'
+
+#validador de correos
+gem 'rfc822'

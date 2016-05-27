@@ -32,6 +32,8 @@ class BookingMailer < Base::CustomMailer
 
     path = options[:horachic] ? "horachic" : "agendapro"
 
+    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
+
     mail(
       from: filter_sender(),
       reply_to: filter_sender(@book.location.email),
@@ -69,6 +71,8 @@ class BookingMailer < Base::CustomMailer
 
     layout = options[:horachic] ? "horachic" : "green"
     path = options[:horachic] ? "horachic" : "agendapro"
+
+    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
 
     mail(
       from: filter_sender(),
@@ -110,6 +114,8 @@ class BookingMailer < Base::CustomMailer
 
     layout = options[:horachic] ? "horachic" : "green"
     path = options[:horachic] ? "horachic" : "agendapro"
+
+    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
 
     mail(
       from: filter_sender(),
@@ -180,6 +186,8 @@ class BookingMailer < Base::CustomMailer
     layout = options[:horachic] ? "horachic" : "green"
     path = options[:horachic] ? "horachic" : "agendapro"
 
+    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
+
     mail(
       from: filter_sender(),
       reply_to: filter_sender(@book.location.email),
@@ -212,6 +220,8 @@ class BookingMailer < Base::CustomMailer
     @company_setting = @company.company_setting
     @client = options[:client]
     @name = options[:name]
+
+    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
 
     mail(
       from: filter_sender(),
@@ -250,6 +260,8 @@ class BookingMailer < Base::CustomMailer
 
     path = options[:horachic] ? "horachic" : "agendapro"
 
+    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "#{@bookings.pluck(:id).inspect}" } }.to_json if @client
+
     mail(
       from: filter_sender(),
       reply_to: filter_sender(book.location.email),
@@ -284,6 +296,8 @@ class BookingMailer < Base::CustomMailer
     @name = options[:name]
 
     path = options[:horachic] ? "horachic" : "agendapro"
+
+    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "#{@bookings.pluck(:id).inspect}" } }.to_json if @client
 
     mail(
       from: filter_sender(),

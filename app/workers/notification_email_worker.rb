@@ -5,6 +5,7 @@ class NotificationEmailWorker < BaseEmailWorker
     total_recipients = 0
 
     notification = NotificationEmail.find(sending.sendable_id)
+    targets = [notification.email].size
     recipients = filter_mails([notification.email])
     case notification.receptor_type
     when 0 # Company summary
@@ -40,6 +41,6 @@ class NotificationEmailWorker < BaseEmailWorker
       end
     end
 
-    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: @total_sendings, total_recipients: @total_recipients)
+    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: @total_sendings, total_recipients: @total_recipients, total_targets: targets)
   end
 end

@@ -14,6 +14,7 @@ class Booking < ActiveRecord::Base
   belongs_to :receipt
 
   has_many :booking_histories, dependent: :destroy
+  has_many :booking_email_logs, dependent: :destroy
   has_many :sendings, class_name: 'Email::Sending', as: :sendable
 
   validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :client_id, :presence => true
@@ -37,6 +38,10 @@ class Booking < ActiveRecord::Base
 
 
   WORKER = 'BookingEmailWorker'
+
+  def is_canceled
+    return self.status_id == Status.find_by_name("Cancelado").id
+  end
 
   def editable
     return self.location.company.company_setting.can_edit
@@ -341,6 +346,10 @@ class Booking < ActiveRecord::Base
   def time_in_provider_time
     puts self.changed.inspect
 
+    if is_canceled
+      return
+    end
+
     if self.status_id_changed? && self.changed.count == 1
       return
     end
@@ -412,12 +421,12 @@ class Booking < ActiveRecord::Base
               if (provider_booking.start - self.end) * (self.start - provider_booking.end) > 0
                 if !self.service.group_service || self.service_id != provider_booking.service_id
                   if !self.is_session || (self.is_session && self.is_session_booked) and (!provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked))
-                    errors.add(:base, "La hora seleccionada ya está reservada para el prestador elegido")
+                    errors.add(:base, "La hora " + self.start.strftime("%d/%m/%Y %R") + " ya está reservada para el prestador elegido.")
                     return
                   end
                 elsif self.service.group_service && self.service_id == provider_booking.service_id && self.service_provider.bookings.where(:service_id => self.service_id, :start => self.start).where.not(status_id: Status.find_by_name('Cancelado')).where('is_session = false or (is_session = true and is_session_booked = true)').count > self.service.capacity
                   if !self.is_session || (self.is_session && self.is_session_booked) and (!provider_booking.is_session || (provider_booking.is_session && provider_booking.is_session_booked))
-                    errors.add(:base, "La capacidad del servicio grupal ya llegó a su límite")
+                    errors.add(:base, "La capacidad del servicio grupal ya llegó a su límite.")
                     return
                   end
                 end
@@ -608,29 +617,45 @@ class Booking < ActiveRecord::Base
   end
 
   def booking_duration
+    if is_canceled
+      return
+    end
     if ((self.end - self.start) / 1.minute ).round < 5
       errors.add(:base, "La duración de la reserva no puede ser menor a 5 minutos.")
+      errors.add(:clients, "La duración de la reserva no puede ser menor a 5 minutos.")
     end
   end
 
   def service_staff
+    if is_canceled
+      return
+    end
     unless changed_attributes.except("payment_id", "receipt_id").empty?
       if !self.service_provider.services.include?(self.service)
         errors.add(:base, "El prestador seleccionado no realiza el servicio elegido en la reserva. Por favor agrega el servicio al prestador o elige otro prestador.")
+        errors.add(:clients, "El prestador de la reserva no realiza el servicio.")
       end
     end
   end
 
   def time_empty_or_negative
+    if is_canceled
+      return
+    end
     if self.start >= self.end
       errors.add(:base, "La hora de fin es menor o igual a la hora de inicio. Por favor revisa la hora asignada.")
+      errors.add(:clients, "La hora de fin es menor o igual a la hora de inicio. Por favor revisa la hora asignada.")
     end
   end
 
   def client_exclusive
+    if is_canceled
+      return
+    end
     if self.service_provider.company.company_setting.client_exclusive
       if !self.client.can_book || self.client.identification_number.nil? || self.client.identification_number.empty?
         errors.add(:base, "El cliente ingresado no figura en los registros o no puede reservar.")
+        errors.add(:clients, "No figuras en los registros de la empresa o no tienes permiso para reservar.")
       end
     end
   end
