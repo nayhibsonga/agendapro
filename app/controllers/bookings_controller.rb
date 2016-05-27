@@ -2669,15 +2669,7 @@ class BookingsController < ApplicationController
 
         if booking.is_session && booking.session_booking
           is_session = true
-          session_index = 1
-          Booking.where(:session_booking_id => booking.session_booking_id, :is_session_booked => true).order('start asc').each do |b|
-            if b.id == booking.id
-              break
-            else
-              session_index = session_index + 1
-            end
-          end
-          sessions_ratio = "Sesión " + session_index.to_s + " de " + booking.session_booking.sessions_amount.to_s
+          sessions_ratio = "Sesión #{Booking.where(:session_booking_id => booking.session_booking_id, :is_session_booked => true).where('start <= ?', booking.start).count} de #{booking.session_booking.sessions_amount.to_s}"
         else
           sessions_ratio = "0/0"
           is_session = false
@@ -3907,7 +3899,7 @@ class BookingsController < ApplicationController
     end
 
     if mobile_request?
-      
+
       parser = PostgresParser.new
 
       @service = @booking.service
