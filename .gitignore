@@ -27,6 +27,10 @@ public/payments_files/
 public/products_files/
 public/bookings_files/
 public/uploads/
+public/bookings_files
+public/payments_files
+public/clients_files
+public/products_files
 public/assets/
 /public/assets/
 /public/assets

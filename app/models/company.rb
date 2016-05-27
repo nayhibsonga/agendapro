@@ -897,7 +897,7 @@ class Company < ActiveRecord::Base
 		"#{countries.web_address}.agendapro#{countries.country.domain}"
 	end
 
-	def self.generate_bookings_report(company_id, location_ids, from, to, option, status_ids)
+	def self.generate_bookings_report(company_id, location_ids, from, to, option, status_ids, filepath)
 	    require 'writeexcel'
 
 	    header = []
@@ -911,7 +911,7 @@ class Company < ActiveRecord::Base
       	end
 
 	    company = Company.find(company_id)
-	    title = 'public/reservas_' + company_id.to_s + '.xls'
+	    title = filepath
 	    workbook = WriteExcel.new(title)
 
 	    worksheet = workbook.add_worksheet
@@ -943,7 +943,7 @@ class Company < ActiveRecord::Base
 	    	if option.to_i == 0
 	    		booking_date = booking.created_at.strftime('%d/%m/%Y %R')
 	    	else
-	    		booking.start.strftime('%d/%m/%Y %R')
+	    		booking_date = booking.start.strftime('%d/%m/%Y %R')
 	    	end
 
 	    	booking_row = [booking_date, booking.location.name, booking_client, booking.service.name, booking.service_provider.public_name, booking.status.name, payed_state]
@@ -956,6 +956,123 @@ class Company < ActiveRecord::Base
 
 	    return workbook
 
+	end
+
+	def self.generate_clients_file(company_id, clients, filepath)
+		require 'writeexcel'
+	    header = []
+
+	    company = Company.find(company_id)
+
+	    title = filepath
+	    workbook = WriteExcel.new(title)
+
+	    worksheet = workbook.add_worksheet
+
+	    header = ["E-mail", "Nombre", "Apellido", (I18n.t('ci')).capitalize, "Teléfono", "Dirección", "Comuna", "Fecha Nacimiento", "Edad", "Género", "Fecha Creación"]
+
+	    attributes = company.custom_attributes.joins(:attribute_group).order('attribute_groups.order asc').order('attributes.order asc').order('name asc')
+		attributes.each do |attribute|
+			if attribute.datatype != "file"
+				if attribute.datatype != "categoric" || (attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0)
+			    	header << attribute.name
+				end
+			end
+		end
+
+		worksheet.write_row(0, 0, header)
+
+		clients.each_with_index do |client, index|
+
+			gender = "Indefinido"
+			if client.gender == 1
+				gender = "Femenino"
+			elsif client.gender == 2
+				gender = "Masculino"
+			end
+
+			client_row = [client.email, client.first_name, client.last_name, client.identification_number, client.phone, client.address, client.district, client.get_birth_date, client.age, gender, client.created_at.strftime('%d/%m/%Y %R')]
+
+			attributes.each do |attribute|
+				if attribute.datatype != "file"
+				  if attribute.datatype == "float"
+				    float_attribute = FloatAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+				    float_attribute_value = ""
+				    if !float_attribute.nil? && !float_attribute.value.nil?
+				      float_attribute_value = float_attribute.value
+				    end
+				    client_row << float_attribute_value.to_s
+				  elsif attribute.datatype == "integer"
+				    integer_attribute = IntegerAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+				    integer_attribute_value = ""
+				    if !integer_attribute.nil? && !integer_attribute.value.nil?
+				      integer_attribute_value = integer_attribute.value
+				    end
+				    client_row << integer_attribute_value.to_s
+				  elsif attribute.datatype == "text"
+				    text_attribute = TextAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+				    text_attribute_value = ""
+				    if !text_attribute.nil? && !text_attribute.value.nil?
+				      text_attribute_value = text_attribute.value
+				    end
+				    client_row << text_attribute_value
+				  elsif attribute.datatype == "textarea"
+				    textarea_attribute = TextareaAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+				    textarea_attribute_value = ""
+				    if !textarea_attribute.nil? && !textarea_attribute.value.nil?
+				      textarea_attribute_value = textarea_attribute.value
+				    end
+				    client_row << textarea_attribute_value
+				  elsif attribute.datatype == "boolean"
+				    boolean_attribute = BooleanAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+				    boolean_attribute_value = ""
+				    if !boolean_attribute.nil? && !boolean_attribute.value.nil?
+				      if boolean_attribute.value == true
+				        boolean_attribute_value = "Sí"
+				      else
+				        boolean_attribute_value = "No"
+				      end
+				    end
+				    client_row << boolean_attribute_value
+				  elsif attribute.datatype == "date"
+				    date_attribute = DateAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+				    date_attribute_value = ""
+				    if !date_attribute.nil? && !date_attribute.value.nil?
+				      date_attribute_value = date_attribute.value.strftime('%d/%m/%Y')
+				    end
+				    client_row << date_attribute_value
+				  elsif attribute.datatype == "datetime"
+				    date_time_attribute = DateTimeAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+				    date_time_attribute_date = ""
+				    date_time_attribute_hour = "00"
+				    date_time_attribute_minute = "00"
+				    if !date_time_attribute.nil? && !date_time_attribute.value.nil?
+				      date_time_attribute_value = date_time_attribute.value.strftime("%d/%m/%Y %R")
+				    end
+				    client_row << date_time_attribute_value
+				  elsif attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0
+				    categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: client.id).first
+				    category_value = ""
+				    if !categoric_attribute.attribute_category.nil?
+				      category_value = categoric_attribute.attribute_category.category
+				    end
+				    client_row << category_value
+				  end
+				end
+			end
+
+			worksheet.write_row(index+1, 0, client_row)
+
+		end
+
+		workbook.close
+
+	    return workbook
+
+	end
+
+	def self.delete_booking_file(filepath)
+		File.delete(filepath)
 	end
 
 end

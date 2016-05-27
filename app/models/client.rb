@@ -1187,11 +1187,11 @@ class Client < ActiveRecord::Base
     workbook.close
   end
 
-  def self.generate_import_file(company_id)
+  def self.generate_import_file(company_id, filepath)
     require 'writeexcel'
 
     company = Company.find(company_id)
-    title = 'public/importador_empresa_' + company_id.to_s + '.xls'
+    title = filepath
     workbook = WriteExcel.new(title)
 
     worksheet = workbook.add_worksheet
