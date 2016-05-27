@@ -331,6 +331,7 @@ function loadCalendar (startTime, endTime, hiddenDays, resourcesArray, providerI
     maxTime: endTime,
     editable: true,
     disableResizing: true,
+    dragScroll: true,
     eventDragStart: function(event, jsEvent, ui, view){
       ui.helper.qtip('hide');
       dragInProgress = true;

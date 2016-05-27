@@ -115,11 +115,11 @@ class Payment < ActiveRecord::Base
 
       index1 += index
       
-      payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: from.beginning_of_day..to.end_of_day, location_id: @location_ids).pluck(:id))
+      payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: from.beginning_of_day..to.end_of_day, location_id: location_ids).pluck(:id))
 
-      mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: from.beginning_of_day..to.end_of_day, location_id: @location_ids).pluck(:id))
+      mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: from.beginning_of_day..to.end_of_day, location_id: location_ids).pluck(:id))
 
-      bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: from.beginning_of_day..to.end_of_day, location_id: @location_ids).pluck(:id))
+      bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: from.beginning_of_day..to.end_of_day, location_id: location_ids).pluck(:id))
 
       internal_sales = InternalSale.where(service_provider_id: service_provider.id, date: from.beginning_of_day..to.end_of_day)
 
@@ -249,9 +249,9 @@ class Payment < ActiveRecord::Base
 
         payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: @location_ids).pluck(:id))
 
-        mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: @location_ids).pluck(:id))
+        mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: location_ids).pluck(:id))
 
-        bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: @location_ids).pluck(:id))
+        bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: location_ids).pluck(:id))
 
         internal_sales = InternalSale.where(service_provider_id: service_provider.id, date: current_date.beginning_of_day..current_date.end_of_day)
 

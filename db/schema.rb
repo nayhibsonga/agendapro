@@ -117,10 +117,10 @@ ActiveRecord::Schema.define(version: 20160526164458) do
 
   create_table "booking_email_logs", force: true do |t|
     t.integer  "booking_id"
-    t.string   "transmission_id"
-    t.string   "status"
-    t.string   "subject"
-    t.string   "recipient"
+    t.string   "transmission_id", default: ""
+    t.string   "status",          default: ""
+    t.string   "subject",         default: ""
+    t.string   "recipient",       default: ""
     t.datetime "timestamp"
     t.integer  "opens",           default: 0
     t.integer  "clicks",          default: 0
@@ -286,10 +286,10 @@ ActiveRecord::Schema.define(version: 20160526164458) do
   create_table "client_email_logs", force: true do |t|
     t.integer  "client_id"
     t.integer  "campaign_id"
-    t.string   "transmission_id"
-    t.string   "status"
-    t.string   "subject"
-    t.string   "recipient"
+    t.string   "transmission_id", default: ""
+    t.string   "status",          default: ""
+    t.string   "subject",         default: ""
+    t.string   "recipient",       default: ""
     t.datetime "timestamp"
     t.integer  "opens",           default: 0
     t.integer  "clicks",          default: 0
@@ -300,7 +300,6 @@ ActiveRecord::Schema.define(version: 20160526164458) do
   end
 
   add_index "client_email_logs", ["client_id"], name: "index_client_email_logs_on_client_id", using: :btree
-
 
   create_table "client_files", force: true do |t|
     t.integer  "client_id"
