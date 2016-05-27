@@ -39,7 +39,7 @@ class SessionsBookingEmailWorker < BaseEmailWorker
     end
 
     # Company
-    targets += NotificationEmail.where(company: bookings.first.location.company, receptor_type: 0).distinct.pluck(:email)
+    targets += NotificationEmail.where(company: bookings.first.location.company, receptor_type: 0).distinct.pluck(:email).size
     recipients = filter_mails(NotificationEmail.where(company: bookings.first.location.company, receptor_type: 0).distinct.pluck(:email))
     name = bookings.first.location.company.name
     recipients.in_groups_of(50).each do |group|
