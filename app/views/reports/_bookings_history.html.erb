@@ -26,9 +26,9 @@
           <tbody>
             <% 
               if @option.to_i == 0
-                @bookings = Booking.where(created_at: @from..@to, status_id: @status_ids, location_id: @locations.pluck(:id)).order(created_at: :desc)
+                @bookings = Booking.where(created_at: @from..@to, status_id: @status_ids, location_id: @locations.pluck(:id)).where('is_session = false or (is_session = true and is_session_booked = true)').order(created_at: :desc)
               else
-                @bookings = Booking.where(start: @from..@to, status_id: @status_ids, location_id: @locations.pluck(:id)).order(start: :desc)
+                @bookings = Booking.where(start: @from..@to, status_id: @status_ids, location_id: @locations.pluck(:id)).where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc)
               end
             %>
             <% @bookings.each do |booking| %>
