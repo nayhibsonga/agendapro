@@ -915,7 +915,7 @@ class Company < ActiveRecord::Base
         	header << "Fecha de creación"
         	header << "Fecha de realización"
       	else
-        	bookings = Booking.where(start: from..to, status_id: status_ids, location_id: location_ids).order(start: :desc).where('is_session = false or (is_session = true and is_session_booked = true)')
+        	bookings = Booking.where(start: from..to, status_id: status_ids, location_id: location_ids).where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc)
         	header << "Fecha de realización"
         	header << "Fecha de creación"
       	end
