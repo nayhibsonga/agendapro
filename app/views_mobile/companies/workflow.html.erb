@@ -85,7 +85,7 @@
             <h3 class="panel-title">Dirección</h3>
           </div>
           <div class="panel-body">
-            <p><%= if !@location.outcall then @location.short_address else "A Domicilio" end %></p>
+            <p><%= if !@location.outcall then @location.short_address_with_second_address else "A Domicilio" end %></p>
             <% if @location.outcall %>
             <p>Lugares que atiende:</p>
             <pre><%= @location.outcall_places %></pre>
