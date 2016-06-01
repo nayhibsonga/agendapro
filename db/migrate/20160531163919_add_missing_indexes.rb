@@ -1,8 +1,9 @@
 class AddMissingIndexes < ActiveRecord::Migration
   def change
   	#Booking
+  	remove_index :bookings, :payment_id
   	add_index :bookings, :payment_id, where: "payment_id is not null"
-  	add_index :bookings, :receipt_id, where: "receipt_id is not null"
+  	#add_index :bookings, :receipt_id, where: "receipt_id is not null"
   	#AttributeCategories
   	add_index :attribute_categories, :attribute_id
   	#AttributeGroups
