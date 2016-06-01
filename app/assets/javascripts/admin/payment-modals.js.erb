@@ -3022,7 +3022,10 @@ function resetPaymentIntro()
 
   $("#payment_client_email").val("");
   var todayDate = new Date();
-  $("#payment_date").val(todayDate);
+  var date_str = todayDate.toJSON().split("T")[0];
+  var date_arr = date_str.split("-");
+  var date_str_format = date_arr[2] + "/" + date_arr[1] + "/" + date_arr[0];
+  $("#payment_date").val(date_str_format);
 
   clearValidations('#payment_client_phone');
   clearValidations('#payment_client_gender');
