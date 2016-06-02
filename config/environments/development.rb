@@ -41,9 +41,9 @@ Agendapro::Application.configure do
     :port      => 587, # 25, 465 or 587
     :enable_starttls_auto => true, # detects and uses STARTTLS
     :user_name => "SMTP_Injection",
-    :password  => "ba9959858c917439ef4403556427a811703be9f8", # SMTP password is any valid API key
+    :password  => ENV["SPARKPOST_SMTP_KEY"], # SMTP password is any valid API key
     :authentication => :login, # Mandrill supports 'plain' or 'login'
-    :domain => 'agendapro.co', # your domain to identify your server when connecting
+    :domain => ENV["EMAIL_SENDING_DOMAIN"], # your domain to identify your server when connecting
   }
 
 end

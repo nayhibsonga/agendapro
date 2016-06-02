@@ -1,5 +1,5 @@
 class BookingsController < ApplicationController
-  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form, :get_treatment_info, :delete_treatment]
+  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form, :get_treatment_info, :delete_treatment, :get_email_logs]
   before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :confirm_error, :confirm_success, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours, :hours_test, :available_hours]
   before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :confirm_error, :confirm_success, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours, :hours_test, :available_hours]
   layout "admin", except: [:book_service, :book_error, :remove_bookings, :provider_booking, :edit_booking, :edit_booking_post, :cancel_booking, :transfer_error_cancel, :confirm_booking, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data]
@@ -2304,7 +2304,7 @@ class BookingsController < ApplicationController
         format.json { render :json => @bookings.pluck(:id) }
       else
         format.html { redirect_to bookings_url }
-        format.json { render :json => { :errors => "No se puedieron cancelar todas las reservas." }, :status => 422 }
+        format.json { render :json => { :errors => "No se pudieron cancelar todas las reservas." }, :status => 422 }
       end
     end
   end
@@ -2614,102 +2614,91 @@ class BookingsController < ApplicationController
 
     @cancelled_id = Status.find_by_name('Cancelado').id
 
-    @bookings = Booking.where('bookings.service_provider_id IN (?)', @providers.pluck(:id)).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').includes(:client).includes(:service).includes(:session_booking)
+    @bookings = Booking.where.not(status_id: @cancelled_id).where('bookings.service_provider_id IN (?)', @providers.pluck(:id)).where('(bookings.start,bookings.end) overlaps (date ?,date ?)', end_date, start_date).where('bookings.is_session = false or (bookings.is_session = true and bookings.is_session_booked = true)').includes(:client).includes(:service).includes(:session_booking)
 
     @bookings.each do |booking|
-      if booking.status_id != @cancelled_id
-        event = Hash.new
-        booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
-        booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
+      event = Hash.new
+      booking.provider_lock ? providerLock = '-lock' : providerLock = '-unlock'
+      booking.web_origin ? originClass = 'origin-web' : originClass = 'origin-manual'
 
-        payedClass = ''
-        if booking.payed_state
-          payedClass = ' payed'
-        end
-        bundleClass = ''
-        if booking.bundled
-          bundleClass = ' bundle'
-        end
-        originClass += providerLock + statusIcon[booking.status_id] + payedClass + bundleClass
-
-        title = ''
-        qtip = ''
-        phone = ''
-        email = ''
-        comment = ''
-        prepayed = ''
-        is_session = false
-        sessions_ratio = ''
-
-        if booking.client.first_name
-          title += booking.client.first_name
-          qtip += booking.client.first_name
-        end
-        if booking.client.last_name
-          title += ' ' + booking.client.last_name
-          qtip += ' ' + booking.client.last_name
-        end
-        if booking.service.name
-          title += ' - ' + booking.service.name
-        end
-
-        # Se verifica que existan los datos y en caso contrario, se deja como string vacío para evitar nulos en los Qtips
-
-        phone = booking.client.phone if booking.client.phone
-
-        email = booking.client.email if booking.client.email
-
-        comment = booking.company_comment if booking.company_comment
-
-        if booking.payed_state
-          prepayed = 'Sí'
-        else
-          prepayed = 'No'
-        end
-
-        if booking.is_session && booking.session_booking
-          is_session = true
-          session_index = 1
-          Booking.where(:session_booking_id => booking.session_booking_id, :is_session_booked => true).order('start asc').each do |b|
-            if b.id == booking.id
-              break
-            else
-              session_index = session_index + 1
-            end
-          end
-          sessions_ratio = "Sesión " + session_index.to_s + " de " + booking.session_booking.sessions_amount.to_s
-        else
-          sessions_ratio = "0/0"
-          is_session = false
-        end
-
-
-        if booking.is_session && booking.is_session_booked && !booking.user_session_confirmed
-          originClass += ' session'
-        end
-
-        event = {
-          id: booking.id,
-          title: title,
-          allDay: false,
-          start: booking.start,
-          end: booking.end,
-          resourceId: booking.service_provider_id,
-          className: originClass,
-          title_qtip: qtip,
-          time_qtip: booking.start.strftime("%H:%M") + ' - ' + booking.end.strftime("%H:%M"),
-          service_qtip: booking.service.name,
-          phone_qtip: phone,
-          email_qtip: email,
-          comment_qtip: comment,
-          prepayed_qtip: prepayed,
-          is_session_qtip: is_session,
-          sessions_ratio_qtip: sessions_ratio,
-          identification_number_qtip: booking.client.identification_number ? booking.client.identification_number : ""
-        }
-
-        events.push(event)
+      payedClass = ''
+      if booking.payed_state
+        payedClass = ' payed'
       end
+      bundleClass = ''
+      if booking.bundled
+        bundleClass = ' bundle'
+      end
+      originClass += providerLock + statusIcon[booking.status_id] + payedClass + bundleClass
+
+      title = ''
+      qtip = ''
+      phone = ''
+      email = ''
+      comment = ''
+      prepayed = ''
+      is_session = false
+      sessions_ratio = ''
+
+      if booking.client.first_name
+        title += booking.client.first_name
+        qtip += booking.client.first_name
+      end
+      if booking.client.last_name
+        title += ' ' + booking.client.last_name
+        qtip += ' ' + booking.client.last_name
+      end
+      if booking.service.name
+        title += ' - ' + booking.service.name
+      end
+
+      # Se verifica que existan los datos y en caso contrario, se deja como string vacío para evitar nulos en los Qtips
+
+      phone = booking.client.phone if booking.client.phone
+
+      email = booking.client.email if booking.client.email
+
+      comment = booking.company_comment if booking.company_comment
+
+      if booking.payed_state
+        prepayed = 'Sí'
+      else
+        prepayed = 'No'
+      end
+
+      if booking.is_session && booking.session_booking
+        is_session = true
+        sessions_ratio = "Sesión #{Booking.where(:session_booking_id => booking.session_booking_id, :is_session_booked => true).where("start <= ?", booking.start).count} de #{booking.session_booking.sessions_amount}"
+      else
+        sessions_ratio = "0/0"
+        is_session = false
+      end
+
+      if booking.is_session && booking.is_session_booked && !booking.user_session_confirmed
+        originClass += ' session'
+      end
+
+      event = {
+        id: booking.id,
+        title: title,
+        allDay: false,
+        start: booking.start,
+        end: booking.end,
+        resourceId: booking.service_provider_id,
+        className: originClass,
+        title_qtip: qtip,
+        time_qtip: booking.start.strftime("%H:%M") + ' - ' + booking.end.strftime("%H:%M"),
+        service_qtip: booking.service.name,
+        phone_qtip: phone,
+        email_qtip: email,
+        comment_qtip: comment,
+        prepayed_qtip: prepayed,
+        is_session_qtip: is_session,
+        sessions_ratio_qtip: sessions_ratio,
+        identification_number_qtip: booking.client.identification_number ? booking.client.identification_number : ""
+      }
+
+      events.push(event)
     end
 
     @breaks = ProviderBreak.where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', start_date, end_date).where(:service_provider_id => @providers).order(:start)
@@ -3907,7 +3896,7 @@ class BookingsController < ApplicationController
     end
 
     if mobile_request?
-      
+
       parser = PostgresParser.new
 
       @service = @booking.service
@@ -4134,7 +4123,7 @@ class BookingsController < ApplicationController
 
   def cancel_booking
     require 'date'
-
+    @errors = []
     unless params[:id]
       crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
       id = crypt.decrypt_and_verify(params[:confirmation_code])
@@ -7134,6 +7123,15 @@ class BookingsController < ApplicationController
 
     render :json => @json_response
 
+  end
+
+  def get_email_logs
+    @booking_email_logs = []
+    timezone = CustomTimezone.from_booking(@booking)
+    @booking.booking_email_logs.each do |booking_email_log|
+      @booking_email_logs.push({created_at: booking_email_log.created_at, progress: booking_email_log.progress, status: booking_email_log.status, timestamp: booking_email_log.timestamp, subject: booking_email_log.subject, recipient: booking_email_log.recipient, opens: booking_email_log.opens, clicks: booking_email_log.clicks, time_offset: timezone.offseti })
+    end
+    render :json => @booking_email_logs
   end
 
   def hours_test

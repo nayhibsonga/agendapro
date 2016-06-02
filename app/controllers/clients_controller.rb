@@ -1,5 +1,5 @@
 class ClientsController < ApplicationController
-  before_action :set_client, only: [:show, :edit, :update, :destroy, :payments_content, :payments, :last_payments, :get_custom_attributes]
+  before_action :set_client, only: [:show, :edit, :update, :destroy, :payments_content, :emails_content, :payments, :emails, :last_payments, :get_custom_attributes]
   before_action :authenticate_user!, except: [:client_loader]
   before_action :quick_add
   before_action -> (source = "clients") { verify_free_plan source }, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :new, :edit, :create, :update]
@@ -92,6 +92,38 @@ class ClientsController < ApplicationController
       format.csv { render text: Client.export_csv(current_user.company_id, @clients_export) }
       format.xls
     end
+
+  end
+
+  def download
+
+    selected_custom_filters = []
+    if !params[:custom_filters].blank?
+      selected_custom_filters = CustomFilter.find(params[:custom_filters])
+    end
+
+    @clients = Client.accessible_by(current_ability)
+    #@clients_export = Client.accessible_by(current_ability)
+
+    #Custom filters
+    selected_custom_filters.each do |custom_filter|
+      @clients = Client.custom_filter(@clients, custom_filter)
+      #@clients_export = Client.custom_filter(@clients_export, custom_filter)
+    end
+
+
+    @clients = @clients.filter(current_user.company_id, params)
+    #@clients_export = @clients_export.filter(current_user.company_id, params)
+
+    @clients_export = @clients.order(sort_column + " " + sort_direction)
+    @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
+
+    filepath = "#{Rails.root}/public/clients_files/clientes_" + current_user.company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+    Company.generate_clients_file(current_user.company_id, @clients_export, filepath)
+
+    send_file filepath, filename: "clientes.xls"
+
+    Company.delay(run_at: 2.hours.from_now).delete_booking_file(filepath)
 
   end
 
@@ -471,6 +503,31 @@ class ClientsController < ApplicationController
       tmp_to.push(email) if email=~ /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
     end
     @to = tmp_to.join(', ')
+
+    @start_date = DateTime.now - 1.week
+
+    @end_date = DateTime.now
+
+    @start_date = @start_date.strftime("%d/%m/%Y")
+    @end_date = @end_date.strftime("%d/%m/%Y")
+  end
+
+  def campaigns_report_content
+    @timezone = CustomTimezone.from_company(@company)
+
+    @from = params[:from].to_datetime.beginning_of_day + @timezone.offset
+    @to = params[:to].to_datetime.end_of_day + @timezone.offset
+    @campaigns = Email::Sending.where(sendable_id: Email::Content.where(company_id: current_user.company_id), sendable_type: "Email::Content", sent_date: @from..@to)
+
+    render "clients/email/full/_campaigns_content", layout: false
+  end
+
+  def campaign_report_details
+    @client_email_logs = ClientEmailLog.where(campaign_id: params[:campaign_id])
+
+    respond_to do |format|
+      format.xls
+    end
   end
 
   def send_mail
@@ -979,6 +1036,32 @@ class ClientsController < ApplicationController
 
     render "_payments_content", layout: false
 
+  end
+
+  def emails
+
+    #Check params first
+
+    @start_date = DateTime.now - 1.months
+
+    @end_date = DateTime.now
+
+    @start_date = @start_date.strftime("%d/%m/%Y")
+    @end_date = @end_date.strftime("%d/%m/%Y")
+
+
+  end
+
+  def emails_content
+    @timezone = CustomTimezone.from_company(@company)
+
+    @from = params[:from].to_datetime.beginning_of_day + @timezone.offset
+    @to = params[:to].to_datetime.end_of_day + @timezone.offset
+    @emails = BookingEmailLog.where(timestamp: @from..@to, booking_id: Booking.where(client_id: @client.id).pluck(:id)) + ClientEmailLog.where(timestamp: @from..@to, client_id: @client.id)
+
+    @emails.sort_by(&:timestamp)
+
+    render "_emails_content", layout: false
   end
 
   private

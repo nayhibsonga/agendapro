@@ -14,6 +14,7 @@ class Booking < ActiveRecord::Base
   belongs_to :receipt
 
   has_many :booking_histories, dependent: :destroy
+  has_many :booking_email_logs, dependent: :destroy
   has_many :sendings, class_name: 'Email::Sending', as: :sendable
 
   validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :client_id, :presence => true

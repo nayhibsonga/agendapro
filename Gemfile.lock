@@ -380,6 +380,7 @@ GEM
     rest-client (1.6.8)
       mime-types (~> 1.16)
       rdoc (>= 2.4.2)
+    rfc822 (0.1.5)
     ri_cal (0.8.8)
     roo (2.3.2)
       nokogiri (~> 1)
@@ -519,6 +520,7 @@ DEPENDENCIES
   quiet_assets
   rack-cors
   rails (= 4.0.1)
+  rfc822
   ri_cal
   roo
   roo-xls
@@ -533,3 +535,6 @@ DEPENDENCIES
   whenever
   will_paginate-bootstrap
   writeexcel
+
+BUNDLED WITH
+   1.12.5

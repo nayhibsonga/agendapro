@@ -69,16 +69,13 @@ class ReportsController < ApplicationController
 
 	def bookings_history_sheet
 		@locations = Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:order, :name)
-		#(company_id, location_ids, from, to, option, status_ids)
-		# respond_to do |format|
-	 #      format.xls {render xls: Company.generate_bookings_report(current_user.company_id, @locations.pluck(:id), @from, @to, @option, @status_ids)}
-	 #    end
-	 	Company.generate_bookings_report(current_user.company_id, @locations.pluck(:id), @from, @to, @option, @status_ids)
-	    #respond_to do |format|
-	    #	format.xls {render :template => 'public/reservas_' + current_user.company_id.to_s + '.xls'}
-	    #end
-	    send_file "#{Rails.root}/public/reservas_" + current_user.company_id.to_s + ".xls", filename: "reporte_reservas.xls"
-	    #send_data Company.generate_bookings_report(current_user.company_id, @locations.pluck(:id), @from, @to, @option, @status_ids), filename: "reporte_reservas.xls"
+
+		filepath = "#{Rails.root}/public/bookings_files/reservas_" + current_user.company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+	 	Company.generate_bookings_report(current_user.company_id, @locations.pluck(:id), @from, @to, @option, @status_ids, filepath)
+
+	    send_file filepath, filename: "reporte_reservas.xls"
+
+		Company.delay(run_at: 2.hours.from_now).delete_booking_file(filepath)
 	end
 
 	def set_params

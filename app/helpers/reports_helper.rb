@@ -8,7 +8,7 @@ module ReportsHelper
 		percent = 0
 
 		if option.to_i == 0
-			bookings = Booking.where(created_at: from..to, location_id: location_ids)
+			bookings = Booking.where(created_at: from..to, location_id: location_ids).where('is_session = false or (is_session = true and is_session_booked = true)')
 			status_bookings = bookings.where(status_id: status.id)
 			if bookings.count > 0
 				counted = status_bookings.count
@@ -16,7 +16,7 @@ module ReportsHelper
 				percent = ((counted.to_f / total.to_f) * 100).round(0)
 			end
 		else
-			bookings = Booking.where(start: from..to, location_id: location_ids)
+			bookings = Booking.where(start: from..to, location_id: location_ids).where('is_session = false or (is_session = true and is_session_booked = true)')
 			status_bookings = bookings.where(status_id: status.id)
 			if bookings.count > 0
 				counted = status_bookings.count
@@ -47,7 +47,7 @@ module ReportsHelper
 				current_date_limit = current_date + 1.days
 			end
 			if option.to_i == 0
-				bookings = Booking.where(created_at: current_date.beginning_of_day..current_date_limit.beginning_of_day, location_id: location_ids)
+				bookings = Booking.where(created_at: current_date.beginning_of_day..current_date_limit.beginning_of_day, location_id: location_ids).where('is_session = false or (is_session = true and is_session_booked = true)')
 				status_bookings = bookings.where(status_id: status.id)
 				if bookings.count == 0
 					bookings_array[current_date.strftime("%d/%m/%Y")] = 0
@@ -55,7 +55,7 @@ module ReportsHelper
 					bookings_array[current_date.strftime("%d/%m/%Y")] = ((status_bookings.count.to_f / bookings.count.to_f) * 100).round(0)
 				end
 			else
-				bookings = Booking.where(start: current_date.beginning_of_day..current_date_limit.beginning_of_day, location_id: location_ids)
+				bookings = Booking.where(start: current_date.beginning_of_day..current_date_limit.beginning_of_day, location_id: location_ids).where('is_session = false or (is_session = true and is_session_booked = true)')
 				status_bookings = bookings.where(status_id: status.id)
 				if bookings.count == 0
 					bookings_array[current_date.strftime("%d/%m/%Y")] = 0
@@ -90,7 +90,7 @@ module ReportsHelper
 			percent = 0
 
 			if option.to_i == 0
-				bookings = Booking.where(created_at: from..to, location_id: location_ids, service_id: service.id)
+				bookings = Booking.where(created_at: from..to, location_id: location_ids, service_id: service.id).where('is_session = false or (is_session = true and is_session_booked = true)')
 				status_bookings = bookings.where(status_id: status.id)
 				if bookings.count > 0
 					counted = status_bookings.count
@@ -98,7 +98,7 @@ module ReportsHelper
 					percent = ((counted.to_f / total.to_f) * 100).round(0)
 				end
 			else
-				bookings = Booking.where(start: from..to, location_id: location_ids, service_id: service.id)
+				bookings = Booking.where(start: from..to, location_id: location_ids, service_id: service.id).where('is_session = false or (is_session = true and is_session_booked = true)')
 				status_bookings = bookings.where(status_id: status.id)
 				if bookings.count > 0
 					counted = status_bookings.count

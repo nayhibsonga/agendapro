@@ -141,6 +141,8 @@ class Ability
 
         can :payments, Client, :company_id => user.company_id
         can :payments_content, Client, :company_id => user.company_id
+        can :emails, Client, :company_id => user.company_id
+        can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
 
         can :stock_change, Product, :company_id => user.company_id
@@ -149,6 +151,7 @@ class Ability
         can :delete_treatment, Booking, :company_id => user.company_id
         can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
+        can :get_email_logs, Booking, :company_id => user.company_id
 
         can :new_filter_form, CustomFilter, :company_id => user.company_id
         can :edit_filter_form, CustomFilter, :company_id => user.company_id
@@ -389,7 +392,10 @@ class Ability
 
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
+        can :campaigns_report_content, Client, :company_id => user.company_id
+        can :campaign_report_details, Client, :company_id => user.company_id
         can :import, Client
+        can :download, Client
 
         can :import, Product
 
@@ -425,7 +431,7 @@ class Ability
         can :create, Attribute, :company_id => user.company_id
         can :update, Attribute, :company_id => user.company_id
         can :destroy, Attribute, :company_id => user.company_id
-        can :edit_form, Attribute, :company_id => user.company.id
+        can :edit_form, Attribute, :company_id => user.company_id
 
         can :show, AttributeCategory, :company_id => user.company_id
         can :create, AttributeCategory, :company_id => user.company_id
@@ -436,7 +442,7 @@ class Ability
         can :create, AttributeGroup, :company_id => user.company_id
         can :update, AttributeGroup, :company_id => user.company_id
         can :destroy, AttributeGroup, :company_id => user.company_id
-        can :edit_form, AttributeGroup, :company_id => user.company.id
+        can :edit_form, AttributeGroup, :company_id => user.company_id
 
         can :show, ClientFile, :client => {:company_id => user.company_id}
         can :create, ClientFile, :client => {:company_id => user.company_id}
@@ -487,6 +493,8 @@ class Ability
 
         can :payments, Client, :company_id => user.company_id
         can :payments_content, Client, :company_id => user.company_id
+        can :emails, Client, :company_id => user.company_id
+        can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
 
         can :stock_change, Product, :company_id => user.company_id
@@ -495,6 +503,7 @@ class Ability
         can :delete_treatment, Booking, :company_id => user.company_id
         can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
+        can :get_email_logs, Booking, :company_id => user.company_id
 
         can :rearrange, Attribute, :company_id => user.company_id
         can :rearrange, AttributeGroup, :company_id => user.company_id
@@ -721,7 +730,10 @@ class Ability
 
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
+        can :campaigns_report_content, Client, :company_id => user.company_id
+        can :campaign_report_details, Client, :company_id => user.company_id
         can :import, Client
+        can :download, Client
 
         can :import, Product
 
@@ -759,11 +771,14 @@ class Ability
 
         can :payments, Client, :company_id => user.company_id
         can :payments_content, Client, :company_id => user.company_id
+        can :emails, Client, :company_id => user.company_id
+        can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
         can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
+        can :get_email_logs, Booking, :company_id => user.company_id
         can :location_users, User, :company_id => user.company_id
 
         can :index_content, Payment
@@ -826,7 +841,10 @@ class Ability
 
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
+        can :campaigns_report_content, Client, :company_id => user.company_id
+        can :campaign_report_details, Client, :company_id => user.company_id
         can :import, Client
+        can :download, Client
 
         can :locations_stats_excel, Product, :company_id => user.company_id
         can :logs_history_excel, Product, :company_id => user.company_id
@@ -902,6 +920,7 @@ class Ability
         can :delete_treatment, Booking, :company_id => user.company_id
         can :delete_client_treatment, Booking, :company_id => user.company_id
         can :get_treatment_info, Booking, :company_id => user.company_id
+        can :get_email_logs, Booking, :company_id => user.company_id
         can :get_booking, Booking, :service_provider_id => user.service_providers.pluck(:id)
 
         can :read, ServiceProvider, :id => user.service_providers.pluck(:id)
@@ -990,6 +1009,8 @@ class Ability
 
         can :payments, Client, :company_id => user.company_id
         can :payments_content, Client, :company_id => user.company_id
+        can :emails, Client, :company_id => user.company_id
+        can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
 
         can :update_custom_attributes, Client, :company_id => user.company_id

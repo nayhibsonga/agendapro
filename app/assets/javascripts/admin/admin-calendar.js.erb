@@ -615,7 +615,6 @@ function editBookingModal(eventId) {
       $('#deleteTreatmentDiv').remove();
       if(booking.bundled)
       {
-        window.console.log($('#booking_status_id').closest('.col-md-6'));
         $('#bundled_service').show();
         $("#is_bundle").html("Sí");
         $('#booking_status_id').closest('.col-md-6').append(
@@ -703,6 +702,7 @@ function editBookingModal(eventId) {
 
         checkTreatmentPrice(booking.service_id, booking.session_booking_id);
         getTreatmentInfo(booking.id);
+        // getEmailLogs(booking.id);
         //$("#xButton").attr("disabled", true);
       }
 
@@ -801,6 +801,7 @@ function createBookingModal(date, provider_id) {
   $('#deleteTreatmentDiv').remove();
   loadClientPayments(0);
   $('#booking-history-tbody').empty();
+  $('#booking-email-tbody').empty();
 
   $.getJSON('/local_providers', {location: localId}, function (providersArray) {
     if (providersArray.length > 0) {
@@ -3031,6 +3032,26 @@ function loadClientHistory(booking_id) {
         $('#booking-history-tbody').append('<tr><td colspan="8">No hay modificaciones para esta reserva...</td></tr>');
       }
     });
+    $('#booking-email-tbody').empty();
+    $.getJSON('/get_email_logs', {id: parseInt(booking_id)}, function (booking_emails) {
+      if (booking_emails.length > 0) {
+        $.each(booking_emails, function (key, booking_email) {
+          var color = '#fd633f'
+          if (booking_email.progress == 2) {
+            color = '#1ba970'
+          }
+          else if (booking_email.progress == 1) {
+            color = '#fd9610'
+          }
+          var created = new Date(booking_email.timestamp);
+          offsetDate(created, booking_email.time_offset);
+          $('#booking-email-tbody').append('<tr><td><i class="fa fa-circle" aria-hidden="true" style="color: '+color+'"></i>'+booking_email.status+'</td><td>'+dateToLocal(created)+'</td><td>'+booking_email.subject+'</td><td>'+booking_email.recipient+'</td><td>'+booking_email.opens+'</td><td>'+booking_email.clicks+'</td></tr>');
+        });
+      }
+      else {
+        $('#booking-email-tbody').append('<tr><td colspan="6">No hay correos enviados para esta reserva...</td></tr>');
+      }
+    });
   }
   return false;
 }
@@ -3466,7 +3487,7 @@ $(function() {
         }
       });
 
-      
+
 
       $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + client.id);

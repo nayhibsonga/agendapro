@@ -5,6 +5,7 @@ class BillingWireTransferEmailWorker < BaseEmailWorker
 
     transfer = BillingWireTransfer.find(sending.sendable_id)
 
+    targets = self.get_receipients(transfer, sending.method).size
     recipients = filter_mails(self.get_receipients(transfer, sending.method))
     recipients.in_groups_of(50).each do |group|
       group.compact!
@@ -13,7 +14,7 @@ class BillingWireTransferEmailWorker < BaseEmailWorker
       BillingWireTransferMailer.delay.send(sending.method, transfer, group.join(', ')) if group.size > 0
     end
 
-    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients)
+    sending.update(status: 'delivered', sent_date: DateTime.now, total_sendings: total_sendings, total_recipients: total_recipients, total_targets: targets)
   end
 
   private

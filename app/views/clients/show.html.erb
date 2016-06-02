@@ -1,33 +1,6 @@
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-10">
-      <div class="col-md-12">
-        <h2 class="text-green">
-          <%= @client.first_name %> <%= @client.last_name %>
-          <small><%= @client.email %></small>
-        </h2>
-      </div>
 
-      <div class="col-sm-3 col-md-3">
-        <p><strong><%= (I18n.t('ci')).capitalize %>:&nbsp;</strong> <%= if !@client.identification_number.blank? then @client.identification_number else '---' end %></p>
-      </div>
-      <div class="col-sm-3 col-md-3">
-        <p><strong>Cumpleaños:&nbsp;</strong> <%= @client.get_birth_date %></p>
-      </div>
-      <div class="col-sm-3 col-md-3">
-        <p><strong>Teléfono 1:&nbsp;</strong> <%= if !@client.phone.blank? then @client.phone else '---' end %></p>
-      </div>
-      <div class="col-sm-3 col-md-3">
-        <p><strong>Teléfono 2:&nbsp;</strong> <%= if !@client.second_phone.blank? then @client.second_phone else '---' end %></p>
-      </div>
-
-    </div>
-    <div class="col-md-2" style="padding-top: 15px;">
-      <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar Cliente</span>'.html_safe, edit_client_path(@client), :class => "btn btn-orange", :style => "width: 140px; margin-bottom: 3px; min-width: 150px;" %><br />
-      <%= link_to '<i class="fa fa-money"></i> <span class="hidden-xs">Historial de pagos</span>'.html_safe, client_payments_path(@client), :class => "btn btn-orange", :style => "margin-bottom: 3px; min-width: 150px;" %><br />
-      <%= link_to '<i class="fa fa-search-plus"></i> <span class="hidden-xs">Ver Archivos</span>'.html_safe, get_client_files_path(client_id: @client.id), :class => "btn btn-orange", :style => "min-width: 150px;" %>
-    </div>
-  </div>
+  <%= render 'client_layout' %>
 
   <div class="row">
     <div class="col-md-12">
