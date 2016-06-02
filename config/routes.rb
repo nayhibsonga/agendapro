@@ -375,6 +375,7 @@ Agendapro::Application.routes.draw do
 
     get '/service_provider/pdf', :to => 'service_providers#pdf'
     get '/provider_hours', :to => 'bookings#provider_hours'
+    get '/service_provider_default_time', :to => 'service_providers#default_time'
 
     get '/iframe/sampler', :to => 'iframe#sampler'
     post '/iframe/overview/:company_id', :to => 'iframe#overview'
