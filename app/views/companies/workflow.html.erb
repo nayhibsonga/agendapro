@@ -1407,10 +1407,12 @@
               $(".selected-service").each(function() {
                 var provider = $(this).find('.selected-service-provider').val();
                 var service_id = $(this).attr("service_id");
+                var bundle_id = $(this).attr("bundle_id");
                 console.log(provider)
                 selects.push({
                   service: service_id,
-                  provider: provider
+                  provider: provider,
+                  bundle_id: bundle_id
                 });
               });
             }
@@ -1421,10 +1423,12 @@
                 $(".selected-service").each(function() {
                   var provider = $(this).find('.selected-service-provider').val();
                   var service_id = $(this).attr("service_id");
+                  var bundle_id = $(this).attr("bundle_id");
                   console.log(provider)
                   selects.push({
                     service: service_id,
-                    provider: provider
+                    provider: provider,
+                    bundle_id: bundle_id
                   });
                 });
               }
@@ -1433,10 +1437,12 @@
                 $(".selected-service").each(function() {
                   var provider = $('input[name="changeProvider"]:checked').val();
                   var service_id = $(this).attr("service_id");
+                  var bundle_id = $(this).attr("bundle_id");
                   console.log(provider)
                   selects.push({
                     service: service_id,
-                    provider: provider
+                    provider: provider,
+                    bundle_id
                   });
                 });
               }

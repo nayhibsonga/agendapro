@@ -248,7 +248,9 @@ class Location < ActiveRecord::Base
 				provider_time_close = provider_time.close.clone()
 				self.location_times.where(day_id: provider_time.day_id).each do |location_time|
           if (provider_time_open.change(:month => 1, :day => 1, :year => 2000) < location_time.open) || (provider_time_close.change(:month => 1, :day => 1, :year => 2000) > location_time.close)
-            providers << service_provider.public_name
+            if !providers.include?(service_provider.public_name)
+              providers << service_provider.public_name
+            end
             provider_time.open = provider_time_open < location_time.open ? location_time.open : provider_time_open
             provider_time.close = provider_time_close > location_time.close ? location_time.close : provider_time_close
             provider_time.save
@@ -259,7 +261,9 @@ class Location < ActiveRecord::Base
       location_days = service_provider.provider_times.pluck(:day_id).delete_if { |time| self.location_times.pluck(:day_id).include? time }
       provider_days = service_provider.provider_times.where(day_id: location_days)
       if provider_days.count > 0
-        providers << service_provider.public_name
+        if !providers.include?(service_provider.public_name)
+          providers << service_provider.public_name
+        end
         provider_days.destroy_all
       end
 		end

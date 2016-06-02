@@ -911,11 +911,13 @@ class Company < ActiveRecord::Base
 	    header = []
 
 	    if option.to_i == 0
-        	bookings = Booking.where(created_at: from..to, status_id: status_ids, location_id: location_ids).order(created_at: :desc)
+        	bookings = Booking.where(created_at: from..to, status_id: status_ids, location_id: location_ids).where('is_session = false or (is_session = true and is_session_booked = true)').order(created_at: :desc)
         	header << "Fecha de creación"
-      	else
-        	bookings = Booking.where(start: from..to, status_id: status_ids, location_id: location_ids).order(start: :desc)
         	header << "Fecha de realización"
+      	else
+        	bookings = Booking.where(start: from..to, status_id: status_ids, location_id: location_ids).where('is_session = false or (is_session = true and is_session_booked = true)').order(start: :desc)
+        	header << "Fecha de realización"
+        	header << "Fecha de creación"
       	end
 
 	    company = Company.find(company_id)
@@ -925,7 +927,7 @@ class Company < ActiveRecord::Base
 	    worksheet = workbook.add_worksheet
 
 	    
-	    header = header + ["Local", "Cliente", "Servicio", "Prestador", "Estado", "Estado de pago"]
+	    header = header + ["Local", "Cliente", "Servicio", "Precio lista", "Precio real", "Nº de sesión", "Prestador", "Estado", "Estado de pago", "Notas compartidas con cliente", "Comentario interno"]
 
 	    worksheet.write_row(0, 0, header)
 
@@ -933,6 +935,7 @@ class Company < ActiveRecord::Base
 
 	    	booking_date = ""
 	    	payed_state = ""
+	    	session_number = "NA"
 	    	booking_client = "Sin información"
 	    	if !booking.client.nil?
 	    		booking_client = booking.client.full_name
@@ -949,12 +952,18 @@ class Company < ActiveRecord::Base
             end
 
 	    	if option.to_i == 0
-	    		booking_date = booking.created_at.strftime('%d/%m/%Y %R')
+	    		booking_date1 = booking.created_at.strftime('%d/%m/%Y %R')
+	    		booking_date2 = booking.start.strftime('%d/%m/%Y %R')
 	    	else
-	    		booking_date = booking.start.strftime('%d/%m/%Y %R')
+	    		booking_date1 = booking.start.strftime('%d/%m/%Y %R')
+	    		booking_date2 = booking.created_at.strftime('%d/%m/%Y %R')
 	    	end
 
-	    	booking_row = [booking_date, booking.location.name, booking_client, booking.service.name, booking.service_provider.public_name, booking.status.name, payed_state]
+	    	if booking.is_session && !booking.session_booking.nil?
+	    		session_number = (booking.session_booking.bookings.where(is_session_booked: true).where('start < ?', booking.start).count + 1).to_s
+	    	end
+
+	    	booking_row = [booking_date1, booking_date2, booking.location.name, booking_client, booking.service.name, booking.list_price, booking.price, session_number, booking.service_provider.public_name, booking.status.name, payed_state, booking.notes, booking.company_comment]
 
 	    	worksheet.write_row(index+1, 0, booking_row)
 
