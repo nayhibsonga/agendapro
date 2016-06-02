@@ -10,6 +10,8 @@ var bookingBuffer = [];
 
 var openedBooking;
 
+var testElement;
+
 function showErrors (xhr) {
   var errors = $.parseJSON(xhr.responseText).errors;
   var errores = '';
@@ -222,6 +224,13 @@ function loadCalendar (startTime, endTime, hiddenDays, resourcesArray, providerI
       };
     },
     eventRender: function(event, element) {
+      var display_my = 'bottom center';
+      var display_at = 'top center';
+      if(element.position() && element.position().top < 60)
+      {
+        display_my = 'top center';
+        display_at = 'bottom center';
+      }
       if ($.isNumeric(event.id)) {
         var prepayed = event.prepayed_qtip;
         if (prepayed === undefined) {
@@ -246,8 +255,8 @@ function loadCalendar (startTime, endTime, hiddenDays, resourcesArray, providerI
               event.sessions_ratio_qtip
             },
             position: {
-              my: 'bottom center',  // el triángulo sale de abajo al medio
-              at: 'top center' // se ubica arriba del elemento en cuestión
+              my: display_my,  // el triángulo sale de abajo al medio
+              at: display_at // se ubica arriba del elemento en cuestión
             },
             style: {
               classes: 'qtip-bootstrap'
@@ -259,6 +268,8 @@ function loadCalendar (startTime, endTime, hiddenDays, resourcesArray, providerI
             },
             events: {
               show: function(event, api) {
+                console.log("Show");
+                console.log(event);
                 if(dragInProgress)
                 {
                   event.preventDefault();
@@ -281,8 +292,8 @@ function loadCalendar (startTime, endTime, hiddenDays, resourcesArray, providerI
               'Pagado: ' + prepayed
             },
             position: {
-              my: 'bottom center',  // el triángulo sale de abajo al medio
-              at: 'top center' // se ubica arriba del elemento en cuestión
+              my: display_my,  // el triángulo sale de abajo al medio
+              at: display_at // se ubica arriba del elemento en cuestión
             },
             style: {
               classes: 'qtip-bootstrap'
