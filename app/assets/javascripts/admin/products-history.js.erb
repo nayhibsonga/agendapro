@@ -1,3 +1,4 @@
+var ajax_name = "products_history_list";
 function loadHistory()
 {
   var location_ids = [];
@@ -34,6 +35,8 @@ function loadHistory()
   var date_to = $('#to').val();
   var order = $('#order-select').val();
 
+  var ajax_turn = requestAjaxTurn(ajax_name);
+
   $.ajax({
     url: '/product_logs_history',
     method: 'get',
@@ -43,11 +46,14 @@ function loadHistory()
       $('#download_stats_btn').hide();
     },
     success: function(response){
-      $('#render_content').empty();
-      $('#render_content').append(response);
-      link_href = '/product_logs_history_excel.xls?location_ids=' + location_ids.join() +'&product_ids=' + product_ids.join() + '&from=' + date_from + '&to=' + date_to + '&order=' + order;
-      $('#download-history-link').attr("href", link_href);
-      $('#download_stats_btn').show();
+      if(shouldDisplay(ajax_name, ajax_turn))
+      {
+        $('#render_content').empty();
+        $('#render_content').append(response);
+        link_href = '/product_logs_history_excel.xls?location_ids=' + location_ids.join() +'&product_ids=' + product_ids.join() + '&from=' + date_from + '&to=' + date_to + '&order=' + order;
+        $('#download-history-link').attr("href", link_href);
+        $('#download_stats_btn').show();
+      }
     }
   });
 }
@@ -93,6 +99,8 @@ function loadProducts()
 }
 
 $(function(){
+
+  registerModerator(ajax_name);
 
   $('#order-select').on('change', function(){
     loadHistory();

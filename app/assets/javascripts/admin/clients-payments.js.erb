@@ -1,3 +1,4 @@
+var ajax_name = "client_payments_list";
 function loadPayments()
 {
   var items = [];
@@ -13,11 +14,16 @@ function loadPayments()
     $('#client_payments_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
     var client_id = $('#client_id').val();
 
+    var ajax_turn = requestAjaxTurn(ajax_name);
+
     $.ajax({
         url: '/clients/' + client_id + '/payments_content?&from=' + $('#from').val() + '&to=' + $('#to').val() + '&items=' + items,
         cache: false,
         success: function(html){
-          $('#client_payments_div').html(html);
+          if(shouldDisplay(ajax_name, ajax_turn))
+          {
+            $('#client_payments_div').html(html);
+          }
         }
     });
   }
@@ -61,6 +67,8 @@ function paginatedContent() {
 */
 
 $(function() {
+
+  registerModerator(ajax_name);
 
   $('#itemsMultiSelect').multiselect({
     includeSelectAllOption: true,

@@ -1,3 +1,4 @@
+var ajax_name = "payments_list";
 function destroyPayment(payment_id) {
   $.ajax({
     type: 'DELETE',
@@ -65,12 +66,17 @@ function loadPayments(locations, payment_methods) {
     var payment_methods = payment_method_ids.join();
     var payment_selected_items = payment_selected_items_arr.join();
 
+    var ajax_turn = requestAjaxTurn(ajax_name);
+
     $('#render_content').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
     $.ajax({
         url: '/payments_index_content?from=' + $('#from').val() + '&to=' + $('#to').val() + '&location_ids=' + locations + '&payment_method_ids=' + payment_methods + '&payment_items=' + payment_selected_items,
         cache: false,
         success: function(html){
-          $('#render_content').html(html);
+          if(shouldDisplay(ajax_name, ajax_turn))
+          {
+            $('#render_content').html(html);
+          }
         }
     });
 
@@ -79,6 +85,7 @@ function loadPayments(locations, payment_methods) {
 
 $(function() {
 
+  registerModerator(ajax_name);
 
   $('#locationMultiSelect').multiselect({
     includeSelectAllOption: true,
