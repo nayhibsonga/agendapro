@@ -329,6 +329,10 @@ function loadDefaults()
   /*
     Check for days without time and load default
   */
+  if($('#id_data').length < 1)
+  {
+    return false;
+  }
   var providerId = $('#id_data').data('id');
   $('.dayCheckbox:unchecked').each(function(){
     var day_id = $(this).attr('id')[$(this).attr('id').length - 1];
