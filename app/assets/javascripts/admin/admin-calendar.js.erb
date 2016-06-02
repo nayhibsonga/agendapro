@@ -3726,4 +3726,9 @@ $(function() {
     today: 'Hoy',
     clear: ''
   });
+
+  $(".modal").on('show.bs.modal', function(){
+    $('#popover').hide();
+  });
+
 });

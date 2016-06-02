@@ -109,6 +109,7 @@ class Ability
     can :user_delete_treatment, Booking
 
     can :pdf, ServiceProvider
+    can :default_time, ServiceProvider
 
     # Singup Validate
     can :check_user_email, User

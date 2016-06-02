@@ -1,5 +1,5 @@
 class ServiceProvidersController < ApplicationController
-  before_action :set_service_provider, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
+  before_action :set_service_provider, only: [:show, :edit, :update, :destroy, :activate, :deactivate, :default_time]
   before_action :authenticate_user!, except: [:location_services, :location_providers, :provider_time, :available_hours_week_html]
   before_action :quick_add, except: [:location_services, :location_providers, :provider_time, :available_hours_week_html]
   load_and_authorize_resource
@@ -204,6 +204,34 @@ class ServiceProvidersController < ApplicationController
     else
       render :json => ''
     end
+  end
+
+  def default_time
+    day = params[:day]
+
+    start_hour = "09"
+    start_minute = "00"
+    end_hour = "18"
+    end_minute = "00"
+
+    if @service_provider.provider_times.where(day_id: day).count > 0
+      start_time = @service_provider.provider_times.where(day_id: day).order('open asc').first.open
+      end_time = @service_provider.provider_times.where(day_id: day).order('close desc').first.close
+      start_hour = start_time.strftime("%H")
+      start_minute = start_time.strftime("%M")
+      end_hour = end_time.strftime("%H")
+      end_minute = end_time.strftime("%M")
+    elsif @service_provider.location.location_times.where(day_id: day).count > 0
+      start_time = @service_provider.location.location_times.where(day_id: day).order('open asc').first.open
+      end_time = @service_provider.location.location_times.where(day_id: day).order('close desc').first.close
+      start_hour = start_time.strftime("%H")
+      start_minute = start_time.strftime("%M")
+      end_hour = end_time.strftime("%H")
+      end_minute = end_time.strftime("%M")
+    end
+
+    render :json => {start_hour: start_hour, start_minute: start_minute, end_hour: end_hour, end_minute: end_minute}
+
   end
 
   private
