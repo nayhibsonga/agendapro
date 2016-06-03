@@ -1316,8 +1316,11 @@ function editDrag(event) {
     });
   } else {
     var text = '';
-    if (event.resourceId) {
-      text = 'Si la reserva tenía una preferencia de prestador, esta se perderá.\n';
+    if (event.oldResourceId) {
+      if(event.oldResourceId != eventJSON.service_provider_id)
+      {
+        text = 'Si la reserva tenía una preferencia de prestador, esta se perderá.\n';
+      }
     };
     // Staff code
     var confirmation = false;
