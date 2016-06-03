@@ -5,6 +5,7 @@ class ProductsController < ApplicationController
   before_action -> (source = "products") { verify_free_plan source }
   before_action :verify_blocked_status
   before_action :verify_premium_plan, only: [:stats, :locations_stats, :locations_stats_excel, :history, :logs_history, :logs_history_excel]
+  before_action :verify_disabled
   layout "admin"
   load_and_authorize_resource
 

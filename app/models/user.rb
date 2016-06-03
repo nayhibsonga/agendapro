@@ -124,4 +124,18 @@ class User < ActiveRecord::Base
 		"#{self.first_name} #{self.last_name}"
 	end
 
+	#Check if Staff or Recepcionista have no providers or locations associated (or are inactive)
+	def is_disabled
+		if self.role_id == Role.find_by_name("Recepcionista").id
+			if self.locations.where(active: true).count == 0
+				return true
+			end
+		elsif self.role_id == Role.find_by_name("Staff").id || self.id == Role.find_by_name("Staff (sin edición)")
+			if self.service_providers.where(active: true).count == 0
+				return true
+			end
+		end
+		return false
+	end
+
 end

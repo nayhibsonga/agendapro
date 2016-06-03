@@ -5,6 +5,11 @@ class DashboardController < ApplicationController
   layout "admin"
 
   def index
+
+    if current_user.is_disabled
+      redirect_to action: 'disabled'
+    end
+
     host = request.host_with_port
     @url = host[host.index(request.domain)..host.length]
 
@@ -70,6 +75,28 @@ class DashboardController < ApplicationController
       if mobile_request?
         @company = current_user.company
       end
+    end
+  end
+
+  def disabled
+    host = request.host_with_port
+    @url = host[host.index(request.domain)..host.length]
+    # Datos estaticos
+    @billing_info_missing = false
+    if current_user.company.payment_status != PaymentStatus.find_by_name("Trial") && current_user.role_id != Role.find_by_name("Super Admin").id
+      @billing_info_missing = true if BillingInfo.where(company_id: current_user.company_id).count == 0
+      if !@billing_info_missing
+        @billing_info = BillingInfo.find_by(company_id: current_user.company_id)
+        if @billing_info.name.blank? || @billing_info.rut.blank? || @billing_info.address.blank? || @billing_info.sector.blank? || @billing_info.email.blank? || @billing_info.phone.blank?
+          @billing_info_missing = true
+        end
+      end
+    end
+
+    @due_payment = true if Company.find(current_user.company_id).payment_status == PaymentStatus.find_by_name("Emitido") unless current_user.role_id == Role.find_by_name("Super Admin").id
+    @timezone = CustomTimezone.from_company(@company)
+    if mobile_request?
+      @company = current_user.company
     end
   end
 
