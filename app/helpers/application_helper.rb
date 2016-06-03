@@ -255,9 +255,20 @@ module ApplicationHelper
 	def provider_booking_occupation(from, to, status, option, provider_id)
 		available_time = 0.0
 		used_time = 0.0
-		ServiceProvider.find(provider_id).provider_times.each do |provider_time|
-			available_time += provider_time.close - provider_time.open
+		current_date = from
+		service_provider = ServiceProvider.find(provider_id)
+		while current_date <= to
+			puts current_date.to_s
+			service_provider.provider_times.where(day_id: current_date.wday).each do |provider_time|
+				available_time += provider_time.close - provider_time.open
+			end
+			current_date = current_date +1.days
 		end
+		break_times = 0
+		service_provider.provider_breaks.where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', from, to).each do |provider_break|
+			break_times += provider_break.end - provider_break.start
+		end
+		available_time -= break_times
 		if option == 1
 			Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider_id, start: from.beginning_of_day..to.end_of_day).each do |booking|
 				used_time += booking.end - booking.start
@@ -267,8 +278,9 @@ module ApplicationHelper
 				used_time += booking.end - booking.start
 			end
 		end
+
 		if available_time > 0
-			return used_time/available_time
+			return used_time/available_time * 100.0
 		else
 			return 0
 		end
