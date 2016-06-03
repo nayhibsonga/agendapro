@@ -35,7 +35,7 @@ class ServicesController < ApplicationController
   def deactivate
     @service.active = false
     @service.save
-    flash[:success] = "Servicio activado exitosamente."
+    flash[:success] = "Servicio desactivado exitosamente."
     redirect_to services_path
   end
 

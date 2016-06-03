@@ -492,6 +492,7 @@ $(function() {
           $('#service_service_category_id').append('<option value="'+service_category.id+'">'+service_category.name+'</option>');
           $('#service_service_category_id option[value="'+service_category.id+'"]').prop('selected', true);
           $('#serviceCategoryModal').modal('hide');
+          triggerSuccess('Categoría creada existosamente.');
         },
         error: function(xhr){
           var errors = $.parseJSON(xhr.responseText).errors;
