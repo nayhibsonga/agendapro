@@ -450,6 +450,7 @@ function popover() {
   inputgroup.on('hide.bs.popover', function() {
     $('#map-placement').append($('#content-popover').addClass('no-show').detach());
     opened = false;
+    close = $('.popover .close');
     close.unbind('click');
   });
   inputgroup.focusin(function(event) {
@@ -497,4 +498,5 @@ $(function() {
 		$('#fieldset_step3').attr('disabled', false);
 		scrollToAnchor('fieldset_step3');
 	});
+
 });
