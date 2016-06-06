@@ -1,3 +1,4 @@
+var ajax_name = "products_stats_list";
 function loadStats()
 {
 	var location_ids = [];
@@ -20,6 +21,8 @@ function loadStats()
 	var date_from = $('#from').val();
 	var date_to = $('#to').val();
 
+	var ajax_turn = requestAjaxTurn(ajax_name);
+
 	$.ajax({
 		url: '/locations_products_stats',
 		method: 'get',
@@ -30,14 +33,18 @@ function loadStats()
 			$('#download_stats_btn').hide();
 		},
 		success: function(response){
-			$('#render_content').empty();
-			$('#render_content').append(response);
-			$('#price_sum_summary').html('<strong>' + $('#price_total').val() + '</strong>');
-			$('#quantity_sum_summary').html('<strong>' + $('#quantity_total').val() + '</strong>');
-			$('#summaries_div').show();
-			link_href = '/locations_products_stats_excel.xls?location_ids=' + location_ids.join() + '&from=' + date_from + '&to=' + date_to;
-			$('#download-stats-link').attr("href", link_href);
-			$('#download_stats_btn').show();
+
+			if(shouldDisplay(ajax_name, ajax_turn))
+			{
+				$('#render_content').empty();
+				$('#render_content').append(response);
+				$('#price_sum_summary').html('<strong>' + $('#price_total').val() + '</strong>');
+				$('#quantity_sum_summary').html('<strong>' + $('#quantity_total').val() + '</strong>');
+				$('#summaries_div').show();
+				link_href = '/locations_products_stats_excel.xls?location_ids=' + location_ids.join() + '&from=' + date_from + '&to=' + date_to;
+				$('#download-stats-link').attr("href", link_href);
+				$('#download_stats_btn').show();
+			}
 		}
 	})
 }
@@ -117,6 +124,8 @@ function loadProductHistory(product_id)
 }
 
 $(function(){
+
+	registerModerator(ajax_name);
 
 	$('#from').on('change', function(){
     loadStats();

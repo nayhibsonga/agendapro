@@ -114,6 +114,7 @@ Agendapro::Application.routes.draw do
 
 
     # Reporting
+    get '/disabled', :to => 'dashboard#disabled'
     get '/dashboard', :to => 'dashboard#index', :as => 'dashboard'
     get '/reports', :to => 'reports#index', :as => 'reports'
     get '/report_locations', :to => 'reports#locations'
