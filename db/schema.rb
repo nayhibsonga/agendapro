@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
   add_index "billing_records", ["transaction_type_id"], name: "index_billing_records_on_transaction_type_id", using: :btree
 
   create_table "billing_wire_transfers", force: true do |t|
-    t.datetime "payment_date",   default: '2015-12-02 16:05:59'
+    t.datetime "payment_date",   default: '2015-11-16 15:12:16'
     t.float    "amount",         default: 0.0
     t.string   "account_name",   default: ""
     t.string   "account_number", default: ""
@@ -200,8 +200,6 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.integer  "payment_id"
-    t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
     t.integer  "payment_id"
     t.float    "discount",               default: 0.0
@@ -223,7 +221,6 @@ ActiveRecord::Schema.define(version: 20160531163919) do
   add_index "bookings", ["location_id"], name: "index_bookings_on_location_id", using: :btree
   add_index "bookings", ["payment_id"], name: "index_bookings_on_payment_id", where: "(payment_id IS NOT NULL)", using: :btree
   add_index "bookings", ["promotion_id"], name: "index_bookings_on_promotion_id", using: :btree
-  add_index "bookings", ["receipt_id"], name: "index_bookings_on_receipt_id", where: "(receipt_id IS NOT NULL)", using: :btree
   add_index "bookings", ["service_id"], name: "index_bookings_on_service_id", using: :btree
   add_index "bookings", ["service_provider_id"], name: "index_bookings_on_service_provider_id", using: :btree
   add_index "bookings", ["session_booking_id"], name: "index_bookings_on_session_booking_id", using: :btree
@@ -397,7 +394,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
     t.integer  "trial_months_left",   default: 0
-    t.integer  "default_plan_id",     default: 21
+    t.integer  "default_plan_id",     default: 11
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
@@ -838,7 +835,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "date",                default: '2015-11-02 04:28:19'
+    t.datetime "date",                default: '2015-10-27 17:17:43'
     t.integer  "user_id"
     t.text     "notes",               default: ""
   end
@@ -1283,7 +1280,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.integer  "company_id"
     t.float    "amount",        default: 0.0
     t.boolean  "payed",         default: false
-    t.datetime "payment_date",  default: '2015-11-10 18:01:28'
+    t.datetime "payment_date",  default: '2015-11-10 14:59:37'
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "discount",      default: 0.0
@@ -1676,7 +1673,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
-    t.datetime "date",          default: '2015-11-02 04:28:19'
+    t.datetime "date",          default: '2015-10-23 15:05:22'
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1701,7 +1698,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
-    t.datetime "date",                    default: '2015-11-02 04:28:19'
+    t.datetime "date",                    default: '2015-10-23 13:42:39'
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false

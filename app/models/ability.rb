@@ -399,6 +399,7 @@ class Ability
         can :download, Client
 
         can :import, Product
+        can :download, Product
 
         can :change_categories_order, ServiceCategory
         can :change_services_order, Service
@@ -737,6 +738,7 @@ class Ability
         can :download, Client
 
         can :import, Product
+        can :download, Product
 
         can :change_categories_order, ServiceCategory
         can :change_services_order, Service

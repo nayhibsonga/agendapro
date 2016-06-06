@@ -44,7 +44,7 @@
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="downloadDropdown">
-                    <li><%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, '/products.xls', :target => :blank, class: "" %></li>
+                    <li><%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, '/products_download.xls', :target => :blank, class: "" %></li>
                     <li><%= link_to '<i class="fa fa-download"></i> CSV'.html_safe, '/products.csv', :target => :blank, class: "" %></li>
                   </ul>
                 </div>
@@ -258,7 +258,7 @@
           </ul>
           <p>
             Plantillas para importación:
-            <%= link_to '<i class="fa fa-download"></i> Plantilla Excel'.html_safe, '/products.xls', :target => :blank, class: "btn btn-white" %>
+            <%= link_to '<i class="fa fa-download"></i> Plantilla Excel'.html_safe, '/products_download.xls', :target => :blank, class: "btn btn-white" %>
             <%= link_to '<i class="fa fa-download"></i> Plantilla CSV'.html_safe, '/products.csv', :target => :blank, class: "btn btn-white" %>
           </p>
           <div class="form-group" id="file-group">
