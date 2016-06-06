@@ -706,7 +706,7 @@ class Company < ActiveRecord::Base
 	#
 	# 5th of month:
 	# Remind companies that were issued and haven't payed yet
-	# "Block" companies that expired (move them to blocked)
+	#
 	#
 	def self.collect_reminder
 
@@ -721,55 +721,17 @@ class Company < ActiveRecord::Base
 		month_end = Time.now.days_in_month
 		month_prop = (month_day - 1).to_f / month_end.to_f
 
-		collectables.where.not(payment_status_id: status_activo.id).each do |company|
+		collectables.where(payment_status_id: status_emitido.id).each do |company|
 
 			sales_tax = company.country.sales_tax
 
-			if company.payment_status_id == status_emitido.id
-
-				#Send first reminder
-				if !company.account_used_all
-					#Hasn't used
-				else
-					company.sendings.build(method: 'message_invoice').save
-				end
-
-			elsif company.payment_status_id == status_vencido.id
-
-				#Block them by changing their plan to free plan
-				#Add their due amount for possible reactivation in the future
-
-				#prev_plan_id = company.plan_id
-
-				company.payment_status_id = status_bloqueado.id
-				if company.due_amount.nil?
-					if company.plan.custom
-						#company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
-						company.due_amount = month_prop * company.company_plan_setting.base_price * (1 + sales_tax)
-					else
-						company.due_amount = month_prop * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
-					end
-				else
-					#company.due_amount += month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
-					if company.plan.custom
-						#company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
-						company.due_amount += month_prop * company.company_plan_setting.base_price * (1 + sales_tax)
-					else
-						company.due_amount += month_prop * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
-					end
-				end
-				#company.plan_id = plan_gratis.id
-				company.due_date = DateTime.now
-
-				if company.save
-					#DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
-					#Send mail alerting their plan changed
-					if company.account_used_all
-						company.sendings.build(method: 'close_message_invoice').save
-					end
-				end
-
+			#Send first reminder
+			if !company.account_used_all
+				#Hasn't used
+			else
+				company.sendings.build(method: 'message_invoice').save
 			end
+
 
 		end
 
@@ -787,7 +749,7 @@ class Company < ActiveRecord::Base
 		month_end = Time.now.days_in_month
 		month_prop = (month_day - 1).to_f / month_end.to_f
 
-		collectables.where.where(payment_status_id: status_vencido.id).each do |company|
+		collectables.where(payment_status_id: status_vencido.id).each do |company|
 
 			sales_tax = company.country.sales_tax
 
