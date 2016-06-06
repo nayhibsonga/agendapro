@@ -816,6 +816,7 @@ class Company < ActiveRecord::Base
 		#Shut down blocked companies
 		regular_blocked.each do |company|
 			company.payment_status_id = status_inactivo.id
+			company.active = false
 			company.save
 		end
 
