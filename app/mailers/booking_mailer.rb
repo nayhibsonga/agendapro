@@ -297,7 +297,7 @@ class BookingMailer < Base::CustomMailer
 
     path = options[:horachic] ? "horachic" : "agendapro"
 
-    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "#{@bookings.map(&:id).inspect}" } }.to_json if @client
+    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "#{@bookings.map(&:id).inspect}" } }.to_json
 
     mail(
       from: filter_sender(),

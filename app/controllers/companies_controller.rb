@@ -79,6 +79,10 @@ class CompaniesController < ApplicationController
 			      end
 			    end
 
+			    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || @company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || @company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
+			      	price = ((month_days - day_number + 1).to_f / month_days.to_f) * price
+			    end
+
 	    		new_plan = Plan.find(plan_id)
 
 	    		accepted_plans = Plan.where(custom: false).pluck(:id)
@@ -283,6 +287,10 @@ class CompaniesController < ApplicationController
 			      else
 			        price = company.company_plan_setting.base_price * company.computed_multiplier
 			      end
+			    end
+
+			    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || @company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || @company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
+			      price = ((month_days - day_number + 1).to_f / month_days.to_f) * price
 			    end
 
 	    		accepted_amounts = [1,2,3,4,6,9,12]
@@ -526,6 +534,12 @@ class CompaniesController < ApplicationController
 		#@company.months_active_left > 0 ? @plan_1 = (@company.due_amount/(1+@sales_tax) + @price).round(0) : @plan_1 = ((@company.due_amount/(1+@sales_tax) + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
 
 		@plan_1 = (@company.due_amount/(1+@sales_tax) + @price).round(0)
+
+		if @company.payment_status_id == PaymentStatus.find_by_name("Trial").id || @company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || @company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
+	      	puts "True"
+	      	special_price = ((@month_days - @day_number + 1).to_f / @month_days.to_f) * @price
+	      	@plan_1 = (@company.due_amount + special_price * (1+@sales_tax)).round(0)
+	    end
 
 
 	    @plan_2 = (@plan_1 + @price*1).round(0)

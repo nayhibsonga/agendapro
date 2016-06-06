@@ -21,6 +21,11 @@ every '0 0 25 * *' do
   runner "Company.collect_ultimatum"
 end
 
+#For new blocking
+every '0 0 10 * *' do
+  runner "Company.collect_block"
+end
+
 #every 1.days, :at => '0 am' do
 #  runner "Company.payment_expiry"
 #  runner "Company.payment_shut"
