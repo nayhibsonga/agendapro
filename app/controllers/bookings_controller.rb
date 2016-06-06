@@ -25,7 +25,7 @@ class BookingsController < ApplicationController
       @locations = Location.actives.accessible_by(current_ability).ordered
     end
     @company_setting = @company.company_setting
-    @service_providers = ServiceProvider.where(location_id: @locations).ordered
+    @service_providers = ServiceProvider.where(location_id: @locations).accessible_by(current_ability).ordered
     @provider_groups = JbuilderTemplate.encode(view_context) do |json|
       json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order, :name) do |provider_group|
         json.name  provider_group.name
@@ -41,7 +41,7 @@ class BookingsController < ApplicationController
         json.location location.id
         json.days Day.all do |day|
           json.day day.id
-          json.resources ServiceProvider.joins(:provider_times).actives.where(provider_times: {day: day}).where(location: location).order(:order, :public_name).uniq do |provider|
+          json.resources ServiceProvider.joins(:provider_times).actives.accessible_by(current_ability).where(provider_times: {day: day}).where(location: location).order(:order, :public_name).uniq do |provider|
             json.id provider.id
             json.name provider.public_name
           end
@@ -70,12 +70,12 @@ class BookingsController < ApplicationController
     else
       @locations = Location.where(:active => true).accessible_by(current_ability).order(:order, :name)
     end
-    @service_providers = ServiceProvider.where(location_id: @locations).order(:order, :public_name)
+    @service_providers = ServiceProvider.where(location_id: @locations).accessible_by(current_ability).order(:order, :public_name)
     @provider_groups = JbuilderTemplate.encode(view_context) do |json|
-      json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order, :name) do |provider_group|
+      json.array! ProviderGroup.where(company_id: current_user.company_id).accessible_by(current_ability).order(:order, :name) do |provider_group|
         json.name  provider_group.name
         json.location_id provider_group.location_id
-        json.resources provider_group.service_providers.where(active: true) do |service_provider|
+        json.resources provider_group.service_providers.accessible_by(current_ability).where(active: true) do |service_provider|
           json.id service_provider.id
           json.name service_provider.public_name
         end
