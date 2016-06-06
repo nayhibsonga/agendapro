@@ -588,6 +588,9 @@ class BookingsController < ApplicationController
         format.json { render :json => @bookings }
         format.js { }
       else
+        if !session_booking.nil?
+          session_booking.delete
+        end
         @bookings.each do |book|
           Booking.find(book[:id]).destroy
         end
@@ -3557,6 +3560,9 @@ class BookingsController < ApplicationController
           redirect_to punto_pagos_failure_path and return
         end
       else
+        if @has_session_booking && !@session_booking.nil?
+          @session_booking.delete
+        end
         @bookings.each do |booking|
             booking.delete
         end

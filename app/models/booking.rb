@@ -1,16 +1,16 @@
 class Booking < ActiveRecord::Base
-	belongs_to :service_provider
-	belongs_to :service
-	belongs_to :user
-	belongs_to :status
-	belongs_to :location
-	belongs_to :promotion
-	belongs_to :client
-	belongs_to :deal
-	belongs_to :payed_booking
-	belongs_to :payment
-	belongs_to :session_booking
-	belongs_to :service_promo
+  belongs_to :service_provider
+  belongs_to :service
+  belongs_to :user
+  belongs_to :status
+  belongs_to :location
+  belongs_to :promotion
+  belongs_to :client
+  belongs_to :deal
+  belongs_to :payed_booking
+  belongs_to :payment
+  belongs_to :session_booking
+  belongs_to :service_promo
   belongs_to :receipt
 
   has_many :booking_histories, dependent: :destroy
@@ -36,8 +36,18 @@ class Booking < ActiveRecord::Base
   after_create :send_booking_mail, :wait_for_payment, :check_session
   after_update :send_update_mail, :check_session
 
+  #after_destroy :check_treatment
+
 
   WORKER = 'BookingEmailWorker'
+
+  def check_treatment
+    if self.is_session && !self.session_booking.nil?
+      if self.session_booking.bookings.count == 0
+        self.session_booking.destroy
+      end
+    end
+  end
 
   def is_canceled
     return self.status_id == Status.find_by_name("Cancelado").id
@@ -93,19 +103,19 @@ class Booking < ActiveRecord::Base
     end
   end
 
-	def check_session
-		if self.id.nil?
-			return
-		end
-		sessions_count = 0
-		if !self.session_booking.nil?
-			self.session_booking.bookings.each do |b|
-				if b.is_session_booked
-					sessions_count = sessions_count + 1
-				end
-			end
-			self.session_booking.sessions_taken = sessions_count
-			self.session_booking.save
+  def check_session
+    if self.id.nil?
+      return
+    end
+    sessions_count = 0
+    if !self.session_booking.nil?
+      self.session_booking.bookings.each do |b|
+        if b.is_session_booked
+          sessions_count = sessions_count + 1
+        end
+      end
+      self.session_booking.sessions_taken = sessions_count
+      self.session_booking.save
 
       if self.price.nil?
         if self.list_price.nil?
@@ -130,8 +140,8 @@ class Booking < ActiveRecord::Base
         end
       end
 
-		end
-	end
+    end
+  end
 
   def wait_for_payment
     if self.trx_id != ""
