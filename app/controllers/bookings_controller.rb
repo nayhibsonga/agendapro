@@ -72,7 +72,7 @@ class BookingsController < ApplicationController
     end
     @service_providers = ServiceProvider.where(location_id: @locations).accessible_by(current_ability).order(:order, :public_name)
     @provider_groups = JbuilderTemplate.encode(view_context) do |json|
-      json.array! ProviderGroup.where(company_id: current_user.company_id).order(:order, :name) do |provider_group|
+      json.array! ProviderGroup.where(company_id: current_user.company_id).accessible_by(current_ability).order(:order, :name) do |provider_group|
         json.name  provider_group.name
         json.location_id provider_group.location_id
         json.resources provider_group.service_providers.accessible_by(current_ability).where(active: true) do |service_provider|
