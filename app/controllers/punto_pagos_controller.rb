@@ -61,12 +61,6 @@ class PuntoPagosController < ApplicationController
       end
     end
 
-    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || @company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || @company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
-      puts "True"
-      price = ((@month_days - @day_number + 1).to_f / @month_days.to_f) * @price
-      @plan_1 = (@company.due_amount + special_price * (1+@sales_tax)).round(0)
-    end
-
     sales_tax = company.country.sales_tax
     day_number = Time.now.day
     month_number = Time.now.month
@@ -128,7 +122,7 @@ class PuntoPagosController < ApplicationController
     puts payment_method
     company = Company.find(current_user.company_id)
 
-    company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
+    #company.payment_status == PaymentStatus.find_by_name("Trial") ? price = Plan.where(locations: company.locations.where(active: true).count).where('service_providers >= ?', company.service_providers.where(active: true).count).first.plan_countries.find_by(country_id: company.country.id).price : price = company.plan.plan_countries.find_by(country_id: company.country.id).price
 
     price = 0
     if company.payment_status == PaymentStatus.find_by_name("Trial")
@@ -145,10 +139,6 @@ class PuntoPagosController < ApplicationController
       end
     end
 
-    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || @company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || @company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
-      price = ((month_days - day_number + 1).to_f / month_days.to_f) * price
-    end
-
 
     new_plan = Plan.find(plan_id)
     sales_tax = company.country.sales_tax
@@ -157,6 +147,11 @@ class PuntoPagosController < ApplicationController
     month_days = Time.now.days_in_month
     accepted_plans = Plan.where(custom: false).pluck(:id)
     accepted_payments = ["00","16","03","04","05","06","07"]
+
+    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
+      price = ((month_days - day_number + 1).to_f / month_days.to_f) * price
+    end
+    
     if accepted_plans.include?(plan_id) && accepted_payments.include?(payment_method) && company
       if (company.service_providers.where(active: true, location_id: company.locations.where(active: true).pluck(:id)).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || (!new_plan.custom && new_plan.name != "Personal")
 

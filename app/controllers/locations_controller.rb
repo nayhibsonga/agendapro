@@ -116,7 +116,6 @@ class LocationsController < ApplicationController
   def activate
     @location.active = true
     if @location.save
-      @location.add_due
       flash[:success] = "Local activado exitosamente."
       redirect_to inactive_locations_path
     else
@@ -127,7 +126,6 @@ class LocationsController < ApplicationController
   def deactivate
     @location.active = false
     if @location.save
-      @location.substract_due
       @location.active_service_providers.update_all(active: false)
       flash[:success] = "Local desactivado exitosamente."
       redirect_to locations_path

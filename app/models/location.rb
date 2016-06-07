@@ -69,8 +69,9 @@ class Location < ActiveRecord::Base
   end
 
   after_commit :extended_schedule
-  after_create :add_products, :add_due
-  after_destroy :substract_due
+  after_create :add_products, :create_location_process
+  after_update :update_location_process
+  after_destroy :destroy_location_process
 
   pg_search_scope :search_company_name, :associated_against => {
     :company => :name
@@ -132,26 +133,125 @@ class Location < ActiveRecord::Base
 
   	#Add due if plan is not custom and locations increased by one
   	def add_due
-  		if !self.company.plan.custom
-  			company = self.company
-  			day_number = DateTime.now.day
-    		month_number = DateTime.now.month
-    		month_days = DateTime.now.days_in_month
-  			company.due_amount += (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * company.computed_multiplier).round(2)
-  			company.save
-  		end
+  		# if !self.company.plan.custom
+  		# 	company = self.company
+  		# 	day_number = DateTime.now.day
+    # 		month_number = DateTime.now.month
+    # 		month_days = DateTime.now.days_in_month
+  		# 	company.due_amount += (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * company.computed_multiplier).round(2)
+  		# 	company.save
+  		# end
   	end
+
+    #After creation, check if there is more than one location.
+    #If so, adjust due according to current status.
+    def create_location_process
+      if !self.company.plan.custom
+        if self.company.locations.count > 1
+          company = self.company
+          day_number = DateTime.now.day
+          month_number = DateTime.now.month
+          month_days = DateTime.now.days_in_month
+
+          #Process changes according to status.
+          #If status is "Activo", then current month was already payed and due_amount should increase for the new location for month's days left and all months active left.
+          #If status is "Emitido", "Vencido" or "Bloqueado", then month hasn't been payed and the price will rise, so we should substract due_amount for month's days past.
+          if company.payment_status = PaymentStatus.find_by_name("Activo")
+            #Increase is: days_left * base_price * 0.5
+            company.due_amount += (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * 0.5) + (company.company_plan_setting.base_price * 0.5) * (company.months_active_left - 1)
+            company.save
+          elsif ["Emitido", "Vencido", "Bloqueado"].include?(company.payment_status.name)
+            #Decrease is: past_days * base_price * 0.5
+            company.due_amount -= ((day_number).to_f / month_days.to_f) * company.company_plan_setting.base_price * 0.5
+            company.save
+          end
+
+        end
+      end
+    end
+
+    #Check if a location has been deactivated or reactivated
+    #If so, adjust due according to current status.
+    def update_location_process
+      if !self.company.plan.custom
+        if self.active_changed?
+          company = self.company
+          day_number = DateTime.now.day
+          month_number = DateTime.now.month
+          month_days = DateTime.now.days_in_month
+
+          if self.active
+            #Process changes according to company status.
+            #If status is "Activo", then current month was already payed and due_amount should increase for the new location for month's days left and all payed months.
+            #If status is "Emitido", "Vencido" or "Bloqueado", then month hasn't been payed and the price will rise, so we should substract due_amount for month's days past.
+            if company.payment_status = PaymentStatus.find_by_name("Activo")
+              #Increase is: days_left * base_price * 0.5
+              company.due_amount += (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * 0.5 ) + (company.company_plan_setting.base_price * 0.5) * (company.months_active_left - 1)
+              company.save
+              puts "Due: " + company.due_amount.to_s
+              puts "Active location, company Activo"
+            elsif ["Emitido", "Vencido", "Bloqueado"].include?(company.payment_status.name)
+              #Decrease is: past_days * base_price * 0.5
+              company.due_amount -= ((day_number).to_f / month_days.to_f) * company.company_plan_setting.base_price * 0.5
+              company.save
+              puts "Due: " + company.due_amount.to_s
+              puts "Active location, company not Activo"
+            end
+          else
+            #Process changes according to company status.
+            #If status is "Activo", the current month was already payed and due_amount should decrease for the new location for month's day left and all payed months.
+            #If status is "Emitido", "Vencido" or "Bloqueado", then month hasn't been payed and the price will lower, so we should add due_amount for month's days past.
+            if company.payment_status = PaymentStatus.find_by_name("Activo")
+              company.due_amount -= ((((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * 0.5 ) + (company.company_plan_setting.base_price * 0.5) * (company.months_active_left - 1))
+              company.save
+              puts "Due: " + company.due_amount.to_s
+              puts "Inactive location, company Activo"
+            elsif ["Emitido", "Vencido", "Bloqueado"].include?(company.payment_status.name)
+              company.due_amount += ((day_number).to_f / month_days.to_f) * company.company_plan_setting.base_price * 0.5
+              company.save
+              puts "Due: " + company.due_amount.to_s
+              puts "Inactive location, company not Activo"
+            end
+          end
+
+        end
+      end
+    end
+
+    #After destruction, adjust due according to current status.
+    def destroy_location_process
+      if !self.company.plan.custom
+        if self.company.locations.count > 0
+          company = self.company
+          day_number = DateTime.now.day
+          month_number = DateTime.now.month
+          month_days = DateTime.now.days_in_month
+
+          #Process changes according to company status.
+          #If status is "Activo", the current month was already payed and due_amount should decrease for the new location for month's day left and all payed months.
+          #If status is "Emitido", "Vencido" or "Bloqueado", then month hasn't been payed and the price will lower, so we should add due_amount for month's days past.
+          if company.payment_status = PaymentStatus.find_by_name("Activo")
+            company.due_amount -= ((((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * 0.5 ) + (company.company_plan_setting.base_price * 0.5) * (company.months_active_left - 1))
+            company.save
+          elsif ["Emitido", "Vencido", "Bloqueado"].include?(company.payment_status.name)
+            company.due_amount += ((day_number).to_f / month_days.to_f) * company.company_plan_setting.base_price * 0.5
+            company.save
+          end
+
+        end
+      end
+    end
 
   	#Substract due if plan is not custom and locations decreased by one
   	def substract_due
-  		if !self.company.plan.custom
-  			company = self.company
-  			day_number = DateTime.now.day
-    		month_number = DateTime.now.month
-    		month_days = DateTime.now.days_in_month
-  			company.due_amount -= (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * (company.computed_multiplier + company.company_plan_setting.locations_multiplier)).round(2)
-  			company.save
-  		end
+  		# if !self.company.plan.custom
+  		# 	company = self.company
+  		# 	day_number = DateTime.now.day
+    # 		month_number = DateTime.now.month
+    # 		month_days = DateTime.now.days_in_month
+  		# 	company.due_amount -= (((month_days - day_number + 1).to_f / month_days.to_f) * company.company_plan_setting.base_price * (company.computed_multiplier + company.company_plan_setting.locations_multiplier)).round(2)
+  		# 	company.save
+  		# end
   	end
 
   	def add_products

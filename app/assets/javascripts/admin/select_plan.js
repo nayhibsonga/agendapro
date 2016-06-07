@@ -374,9 +374,17 @@ $(function() {
 
       /*
       Should pay days of the month passed with current_price, and forward days with new_price, plus debt
+      But only when "Emitido"
+      If "Bloqueado or Inactivo", should only add forward days.
       */
 
+
+
       var computed_price = plan_value_taken + due_amount / (1 + sales_tax) + plan_month_value;
+      if($('#blocked_or_inactive').val() == "1")
+      {
+        computed_price = due_amount / (1 + sales_tax) + plan_month_value;
+      }
       console.log("plan_value_taken " + plan_value_taken);
       console.log("due_amount " + due_amount);
       console.log("plan_month_value " + plan_month_value);
