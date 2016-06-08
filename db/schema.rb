@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160531163919) do
+ActiveRecord::Schema.define(version: 20160606161524) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -297,6 +297,142 @@ ActiveRecord::Schema.define(version: 20160531163919) do
 
   add_index "categoric_custom_filters", ["attribute_id"], name: "index_categoric_custom_filters_on_attribute_id", using: :btree
   add_index "categoric_custom_filters", ["custom_filter_id"], name: "index_categoric_custom_filters_on_custom_filter_id", using: :btree
+
+  create_table "chart_categories", force: true do |t|
+    t.integer  "chart_field_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_categories", ["chart_field_id"], name: "index_chart_categories_on_chart_field_id", using: :btree
+
+  create_table "chart_field_booleans", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.boolean  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_booleans", ["chart_field_id"], name: "index_chart_field_booleans_on_chart_field_id", using: :btree
+  add_index "chart_field_booleans", ["client_id"], name: "index_chart_field_booleans_on_client_id", using: :btree
+
+  create_table "chart_field_categorics", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.integer  "chart_category_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_categorics", ["chart_category_id"], name: "index_chart_field_categorics_on_chart_category_id", using: :btree
+  add_index "chart_field_categorics", ["chart_field_id"], name: "index_chart_field_categorics_on_chart_field_id", using: :btree
+  add_index "chart_field_categorics", ["client_id"], name: "index_chart_field_categorics_on_client_id", using: :btree
+
+  create_table "chart_field_dates", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.date     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_dates", ["chart_field_id"], name: "index_chart_field_dates_on_chart_field_id", using: :btree
+  add_index "chart_field_dates", ["client_id"], name: "index_chart_field_dates_on_client_id", using: :btree
+
+  create_table "chart_field_datetimes", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.datetime "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_datetimes", ["chart_field_id"], name: "index_chart_field_datetimes_on_chart_field_id", using: :btree
+  add_index "chart_field_datetimes", ["client_id"], name: "index_chart_field_datetimes_on_client_id", using: :btree
+
+  create_table "chart_field_files", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.integer  "client_file_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_files", ["chart_field_id"], name: "index_chart_field_files_on_chart_field_id", using: :btree
+  add_index "chart_field_files", ["client_file_id"], name: "index_chart_field_files_on_client_file_id", using: :btree
+  add_index "chart_field_files", ["client_id"], name: "index_chart_field_files_on_client_id", using: :btree
+
+  create_table "chart_field_floats", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.float    "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_floats", ["chart_field_id"], name: "index_chart_field_floats_on_chart_field_id", using: :btree
+  add_index "chart_field_floats", ["client_id"], name: "index_chart_field_floats_on_client_id", using: :btree
+
+  create_table "chart_field_integers", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.integer  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_integers", ["chart_field_id"], name: "index_chart_field_integers_on_chart_field_id", using: :btree
+  add_index "chart_field_integers", ["client_id"], name: "index_chart_field_integers_on_client_id", using: :btree
+
+  create_table "chart_field_textareas", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_textareas", ["chart_field_id"], name: "index_chart_field_textareas_on_chart_field_id", using: :btree
+  add_index "chart_field_textareas", ["client_id"], name: "index_chart_field_textareas_on_client_id", using: :btree
+
+  create_table "chart_field_texts", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_texts", ["chart_field_id"], name: "index_chart_field_texts_on_chart_field_id", using: :btree
+  add_index "chart_field_texts", ["client_id"], name: "index_chart_field_texts_on_client_id", using: :btree
+
+  create_table "chart_fields", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "chart_group_id"
+    t.string   "name"
+    t.text     "description"
+    t.string   "datatype"
+    t.string   "slug"
+    t.boolean  "mandatory"
+    t.integer  "order"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_fields", ["chart_group_id"], name: "index_chart_fields_on_chart_group_id", using: :btree
+  add_index "chart_fields", ["company_id"], name: "index_chart_fields_on_company_id", using: :btree
+
+  create_table "chart_groups", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.integer  "order"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_groups", ["company_id"], name: "index_chart_groups_on_company_id", using: :btree
 
   create_table "cities", force: true do |t|
     t.string   "name",       null: false

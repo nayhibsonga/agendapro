@@ -127,6 +127,16 @@
                   </div>
                 </div>
               </div>
+              <div class="col-md-6">
+                <div onclick="$('#charts_link').click();" class="media">
+                  <div class="media-left">
+                    <%= image_tag 'admin/charts.png', class: 'media-object media-image' %>
+                  </div>
+                  <div class="media-body">
+                    <span class="text-green">Fichas históricas:</span> crea fichas históricas para llevar un seguimiento de tus pacientes.
+                  </div>
+                </div>
+              </div>
             <% else %>
               <!-- blocked_clients_link -->
               <div class="col-md-6">
@@ -136,6 +146,16 @@
                   </div>
                   <div class="media-body">
                     <span style="color: #ababab;">&nbsp;Personalización de Clientes:</span> sección no disponible para tu plan actual.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="media">
+                  <div class="media-left" style="color: #ababab; border: 1px solid #ababab; border-radius: 10px;">
+                    &nbsp;&nbsp;<i class="fa fa-lock fa-3x lock-image"></i>
+                  </div>
+                  <div class="media-body">
+                    <span style="color: #ababab;">&nbsp;Fichas históricas:</span> sección no disponible para tu plan actual.
                   </div>
                 </div>
               </div>
