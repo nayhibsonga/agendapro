@@ -35,8 +35,10 @@
         <li role="presentation"><a id="notifications_link" href="#notifications" role="tab" data-toggle="pill" data-title="Notificaciones" data-description="Configura que e-mails deseas recibir y a que correo.">Notificaciones</a></li>
         <% if current_user.company.is_plan_capable("Premium") %>
           <li role="presentation"><a id="clients_link" href="#clients" role="tab" data-toggle="pill" data-title="Clientes" data-description="Configura campos personalizados y filtros para tus clientes.">Clientes</a></li>
+          <li role="presentation"><a id="charts_link" href="#charts" role="tab" data-toggle="pill" data-title="Fichas" data-description="Crea fichas históricas para llevar un seguimiento de tus pacientes.">Fichas</a></li>
         <% else %>
           <li role="presentation"><a id="blocked_clients_link" href="#" class="locked-section">Clientes<i class="fa fa-lock fa-1 lock-image"></i></a></li>
+          <li role="presentation"><a id="blocked_charts_link" href="#" class="locked-section">Fichas<i class="fa fa-lock fa-1 lock-image"></i></a></li>
         <% end %>
       </ul>
     </div>
@@ -112,7 +114,7 @@
                   <%= image_tag 'admin/8.png', class: 'media-object media-image' %>
                 </div>
                 <div class="media-body">
-                  <span class="text-green">Sistema de Caja:</span> Configura el sistema de caja y medios de pagos que acepta tu empresa.
+                  <span class="text-green">Sistema de Caja:</span> configura el sistema de caja y medios de pagos que acepta tu empresa.
                 </div>
               </div>
             </div>
@@ -1601,8 +1603,126 @@
             <!-- End Filters -->
 
           </div>
+          <!-- End Clients -->
+
+          <!-- Charts -->
+          <div class="tab-pane" id="charts">
+          <!-- Chart Groups -->
+
+            <div class="row" style="margin-top: 40px;">
+              <div class="col-md-12">
+                <div class="background-grey">
+                  <h3 class="text-green">
+                    Listado de categorías de campos
+                    <button class="btn btn-green pull-right" id="new_chart_group_button"><i class="fa fa-plus"></i> Agregar categoría</button>
+                  </h3>
+                </div>
+                <table class="table table-hover table-green">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Opciones</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="attribute-groups-tbody">
+                    <% @chart_groups.each do |chart_group| %>
+                      <tr class="chart-group-row" chart_group_id="<%= chart_group.id.to_s %>">
+                        <td>
+                          <%= chart_group.name %>
+                        </td>
+                        <td>
+                          <% if chart_group.name != "Otros" %>
+                            <button class="btn btn-orange edit_chart_group_btn" data-chartgroupid="<%= chart_group.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
+
+                            <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, chart_group, method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo seleccionado?' }, class: 'btn btn-red' %>
+                          <% end %>
+                        </td>
+                        <td>
+                          <i class="fa fa-bars move-chart-group"></i>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- End Chart Groups -->
+
+
+            <!-- Chart Fields -->
+            <div class="row" style="margin-top: 40px;">
+              <div class="col-md-12">
+                <div class="background-grey">
+                  <h3 class="text-green">
+                    Listado de campos
+                    <button class="btn btn-green pull-right" id="new_chart_field_button"><i class="fa fa-plus"></i> Agregar campo</button>
+                  </h3>
+                </div>
+
+                <div class="panel-group" id="chartGroupsAccordion" style="margin-top: 5px;">
+
+                  <% @chart_groups.each do |chart_group| %>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title" data-toggle="collapse" data-parent="#chartGroupsAccordion" href="#collapse-chart-group-<%= chart_group.id %>">
+                          <a><%= chart_group.name %></a>
+                        </h4>
+                      </div>
+                      <div id="collapse-chart-group-<%= chart_group.id %>" class="panel-collapse collapse<% if @chart_groups.count == 1%> in<% end %>">
+
+
+                        <table class="table table-hover table-green">
+                          <thead>
+                            <tr>
+                              <th>Nombre</th>
+                              <th>Descripción</th>
+                              <th>Tipo</th>
+                              <th>Obligatorio</th>
+                              <th>Opciones</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody class="attributes-tbody">
+                            <% chart_group.chart_fields.order(:order).order(:name).each do |chart_field| %>
+                              <tr class="chart_field-row" attribute_id="<%= chart_field.id.to_s %>">
+                                <td>
+                                  <%= chart_field.name %>
+                                </td>
+                                <td>
+                                  <%= chart_field.description %>
+                                </td>
+                                <td>
+                                  <%= chart_field.datatype_to_text %>
+                                </td>
+                                <td>
+                                  <%= chart_field.mandatory_to_text %>
+                                </td>
+                                <td>
+                                  <button class="btn btn-orange edit_chart_field_btn" data-chartfieldid="<%= chart_field.id %>"><i class="fa fa-pencil"></i>&nbsp;Editar</button>
+                                  <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, chart_field, method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo seleccionado?' }, class: 'btn btn-red' %>
+                                  <% if chart_field.datatype == "categoric" %>
+                                    <button class="btn btn-green add_chart_field_category_button" data-chartfieldid="<%= chart_field.id %>"><i class="fa fa-bars"></i>&nbsp;Categorías</button>
+                                  <% end %>
+                                </td>
+                                <td>
+                                  <i class="fa fa-bars move-chart-field"></i>
+                                </td>
+                              </tr>
+                            <% end %>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <!-- End Chart Fields -->
+          </div>
         <% end %>
-        <!-- End Clients -->
+        <!-- End Charts -->
 
       </div>
     </div>
