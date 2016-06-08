@@ -108,7 +108,7 @@ class PlansController < ApplicationController
     #@company.months_active_left > 0 ? @plan_1 = (@company.due_amount + @price).round(0) : @plan_1 = ((@company.due_amount + (@month_days - @day_number + 1)*@price/@month_days)).round(0)
     @plan_1 = (@company.due_amount + @price * (1 + @sales_tax)).round(0)
 
-    if @company.payment_status_id == PaymentStatus.find_by_name("Trial").id
+    if @company.payment_status_id == PaymentStatus.find_by_name("Trial").id || @company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || @company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
       puts "True"
       special_price = ((@month_days - @day_number + 1).to_f / @month_days.to_f) * @price
       @plan_1 = (@company.due_amount + special_price * (1+@sales_tax)).round(0)

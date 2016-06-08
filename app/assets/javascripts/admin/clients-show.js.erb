@@ -1,4 +1,4 @@
-
+var ajax_name = "client_show_list";
 function loadBookings()
 {
 	var service_ids = [];
@@ -35,11 +35,16 @@ function loadBookings()
     $('#client_bookings_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
     $('#treatment_bookings_div').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></p>');
 
+    var ajax_turn = requestAjaxTurn(ajax_name);
+
     $.ajax({
         url: '/client_bookings_content?client_id=' + client_id + '&from=' + $('#from').val() + '&to=' + $('#to').val() + '&service_ids=' + services + '&service_provider_ids=' + service_providers + '&status_ids=' + statuses,
         cache: false,
         success: function(html){
-          $('#client_bookings_div').html(html);
+          if(shouldDisplay(ajax_name, ajax_turn))
+          {
+            $('#client_bookings_div').html(html);
+          }
         }
     });
 
@@ -47,7 +52,10 @@ function loadBookings()
         url: '/client_treatments_content?client_id=' + client_id + '&from=' + $('#from').val() + '&to=' + $('#to').val() + '&service_ids=' + services + '&service_provider_ids=' + service_providers,
         cache: false,
         success: function(html){
-          $('#client_treatments_div').html(html);
+          if(shouldDisplay(ajax_name, ajax_turn))
+          {
+            $('#client_treatments_div').html(html);
+          }
         }
     });
 
@@ -110,6 +118,8 @@ function deleteTreatment(eventId){
 }
 
 $(function() {
+
+  registerModerator(ajax_name);
 
   $('#serviceMultiSelect').multiselect({
     includeSelectAllOption: true,

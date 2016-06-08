@@ -1,5 +1,7 @@
+var ajax_name = "sales_reports_list";
 function loadProvidersReport()
 {
+
 	var provider_ids = []
 	$('#render_content').empty();
 
@@ -17,10 +19,13 @@ function loadProvidersReport()
 
 	if(provider_ids.length == 0)
 	{
+		$('#loader-div').hide();
 		return;
 	}
 
 	$('#loader-div').show();
+
+	var ajax_turn = requestAjaxTurn(ajax_name);
 
 	$.ajax({
 		url: 'service_providers_report',
@@ -28,15 +33,23 @@ function loadProvidersReport()
 		type: 'get',
 		error: function(response){
 		  	swal({
-          title: "Error",
-          type: "error"
-        });
+	          title: "Error",
+	          type: "error"
+	        });
 		  	$('#loader-div').hide();
 		},
 		success: function(response){
 
-		  	$('#render_content').append(response);
-		  	$('#loader-div').hide();
+			if(shouldDisplay(ajax_name, ajax_turn))
+			{
+		  		$('#render_content').append(response);
+		  		$('#loader-div').hide();
+		  		console.log("Display");
+		  	}
+		  	else
+		  	{
+		  		console.log("Don't Display");
+		  	}
 		}
 	});
 }
@@ -60,10 +73,13 @@ function loadUsersReport()
 
 	if(user_ids.length == 0)
 	{
+		$('#loader-div').hide();
 		return;
 	}
 
 	$('#loader-div').show();
+
+	var ajax_turn = requestAjaxTurn(ajax_name);
 
 	$.ajax({
 		url: 'users_report',
@@ -78,8 +94,17 @@ function loadUsersReport()
 		},
 		success: function(response){
 
-		  	$('#render_content').append(response);
-		  	$('#loader-div').hide();
+			if(shouldDisplay(ajax_name, ajax_turn))
+			{
+			  	$('#render_content').append(response);
+			  	$('#loader-div').hide();
+			  	console.log("Display");
+			}
+			else
+			{
+				console.log("Don't Display");
+			}
+
 		}
 	});
 }
@@ -103,10 +128,13 @@ function loadCashiersReport()
 
 	if(cashier_ids.length == 0)
 	{
+		$('#loader-div').hide();
 		return;
 	}
 
 	$('#loader-div').show();
+
+	var ajax_turn = requestAjaxTurn(ajax_name);
 
 	$.ajax({
 		url: 'cashiers_report',
@@ -121,8 +149,16 @@ function loadCashiersReport()
 		},
 		success: function(response){
 
-		  	$('#render_content').append(response);
-		  	$('#loader-div').hide();
+		  	if(shouldDisplay(ajax_name, ajax_turn))
+			{
+			  	$('#render_content').append(response);
+			  	$('#loader-div').hide();
+			  	console.log("Display");
+			}
+			else
+			{
+				console.log("Don't Display");
+			}
 		}
 	});
 }
@@ -136,6 +172,8 @@ function loadReport()
 
 $(document).ready(function(){
 
+
+	registerModerator(ajax_name);
 
 	$("#reports_start").datepicker({
 	    dateFormat: 'dd/mm/yy',
