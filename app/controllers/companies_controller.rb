@@ -719,7 +719,7 @@ class CompaniesController < ApplicationController
 		end
 		if params[:new_mails_base_capacity].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
 			if @company.company_setting.mails_base_capacity != params[:new_mails_base_capacity].to_i
-				log_details += " Mails base: " + @company.company_plan_setting.mails_base_capacity.to_s + " a " + params[:new_mails_base_capacity].to_s + "."
+				log_details += " Mails base: " + @company.company_setting.mails_base_capacity.to_s + " a " + params[:new_mails_base_capacity].to_s + "."
 			end
 			@company.company_setting.mails_base_capacity = params[:new_mails_base_capacity].to_i
 			@company.company_setting.save

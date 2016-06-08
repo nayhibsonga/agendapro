@@ -49,7 +49,7 @@
                 <% @company_cron_logs.each do |company_cron_log| %>
                   <tr>
                     <% if company_cron_log.company_id.nil? || Company.where(id: company_cron_log.company_id).count == 0 %>
-                      <td><%= Sin compañía (error PayU) %></td>
+                      <td>Sin compañía (error PayU)</td>
                     <% else %>
                       <td><%= Company.find(company_cron_log.company_id).name %></td>
                     <% end %>
