@@ -63,6 +63,7 @@ class Company < ActiveRecord::Base
 
 	scope :collectables, -> { where(active: true).where('created_at <= ?', DateTime.now - 2.months).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
 	scope :former_trials, -> { where(active: true).where('created_at > ?', DateTime.now - 2.months).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where.not(payment_status_id: PaymentStatus.where(name: ["Inactivo", "Bloqueado", "Admin", "Convenio PAC"]).pluck(:id)) }
+	scope :regular_blocked, -> { where(active: true).where('created_at <= ?', DateTime.now - 2.months).where.not(plan_id: Plan.where(name: ["Gratis", "Trial"]).pluck(:id)).where(payment_status_id: PaymentStatus.find_by_name("Bloqueado").id) }
 
 	validates :name, :web_address, :plan, :payment_status, :country, :presence => true
 
@@ -705,7 +706,7 @@ class Company < ActiveRecord::Base
 	#
 	# 5th of month:
 	# Remind companies that were issued and haven't payed yet
-	# "Block" companies that expired (move them to blocked)
+	#
 	#
 	def self.collect_reminder
 
@@ -720,66 +721,85 @@ class Company < ActiveRecord::Base
 		month_end = Time.now.days_in_month
 		month_prop = (month_day - 1).to_f / month_end.to_f
 
-		collectables.where.not(payment_status_id: status_activo.id).each do |company|
+		collectables.where(payment_status_id: status_emitido.id).each do |company|
 
 			sales_tax = company.country.sales_tax
 
-			if company.payment_status_id == status_emitido.id
-
-				#Send first reminder
-				if !company.account_used_all
-					#Hasn't used
-				else
-					company.sendings.build(method: 'message_invoice').save
-				end
-
-			elsif company.payment_status_id == status_vencido.id
-
-				#Block them by changing their plan to free plan
-				#Add their due amount for possible reactivation in the future
-
-				#prev_plan_id = company.plan_id
-
-				company.payment_status_id = status_bloqueado.id
-				if company.due_amount.nil?
-					if company.plan.custom
-						#company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
-						company.due_amount = month_prop * company.company_plan_setting.base_price * (1 + sales_tax)
-					else
-						company.due_amount = month_prop * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
-					end
-				else
-					#company.due_amount += month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
-					if company.plan.custom
-						#company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
-						company.due_amount += month_prop * company.company_plan_setting.base_price * (1 + sales_tax)
-					else
-						company.due_amount += month_prop * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
-					end
-				end
-				#company.plan_id = plan_gratis.id
-				company.due_date = DateTime.now
-
-				if company.save
-					#DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
-					#Send mail alerting their plan changed
-					if company.account_used_all
-						company.sendings.build(method: 'close_message_invoice').save
-					end
-				end
-
+			#Send first reminder
+			if !company.account_used_all
+				#Hasn't used
+			else
+				company.sendings.build(method: 'message_invoice').save
 			end
+
+
+		end
+
+	end
+
+	#10th of month
+	#Soft block companies that where in Vencido
+	def self.collect_block
+		status_vencido = PaymentStatus.find_by_name("Vencido")
+		status_bloqueado = PaymentStatus.find_by_name("Bloqueado")
+		plan_gratis = Plan.find_by_name("Gratis")
+		chile = Country.find_by_name("Chile")
+
+		month_day = Time.now.day
+		month_end = Time.now.days_in_month
+		month_prop = (month_day - 1).to_f / month_end.to_f
+
+		collectables.where(payment_status_id: status_vencido.id).each do |company|
+
+			sales_tax = company.country.sales_tax
+
+			#Block them by changing their plan to free plan
+			#Add their due amount for possible reactivation in the future
+
+			#prev_plan_id = company.plan_id
+
+			company.payment_status_id = status_bloqueado.id
+			if company.due_amount.nil?
+				if company.plan.custom
+					#company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					company.due_amount = month_prop * company.company_plan_setting.base_price * (1 + sales_tax)
+				else
+					company.due_amount = month_prop * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+				end
+			else
+				#company.due_amount += month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+				if company.plan.custom
+					#company.due_amount = month_prop * company.plan.plan_countries.find_by(country_id: company.country.id).price.to_f * (1 + sales_tax)
+					company.due_amount += month_prop * company.company_plan_setting.base_price * (1 + sales_tax)
+				else
+					company.due_amount += month_prop * company.company_plan_setting.base_price * company.computed_multiplier * (1 + sales_tax)
+				end
+			end
+			#company.plan_id = plan_gratis.id
+			company.due_date = DateTime.now
+
+			if company.save
+				#DowngradeLog.create(company_id: company.id, debt: company.due_amount, plan_id: prev_plan_id)
+				#Send mail alerting their plan changed
+				if company.account_used_all
+					company.sendings.build(method: 'close_message_invoice').save
+				end
+			end
+
 
 		end
 
 	end
 
 	#15th of month
+	#Remind Emitidos
+	#Shut down (set inactivo) Bloqueados
 	def self.collect_insistence
 
 		status_activo = PaymentStatus.find_by_name("Activo")
 		status_emitido = PaymentStatus.find_by_name("Emitido")
 		status_vencido = PaymentStatus.find_by_name("Vencido")
+		status_inactivo = PaymentStatus.find_by_name("Inactivo")
 		plan_gratis = Plan.find_by_name("Gratis")
 
 		collectables.where(payment_status_id: status_emitido.id).each do |company|
@@ -791,6 +811,13 @@ class Company < ActiveRecord::Base
 				company.sendings.build(method: 'reminder_message_invoice').save
 			end
 
+		end
+
+		#Shut down blocked companies
+		regular_blocked.each do |company|
+			company.payment_status_id = status_inactivo.id
+			company.active = false
+			company.save
 		end
 
 	end

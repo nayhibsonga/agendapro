@@ -5,6 +5,7 @@ class ProductsController < ApplicationController
   before_action -> (source = "products") { verify_free_plan source }
   before_action :verify_blocked_status
   before_action :verify_premium_plan, only: [:stats, :locations_stats, :locations_stats_excel, :history, :logs_history, :logs_history_excel]
+  before_action :verify_disabled
   layout "admin"
   load_and_authorize_resource
 
@@ -33,6 +34,37 @@ class ProductsController < ApplicationController
     @product_displays = ProductDisplay.where(company_id: current_user.company_id).order(:name)
 
     respond_with(@products)
+  end
+
+  def download
+    @products = Product.where(company_id: current_user.company_id).order(:product_category_id, :product_brand_id, :name)
+    @pre_xls_locations = Location.where(company_id: current_user.company_id, active: true).order(:id)
+
+    if current_user.role_id != Role.find_by_name("Administrador General").id
+      @xls_locations = []
+      @pre_xls_locations.each do |location|
+        if current_user.locations.pluck(:id).include?(location.id)
+          @xls_locations << location
+        end
+      end
+    else
+       @xls_locations = @pre_xls_locations
+    end
+
+    @product_category = ProductCategory.new
+    @product_brand = ProductBrand.new
+    @product_display = ProductDisplay.new
+    @product_categories = ProductCategory.where(company_id: current_user.company_id).order(:name)
+    @product_brands = ProductBrand.where(company_id: current_user.company_id).order(:name)
+    @product_displays = ProductDisplay.where(company_id: current_user.company_id).order(:name)
+
+    filepath = "#{Rails.root}/public/products_files/productos_" + current_user.company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+    Product.generate_file(current_user.company_id, @products, @xls_locations, filepath)
+
+    send_file filepath, filename: "productos.xls"
+
+    Company.delay(run_at: 2.hours.from_now).delete_booking_file(filepath)
+
   end
 
   def stats

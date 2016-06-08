@@ -35,7 +35,7 @@ class ServicesController < ApplicationController
   def deactivate
     @service.active = false
     @service.save
-    flash[:success] = "Servicio activado exitosamente."
+    flash[:success] = "Servicio desactivado exitosamente."
     redirect_to services_path
   end
 
@@ -242,7 +242,9 @@ class ServicesController < ApplicationController
     end
     if service_resources_unavailable.any?
       services = services.where.not(id: service_resources_unavailable.pluck(:service_id))
-      bundles = bundles.where.not(id: ServiceBundle.where(service_id: service_resources_unavailable.pluck(:service_id)).pluck(:bundle_id))
+      if bundles.count > 0
+        bundles = bundles.where.not(id: ServiceBundle.where(service_id: service_resources_unavailable.pluck(:service_id)).pluck(:bundle_id))
+      end
     end
 
     categorized_services = Array.new

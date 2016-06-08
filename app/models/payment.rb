@@ -90,4 +90,249 @@ class Payment < ActiveRecord::Base
     PaymentSending.create(payment: self, emails: given_emails)
   end
 
+  def self.generate_providers_report(company_id, service_providers, from, to, location_ids, filepath)
+
+    require 'writeexcel'
+
+    company = Company.find(company_id)
+    title = filepath
+    workbook = WriteExcel.new(title)
+
+    worksheet1 = workbook.add_worksheet
+
+    w1_header1 = ["","Total ventas de productos, reservas y servicios", "Total comisiones", "Total compras de productos"]
+
+    worksheet1.write_row(0, 0, w1_header1)
+
+    index1 = 1
+
+    all_incomes_total = 0
+    all_commissions_total = 0
+    all_internal_sales_total = 0
+
+
+    service_providers.each_with_index do |service_provider, index| 
+
+      index1 += index
+      
+      payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: from.beginning_of_day..to.end_of_day, location_id: location_ids).pluck(:id))
+
+      mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: from.beginning_of_day..to.end_of_day, location_id: location_ids).pluck(:id))
+
+      bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: from.beginning_of_day..to.end_of_day, location_id: location_ids).pluck(:id))
+
+      internal_sales = InternalSale.where(service_provider_id: service_provider.id, date: from.beginning_of_day..to.end_of_day)
+
+      payment_products_total = 0.0
+      mock_bookings_total = mock_bookings.sum(:price)
+      bookings_total = bookings.sum(:price)
+      internal_sales_total = 0.0
+
+      payment_products_commissions = 0.0
+      mock_bookings_commissions = 0.0
+      bookings_commissions = 0.0
+
+      current_incomes_total = 0
+      current_commissions_total = 0
+      current_internal_sales_total = 0
+
+      
+
+      payment_products.each do |payment_product| 
+
+        payment_products_total += payment_product.quantity * payment_product.price
+        payment_products_commissions += payment_product.quantity * payment_product.product.get_commission
+
+      end 
+
+      mock_bookings.each do |mock_booking| 
+        
+        mock_bookings_commissions += mock_booking.get_commission
+        
+      end 
+
+      bookings.each do |booking| 
+
+        bookings_commissions += booking.get_commission
+        
+      end 
+
+      internal_sales.each do |internal_sale| 
+
+        internal_sales_total += internal_sale.quantity * internal_sale.price
+
+      end 
+
+      
+
+      all_incomes_total += mock_bookings_total
+      all_incomes_total += bookings_total
+      all_incomes_total += payment_products_total
+
+      all_commissions_total += payment_products_commissions
+      all_commissions_total += bookings_commissions
+      all_commissions_total += mock_bookings_commissions
+
+      all_internal_sales_total += internal_sales_total
+
+      current_incomes_total = mock_bookings_total + bookings_total + payment_products_total
+      current_commissions_total = payment_products_commissions + bookings_commissions + mock_bookings_commissions
+      current_internal_sales_total = internal_sales_total
+
+      
+
+
+      # <Row>
+      #   <Cell><Data ss:Type="String"> service_provider.public_name </Data></Cell>
+      #   <Cell><Data ss:Type="Number"> current_incomes_total.round(2) </Data></Cell>
+      #   <Cell><Data ss:Type="Number"> current_commissions_total.round(2) </Data></Cell>
+      #   <Cell><Data ss:Type="Number"> current_internal_sales_total.round(2) </Data></Cell>
+      # </Row>
+      sp_row = [service_provider.public_name, current_incomes_total.round(2), current_commissions_total.round(2), current_internal_sales_total.round(2)]
+      worksheet1.write_row(index1, 0, sp_row)
+
+    end 
+
+    index1 += 1
+    worksheet1.write(index1, 0, "")
+
+    w1_header2 = ["TOTAL", all_incomes_total.round(2), all_commissions_total.round(2), all_internal_sales_total.round(2)]
+
+    index1 += 1
+    worksheet1.write_row(index1, 0, w1_header2)
+
+    index1 += 1
+    worksheet1.write(index1, 0, "")
+
+    index1 += 1
+    worksheet1.write(index1, 0, "Recaudaciones por fecha")
+
+    sp_totals_row = [""]
+    sp_totals_row2 = ["Fecha"]
+
+    service_provider_totals = []
+    sp_index = 0
+    service_providers.order('public_name asc').each do |service_provider|
+      service_provider_totals[sp_index] = [0, 0, 0]
+      sp_index += 1
+      sp_totals_row << service_provider.public_name
+      sp_totals_row << ""
+      sp_totals_row << ""
+      sp_totals_row2 = sp_totals_row2 + ["Ventas", "Comisiones", "Compras internas"]
+    end
+
+    index1 += 1
+    worksheet1.write_row(index1, 0, sp_totals_row)
+
+    sp_totals_row2 = sp_totals_row2 + ["Total ventas", "Total comisiones", "Total compras internas"]
+
+    index1 += 1
+    worksheet1.write_row(index1, 0, sp_totals_row2)
+
+
+    current_date = from.to_date
+    end_date = to.to_date
+
+    date_total_sum = 0
+    date_commissions_total_sum = 0
+    date_internal_sales_total_sum = 0
+
+    while current_date <= end_date
+      date_total = 0
+      date_commissions_total = 0
+      date_internal_sales_total = 0
+      provider_index = 0
+
+      provider_row = [current_date.strftime('%d/%m/%Y')]
+
+      service_providers.order('public_name asc').each do |service_provider|
+
+        payment_products = PaymentProduct.where(seller_id: service_provider.id, seller_type: 0, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: @location_ids).pluck(:id))
+
+        mock_bookings = MockBooking.where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: location_ids).pluck(:id))
+
+        bookings = Booking.where.not(status_id: Status.find_by_name("Cancelado").id).where('payment_id is not null').where(service_provider_id: service_provider.id, payment_id: Payment.where(payment_date: current_date.beginning_of_day..current_date.end_of_day, location_id: location_ids).pluck(:id))
+
+        internal_sales = InternalSale.where(service_provider_id: service_provider.id, date: current_date.beginning_of_day..current_date.end_of_day)
+
+
+        payment_products_total = 0.0
+        mock_bookings_total = mock_bookings.sum(:price)
+        bookings_total = bookings.sum(:price)
+        internal_sales_total = 0.0
+
+        payment_products_commissions = 0.0
+        mock_bookings_commissions = 0.0
+        bookings_commissions = 0.0
+
+        current_incomes_total = 0
+        current_commissions_total = 0
+        current_internal_sales_total = 0
+
+        payment_products.each do |payment_product|
+
+
+            payment_products_total += payment_product.quantity * payment_product.price
+            payment_products_commissions += payment_product.quantity * payment_product.product.get_commission
+        end
+
+
+        mock_bookings.each do |mock_booking|
+            mock_bookings_commissions += mock_booking.get_commission
+        end
+
+
+        bookings.each do |booking|
+            bookings_commissions += booking.get_commission
+        end
+
+        internal_sales.each do |internal_sale|
+            internal_sales_total += internal_sale.quantity * internal_sale.price
+        end
+
+
+        current_incomes_total = mock_bookings_total + bookings_total + payment_products_total
+        current_commissions_total = payment_products_commissions + bookings_commissions + mock_bookings_commissions
+
+        date_total += current_incomes_total
+        date_commissions_total += current_commissions_total
+        date_internal_sales_total += internal_sales_total
+
+        service_provider_totals[provider_index][0] += current_incomes_total
+        service_provider_totals[provider_index][1] += current_commissions_total
+        service_provider_totals[provider_index][2] += internal_sales_total
+
+        provider_row += [current_incomes_total, current_commissions_total, internal_sales_total]
+        provider_index += 1
+
+      end
+
+      index1 += 1
+      worksheet1.write_row(index1, 0, provider_row)
+
+      date_total_sum += date_total
+      date_commissions_total_sum += date_commissions_total
+      date_internal_sales_total_sum += date_internal_sales_total
+      current_date = current_date + 1.days
+
+    end
+
+    totals_final_row = ["Totales"]
+
+    for i in 0..service_provider_totals.count-1
+      totals_final_row += [service_provider_totals[i][0], service_provider_totals[i][1], service_provider_totals[i][2]]
+    end
+
+    totals_final_row += [date_total_sum, date_commissions_total_sum, date_internal_sales_total_sum]
+
+    index1 += 1
+    worksheet1.write_row(index1, 0, totals_final_row)
+
+    workbook.close
+
+    return workbook
+
+
+  end
+
 end

@@ -1,0 +1,19 @@
+<div style="margin-top: 80px;">
+&nbsp;
+</div>
+<div style="margin: auto; height: 120px; width: 400px; text-align: center; background: #22c488; color: #fff; font-size: 28px; font-weight: bold; padding-top: 30px;">
+	<%= image_tag 'admin/lo_sentimos.png', class: 'media-object media-image', style: 'width: 70px !important; height: 70px !important;' %>&nbsp;&nbsp;Lo sentimos
+</div>
+<div style="margin-top: 20px;">
+&nbsp;
+</div>
+<div style="margin: auto; width: 480px;">
+	<p style="text-align: center; font-size: 18px;">
+	 <% if current_user.role_id == Role.find_by_name("Recepcionista").id %>
+	 	No puedes acceder al panel pues no tienes locales asociados o han sido desactivados. Contacta con tu administrador para solucionar el problema.
+	 <% elsif current_user.role_id == Role.find_by_name("Staff").id || current_user.role_id == Role.find_by_name("Staff (sin edición)").id %>
+	 	No puedes acceder al panel pues no tienes prestadores asociados o han sido desactivados. Contacta con tu administrador para solucionar el problema.
+	 <% end %>
+	 	
+	</p>
+</div>

@@ -232,5 +232,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def verify_disabled
+    if !current_user.nil?
+      if current_user.is_disabled
+        redirect_to action: 'disabled', controller: 'dashboard'
+      end
+    end
+  end
 
 end

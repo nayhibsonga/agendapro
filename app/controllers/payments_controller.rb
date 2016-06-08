@@ -3,6 +3,7 @@ class PaymentsController < ApplicationController
   before_action :authenticate_user!
   before_action -> (source = "payments") { verify_free_plan source }, except: [:load_payment, :client_bookings, :create_new_payment, :update_payment, :receipt_pdf, :payment_pdf, :send_receipts_email, :get_receipts, :get_intro_info, :save_intro_info, :check_booking_payment, :get_formatted_booking, :delete_payment, :commissions, :service_commissions, :provider_commissions, :set_default_commission, :set_provider_default_commissions, :set_commissions, :summary]
   before_action :verify_blocked_status, except: [:load_payment, :client_bookings, :create_new_payment, :update_payment, :receipt_pdf, :payment_pdf, :send_receipts_email, :get_receipts, :get_intro_info, :save_intro_info, :check_booking_payment, :get_formatted_booking, :delete_payment, :commissions, :service_commissions, :provider_commissions, :set_default_commission, :set_provider_default_commissions, :set_commissions, :summary]
+  before_action :verify_disabled
   layout "admin"
   load_and_authorize_resource
 
@@ -2913,6 +2914,12 @@ class PaymentsController < ApplicationController
     @location_ids = current_user.company.locations.pluck(:id)
 
     respond_with(@service_providers)
+    #filepath = "#{Rails.root}/public/payments_files/productos_" + current_user.company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+    #Payment.generate_providers_report(current_user.company_id, @service_providers, @from, @to, @location_ids, filepath)
+
+    #send_file filepath, filename: "reporte_prestadores.xls"
+
+    #Company.delay(run_at: 2.hours.from_now).delete_booking_file(filepath)
 
   end
 
