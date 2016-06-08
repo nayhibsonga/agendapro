@@ -130,7 +130,7 @@ class User < ActiveRecord::Base
 			if self.locations.where(active: true).count == 0
 				return true
 			end
-		elsif self.role_id == Role.find_by_name("Staff").id || self.id == Role.find_by_name("Staff (sin edición)")
+		elsif self.role_id == Role.find_by_name("Staff").id || self.role_id == Role.find_by_name("Staff (sin edición)").id
 			if self.service_providers.where(active: true).count == 0
 				return true
 			end

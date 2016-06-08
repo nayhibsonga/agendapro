@@ -195,9 +195,11 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_blocked_status
-    if current_user.company.payment_status.id == PaymentStatus.find_by_name("Bloqueado").id
-      redirect_to select_plan_path, alert: "Tu cuenta se encuentra bloqueada hasta que canceles la deuda y el mes actual."
-      return
+    if !current_user.nil?
+      if current_user.company.payment_status.id == PaymentStatus.find_by_name("Bloqueado").id
+        redirect_to select_plan_path, alert: "Tu cuenta se encuentra bloqueada hasta que canceles la deuda y el mes actual."
+        return
+      end
     end
   end
 
