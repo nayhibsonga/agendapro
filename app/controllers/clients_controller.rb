@@ -3,7 +3,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!, except: [:client_loader]
   before_action :quick_add
   before_action -> (source = "clients") { verify_free_plan source }, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :new, :edit, :create, :update]
-  before_action :verify_blocked_status, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :new, :edit, :create, :update]
+  before_action :verify_blocked_status, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :show, :new, :edit, :create, :update, :update_custom_attributes, :check_sessions, :get_custom_attributes, :client_loader, :last_payments]
   before_action :verify_premium_plan, only: [:files, :create_folder, :rename_folder, :delete_folder, :upload_file, :move_file, :edit_file]
   before_action :verify_disabled
   load_and_authorize_resource

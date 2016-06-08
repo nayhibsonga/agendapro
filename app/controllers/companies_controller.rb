@@ -79,7 +79,7 @@ class CompaniesController < ApplicationController
 			      end
 			    end
 
-			    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || @company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || @company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
+			    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
 			      	price = ((month_days - day_number + 1).to_f / month_days.to_f) * price
 			    end
 
@@ -289,7 +289,7 @@ class CompaniesController < ApplicationController
 			      end
 			    end
 
-			    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || @company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || @company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
+			    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
 			      price = ((month_days - day_number + 1).to_f / month_days.to_f) * price
 			    end
 
