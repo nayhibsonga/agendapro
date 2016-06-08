@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160531163919) do
+ActiveRecord::Schema.define(version: 20160608171000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "attribute_categories", force: true do |t|
@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
   add_index "billing_records", ["transaction_type_id"], name: "index_billing_records_on_transaction_type_id", using: :btree
 
   create_table "billing_wire_transfers", force: true do |t|
-    t.datetime "payment_date",   default: '2015-12-02 18:34:34'
+    t.datetime "payment_date",   default: '2015-11-16 15:12:16'
     t.float    "amount",         default: 0.0
     t.string   "account_name",   default: ""
     t.string   "account_number", default: ""
@@ -132,10 +132,10 @@ ActiveRecord::Schema.define(version: 20160531163919) do
 
   create_table "booking_email_logs", force: true do |t|
     t.integer  "booking_id"
-    t.string   "transmission_id"
-    t.string   "status"
-    t.string   "subject"
-    t.string   "recipient"
+    t.string   "transmission_id", default: ""
+    t.string   "status",          default: ""
+    t.string   "subject",         default: ""
+    t.string   "recipient",       default: ""
     t.datetime "timestamp"
     t.integer  "opens",           default: 0
     t.integer  "clicks",          default: 0
@@ -159,8 +159,8 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes"
-    t.text     "company_comment"
+    t.text     "notes",               default: ""
+    t.text     "company_comment",     default: ""
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
@@ -189,22 +189,22 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.integer  "client_id"
     t.float    "price",                  default: 0.0
     t.boolean  "provider_lock",          default: false
-    t.integer  "max_changes",            default: 2
     t.boolean  "payed",                  default: false
     t.string   "trx_id",                 default: ""
+    t.integer  "max_changes",            default: 2
     t.string   "token",                  default: ""
     t.integer  "deal_id"
     t.integer  "booking_group"
     t.integer  "payed_booking_id"
-    t.integer  "payment_id"
     t.boolean  "is_session",             default: false
     t.integer  "session_booking_id"
     t.boolean  "user_session_confirmed", default: false
     t.boolean  "is_session_booked",      default: false
-    t.float    "discount",               default: 0.0
     t.integer  "service_promo_id"
-    t.integer  "reminder_group"
+    t.integer  "payment_id"
+    t.float    "discount",               default: 0.0
     t.boolean  "is_booked",              default: true
+    t.integer  "reminder_group"
     t.float    "list_price",             default: 0.0
     t.integer  "receipt_id"
     t.boolean  "payed_state",            default: false
@@ -298,6 +298,142 @@ ActiveRecord::Schema.define(version: 20160531163919) do
   add_index "categoric_custom_filters", ["attribute_id"], name: "index_categoric_custom_filters_on_attribute_id", using: :btree
   add_index "categoric_custom_filters", ["custom_filter_id"], name: "index_categoric_custom_filters_on_custom_filter_id", using: :btree
 
+  create_table "chart_categories", force: true do |t|
+    t.integer  "chart_field_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_categories", ["chart_field_id"], name: "index_chart_categories_on_chart_field_id", using: :btree
+
+  create_table "chart_field_booleans", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.boolean  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_booleans", ["chart_field_id"], name: "index_chart_field_booleans_on_chart_field_id", using: :btree
+  add_index "chart_field_booleans", ["client_id"], name: "index_chart_field_booleans_on_client_id", using: :btree
+
+  create_table "chart_field_categorics", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.integer  "chart_category_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_categorics", ["chart_category_id"], name: "index_chart_field_categorics_on_chart_category_id", using: :btree
+  add_index "chart_field_categorics", ["chart_field_id"], name: "index_chart_field_categorics_on_chart_field_id", using: :btree
+  add_index "chart_field_categorics", ["client_id"], name: "index_chart_field_categorics_on_client_id", using: :btree
+
+  create_table "chart_field_dates", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.date     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_dates", ["chart_field_id"], name: "index_chart_field_dates_on_chart_field_id", using: :btree
+  add_index "chart_field_dates", ["client_id"], name: "index_chart_field_dates_on_client_id", using: :btree
+
+  create_table "chart_field_datetimes", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.datetime "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_datetimes", ["chart_field_id"], name: "index_chart_field_datetimes_on_chart_field_id", using: :btree
+  add_index "chart_field_datetimes", ["client_id"], name: "index_chart_field_datetimes_on_client_id", using: :btree
+
+  create_table "chart_field_files", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.integer  "client_file_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_files", ["chart_field_id"], name: "index_chart_field_files_on_chart_field_id", using: :btree
+  add_index "chart_field_files", ["client_file_id"], name: "index_chart_field_files_on_client_file_id", using: :btree
+  add_index "chart_field_files", ["client_id"], name: "index_chart_field_files_on_client_id", using: :btree
+
+  create_table "chart_field_floats", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.float    "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_floats", ["chart_field_id"], name: "index_chart_field_floats_on_chart_field_id", using: :btree
+  add_index "chart_field_floats", ["client_id"], name: "index_chart_field_floats_on_client_id", using: :btree
+
+  create_table "chart_field_integers", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.integer  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_integers", ["chart_field_id"], name: "index_chart_field_integers_on_chart_field_id", using: :btree
+  add_index "chart_field_integers", ["client_id"], name: "index_chart_field_integers_on_client_id", using: :btree
+
+  create_table "chart_field_textareas", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_textareas", ["chart_field_id"], name: "index_chart_field_textareas_on_chart_field_id", using: :btree
+  add_index "chart_field_textareas", ["client_id"], name: "index_chart_field_textareas_on_client_id", using: :btree
+
+  create_table "chart_field_texts", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_field_texts", ["chart_field_id"], name: "index_chart_field_texts_on_chart_field_id", using: :btree
+  add_index "chart_field_texts", ["client_id"], name: "index_chart_field_texts_on_client_id", using: :btree
+
+  create_table "chart_fields", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "chart_group_id"
+    t.string   "name"
+    t.text     "description"
+    t.string   "datatype"
+    t.string   "slug"
+    t.boolean  "mandatory"
+    t.integer  "order"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_fields", ["chart_group_id"], name: "index_chart_fields_on_chart_group_id", using: :btree
+  add_index "chart_fields", ["company_id"], name: "index_chart_fields_on_company_id", using: :btree
+
+  create_table "chart_groups", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.integer  "order"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_groups", ["company_id"], name: "index_chart_groups_on_company_id", using: :btree
+
   create_table "cities", force: true do |t|
     t.string   "name",       null: false
     t.integer  "region_id",  null: false
@@ -320,10 +456,10 @@ ActiveRecord::Schema.define(version: 20160531163919) do
   create_table "client_email_logs", force: true do |t|
     t.integer  "client_id"
     t.integer  "campaign_id"
-    t.string   "transmission_id"
-    t.string   "status"
-    t.string   "subject"
-    t.string   "recipient"
+    t.string   "transmission_id", default: ""
+    t.string   "status",          default: ""
+    t.string   "subject",         default: ""
+    t.string   "recipient",       default: ""
     t.datetime "timestamp"
     t.integer  "opens",           default: 0
     t.integer  "clicks",          default: 0
@@ -394,7 +530,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
     t.integer  "trial_months_left",   default: 0
-    t.integer  "default_plan_id",     default: 10
+    t.integer  "default_plan_id",     default: 11
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
@@ -504,16 +640,16 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.boolean  "booking_history",             default: true
     t.boolean  "staff_code",                  default: false
     t.integer  "monthly_mails",               default: 0,                     null: false
-    t.boolean  "deal_activate",               default: false
-    t.string   "deal_name",                   default: ""
-    t.boolean  "deal_overcharge",             default: true
     t.boolean  "allows_online_payment",       default: false
     t.string   "account_number",              default: ""
     t.string   "company_rut",                 default: ""
     t.string   "account_name",                default: ""
     t.integer  "account_type",                default: 3
     t.integer  "bank_id"
-    t.boolean  "deal_exclusive",              default: true
+    t.boolean  "deal_activate",               default: false
+    t.string   "deal_name",                   default: ""
+    t.boolean  "deal_overcharge",             default: true
+    t.boolean  "deal_exclusive",              default: false
     t.integer  "deal_quantity",               default: 0
     t.integer  "deal_constraint_option",      default: 0
     t.integer  "deal_constraint_quantity",    default: 0
@@ -529,9 +665,9 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.boolean  "can_edit",                    default: true
     t.boolean  "can_cancel",                  default: true
     t.boolean  "use_identification_number",   default: false
-    t.string   "preset_notes"
     t.boolean  "payment_client_required",     default: true
     t.boolean  "show_cashes",                 default: false
+    t.string   "preset_notes"
     t.boolean  "editable_payment_prices",     default: true
     t.boolean  "mandatory_mock_booking_info", default: false
     t.boolean  "strict_booking",              default: false,                 null: false
@@ -668,18 +804,16 @@ ActiveRecord::Schema.define(version: 20160531163919) do
   add_index "downgrade_logs", ["plan_id"], name: "index_downgrade_logs_on_plan_id", using: :btree
 
   create_table "economic_sectors", force: true do |t|
-    t.string   "name",                                      null: false
+    t.string   "name",                                    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "show_in_home",              default: true
-    t.boolean  "show_in_company",           default: true
-    t.string   "mobile_preview",            default: ""
-    t.boolean  "marketplace",               default: false
-    t.integer  "marketplace_categories_id"
+    t.boolean  "show_in_home",            default: true
+    t.boolean  "show_in_company",         default: true
+    t.string   "mobile_preview",          default: ""
+    t.boolean  "marketplace",             default: false
     t.integer  "marketplace_category_id"
   end
 
-  add_index "economic_sectors", ["marketplace_categories_id"], name: "index_economic_sectors_on_marketplace_categories_id", using: :btree
   add_index "economic_sectors", ["marketplace_category_id"], name: "index_economic_sectors_on_marketplace_category_id", using: :btree
 
   create_table "economic_sectors_dictionaries", force: true do |t|
@@ -837,7 +971,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.float    "discount",            default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "date",                default: '2015-10-30 21:54:55'
+    t.datetime "date",                default: '2015-10-27 17:17:43'
     t.integer  "user_id"
     t.text     "notes",               default: ""
   end
@@ -866,8 +1000,8 @@ ActiveRecord::Schema.define(version: 20160531163919) do
 
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
-    t.integer  "location_id"
-    t.integer  "stock"
+    t.integer  "location_id",                null: false
+    t.integer  "stock",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "stock_limit"
@@ -1237,8 +1371,8 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.integer  "quantity",    default: 1,   null: false
     t.integer  "seller_id"
     t.integer  "seller_type"
-    t.float    "list_price",  default: 0.0
     t.integer  "receipt_id"
+    t.float    "list_price",  default: 0.0
   end
 
   add_index "payment_products", ["payment_id"], name: "index_payment_products_on_payment_id", using: :btree
@@ -1282,7 +1416,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.integer  "company_id"
     t.float    "amount",        default: 0.0
     t.boolean  "payed",         default: false
-    t.datetime "payment_date",  default: '2015-11-12 13:16:44'
+    t.datetime "payment_date",  default: '2015-11-10 14:59:37'
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "discount",      default: 0.0
@@ -1675,7 +1809,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",        default: 0.0
-    t.datetime "date",          default: '2015-10-30 21:54:55'
+    t.datetime "date",          default: '2015-10-23 15:05:22'
     t.text     "notes",         default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1700,7 +1834,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.integer  "sales_cash_id"
     t.integer  "user_id"
     t.float    "amount",                  default: 0.0
-    t.datetime "date",                    default: '2015-10-30 21:54:55'
+    t.datetime "date",                    default: '2015-10-23 13:42:39'
     t.text     "notes",                   default: ""
     t.string   "receipt_number"
     t.boolean  "is_internal_transaction", default: false
@@ -1874,7 +2008,7 @@ ActiveRecord::Schema.define(version: 20160531163919) do
     t.boolean  "has_time_discount",           default: false
     t.boolean  "has_last_minute_discount",    default: false
     t.boolean  "time_promo_active",           default: false
-    t.string   "time_promo_photo",            default: ""
+    t.string   "time_promo_photo"
     t.integer  "active_service_promo_id"
     t.boolean  "must_be_paid_online",         default: false
     t.text     "promo_description",           default: ""
@@ -1986,6 +2120,17 @@ ActiveRecord::Schema.define(version: 20160531163919) do
   end
 
   add_index "stock_setting_emails", ["stock_alarm_setting_id"], name: "index_stock_setting_emails_on_stock_alarm_setting_id", using: :btree
+
+  create_table "super_admin_logs", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "user_id"
+    t.text     "detail"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "super_admin_logs", ["company_id"], name: "index_super_admin_logs_on_company_id", using: :btree
+  add_index "super_admin_logs", ["user_id"], name: "index_super_admin_logs_on_user_id", using: :btree
 
   create_table "tags", force: true do |t|
     t.string   "name",               null: false

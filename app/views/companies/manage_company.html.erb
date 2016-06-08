@@ -51,6 +51,7 @@
               <li><a href="#edit" role="tab" data-toggle="tab" class="tab_index">Edición</a></li>
               <% end %>
               <li><a href="#billing-info" role="tab" data-toggle="tab" class="tab_index">Facturación</a></li>
+              <li><a href="#changes-logs" role="tab" data-toggle="tab" class="tab_index">Log de cambios</a></li>
             </ul>
           </div>
           <div class="col-md-10 left-panel">
@@ -174,6 +175,70 @@
                       <h3>Reservas para el año <span id="bookings-selected-year"><%= current %></span></h3>
                       <table class="table table-green"></table>
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="changes-logs">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Cambios internos</h4>
+                  </div>
+                  <div class="panel-body panel-scrollable">
+                    <table class="table table-green">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Autor</th>
+                          <th>Detalle</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% @company.super_admin_logs.order(created_at: :desc).each do |log| %>
+                          <tr>
+                            <td>
+                              <%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %>
+                            </td>
+                            <td>
+                              <%= log.user.full_name %> (<%= log.user.role.name %>)
+                            </td>
+                            <td>
+                              <%= log.detail %>
+                            </td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">Cambios empresa</h4>
+                  </div>
+                  <div class="panel-body panel-scrollable">
+                    <table class="table table-green">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Action Ref</th>
+                          <th>Detalle</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% @company.company_cron_logs.order(created_at: :desc).each do |log| %>
+                          <tr>
+                            <td>
+                              <%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %>
+                            </td>
+                            <td>
+                              <%= log.action_ref.to_s %>
+                            </td>
+                            <td>
+                              <%= log.details %>
+                            </td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
