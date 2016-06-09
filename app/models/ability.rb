@@ -491,6 +491,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
+        can :generate_clients_base, Company, :company_id => user.company_id
+
         can :get_custom_attributes, Client, :company_id => user.company_id
 
         can :payments, Client, :company_id => user.company_id
