@@ -22,6 +22,9 @@ class Company < ActiveRecord::Base
 
 	has_many :custom_filters, dependent: :destroy
 
+	has_many :super_admin_logs
+	has_many :company_cron_logs
+
 	accepts_nested_attributes_for :company_countries, :reject_if => :reject_company_country, :allow_destroy => true
 
 	def reject_company_country(attributes)
@@ -83,6 +86,15 @@ class Company < ActiveRecord::Base
 	after_create :create_cashier, :create_plan_setting, :create_attribute_group,
 
 	WORKER = 'CompanyEmailWorker'
+
+	#Log changes made by a Super Admin or Ventas user
+	# def log_changes
+	# 	if !self.users.pluck(:id).include? current_user.id
+	# 		if self.previous_changes.count > 0
+
+	# 		end
+	# 	end
+	# end
 
 	def create_attribute_group
 		if AttributeGroup.where(name: "Otros", company_id: self.id).count < 1

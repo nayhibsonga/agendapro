@@ -938,30 +938,44 @@ class Client < ActiveRecord::Base
 
         if row["email"].present?
           row["email"] = row["email"].gsub(/mailto:/, '').downcase.to_s
+        else
+          row["email"] = ""
         end
 
         if row["first_name"].present?
           row["first_name"] = row["first_name"].to_s
+        else
+          row["first_name"] = ""
         end
 
         if row["last_name"].present?
           row["last_name"] = row["last_name"].to_s
+        else
+          row["last_name"] = ""
         end
 
         if row["phone"].present?
           row["phone"] = row["phone"].to_s.chomp('.0')
+        else
+          row["phone"] = ""
         end
 
         if row["address"].present?
           row["address"] = row["address"].to_s
+        else
+          row["address"] = ""
         end
 
         if row["district"].present?
           row["district"] = row["district"].to_s
+        else
+          row["district"] = ""
         end
 
         if row["city"].present?
           row["city"] = row["city"].to_s
+        else
+          row["city"] = ""
         end
 
         if row["age"].present?
@@ -988,14 +1002,20 @@ class Client < ActiveRecord::Base
 
         if row["record"].present?
           row["record"] = row["record"].to_s.chomp('.0')
+        else
+          row["record"] = ""
         end
 
         if row["second_phone"].present?
           row["second_phone"] = row["second_phone"].to_s.chomp('.0')
+        else
+          row["second_phone"] = ""
         end
 
         if row["identification_number"].present?
           row["identification_number"] = row["identification_number"].to_s.chomp('.0')
+        else
+          row["identification_number"] = ""
         end
 
         custom_params = Hash.new

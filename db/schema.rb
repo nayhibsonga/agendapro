@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160608154044) do
+ActiveRecord::Schema.define(version: 20160608171000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -2120,6 +2120,17 @@ ActiveRecord::Schema.define(version: 20160608154044) do
   end
 
   add_index "stock_setting_emails", ["stock_alarm_setting_id"], name: "index_stock_setting_emails_on_stock_alarm_setting_id", using: :btree
+
+  create_table "super_admin_logs", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "user_id"
+    t.text     "detail"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "super_admin_logs", ["company_id"], name: "index_super_admin_logs_on_company_id", using: :btree
+  add_index "super_admin_logs", ["user_id"], name: "index_super_admin_logs_on_user_id", using: :btree
 
   create_table "tags", force: true do |t|
     t.string   "name",               null: false
