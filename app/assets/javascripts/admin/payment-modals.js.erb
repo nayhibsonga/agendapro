@@ -1582,16 +1582,16 @@ function calculatePaymentTotal(){
 
     var quantity = parseInt($(this).find('.itemQuantity').val());
     var price_str = $(this).find('.itemPrice').val();
-    var price = parseInt(price_str);
-    var discount = parseInt($(this).find('.itemDiscount').val());
+    var price = parseFloat(price_str);
+    var discount = parseFloat($(this).find('.itemDiscount').val());
 
     total = total + (quantity*price*(100-discount)/100);
 
   });
 
   $("#paymentCalculatedTotal").empty();
-  $("#paymentCalculatedTotal").append("$" + total);
-  $("#payment_total_cost").val(total);
+  $("#paymentCalculatedTotal").append("$" + Math.round(total));
+  $("#payment_total_cost").val(Math.round(total));
 
   //Reset pay amounts if items list changed
   $("#payment_transactions_sum").val("0");

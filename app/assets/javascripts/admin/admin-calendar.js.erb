@@ -500,6 +500,7 @@ function loadProviderEvents(providerId) {
 
 function editBookingModal(eventId) {
 
+  $('label[for="booking_price"]').html("Precio");
   $("#treatment_price_div").hide();
   $("#treatment_price").text("");
 
@@ -549,7 +550,8 @@ function editBookingModal(eventId) {
       }
       $('#booking_service_provider_id option[value="'+booking.service_provider_id+'"]').attr("selected",true);
       $('#booking_status_id option[value="'+booking.status_id+'"]').attr("selected",true);
-      $('#booking_price').val(booking.price);
+      var rounded_price = Math.round(booking.price * 100) / 100;
+      $('#booking_price').val(rounded_price);
       $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + booking.client_id);
       $('.open_client_link').attr("href", "/clients/" + booking.client_id);
@@ -803,6 +805,7 @@ function createBookingModal(date, provider_id) {
   $("#sessions-row").hide();
   $("#is_edit_modal").val("0");
   $('#booking_service_id').empty();
+  $('label[for="booking_price"]').html("Precio");
   $("#treatment_price_div").hide();
   $("#treatment_price").text("");
   $('#payed_state_fixed_div').hide();
@@ -2700,7 +2703,8 @@ function modalChange() {
       }
 
     }
-    $('#booking_price').val(price);
+    var rounded_price = Math.round(price * 100) / 100;
+    $('#booking_price').val(rounded_price);
   }
   if ($("#bookingStartHour").val() != '' && $("#bookingStartMinute").val() != '' && $("#booking_service_id").val() != '') {
     var duration = 0;
@@ -2841,12 +2845,15 @@ function checkClientSessions(service_change) {
                 });
               }
               session_price = service.price/service.sessions_amount;
-              $("#booking_price").val(session_price);
+              var rounded_price = Math.round(session_price * 100) / 100;
+              $("#booking_price").val(rounded_price);
+              $('label[for="booking_price"]').html("Precio de sesión");
               $("#treatment_price_div").show();
               $("#treatment_price").text("$ " + service.price);
             }
             else
             {
+              $('label[for="booking_price"]').html("Precio");
               $("#treatment_price_div").hide();
               $("#treatment_price").text("");
               $("#has_sessions").val("0");
@@ -2872,13 +2879,16 @@ function checkClientSessions(service_change) {
               $("#add-service-btn").hide();
               $("#has_sessions").val("1");
               session_price = service.price/service.sessions_amount;
-              $("#booking_price").val(session_price);
+              var rounded_price = Math.round(session_price * 100) / 100;
+              $("#booking_price").val(rounded_price);
+              $('label[for="booking_price"]').html("Precio de sesión");
               $("#treatment_price_div").show();
               $("#treatment_price").text("$ " + service.price);
             }
             else
             {
               $("#has_sessions").val("0");
+              $('label[for="booking_price"]').html("Precio");
               $("#treatment_price_div").hide();
               $("#treatment_price").text("");
             }
@@ -2967,12 +2977,14 @@ function checkClientSessions(service_change) {
                       index = index + 1;
                     });
                   }
+                  $('label[for="booking_price"]').html("Precio de sesión");
                   $("#treatment_price_div").show();
                   $("#treatment_price").text("$ " + service.price);
                 }
                 else
                 {
                   $("#has_sessions").val("0");
+                  $('label[for="booking_price"]').html("Precio");
                   $("#treatment_price_div").hide();
                   $("#treatment_price").text("");
                 }
@@ -2996,12 +3008,14 @@ function checkClientSessions(service_change) {
                 $("#sessions-row").show();
                 $("#add-service-btn").hide();
                 $("#has_sessions").val("1");
+                $('label[for="booking_price"]').html("Precio de sesión");
                 $("#treatment_price_div").show();
                 $("#treatment_price").text("$ " + service.price);
               }
               else
               {
                 $("#has_sessions").val("0");
+                $('label[for="booking_price"]').html("Precio");
                 $("#treatment_price_div").hide();
                 $("#treatment_price").text("");
               }
@@ -3118,8 +3132,9 @@ function checkTreatmentPrice(service_id, session_booking_id) {
     success: function(response){
       if(response[0] == "ok")
       {
+        $('label[for="booking_price"]').html("Precio de sesión");
         $("#treatment_price_div").show();
-        $("#treatment_price").text("$ " + response[1]);
+        $("#treatment_price").text("$ " + Math.round(parseFloat(response[1])));
       }
       else
       {
