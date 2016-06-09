@@ -1,6 +1,8 @@
 Agendapro::Application.routes.draw do
 
 
+  resources :charts
+
   resources :chart_fields
 
   resources :chart_groups
