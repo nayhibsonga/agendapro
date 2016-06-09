@@ -68,7 +68,7 @@ class PuntoPagosController < ApplicationController
     accepted_amounts = [1,2,3,4,6,9,12]
     accepted_payments = ["16","03","04","05","06","07"]
 
-    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || @company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || @company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
+    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
       price = ((month_days - day_number + 1).to_f / month_days.to_f) * price
     end
 
@@ -151,7 +151,7 @@ class PuntoPagosController < ApplicationController
     if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
       price = ((month_days - day_number + 1).to_f / month_days.to_f) * price
     end
-    
+
     if accepted_plans.include?(plan_id) && accepted_payments.include?(payment_method) && company
       if (company.service_providers.where(active: true, location_id: company.locations.where(active: true).pluck(:id)).count <= new_plan.service_providers && company.locations.where(active: true).count <= new_plan.locations) || (!new_plan.custom && new_plan.name != "Personal")
 

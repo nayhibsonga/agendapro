@@ -516,10 +516,14 @@ class AvailableHoursFunction < ActiveRecord::Migration
 		        bundle_present := TRUE;
 		      END IF;
 
-		      IF (admin = FALSE) THEN
-		        current_service_providers_ids := (select array(select id from service_providers as t1 where active = true and online_booking = true and location_id = local_id and id in (select service_provider_id from service_staffs as t2 where t1.id = t2.service_provider_id AND t2.service_id = service_ids[service_staff_pos])));
-		      ELSE 
-		        current_service_providers_ids := (select array(select id from service_providers as t1 where active = true and location_id = local_id and id in (select service_provider_id from service_staffs as t2 where t1.id = t2.service_provider_id AND t2.service_id = service_ids[service_staff_pos])));
+		      IF providers_ids[1] = 0 THEN
+		        IF (admin = FALSE) THEN
+		          current_service_providers_ids := (select array(select id from service_providers as t1 where active = true and online_booking = true and location_id = local_id and id in (select service_provider_id from service_staffs as t2 where t1.id = t2.service_provider_id AND t2.service_id = service_ids[service_staff_pos])));
+		        ELSE 
+		          current_service_providers_ids := (select array(select id from service_providers as t1 where active = true and location_id = local_id and id in (select service_provider_id from service_staffs as t2 where t1.id = t2.service_provider_id AND t2.service_id = service_ids[service_staff_pos])));
+		        END IF;
+		      ELSE
+		        current_service_providers_ids := providers_ids;
 		      END IF;
 
 		      --Break if there are no providers

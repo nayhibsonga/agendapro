@@ -16,7 +16,7 @@ module ApplicationHelper
         elsif nameArray.length == 3
           returnHash[:first_name] = nameArray[0] unless nameArray[0].blank?
           returnHash[:last_name] = nameArray[1] + ' ' + nameArray[2]
-        else 
+        else
           returnHash[:first_name] = nameArray[0] + ' ' + nameArray[1]
           last_name = ''
           (2..nameArray.length - 1).each do |i|
@@ -513,7 +513,7 @@ module ApplicationHelper
 	end
 
 	def link_to_remove_fields(name, f)
-  	f.hidden_field(:_destroy) + link_to_function(('<i class="fa fa-trash-o"> ' + name + '</i>').html_safe, "remove_fields(this)", class: 'btn btn-red')
+  	f.hidden_field(:_destroy) + link_to_function(('<i class="fa fa-trash-o"></i> ' + name).html_safe, "remove_fields(this)", class: 'btn btn-red')
 	end
 
 	def link_to_add_fields(name, f, association)
@@ -521,7 +521,7 @@ module ApplicationHelper
     fields = f.fields_for(association, new_object, :child_index => "new_#{association}") do |builder|
       render(association.to_s.singularize + "_fields", :f => builder)
     end
-    link_to_function(name, "add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")")
+    link_to_function(('<i class="fa fa-plus"></i> ' + name).html_safe, "add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")", class: "btn btn-sm btn-green")
 	end
 
 	def code_to_payment_method(code)
@@ -543,7 +543,7 @@ module ApplicationHelper
 		end
 
 		return return_str
-		
+
 	end
 
 	def bytes_to_text(bytes)
