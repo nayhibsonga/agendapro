@@ -647,35 +647,92 @@ class CompaniesController < ApplicationController
 	def update_company
 
 		@company = Company.find(params[:id])
+
+		log_details = ""
+
+		if @company.payment_status_id != params[:new_payment_status_id].to_i
+			log_details += " Estado: " + @company.payment_status.name + " a " + PaymentStatus.find(params[:new_payment_status_id]).name + "."
+		end
+
+		if @company.sales_user_id != params[:sales_user_id].to_i
+			if !@company.sales_user_id.nil? && !params[:sales_user_id].blank?
+				log_details += " Usuario Ventas: " + @company.sales_user.full_name + " a " + User.find(params[:sales_user_id]).name + "."
+			elsif @company.sales_user_id.nil? && !params[:sales_user_id].blank?
+				log_details += " Usuario Ventas: Sin asignar a " + User.find(params[:sales_user_id]).name + "."
+			elsif !@company.sales_user_id.nil? && params[:sales_user_id].blank?
+				log_details += " Usuario Ventas: " + @company.sales_user.full_name + " a Sin asignar."
+			end
+				
+		end
+
+		if @company.plan_id != params[:new_plan_id].to_i
+			log_details += " Plan: " + @company.plan.name + " a " + Plan.find(params[:new_plan_id]).name + "."
+		end
+
+		if @company.default_plan_id != params[:new_default_plan_id].to_i && !params[:new_default_plan_id].blank?
+			log_details += " Plan por defecto: " + @company.default_plan.name + " a " + Plan.find(params[:new_default_plan_id]).name + "."
+		end
+
 		@company.payment_status_id = params[:new_payment_status_id]
 		@company.sales_user_id = params[:sales_user_id]
 		@company.plan_id = params[:new_plan_id]
 		@company.default_plan_id = params[:new_default_plan_id]
 		if params[:new_due_amount].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			if @company.due_amount != params[:new_due_amount].to_f
+				log_details += " Deuda: " + @company.due_amount.to_s + " a " + params[:new_due_amount].to_s + "."
+			end
 			@company.due_amount = params[:new_due_amount]
 		end
 		if params[:new_months_active_left].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			if @company.months_active_left != params[:new_months_active_left].to_i
+				log_details += " Meses restantes: " + @company.months_active_left.to_s + " a " + params[:new_months_active_left].to_s + "."
+			end
 			@company.months_active_left = params[:new_months_active_left]
 		end
 		if params[:new_online_payment_commission].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			if @company.company_setting.online_payment_commission != params[:new_online_payment_commission].to_f
+				log_details += " Comisión pago en línea: " + @company.company_setting.online_payment_commission.to_s + "% a " + params[:new_online_payment_commission].to_s + "%."
+			end
 			@company.company_setting.online_payment_commission = params[:new_online_payment_commission].to_f
 			@company.company_setting.save
 		end
 		if params[:new_promo_commission].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			if @company.company_setting.promo_commission != params[:new_promo_commission].to_f
+				log_details += " Comisión promociones: " + @company.company_setting.promo_commission.to_s + "% a " + params[:new_promo_commission].to_s + "%."
+			end
 			@company.company_setting.promo_commission = params[:new_promo_commission].to_f
 			@company.company_setting.save
 		end
 		if params[:new_base_price].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			if @company.company_plan_setting.base_price != params[:new_base_price].to_f
+				log_details += " Precio base: " + @company.company_plan_setting.base_price.to_s + " a " + params[:new_base_price].to_s + "."
+			end
 			@company.company_plan_setting.base_price = params[:new_base_price].to_f
 			@company.company_plan_setting.save
 		end
 		if params[:new_locations_multiplier].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			if @company.company_plan_setting.locations_multiplier != params[:new_locations_multiplier].to_f
+				log_details += " Multiplicador: " + @company.company_plan_setting.locations_multiplier.to_s + " a " + params[:new_locations_multiplier].to_s + "."
+			end
 			@company.company_plan_setting.locations_multiplier = params[:new_locations_multiplier].to_f
 			@company.company_plan_setting.save
 		end
 		if params[:new_mails_base_capacity].match(/\A[+-]?\d+?(_?\d+)*(\.\d+e?\d*)?\Z/) != nil
+			if @company.company_setting.mails_base_capacity != params[:new_mails_base_capacity].to_i
+				log_details += " Mails base: " + @company.company_setting.mails_base_capacity.to_s + " a " + params[:new_mails_base_capacity].to_s + "."
+			end
 			@company.company_setting.mails_base_capacity = params[:new_mails_base_capacity].to_i
 			@company.company_setting.save
+		end
+
+		opc_checker = (params[:new_online_payment_capable].to_i == 1)
+		poc_checker = (params[:new_promo_offerer_capable].to_i == 1)
+		if @company.company_setting.online_payment_capable != opc_checker
+			log_details += " Pago en línea: " + @company.company_setting.online_payment_capable.to_s + " a " + opc_checker.to_s + "."
+		end
+
+		if @company.company_setting.promo_offerer_capable != poc_checker
+			log_details += " Promociones: " + @company.company_setting.promo_offerer_capable.to_s + " a " + poc_checker.to_s + "."
 		end
 
 		@company.company_setting.online_payment_capable = params[:new_online_payment_capable]
@@ -695,6 +752,11 @@ class CompaniesController < ApplicationController
 		end
 
 		if @company.save
+
+			if log_details != ""
+				SuperAdminLog.create(company_id: @company.id, user_id: current_user.id, detail: log_details)
+			end
+
 			flash[:success] = 'Companía editada correctamente.'
 			redirect_to :action => 'manage_company', :id => @company.id
 		else
