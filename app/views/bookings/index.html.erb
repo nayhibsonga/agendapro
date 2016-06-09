@@ -219,7 +219,7 @@
                         </div>
                       </div>
                       <div class="form-group has-feedback">
-                        <%= f.label :service_provider_id, "Prestador de Servicios", class: "col-sm-4 control-label" %>
+                        <%= f.label :service_provider_id, "Prestador de servicios", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
                           <%= f.collection_select :service_provider_id, ServiceProvider.where(location_id: Location.where(company_id: current_user.company_id).actives).accessible_by(current_ability).ordered, :id, :public_name, {}, { class: "form-control" }%>
                           <span class="help-block"></span>
@@ -250,7 +250,7 @@
                         </div>
                       </div>
                       <div class="form-group has-feedback" id="treatment_price_div">
-                        <%= f.label :price, "Precio tratamiento", class: "col-sm-4 control-label" %>
+                        <%= f.label "treatment_price", "Precio tratamiento", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8" style="padding-top: 7px;">
                           <span id="treatment_price"></span>
                         </div>
@@ -287,7 +287,7 @@
                         </div>
                         <% end %>
                         <div class="form-group has-feedback">
-                          <label for="full_name" class="col-sm-4 control-label">Nombre Cliente</label>
+                          <label for="full_name" class="col-sm-4 control-label">Nombre cliente</label>
                           <div class="col-sm-8">
                             <div class="input-group">
                               <input type="text" id="full_name" class="form-control" placeholder="Buscar clientes..." name="full_name">
@@ -385,7 +385,7 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <%= f.label :company_comment, "Comentario Interno", class: "col-sm-2 control-label" %>
+                        <%= f.label :company_comment, "Comentario interno", class: "col-sm-2 control-label" %>
                         <div class="col-sm-10">
                           <%= f.text_area :company_comment, :rows => "2", class: "form-control modal-textarea" %>
                         </div>
@@ -1275,7 +1275,7 @@
                 </div>
               <% end %>
               <div class="form-group has-feedback">
-                <label for="full_name" class="col-md-4 control-label">Nombre Cliente</label>
+                <label for="full_name" class="col-md-4 control-label">Nombre cliente</label>
                 <div class="col-md-8">
                   <div class="input-group">
                     <input type="text" id="full_name" class="form-control" placeholder="Buscar clientes..." name="full_name">
@@ -1319,7 +1319,7 @@
               </div>
             </div>
             <div class="form-group">
-              <%= f.label :company_comment, "Comentario Interno", class: "col-md-4 control-label" %>
+              <%= f.label :company_comment, "Comentario interno", class: "col-md-4 control-label" %>
               <div class="col-md-8">
                 <%= f.text_area :company_comment, :rows => "2", class: "form-control modal-textarea" %>
               </div>
