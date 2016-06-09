@@ -4,7 +4,7 @@ class CompanyMailer < Base::CustomMailer
   #Send a warning notifying tht trial period ends soon (5 days)
   def warning_trial (company, recipient)
     # layout variables
-    @title = "Comprobante de pago en Agendapro"
+    @title = "Período de prueba por finalizar en AgendaPro"
     @header = "Aviso de fin del período de prueba. Si ya activaste tu cuenta, por favor ignora este correo."
 
     # view variables
