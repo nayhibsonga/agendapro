@@ -29,6 +29,10 @@ class Base::CustomMailer < ActionMailer::Base
     email.present? ? email : "AgendaPro <no-reply@#{ENV['EMAIL_SENDING_DOMAIN']}>"
   end
 
+  def sender_from_company(company)
+    "#{company.name.titleize} <no-reply@#{ENV['EMAIL_SENDING_DOMAIN']}>"
+  end
+
   private
     def default_options
       @title = "AgendaPro"

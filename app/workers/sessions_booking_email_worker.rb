@@ -12,7 +12,7 @@ class SessionsBookingEmailWorker < BaseEmailWorker
     recipients = filter_mails([bookings.first.client.email])
     total_sendings += 1
     total_recipients += recipients.size
-    SessionsBookingMailer.delay.send(sending.method, bookings.to_a, recipients.join(', '))
+    SessionsBookingMailer.delay.send(sending.method, bookings.to_a, recipients.join(', ')) if recipients.size > 0
 
     # Providers
     bookings.map { |b| b.service_provider }.uniq.each do |provider|

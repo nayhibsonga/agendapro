@@ -35,7 +35,7 @@ class BookingMailer < Base::CustomMailer
     headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
 
     mail(
-      from: filter_sender(),
+      from: sender_from_company(@company),
       reply_to: filter_sender(@book.location.email),
       to: recipient,
       subject: @title,
@@ -75,7 +75,7 @@ class BookingMailer < Base::CustomMailer
     headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
 
     mail(
-      from: filter_sender(),
+      from: sender_from_company(@company),
       reply_to: filter_sender(@book.location.email),
       to: recipient,
       subject: @title,
@@ -118,7 +118,7 @@ class BookingMailer < Base::CustomMailer
     headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
 
     mail(
-      from: filter_sender(),
+      from: sender_from_company(@company),
       reply_to: filter_sender(@book.location.email),
       to: recipient,
       subject: @title,
@@ -145,7 +145,7 @@ class BookingMailer < Base::CustomMailer
     @name = options[:name]
 
     mail(
-      from: filter_sender(),
+      from: sender_from_company(@company),
       reply_to: filter_sender(@book.location.email),
       to: recipient,
       subject: @title,
@@ -189,7 +189,7 @@ class BookingMailer < Base::CustomMailer
     headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
 
     mail(
-      from: filter_sender(),
+      from: sender_from_company(@company),
       reply_to: filter_sender(@book.location.email),
       to: recipient,
       subject: @title,
@@ -224,7 +224,7 @@ class BookingMailer < Base::CustomMailer
     headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
 
     mail(
-      from: filter_sender(),
+      from: sender_from_company(@company),
       reply_to: filter_sender(@book.location.email),
       to: recipient,
       subject: @title,
@@ -263,7 +263,7 @@ class BookingMailer < Base::CustomMailer
     headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "#{@bookings.map(&:id).inspect}" } }.to_json if @client
 
     mail(
-      from: filter_sender(),
+      from: sender_from_company(@company),
       reply_to: filter_sender(book.location.email),
       to: recipient,
       subject: @title,
@@ -300,7 +300,7 @@ class BookingMailer < Base::CustomMailer
     headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "#{@bookings.map(&:id).inspect}" } }.to_json
 
     mail(
-      from: filter_sender(),
+      from: sender_from_company(@company),
       reply_to: filter_sender(book.location.email),
       to: recipient,
       subject: @title,

@@ -27,7 +27,7 @@ class ClientMailer < Base::CustomMailer
     headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "campaign_id" => "#{@content.sendings.last.id}" } }.to_json
 
     mail(
-      from: filter_sender("#{@content.company.name.titleize} <no-reply@#{ENV['EMAIL_SENDING_DOMAIN']}>"),
+      from: sender_from_company(@content.company),
       bcc: recipient,
       subject: @content.subject,
       reply_to: @content.from,
