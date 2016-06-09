@@ -25,7 +25,7 @@ class SessionsBookingMailer < Base::CustomMailer
     @name = options[:name]
 
     mail(
-      from: filter_sender(),
+      from: sender_from_company(@company),
       reply_to: filter_sender(book.location.email),
       to: recipient,
       subject: @title,
