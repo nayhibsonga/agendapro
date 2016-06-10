@@ -81,4 +81,72 @@ class Chart < ActiveRecord::Base
 
   end
 
+  def get_chart_fields
+
+    chart_fields = {}
+
+    self.company.chart_fields.each do |chart_field|
+
+      case chart_field.datatype
+
+      when "float"
+
+        field = ChartFieldFloat.where(chart_field_id: chart_field.id, chart_id: self.id).first
+        if !field.nil?
+          chart_fields[field.slug + "_chart_field"] = field.value
+        else
+          chart_fields[field.slug + "_chart_field"] = nil
+        end
+
+      when "integer"
+
+        field = ChartFieldInteger.where(chart_field_id: chart_field.id, chart_id: self.id).first
+        if !field.nil?
+          chart_fields[field.slug + "_chart_field"] = field.value
+        else
+          chart_fields[field.slug + "_chart_field"] = nil
+        end
+
+      when "text"
+
+        field = ChartFieldText.where(chart_field_id: chart_field.id, chart_id: self.id).first
+        if !field.nil?
+          chart_fields[field.slug + "_chart_field"] = field.value
+        else
+          chart_fields[field.slug + "_chart_field"] = ""
+        end
+
+      when "textarea"
+
+        field = ChartFieldTextarea.where(chart_field_id: chart_field.id, chart_id: self.id).first
+        if !field.nil?
+          chart_fields[field.slug + "_chart_field"] = field.value
+        else
+          chart_fields[field.slug + "_chart_field"] = ""
+        end
+
+      when "boolean"
+
+        field = ChartFieldBoolean.where(chart_field_id: chart_field.id, chart_id: self.id).first
+        if !field.nil?
+          chart_fields[field.slug + "_chart_field"] = field.value
+        else
+          chart_fields[field.slug + "_chart_field"] = false
+        end
+
+      when "date"
+
+        field = ChartFieldDate.where(chart_field_id: chart_field.id, chart_id: self.id).first
+        if !field.nil?
+          chart_fields[field.slug + "_chart_field"] = field.value
+        else
+          chart_fields[field.slug + "_chart_field"] = nil
+        end
+
+      end
+
+    end
+
+  end
+
 end
