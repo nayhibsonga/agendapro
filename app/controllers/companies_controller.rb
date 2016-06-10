@@ -656,9 +656,9 @@ class CompaniesController < ApplicationController
 
 		if @company.sales_user_id != params[:sales_user_id].to_i
 			if !@company.sales_user_id.nil? && !params[:sales_user_id].blank?
-				log_details += " Usuario Ventas: " + @company.sales_user.full_name + " a " + User.find(params[:sales_user_id]).name + "."
+				log_details += " Usuario Ventas: " + @company.sales_user.full_name + " a " + User.find(params[:sales_user_id]).full_name + "."
 			elsif @company.sales_user_id.nil? && !params[:sales_user_id].blank?
-				log_details += " Usuario Ventas: Sin asignar a " + User.find(params[:sales_user_id]).name + "."
+				log_details += " Usuario Ventas: Sin asignar a " + User.find(params[:sales_user_id]).full_name + "."
 			elsif !@company.sales_user_id.nil? && params[:sales_user_id].blank?
 				log_details += " Usuario Ventas: " + @company.sales_user.full_name + " a Sin asignar."
 			end
