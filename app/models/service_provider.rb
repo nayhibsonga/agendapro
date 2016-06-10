@@ -34,6 +34,79 @@ class ServiceProvider < ActiveRecord::Base
 
 	after_save :location_bookings
 
+	#Get sum of all breaks that overlap open times, i.e. valid locations_times and provider_times
+	#TODO check overlaping breaks, merge and then check against them
+	def breaks_time(from, to)
+
+		current_date = from
+
+		breaks_sum = 0.0
+
+		while current_date <= to.end_of_day
+
+			day_begin = current_date.beginning_of_day
+			day_end = current_date.end_of_day
+
+			wday = current_date.wday
+			if wday == 0
+				wday = 7
+			end
+
+			if self.location.location_times.where(day_id: wday).count > 0
+
+				if self.provider_times.where(day_id: wday).count > 0
+
+					self.provider_times.where(day_id: wday).each do |provider_time|
+
+						self.provider_breaks.where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', day_begin, day_end).each do |provider_break|
+
+							#Check if whole break is within the day for comparison purposes
+							if provider_break.start.to_date == provider_break.end.to_date
+
+								break_start = provider_break.start.change(:month => 1, :day => 1, :year => 2000)
+								break_end = provider_break.end.change(:month => 1, :day => 1, :year => 2000)
+
+							else
+
+								#Break is greater than a day. Abstract a partial_break that lies between start and end of day
+								b_start_day = provider_break.start.wday
+								if b_start_day == 0
+									b_start_day = 7
+								end
+								b_end_day = provider_break.end.wday
+								if b__day == 0
+									b_start_day = 7
+								end
+								if b_start_day == w_day
+									break_start = provider_break.start.change(:month => 1, :day => 1, :year => 2000)
+								else
+									break_start = provider_time.open
+								end
+								if b_end_day == w_day
+									break_end = provider_break.end.change(:month => 1, :day => 1, :year => 2000)
+								else
+									break_end = provider_time.close
+								end
+
+							end
+
+							breaks_sum += break_end - break_start
+
+						end
+
+					end
+
+				end
+
+			end
+
+			current_date += 1.days
+		end
+
+		return breaks_sum
+
+	end
+
 	def location_bookings
 		Booking.where(service_provider_id: self.id).update_all(location_id: self.location_id)
 	end
