@@ -901,7 +901,7 @@ class Client < ActiveRecord::Base
           elsif attribute.datatype == "categoric" && !attribute.attribute_categories.nil? && attribute.attribute_categories.count > 0
             categoric_attribute = CategoricAttribute.where(attribute_id: attribute.id, client_id: client.id).first
             category_value = ""
-            if !categoric_attribute.attribute_category.nil?
+            if !categoric_attribute.nil? && !categoric_attribute.attribute_category.nil?
               category_value = categoric_attribute.attribute_category.category
             end
             client_line << category_value.to_s
