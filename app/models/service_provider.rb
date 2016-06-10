@@ -77,12 +77,12 @@ class ServiceProvider < ActiveRecord::Base
 								if b_end_day == 0
 									b_end_day = 7
 								end
-								if b_start_day == w_day
+								if b_start_day == wday
 									break_start = provider_break.start.change(:month => 1, :day => 1, :year => 2000)
 								else
 									break_start = provider_time.open
 								end
-								if b_end_day == w_day
+								if b_end_day == wday
 									break_end = provider_break.end.change(:month => 1, :day => 1, :year => 2000)
 								else
 									break_end = provider_time.close
