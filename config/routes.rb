@@ -1,12 +1,6 @@
 Agendapro::Application.routes.draw do
 
 
-  resources :charts
-
-  resources :chart_fields
-
-  resources :chart_groups
-
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -28,6 +22,10 @@ Agendapro::Application.routes.draw do
     resources :attribute_categories
     resources :attributes
     resources :attribute_groups
+    resources :charts
+    resources :chart_fields
+    resources :chart_groups
+    resources :chart_categories
 
     resources :countries
     resources :regions
@@ -574,6 +572,8 @@ Agendapro::Application.routes.draw do
     post '/move_company_file', :to => 'companies#move_file'
     post '/change_company_file', :to => 'companies#edit_file'
     post '/client_update_attributes', :to => 'clients#update_custom_attributes'
+    get '/get_chart_categories', :to => 'chart_fields#get_chart_categories'
+    get '/chart_field_edit_form', :to => 'chart_fields#edit_form'
 
     post '/upload_client_file', :to => 'clients#upload_file'
     post '/create_client_folder', :to => 'clients#create_folder'
@@ -596,6 +596,8 @@ Agendapro::Application.routes.draw do
     get '/edit_filter_form', :to => 'custom_filters#edit_filter_form'
     post '/rearrange_attributes', :to => 'attributes#rearrange'
     post '/rearrange_attribute_groups', :to => 'attribute_groups#rearrange'
+    post '/rearrange_chart_fields', :to => 'chart_fields#rearrange'
+    post '/rearrange_chart_groups', :to => 'chart_groups#rearrange'
 
     post '/select_default_plan', :to => 'companies#select_default_plan'
 
@@ -621,6 +623,8 @@ Agendapro::Application.routes.draw do
     get '/clients/:id/emails', :to => 'clients#emails', :as => 'client_emails'
     get '/clients/:id/emails_content', :to => 'clients#emails_content', :as => 'client_emails_content'
     get '/clients/:id/last_payments', :to => 'clients#last_payments', :as => 'clients_last_payments'
+    get '/clients/:id/charts', :to => 'clients#charts', :as => 'clients_charts'
+    get '/clients/:id/charts_content', :to => 'clients#charts_content', :as => 'clients_charts_content'
 
     get '/hours_test', :to => 'bookings#hours_test'
 

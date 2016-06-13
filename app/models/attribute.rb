@@ -72,65 +72,68 @@ class Attribute < ActiveRecord::Base
 		end
 	end
 
-	def create_chart_field(chart_id)
+	def create_clients_attributes
 
 		if self.datatype == "categoric"
-			chart_category = ChartCategory.create(chart_field_id: self.id, category: "Otra")
+			attribute_category = AttributeCategory.create(attribute_id: self.id, category: "Otra")
 		end
 
-		case self.datatype
-		when "float"
-			
-			if ChartFieldFloat.where(chart_field_id: self.id, chart_id: chart_id).count == 0
-				ChartFieldFloat.create(chart_field_id: self.id, chart_id: chart_id)
-			end
 
-		when "integer"
-			
-			if ChartFieldInteger.where(chart_field_id: self.id, chart_id: chart_id).count == 0
-				ChartFieldInteger.create(chart_field_id: self.id, chart_id: chart_id)
-			end
+		company = self.company
+		company.clients.each do |client|
+			case self.datatype
+			when "float"
+				
+				if FloatAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+					FloatAttribute.create(attribute_id: self.id, client_id: client.id)
+				end
 
-		when "text"
-			
-			if ChartFieldText.where(chart_field_id: self.id, chart_id: chart_id).count == 0
-				ChartFieldText.create(chart_field_id: self.id, chart_id: chart_id, value: "")
-			end
+			when "integer"
+				
+				if IntegerAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+					IntegerAttribute.create(attribute_id: self.id, client_id: client.id)
+				end
 
-		when "textarea"
-			
-			if ChartFieldTextarea.where(chart_field_id: self.id, chart_id: chart_id).count == 0
-				ChartFieldTextarea.create(chart_field_id: self.id, chart_id: chart_id, value: "")
-			end
+			when "text"
+				
+				if TextAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+					TextAttribute.create(attribute_id: self.id, client_id: client.id, value: "")
+				end
 
-		when "boolean"
-			
-			if ChartFieldBoolean.where(chart_field_id: self.id, chart_id: chart_id).count == 0
-				ChartFieldBoolean.create(chart_field_id: self.id, chart_id: chart_id)
-			end
+			when "textarea"
+				
+				if TextareaAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+					TextareaAttribute.create(attribute_id: self.id, client_id: client.id, value: "")
+				end
 
-		when "date"
-			
-			if ChartFieldDate.where(chart_field_id: self.id, chart_id: chart_id).count == 0
-				ChartFieldDate.create(chart_field_id: self.id, chart_id: chart_id)
-			end
+			when "boolean"
+				
+				if BooleanAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+					BooleanAttribute.create(attribute_id: self.id, client_id: client.id)
+				end
 
-		when "datetime"
-			
-			if ChartFieldDatetime.where(chart_field_id: self.id, chart_id: chart_id).count == 0
-				ChartFieldDatetime.create(chart_field_id: self.id, chart_id: chart_id)
-			end
+			when "date"
+				
+				if DateAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+					DateAttribute.create(attribute_id: self.id, client_id: client.id)
+				end
 
-		when "file"
-			if ChartFieldFile.where(chart_field_id: self.id, chart_id: chart_id).count == 0
-				ChartFieldFile.create(chart_field_id: self.id, chart_id: chart_id)
-			end
-		when "categoric"
-			if ChartFieldCategoric.where(chart_field_id: self.id, chart_id: chart_id).count == 0
-				ChartFieldCategoric.create(chart_field_id: self.id, chart_id: chart_id, chart_category_id: chart_category.id)
+			when "datetime"
+				
+				if DateTimeAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+					DateTimeAttribute.create(attribute_id: self.id, client_id: client.id)
+				end
+
+			when "file"
+				if FileAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+					FileAttribute.create(attribute_id: self.id, client_id: client.id)
+				end
+			when "categoric"
+				if CategoricAttribute.where(attribute_id: self.id, client_id: client.id).count == 0
+					CategoricAttribute.create(attribute_id: self.id, client_id: client.id, attribute_category_id: attribute_category.id)
+				end
 			end
 		end
-
 
 	end
 
@@ -174,7 +177,7 @@ class Attribute < ActiveRecord::Base
 		elsif cat_str.nil? || cat_str == ""
 			return nil
 		else
-			self.chart_categories.each do |category|
+			self.attribute_categories.each do |category|
 				if cat_str.downcase == category.category.downcase
 					return category.id
 				end

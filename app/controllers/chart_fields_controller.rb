@@ -1,8 +1,10 @@
 class ChartFieldsController < ApplicationController
-  before_action :set_attribute, only: [:show, :edit, :update, :destroy, :edit_form]
+  before_action :set_chart_field, only: [:show, :edit, :update, :destroy, :edit_form]
   before_action :authenticate_user!
   layout "admin"
   load_and_authorize_resource
+
+  respond_to :html, :json
 
   def index
     @chart_fields = ChartField.all
