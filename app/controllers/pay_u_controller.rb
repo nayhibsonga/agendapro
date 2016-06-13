@@ -74,7 +74,7 @@ class PayUController < ApplicationController
     month_days = Time.now.days_in_month
     accepted_amounts = [1,2,3,4,6,9,12]
 
-    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || @company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || @company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
+    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
       price = ((month_days - day_number + 1).to_f / month_days.to_f) * price
     end
 
