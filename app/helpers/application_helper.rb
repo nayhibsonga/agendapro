@@ -227,32 +227,125 @@ module ApplicationHelper
 
 	# Occupation
 	def booking_occupation(from, to, status, option, company_id)
-		occupation_sum = 0.0
-		locations = Location.where(company_id: company_id, active:true).count
-		Location.where(company_id: company_id, active:true).each do |location|
-			occupation_sum += location_booking_occupation(from, to, status, option, location.id)
+		puts "Booking occupation"
+		puts "From: " + from.to_s
+		puts "To: " +  to.to_s
+		available_time = 0.0
+		used_time = 0.0
+		current_date = from
+		locations = Location.where(company_id: company_id, active: true)
+		break_times = 0
+		while current_date <= to
+			puts current_date.to_s
+			locations.each do |location|
+				location.location_times.where(day_id: current_date.wday).each do |location_time|
+					available_time += location_time.close - location_time.open
+				end
+				location.service_providers.where(active: true).each do |service_provider|
+					#service_provider.provider_breaks.where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', from, to).where('provider_breaks.start >= ?', from).where('provider_breaks.end <= ?', to).each do |provider_break|
+
+					#	break_times += provider_break.end - provider_break.start
+					#end
+					break_times += service_provider.breaks_time(current_date.beginning_of_day, current_date.end_of_day)
+
+				end
+			end
+			current_date = current_date +1.days
 		end
-		if locations > 0
-			return occupation_sum/locations
+
+		puts "Available: " + available_time.to_s
+		puts "Breaks: " + break_times.to_s
+
+		available_time -= break_times
+
+		if option == 1
+			Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, location_id: locations.pluck(:id), start: from.beginning_of_day..to.end_of_day).each do |booking|
+				used_time += booking.end - booking.start
+			end
+		else
+			Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, location_id: locations.pluck(:id), created_at: from.beginning_of_day..to.end_of_day).each do |booking|
+				used_time += booking.end - booking.start
+			end
+		end
+
+		puts "Used: " + used_time.to_s
+
+		if available_time > 0
+			return used_time/available_time
 		else
 			return 0
 		end
+
+		# occupation_sum = 0.0
+		# locations = Location.where(company_id: company_id, active:true).count
+		# Location.where(company_id: company_id, active:true).each do |location|
+		# 	occupation_sum += location_booking_occupation(from, to, status, option, location.id)
+		# end
+		# if locations > 0
+		# 	return occupation_sum/locations
+		# else
+		# 	return 0
+		# end
 	end
 
 	def location_booking_occupation(from, to, status, option, location_id)
-		occupation_sum = 0.0
-		providers = Location.find(location_id).service_providers.where(active:true).count
-		Location.find(location_id).service_providers.where(active:true).each do |service_provider|
-			occupation_sum += provider_booking_occupation(from, to, status, option, service_provider.id)
+		# occupation_sum = 0.0
+		# providers = Location.find(location_id).service_providers.where(active:true).count
+		# Location.find(location_id).service_providers.where(active:true).each do |service_provider|
+		# 	occupation_sum += provider_booking_occupation(from, to, status, option, service_provider.id)
+		# end
+		# if providers > 0
+		# 	return occupation_sum/providers
+		# else
+		# 	return 0
+		# end
+		puts "Location occupation"
+		puts "From: " + from.to_s
+		puts "To: " +  to.to_s
+		available_time = 0.0
+		used_time = 0.0
+		current_date = from
+		location = Location.find(location_id)
+		break_times = 0
+		while current_date <= to
+			location.location_times.where(day_id: current_date.wday).each do |location_time|
+				available_time += location_time.close - location_time.open
+			end
+			location.service_providers.where(active: true).each do |service_provider|
+				#service_provider.provider_breaks.where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', from, to).each do |provider_break|
+				#	break_times += provider_break.end - provider_break.start
+				#end
+				break_times += service_provider.breaks_time(current_date.beginning_of_day, current_date.end_of_day)
+			end
+			current_date = current_date +1.days
 		end
-		if providers > 0
-			return occupation_sum/providers
+
+		puts "Available: " + available_time.to_s
+		puts "Breaks: " + break_times.to_s
+
+		available_time -= break_times
+
+		if option == 1
+			Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, location_id: location_id, start: from.beginning_of_day..to.end_of_day).each do |booking|
+				used_time += booking.end - booking.start
+			end
+		else
+			Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, location_id: location_id, created_at: from.beginning_of_day..to.end_of_day).each do |booking|
+				used_time += booking.end - booking.start
+			end
+		end
+
+		puts "Used: " + used_time.to_s
+
+		if available_time > 0
+			return used_time/available_time
 		else
 			return 0
 		end
 	end
 
 	def provider_booking_occupation(from, to, status, option, provider_id)
+		puts "Provider Occupation " + provider_id.to_s
 		available_time = 0.0
 		used_time = 0.0
 		current_date = from
@@ -264,10 +357,10 @@ module ApplicationHelper
 			end
 			current_date = current_date +1.days
 		end
-		break_times = 0
-		service_provider.provider_breaks.where('(provider_breaks.start,provider_breaks.end) overlaps (date ?,date ?)', from, to).each do |provider_break|
-			break_times += provider_break.end - provider_break.start
-		end
+		puts "Available: " + available_time.to_s
+
+		break_times = service_provider.breaks_time(from, to)
+		puts "Breaks: " + break_times.to_s
 		available_time -= break_times
 		if option == 1
 			Booking.where('is_session = false or (is_session = true and is_session_booked = true)').where(status_id: status, service_provider_id: provider_id, start: from.beginning_of_day..to.end_of_day).each do |booking|
@@ -279,8 +372,10 @@ module ApplicationHelper
 			end
 		end
 
+		puts "Used: " + used_time.to_s
+
 		if available_time > 0
-			return used_time/available_time * 100.0
+			return used_time/available_time
 		else
 			return 0
 		end

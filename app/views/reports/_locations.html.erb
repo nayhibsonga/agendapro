@@ -20,7 +20,13 @@
                 <td><%= location.name %></td>
                 <td><%= location_booking_count(@from, @to, @status_ids, @option, location.id) %></td>
                 <td><%= number_to_currency(location_booking_revenue(@from, @to, @status_ids, @option, location.id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
-                <td><%= number_to_percentage(location_booking_occupation(@from, @to, @status_ids, @option, location.id), precision: 2) %></td>
+                <td>
+                  <% if @option == 1 %>
+                    <%= number_to_percentage(location_booking_occupation(@from, @to, @status_ids, @option, location.id) * 100.0, precision: 2) %>
+                  <% else %>
+                    No aplica
+                  <% end %>
+                </td>
               </tr>
             <% end %>
           </tbody>
@@ -29,7 +35,13 @@
               <td>Total</td>
               <td><%= booking_count(@from, @to, @status_ids, @option, current_user.company_id) %></td>
               <td><%= number_to_currency(booking_revenue(@from, @to, @status_ids, @option, current_user.company_id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
-              <td><%= number_to_percentage(booking_occupation(@from, @to, @status_ids, @option, current_user.company_id), precision: 2) %></td>
+              <td>
+                <% if @option == 1 %>
+                  <%= number_to_percentage(booking_occupation(@from, @to, @status_ids, @option, current_user.company_id) * 100.0, precision: 2) %>
+                <% else %>
+                  No aplica
+                <% end %>
+              </td>
             </tr>
           </tfoot>
         </table>
