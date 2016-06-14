@@ -623,8 +623,8 @@ Agendapro::Application.routes.draw do
     get '/clients/:id/emails', :to => 'clients#emails', :as => 'client_emails'
     get '/clients/:id/emails_content', :to => 'clients#emails_content', :as => 'client_emails_content'
     get '/clients/:id/last_payments', :to => 'clients#last_payments', :as => 'clients_last_payments'
-    get '/clients/:id/charts', :to => 'clients#charts', :as => 'clients_charts'
-    get '/clients/:id/charts_content', :to => 'clients#charts_content', :as => 'clients_charts_content'
+    get '/clients/:id/charts', :to => 'clients#charts', :as => 'client_charts'
+    get '/clients/:id/charts_content', :to => 'clients#charts_content', :as => 'client_charts_content'
 
     get '/hours_test', :to => 'bookings#hours_test'
 

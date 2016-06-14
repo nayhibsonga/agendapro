@@ -800,7 +800,7 @@ class Ability
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
-        can :get_chart_categories, ChartField, :company_id => user.company_i
+        can :get_chart_categories, ChartField, :company_id => user.company_id
         can :update_custom_attributes, Client, :company_id => user.company_id
 
         can :get_custom_attributes, Client, :company_id => user.company_id
@@ -952,7 +952,7 @@ class Ability
     elsif user.role_id == Role.find_by_name("Staff").id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
-        can :get_chart_categories, ChartField, :company_id => user.company_i
+        can :get_chart_categories, ChartField, :company_id => user.company_id
         can :update_custom_attributes, Client, :company_id => user.company_id
 
         can :get_custom_attributes, Client, :company_id => user.company_id
@@ -1071,7 +1071,7 @@ class Ability
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
-        can :get_chart_categories, ChartField, :company_id => user.company_i
+        can :get_chart_categories, ChartField, :company_id => user.company_id
         can :update_custom_attributes, Client, :company_id => user.company_id
 
         can :get_custom_attributes, Client, :company_id => user.company_id
