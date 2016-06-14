@@ -1072,6 +1072,11 @@ class ClientsController < ApplicationController
 
     @start_date = @start_date.strftime("%d/%m/%Y")
     @end_date = @end_date.strftime("%d/%m/%Y")
+
+    @company = @client.company
+
+    @chart = Chart.new
+
   end
 
   def charts_content
@@ -1079,6 +1084,11 @@ class ClientsController < ApplicationController
 
     @from = params[:from].to_datetime.beginning_of_day + @timezone.offset
     @to = params[:to].to_datetime.end_of_day + @timezone.offset
+
+    @option = params[:option]
+    if params[:field_slugs].present?
+      @field_slugs = params[:field_slugs].split(",")
+    end
 
     @charts = Chart.where(client_id: @client.id).order(date: :desc)
 

@@ -19,6 +19,7 @@ class Company < ActiveRecord::Base
 
 	has_many :chart_fields
 	has_many :chart_groups
+	has_many :charts
 
 	has_many :custom_filters, dependent: :destroy
 

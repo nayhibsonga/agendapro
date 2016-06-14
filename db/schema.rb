@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160609165115) do
+ActiveRecord::Schema.define(version: 20160614161908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -312,56 +312,56 @@ ActiveRecord::Schema.define(version: 20160609165115) do
     t.boolean  "value"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "charts_id"
+    t.integer  "chart_id"
   end
 
   add_index "chart_field_booleans", ["chart_field_id"], name: "index_chart_field_booleans_on_chart_field_id", using: :btree
-  add_index "chart_field_booleans", ["charts_id"], name: "index_chart_field_booleans_on_charts_id", using: :btree
+  add_index "chart_field_booleans", ["chart_id"], name: "index_chart_field_booleans_on_chart_id", using: :btree
 
   create_table "chart_field_categorics", force: true do |t|
     t.integer  "chart_field_id"
     t.integer  "chart_category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "charts_id"
+    t.integer  "chart_id"
   end
 
   add_index "chart_field_categorics", ["chart_category_id"], name: "index_chart_field_categorics_on_chart_category_id", using: :btree
   add_index "chart_field_categorics", ["chart_field_id"], name: "index_chart_field_categorics_on_chart_field_id", using: :btree
-  add_index "chart_field_categorics", ["charts_id"], name: "index_chart_field_categorics_on_charts_id", using: :btree
+  add_index "chart_field_categorics", ["chart_id"], name: "index_chart_field_categorics_on_chart_id", using: :btree
 
   create_table "chart_field_dates", force: true do |t|
     t.integer  "chart_field_id"
     t.date     "value"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "charts_id"
+    t.integer  "chart_id"
   end
 
   add_index "chart_field_dates", ["chart_field_id"], name: "index_chart_field_dates_on_chart_field_id", using: :btree
-  add_index "chart_field_dates", ["charts_id"], name: "index_chart_field_dates_on_charts_id", using: :btree
+  add_index "chart_field_dates", ["chart_id"], name: "index_chart_field_dates_on_chart_id", using: :btree
 
   create_table "chart_field_datetimes", force: true do |t|
     t.integer  "chart_field_id"
     t.datetime "value"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "charts_id"
+    t.integer  "chart_id"
   end
 
   add_index "chart_field_datetimes", ["chart_field_id"], name: "index_chart_field_datetimes_on_chart_field_id", using: :btree
-  add_index "chart_field_datetimes", ["charts_id"], name: "index_chart_field_datetimes_on_charts_id", using: :btree
+  add_index "chart_field_datetimes", ["chart_id"], name: "index_chart_field_datetimes_on_chart_id", using: :btree
 
   create_table "chart_field_files", force: true do |t|
     t.integer  "chart_field_id"
     t.integer  "client_file_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "charts_id"
+    t.integer  "chart_id"
   end
 
   add_index "chart_field_files", ["chart_field_id"], name: "index_chart_field_files_on_chart_field_id", using: :btree
-  add_index "chart_field_files", ["charts_id"], name: "index_chart_field_files_on_charts_id", using: :btree
+  add_index "chart_field_files", ["chart_id"], name: "index_chart_field_files_on_chart_id", using: :btree
   add_index "chart_field_files", ["client_file_id"], name: "index_chart_field_files_on_client_file_id", using: :btree
 
   create_table "chart_field_floats", force: true do |t|
@@ -369,44 +369,44 @@ ActiveRecord::Schema.define(version: 20160609165115) do
     t.float    "value"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "charts_id"
+    t.integer  "chart_id"
   end
 
   add_index "chart_field_floats", ["chart_field_id"], name: "index_chart_field_floats_on_chart_field_id", using: :btree
-  add_index "chart_field_floats", ["charts_id"], name: "index_chart_field_floats_on_charts_id", using: :btree
+  add_index "chart_field_floats", ["chart_id"], name: "index_chart_field_floats_on_chart_id", using: :btree
 
   create_table "chart_field_integers", force: true do |t|
     t.integer  "chart_field_id"
     t.integer  "value"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "charts_id"
+    t.integer  "chart_id"
   end
 
   add_index "chart_field_integers", ["chart_field_id"], name: "index_chart_field_integers_on_chart_field_id", using: :btree
-  add_index "chart_field_integers", ["charts_id"], name: "index_chart_field_integers_on_charts_id", using: :btree
+  add_index "chart_field_integers", ["chart_id"], name: "index_chart_field_integers_on_chart_id", using: :btree
 
   create_table "chart_field_textareas", force: true do |t|
     t.integer  "chart_field_id"
     t.text     "value"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "charts_id"
+    t.integer  "chart_id"
   end
 
   add_index "chart_field_textareas", ["chart_field_id"], name: "index_chart_field_textareas_on_chart_field_id", using: :btree
-  add_index "chart_field_textareas", ["charts_id"], name: "index_chart_field_textareas_on_charts_id", using: :btree
+  add_index "chart_field_textareas", ["chart_id"], name: "index_chart_field_textareas_on_chart_id", using: :btree
 
   create_table "chart_field_texts", force: true do |t|
     t.integer  "chart_field_id"
     t.text     "value"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "charts_id"
+    t.integer  "chart_id"
   end
 
   add_index "chart_field_texts", ["chart_field_id"], name: "index_chart_field_texts_on_chart_field_id", using: :btree
-  add_index "chart_field_texts", ["charts_id"], name: "index_chart_field_texts_on_charts_id", using: :btree
+  add_index "chart_field_texts", ["chart_id"], name: "index_chart_field_texts_on_chart_id", using: :btree
 
   create_table "chart_fields", force: true do |t|
     t.integer  "company_id"
@@ -442,11 +442,13 @@ ActiveRecord::Schema.define(version: 20160609165115) do
     t.datetime "date"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "last_modifier_id"
   end
 
   add_index "charts", ["booking_id"], name: "index_charts_on_booking_id", using: :btree
   add_index "charts", ["client_id"], name: "index_charts_on_client_id", using: :btree
   add_index "charts", ["company_id"], name: "index_charts_on_company_id", using: :btree
+  add_index "charts", ["last_modifier_id"], name: "index_charts_on_last_modifier_id", using: :btree
   add_index "charts", ["user_id"], name: "index_charts_on_user_id", using: :btree
 
   create_table "cities", force: true do |t|

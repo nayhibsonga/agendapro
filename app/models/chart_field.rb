@@ -13,6 +13,9 @@ class ChartField < ActiveRecord::Base
   has_many :chart_field_texts, dependent: :destroy
   has_many :chart_field_textareas, dependent: :destroy
 
+  after_create :create_charts_new_field
+  after_save :generate_slug, :rearrange
+
   def rearrange
 
     #Check order isn't past current gratest order
@@ -44,6 +47,14 @@ class ChartField < ActiveRecord::Base
   def generate_slug
     new_slug = self.name.mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').squish.downcase.tr(" ","_").to_s
     self.update_column(:slug, new_slug)
+  end
+
+  def create_charts_new_field
+
+    self.company.charts.pluck(:id).each do |chart_id|
+      create_chart_field(chart_id)
+    end
+
   end
 
   def create_chart_field(chart_id)

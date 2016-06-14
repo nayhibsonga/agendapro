@@ -1,7 +1,7 @@
 class ChartsController < ApplicationController
   before_action :set_chart, only: [:show, :edit, :update, :destroy]
 
-  respond_to :html
+  respond_to :html, :json
 
   def index
     @charts = Chart.all
@@ -22,7 +22,12 @@ class ChartsController < ApplicationController
 
   def create
     @chart = Chart.new(chart_params)
-    @chart.save
+    if @chart.save
+      @chart.save_chart_fields(params)
+      flash[:success] = "Ficha creada."
+    else
+      flash[:alert] = "Error al crear la ficha."
+    end
     respond_with(@chart)
   end
 

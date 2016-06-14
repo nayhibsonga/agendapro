@@ -1,0 +1,55 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="table-responsive">
+      <table class="table table-hover table-green">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Usuario</th>
+            <th>Reserva</th>
+            <th>Última modificación</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% timezone_offset = chart.company.country.timezone_offset %>
+          <% @charts.each do |chart| %>
+            <tr>
+              <td><%= l chart.date, format: :long %></td>
+              <td>
+                <% if chart.user.nil? %>
+                    Sin información
+                <% else %>
+                  <%= chart.user.full_name %>
+                <% end %>
+              </td>
+              <td>
+                <% if chart.booking.nil? %>
+                  Sin reserva
+                <% else %>
+                  <button class="btn btn-default btn-xs" onclick="openBookingSummary(<%= booking.id %>);"><i class="fa fa-search-plus"></i>&nbsp;Ver reserva</button>
+                <% end %>
+              </td>
+              <td>
+                <% if chart.created_at != chart.updated_at %>
+                  <% if chart.last_modifier.nil? %>
+                    <%= l (chart.updated_at + timezone_offset.hours), format: :long %>
+                  <% else %>
+                    <%= l (chart.updated_at + timezone_offset.hours), format: :long %>, por <%= chart.last_modifier.full_name %>
+                  <% end %>
+                <% else %>
+                  Sin modificaciones
+                <% end %>
+              </td>
+              <td>
+                <button class="btn btn-default btn-green btn-xs" onclick="openChartSummary(<%= chart.id %>);"><i class="fa fa-search-plus"></i>Ver</button>
+                <button class="btn btn-default btn-orange btn-xs" onclick="editChart(<%= chart.id %>);"><i class="fa fa-search-plus"></i>Editar</button>
+                <button class="btn btn-default btn-red btn-xs" onclick="deleteChart(<%= chart.id %>);"><i class="fa fa-search-plus"></i>Eliminar</button>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
