@@ -660,6 +660,12 @@ class CompaniesController < ApplicationController
 			log_details += " Estado: " + @company.payment_status.name + " a " + PaymentStatus.find(params[:new_payment_status_id]).name + "."
 		end
 
+		if @company.payment_status_id != PaymentStatus.find_by_name("Inactivo").id
+			@company.active = true
+		else
+			@company.active = false
+		end
+
 		if @company.sales_user_id != params[:sales_user_id].to_i
 			if !@company.sales_user_id.nil? && !params[:sales_user_id].blank?
 				log_details += " Usuario Ventas: " + @company.sales_user.full_name + " a " + User.find(params[:sales_user_id]).full_name + "."
