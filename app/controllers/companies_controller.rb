@@ -111,6 +111,7 @@ class CompaniesController < ApplicationController
 
 					            new_amount_due = (-1 * (((plan_value_left - plan_month_value - due_amount/(1 + sales_tax)).round(0)/plan_price) % 1 )) * plan_price * (1 + sales_tax)
 
+					            company.active = true
 					            company.plan_id = plan_id
 					            company.months_active_left = new_active_months_left
 					            company.due_amount = (new_amount_due).round(0) * (1 + sales_tax)
@@ -147,6 +148,7 @@ class CompaniesController < ApplicationController
 					            mockCompany.months_active_left = 1.0
 					            mockCompany.due_amount = 0.0
 					            mockCompany.due_date = nil
+					            mockCompany.active = true
 					            mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
 					            if !mockCompany.valid?
 					            	@json_response[0] = "error"
@@ -202,6 +204,7 @@ class CompaniesController < ApplicationController
 							mockCompany.months_active_left = 1.0
 							mockCompany.due_amount = 0.0
 							mockCompany.due_date = nil
+							mockCompany.active = true
 							mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
 							if !mockCompany.valid?
 								@json_response[0] = "error"
@@ -301,6 +304,7 @@ class CompaniesController < ApplicationController
 					mockCompany.due_amount = 0.0
 					mockCompany.due_date = nil
 					mockCompany.payment_status_id = PaymentStatus.find_by_name("Activo").id
+					mockCompany.active = true
 					if !mockCompany.valid?
 						#Error
 						@json_response[0] = "error"
@@ -333,6 +337,7 @@ class CompaniesController < ApplicationController
 						company.due_amount = 0.0
 						company.due_date = nil
 						company.payment_status_id = PaymentStatus.find_by_name("Activo").id
+						company.active = true
 
 	        			if company.save
 	        				@transfer.approved = true
@@ -386,6 +391,7 @@ class CompaniesController < ApplicationController
 			company.due_amount = 0.0
 			company.due_date = nil
 			company.payment_status_id = PaymentStatus.find_by_name("Activo").id
+			company.active = true
 
 			if !company.valid?
 			    #Error
