@@ -502,6 +502,7 @@ class PuntoPagosController < ApplicationController
       if BillingLog.find_by_trx_id(params[:trx_id])
         billing_log = BillingLog.find_by_trx_id(params[:trx_id])
         company = Company.find(billing_log.company_id)
+        company.active = true
         company.months_active_left += billing_log.amount
         company.due_amount = 0.0
         company.due_date = nil
@@ -515,6 +516,7 @@ class PuntoPagosController < ApplicationController
       elsif PlanLog.find_by_trx_id(params[:trx_id])
         plan_log = PlanLog.find_by_trx_id(params[:trx_id])
         company = Company.find(plan_log.company_id)
+        company.active = true
         company.plan_id = plan_log.new_plan_id
         company.months_active_left = 1.0
         company.due_amount = 0.0
