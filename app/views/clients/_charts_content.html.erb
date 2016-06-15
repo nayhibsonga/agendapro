@@ -1,55 +1,139 @@
 <div class="row">
   <div class="col-md-12">
     <div class="table-responsive">
-      <table class="table table-hover table-green">
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Usuario</th>
-            <th>Reserva</th>
-            <th>Última modificación</th>
-            <th>Opciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% timezone_offset = chart.company.country.timezone_offset %>
-          <% @charts.each do |chart| %>
+      <% if @option == "summary" %>
+        <table class="table table-hover table-green">
+          <thead>
             <tr>
-              <td><%= l chart.date, format: :long %></td>
-              <td>
-                <% if chart.user.nil? %>
-                    Sin información
-                <% else %>
-                  <%= chart.user.full_name %>
-                <% end %>
-              </td>
-              <td>
-                <% if chart.booking.nil? %>
-                  Sin reserva
-                <% else %>
-                  <button class="btn btn-default btn-xs" onclick="openBookingSummary(<%= booking.id %>);"><i class="fa fa-search-plus"></i>&nbsp;Ver reserva</button>
-                <% end %>
-              </td>
-              <td>
-                <% if chart.created_at != chart.updated_at %>
-                  <% if chart.last_modifier.nil? %>
-                    <%= l (chart.updated_at + timezone_offset.hours), format: :long %>
-                  <% else %>
-                    <%= l (chart.updated_at + timezone_offset.hours), format: :long %>, por <%= chart.last_modifier.full_name %>
-                  <% end %>
-                <% else %>
-                  Sin modificaciones
-                <% end %>
-              </td>
-              <td>
-                <button class="btn btn-default btn-green btn-xs" onclick="openChartSummary(<%= chart.id %>);"><i class="fa fa-search-plus"></i>Ver</button>
-                <button class="btn btn-default btn-orange btn-xs" onclick="editChart(<%= chart.id %>);"><i class="fa fa-search-plus"></i>Editar</button>
-                <button class="btn btn-default btn-red btn-xs" onclick="deleteChart(<%= chart.id %>);"><i class="fa fa-search-plus"></i>Eliminar</button>
-              </td>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Reserva</th>
+              <th>Última modificación</th>
+              <th>Opciones</th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <% timezone_offset = @client.company.country.timezone_offset %>
+            <% @charts.each do |chart| %>
+              <tr>
+                <td><%= l chart.date, format: :long %></td>
+                <td>
+                  <% if chart.user.nil? %>
+                      Sin información
+                  <% else %>
+                    <%= chart.user.full_name %>
+                  <% end %>
+                </td>
+                <td>
+                  <% if chart.booking.nil? %>
+                    Sin reserva
+                  <% else %>
+                    <button class="btn btn-default btn-xs" onclick="openBookingSummary(<%= chart.id %>);"><i class="fa fa-search-plus"></i>&nbsp;Ver reserva</button>
+                  <% end %>
+                </td>
+                <td>
+                  <% if chart.created_at != chart.updated_at %>
+                    <% if chart.last_modifier.nil? %>
+                      <%= l (chart.updated_at + timezone_offset.hours), format: :long %>
+                    <% else %>
+                      <%= l (chart.updated_at + timezone_offset.hours), format: :long %>, por <%= chart.last_modifier.full_name %>
+                    <% end %>
+                  <% else %>
+                    Sin modificaciones
+                  <% end %>
+                </td>
+                <td>
+                  <button class="btn btn-default btn-green btn-xs" onclick="openChartSummary(<%= chart.id %>);"><i class="fa fa-search-plus"></i>Ver</button>
+                  <button class="btn btn-default btn-orange btn-xs" onclick="editChart(<%= chart.id %>);"><i class="fa fa-search-plus"></i>Editar</button>
+                  <button class="btn btn-default btn-red btn-xs" onclick="deleteChart(<%= chart.id %>);"><i class="fa fa-search-plus"></i>Eliminar</button>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <table class="table table-hover table-green">
+          <thead>
+            <tr>
+              <th>
+                Fecha
+              </th>
+              <% @client.company.chart_groups.order(:order).each do |chart_group| %>
+                <% if chart_group.chart_fields.where(id: @field_ids).count > 0 %>
+                  <% chart_group.chart_fields.where(id: @field_ids).order(:order).each do |chart_field| %>
+                    <th><%= chart_field.name %></th>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody>
+            <% @charts.each do |chart| %>
+              <tr>
+                <td><%= l chart.date, format: :long %></td>
+                <% @client.company.chart_groups.order(:order).each do |chart_group| %>
+                  <% if chart_group.chart_fields.where(id: @field_ids).count > 0 %>
+                    <% chart_group.chart_fields.where(id: @field_ids).order(:order).each do |chart_field| %>
+                      <%
+                        field_value = ""
+                        if chart_field.datatype == "integer"
+                          field = chart.chart_field_integers.where(chart_field_id: chart_field.id).first
+                          if !field.nil?
+                            field_value = "#{field.value}"
+                          end
+                        elsif chart_field.datatype == "float"
+                          field = chart.chart_field_floats.where(chart_field_id: chart_field.id).first
+                          if !field.nil?
+                            field_value = "#{field.value}"
+                          end
+                        elsif chart_field.datatype == "text"
+                          field = chart.chart_field_texts.where(chart_field_id: chart_field.id).first
+                          if !field.nil?
+                            field_value = "#{field.value}"
+                          end
+                        elsif chart_field.datatype == "textarea"
+                          field = chart.chart_field_textareas.where(chart_field_id: chart_field.id).first
+                          if !field.nil?
+                            field_value = "#{field.value}"
+                          end
+                        elsif chart_field.datatype == "boolean" 
+                          field = chart.chart_field_booleans.where(chart_field_id: chart_field.id).first
+                          if !field.nil?
+                            if !field.value.nil?
+                              if field.value
+                                field_value = "Sí"
+                              else
+                                field_value = "No"
+                              end
+                            end
+                          end
+                        elsif chart_field.datatype == "date"
+                          field = chart.chart_field_dates.where(chart_field_id: chart_field.id).first
+                          if !field.nil? && !field.value.nil?
+                            field_value = field.value.strftime("%d/%m/%Y")
+                          end
+                        elsif chart_field.datatype == "datetime"
+                          field = chart.chart_field_datetimes.where(chart_field_id: chart_field.id).first
+                          if !field.nil? && !field.value.nil?
+                            field_value = field.value.strftime("%d/%m/%Y %R")
+                          end
+                        elsif chart_field.datatype == "categoric"
+
+                        elsif chart_field.datatype == "file"
+
+                        end 
+                      %>
+                      <td>
+                        <%= field_value %>
+                      </td>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
     </div>
   </div>
 </div>

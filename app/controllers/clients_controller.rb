@@ -1,5 +1,5 @@
 class ClientsController < ApplicationController
-  before_action :set_client, only: [:show, :edit, :update, :destroy, :payments_content, :emails_content, :payments, :emails, :last_payments, :get_custom_attributes, :charts, :bookings]
+  before_action :set_client, only: [:show, :edit, :update, :destroy, :payments_content, :emails_content, :payments, :emails, :last_payments, :get_custom_attributes, :charts, :charts_content, :bookings]
   before_action :authenticate_user!, except: [:client_loader]
   before_action :quick_add
   before_action -> (source = "clients") { verify_free_plan source }, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :new, :edit, :create, :update]
@@ -1092,11 +1092,11 @@ class ClientsController < ApplicationController
     @to = params[:to].to_datetime.end_of_day + @timezone.offset
 
     @option = params[:option]
-    if params[:field_slugs].present?
-      @field_slugs = params[:field_slugs].split(",")
+    if params[:field_ids].present?
+      @field_ids = params[:field_ids].split(",")
     end
 
-    @charts = Chart.where(client_id: @client.id).order(date: :desc)
+    @charts = Chart.where(client_id: @client.id).where(date: @from..@to).order(date: :desc)
 
     render "_charts_content", layout: false
   end

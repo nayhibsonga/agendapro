@@ -1,5 +1,6 @@
 var paymentPastBookings = [];
 var paymentPastTreatments = [];
+var ajax_name = "client_charts_list";
 
 function loadChartBookings(){
 
@@ -39,7 +40,52 @@ function loadChartBookings(){
 
 }
 
+function loadCharts(){
+
+  var client_id = $('#chart_client_id').val();
+  var from_date = $('#from').val();
+  var to_date = $('#to').val();
+  var option = $('#option').val();
+
+  var field_ids = [];
+
+  $('#client_charts_div').hide();
+  $('#client_charts_div').empty();
+
+  var ajax_turn = requestAjaxTurn(ajax_name);
+
+  $("#fieldMultiSelect option").each(function(){
+    if ($(this).is(':selected'))
+    {
+        field_ids.push($(this).val());
+    }
+  });
+
+  $.ajax({
+    url: '/client_charts_content',
+    method: 'get',
+    data: {id: client_id, from: from_date, to: to_date, option: option, field_ids: field_ids},
+    error: function(response){
+
+    },
+    success: function(response){
+      if(shouldDisplay(ajax_name, ajax_turn))
+      {
+        $('#client_charts_div').append(response);
+        $('#client_charts_div').show();
+        console.log("Display");
+      }
+      else
+      {
+        console.log("Don't display");
+      }
+    }
+  });
+}
+
 $(function() {
+
+  registerModerator(ajax_name);
 
   $('#saveChartBtn').click(function(e){
     e.preventDefault();
@@ -85,6 +131,66 @@ $(function() {
         clear: ''
   });
 
+  $(".option_select_date").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
+
+  $('#fieldMultiSelect').multiselect({
+      includeSelectAllOption: true,
+      selectAllText: 'Todos',
+      buttonContainer: '<div></div>',
+      enableClickableOptGroups: true,
+      buttonText: function(options, select) {
+
+          if (options.length === 0) {
+            return 'Ninguno';
+          }
+          else if(options.length == select[0].length)
+          {
+            return "Todos";
+          }
+          else if(options.length > 3)
+          {
+            return options.length + " seleccionados";
+          }
+          else {
+            var labels = [];
+            options.each(function() {
+                if ($(this).attr('label') !== undefined) {
+                    labels.push($(this).attr('label'));
+                }
+                else {
+                    labels.push($(this).html());
+                }
+            });
+            return labels.join(', ') + '';
+          }
+      },
+      onChange: function(option, checked, select){
+        if($('#option').val() == "evolution")
+        {
+          loadCharts();
+        }
+      },
+      onInitialized: function(select, container){
+        $('#fieldMultiSelect').show();
+      }
+  });
+
   var currentDate = new Date();
   var date_str = currentDate.toJSON().split("T")[0];
   var date_arr = date_str.split("-");
@@ -110,5 +216,10 @@ $(function() {
   $('#aux_date').val(date_str_format);
   $("#aux_hour").val(new_hour);
   $("#aux_minute").val(new_minute);
+
+  $('.option_select').on('change', function(){
+    loadCharts();
+  });
+  loadCharts();
 
 });

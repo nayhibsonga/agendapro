@@ -10,14 +10,47 @@
       <div class="row">
         <label for="from" class="col-sm-1 control-label">Desde:</label>
         <div class="col-sm-3">
-          <input type="text" id="from" name="from" class="form-control option_select" value="<%= @start_date %>">
+          <input type="text" id="from" name="from" class="form-control option_select option_select_date" value="<%= @start_date %>">
         </div>
         <label for="from" class="col-sm-1 control-label">Hasta:</label>
         <div class="col-sm-3">
-          <input type="text" id="to" name="to" class="form-control option_select" value="<%= @end_date %>">
+          <input type="text" id="to" name="to" class="form-control option_select option_select_date" value="<%= @end_date %>">
         </div>
         <div class="col-sm-4">
           <button class="btn btn-green" id="addChartBtn"><i class="fa fa-plus"></i>&nbsp;Agregar ficha</button>
+        </div>
+        <div style="clear: both;">
+        </div>
+      </div>
+      <div class="row" style="margin-top: 7px;">
+        <label for="from" class="col-sm-1 control-label">Ver:</label>
+        <div class="col-sm-3">
+          <select name="option" id="option" class="form-control option_select">
+            <option value="summary">
+              Resumen
+            </option>
+            <option value="evolution">
+              Evolución
+            </option>
+          </select>
+        </div>
+        <label for="fieldMultiSelect" class="col-sm-1 control-label">Campos:</label>
+        <div class="col-sm-3">
+          <select id="fieldMultiSelect" multiple="multiple" hidden>
+            <% @company.chart_groups.order(:order).each do |chart_group| %>
+              <% if chart_group.chart_fields.count > 0 %>
+                <optgroup label="<%= chart_group.name %>">
+                  <% chart_group.chart_fields.order(:order).each do |chart_field| %>
+                    <option value="<%= chart_field.id %>">
+                      <%= chart_field.name %>
+                    </option>
+                  <% end %>
+                </optgroup>
+              <% end %>
+            <% end %>
+          </select>
+        </div>
+        <div class="col-sm-4">
         </div>
         <div style="clear: both;">
         </div>
@@ -417,7 +450,11 @@
   <% end %>
 </div>
 
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
+<% end %>
 
 <% content_for :scripts do %>
+  <%= javascript_include_tag "admin/bootstrap-multiselect" %>
   <%= javascript_include_tag "admin/clients-charts" %>
 <% end %>
