@@ -1,7 +1,81 @@
+var paymentPastBookings = [];
+var paymentPastTreatments = [];
+
+function loadChartBookings(){
+
+  $('#cpb-bookings').empty();
+
+  $.getJSON('/chart_bookings/', { client_id: parseInt($('#chart_client_id').val()), from: $('#bookings_from').val(), to: $('#bookings_to').val() }, function (response) {
+
+    bookings = response;
+    if(bookings.length > 0)
+    {
+      $.each(bookings, function(key, booking){
+
+        var session_str = "";
+        if(booking.is_session)
+        {
+          session_str = " (sesión " + booking.session_number + " de " + booking.sessions_amount + ")";
+        }
+
+        $("#cpb-bookings").append('<div class="pastBookingRow" booking_id="' + booking.id + '">' +
+          '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addChartBooking" booking_id="' + booking.id + '"><i class="fa fa-plus"></i></button></div>' +
+          '<div class="col-xs-3 pastBookingCol service_name">' + booking.service_name + session_str + '</div>' +
+          '<div class="col-xs-3 pastBookingCol provider_name">' + booking.provider_name + '</div>' +
+          '<div class="col-xs-4 pastBookingCol start_date">' + booking.start + '</div>' +
+          '</div></div>'
+        );
+
+      });
+      
+    }
+    else
+    {
+      $('#cpb-bookings').append('<p style="text-align: center; padding-top: 5px; padding-bottom: 5px;">El cliente no tiene reservas en el período ingresado.</p>');
+    }
+    $('#chartBookings').show();
+
+  });  
+
+}
+
 $(function() {
 
 	$('#addChartBtn').click(function(){
 		$('#newChartModal').modal('show');
 	});
+
+  $('#addChartBookingBtn').click(function(e){
+    e.preventDefault();
+    loadChartBookings();
+  });
+
+  $('body').on('click', '.addChartBooking',function(e){
+    e.preventDefault();
+    var booking_id = $(this).attr("booking_id");
+    $('#chart_booking_id').val(booking_id);
+    var row = $('.pastBookingRow[booking_id="' + booking_id + '"]');
+    var detail_str = "";
+    detail_str += row.find('.service_name').text() + " con " + row.find('.provider_name').text() + " el " + row.find('.start_date').text();
+
+    $('#chart_booking_detail').html(detail_str);
+  });
+
+	$(".chart_field_datepicker").datepicker({
+	    dateFormat: 'dd/mm/yy',
+	    autoSize: true,
+	    firstDay: 1,
+	    changeMonth: true,
+	    changeYear: true,
+	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	        prevText: 'Atrás',
+	        nextText: 'Adelante',
+	        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+	        today: 'Hoy',
+	        clear: ''
+	  });
 
 });

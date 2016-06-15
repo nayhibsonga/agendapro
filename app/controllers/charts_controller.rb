@@ -41,6 +41,24 @@ class ChartsController < ApplicationController
     respond_with(@chart)
   end
 
+  #Return bookings (including booked sessions) between two dates
+  def bookings
+    @client = Client.find(params[:client_id])
+    @from = params[:from].to_datetime.beginning_of_day
+    @to = params[:to].to_datetime.end_of_day
+    @bookings = []
+    @client.bookings.where('is_session = false or (is_session = true and is_session_booked = true)').where.not(id: @client.charts.pluck(:booking_id)).where(start: @from..@to).order(start: :desc).each do |booking|
+      session_number = 0
+      sessions_amount = 0
+      if booking.is_session && !booking.session_booking.nil?
+        session_number = booking.session_booking.bookings.where(is_session_booked: true).where('start < ?', booking.start).count + 1
+        sessions_amount = booking.session_booking.sessions_amount
+      end
+      @bookings << {id: booking.id, service_name: booking.service.name, start: booking.start.strftime("%d/%m/%Y %R"), provider_name: booking.service_provider.public_name, is_session: booking.is_session, session_number: session_number, sessions_amount: sessions_amount}
+    end
+    render :json => @bookings
+  end
+
   private
     def set_chart
       @chart = Chart.find(params[:id])
