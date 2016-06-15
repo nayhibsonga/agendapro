@@ -355,6 +355,7 @@ Agendapro::Application.routes.draw do
     patch '/clients/:id/comments', :to => 'clients#update_comment'
     delete '/clients/:id/comments', :to => 'clients#destroy_comment'
     get '/clients_download', :to => 'clients#download'
+    get '/clients_file_generation', :to => 'clients#file_generation'
 
     get '/inactive_locations', :to => 'locations#inactive_index', :as => 'inactive_locations'
     get '/inactive_services', :to => 'services#inactive_index', :as => 'inactive_services'

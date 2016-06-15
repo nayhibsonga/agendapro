@@ -510,7 +510,7 @@ class Client < ActiveRecord::Base
 
           booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
 
-          if ((Time.now + booking_confirmation_time.days + timezone.offset)..(Time.now + booking_confirmation_time.days + 1.days + timezone.offset)).cover?(booking.start) && booking.send_mail
+          if ((Time.now + booking_confirmation_time.days + timezone.offset)..(Time.now + booking_confirmation_time.days + 1.days + timezone.offset)).cover?(booking.start) && booking.send_mail && booking.reminder_group.nil?
 
             if booking.is_session
               if booking.is_session_booked and booking.user_session_confirmed

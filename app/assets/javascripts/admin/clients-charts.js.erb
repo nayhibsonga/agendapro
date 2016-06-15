@@ -41,6 +41,13 @@ function loadChartBookings(){
 
 $(function() {
 
+  $('#saveChartBtn').click(function(e){
+    e.preventDefault();
+    var date_str = $('#aux_date').val() + " " + $('#aux_hour').val() + ":" + $('#aux_minute').val() + ":00";
+    $('#chart_date').val(date_str);
+    $('#new_chart').submit();
+  });
+
 	$('#addChartBtn').click(function(){
 		$('#newChartModal').modal('show');
 	});
@@ -62,20 +69,46 @@ $(function() {
   });
 
 	$(".chart_field_datepicker").datepicker({
-	    dateFormat: 'dd/mm/yy',
-	    autoSize: true,
-	    firstDay: 1,
-	    changeMonth: true,
-	    changeYear: true,
-	    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-	        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-	        prevText: 'Atrás',
-	        nextText: 'Adelante',
-	        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-	        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-	        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-	        today: 'Hoy',
-	        clear: ''
-	  });
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
+  var currentDate = new Date();
+  var date_str = currentDate.toJSON().split("T")[0];
+  var date_arr = date_str.split("-");
+  var date_str_format = date_arr[2] + "/" + date_arr[1] + "/" + date_arr[0];
+  var new_hour = currentDate.getHours();
+  var new_minute = currentDate.getMinutes();
+  if(new_hour < 10)
+  {
+    new_hour = "0" + new_hour;
+  }
+  else
+  {
+    new_hour = "" + new_hour;
+  }
+  if(new_minute < 10)
+  {
+    new_minute = "0" + new_minute;
+  }
+  else
+  {
+    new_minute = "" + new_minute;
+  }
+  $('#aux_date').val(date_str_format);
+  $("#aux_hour").val(new_hour);
+  $("#aux_minute").val(new_minute);
 
 });

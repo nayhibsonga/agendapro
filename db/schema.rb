@@ -692,6 +692,9 @@ ActiveRecord::Schema.define(version: 20160614161908) do
     t.integer  "booking_leap",                default: 15
     t.boolean  "allows_overlap_hours",        default: false
     t.boolean  "require_cashier_code",        default: true
+    t.string   "color_light"
+    t.string   "color_normal"
+    t.string   "color_dark"
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree

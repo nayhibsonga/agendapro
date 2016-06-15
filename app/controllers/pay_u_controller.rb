@@ -533,6 +533,7 @@ class PayUController < ApplicationController
       if BillingLog.find_by_trx_id(confirmation_params[:reference_sale])
         billing_log = BillingLog.find_by_trx_id(confirmation_params[:reference_sale])
         company = Company.find(billing_log.company_id)
+        company.active = true
         company.months_active_left += billing_log.amount
         company.due_amount = 0.0
         company.due_date = nil
@@ -546,6 +547,7 @@ class PayUController < ApplicationController
       elsif PlanLog.find_by_trx_id(confirmation_params[:reference_sale])
         plan_log = PlanLog.find_by_trx_id(confirmation_params[:reference_sale])
         company = Company.find(plan_log.company_id)
+        company.active = true
         company.plan_id = plan_log.new_plan_id
         company.months_active_left = 1.0
         company.due_amount = 0.0

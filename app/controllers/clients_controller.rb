@@ -96,6 +96,12 @@ class ClientsController < ApplicationController
 
   end
 
+  def file_generation
+    respond_to do |format|
+      format.html
+    end
+  end
+
   def download
 
     selected_custom_filters = []

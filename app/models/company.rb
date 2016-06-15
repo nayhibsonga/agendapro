@@ -250,7 +250,7 @@ class Company < ActiveRecord::Base
 	def self.payment_inactive
 		where(payment_status_id: PaymentStatus.find_by_name("Bloqueado").id).where('due_date < ?', (1.months+15.days).ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Inactivo").id
-			company.due_amount = 0.0
+			# company.due_amount = 0.0
 			company.active = false
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 4, details: "OK payment_inactive")
@@ -969,7 +969,7 @@ class Company < ActiveRecord::Base
 
 	    worksheet = workbook.add_worksheet
 
-	    
+
 	    header = header + ["Local", "Cliente", "Servicio", "Precio lista", "Precio real", "Nº de sesión", "Prestador", "Estado", "Estado de pago", "Notas compartidas con cliente", "Comentario interno"]
 
 	    worksheet.write_row(0, 0, header)

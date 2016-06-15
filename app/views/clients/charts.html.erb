@@ -52,9 +52,9 @@
 
 <div class="modal fade chartModal" id="newChartModal" tabindex="-1" role="dialog" aria-labelledby="Nueva ficha" aria-hidden="true">
   <%= form_for @chart, html: {class: "form-horizontal"} do |f| %>
-    <input type="hidden" name="chart_client_id" id="chart_client_id" value="<%= @client.id %>" />
-    <input type="hidden" name="chart_company_id" id="chart_company_id" value="<%= @company.id %>" />
-    <input type="hidden" name="chart_user_id" id="chart_user_id" value="<%= current_user.id %>" />
+    <input type="hidden" name="chart[client_id]" id="chart_client_id" value="<%= @client.id %>" />
+    <input type="hidden" name="chart[company_id]" id="chart_company_id" value="<%= @company.id %>" />
+    <input type="hidden" name="chart[user_id]" id="chart_user_id" value="<%= current_user.id %>" />
     <div class="modal-dialog" style="width: 70%;">
       <div class="modal-content">
         <div class="modal-header">
@@ -67,7 +67,7 @@
           <div class="row well" style="margin-bottom: 0px;">
             <div class="col-md-2">
               <ul id="client-chart-fields-tab" class="nav nav-pills nav-stacked" role="tablist">
-                <li id="client-chart-general-li" class="booking-client-li"><a href="#chart-general" role="tab" data-toggle="tab" class="client_tab_index">General</a></li>
+                <li id="client-chart-general-li" class="booking-client-li active"><a href="#chart-general" role="tab" data-toggle="tab" class="client_tab_index">General</a></li>
                 <% @company.chart_groups.each_with_index do |chart_group, index| %>
                   <% if chart_group.chart_fields.count > 0 %>
                     <li id="client-chart-fields<%= chart_group.id %>-li" class="booking-client-li"><a href="#client-chart-fields-<%= chart_group.id %>" role="tab" data-toggle="tab" class="client_tab_index" id="client-chart-fields-<%= chart_group.id %>-tab"><%= chart_group.name %></a></li>
@@ -87,10 +87,41 @@
                       <div class="form-group">
                         <label for="chart_date" class="col-xs-2 col-md-2 control-label left-label">Fecha</label>
                         <div class="col-xs-2 col-md-2">
-                          <input type="text" class="form-control chart_field_datepicker" id="chart_date" name="chart_date" value="<%= (DateTime.now + @company.country.timezone_offset.hours).strftime('%d/%m/%Y') %>" autocomplete="off" />
+                          <input type="hidden" name="chart[date]" id="chart_date" value="" /> 
+                          <input type="text" class="form-control chart_field_datepicker" id="aux_date" value="<%= (DateTime.now + @company.country.timezone_offset.hours).strftime('%d/%m/%Y') %>" autocomplete="off" />
                         </div>
                         <div class="col-xs-4" style="text-align: right;">
-                          <%= time_select 'chart_date', 'time', {minute_step: 1}, {:class => 'form-control payment-date-select', required: true} %>
+                          <select class="form-control" style="width: 45% !important; display: inline;" id="aux_hour">
+                            <%
+                              for i in 0..23
+                                str_hour = i.to_s
+                                if str_hour.length == 1
+                                  str_hour = "0" + str_hour
+                                end
+
+                                %>
+                                  <option value="<%= str_hour %>"><%= str_hour %></option>
+                                <%
+
+                              end
+                            %>
+                          </select>
+                          &nbsp;:&nbsp;
+                          <select class="form-control" style="width: 45% !important; display: inline;" id="aux_minute">
+                            <%
+                              for i in 0..59
+                                str_hour = i.to_s
+                                if str_hour.length == 1
+                                  str_hour = "0" + str_hour
+                                end
+
+                                %>
+                                  <option value="<%= str_hour %>"><%= str_hour %></option>
+                                <%
+
+                              end
+                            %>
+                          </select>
                         </div>
                         <div class="col-xs-4">
 
@@ -98,7 +129,7 @@
 
                       </div>
                       <div class="form-group">
-                        <input type="hidden" name="chart_booking_id" id="chart_booking_id" value="" />
+                        <input type="hidden" name="chart[booking_id]" id="chart_booking_id" value="" />
                         <label for="chart_booking_id" class="col-xs-2 col-md-2 control-label left-label">Reserva</label>
                         <div class="col-xs-4" style="padding-top: 7px;">
                           <span id="chart_booking_detail">Sin reserva asociada</span>

@@ -24,11 +24,13 @@ class ChartsController < ApplicationController
     @chart = Chart.new(chart_params)
     if @chart.save
       @chart.save_chart_fields(params)
-      flash[:success] = "Ficha creada."
+      flash[:success] = "Ficha creada exitosamente."
     else
       flash[:alert] = "Error al crear la ficha."
     end
-    respond_with(@chart)
+    respond_with(@chart) do |format|
+      format.html { redirect_to client_charts_path(@chart.client) }
+    end
   end
 
   def update
