@@ -60,7 +60,11 @@ class ChartField < ActiveRecord::Base
   def create_chart_field(chart_id)
 
     if self.datatype == "categoric"
-      chart_category = ChartCategory.create(chart_field_id: self.id, category: "Otra")
+      if ChartCategory.where(chart_field_id: self.id, name: "Otra").count < 1
+        chart_category = ChartCategory.create(chart_field_id: self.id, name: "Otra")
+      else
+        chart_category = ChartCategory.where(chart_field_id: self.id, name: "Otra").first
+      end
     end
 
     case self.datatype

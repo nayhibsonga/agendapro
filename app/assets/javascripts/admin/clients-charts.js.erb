@@ -83,6 +83,22 @@ function loadCharts(){
   });
 }
 
+function openChartSummary(chart_id){
+  $('#chartSummaryModalBody').empty();
+  $.ajax({
+    url: '/chart_summary',
+    method: 'get',
+    data: {id: chart_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#chartSummaryModalBody').html(response);
+      $('#chartSummaryModal').modal('show');
+    }
+  })
+}
+
 $(function() {
 
   registerModerator(ajax_name);
@@ -190,6 +206,24 @@ $(function() {
         $('#fieldMultiSelect').show();
       }
   });
+
+
+  $("body").on("ajax:success", ".chart-delete", function(e, data, status, xhr){
+    swal({
+        title: "Éxito",
+        text: "Ficha eliminada correctamente.",
+        type: "success"
+    });
+    loadCharts();
+  }).on("ajax:error", function(e, xhr, status, error){
+    console.log(xhr.responseText)
+    swal({
+      title: "Error",
+      text: "Se produjo un error",
+      type: "error"
+    });
+  });
+
 
   var currentDate = new Date();
   var date_str = currentDate.toJSON().split("T")[0];

@@ -83,8 +83,10 @@
   </div>
 </div>
 
+<!-- Chart cration form modal -->
+
 <div class="modal fade chartModal" id="newChartModal" tabindex="-1" role="dialog" aria-labelledby="Nueva ficha" aria-hidden="true">
-  <%= form_for @chart, html: {class: "form-horizontal"} do |f| %>
+  <%= form_for @chart, html: {class: "form-horizontal", multipart: true} do |f| %>
     <input type="hidden" name="chart[client_id]" id="chart_client_id" value="<%= @client.id %>" />
     <input type="hidden" name="chart[company_id]" id="chart_company_id" value="<%= @company.id %>" />
     <input type="hidden" name="chart[user_id]" id="chart_user_id" value="<%= current_user.id %>" />
@@ -449,6 +451,36 @@
     </div>
   <% end %>
 </div>
+<!-- Chart creation form end -->
+
+<!-- Chart edition form -->
+
+<div class="model fade ChartModal" id ="editChartModal" tabindex="-1" role="dialog" aria-labelledby="Editar ficha" aria-hidden="true">
+
+</div>
+
+<!-- Chart editiuon end -->
+
+<!-- Chart summary modal -->
+
+<div class="modal fade chartModal" id="chartSummaryModal" tabindex="-1" role="dialog" aria-labelledby="Ficha de cliente" aria-hidden="true">
+  <div class="modal-dialog" style="width: 70%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="chartSummaryModalTitle" style="line-height: 1.1;">Ficha de cliente</h3>
+      </div>
+      <div class="modal-body" id="chartSummaryModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart summary end -->
 
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>
@@ -457,4 +489,6 @@
 <% content_for :scripts do %>
   <%= javascript_include_tag "admin/bootstrap-multiselect" %>
   <%= javascript_include_tag "admin/clients-charts" %>
+  <%= javascript_include_tag 'validations/validate' %>
+  <%= javascript_include_tag 'validations/admin/client' %>
 <% end %>

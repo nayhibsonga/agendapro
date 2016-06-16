@@ -1,0 +1,164 @@
+<div class="row" style="margin-top: 5px; margin-bottom: 5px;">
+	<div class="col-md-12 payment_summary_col">
+		<div class="payment_summary_title">
+			Ficha de cliente
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="row">
+			<label class="control-label col-md-5">
+				Fecha
+			</label>
+			<div class="col-md-7">
+				<%= @chart.date.strftime('%d/%m/%Y %R') %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Autor
+			</label>
+			<div class="col-md-7">
+				<% if @chart.user.nil? %>
+					Sin información
+				<% else %>
+					<%= @chart.user.full_name %>
+				<% end %>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="row">
+			<label class="control-label col-md-5">
+				Reserva
+			</label>
+			<div class="col-md-7">
+				<% if @chart.booking.nil? %>
+          Sin reserva
+        <% else %>
+          <%= "#{@chart.booking.service.name} con #{@chart.booking.service_provider.public_name}, el " + @chart.booking.start.strftime("%d/%m/%Y %R") %>
+        <% end %>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col-md-5">
+				Última modificación
+			</label>
+			<div class="col-md-7">
+        <% timezone_offset = @chart.company.country.timezone_offset %>
+				<% if @chart.created_at != @chart.updated_at %>
+          <% if @chart.last_modifier.nil? %>
+            <%= l (@chart.updated_at + timezone_offset.hours), format: :long %>
+          <% else %>
+            <%= l (@chart.updated_at + timezone_offset.hours), format: :long %>, por <%= @chart.last_modifier.full_name %>
+          <% end %>
+        <% else %>
+          Sin modificaciones
+        <% end %>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Loop through Chart Groups -->
+
+<% @chart.company.chart_groups.order(:order).each do |chart_group| %>
+  <% if chart_group.chart_fields.count > 0 %>
+    <div class="row" style="margin-top: 15px; margin-bottom: 5px;">
+    	<div class="col-md-12 payment_summary_col">
+    		<div class="payment_summary_subtitle">
+    			<%= chart_group.name %>
+    		</div>
+    	</div>
+    </div>
+
+    <div class="row">
+    	
+    <% chart_group.chart_fields.order(:order).each do |chart_field| %>
+      <div class="col-md-6">
+
+        <label class="control-label col-md-5" style="padding-left: 0px;">
+          <%= chart_field.name %>
+        </label>
+        <div class="col-md-7">
+          
+
+          <%
+            field_value = ""
+            if chart_field.datatype == "integer"
+              field = @chart.chart_field_integers.where(chart_field_id: chart_field.id).first
+              if !field.nil?
+                field_value = "#{field.value}"
+              end
+            elsif chart_field.datatype == "float"
+              field = @chart.chart_field_floats.where(chart_field_id: chart_field.id).first
+              if !field.nil?
+                field_value = "#{field.value}"
+              end
+            elsif chart_field.datatype == "text"
+              field = @chart.chart_field_texts.where(chart_field_id: chart_field.id).first
+              if !field.nil?
+                field_value = "#{field.value}"
+              end
+            elsif chart_field.datatype == "textarea"
+              field = @chart.chart_field_textareas.where(chart_field_id: chart_field.id).first
+              if !field.nil?
+                field_value = "#{field.value}"
+              end
+            elsif chart_field.datatype == "boolean" 
+              field = @chart.chart_field_booleans.where(chart_field_id: chart_field.id).first
+              if !field.nil?
+                if !field.value.nil?
+                  if field.value
+                    field_value = "Sí"
+                  else
+                    field_value = "No"
+                  end
+                end
+              end
+            elsif chart_field.datatype == "date"
+              field = @chart.chart_field_dates.where(chart_field_id: chart_field.id).first
+              if !field.nil? && !field.value.nil?
+                field_value = field.value.strftime("%d/%m/%Y")
+              end
+            elsif chart_field.datatype == "datetime"
+              field = @chart.chart_field_datetimes.where(chart_field_id: chart_field.id).first
+              if !field.nil? && !field.value.nil?
+                field_value = field.value.strftime("%d/%m/%Y %R")
+              end
+            elsif chart_field.datatype == "categoric"
+              field = @chart.chart_field_categorics.where(chart_field_id: chart_field.id).first
+              if !field.nil? && !field.chart_category.nil?
+                field_value = field.chart_category.name
+              end
+            elsif chart_field.datatype == "file"
+              field = @chart.chart_field_files.where(chart_field_id: chart_field.id).first
+              if !field.nil? && !field.client_file.nil?
+                field_value = field.client_file.public_url
+              end
+            end 
+          %>
+
+          <% if chart_field.datatype == "file" %>
+            <% if field_value != "" %>
+              <a href="<%= field_value %>" class="" target="_blank">Descargar</a>
+            <% else %>
+              Sin archivo
+            <% end %>
+          <% else %>
+            <%= field_value %>
+          <% end %>
+
+
+        </div>
+
+      </div>
+    <% end %>
+
+    </div>
+  <% end %>
+<% end %>
+
+

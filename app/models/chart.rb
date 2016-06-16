@@ -5,7 +5,6 @@ class Chart < ActiveRecord::Base
   belongs_to :user
   belongs_to :last_modifier, class_name: "User"
 
-  has_many :chart_categories, dependent: :destroy
   has_many :chart_field_booleans, dependent: :destroy
   has_many :chart_field_categorics, dependent: :destroy
   has_many :chart_field_dates, dependent: :destroy
@@ -21,7 +20,7 @@ class Chart < ActiveRecord::Base
     self.company.chart_fields.each do |chart_field|
 
       if chart_field.datatype == "categoric"
-        chart_category = ChartCategory.create(chart_field_id: chart_field.id, category: "Otra")
+        chart_category = ChartCategory.create(chart_field_id: chart_field.id, name: "Otra")
       end
 
       case chart_field.datatype

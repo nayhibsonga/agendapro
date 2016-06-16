@@ -1,5 +1,7 @@
 class ChartsController < ApplicationController
-  before_action :set_chart, only: [:show, :edit, :update, :destroy]
+  before_action :set_chart, only: [:show, :edit, :update, :destroy, :summary]
+  before_action :authenticate_user!
+  load_and_authorize_resource
 
   respond_to :html, :json
 
@@ -59,6 +61,10 @@ class ChartsController < ApplicationController
       @bookings << {id: booking.id, service_name: booking.service.name, start: booking.start.strftime("%d/%m/%Y %R"), provider_name: booking.service_provider.public_name, is_session: booking.is_session, session_number: session_number, sessions_amount: sessions_amount}
     end
     render :json => @bookings
+  end
+
+  def summary
+    render "_summary", layout: false
   end
 
   private
