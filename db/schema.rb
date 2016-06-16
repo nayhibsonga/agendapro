@@ -11,13 +11,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160609114120) do
+ActiveRecord::Schema.define(version: 20160613163022) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
+
+  create_table "app_feeds", force: true do |t|
+    t.integer  "company_id"
+    t.string   "title"
+    t.string   "image"
+    t.text     "subtitle"
+    t.text     "body"
+    t.string   "external_url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "app_feeds", ["company_id"], name: "index_app_feeds_on_company_id", using: :btree
 
   create_table "attribute_categories", force: true do |t|
     t.integer  "attribute_id"

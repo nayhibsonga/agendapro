@@ -30,3 +30,13 @@ json.promotions do
     json.url request.protocol + request.host_with_port + '/show_time_promo?id=' + result[0].id.to_s + '&location_id=' + result[1].id.to_s
   end
 end
+json.feeds do
+  json.array!(@app_feeds) do |app_feed|
+    json.id app_feed.id
+    json.title app_feed.title
+    json.subtitle app_feed.subtitle
+    json.body app_feed.body
+    json.external_url app_feed.external_url
+    json.promo_photo app_feed.image ? request.protocol + request.host_with_port + app_feed.image.url : ""
+  end
+end

@@ -55,6 +55,7 @@ class Company < ActiveRecord::Base
 	has_many :product_categories, dependent: :destroy
 	has_many :billing_wire_transfers
 	has_many :downgrade_logs
+	has_many :app_feeds
 
 	has_one :company_plan_setting
 
@@ -965,7 +966,7 @@ class Company < ActiveRecord::Base
 
 	    worksheet = workbook.add_worksheet
 
-	    
+
 	    header = header + ["Local", "Cliente", "Servicio", "Precio lista", "Precio real", "Nº de sesión", "Prestador", "Estado", "Estado de pago", "Notas compartidas con cliente", "Comentario interno"]
 
 	    worksheet.write_row(0, 0, header)

@@ -1,0 +1,76 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="well">
+        <%= form_for @app_feed, :html => {:class => 'form-horizontal'} do |f| %>
+          <% if @app_feed.errors.any? %>
+            <% content_for :scripts do %>
+              <% message = '' %>
+              <% @app_feed.errors.full_messages.each do |msg| %>
+                <% message += '* ' + msg + '\n' %>
+              <% end %>
+              <script type="text/javascript">
+                swal({
+                  title: "Error al guardar la categoría",
+                  text: "<%= message %>",
+                  type: "error"
+                });
+              </script>
+            <% end %>
+          <% end %>
+          <div class="form-group has-feedback">
+            <%= f.label :title, 'Título', :class => 'col-md-3 control-label' %>
+            <div class="col-md-5">
+              <%= f.text_field :title, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Título' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <%= f.label :subtitle, 'Sub Título', :class => 'col-md-3 control-label' %>
+            <div class="col-md-5">
+              <%= f.text_field :subtitle, :required => true, :class => 'form-control', :placeholder => 'Subitítulo' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <%= f.label :body, 'Mensaje', :class => 'col-md-3 control-label' %>
+            <div class="col-md-5">
+              <%= f.text_area :body, :required => true, :class => 'form-control', :placeholder => 'Categoría (requerido)' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <%= f.label :image, 'Imagen', :class => 'col-md-3 control-label' %>
+            <div class="col-md-5">
+              <%= f.file_field :image, :accept => 'image/png,image/gif,image/jpeg', :class => 'form-control' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+              <div class="checkbox">
+              <label>
+                <%= f.check_box :remove_image %> Quitar Logo
+              </label>
+            </div>
+            </div>
+          </div>
+          <div class="form-group has-feedback">
+            <%= f.label :external_url, 'Enlace externo', :class => 'col-md-3 control-label' %>
+            <div class="col-md-5">
+              <%= f.text_field :external_url, :class => 'form-control', :placeholder => 'Categoría (requerido)' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-offset-3 col-md-5">
+              <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+              <%= link_to 'Cancelar', app_feeds_path, class: "btn btn-white" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

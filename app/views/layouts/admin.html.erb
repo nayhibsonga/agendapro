@@ -230,6 +230,11 @@
                     <% else %>
                       <li><%= link_to '<i class="fa fa-file fa-fw"></i> Repositorio de Archivos<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, '#', :class => "locked-section" %></li>
                     <% end %>
+                    <% if current_user.company.is_plan_capable("Pro") %>
+                      <li><%= link_to '<i class="fa fa-mobile fa-fw"></i> App Personalizada'.html_safe, app_feeds_path %></li>
+                    <% else %>
+                      <li><%= link_to '<i class="fa fa-mobile fa-fw"></i> App Personalizada<i class="fa fa-lock fa-1 lock-image"></i>'.html_safe, '#', :class => "locked-section" %></li>
+                    <% end %>
                   </ul>
                 </li>
                 <% end %>

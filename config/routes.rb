@@ -57,6 +57,7 @@ Agendapro::Application.routes.draw do
     resources :company_from_emails
     resources :staff_codes
     resources :billing_infos
+    resources :app_feeds
 
     resources :numeric_parameters
 

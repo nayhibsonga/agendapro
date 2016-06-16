@@ -488,6 +488,10 @@ class Ability
         can :delete_billing_wire_transfer, Company
         can :save_billing_wire_transfer, Plan
 
+        can :read, AppFeed, :company_id => user.company_id
+        can :create, AppFeed, :company_id => user.company_id
+        can :update, AppFeed, :company_id => user.company_id
+        can :destroy, AppFeed, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
@@ -769,6 +773,11 @@ class Ability
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
         can :update_custom_attributes, Client, :company_id => user.company_id
+
+        can :read, AppFeed, :company_id => user.company_id
+        can :create, AppFeed, :company_id => user.company_id
+        can :update, AppFeed, :company_id => user.company_id
+        can :destroy, AppFeed, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
