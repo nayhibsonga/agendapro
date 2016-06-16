@@ -38,6 +38,6 @@ class Base::CustomMailer < ActionMailer::Base
       @title = "AgendaPro"
       @url = "www.agendapro.co"
       headers["X-MC-PreserveRecipients"] = "false"
-      headers["X-MSYS-API"] = { "options" => { "open_tracking" => false, "click_tracking" => false, "ip_pool" => "ip_pool1" } }.to_json
+      headers["X-MSYS-API"] = { "options" => { "open_tracking" => false, "click_tracking" => false, "ip_pool" => "#{ENV['IP_POOL']}" } }.to_json
     end
 end
