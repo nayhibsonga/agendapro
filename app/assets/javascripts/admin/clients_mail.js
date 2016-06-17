@@ -17,6 +17,7 @@ $(function () {
       $('.combination-checkbox').prop('checked', false);
       $('.regular-btn').show();
       $('.merge-btn').hide();
+      $('.combination-explanation').hide();
     }
   });
 
@@ -25,10 +26,12 @@ $(function () {
     if($(this).is(':checked'))
     {
       $('.merge-btn[client_id="' + client_id + '"]').show();
+      $('.combination-explanation[client_id="' + client_id + '"]').show();
     }
     else
     {
       $('.merge-btn[client_id="' + client_id + '"]').hide();
+      $('.combination-explanation[client_id="' + client_id + '"]').hide();
     }
   });
 
