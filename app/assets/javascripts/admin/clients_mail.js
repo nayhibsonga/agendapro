@@ -1,4 +1,65 @@
 $(function () {
+
+  $('#toggleMerge').on('click', function(){
+    if($(this).hasClass("inactive"))
+    {
+      $(this).removeClass("inactive");
+      $(this).addClass("active");
+      $('.combination-td').show();
+      $('.combination-checkbox').prop('checked', false);
+      $('.regular-btn').hide();
+    }
+    else
+    {
+      $(this).removeClass("active");
+      $(this).addClass("inactive");
+      $('.combination-td').hide();
+      $('.combination-checkbox').prop('checked', false);
+      $('.regular-btn').show();
+      $('.merge-btn').hide();
+    }
+  });
+
+  $('.combination-checkbox').on('change', function(){
+    var client_id = $(this).attr("client_id");
+    if($(this).is(':checked'))
+    {
+      $('.merge-btn[client_id="' + client_id + '"]').show();
+    }
+    else
+    {
+      $('.merge-btn[client_id="' + client_id + '"]').hide();
+    }
+  });
+
+  $('.merge-btn').on('click', function(){
+    var target_id = $(this).attr("client_id");
+    var origin_ids = [];
+    $('.combination-checkbox:checked').each(function(){
+      if($(this).attr("client_id") != target_id)
+      {
+        origin_ids.push($(this).attr("client_id"));
+      }
+    });
+    $.ajax({
+      url: '/merge_clients',
+      method: 'post',
+      data: {target_id: target_id, origin_ids: origin_ids},
+      dataType: 'json',
+      error: function(response){
+        swal({
+          title: "Error",
+          text: "Ocurrió un error al combinar clientes.",
+          type: "error"
+        });
+      },
+      success: function(response){
+        triggerSuccess("Clientes combinados exitosamente.");
+        window.location.reload();
+      }
+    })
+  });
+
   $('[data-toggle="tooltip"]').tooltip();
 
   createDatepicker("#birth_from_display", {

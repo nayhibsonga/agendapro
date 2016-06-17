@@ -169,6 +169,7 @@ Agendapro::Application.routes.draw do
     get '/clients_last_name_suggestion', :to => 'clients#last_name_suggestion'
     get '/clients_rut_suggestion', :to => 'clients#rut_suggestion'
     get '/client_loader', :to => 'clients#client_loader'
+    post '/merge_clients', :to => 'clients#merge'
 
     get '/check_staff_code', :to => 'staff_codes#check_staff_code'
     get '/get_staff_by_code', :to => 'staff_codes#get_staff_by_code'
