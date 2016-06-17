@@ -26,7 +26,7 @@ class SessionsBookingMailer < Base::CustomMailer
 
     if @client.present?
       message.header.fields.select{|f| f.name == 'X-MSYS-API' }.each{|f| message.header.fields.delete(f) }
-      headers['X-MSYS-API'] = { "options" => { "open_tracking" => true, "click_tracking" => true, "ip_pool" => "#{ENV['IP_POOL']}" }, "metadata" => { "booking_ids" => "[#{@bookings.map(&:id).inspect}]" } }.to_json
+      headers['X-MSYS-API'] = { "options" => { "open_tracking" => true, "click_tracking" => true, "ip_pool" => "#{ENV['IP_POOL']}" }, "metadata" => { "booking_ids" => "#{@bookings.map(&:id).inspect}" } }.to_json
     end
 
     mail(
