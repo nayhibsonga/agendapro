@@ -33,7 +33,8 @@
                 <p class="price"><%= number_to_currency(t "plans.normal") %></p>
                 <p>+ IVA</p>
               </div>
-              <p>Por mes</p>
+              <div class="pricing-compact"><span><%= number_to_currency(t "plans.normal") %></span> / mes</div>
+              <p class="pricing-down">Por mes</p>
             </div>
             <div class="pricing-col active" data-plan="premium">
               <p class="pricing-plan">Premium</p>
@@ -42,7 +43,8 @@
                 <p class="price"><%= number_to_currency(t "plans.premium") %></p>
                 <p>+ IVA</p>
               </div>
-              <p>Por mes</p>
+              <div class="pricing-compact"><span><%= number_to_currency(t "plans.premium") %></span> / mes</div>
+              <p class="pricing-down">Por mes</p>
             </div>
             <div class="pricing-col" data-plan="pro">
               <p class="pricing-plan">Pro</p>
@@ -51,7 +53,8 @@
                 <p class="price"><%= number_to_currency(t "plans.pro") %></p>
                 <p>+ IVA</p>
               </div>
-              <p>Por mes</p>
+              <div class="pricing-compact"><span><%= number_to_currency(t "plans.pro") %></span> / mes</div>
+              <p class="pricing-down">Por mes</p>
             </div>
           </div>
         </div>
@@ -84,6 +87,54 @@
               </div>
             </div>
           </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Costo Sucursal Extra
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p>
+                  <%= number_to_currency(t "plan_extra_location.normal") %>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p>
+                  <%= number_to_currency(t "plan_extra_location.premium") %>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p>
+                  <%= number_to_currency(t "plan_extra_location.pro") %>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                E-Mails publicitarios incluídos
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p>
+                  5.000
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p>
+                  10.000
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p>
+                  15.000
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="col-xs-12">
@@ -94,31 +145,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Reservas Internas desde Calendario
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Buscador de Horas automático<span class="pull-right" data-toggle="tooltip" data-placement="top" title="El sistema AgendaPro busca en tu agenda las próximas horas disponibles, para que puedas generar las reservas de forma rápida cuando te llaman o pasan a reservar."><i class="fa fa-question-circle fa-lg"></i></span>
+                Manejo de agenda y buscador de horas <span class="pull-right" data-toggle="tooltip" data-placement="top" title="Ordena y organiza a tu equipo completo en una sola vista. Además, el sistema AgendaPro busca en tu agenda las próximas horas disponibles, para que puedas generar las reservas de forma rápida cuando te llaman o pasan a reservar."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -166,7 +193,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Confirmaciones Automáticas<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Sistema de confirmaciones automáticas, para recordarles las citas a tus clientes."><i class="fa fa-question-circle fa-lg"></i></span>
+                Confirmaciones Automáticas<span class="pull-right" data-toggle="tooltip" data-placement="top" title="No pierdas más tiempo y recuérdales a tus clientes sus próximas citas de forma automática por medio de un correo electrónico personalizado."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -190,31 +217,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Reservas Web 24/7<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Desde tu propia web, tus clientes podrán reservar las 24 horas del día, los 7 días de la semana. Aprovecha de recibir reservas incluso cuando estás cerrado."><i class="fa fa-question-circle fa-lg"></i></span>
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Reservas desde Facebook<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Puedes agregar una app especial a tu Fanpage de Facebook, para que tus clientes reserven desde tu perfil de Facebook."><i class="fa fa-question-circle fa-lg"></i></span>
+                Reservas en línea y desde Facebook <span class="pull-right" data-toggle="tooltip" data-placement="top" title="Tus clientes podrán reservar los 7 días de la semana desde tu página web o desde tu fanpage en Facebook. Aprovecha de recibir reservas incluso cuando estés descansando."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -341,31 +344,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Buscador AgendaPro
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Lugar en portal Horachic.com
+                Aplicación móvil AgendaPro
               </p>
             </div>
             <div class="pricing-cols">
@@ -419,7 +398,7 @@
             <div class="pricing-cols">
               <div class="pricing-col" data-plan="normal">
                 <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
+                  &nbsp;
                 </p>
               </div>
               <div class="pricing-col active" data-plan="premium">
@@ -443,55 +422,7 @@
             <div class="pricing-cols">
               <div class="pricing-col" data-plan="normal">
                 <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Aplicación móvil AgendaPro
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Aplicación móvil HoraChic
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
+                  &nbsp;
                 </p>
               </div>
               <div class="pricing-col active" data-plan="premium">
@@ -516,31 +447,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Perfil de Usuario para Staff
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Código de empleado / + control
+                Perfil especial para profesional con código de verificación
               </p>
             </div>
             <div class="pricing-cols">
@@ -588,55 +495,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Impresión de Horario
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Fichas de Clientes
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p>
-                  Básicas
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p>
-                  Pro
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p>
-                  Pro
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Exportación/Importación base de datos
+                Base de Clientes
               </p>
             </div>
             <div class="pricing-cols">
@@ -708,31 +567,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Sistema de Caja
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Pago de Comisiones
+                Sistema de Caja y Cálculo de Comisiones
               </p>
             </div>
             <div class="pricing-cols">
@@ -780,7 +615,79 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Packs de servicios (grupos de servicios con distintos profesionales)
+                Fichas personalizadas por cliente
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Reportería de Productos
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Packs de servicios
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Servicios con Horarios
               </p>
             </div>
             <div class="pricing-cols">

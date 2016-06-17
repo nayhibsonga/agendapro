@@ -216,6 +216,11 @@ es:
     normal: 29900
     premium: 49900
     pro: 99900
+  plan_extra_location:
+    personal: 14900
+    normal: 14950
+    premium: 25950
+    pro: 49950
   phones:
     sales: '+569 4271 7566'
     support: '+569 4291 7498'

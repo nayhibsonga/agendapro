@@ -20,6 +20,11 @@ es_VE:
     normal: 280
     premium: 470
     pro: 940
+  plan_extra_location:
+    personal: 140
+    normal: 140
+    premium: 235
+    pro: 470
   phones:
     sales: '+57 317 441 4635'
     support: '+57 1 382 4836'
