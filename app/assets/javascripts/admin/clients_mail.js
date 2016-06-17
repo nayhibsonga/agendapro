@@ -44,23 +44,35 @@ $(function () {
         origin_ids.push($(this).attr("client_id"));
       }
     });
-    $.ajax({
-      url: '/merge_clients',
-      method: 'post',
-      data: {target_id: target_id, origin_ids: origin_ids},
-      dataType: 'json',
-      error: function(response){
-        swal({
-          title: "Error",
-          text: "Ocurrió un error al combinar clientes.",
-          type: "error"
+
+    swal({
+      title: "¿Estás seguro que quieres combinar los clientes?",
+      text: "Las reservas, pagos, archivos y otros elementos de los clientes seleccionados serán traspasados a este cliente. Los datos personales del cliente se mantendrán intactos, y los otros clientes se eliminarán.",
+      type: "warning",
+      showCancelButton: true
+    },
+    function(isConfirm) {
+      if (isConfirm) {
+        $.ajax({
+          url: '/merge_clients',
+          method: 'post',
+          data: {target_id: target_id, origin_ids: origin_ids},
+          dataType: 'json',
+          error: function(response){
+            swal({
+              title: "Error",
+              text: "Ocurrió un error al combinar clientes.",
+              type: "error"
+            });
+          },
+          success: function(response){
+            triggerSuccess("Clientes combinados exitosamente.");
+            window.location.reload();
+          }
         });
-      },
-      success: function(response){
-        triggerSuccess("Clientes combinados exitosamente.");
-        window.location.reload();
       }
-    })
+    });
+
   });
 
   $('[data-toggle="tooltip"]').tooltip();
