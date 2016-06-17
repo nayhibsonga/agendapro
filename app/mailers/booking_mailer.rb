@@ -32,8 +32,10 @@ class BookingMailer < Base::CustomMailer
 
     path = options[:horachic] ? "horachic" : "agendapro"
 
-    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
-
+    if @client.present?
+      message.header.fields.select{|f| f.name == 'X-MSYS-API' }.each{|f| message.header.fields.delete(f) }
+      headers['X-MSYS-API'] = { "options" => { "open_tracking" => true, "click_tracking" => true, "ip_pool" => "#{ENV['IP_POOL']}" }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json
+    end
     mail(
       from: sender_from_company(@company),
       reply_to: filter_sender(@book.location.email),
@@ -72,7 +74,10 @@ class BookingMailer < Base::CustomMailer
     layout = options[:horachic] ? "horachic" : "green"
     path = options[:horachic] ? "horachic" : "agendapro"
 
-    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
+    if @client.present?
+      message.header.fields.select{|f| f.name == 'X-MSYS-API' }.each{|f| message.header.fields.delete(f) }
+      headers['X-MSYS-API'] = { "options" => { "open_tracking" => true, "click_tracking" => true, "ip_pool" => "#{ENV['IP_POOL']}" }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json
+    end
 
     mail(
       from: sender_from_company(@company),
@@ -115,7 +120,10 @@ class BookingMailer < Base::CustomMailer
     layout = options[:horachic] ? "horachic" : "green"
     path = options[:horachic] ? "horachic" : "agendapro"
 
-    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
+    if @client.present?
+      message.header.fields.select{|f| f.name == 'X-MSYS-API' }.each{|f| message.header.fields.delete(f) }
+      headers['X-MSYS-API'] = { "options" => { "open_tracking" => true, "click_tracking" => true, "ip_pool" => "#{ENV['IP_POOL']}" }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json
+    end
 
     mail(
       from: sender_from_company(@company),
@@ -186,7 +194,10 @@ class BookingMailer < Base::CustomMailer
     layout = options[:horachic] ? "horachic" : "green"
     path = options[:horachic] ? "horachic" : "agendapro"
 
-    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
+    if @client.present?
+      message.header.fields.select{|f| f.name == 'X-MSYS-API' }.each{|f| message.header.fields.delete(f) }
+      headers['X-MSYS-API'] = { "options" => { "open_tracking" => true, "click_tracking" => true, "ip_pool" => "#{ENV['IP_POOL']}" }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json
+    end
 
     mail(
       from: sender_from_company(@company),
@@ -221,7 +232,10 @@ class BookingMailer < Base::CustomMailer
     @client = options[:client]
     @name = options[:name]
 
-    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json if @client
+    if @client.present?
+      message.header.fields.select{|f| f.name == 'X-MSYS-API' }.each{|f| message.header.fields.delete(f) }
+      headers['X-MSYS-API'] = { "options" => { "open_tracking" => true, "click_tracking" => true, "ip_pool" => "#{ENV['IP_POOL']}" }, "metadata" => { "booking_ids" => "[#{@book.id}]" } }.to_json
+    end
 
     mail(
       from: sender_from_company(@company),
@@ -260,7 +274,10 @@ class BookingMailer < Base::CustomMailer
 
     path = options[:horachic] ? "horachic" : "agendapro"
 
-    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "#{@bookings.map(&:id).inspect}" } }.to_json if @client
+    if @client.present?
+      message.header.fields.select{|f| f.name == 'X-MSYS-API' }.each{|f| message.header.fields.delete(f) }
+      headers['X-MSYS-API'] = { "options" => { "open_tracking" => true, "click_tracking" => true, "ip_pool" => "#{ENV['IP_POOL']}" }, "metadata" => { "booking_ids" => "#{@bookings.map(&:id).inspect}" } }.to_json
+    end
 
     mail(
       from: sender_from_company(@company),
@@ -282,12 +299,12 @@ class BookingMailer < Base::CustomMailer
     @company = book.location.company
 
     # layout variables
-    @title = "Confirma tus reservas #{@company.name}"
+    @title = "Confirma tus reservas en #{@company.name}"
     unless options[:horachic] # layout green
       @url = @company.web_url
       @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
     else # layout horachic
-      @header = "Confirma tus reservas #{@company.name}"
+      @header = "Confirma tus reservas en #{@company.name}"
     end
 
     # view variables
@@ -297,7 +314,8 @@ class BookingMailer < Base::CustomMailer
 
     path = options[:horachic] ? "horachic" : "agendapro"
 
-    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "booking_ids" => "#{@bookings.map(&:id).inspect}" } }.to_json
+    message.header.fields.select{|f| f.name == 'X-MSYS-API' }.each{|f| message.header.fields.delete(f) }
+    headers['X-MSYS-API'] = { "options" => { "open_tracking" => true, "click_tracking" => true, "ip_pool" => "#{ENV['IP_POOL']}" }, "metadata" => { "booking_ids" => "#{@bookings.map(&:id).inspect}" } }.to_json
 
     mail(
       from: sender_from_company(@company),
