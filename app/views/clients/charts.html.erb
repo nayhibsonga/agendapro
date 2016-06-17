@@ -455,8 +455,12 @@
 
 <!-- Chart edition form -->
 
-<div class="model fade ChartModal" id ="editChartModal" tabindex="-1" role="dialog" aria-labelledby="Editar ficha" aria-hidden="true">
-
+<div class="model fade chartModal" id ="editChartModal" tabindex="-1" role="dialog" aria-labelledby="Editar ficha" aria-hidden="true">
+  <div class="modal-dialog" style="width: 70%;">
+    <div class="modal-content">
+      
+    </div>
+  </div>
 </div>
 
 <!-- Chart editiuon end -->
@@ -481,6 +485,27 @@
 </div>
 
 <!-- Chart summary end -->
+
+<!-- Chart booking summary modal -->
+
+<div class="modal fade chartModal" id="bookingSummaryModal" tabindex="-1" role="dialog" aria-labelledby="Resumen de reserva" aria-hidden="true">
+  <div class="modal-dialog" style="width: 70%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <h3 class="modal-title" id="bookingSummaryModalTitle" style="line-height: 1.1;">Resumen de reserva</h3>
+      </div>
+      <div class="modal-body" id="bookingSummaryModalBody">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart booking summary end -->
 
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag "admin/bootstrap-multiselect" %>

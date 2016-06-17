@@ -40,6 +40,44 @@ function loadChartBookings(){
 
 }
 
+function loadEditChartBookings(){
+
+  $('#edit-cpb-bookings').empty();
+
+  $.getJSON('/chart_bookings/', { client_id: parseInt($('#edit_chart_client_id').val()), from: $('#edit_bookings_from').val(), to: $('#edit_bookings_to').val() }, function (response) {
+
+    bookings = response;
+    if(bookings.length > 0)
+    {
+      $.each(bookings, function(key, booking){
+
+        var session_str = "";
+        if(booking.is_session)
+        {
+          session_str = " (sesión " + booking.session_number + " de " + booking.sessions_amount + ")";
+        }
+
+        $("#edit-cpb-bookings").append('<div class="pastBookingRow" booking_id="' + booking.id + '">' +
+          '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addChartBooking" booking_id="' + booking.id + '"><i class="fa fa-plus"></i></button></div>' +
+          '<div class="col-xs-3 pastBookingCol service_name">' + booking.service_name + session_str + '</div>' +
+          '<div class="col-xs-3 pastBookingCol provider_name">' + booking.provider_name + '</div>' +
+          '<div class="col-xs-4 pastBookingCol start_date">' + booking.start + '</div>' +
+          '</div></div>'
+        );
+
+      });
+      
+    }
+    else
+    {
+      $('#edit-cpb-bookings').append('<p style="text-align: center; padding-top: 5px; padding-bottom: 5px;">El cliente no tiene reservas en el período ingresado.</p>');
+    }
+    $('#editChartBookings').show();
+
+  });  
+
+}
+
 function loadCharts(){
 
   var client_id = $('#chart_client_id').val();
@@ -96,7 +134,46 @@ function openChartSummary(chart_id){
       $('#chartSummaryModalBody').html(response);
       $('#chartSummaryModal').modal('show');
     }
-  })
+  });
+}
+
+function editChart(chart_id){
+  $('#editChartModal .modal-content').empty();
+  $.ajax({
+    url: '/charts/' + chart_id + '/edit/',
+    method: 'get',
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#editChartModal .modal-content').html(response);
+      $(".chart_field_datepicker").datepicker({
+        dateFormat: 'dd/mm/yy',
+        autoSize: true,
+        firstDay: 1,
+        changeMonth: true,
+        changeYear: true,
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            prevText: 'Atrás',
+            nextText: 'Adelante',
+            dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+            dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+            dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+            today: 'Hoy',
+            clear: ''
+      });
+      $('#editAddChartBookingBtn').click(function(e){
+        e.preventDefault();
+        loadEditChartBookings();
+      });
+      $('#editChartModal').modal('show');
+    }
+  });
+}
+
+function openBookingSummary(booking_id){
+  
 }
 
 $(function() {
@@ -108,6 +185,13 @@ $(function() {
     var date_str = $('#aux_date').val() + " " + $('#aux_hour').val() + ":" + $('#aux_minute').val() + ":00";
     $('#chart_date').val(date_str);
     $('#new_chart').submit();
+  });
+
+  $('#updateChartBtn').click(function(e){
+    e.preventDefault();
+    var date_str = $('#edit_aux_date').val() + " " + $('#edit_aux_hour').val() + ":" + $('#edit_aux_minute').val() + ":00";
+    $('#edit_chart_date').val(date_str);
+    $('#edit_chart').submit();
   });
 
 	$('#addChartBtn').click(function(){
@@ -128,6 +212,17 @@ $(function() {
     detail_str += row.find('.service_name').text() + " con " + row.find('.provider_name').text() + " el " + row.find('.start_date').text();
 
     $('#chart_booking_detail').html(detail_str);
+  });
+
+  $('body').on('click', '.editAddChartBooking',function(e){
+    e.preventDefault();
+    var booking_id = $(this).attr("booking_id");
+    $('#edit_chart_booking_id').val(booking_id);
+    var row = $('.pastBookingRow[booking_id="' + booking_id + '"]');
+    var detail_str = "";
+    detail_str += row.find('.service_name').text() + " con " + row.find('.provider_name').text() + " el " + row.find('.start_date').text();
+
+    $('#edit_chart_booking_detail').html(detail_str);
   });
 
 	$(".chart_field_datepicker").datepicker({

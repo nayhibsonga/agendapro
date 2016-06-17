@@ -20,6 +20,9 @@ class ChartsController < ApplicationController
   end
 
   def edit
+    @company = @chart.company
+    @s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+    render "_form", layout: false
   end
 
   def create
@@ -36,8 +39,15 @@ class ChartsController < ApplicationController
   end
 
   def update
-    @chart.update(chart_params)
-    respond_with(@chart)
+    if @chart.update(chart_params)
+      @chart.save_chart_fields(params)
+      flash[:success] = "Ficha actualizada exitosamente."
+    else
+      flash[:alert] = "Error al actualizar la ficha."
+    end
+    respond_with(@chart) do |format|
+      format.html { redirect_to client_charts_path(@chart.client) }
+    end
   end
 
   def destroy
