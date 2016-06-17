@@ -47,7 +47,11 @@ $(function () {
       data: {target_id: target_id, origin_ids: origin_ids},
       dataType: 'json',
       error: function(response){
-
+        swal({
+          title: "Error",
+          text: "Ocurrió un error al combinar clientes.",
+          type: "error"
+        });
       },
       success: function(response){
         triggerSuccess("Clientes combinados exitosamente.");

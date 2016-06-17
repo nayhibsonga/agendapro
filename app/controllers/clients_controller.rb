@@ -1076,7 +1076,7 @@ class ClientsController < ApplicationController
   end
 
   def merge
-    json_reponse = []
+    json_reponse = ["ok"]
     @client = Client.find(params[:target_id])
     clients_ids = params[:origin_ids]
     clients_ids.each do |client_id|
