@@ -66,6 +66,15 @@
   </div>
 </div>
 
+<!-- Chart edition form -->
+
+<div class="modal fade chartModal" id ="editChartModal" tabindex="-1" role="dialog" aria-labelledby="Editar ficha" aria-hidden="true">
+  
+
+</div>
+
+<!-- Chart edition end -->
+
 <div class="modal fade chartModal" id="chartSummaryModal" tabindex="-1" role="dialog" aria-labelledby="Ficha" aria-hidden="true">
   <div class="modal-dialog" style="width: 70%;">
     <div class="modal-content">
@@ -166,17 +175,21 @@
                       <div class="form-group">
                         <input type="hidden" name="chart[booking_id]" id="chart_booking_id" value="" />
                         <label for="chart_booking_id" class="col-xs-2 col-md-2 control-label left-label">Reserva</label>
-                        <div class="col-xs-4" style="padding-top: 7px;">
-                          <span id="chart_booking_detail">Sin reserva asociada</span>
+                        <div class="col-xs-10" style="padding-top: 7px;">
+                          <span id="chart_booking_detail">Sin reserva asociada. Define un rango de fechas y busca reservas si quieres asociar una.</span>
                         </div>
-                        <div class="col-xs-2">
-                          <button class="btn btn-default form-control" id="addChartBookingBtn">Ver reservas</button>
-                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="bookings_from" class="col-xs-2 control-label left-label">Desde</label>
                         <div class="col-xs-2">
                           <input type="text" id="bookings_from" class="form-control chart_field_datepicker" value="<%= (DateTime.now + @company.country.timezone_offset.hours - 7.days).strftime('%d/%m/%Y') %>" />
                         </div>
+                        <label for="bookings_to" class="col-xs-1 control-label left-label">Hasta</label>
                         <div class="col-xs-2">
-                        <input type="text" id="bookings_to" class="form-control chart_field_datepicker" value="<%= (DateTime.now + @company.country.timezone_offset.hours).strftime('%d/%m/%Y') %>" />
+                          <input type="text" id="bookings_to" class="form-control chart_field_datepicker" value="<%= (DateTime.now + @company.country.timezone_offset.hours).strftime('%d/%m/%Y') %>" />
+                        </div>
+                        <div class="col-xs-2">
+                          <button class="btn btn-green form-control" id="addChartBookingBtn">Buscar</button>
                         </div>
                       </div>
                       <div class="form-group">
@@ -219,8 +232,8 @@
                     
                       <% @company.chart_groups.order(:order).each_with_index do |chart_group, index| %>
                         <% if chart_group.chart_fields.count > 0 %>
-                          <div class="tab-pane" id="client-chart-fields-<%= chart_group.id %>">
-                            <div class="row">
+                          <div class="tab-pane charts-pane" id="client-chart-fields-<%= chart_group.id %>">
+                            
 
                               <% chart_group.chart_fields.order(:order).each do |chart_field| %>
 
@@ -233,8 +246,7 @@
                                 <div class="col-md-6">
 
                                   <% if chart_field.datatype == "file" %>
-                                    <div class="row">
-                                      <div class="col-md-12">
+                                    
                                         <div class="form-group has-feedback">
                                           <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
                                             <%= chart_field.name %>
@@ -244,13 +256,11 @@
                                             <span class="help-block"><%= chart_field.description %></span>
                                           </div>
                                         </div>
-                                      </div>
-                                    </div>
+                                      
 
 
                                   <% elsif chart_field.datatype == "float" %>
-                                    <div class="row">
-                                      <div class="col-md-12">
+                                    
                                         <div class="form-group has-feedback">
                                           <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
                                             <%= chart_field.name %>
@@ -261,11 +271,9 @@
                                             <span class="form-control-feedback"></span>
                                           </div>
                                         </div>
-                                      </div>
-                                    </div>
+                                      
                                   <% elsif chart_field.datatype == "integer" %>
-                                    <div class="row">
-                                      <div class="col-md-12">
+                                    
                                         <div class="form-group has-feedback">
                                           <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
                                             <%= chart_field.name %>
@@ -276,29 +284,25 @@
                                             <span class="form-control-feedback"></span>
                                           </div>
                                         </div>
-                                      </div>
-                                    </div>
+                                      
                                   <% elsif chart_field.datatype == "text" %>
 
-                                    <div class="row">
-                                      <div class="col-md-12">
+                                    
                                         <div class="form-group has-feedback">
                                           <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
                                             <%= chart_field.name %>
                                           </label>
                                           <div class="col-sm-8">
-                                            <input type="text" class="form-control chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_chart_field" value="" <%= "required" if chart_field.mandatory %> />
+                                            <input type="text" class="form-control chart-field" title="<%= chart_field.description %>" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_chart_field" value="" <%= "required" if chart_field.mandatory %> />
                                             <span class="help-block"><%= chart_field.description %></span>
                                             <span class="form-control-feedback"></span>
                                           </div>
                                         </div>
-                                      </div>
-                                    </div>
+                                      
 
                                   <% elsif chart_field.datatype == "textarea" %>
 
-                                    <div class="row">
-                                      <div class="col-md-12">
+                                    
                                         <div class="form-group has-feedback">
                                           <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
                                             <%= chart_field.name %>
@@ -309,13 +313,11 @@
                                             <span class="form-control-feedback"></span>
                                           </div>
                                         </div>
-                                      </div>
-                                    </div>
+                                      
 
                                   <% elsif chart_field.datatype == "boolean" %>
 
-                                    <div class="row">
-                                      <div class="col-md-12">
+                                    
                                         <div class="form-group has-feedback">
                                           <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
                                             <%= chart_field.name %>
@@ -328,13 +330,11 @@
                                             <span class="help-block"><%= chart_field.description %></span>
                                           </div>
                                         </div>
-                                      </div>
-                                    </div>
+                                      
 
                                   <% elsif chart_field.datatype == "date" %>
 
-                                    <div class="row">
-                                      <div class="col-md-12">
+                                    
                                         <div class="form-group has-feedback">
                                           <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
                                             <%= chart_field.name %>
@@ -345,14 +345,12 @@
                                             <span class="form-control-feedback"></span>
                                           </div>
                                         </div>
-                                      </div>
-                                    </div>
+                                      
 
                                   <% elsif chart_field.datatype == "datetime" %>
 
-                                    <div class="row">
-                                      <div class="col-md-12">
-                                        <div class="form-group">
+                                    
+                                      <div class="form-group">
                                         <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
                                           <%= chart_field.name %>
                                         </label>
@@ -401,14 +399,12 @@
                                           <span class="form-control-feedback"></span>
                                         </div>
                                       </div>
-                                      </div>
-                                    </div>
+                                      
 
                                   <% elsif chart_field.datatype == "categoric" %>
 
-                                    <div class="row">
-                                      <div class="col-md-12">
-                                        <div class="form-group has-feedback">
+                                    
+                                      <div class="form-group has-feedback">
                                         <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
                                           <%= chart_field.name %>
                                         </label>
@@ -421,14 +417,13 @@
                                           <span class="help-block"><%= chart_field.description %></span>
                                         </div>
                                       </div>
-                                      </div>
-                                    </div>
+                                      
 
                                   <% end %>
                                 </div>
                               <% end %>
 
-                            </div>
+                            
                           </div>
                         <% end %>
                       <% end %>
@@ -453,38 +448,6 @@
 </div>
 <!-- Chart creation form end -->
 
-<!-- Chart edition form -->
-
-<div class="model fade chartModal" id ="editChartModal" tabindex="-1" role="dialog" aria-labelledby="Editar ficha" aria-hidden="true">
-  <div class="modal-dialog" style="width: 70%;">
-    <div class="modal-content">
-      
-    </div>
-  </div>
-</div>
-
-<!-- Chart editiuon end -->
-
-<!-- Chart summary modal -->
-
-<div class="modal fade chartModal" id="chartSummaryModal" tabindex="-1" role="dialog" aria-labelledby="Ficha de cliente" aria-hidden="true">
-  <div class="modal-dialog" style="width: 70%;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><i class="fa fa-times" aria-hidden="true"></i></button>
-        <h3 class="modal-title" id="chartSummaryModalTitle" style="line-height: 1.1;">Ficha de cliente</h3>
-      </div>
-      <div class="modal-body" id="chartSummaryModalBody">
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default payment-btn-close" data-dismiss="modal" aria-label="Salir">Salir</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Chart summary end -->
 
 <!-- Chart booking summary modal -->
 

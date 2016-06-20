@@ -1,5 +1,5 @@
 class ChartsController < ApplicationController
-  before_action :set_chart, only: [:show, :edit, :update, :destroy, :summary]
+  before_action :set_chart, only: [:show, :edit, :update, :destroy, :summary, :edit_form]
   before_action :authenticate_user!
   load_and_authorize_resource
 
@@ -20,6 +20,9 @@ class ChartsController < ApplicationController
   end
 
   def edit
+  end
+
+  def edit_form
     @company = @chart.company
     @s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
     render "_form", layout: false
@@ -83,6 +86,6 @@ class ChartsController < ApplicationController
     end
 
     def chart_params
-      params.require(:chart).permit(:company_id, :client_id, :booking_id, :user_id, :date)
+      params.require(:chart).permit(:company_id, :client_id, :booking_id, :user_id, :date, :last_modifier_id)
     end
 end

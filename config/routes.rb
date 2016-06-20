@@ -200,6 +200,7 @@ Agendapro::Application.routes.draw do
       get '/book_session_form', action: 'book_session_form'
       post '/update_book_session', action: 'update_book_session'
       get '/sessions_calendar', action: 'sessions_calendar'
+      get '/booking_summary', action: 'summary'
     end
 
 
@@ -589,6 +590,7 @@ Agendapro::Application.routes.draw do
     get '/client_treatments_content', :to => 'clients#treatments_content'
     get '/chart_bookings', :to => 'charts#bookings'
     get '/chart_summary', :to => 'charts#summary'
+    get '/chart_edit_form', :to => 'charts#edit_form'
 
     get '/billing_info_admin_form', :to => 'billing_infos#super_admin_form'
     get '/billing_info_admin_edit', :to => 'billing_infos#super_admin_edit'

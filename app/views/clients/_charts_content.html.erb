@@ -28,7 +28,7 @@
                   <% if chart.booking.nil? %>
                     Sin reserva
                   <% else %>
-                    <button class="btn btn-default btn-xs" onclick="openBookingSummary(<%= chart.id %>);"><i class="fa fa-search-plus"></i>&nbsp;Ver reserva</button>
+                    <button class="btn btn-default btn-xs" onclick="openBookingSummary(<%= chart.booking.id %>);"><i class="fa fa-search-plus"></i>&nbsp;Ver reserva</button>
                   <% end %>
                 </td>
                 <td>

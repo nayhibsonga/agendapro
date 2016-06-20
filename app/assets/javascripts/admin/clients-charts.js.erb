@@ -20,7 +20,7 @@ function loadChartBookings(){
         }
 
         $("#cpb-bookings").append('<div class="pastBookingRow" booking_id="' + booking.id + '">' +
-          '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addChartBooking" booking_id="' + booking.id + '"><i class="fa fa-plus"></i></button></div>' +
+          '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addChartBooking" booking_id="' + booking.id + '"><i class="fa fa-circle-o unselected-booking"></i><i class="fa fa-check-circle-o selected-booking"></i></button></div>' +
           '<div class="col-xs-3 pastBookingCol service_name">' + booking.service_name + session_str + '</div>' +
           '<div class="col-xs-3 pastBookingCol provider_name">' + booking.provider_name + '</div>' +
           '<div class="col-xs-4 pastBookingCol start_date">' + booking.start + '</div>' +
@@ -58,7 +58,7 @@ function loadEditChartBookings(){
         }
 
         $("#edit-cpb-bookings").append('<div class="pastBookingRow" booking_id="' + booking.id + '">' +
-          '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addChartBooking" booking_id="' + booking.id + '"><i class="fa fa-plus"></i></button></div>' +
+          '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="editAddChartBooking" booking_id="' + booking.id + '"><i class="fa fa-plus"></i></button></div>' +
           '<div class="col-xs-3 pastBookingCol service_name">' + booking.service_name + session_str + '</div>' +
           '<div class="col-xs-3 pastBookingCol provider_name">' + booking.provider_name + '</div>' +
           '<div class="col-xs-4 pastBookingCol start_date">' + booking.start + '</div>' +
@@ -138,15 +138,16 @@ function openChartSummary(chart_id){
 }
 
 function editChart(chart_id){
-  $('#editChartModal .modal-content').empty();
+  $('#editChartModal').empty();
   $.ajax({
-    url: '/charts/' + chart_id + '/edit/',
+    url: '/chart_edit_form',
+    data: {id: chart_id},
     method: 'get',
     error: function(response){
 
     },
     success: function(response){
-      $('#editChartModal .modal-content').html(response);
+      $('#editChartModal').html(response);
       $(".chart_field_datepicker").datepicker({
         dateFormat: 'dd/mm/yy',
         autoSize: true,
@@ -163,22 +164,36 @@ function editChart(chart_id){
             today: 'Hoy',
             clear: ''
       });
-      $('#editAddChartBookingBtn').click(function(e){
-        e.preventDefault();
-        loadEditChartBookings();
-      });
+      
       $('#editChartModal').modal('show');
     }
   });
 }
 
 function openBookingSummary(booking_id){
-  
+  $('#chartSummaryModalBody').empty();
+  $.ajax({
+    url: '/booking_summary',
+    method: 'get',
+    data: {id: booking_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#bookingSummaryModalBody').html(response);
+      $('#bookingSummaryModal').modal('show');
+    }
+  });
 }
 
 $(function() {
 
   registerModerator(ajax_name);
+
+  $('body').on('click', '#editAddChartBookingBtn', function(e){
+    e.preventDefault();
+    loadEditChartBookings();
+  });
 
   $('#saveChartBtn').click(function(e){
     e.preventDefault();
@@ -187,11 +202,12 @@ $(function() {
     $('#new_chart').submit();
   });
 
-  $('#updateChartBtn').click(function(e){
+  $('body').on('click', '#updateChartBtn', function(e){
+    console.log("Entra a update");
     e.preventDefault();
     var date_str = $('#edit_aux_date').val() + " " + $('#edit_aux_hour').val() + ":" + $('#edit_aux_minute').val() + ":00";
     $('#edit_chart_date').val(date_str);
-    $('#edit_chart').submit();
+    $('#edit_chart_form').submit();
   });
 
 	$('#addChartBtn').click(function(){
@@ -205,12 +221,23 @@ $(function() {
 
   $('body').on('click', '.addChartBooking',function(e){
     e.preventDefault();
+
+    //Check if there was a previously selected one
+    old_id = $('#chart_booking_id').val();
+    if(old_id != "")
+    {
+      old_row = $('.pastBookingRow[booking_id="' + old_id + '"]');
+      old_row.find('.unselected-booking').show();
+      old_row.find('.selected-booking').hide();
+    }
+
     var booking_id = $(this).attr("booking_id");
     $('#chart_booking_id').val(booking_id);
     var row = $('.pastBookingRow[booking_id="' + booking_id + '"]');
     var detail_str = "";
     detail_str += row.find('.service_name').text() + " con " + row.find('.provider_name').text() + " el " + row.find('.start_date').text();
-
+    row.find('.unselected-booking').hide();
+    row.find('.selected-booking').show();
     $('#chart_booking_detail').html(detail_str);
   });
 
