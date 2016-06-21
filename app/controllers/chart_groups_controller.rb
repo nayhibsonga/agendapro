@@ -29,14 +29,22 @@ class ChartGroupsController < ApplicationController
   def create
     @chart_group = ChartGroup.new(chart_group_params)
     @chart_group.save
-    flash[:success] = "Categoría creada." if @chart_group.save
+    if @chart_group.save
+      flash[:success] = "Categoría creada."
+    else
+      flash[:alert] = @chart_group.errors.full_messages.first
+    end
     respond_with(@chart_group) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'charts') }
     end
   end
 
   def update
-    flash[:success] = "Categoría editada." if @chart_group.update(chart_group_params)
+    if @chart_group.update(chart_group_params)
+      flash[:success] = "Categoría editada."
+    else
+      flash[:alert] = @chart_group.errors.full_messages.first
+    end
     respond_with(@chart_group) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'charts') }
     end

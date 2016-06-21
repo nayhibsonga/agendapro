@@ -31,14 +31,22 @@ class ChartFieldsController < ApplicationController
 
   def create
     @chart_field = ChartField.new(chart_field_params)
-    flash[:success] = "Campo creado." if @chart_field.save
+    if @chart_field.save
+      flash[:success] = "Campo creado."
+    else
+      flash[:alert] = @chart_field.errors.full_messages.first
+    end
     respond_with(@chart_field) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'charts') }
     end
   end
 
   def update
-    flash[:success] = "Campo editado." if @chart_field.update(chart_field_params)
+    if @chart_field.update(chart_field_params)
+      flash[:success] = "Campo editado."
+    else
+      flash[:alert] = @chart_field.errors.full_messages.first
+    end
     respond_with(@chart_field) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'charts') }
     end

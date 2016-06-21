@@ -591,6 +591,7 @@ Agendapro::Application.routes.draw do
     get '/chart_bookings', :to => 'charts#bookings'
     get '/chart_summary', :to => 'charts#summary'
     get '/chart_edit_form', :to => 'charts#edit_form'
+    get '/booking_chart', :to => 'bookings#chart'
 
     get '/billing_info_admin_form', :to => 'billing_infos#super_admin_form'
     get '/billing_info_admin_edit', :to => 'billing_infos#super_admin_edit'

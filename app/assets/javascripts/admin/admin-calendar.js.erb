@@ -743,11 +743,44 @@ function editBookingModal(eventId) {
 
       console.log(custom_attributes);
 
+      /*
+      * Add chart fields if there is a chart associated to this booking
+      */
+
+      var chart_fields = [];
+      if(booking.has_chart)
+      {
+        chart_fields = booking.chart_fields;
+        loadChart(booking.chart, booking.chart_fields);
+        for(var key in chart_fields)
+        {
+          console.log("KEY");
+          console.log(key);
+          console.log(chart_fields[key]);
+          if($('[name="' + key + '"]').is('select'))
+          {
+            if(chart_fields[key] == false)
+            {
+              chart_fields[key] = "0";
+            }
+            else if(chart_fields[key] == true)
+            {
+              chart_fields[key] = "1";
+            }
+          }
+          $('[name="' + key + '"]').val(chart_fields[key]);
+        }
+      }
+
+      console.log(chart_fields);
+      
+
       $('#bookingModal #myTab').show();
       $('#bookingModal .booking-modal-footer').show();
       $('#bookingModal #payment_client_group').hide();
       $('#booking-tab').tab('show');
       $('#payments-li, #payments-li > a[data-toggle=tab]').removeClass('disabled');
+      $('#charts-li, #charts-li > a[data-toggle=tab]').removeClass('disabled');
       $('#bookingModal').modal('show');
 
       /*
@@ -795,6 +828,137 @@ function editBookingModal(eventId) {
 
     });
   }
+}
+
+/* 
+Check if booking has a chart.
+If so, load it. If not, reset
+*/
+
+function checkChart(booking_id, client_id)
+{
+  $.ajax({
+    url: '/booking_chart',
+    method: 'get',
+    data: {id: booking_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      if(response.has_chart)
+      {
+        var chart = response.chart;
+        if(parseInt(chart.client_id) == parseInt(client_id))
+        {
+          loadChart(chart, response.chart_fields);
+        }
+        else
+        {
+          resetChart();
+        }
+      }
+      else
+      {
+        resetChart();
+      }
+    }
+  })
+}
+
+function loadChart(chart, chart_fields)
+{
+  for(var key in chart_fields)
+  {
+    console.log("KEY");
+    console.log(key);
+    console.log(chart_fields[key]);
+    if($('[name="' + key + '"]').is('select'))
+    {
+      if(chart_fields[key] == false)
+      {
+        chart_fields[key] = "0";
+      }
+      else if(chart_fields[key] == true)
+      {
+        chart_fields[key] = "1";
+      }
+    }
+    $('[name="' + key + '"]').val(chart_fields[key]);
+  }
+
+  $('#chart_client_id').val(chart.client_id);
+  $('#chart_user_id').val(chart.user_id);
+
+  var chart_date_arr = chart.date.split("T");
+  var chart_date_date_arr = chart_date_arr[0].split("-");
+  var chart_date_time_arr = chart_date_arr[1].split(":");
+  var chart_date = chart_date_date_arr[2] + "/" + chart_date_date_arr[1] + "/" + chart_date_date_arr[0];
+  var chart_hour = chart_date_time_arr[0];
+  var chart_minute = chart_date_time_arr[1];
+
+  if(chart_hour.length == 1)
+  {
+    chart_hour = "0" + chart_hour;
+  }
+
+  if(chart_minute.length == 1)
+  {
+    chart_hour = "0" + chart_minute;
+  }
+
+  $('#aux_date').val(chart_date);
+  $('#aux_hour').val(chart_hour);
+  $('#aux_minute').val(chart_minute);
+  $('#chart_date').val(chart_date + " " + chart_hour + ":" + chart_minute + ":00");
+
+  $('#create_chart').val("1");
+  $('#create_chart').prop('checked', true);
+
+  console.log(chart.date);
+
+  console.log(chart_fields);
+}
+
+function resetChart()
+{
+  var todayDate = new Date();
+  var date_str = todayDate.toJSON().split("T")[0];
+  var date_arr = date_str.split("-");
+  var date_str_format = date_arr[2] + "/" + date_arr[1] + "/" + date_arr[0];
+  var new_hour = todayDate.getHours();
+  var new_minute = todayDate.getMinutes();
+  if(new_hour < 10)
+  {
+    new_hour = "0" + new_hour;
+  }
+  else
+  {
+    new_hour = "" + new_hour;
+  }
+  if(new_minute < 10)
+  {
+    new_minute = "0" + new_minute;
+  }
+  else
+  {
+    new_minute = "" + new_minute;
+  }
+  $('#create_chart').val("0");
+  $('#create_chart').prop('checked', false);
+  $('#aux_date').val(date_str_format);
+  $('#aux_hour').val(new_hour);
+  $('#aux_minute').val(new_minute);
+  $('#chart_date').val(date_str_format + " " + new_hour + ":" + new_minute + ":00");
+  $('.chart-field').each(function(){
+    if(!$(this).is('select'))
+    {
+      $(this).val("");
+    }
+    else
+    {
+      $(this).children().first().prop("selected", true);
+    }
+  });
 }
 
 function createBookingModal(date, provider_id) {
@@ -948,6 +1112,8 @@ function createBookingModal(date, provider_id) {
         $('#bookingModal .booking-modal-footer').show();
         $('#booking-tab').tab('show');
         $('#payments-li, #payments-li > a[data-toggle=tab]').addClass('disabled');
+        $('#charts-li, #charts-li > a[data-toggle=tab]').addClass('disabled');
+        resetChart();
         $('#bookingModal #payment_client_group').hide();
         $('#bookingModal').modal('show');
       }
@@ -1177,6 +1343,31 @@ function jsonAttributes()
     jsAttributes[attribute_name] = attribute_val;
   });
   return jsAttributes;
+}
+
+function jsonFields()
+{
+  var jsFields = {};
+  $('.chart-field').each(function(){
+    var field_name = $(this).attr("name");
+    var field_val = $(this).val();
+    jsFields[field_name] = field_val;
+  });
+  return jsFields; 
+}
+
+function jsonChart()
+{
+
+  $('#chart_date').val($('#aux_date').val() + " " + $('#aux_hour').val() + ":" + $('#aux_minute').val() + ":00");
+
+  var jsChart = {
+    "create_chart": $('#create_chart').val(),
+    "client_id": $('#chart_client_id').val(),
+    "date": $('#chart_date').val()
+  };
+
+  return jsChart;
 }
 
 function jsonBooking() {
@@ -1554,6 +1745,8 @@ function saveBooking(typeURL, extraURL, bundled) {
     bookingJSON = $.extend(bookingJSON, {'bundled_delete': bundled });
   }
   var attributesJSON = jsonAttributes();
+  var fieldsJSON = jsonFields();
+  var chartJSON = jsonChart();
   if (typeURL == 'POST') {
     if(Array.isArray(bookingJSON)) {
       bookingBuffer = bookingJSON;
@@ -1579,7 +1772,7 @@ function saveBooking(typeURL, extraURL, bundled) {
     $.ajax({
       type: typeURL,
       url: '/bookings'+ extraURL +'.json',
-      data: { "booking": bookingJSON, "custom_attributes": attributesJSON },
+      data: { "booking": bookingJSON, "custom_attributes": attributesJSON, "chart_fields": fieldsJSON, "chart": chartJSON },
       dataType: 'json',
       headers: {
         'Cache-Control': 'no-transform'
@@ -1707,10 +1900,12 @@ function saveBooking(typeURL, extraURL, bundled) {
 
 function saveBookingBuffer () {
   var attributesJSON = jsonAttributes();
+  var fieldsJSON = jsonFields();
+  var chartJSON = jsonChart();
   $.ajax({
     type: 'POST',
     url: '/bookings.json',
-    data: { "bookings": bookingBuffer, "custom_attributes": attributesJSON },
+    data: { "bookings": bookingBuffer, "custom_attributes": attributesJSON, "chart_fields": fieldsJSON, "chart": chartJSON },
     dataType: 'json',
     success: function(bookings){
       $('#bookingAlerts').hide();
@@ -1802,7 +1997,7 @@ function saveBookingBuffer () {
       },
       function (isConfirm) {
         if (isConfirm) {
-          $.post('/force_create.json', { "bookings": bookingBuffer }, function (bookings) {
+          $.post('/force_create.json', { "bookings": bookingBuffer, "custom_attributes": attributesJSON, "chart_fields": fieldsJSON }, function (bookings) {
             $('#bookingAlerts').hide();
             $('#bookingWarnings').empty();
             var warning = false;
@@ -3332,6 +3527,11 @@ $(function() {
         }
       });
 
+      if(openedBooking != null)
+      {
+        checkChart(openedBooking.id, client.id);
+      }
+
       $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + client.id);
       $('.open_client_link').attr("href", "/clients/" + client.id);
@@ -3423,6 +3623,11 @@ $(function() {
           console.log("Error");
         }
       });
+
+      if(openedBooking != null)
+      {
+        checkChart(openedBooking.id, client.id);
+      }
 
       $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + client.id);
@@ -3517,7 +3722,10 @@ $(function() {
         }
       });
 
-
+      if(openedBooking != null)
+      {
+        checkChart(openedBooking.id, client.id);
+      }
 
       $('.staff_client_link').show();
       $('.staff_client_link').attr("href", "/clients/" + client.id);
@@ -3622,6 +3830,7 @@ $(function() {
         $(this).val("");
       }
     });
+    resetChart();
   });
 
   $('#breakModal').on('hidden.bs.modal', function (e) {
@@ -3634,6 +3843,8 @@ $(function() {
     $('.custom-attribute').each(function(){
       $(this).val('');
     });
+
+    resetChart();
 
     $('.staff_client_link').hide();
     $('.staff_client_link').attr("href", "#");
@@ -3759,6 +3970,10 @@ $(function() {
 
   $(".modal").on('show.bs.modal', function(){
     $('#popover').hide();
+  });
+
+  $('.create_chart_explanation').tooltip({
+    placement: "right"
   });
 
 });

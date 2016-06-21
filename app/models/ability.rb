@@ -139,6 +139,7 @@ class Ability
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
         can :summary, Booking, :company_id => user.company_id
+        can :chart, Booking, :company_id => user.company_id
 
         can :bookings, Chart, :company_id => user.company_id
         can :summary, Chart, :company_id => user.company_id
@@ -525,6 +526,7 @@ class Ability
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
         can :summary, Booking, :company_id => user.company_id
+        can :chart, Booking, :company_id => user.company_id
 
         can :bookings, Chart, :company_id => user.company_id
         can :summary, Chart, :company_id => user.company_id
@@ -822,6 +824,7 @@ class Ability
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
         can :summary, Booking, :company_id => user.company_id
+        can :chart, Booking, :company_id => user.company_id
 
         can :bookings, Chart, :company_id => user.company_id
         can :summary, Chart, :company_id => user.company_id
@@ -985,6 +988,7 @@ class Ability
     elsif user.role_id == Role.find_by_name("Staff").id
 
         can :summary, Booking, :company_id => user.company_id
+        can :chart, Booking, :company_id => user.company_id
 
         can :bookings, Chart, :company_id => user.company_id
         can :summary, Chart, :company_id => user.company_id
@@ -1114,6 +1118,7 @@ class Ability
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 
         can :summary, Booking, :company_id => user.company_id
+        can :chart, Booking, :company_id => user.company_id
 
         can :bookings, Chart, :company_id => user.company_id
         can :summary, Chart, :company_id => user.company_id

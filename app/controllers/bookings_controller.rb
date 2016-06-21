@@ -1,5 +1,5 @@
 class BookingsController < ApplicationController
-  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form, :get_treatment_info, :delete_treatment, :get_email_logs, :summary]
+  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form, :get_treatment_info, :delete_treatment, :get_email_logs, :summary, :chart]
   before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :confirm_error, :confirm_success, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours, :hours_test, :available_hours]
   before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :confirm_error, :confirm_success, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours, :hours_test, :available_hours]
   before_action :verify_disabled, only: [:index, :fixed_index]
@@ -119,7 +119,13 @@ class BookingsController < ApplicationController
     after_book_date = DateTime.now + u.service.company.company_setting.after_booking.months
     after_book_date = I18n.l after_book_date.to_date, format: :day
 
-    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id, :custom_attributes => u.client.get_custom_attributes, :bundled => u.bundled}
+    has_chart = !u.chart.nil?
+    chart_fields = []
+    if has_chart
+      chart_fields = u.chart.get_chart_fields
+    end
+
+    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id, :custom_attributes => u.client.get_custom_attributes, :bundled => u.bundled, :has_chart => has_chart, :chart_fields => chart_fields, :chart => u.chart}
     respond_to do |format|
       format.html { }
       format.json { render :json => @booking_json }
@@ -7831,6 +7837,16 @@ class BookingsController < ApplicationController
 
   def summary
     render '_summary', layout: false
+  end
+
+  def chart
+    chart = @booking.chart
+    has_chart = !chart.nil?
+    chart_fields = []
+    if has_chart
+      chart_fields = chart.get_chart_fields
+    end
+    render :json => {:has_chart => has_chart, :chart_fields => chart_fields, :chart => @booking.chart}
   end
 
   private

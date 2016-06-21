@@ -13,8 +13,18 @@ class ChartField < ActiveRecord::Base
   has_many :chart_field_texts, dependent: :destroy
   has_many :chart_field_textareas, dependent: :destroy
 
+  validate :name_uniqueness
+
   after_create :create_charts_new_field
   after_save :generate_slug, :rearrange
+
+  def name_uniqueness
+    ChartField.where(name: self.name, company_id: self.company_id).each do |chart_field|
+      if chart_field != self
+        errors.add(:base, "No se pueden crear dos campos con el mismo nombre.")
+      end
+    end
+  end
 
   def rearrange
 

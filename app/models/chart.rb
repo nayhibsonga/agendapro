@@ -93,36 +93,36 @@ class Chart < ActiveRecord::Base
 
         field = ChartFieldFloat.where(chart_field_id: chart_field.id, chart_id: self.id).first
         if !field.nil? && !field.value.nil?
-          chart_fields[field.slug + "_chart_field"] = field.value
+          chart_fields[chart_field.slug + "_chart_field"] = field.value
         else
-          chart_fields[field.slug + "_chart_field"] = nil
+          chart_fields[chart_field.slug + "_chart_field"] = nil
         end
 
       when "integer"
 
         field = ChartFieldInteger.where(chart_field_id: chart_field.id, chart_id: self.id).first
         if !field.nil? && !field.value.nil?
-          chart_fields[field.slug + "_chart_field"] = field.value
+          chart_fields[chart_field.slug + "_chart_field"] = field.value
         else
-          chart_fields[field.slug + "_chart_field"] = nil
+          chart_fields[chart_field.slug + "_chart_field"] = nil
         end
 
       when "text"
 
         field = ChartFieldText.where(chart_field_id: chart_field.id, chart_id: self.id).first
         if !field.nil? && !field.value.nil?
-          chart_fields[field.slug + "_chart_field"] = field.value
+          chart_fields[chart_field.slug + "_chart_field"] = field.value
         else
-          chart_fields[field.slug + "_chart_field"] = ""
+          chart_fields[chart_field.slug + "_chart_field"] = ""
         end
 
       when "textarea"
 
         field = ChartFieldTextarea.where(chart_field_id: chart_field.id, chart_id: self.id).first
         if !field.nil? && !field.value.nil?
-          chart_fields[field.slug + "_chart_field"] = field.value
+          chart_fields[chart_field.slug + "_chart_field"] = field.value
         else
-          chart_fields[field.slug + "_chart_field"] = ""
+          chart_fields[chart_field.slug + "_chart_field"] = ""
         end
 
       when "boolean"
@@ -130,39 +130,50 @@ class Chart < ActiveRecord::Base
         field = ChartFieldBoolean.where(chart_field_id: chart_field.id, chart_id: self.id).first
         if !field.nil? && !field.value.nil?
           if field.value
-            chart_fields[field.slug + "_chart_field"] = "1"
+            chart_fields[chart_field.slug + "_chart_field"] = true
           else
-            chart_fields[field.slug + "_chart_field"] = "0"
+            chart_fields[chart_field.slug + "_chart_field"] = false
           end
         else
-          chart_fields[field.slug + "_chart_field"] = "0"
+          chart_fields[chart_field.slug + "_chart_field"] = false
         end
 
       when "date"
 
         field = ChartFieldDate.where(chart_field_id: chart_field.id, chart_id: self.id).first
         if !field.nil? && !field.value.nil?
-          chart_fields[field.slug + "_chart_field"] = field.value
+          chart_fields[chart_field.slug + "_chart_field"] = field.value
         else
-          chart_fields[field.slug + "_chart_field"] = nil
+          chart_fields[chart_field.slug + "_chart_field"] = nil
         end
 
       when "datetime"
 
         field = ChartFieldDatetime.where(chart_field_id: chart_field.id, chart_id: self.id).first
         if !field.nil? && !field.value.nil?
-          chart_fields[field.slug + "_chart_field_date"] = field.value.strftime('%d/%m/%Y')
-          chart_fields[field.slug + "_chart_field_hour"] = field.value.strftime('%H')
-          chart_fields[field.slug + "_chart_field_minute"] = field.value.strftime('%M')
+          chart_fields[chart_field.slug + "_chart_field"] = field.value.strftime('%d/%m/%Y')
+          chart_fields[chart_field.slug + "_chart_field_hour"] = field.value.strftime('%H')
+          chart_fields[chart_field.slug + "_chart_field_minute"] = field.value.strftime('%M')
         else
-          chart_fields[field.slug + "_chart_field"] = nil
+          chart_fields[chart_field.slug + "_chart_field"] = ""
+          chart_fields[chart_field.slug + "_chart_field_hour"] = nil
+          chart_fields[chart_field.slug + "_chart_field_minute"] = nil
         end
 
       when "categoric"
 
+        field = ChartFieldCategoric.where(chart_field_id: chart_field.id, chart_id: self.id).first
+        if !field.nil?
+          chart_fields[chart_field.slug + "_chart_field"] = field.chart_category_id
+        else
+          chart_fields[chart_field.slug + "_chart_field"] = nil
+        end
+
       end
 
     end
+
+    return chart_fields
 
   end
 

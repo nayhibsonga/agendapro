@@ -972,8 +972,9 @@
                       <div class="form-group">
                         <div class="checkbox">
                           <label>
-                            <input type="checkbox" name="chart[create_chart]" id="create_chart" value="0" />Crear ficha asociada a esta reserva
+                            <input type="checkbox" name="chart[create_chart]" id="create_chart" value="0" />Crear o actualizar ficha asociada a esta reserva
                           </label>
+                          <span class="create_chart_explanation" style="color: #22c488;" title="Advertencia: Si existe una ficha asociada a esta reserva, desmarcas esta opción y luego guardas, la ficha seǵuirá existiendo pero ya no estará asociada a la reserva.">&nbsp;&nbsp;<i class="fa fa-question-circle"></i></span>
                         </div>
                       </div>
                     </div>
@@ -1002,8 +1003,8 @@
                               <label for="chart_date" class="col-xs-2 col-md-2 control-label left-label">Fecha</label>
                               <div class="col-xs-4 col-md-4">
                                 <input type="hidden" name="chart[client_id]" id="chart_client_id" value="" />
-                                <input type="hidden" name="chart[company_id]" id="chart_company_id" value="<%= @current_user.company_id %>" />
-                                <input type="hidden" name="chart[user_id]" id="chart_user_id" value="<%= current_user.id %>" />
+                                <input type="hidden" name="chart[company_id]" id="chart_company_id" value="<%= current_user.company_id %>" />
+                                <input type="hidden" name="chart[user_id]" id="chart_user_id" value="" />
                                 <input type="hidden" name="chart[last_modifier_id]" id="chart_last_modifier_id" value="<%= current_user.id %>" />
                                 <input type="hidden" name="chart[date]" id="chart_date" value="" /> 
                                 <input type="text" class="form-control chart_field_datepicker" id="aux_date" value="<%= (DateTime.now + @company.country.timezone_offset.hours).strftime('%d/%m/%Y') %>" autocomplete="off" />
