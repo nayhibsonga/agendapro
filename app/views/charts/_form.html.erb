@@ -88,22 +88,30 @@
                       </div>
 
                     </div>
+
+
                     <div class="form-group">
                       <input type="hidden" name="chart[booking_id]" id="edit_chart_booking_id" value="" />
                       <label for="edit_chart_booking_id" class="col-xs-2 col-md-2 control-label left-label">Reserva</label>
-                      <div class="col-xs-4" style="padding-top: 7px;">
-                        <span id="edit_chart_booking_detail">Sin reserva asociada</span>
+                      <div class="col-xs-10" style="padding-top: 7px;">
+                        <span id="edit_chart_booking_detail">Sin reserva asociada. Define un rango de fechas y busca reservas si quieres asociar una.</span>
                       </div>
-                      <div class="col-xs-2">
-                        <button class="btn btn-default form-control" id="editAddChartBookingBtn">Ver reservas</button>
-                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="edit_bookings_from" class="col-xs-2 control-label left-label">Desde</label>
                       <div class="col-xs-2">
                         <input type="text" id="edit_bookings_from" class="form-control chart_field_datepicker" value="<%= (DateTime.now + @company.country.timezone_offset.hours - 7.days).strftime('%d/%m/%Y') %>" />
                       </div>
+                      <label for="edit_bookings_to" class="col-xs-1 control-label left-label">Hasta</label>
                       <div class="col-xs-2">
-                      <input type="text" id="edit_bookings_to" class="form-control chart_field_datepicker" value="<%= (DateTime.now + @company.country.timezone_offset.hours).strftime('%d/%m/%Y') %>" />
+                        <input type="text" id="edit_bookings_to" class="form-control chart_field_datepicker" value="<%= (DateTime.now + @company.country.timezone_offset.hours).strftime('%d/%m/%Y') %>" />
+                      </div>
+                      <div class="col-xs-2">
+                        <button class="btn btn-green form-control" id="editAddChartBookingBtn">Buscar</button>
                       </div>
                     </div>
+
+
                     <div class="form-group">
 
                       <!-- Past bookings -->
@@ -169,7 +177,7 @@
                                         </label>
                                         <div class="col-sm-8">
                                           <input type="file" class="form-control file-chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_edit_chart_field" value="" <%= "required" if chart_field.mandatory && (field.nil? || field.client_file.nil?) %> />
-                                          <span class="help-block"><%= chart_field.description %></span>
+                                          <span class="help-block"></span>
 
                                           <%
                                             if !field.nil? && !field.client_file.nil?
@@ -209,12 +217,12 @@
                                   <div class="row">
                                     <div class="col-md-12">
                                       <div class="form-group has-feedback">
-                                        <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
+                                        <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
                                           <%= chart_field.name %>
                                         </label>
                                         <div class="col-sm-8">
                                           <input type="number" class="form-control chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_edit_chart_field" value="<%= field_value %>" <%= "required" if chart_field.mandatory %> />
-                                          <span class="help-block"><%= chart_field.description %></span>
+                                          <span class="help-block"></span>
                                           <span class="form-control-feedback"></span>
                                         </div>
                                       </div>
@@ -233,12 +241,12 @@
                                   <div class="row">
                                     <div class="col-md-12">
                                       <div class="form-group has-feedback">
-                                        <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
+                                        <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
                                           <%= chart_field.name %>
                                         </label>
                                         <div class="col-sm-8">
                                           <input type="number" class="form-control chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_edit_chart_field" value="<%= field_value %>" <%= "required" if chart_field.mandatory %> />
-                                          <span class="help-block"><%= chart_field.description %></span>
+                                          <span class="help-block"></span>
                                           <span class="form-control-feedback"></span>
                                         </div>
                                       </div>
@@ -257,12 +265,12 @@
                                   <div class="row">
                                     <div class="col-md-12">
                                       <div class="form-group has-feedback">
-                                        <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
+                                        <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
                                           <%= chart_field.name %>
                                         </label>
                                         <div class="col-sm-8">
                                           <input type="text" class="form-control chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_edit_chart_field" value="<%= field_value %>" <%= "required" if chart_field.mandatory %> />
-                                          <span class="help-block"><%= chart_field.description %></span>
+                                          <span class="help-block"></span>
                                           <span class="form-control-feedback"></span>
                                         </div>
                                       </div>
@@ -282,12 +290,12 @@
                                   <div class="row">
                                     <div class="col-md-12">
                                       <div class="form-group has-feedback">
-                                        <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
+                                        <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
                                           <%= chart_field.name %>
                                         </label>
                                         <div class="col-sm-8">
                                           <textarea class="form-control chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_edit_chart_field" <%= "required" if chart_field.mandatory %> /><%= field_value %></textarea>
-                                          <span class="help-block"><%= chart_field.description %></span>
+                                          <span class="help-block"></span>
                                           <span class="form-control-feedback"></span>
                                         </div>
                                       </div>
@@ -309,7 +317,7 @@
                                   <div class="row">
                                     <div class="col-md-12">
                                       <div class="form-group has-feedback">
-                                        <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
+                                        <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
                                           <%= chart_field.name %>
                                         </label>
                                         <div class="col-sm-8">
@@ -322,7 +330,7 @@
                                                 <option value="1">Sí</option>
                                               <% end %>
                                           </select>
-                                          <span class="help-block"><%= chart_field.description %></span>
+                                          <span class="help-block"></span>
                                         </div>
                                       </div>
                                     </div>
@@ -341,12 +349,12 @@
                                   <div class="row">
                                     <div class="col-md-12">
                                       <div class="form-group has-feedback">
-                                        <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
+                                        <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
                                           <%= chart_field.name %>
                                         </label>
                                         <div class="col-sm-8">
                                           <input type="text" class="form-control chart_field_datepicker chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_edit_chart_field" value="<%= field_value %>" <%= "required" if chart_field.mandatory %> />
-                                          <span class="help-block"><%= chart_field.description %></span>
+                                          <span class="help-block"></span>
                                           <span class="form-control-feedback"></span>
                                         </div>
                                       </div>
@@ -370,7 +378,7 @@
                                   <div class="row">
                                     <div class="col-md-12">
                                       <div class="form-group">
-                                      <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
+                                      <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
                                         <%= chart_field.name %>
                                       </label>
                                       <div class="col-sm-8" style="padding: 0px !important;">
@@ -424,7 +432,7 @@
                                             %>
                                           </select>
                                         </div>
-                                        <span class="help-block"><%= chart_field.description %></span>
+                                        <span class="help-block"></span>
                                         <span class="form-control-feedback"></span>
                                       </div>
                                     </div>
@@ -440,7 +448,7 @@
                                   <div class="row">
                                     <div class="col-md-12">
                                       <div class="form-group has-feedback">
-                                      <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
+                                      <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
                                         <%= chart_field.name %>
                                       </label>
                                       <div class="col-sm-8">
@@ -453,7 +461,7 @@
                                             <% end %>
                                           <% end %>
                                         </select>
-                                        <span class="help-block"><%= chart_field.description %></span>
+                                        <span class="help-block"></span>
                                       </div>
                                     </div>
                                     </div>

@@ -1362,7 +1362,7 @@ function jsonChart()
   $('#chart_date').val($('#aux_date').val() + " " + $('#aux_hour').val() + ":" + $('#aux_minute').val() + ":00");
 
   var jsChart = {
-    "create_chart": $('#create_chart').val(),
+    "create_chart": $('#create_chart').prop('checked'),
     "client_id": $('#chart_client_id').val(),
     "date": $('#chart_date').val()
   };

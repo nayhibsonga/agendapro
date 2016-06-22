@@ -58,7 +58,7 @@ function loadEditChartBookings(){
         }
 
         $("#edit-cpb-bookings").append('<div class="pastBookingRow" booking_id="' + booking.id + '">' +
-          '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="editAddChartBooking" booking_id="' + booking.id + '"><i class="fa fa-plus"></i></button></div>' +
+          '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="editAddChartBooking" booking_id="' + booking.id + '"><i class="fa fa-circle-o unselected-booking"></i><i class="fa fa-check-circle-o selected-booking"></i></button></div>' +
           '<div class="col-xs-3 pastBookingCol service_name">' + booking.service_name + session_str + '</div>' +
           '<div class="col-xs-3 pastBookingCol provider_name">' + booking.provider_name + '</div>' +
           '<div class="col-xs-4 pastBookingCol start_date">' + booking.start + '</div>' +
@@ -279,12 +279,22 @@ $(function() {
 
   $('body').on('click', '.editAddChartBooking',function(e){
     e.preventDefault();
+
+    old_id = $('#edit_chart_booking_id').val();
+    if(old_id != "")
+    {
+      old_row = $('.pastBookingRow[booking_id="' + old_id + '"]');
+      old_row.find('.unselected-booking').show();
+      old_row.find('.selected-booking').hide();
+    }
+
     var booking_id = $(this).attr("booking_id");
     $('#edit_chart_booking_id').val(booking_id);
     var row = $('.pastBookingRow[booking_id="' + booking_id + '"]');
     var detail_str = "";
     detail_str += row.find('.service_name').text() + " con " + row.find('.provider_name').text() + " el " + row.find('.start_date').text();
-
+    row.find('.unselected-booking').hide();
+    row.find('.selected-booking').show();
     $('#edit_chart_booking_detail').html(detail_str);
   });
 

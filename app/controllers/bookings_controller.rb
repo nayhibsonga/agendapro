@@ -1419,6 +1419,26 @@ class BookingsController < ApplicationController
           @booking.save
         end
 
+        #Use the client check to decide on charts logic
+        #Cases:
+        # 1 Client is the same
+        # => 1.1 Booking had no chart
+        #        If chart_create, then create it associated to this booking.
+        #        Else, nothing to do.
+        # => 1.2 Booking had a chart
+        #        If chart_create, update chart (remember to set last_modifier).
+        #        Else, deassociate chart from the booking (¡don't delete the chart! that should be done on the client view, not from a booking)
+        #
+        # 2 Client is different
+        # => 2.1 Booking had no chart
+        #        If chart_create, then create it for the new_client associated to this booking.
+        #        Else, nothing to do.
+        # => 2.2 Booking had a chart
+        #        If chart_create, create it for the new_client associated to this booking. Deattach former chart from this booking.
+        #        Else, deassociate chart from the booking (¡don't delete the chart! that should be done on the client view, not from a booking)
+
+        logger.debug "Create chart:" + params[:chart][:create_chart]
+
         if @booking.client_id == old_client_id
           if was_session
             if @booking.service_id != old_service_id
@@ -1673,6 +1693,29 @@ class BookingsController < ApplicationController
               logger.debug "They are equal"
             end
           end
+
+          #Chart revision
+          if @booking.chart.nil?
+            if params[:chart][:create_chart] == "true"
+              chart = Chart.create(company_id: current_user.company_id, client_id: @booking.client_id, booking_id: @booking.id, user_id: current_user.id, date: params[:chart][:date])
+              chart.save_chart_fields(params[:chart_fields])
+            end
+          else
+            if params[:chart][:create_chart] == "true"
+              logger.debug "Enters wrongly"
+              chart = @booking.chart
+              chart.last_modifier_id = current_user.id
+              chart.date = params[:chart][:date]
+              chart.save
+              chart.save_chart_fields(params[:chart_fields])
+            else
+              logger.debug "Enters correctly"
+              chart = @booking.chart
+              chart.booking_id = nil
+              chart.save
+            end
+          end
+
         else
 
           if was_session
@@ -2074,6 +2117,27 @@ class BookingsController < ApplicationController
               logger.debug "They are equal"
             end
           end
+
+          #Chart revision
+          if @booking.chart.nil?
+            if params[:chart][:create_chart] == "true"
+              chart = Chart.create(company_id: current_user.company_id, client_id: @booking.client_id, booking_id: @booking.id, user_id: current_user.id, date: params[:chart][:date])
+              chart.save_chart_fields(params[:chart_fields])
+            end
+          else
+            if params[:chart][:create_chart] == "true"
+              chart = @booking.chart
+              chart.booking_id = nil
+              chart.save
+              new_chart = Chart.create(company_id: current_user.company_id, client_id: @booking.client_id, booking_id: @booking.id, user_id: current_user.id, date: params[:chart][:date])
+              new_chart.save_chart_fields(params[:chart_fields])
+            else
+              chart = @booking.chart
+              chart.booking_id = nil
+              chart.save
+            end
+          end
+
         end
 
         ############
