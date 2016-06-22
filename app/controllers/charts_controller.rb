@@ -1,5 +1,5 @@
 class ChartsController < ApplicationController
-  before_action :set_chart, only: [:show, :edit, :update, :destroy, :summary, :edit_form]
+  before_action :set_chart, only: [:show, :edit, :update, :destroy, :summary, :edit_form, :print]
   before_action :authenticate_user!
   load_and_authorize_resource
 
@@ -78,6 +78,21 @@ class ChartsController < ApplicationController
 
   def summary
     render "_summary", layout: false
+  end
+
+  def print
+
+    @filename = "Resumen de ficha"
+    date = DateTime.now
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = PrintChartPdf.new(@chart.id)
+        send_data pdf.render, filename: @filename + "_" + date.to_s[0,10] + '.pdf', type: 'application/pdf'
+      end
+    end
+
   end
 
   private

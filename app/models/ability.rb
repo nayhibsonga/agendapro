@@ -140,6 +140,8 @@ class Ability
 
         can :summary, Booking, :company_id => user.company_id
         can :chart, Booking, :company_id => user.company_id
+        can :print, Client, :company_id => user.company_id
+        can :print, Chart, :company_id => user.company_id
 
         can :bookings, Chart, :company_id => user.company_id
         can :summary, Chart, :company_id => user.company_id
@@ -527,6 +529,8 @@ class Ability
 
         can :summary, Booking, :company_id => user.company_id
         can :chart, Booking, :company_id => user.company_id
+        can :print, Client, :company_id => user.company_id
+        can :print, Chart, :company_id => user.company_id
 
         can :bookings, Chart, :company_id => user.company_id
         can :summary, Chart, :company_id => user.company_id
@@ -825,6 +829,8 @@ class Ability
 
         can :summary, Booking, :company_id => user.company_id
         can :chart, Booking, :company_id => user.company_id
+        can :print, Client, :company_id => user.company_id
+        can :print, Chart, :company_id => user.company_id
 
         can :bookings, Chart, :company_id => user.company_id
         can :summary, Chart, :company_id => user.company_id
@@ -989,6 +995,8 @@ class Ability
 
         can :summary, Booking, :company_id => user.company_id
         can :chart, Booking, :company_id => user.company_id
+        can :print, Client, :company_id => user.company_id
+        can :print, Chart, :company_id => user.company_id
 
         can :bookings, Chart, :company_id => user.company_id
         can :summary, Chart, :company_id => user.company_id
@@ -1119,6 +1127,8 @@ class Ability
 
         can :summary, Booking, :company_id => user.company_id
         can :chart, Booking, :company_id => user.company_id
+        can :print, Client, :company_id => user.company_id
+        can :print, Chart, :company_id => user.company_id
 
         can :bookings, Chart, :company_id => user.company_id
         can :summary, Chart, :company_id => user.company_id

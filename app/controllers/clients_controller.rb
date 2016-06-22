@@ -1,5 +1,5 @@
 class ClientsController < ApplicationController
-  before_action :set_client, only: [:show, :edit, :update, :destroy, :payments_content, :emails_content, :payments, :emails, :last_payments, :get_custom_attributes, :charts, :charts_content, :bookings]
+  before_action :set_client, only: [:show, :edit, :update, :destroy, :payments_content, :emails_content, :payments, :emails, :last_payments, :get_custom_attributes, :charts, :charts_content, :bookings, :print]
   before_action :authenticate_user!, except: [:client_loader]
   before_action :quick_add
   before_action -> (source = "clients") { verify_free_plan source }, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :new, :edit, :create, :update]
@@ -1099,6 +1099,21 @@ class ClientsController < ApplicationController
     @charts = Chart.where(client_id: @client.id).where(date: @from..@to).order(date: :desc)
 
     render "_charts_content", layout: false
+  end
+
+  def print
+
+    @filename = "Resumen de cliente"
+    date = DateTime.now
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = PrintClientPdf.new(@client.id)
+        send_data pdf.render, filename: @filename + "_" + date.to_s[0,10] + '.pdf', type: 'application/pdf'
+      end
+    end
+
   end
 
   private

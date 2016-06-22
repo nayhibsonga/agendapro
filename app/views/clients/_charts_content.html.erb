@@ -46,6 +46,7 @@
                   <button class="btn btn-default btn-green btn-xs" onclick="openChartSummary(<%= chart.id %>);"><i class="fa fa-search-plus"></i>Ver</button>
                   <button class="btn btn-default btn-orange btn-xs" onclick="editChart(<%= chart.id %>);"><i class="fa fa-search-plus"></i>Editar</button>
                   <%= link_to '<i class="fa fa-trash-o"></i>&nbsp;Eliminar'.html_safe, chart, method: :delete, :remote => true, data: { confirm: '¿Estás seguro de eliminar la ficha seleccionada?', type: :json }, class: 'btn btn-red btn-xs chart-delete' %>
+                  <%= link_to '<i class="fa fa-print"></i> <span class="hidden-xs">Imprimir</span>'.html_safe, chart_print_path(chart, format: "pdf"), :class => "btn btn-white btn-xs", :style => "min-width: 100px;" %>
                 </td>
               </tr>
             <% end %>
