@@ -1,0 +1,231 @@
+/* MARKETING CONTENT
+-------------------------------------------------- */
+
+/* Pad the edges of the mobile views a bit */
+.marketing {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Center align the text within the three columns below the carousel */
+.marketing .col-lg-4 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.marketing h2 {
+  font-weight: normal;
+}
+.marketing .col-lg-4 p {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+div.main {
+  margin-bottom: 0;
+}
+section {
+  padding-top: 50px;
+}
+
+/* Featurettes
+------------------------- */
+
+.featurette-divider {
+  margin: 30px 0; /* Space out the Bootstrap <hr> more */
+  border-color: #53565A;
+}
+/* Thin out the marketing headings */
+.featurette-heading {
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -1px;
+  color: #22c488;
+}
+.featurette-heading span.text-muted {
+    color: #646464;
+}
+.lead {
+  color: #646464;
+  letter-spacing: -1px;
+}
+section.green-background h2.featurette-heading {
+  color: #646464;
+}
+section.green-background h2.featurette-heading span.text-muted {
+  color: #ffffff;
+}
+section.green-background p.lead {
+  color: #ffffff;
+}
+.laptop-maxheight {
+  max-height: 458px;
+}
+.mobile-maxheight {
+  max-height: 312px;
+}
+.half-tablet-maxheight {
+  /*max-height: 162px;*/
+}
+.row-padded {
+  padding-top: 0;
+  padding-bottom: 50px;
+}
+.tutorial-pointer {
+  margin-top: 20px;
+}
+
+.img-center.img-responsive {
+    margin: 0 auto;
+}
+
+section.gray-background {
+  background-color: #f6f6f6;
+}
+
+.sector-tabs .btn-group {
+  border: 2px solid #cccccc;
+}
+
+.sector-tabs .btn-group .btn {
+  border: none;
+  padding-top: 16px;
+  background-color: #ffffff;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  font-weight: 900;
+  font-size: 16px;
+  border-radius: 0;
+}
+
+.sector-tabs .btn-group .btn:hover {
+  background-color: #dddddd;
+}
+
+.sector-tabs .btn-group .btn.active {
+  color: #22c488;
+  position: relative;
+  background: #eeeeee;
+  border-bottom: 2px solid #cccccc;
+}
+
+.sector-tabs .btn-group .btn .sector-img-off {
+  display: inline-block;
+}
+
+.sector-tabs .btn-group .btn .sector-img-on {
+  display: none;
+}
+
+.sector-tabs .btn-group .btn.active .sector-img-off {
+  display: none;
+}
+
+.sector-tabs .btn-group .btn.active .sector-img-on {
+  display: inline-block;
+}
+
+.sector-tabs .btn-group .btn.active:hover {
+  background-color: #dddddd;
+}
+
+.sector-tabs .btn-group .btn.active:after, .sector-group .btn-group .btn.active:before {
+  top: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.sector-tabs .btn-group .btn.active:after {
+  border-color: rgba(238, 238, 238, 0);
+  border-top-color: #eeeeee;
+  border-width: 9px;
+  margin-left: -9px;
+}
+
+.sector-tabs .btn-group .btn.active:before {
+  border-color: rgba(204, 204, 204, 0);
+  border-top-color: #cccccc;
+  border-width: 12px;
+  margin-left: -12px;
+}
+
+.img-text-container {
+  position: relative;
+  width: 100%;
+}
+
+/*.img-text-container > img {
+  position: absolute;
+  left: 0;
+  top: 0;
+}*/
+
+.img-text-container > p {
+  position: absolute;
+  width: 100%;
+  color: white;
+  font-size: 36px;
+  font-weight: bold;
+  text-align: center;
+  top: 50%;
+}
+
+.check-pointer {
+  /*background-image: url('home/features/icono-check.png');*/
+  background-image: url(<%= asset_path('home/features/icono-check.png') %>);
+  background-repeat: no-repeat;
+  background-size: 24px 24px;
+  padding-left: 30px;
+  display: block;
+}
+
+/* RESPONSIVE CSS
+-------------------------------------------------- */
+@media (max-width: 1199px) {
+  iframe {
+    height: 314px;
+    width: 500px;
+  }
+}
+
+@media (max-width: 991px) {
+  .featurette-heading {
+    margin-top: 20px;
+  }
+  .tutorial-pointer {
+    display: none;
+  }
+  iframe {
+    height: 376px;
+    width: 600px;
+  }
+}
+
+@media (max-width: 767px) {
+
+  /* Remove the edge padding needed for mobile */
+  .marketing {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .featurette-heading {
+    font-size: 36px;
+  }
+  iframe {
+    height: 314px;
+    width: 500px;
+  }
+}
+@media (max-width: 549px) {
+
+  iframe {
+    height: 179px;
+    width: 290px;
+  }
+}
