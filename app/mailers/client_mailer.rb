@@ -24,7 +24,8 @@ class ClientMailer < Base::CustomMailer
       @company.logo.email.url.include?("logo_vacio") ? attacht_logo() : attacht_logo("public#{@company.logo.email.url}")
     end
 
-    headers["X-MSYS-API"] = { "options" => { "open_tracking" => true, "click_tracking" => true }, "metadata" => { "campaign_id" => "#{@content.sendings.last.id}" } }.to_json
+    message.header.fields.select{|f| f.name == 'X-MSYS-API' }.each{|f| message.header.fields.delete(f) }
+    headers['X-MSYS-API'] = { "options" => { "open_tracking" => true, "click_tracking" => true, "ip_pool" => "#{ENV['IP_POOL']}" }, "metadata" => { "campaign_id" => "#{@content.sendings.last.id}" } }.to_json
 
     mail(
       from: sender_from_company(@content.company),

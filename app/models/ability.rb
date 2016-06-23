@@ -138,6 +138,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
+        can :merge, Client, :company_id => user.company_id
+
         can :get_custom_attributes, Client, :company_id => user.company_id
 
         can :payments, Client, :company_id => user.company_id
@@ -492,6 +494,8 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
+        can :merge, Client, :company_id => user.company_id
+
         can :generate_clients_base, Company, :company_id => user.company_id
 
         can :get_custom_attributes, Client, :company_id => user.company_id
@@ -773,6 +777,8 @@ class Ability
         can :update_custom_attributes, Client, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
+
+        can :merge, Client, :company_id => user.company_id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
         can :update_custom_attributes, Client, :company_id => user.company_id

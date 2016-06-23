@@ -876,6 +876,8 @@ class ClientsController < ApplicationController
 
     obj = s3_bucket.object(@client_file.full_path)
 
+    content_type = obj.content_type
+
     obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
 
     obj.move_to({bucket: ENV['S3_BUCKET'], key: new_folder_path + obj_name}, {acl: 'public-read', content_type: content_type})
@@ -928,6 +930,8 @@ class ClientsController < ApplicationController
       s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
 
       obj = s3_bucket.object(@client_file.full_path)
+
+      content_type = obj.content_type
 
       obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
 
@@ -1069,6 +1073,16 @@ class ClientsController < ApplicationController
     @emails.sort_by(&:timestamp)
 
     render "_emails_content", layout: false
+  end
+
+  def merge
+    json_reponse = ["ok"]
+    @client = Client.find(params[:target_id])
+    clients_ids = params[:origin_ids]
+    clients_ids.each do |client_id|
+      @client.merge(client_id)
+    end
+    render :json => json_reponse
   end
 
   private
