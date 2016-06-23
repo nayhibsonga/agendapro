@@ -14,19 +14,19 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-xs-12">
-					<h1>¡AgendaPro se adapta a tu negocio!</h1>
+					<h1 class="main-title">¡AgendaPro se <span>adapta</span> a tu negocio!</h1>
 				</div>
 			</div>
 			<div class="row row-padded">
 				<div class="col-xs-12">
 					<div class="btn-group btn-group-justified" data-toggle="buttons">
-						<a class="btn btn-default active" data-toggle="tab" data-target="#spa" id="spa-btn"><%= image_tag "home/features/menu/spa.png", alt: "Spa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_spa.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Spa</p></a>
-					  <a class="btn btn-default" data-toggle="tab" data-target="#peluqueria" id="peluqueria-btn"><%= image_tag "home/features/menu/peluqueria.png", alt: "Peluqueria", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_peluqueria.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Peluquería</p></a>
-					  <a class="btn btn-default" data-toggle="tab" data-target="#estetica" id="estetica-btn"><%= image_tag "home/features/menu/estetica.png", alt: "Centro de Estetica", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_estetica.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro de Estética</p></a>
-					  <a class="btn btn-default" data-toggle="tab" data-target="#medico" id="medico-btn"><%= image_tag "home/features/menu/medico.png", alt: "Centro Medico", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_medico.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro Médico</p></a>
-					  <a class="btn btn-default" data-toggle="tab" data-target="#deportivo" id="deportivo-btn"><%= image_tag "home/features/menu/deportivo.png", alt: "Centro Deportivo", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_deportivo.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro Deportivo</p></a>
-					  <a class="btn btn-default" data-toggle="tab" data-target="#alternativa" id="alternativa-btn"><%= image_tag "home/features/menu/alternativa.png", alt: "Medicina Alternativa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_alternativa.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Medicina Alternativa</p></a>
-					  <a class="btn btn-default" data-toggle="tab" data-target="#more" id="more-btn"><%= image_tag "home/features/menu/spa.png", alt: "Spa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_spa.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Y Muchos Más</p></a>
+						<a class="btn btn-default <%= 'active' if params[:section] == 'spa' %>" data-toggle="tab" data-target="#spa" id="spa-btn"><%= image_tag "home/features/menu/spa.png", alt: "Spa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_spa.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Spa</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'belleza' %>" data-toggle="tab" data-target="#peluqueria" id="peluqueria-btn"><%= image_tag "home/features/menu/peluqueria.png", alt: "Peluqueria", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_peluqueria.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Peluquería</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'estetica' %>" data-toggle="tab" data-target="#estetica" id="estetica-btn"><%= image_tag "home/features/menu/estetica.png", alt: "Centro de Estetica", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_estetica.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro de Estética</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'medico' %>" data-toggle="tab" data-target="#medico" id="medico-btn"><%= image_tag "home/features/menu/medico.png", alt: "Centro Medico", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_medico.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro Médico</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'deportivo' %>" data-toggle="tab" data-target="#deportivo" id="deportivo-btn"><%= image_tag "home/features/menu/deportivo.png", alt: "Centro Deportivo", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_deportivo.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Centro Deportivo</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'alternativa' %>" data-toggle="tab" data-target="#alternativa" id="alternativa-btn"><%= image_tag "home/features/menu/alternativa.png", alt: "Medicina Alternativa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_alternativa.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Medicina Alternativa</p></a>
+					  <a class="btn btn-default <%= 'active' if params[:section] == 'more' %>" data-toggle="tab" data-target="#more" id="more-btn"><%= image_tag "home/features/menu/spa.png", alt: "Spa", size: "35x35", class: "sector-img-off" %><%= image_tag "home/features/menu/on_spa.png", alt: "Spa", size: "35x35", class: "sector-img-on" %><p>Y Muchos Más</p></a>
 					</div>
 				</div>
 			</div>
@@ -34,7 +34,7 @@
 	</section>
 	<div class="tab-content">
 		<!-- Sección SPA -->
-		<div id="spa" class="tab-pane active">
+		<div id="spa" class="tab-pane <%= 'active' if params[:section] == 'spa' %>">
 			<section class="tab">
 				<div class="container">
 					<div class="row row-padded">
@@ -53,7 +53,7 @@
 						<div class="col-xs-5">
 							<%= image_tag "home/features/spa/mockup_imac.png", class: "img-responsive" %>
 						</div>
-						<div class="col-xs-7">
+						<div class="col-xs-7 feature-text">
 							<h2>Fideliza a tus clientes</h2>
 							<h3>Envía promociones o información dirigida al grupo indicado. Realiza un seguimiento de las campañas realizadas.</h3>
 							<p class="check-pointer">Forma un grupo de clientes mediante filtros.</p>
@@ -100,7 +100,7 @@
 			</section>
 		</div>
 		<!-- Sección PELUQUERIA -->
-		<div id="peluqueria" class="tab-pane">
+		<div id="peluqueria" class="tab-pane <%= 'active' if params[:section] == 'belleza' %>">
 			<section class="tab">
 				<div class="container">
 					<div class="row row-padded">
@@ -166,7 +166,7 @@
 			</section>
 		</div>
 		<!-- Sección CENTRO DE ESTETICA -->
-		<div id="estetica" class="tab-pane">
+		<div id="estetica" class="tab-pane <%= 'active' if params[:section] == 'estetica' %>">
 			<<section class="tab">
 				<div class="container">
 					<div class="row row-padded">
@@ -232,7 +232,7 @@
 			</section>
 		</div>
 		<!-- Sección CENTRO MEDICO -->
-		<div id="medico" class="tab-pane">
+		<div id="medico" class="tab-pane <%= 'active' if params[:section] == 'medico' %>">
 			<section class="tab">
 				<div class="container">
 					<div class="row row-padded">
@@ -298,7 +298,7 @@
 			</section>
 		</div>
 		<!-- Sección CENTRO DEPORTIVO -->
-		<div id="deportivo" class="tab-pane">
+		<div id="deportivo" class="tab-pane <%= 'active' if params[:section] == 'deportivo' %>">
 			<section class="tab">
 				<div class="container">
 					<div class="row row-padded">
@@ -364,7 +364,7 @@
 			</section>
 		</div>
 		<!-- Sección MEDICINA ALTERNATIVA -->
-		<div id="alternativa" class="tab-pane">
+		<div id="alternativa" class="tab-pane <%= 'active' if params[:section] == 'alternativa' %>">
 			<section class="tab">
 				<div class="container">
 					<div class="row row-padded">
@@ -429,40 +429,40 @@
 				</div>
 			</section>
 		</div>
-		<!-- Sección Y MUCHOS MAS -->
-		<div id="more" class="tab-pane">
+		<!-- Sección MAS -->
+		<div id="more" class="tab-pane <%= 'active' if params[:section] == 'more' || ['spa','belleza','estetica','medico','deportivo','alternativa'].exclude?(params[:section]) %>">
 			<section class="tab">
 				<div class="container">
 					<div class="row row-padded">
 						<div class="col-xs-12">
 							<div class="img-text-container">
 								<%= image_tag "home/features/spa/portada.png", class: "img-responsive img-center" %>
-								<p>Plataforma de Gestión para tu Negocio</p>
+								<p>Plataforma de Gestión para <span>tu</span> Negocio</p>
 							</div>
 						</div>
 					</div>
 				</div>
 			</section>
-			<section>
+			<section class="feature">
 				<div class="container">
 					<div class="row row-padded">
 						<div class="col-xs-5">
-							<%= image_tag "home/features/spa/mockup_imac.png", class: "img-responsive" %>
+							<%= image_tag "home/features/peluqueria/mockup_imac.png", class: "img-responsive" %>
 						</div>
-						<div class="col-xs-7">
-							<h2>Fideliza a tus clientes</h2>
-							<h3>Envía promociones o información dirigida al grupo indicado. Realiza un seguimiento de las campañas realizadas.</h3>
-							<p class="check-pointer">Forma un grupo de clientes mediante filtros.</p>
-							<p class="check-pointer">Selecciona tu planilla preferida para armar el correo.</p>
-							<p class="check-pointer">Descubre cuántos correos enviados fueron visualizados y cuántas personas clickearon un link en su interior.</p>
+						<div class="col-xs-7 feature-text">
+							<h2>Publica tu link de reserva <span>en línea</span> en cualquier sitio o red social</h2>
+							<h3>¡Al crear tu cuenta AgendaPro automáticamente pasas a tener un mini sitio especial para que tus clientes realicen sus citas de acuerdo a la disponibilidad horaria de tu salón!</h3>
+							<p class="check-pointer">Pon un botón de reservas en tu sitio web y en tu fan page de facebook.</p>
+							<p class="check-pointer">Difunde tu link de reservas vía e-mail o whatsapp.</p>
+							<p class="check-pointer">Agiliza tu proceso de agendamiento brindando esta opción a tus clientes.</p>
 						</div>
 					</div>
 				</div>
 			</section>
-			<section class="gray-background">
+			<section class="gray-background feature">
 				<div class="container">
 					<div class="row row-padded">
-						<div class="col-xs-9">
+						<div class="col-xs-9 feature-text">
 							<h2>Revisa y modifica la agenda del día desde cualquier dispositivo</h2>
 							<h3>¡AgendaPro te permite manejar el calendario desde cualquier lugar!</h3>
 							<p class="check-pointer">Realiza citas de la misma manera como las ingresas desde un computador.</p>
@@ -478,26 +478,26 @@
 					</div>
 				</div>
 			</section>
-			<section>
+			<section class="feature">
 				<div class="container">
 					<div class="row row-padded">
-						<div class="col-xs-6">
-							<%= image_tag "home/features/spa/mockup_ipad.png", class: "img-responsive" %>
+						<div class="col-xs-5">
+							<%= image_tag "home/features/peluqueria/mockup_ipad.png", class: "img-responsive" %>
 						</div>
-						<div class="col-xs-6">
-							<h2>Asigna las comisiones de tu personal</h2>
-							<h3>Al ingresar el porcentaje de comisión del profesional y registrar los pagos, el sistema automáticamente asignará la ganancia correspondiente.</h3>
-							<p class="check-pointer">Puedes asignar una comisión general al profesional por todos los servicios que realiza o incluir diversas comisiones por servicios.</p>
-							<p class="check-pointer">Obtén reportes de cuánto ha producido cada profesional, en el tramo de tiempo que tu quieras.</p>
-							<p class="check-pointer">Compara la venta realizada tanto de servicios ofrecidos como de productos vendidos.</p>
+						<div class="col-xs-7 feature-text">
+							<h2>¡Ingresa y actualiza el stock de productos!</h2>
+							<h3>Con AgendaPro puedes importar y gestionar la lista de productos que utilizas y comercializas en tu peluquería.</h3>
+							<p class="check-pointer">Cambia el stock de manera interna para llevar el orden de uso de productos.</p>
+							<p class="check-pointer">Activa alarmas de stock, las cuales te notificarán al correo cuando te quedan pocas unidades.</p>
+							<p class="check-pointer">¡Agrega nuevos productos cuando quieras! Puedes importar y exportar tus productos desde y hacia distintos formatos.</p>
 						</div>
 					</div>
 				</div>
 			</section>
-			<section class="gray-background">
+			<section class="gray-background feature">
 				<div class="container">
 					<div class="row row-padded">
-						<div class="col-xs-9">
+						<div class="col-xs-9 feature-text">
 							<h2>Revisa, edita y aumenta tu base de datos de clientes en cualquier dispositivo</h2>
 							<h3>Puedes utilizar tu celular para ingresar o editar la ficha personal de cualquier cliente de tu lista.</h3>
 							<p class="check-pointer">Agrega clientes y llena su ficha de datos personales rápidamente.</p>
@@ -513,25 +513,25 @@
 					</div>
 				</div>
 			</section>
-			<section>
+			<section class="feature">
 				<div class="container">
 					<div class="row row-padded">
 						<div class="col-xs-5">
-							<%= image_tag "home/features/peluqueria/mockup_imac.png", class: "img-responsive" %>
+							<%= image_tag "home/features/spa/mockup_imac.png", class: "img-responsive" %>
 						</div>
-						<div class="col-xs-7">
-							<h2>Publica tu link de reserva en línea en cualquier sitio o red social</h2>
-							<h3>¡Al crear tu cuenta AgendaPro automáticamente pasas a tener un mini sitio especial para que tus clientes realicen sus citas de acuerdo a la disponibilidad horaria de tu salón!</h3>
-							<p class="check-pointer">Pon un botón de reservas en tu sitio web y en tu fan page de facebook.</p>
-							<p class="check-pointer">Difunde tu link de reservas vía e-mail o whatsapp.</p>
-							<p class="check-pointer">Agiliza tu proceso de agendamiento brindando esta opción a tus clientes.</p>
+						<div class="col-xs-7 feature-text">
+							<h2>Fideliza a tus clientes</h2>
+							<h3>Envía promociones o información dirigida al grupo indicado. Realiza un seguimiento de las campañas realizadas.</h3>
+							<p class="check-pointer">Forma un grupo de clientes mediante filtros.</p>
+							<p class="check-pointer">Selecciona tu planilla preferida para armar el correo.</p>
+							<p class="check-pointer">Descubre cuántos correos enviados fueron visualizados y cuántas personas clickearon un link en su interior.</p>
 						</div>
 					</div>
 				</div>
 			</section>
 		</div>
 	</div>
-	<section class="gray-background">
+	<section class="gray-background feature">
 		<div class="container">
 			<div class="marketing">
 				<div class="row row-padded">
@@ -550,7 +550,7 @@
 							Guarda, actualiza y analiza la información de tus clientes, en el momento que quieras.
 						</h3>
 						<p>Consulta historiales de reservas, asistencias y pagos. ¡Cualquier cambio quedará registrado en el perfil del cliente!</p>
-						<p>Completa toda la información necesaria y permite que otros profesionales de tu negocio te ayuden.</p>
+						<p>Completa toda la información necesaria, usando fichas personalizadas a tus necesidades, y permite que otros profesionales de tu negocio te ayuden.</p>
 					</div>
 					<div class="col-xs-4">
 						<%= image_tag "home/features/icono3.png", class: "img-responsive", size: "66x65" %>
@@ -564,7 +564,7 @@
 			</div>
 		</div>
 	</section>
-	<section>
+	<section class="feature">
 		<div class="container">
 			<div class="marketing">
 				<div class="row row-padded">
