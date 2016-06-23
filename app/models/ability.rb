@@ -151,6 +151,8 @@ class Ability
         can :update, Chart, :company_id => user.company_id
         can :edit_form, Chart, :company_id => user.company_id
 
+        can :merge, Client, :company_id => user.company_id
+
         can :get_custom_attributes, Client, :company_id => user.company_id
 
         can :payments, Client, :company_id => user.company_id
@@ -539,6 +541,7 @@ class Ability
         can :create, Chart, :company_id => user.company_id
         can :update, Chart, :company_id => user.company_id
         can :edit_form, Chart, :company_id => user.company_id
+        can :merge, Client, :company_id => user.company_id
 
         can :generate_clients_base, Company, :company_id => user.company_id
 
@@ -839,6 +842,7 @@ class Ability
         can :create, Chart, :company_id => user.company_id
         can :update, Chart, :company_id => user.company_id
         can :edit_form, Chart, :company_id => user.company_id
+        can :merge, Client, :company_id => user.company_id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
         can :get_chart_categories, ChartField, :company_id => user.company_id

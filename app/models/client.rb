@@ -20,6 +20,11 @@ class Client < ActiveRecord::Base
   has_many :product_logs, dependent: :nullify
   has_many :treatment_logs, dependent: :nullify
   has_many :charts, dependent: :destroy
+  has_many :client_email_logs, dependent: :nullify
+  has_many :mock_bookings, dependent: :nullify
+  has_many :ratings, dependent: :nullify
+  has_many :client_comments, dependent: :destroy
+
 
   scope :from_company, -> (id) { where(company_id: id) if id.present? }
 
@@ -1267,6 +1272,56 @@ class Client < ActiveRecord::Base
     filter_service( params[:services], attendance )
     filter_status( params[:statuses] )
     filter_range( params[:range_from], params[:range_to], attendance )
+  end
+
+  #Merges a client into self
+  def merge(client_id)
+
+    client = Client.find(client_id)
+
+    #Transfer all client's elements to self, except for personal data and custom_attributes
+    client.bookings.update_all(client_id: self.id)
+    client.client_comments.update_all(client_id: self.id)
+    client.client_email_logs.update_all(client_id: self.id)
+    client.mock_bookings.update_all(client_id: self.id)
+    client.payments.update_all(client_id: self.id)
+    client.product_logs.update_all(client_id: self.id)
+    client.ratings.update_all(client_id: self.id)
+    client.session_bookings.update_all(client_id: self.id)
+    client.treatment_logs.update_all(client_id: self.id)
+
+    s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+    new_path = 'companies/' +  self.company.id.to_s + '/clients/' + self.id.to_s + '/'
+    old_path = 'companies/' +  client.company.id.to_s + '/clients/' + client.id.to_s + '/'
+
+    puts "Old path: " + old_path
+    puts "New path: " + new_path
+
+    client.client_files.each do |client_file|
+
+      obj = s3_bucket.object(client_file.full_path)
+
+      if obj.exists?
+        content_type = obj.content_type
+
+        obj_name = obj.key.gsub(old_path, new_path)
+
+        puts "Old key: " + obj.key
+        puts "New key: " + obj_name
+
+        obj.move_to({bucket: ENV['S3_BUCKET'], key: obj_name}, {acl: 'public-read', content_type: content_type})
+
+        client_file.update_columns(client_id: self.id, full_path: obj_name, public_url: obj.public_url)
+      else
+        client_file.delete
+      end
+
+    end
+
+    client.delete
+
+
   end
 
 end

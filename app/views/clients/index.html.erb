@@ -35,6 +35,7 @@
             <% if Rails.env === 'development' %>
               <%= link_to '<i class="fa fa-envelope"></i> Email full (DEV)'.html_safe, send_mail_path(params.merge!(full: true)), class: "btn btn-white", id: 'sendMail' %>
             <% end %>
+            <button class="btn btn-white inactive" id="toggleMerge"><i class="fa fa-compress"></i>&nbsp;Combinar clientes</button>
             <%= link_to '<i class="fa fa-envelope"></i> Enviar e-mail a este listado'.html_safe, send_mail_path(search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], attendance: params[:attendance], range_from: params[:range_from], range_to: params[:range_to]), class: "btn btn-white", id: 'sendMail' %>
           <% else %>
             <button class="btn btn-white">Has alcanzado el limite de e-mails.</button>
@@ -164,6 +165,7 @@
             <caption id="mails" data-monthly-mails="<%= @monthly_mails %>" data-monthly-mails-sent="<%= @monthly_mails_sent %>">E-mails enviados <%= number_with_delimiter(@monthly_mails_sent) %> de <%= number_with_delimiter(@monthly_mails) %></caption>
             <thead>
               <tr>
+                <th class="combination-td" hidden></th>
                 <th><%= sortable "first_name", 'Nombre <i class="fa indicator"></i>'.html_safe %></th>
                 <th><%= sortable "last_name", 'Apellido <i class="fa indicator"></i>'.html_safe %></th>
                 <th><%= sortable "email", 'E-mail <i class="fa indicator"></i>'.html_safe %></th>
@@ -177,14 +179,16 @@
             <tbody>
               <% @clients.each do |client| %>
                 <tr>
+                  <td class="combination-td" hidden><input type="checkbox" class="combination-checkbox" client_id="<%= client.id %>" value="0" /></td>
                   <td><%= client.first_name %></td>
                   <td><%= client.last_name %></td>
                   <td><%= client.email %></td>
                   <td><%= client.identification_number %></td>
                   <td>
-                    <%= link_to '<i class="fa fa-eye"></i> <span class="hidden-xs">Ver</span>'.html_safe, client_path(client), class: 'btn btn-sm btn-margin-bottom btn-green' %>
-                    <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar</span>'.html_safe, edit_client_path(client), :class => "btn btn-sm btn-margin-bottom btn-orange" %>
-                    <%= link_to '<i class="fa fa-trash-o"></i> <span class="hidden-xs">Eliminar</span>'.html_safe, client, :class => "btn btn-sm btn-margin-bottom btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %>
+                    <button class="btn btn-blue merge-btn" client_id="<%= client.id %>" style="display: none;"><i class="fa fa-compress"></i>&nbsp;Combinar hacia esta ficha</button>&nbsp;<span class="text-green combination-explanation" client_id="<%= client.id %>" data-toggle="tooltip" data-placement="bottom" title="Al hacer click en este botón, las reservas, pagos, archivos y otros elementos de los clientes seleccionados serán traspasados a este cliente. Los datos personales del cliente se mantendrán intactos, y los otros clientes se eliminarán.">&nbsp;<i class="fa fa-question-circle fa-lg"></i>&nbsp;</span>
+                    <%= link_to '<i class="fa fa-eye"></i> <span class="hidden-xs">Ver</span>'.html_safe, client_path(client), class: 'btn btn-sm btn-margin-bottom btn-green regular-btn' %>
+                    <%= link_to '<i class="fa fa-pencil"></i> <span class="hidden-xs">Editar</span>'.html_safe, edit_client_path(client), :class => "btn btn-sm btn-margin-bottom btn-orange regular-btn" %>
+                    <%= link_to '<i class="fa fa-trash-o"></i> <span class="hidden-xs">Eliminar</span>'.html_safe, client, :class => "btn btn-sm btn-margin-bottom btn-red regular-btn", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Cliente seleccionado? Este cliente tiene '+client.bookings.count.to_s+' reserva(s) asociada(s), que será(n) eliminada(s) también.' } unless cannot? :destroy, client %>
                   </td>
                   <% if Company.find(current_user.company_id).company_setting.client_exclusive %>
                   <td class="centered">
