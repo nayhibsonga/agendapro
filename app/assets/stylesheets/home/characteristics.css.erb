@@ -74,6 +74,10 @@ section.green-background p.lead {
   margin-top: 20px;
 }
 
+.only-mobile {
+  display: none;
+}
+
 h1.main-title {
   font-weight: 900;
 }
@@ -104,6 +108,7 @@ section.gray-background {
   font-weight: 900;
   font-size: 16px;
   border-radius: 0;
+  white-space: normal;
 }
 
 .sector-tabs .btn-group .btn:hover {
@@ -257,6 +262,12 @@ section.feature {
   }
   .no-mobile {
     display: none;
+  }
+  .only-mobile {
+    display: block;
+  }
+  .img-text-container > p {
+    font-size: 16px;
   }
 }
 @media (max-width: 549px) {
