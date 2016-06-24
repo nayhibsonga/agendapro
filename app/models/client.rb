@@ -1289,6 +1289,7 @@ class Client < ActiveRecord::Base
     client.ratings.update_all(client_id: self.id)
     client.session_bookings.update_all(client_id: self.id)
     client.treatment_logs.update_all(client_id: self.id)
+    client.charts.update_all(client_id: self.id)
 
     s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
 
