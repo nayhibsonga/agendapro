@@ -1,6 +1,7 @@
 <!-- <div class="full_page_photo">
 
 </div> -->
+
 <section class="hgroup">
     <div class="container text-center">
         <h1>Contáctanos</h1>
@@ -13,46 +14,17 @@
                 <iframe width="100%" height="400" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0" src="https://mapsengine.google.com/map/u/0/embed?mid=zxyVW9hDKDEg.kYaUAImoWzTg&amp;hl=es-419&amp;z=17"></iframe>
             </div>
             <div class="contact_form col-md-6">
-            	<%= form_tag("/pcontact", method: "post", id: 'contact' ) do %>
-                <%= hidden_field_tag :source, "contact" %>
-                    <%= hidden_field_tag :inputName %>
-                    <%= hidden_field_tag :inputLastname %>
-                    <div class="row">
-                        <div class="col-sm-12 col-md-12">
-                            <div class="form-group has-feedback">
-                                <label for="full_name" class="label-contacto">Nombre</label>
-                                <input type="text" id="full_name" name="user[full_name]" class="form-control" placeholder="Nombre completo (requerido)">
-                                <span class="help-block"></span>
-                                <span class="form-control-feedback"></span>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-12">
-                            <div class="form-group has-feedback">
-                                <%= label_tag(:inputEmail, 'E-mail', :class => "label-contacto") %>
-                                <%= email_field_tag(:inputEmail, nil, :class => "form-control", :placeholder => 'mail@dominio.com (requerido)', :required => true) %>
-                                <span class="help-block"></span>
-                                <span class="form-control-feedback"></span>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <%= label_tag(:inputSubject, "Asunto", :class => "label-contacto") %>
-                                <%= select_tag(:inputSubject, options_for_select(["Quiero agregar mi empresa a AgendaPro", "Servicio Técnico", "Consulta por plan especial", "Reclamos", "Otros"]), :class => "form-control") %>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-12">
-                            <div class="form-group has-feedback">
-                                <%= label_tag(:inputMessage, "Mensaje", :class => "label-contacto") %>
-                                <%= text_area_tag(:inputMessage, nil, :class => "form-control", :placeholder => "Escriba sus comentarios por favor. (requerido)", :required => true, :rows => 3) %>
-                                <span class="help-block"></span>
-                                <span class="form-control-feedback"></span>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-12">
-                            <button type="submit" class="btn btn-orange btn-lg pull-right"><i class="fa fa-envelope-o"></i> Enviar</button>
-                        </div>
-                    </div>
-                <% end %>
+
+                <!--[if lte IE 8]>
+                <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
+                <![endif]-->
+                <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+                <script>
+                  hbspt.forms.create({
+                    portalId: '2356021',
+                    formId: 'afddb68d-d1dd-4a4a-862a-79054b583931'
+                  });
+                </script>
             </div>
         </div>
     </div>
