@@ -64,6 +64,15 @@ class CompanySettingsController < ApplicationController
     @attributes = @company.custom_attributes.joins(:attribute_group).order('attribute_groups.order asc').order('attributes.order asc').order('name asc')
     @attribute_groups = @company.attribute_groups.order(order: :asc).order(name: :asc)
 
+    @chart_field = ChartField.new
+    @chart_category = ChartCategory.new
+    @chart_group = ChartGroup.new
+
+    @chart_group_otros = ChartGroup.where(name: "Otros", company_id: @company.id).first
+
+    @chart_fields = @company.chart_fields.joins(:chart_group).order('chart_groups.order asc').order('chart_fields.order asc').order('name asc')
+    @chart_groups = @company.chart_groups.order(order: :asc).order(name: :asc)
+
     @custom_filter = CustomFilter.new
     @custom_filters = @company.custom_filters
 

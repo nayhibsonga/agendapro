@@ -1,0 +1,427 @@
+var paymentPastBookings = [];
+var paymentPastTreatments = [];
+var ajax_name = "client_charts_list";
+
+function loadChartBookings(){
+
+  $('#cpb-bookings').empty();
+
+  $.getJSON('/chart_bookings/', { client_id: parseInt($('#chart_client_id').val()), from: $('#bookings_from').val(), to: $('#bookings_to').val() }, function (response) {
+
+    bookings = response;
+    if(bookings.length > 0)
+    {
+      $.each(bookings, function(key, booking){
+
+        var session_str = "";
+        if(booking.is_session)
+        {
+          session_str = " (sesión " + booking.session_number + " de " + booking.sessions_amount + ")";
+        }
+
+        $("#cpb-bookings").append('<div class="pastBookingRow" booking_id="' + booking.id + '">' +
+          '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="addChartBooking" booking_id="' + booking.id + '"><i class="fa fa-circle-o unselected-booking"></i><i class="fa fa-check-circle-o selected-booking"></i></button></div>' +
+          '<div class="col-xs-3 pastBookingCol service_name">' + booking.service_name + session_str + '</div>' +
+          '<div class="col-xs-3 pastBookingCol provider_name">' + booking.provider_name + '</div>' +
+          '<div class="col-xs-4 pastBookingCol start_date">' + booking.start + '</div>' +
+          '</div></div>'
+        );
+
+      });
+      
+    }
+    else
+    {
+      $('#cpb-bookings').append('<p style="text-align: center; padding-top: 5px; padding-bottom: 5px;">El cliente no tiene reservas en el período ingresado.</p>');
+    }
+    $('#chartBookings').show();
+
+  });  
+
+}
+
+function loadEditChartBookings(){
+
+  $('#edit-cpb-bookings').empty();
+
+  $.getJSON('/chart_bookings/', { client_id: parseInt($('#edit_chart_client_id').val()), from: $('#edit_bookings_from').val(), to: $('#edit_bookings_to').val() }, function (response) {
+
+    bookings = response;
+    if(bookings.length > 0)
+    {
+      $.each(bookings, function(key, booking){
+
+        var session_str = "";
+        if(booking.is_session)
+        {
+          session_str = " (sesión " + booking.session_number + " de " + booking.sessions_amount + ")";
+        }
+
+        $("#edit-cpb-bookings").append('<div class="pastBookingRow" booking_id="' + booking.id + '">' +
+          '<div class="row" style="margin-left: 0px; margin-right: 0px; margin-bottom: 3px;"><div class="col-xs-2 pastBookingCol"><button class="editAddChartBooking" booking_id="' + booking.id + '"><i class="fa fa-circle-o unselected-booking"></i><i class="fa fa-check-circle-o selected-booking"></i></button></div>' +
+          '<div class="col-xs-3 pastBookingCol service_name">' + booking.service_name + session_str + '</div>' +
+          '<div class="col-xs-3 pastBookingCol provider_name">' + booking.provider_name + '</div>' +
+          '<div class="col-xs-4 pastBookingCol start_date">' + booking.start + '</div>' +
+          '</div></div>'
+        );
+
+      });
+      
+    }
+    else
+    {
+      $('#edit-cpb-bookings').append('<p style="text-align: center; padding-top: 5px; padding-bottom: 5px;">El cliente no tiene reservas en el período ingresado.</p>');
+    }
+    $('#editChartBookings').show();
+
+  });  
+
+}
+
+function loadCharts(){
+
+  var client_id = $('#chart_client_id').val();
+  var from_date = $('#from').val();
+  var to_date = $('#to').val();
+  var option = $('#option').val();
+
+  var field_ids = [];
+
+  $('#client_charts_div').hide();
+  $('#client_charts_div').empty();
+
+  var ajax_turn = requestAjaxTurn(ajax_name);
+
+  $("#fieldMultiSelect option").each(function(){
+    if ($(this).is(':selected'))
+    {
+        field_ids.push($(this).val());
+    }
+  });
+
+  $.ajax({
+    url: '/client_charts_content',
+    method: 'get',
+    data: {id: client_id, from: from_date, to: to_date, option: option, field_ids: field_ids},
+    error: function(response){
+
+    },
+    success: function(response){
+      if(shouldDisplay(ajax_name, ajax_turn))
+      {
+        $('#client_charts_div').append(response);
+        $('#client_charts_div').show();
+        console.log("Display");
+      }
+      else
+      {
+        console.log("Don't display");
+      }
+    }
+  });
+}
+
+function openChartSummary(chart_id){
+  $('#chartSummaryModalBody').empty();
+  $.ajax({
+    url: '/chart_summary',
+    method: 'get',
+    data: {id: chart_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#chartSummaryModalBody').html(response);
+      $('#chartSummaryModal').modal('show');
+    }
+  });
+}
+
+function editChart(chart_id){
+
+  $('#editChartModal').empty();
+  $.ajax({
+    url: '/chart_edit_form',
+    data: {id: chart_id},
+    method: 'get',
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#editChartModal').html(response);
+      $(".chart_field_datepicker").datepicker({
+        dateFormat: 'dd/mm/yy',
+        autoSize: true,
+        firstDay: 1,
+        changeMonth: true,
+        changeYear: true,
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            prevText: 'Atrás',
+            nextText: 'Adelante',
+            dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+            dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+            dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+            today: 'Hoy',
+            clear: ''
+      });
+
+      $('#edit_chart_form').validate({
+        errorPlacement: function(error, element) {
+          error.appendTo(element.next());
+        },
+        rules: {
+          'chart[date]': {
+            required: true
+          }
+        },
+        highlight: function(element) {
+          $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+          $(element).parent().children('.form-control-feedback').removeClass('fa fa-check').addClass('fa fa-times');
+        },
+        success: function(element) {
+          $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+          $(element).parent().parent().children('.form-control-feedback').removeClass('fa fa-times').addClass('fa fa-check');
+          $(element).parent().empty()
+        },
+        submitHandler: function(form) {
+          form.submit();
+        }
+      });
+      
+      clearValidations('.chart-field');
+      clearValidations('.file-chart-field');
+      clearValidations('#edit_aux_date');
+      clearValidations('#edit_aux_hour');
+      clearValidations('#edit_aux_minute');
+
+      $('#editChartModal').modal('show');
+    }
+  });
+}
+
+function openBookingSummary(booking_id){
+  $('#chartSummaryModalBody').empty();
+  $.ajax({
+    url: '/booking_summary',
+    method: 'get',
+    data: {id: booking_id},
+    error: function(response){
+
+    },
+    success: function(response){
+      $('#bookingSummaryModalBody').html(response);
+      $('#bookingSummaryModal').modal('show');
+    }
+  });
+}
+
+$(function() {
+
+  registerModerator(ajax_name);
+
+  $('body').on('click', '#editAddChartBookingBtn', function(e){
+    e.preventDefault();
+    loadEditChartBookings();
+  });
+
+  $('#saveChartBtn').click(function(e){
+    e.preventDefault();
+    var date_str = $('#aux_date').val() + " " + $('#aux_hour').val() + ":" + $('#aux_minute').val() + ":00";
+    $('#chart_date').val(date_str);
+    $('#new_chart').submit();
+  });
+
+  $('body').on('click', '#updateChartBtn', function(e){
+    console.log("Entra a update");
+    e.preventDefault();
+    var date_str = $('#edit_aux_date').val() + " " + $('#edit_aux_hour').val() + ":" + $('#edit_aux_minute').val() + ":00";
+    $('#edit_chart_date').val(date_str);
+    $('#edit_chart_form').submit();
+  });
+
+	$('#addChartBtn').click(function(){
+    //clearFormValidations('#new_chart');
+    clearValidations('.chart-field');
+    clearValidations('.file-chart-field');
+    clearValidations('#aux_date');
+    clearValidations('#aux_hour');
+    clearValidations('#aux_minute');
+		$('#newChartModal').modal('show');
+	});
+
+  $('#addChartBookingBtn').click(function(e){
+    e.preventDefault();
+    loadChartBookings();
+  });
+
+  $('body').on('click', '.addChartBooking',function(e){
+    e.preventDefault();
+
+    //Check if there was a previously selected one
+    old_id = $('#chart_booking_id').val();
+    if(old_id != "")
+    {
+      old_row = $('.pastBookingRow[booking_id="' + old_id + '"]');
+      old_row.find('.unselected-booking').show();
+      old_row.find('.selected-booking').hide();
+    }
+
+    var booking_id = $(this).attr("booking_id");
+    $('#chart_booking_id').val(booking_id);
+    var row = $('.pastBookingRow[booking_id="' + booking_id + '"]');
+    var detail_str = "";
+    detail_str += row.find('.service_name').text() + " con " + row.find('.provider_name').text() + " el " + row.find('.start_date').text();
+    row.find('.unselected-booking').hide();
+    row.find('.selected-booking').show();
+    $('#chart_booking_detail').html(detail_str);
+  });
+
+  $('body').on('click', '.editAddChartBooking',function(e){
+    e.preventDefault();
+
+    old_id = $('#edit_chart_booking_id').val();
+    if(old_id != "")
+    {
+      old_row = $('.pastBookingRow[booking_id="' + old_id + '"]');
+      old_row.find('.unselected-booking').show();
+      old_row.find('.selected-booking').hide();
+    }
+
+    var booking_id = $(this).attr("booking_id");
+    $('#edit_chart_booking_id').val(booking_id);
+    var row = $('.pastBookingRow[booking_id="' + booking_id + '"]');
+    var detail_str = "";
+    detail_str += row.find('.service_name').text() + " con " + row.find('.provider_name').text() + " el " + row.find('.start_date').text();
+    row.find('.unselected-booking').hide();
+    row.find('.selected-booking').show();
+    $('#edit_chart_booking_detail').html(detail_str);
+  });
+
+	$(".chart_field_datepicker").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
+  $(".option_select_date").datepicker({
+    dateFormat: 'dd/mm/yy',
+    autoSize: true,
+    firstDay: 1,
+    changeMonth: true,
+    changeYear: true,
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        prevText: 'Atrás',
+        nextText: 'Adelante',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        today: 'Hoy',
+        clear: ''
+  });
+
+
+  $('#fieldMultiSelect').multiselect({
+      includeSelectAllOption: true,
+      selectAllText: 'Todos',
+      buttonContainer: '<div></div>',
+      enableClickableOptGroups: true,
+      buttonText: function(options, select) {
+
+          if (options.length === 0) {
+            return 'Ninguno';
+          }
+          else if(options.length == select[0].length)
+          {
+            return "Todos";
+          }
+          else if(options.length > 3)
+          {
+            return options.length + " seleccionados";
+          }
+          else {
+            var labels = [];
+            options.each(function() {
+                if ($(this).attr('label') !== undefined) {
+                    labels.push($(this).attr('label'));
+                }
+                else {
+                    labels.push($(this).html());
+                }
+            });
+            return labels.join(', ') + '';
+          }
+      },
+      onChange: function(option, checked, select){
+        if($('#option').val() == "evolution")
+        {
+          loadCharts();
+        }
+      },
+      onInitialized: function(select, container){
+        $('#fieldMultiSelect').show();
+      }
+  });
+
+
+  $("body").on("ajax:success", ".chart-delete", function(e, data, status, xhr){
+    swal({
+        title: "Éxito",
+        text: "Ficha eliminada correctamente.",
+        type: "success"
+    });
+    loadCharts();
+  }).on("ajax:error", function(e, xhr, status, error){
+    console.log(xhr.responseText)
+    swal({
+      title: "Error",
+      text: "Se produjo un error",
+      type: "error"
+    });
+  });
+
+
+  var currentDate = new Date();
+  var date_str = currentDate.toJSON().split("T")[0];
+  var date_arr = date_str.split("-");
+  var date_str_format = date_arr[2] + "/" + date_arr[1] + "/" + date_arr[0];
+  var new_hour = currentDate.getHours();
+  var new_minute = currentDate.getMinutes();
+  if(new_hour < 10)
+  {
+    new_hour = "0" + new_hour;
+  }
+  else
+  {
+    new_hour = "" + new_hour;
+  }
+  if(new_minute < 10)
+  {
+    new_minute = "0" + new_minute;
+  }
+  else
+  {
+    new_minute = "" + new_minute;
+  }
+  $('#aux_date').val(date_str_format);
+  $("#aux_hour").val(new_hour);
+  $("#aux_minute").val(new_minute);
+
+  $('.option_select').on('change', function(){
+    loadCharts();
+  });
+  loadCharts();
+
+});

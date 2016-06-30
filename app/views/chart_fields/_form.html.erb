@@ -1,0 +1,18 @@
+<%= simple_form_for(@chart_field) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.association :company %>
+    <%= f.association :chart_group %>
+    <%= f.input :name %>
+    <%= f.input :description %>
+    <%= f.input :datatype %>
+    <%= f.input :slug %>
+    <%= f.input :mandatory %>
+    <%= f.input :order %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

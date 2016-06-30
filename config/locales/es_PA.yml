@@ -20,6 +20,11 @@ es_PA:
     normal: 44
     premium: 80
     pro: 160
+  plan_extra_location:
+    personal: 22
+    normal: 22
+    premium: 40
+    pro: 80
   phones:
     sales: '+57 317 441 4635'
     support: '+57 1 382 4836'
