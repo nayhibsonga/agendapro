@@ -301,7 +301,7 @@ class Chart < ActiveRecord::Base
 
           file_description = chart_field.description
 
-          full_name = 'companies/' +  self.company_id.to_s + '/clients/' + self.id.to_s + '/' + folder_name + '/' + param_value.original_filename
+          full_name = 'companies/' +  self.company_id.to_s + '/clients/' + self.client.id.to_s + '/' + folder_name + '/' + param_value.original_filename
 
           s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
 
