@@ -1313,7 +1313,9 @@ class Client < ActiveRecord::Base
 
         obj.move_to({bucket: ENV['S3_BUCKET'], key: obj_name}, {acl: 'public-read', content_type: content_type})
 
-        client_file.update_columns(client_id: self.id, full_path: obj_name, public_url: obj.public_url)
+        new_obj = s3_bucket.object(obj_name)
+
+        client_file.update_columns(client_id: self.id, full_path: obj_name, public_url: new_obj.public_url)
       else
         client_file.delete
       end
