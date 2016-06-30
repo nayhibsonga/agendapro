@@ -345,7 +345,7 @@
                                 <% elsif chart_field.datatype == "date" %>
 
                                   <%
-                                    field = ChartFieldTextarea.where(chart_field_id: chart_field.id, chart_id: @chart.id).first
+                                    field = ChartFieldDate.where(chart_field_id: chart_field.id, chart_id: @chart.id).first
                                     field_value = ""
                                     if !field.nil? && !field.value.nil?
                                       field_value = field.value
@@ -370,7 +370,7 @@
                                 <% elsif chart_field.datatype == "datetime" %>
 
                                   <%
-                                    field = ChartFieldTextarea.where(chart_field_id: chart_field.id, chart_id: @chart.id).first
+                                    field = ChartFieldDatetime.where(chart_field_id: chart_field.id, chart_id: @chart.id).first
                                     field_date = ""
                                     field_hour = "00"
                                     field_minute = "00"

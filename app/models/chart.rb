@@ -277,6 +277,8 @@ class Chart < ActiveRecord::Base
           complete_datetime = param_value + " " + date_hour + ":" + date_minute + ":00"
         end
 
+        puts "Complete datetime: #{complete_datetime}"
+
         chart_field_datetime = ChartFieldDatetime.where(chart_field_id: chart_field.id, chart_id: self.id).first
         if chart_field_datetime.nil?
           ChartFieldDatetime.create(chart_field_id: chart_field.id, chart_id: self.id, value: complete_datetime)
