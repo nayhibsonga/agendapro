@@ -134,7 +134,7 @@ class Booking < ActiveRecord::Base
       #Check for price and divide it by number of sessions if it's the original price or there is a discount.
       if self.price == self.service.price
         self.update_column(:price, self.price / self.session_booking.sessions_amount)
-      elsif self.discount > 0
+      elsif !self.discount.nil? && self.discount > 0
         if self.price.round == (self.service.price*(100-self.discount)/100).round
           self.update_column(:price, self.price / self.session_booking.sessions_amount)
         end
