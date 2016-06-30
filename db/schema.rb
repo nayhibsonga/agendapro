@@ -15,22 +15,9 @@ ActiveRecord::Schema.define(version: 20160623175444) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
-
-  create_table "app_feeds", force: true do |t|
-    t.integer  "company_id"
-    t.string   "title"
-    t.string   "image"
-    t.text     "subtitle"
-    t.text     "body"
-    t.string   "external_url"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "app_feeds", ["company_id"], name: "index_app_feeds_on_company_id", using: :btree
 
   create_table "attribute_categories", force: true do |t|
     t.integer  "attribute_id"
@@ -560,7 +547,7 @@ ActiveRecord::Schema.define(version: 20160623175444) do
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
     t.integer  "trial_months_left",   default: 0
-    t.integer  "default_plan_id",     default: 11
+    t.integer  "default_plan_id",     default: 15
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
@@ -695,10 +682,9 @@ ActiveRecord::Schema.define(version: 20160623175444) do
     t.boolean  "can_edit",                    default: true
     t.boolean  "can_cancel",                  default: true
     t.boolean  "use_identification_number",   default: false
-    t.text     "preset_notes"
     t.boolean  "payment_client_required",     default: true
     t.boolean  "show_cashes",                 default: false
-    t.string   "preset_notes"
+    t.text     "preset_notes"
     t.boolean  "editable_payment_prices",     default: true
     t.boolean  "mandatory_mock_booking_info", default: false
     t.boolean  "strict_booking",              default: false,                 null: false
@@ -706,9 +692,6 @@ ActiveRecord::Schema.define(version: 20160623175444) do
     t.integer  "booking_leap",                default: 15
     t.boolean  "allows_overlap_hours",        default: false
     t.boolean  "require_cashier_code",        default: true
-    t.string   "color_light"
-    t.string   "color_normal"
-    t.string   "color_dark"
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -1787,7 +1770,7 @@ ActiveRecord::Schema.define(version: 20160623175444) do
 
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
-    t.integer  "country_id", null: false
+    t.integer  "country_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

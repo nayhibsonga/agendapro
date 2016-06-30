@@ -1124,8 +1124,10 @@ class ClientsController < ApplicationController
     json_reponse = ["ok"]
     @client = Client.find(params[:target_id])
     clients_ids = params[:origin_ids]
-    clients_ids.each do |client_id|
-      @client.merge(client_id)
+    if !clients_ids.nil?
+      clients_ids.each do |client_id|
+        @client.merge(client_id)
+      end
     end
     render :json => json_reponse
   end
