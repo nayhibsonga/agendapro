@@ -300,7 +300,7 @@
                                           <%= chart_field.name %>
                                         </label>
                                         <div class="col-sm-8">
-                                          <textarea class="form-control chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_edit_chart_field" <%= "required" if chart_field.mandatory %> /><%= field_value %></textarea>
+                                          <textarea class="form-control chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_edit_chart_field" <%= "required" if chart_field.mandatory %> ><%= field_value %></textarea>
                                           <span class="help-block"></span>
                                           <span class="form-control-feedback"></span>
                                         </div>
