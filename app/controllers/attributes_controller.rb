@@ -31,14 +31,22 @@ class AttributesController < ApplicationController
 
   def create
     @attribute = Attribute.new(attribute_params)
-    flash[:success] = "Campo creado." if @attribute.save
+    if @attribute.save
+      flash[:success] = "Campo creado."
+    else
+      flash[:alert] = @attribute.errors.full_messages.first
+    end
     respond_with(@attribute) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
     end
   end
 
   def update
-    flash[:success] = "Campo editado." if @attribute.update(attribute_params)
+    if @attribute.update(attribute_params)
+      flash[:success] = "Campo editado."
+    else
+      flash[:alert] = @attribute.errors.full_messages.first
+    end
     respond_with(@attribute) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
     end

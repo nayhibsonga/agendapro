@@ -5,6 +5,16 @@ class AttributeGroup < ActiveRecord::Base
 	after_save :rearrange
 	before_destroy :transfer_attributes
 
+	validate :name_uniqueness
+
+	def name_uniqueness
+		AttributeGroup.where(name: self.name, company_id: self.company_id).each do |attribute_group|
+			  if attribute_group != self
+			    errors.add(:base, "No se pueden crear dos categorías con el mismo nombre.")
+			  end
+		end
+	end
+
 	def transfer_attributes
 		group_otros = AttributeGroup.where(name: "Otros", company_id: self.company.id).first
 		self.custom_attributes.each do |custom_attribute|
