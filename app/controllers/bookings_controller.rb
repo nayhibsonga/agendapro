@@ -1694,12 +1694,12 @@ class BookingsController < ApplicationController
 
           #Chart revision
           if @booking.chart.nil?
-            if params[:chart][:create_chart] == "true"
+            if params[:chart] && params[:chart][:create_chart] == "true"
               chart = Chart.create(company_id: current_user.company_id, client_id: @booking.client_id, booking_id: @booking.id, user_id: current_user.id, date: params[:chart][:date])
               chart.save_chart_fields(params[:chart_fields])
             end
           else
-            if params[:chart][:create_chart] == "true"
+            if params[:chart] && params[:chart][:create_chart] == "true"
               logger.debug "Enters wrongly"
               chart = @booking.chart
               chart.last_modifier_id = current_user.id
