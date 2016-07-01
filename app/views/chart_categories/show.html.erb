@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Attribute:</strong>
+  <%= @chart_category.attribute_id %>
+</p>
+
+<p>
+  <strong>Category:</strong>
+  <%= @chart_category.name %>
+</p>
+
+<%= link_to 'Edit', edit_chart_category_path(@chart_category) %> |
+<%= link_to 'Back', chart_categories_path %>

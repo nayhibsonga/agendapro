@@ -45,6 +45,16 @@ $(function () {
       }
     });
 
+    if(origin_ids.length < 1)
+    {
+      swal({
+        title: "No se eligieron clientes",
+        text: "Elige al menos un cliente a combinar con éste.",
+        type: "warning"
+      });
+      return false;
+    }
+
     swal({
       title: "¿Estás seguro que quieres combinar los clientes?",
       text: "Las reservas, pagos, archivos y otros elementos de los clientes seleccionados serán traspasados a este cliente. Los datos personales del cliente se mantendrán intactos, y los otros clientes se eliminarán.",

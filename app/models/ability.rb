@@ -138,6 +138,19 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador General").id
 
+        can :summary, Booking, :company_id => user.company_id
+        can :chart, Booking, :company_id => user.company_id
+        can :print, Client, :company_id => user.company_id
+        can :print, Chart, :company_id => user.company_id
+
+        can :bookings, Chart, :company_id => user.company_id
+        can :summary, Chart, :company_id => user.company_id
+        can :read, Chart, :company_id => user.company_id
+        can :destroy, Chart, :company_id => user.company_id
+        can :create, Chart, :company_id => user.company_id
+        can :update, Chart, :company_id => user.company_id
+        can :edit_form, Chart, :company_id => user.company_id
+
         can :merge, Client, :company_id => user.company_id
 
         can :get_custom_attributes, Client, :company_id => user.company_id
@@ -147,6 +160,8 @@ class Ability
         can :emails, Client, :company_id => user.company_id
         can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
+        can :charts, Client, :company_id => user.company_id
+        can :charts_content, Client, :company_id => user.company_id
 
         can :stock_change, Product, :company_id => user.company_id
         can :update_stock, Product, :company_id => user.company_id
@@ -164,6 +179,8 @@ class Ability
 
         can :rearrange, Attribute, :company_id => user.company_id
         can :rearrange, AttributeGroup, :company_id => user.company_id
+        can :rearrange, ChartField, :company_id => user.company_id
+        can :rearrange, ChartGroup, :company_id => user.company_id
 
         can :select_plan, Plan
         can :use_email_templates, Client #FIXME
@@ -449,6 +466,23 @@ class Ability
         can :destroy, AttributeGroup, :company_id => user.company_id
         can :edit_form, AttributeGroup, :company_id => user.company_id
 
+        can :show, ChartField, :company_id => user.company_id
+        can :create, ChartField, :company_id => user.company_id
+        can :update, ChartField, :company_id => user.company_id
+        can :destroy, ChartField, :company_id => user.company_id
+        can :edit_form, ChartField, :company_id => user.company_id
+
+        can :show, ChartCategory, :company_id => user.company_id
+        can :create, ChartCategory, :company_id => user.company_id
+        can :update, ChartCategory, :company_id => user.company_id
+        can :destroy, ChartCategory, :company_id => user.company_id
+
+        can :show, ChartGroup, :company_id => user.company_id
+        can :create, ChartGroup, :company_id => user.company_id
+        can :update, ChartGroup, :company_id => user.company_id
+        can :destroy, ChartGroup, :company_id => user.company_id
+        can :edit_form, ChartGroup, :company_id => user.company_id
+
         can :show, ClientFile, :client => {:company_id => user.company_id}
         can :create, ClientFile, :client => {:company_id => user.company_id}
         can :update, ClientFile, :client => {:company_id => user.company_id}
@@ -460,6 +494,7 @@ class Ability
         can :destroy, CompanyFile, :company_id => user.company_id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
+        can :get_chart_categories, ChartField, :company_id => user.company_id
         can :update_custom_attributes, Client, :company_id => user.company_id
 
         can :files, Company, :company_id => user.company_id
@@ -494,6 +529,18 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Administrador Local").id
 
+        can :summary, Booking, :company_id => user.company_id
+        can :chart, Booking, :company_id => user.company_id
+        can :print, Client, :company_id => user.company_id
+        can :print, Chart, :company_id => user.company_id
+
+        can :bookings, Chart, :company_id => user.company_id
+        can :summary, Chart, :company_id => user.company_id
+        can :read, Chart, :company_id => user.company_id
+        can :destroy, Chart, :company_id => user.company_id
+        can :create, Chart, :company_id => user.company_id
+        can :update, Chart, :company_id => user.company_id
+        can :edit_form, Chart, :company_id => user.company_id
         can :merge, Client, :company_id => user.company_id
 
         can :generate_clients_base, Company, :company_id => user.company_id
@@ -505,6 +552,8 @@ class Ability
         can :emails, Client, :company_id => user.company_id
         can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
+        can :charts, Client, :company_id => user.company_id
+        can :charts_content, Client, :company_id => user.company_id
 
         can :stock_change, Product, :company_id => user.company_id
         can :update_stock, Product, :company_id => user.company_id
@@ -516,6 +565,8 @@ class Ability
 
         can :rearrange, Attribute, :company_id => user.company_id
         can :rearrange, AttributeGroup, :company_id => user.company_id
+        can :rearrange, ChartField, :company_id => user.company_id
+        can :rearrange, ChartGroup, :company_id => user.company_id
 
         can :upload_file, Client
 
@@ -774,13 +825,27 @@ class Ability
         can :edit_file, Client, :company_id => user.company_id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
+        can :get_chart_categories, ChartField, :company_id => user.company_i
         can :update_custom_attributes, Client, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
 
+        can :summary, Booking, :company_id => user.company_id
+        can :chart, Booking, :company_id => user.company_id
+        can :print, Client, :company_id => user.company_id
+        can :print, Chart, :company_id => user.company_id
+
+        can :bookings, Chart, :company_id => user.company_id
+        can :summary, Chart, :company_id => user.company_id
+        can :read, Chart, :company_id => user.company_id
+        can :destroy, Chart, :company_id => user.company_id
+        can :create, Chart, :company_id => user.company_id
+        can :update, Chart, :company_id => user.company_id
+        can :edit_form, Chart, :company_id => user.company_id
         can :merge, Client, :company_id => user.company_id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
+        can :get_chart_categories, ChartField, :company_id => user.company_id
         can :update_custom_attributes, Client, :company_id => user.company_id
 
         can :get_custom_attributes, Client, :company_id => user.company_id
@@ -790,6 +855,8 @@ class Ability
         can :emails, Client, :company_id => user.company_id
         can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
+        can :charts, Client, :company_id => user.company_id
+        can :charts_content, Client, :company_id => user.company_id
 
         can :delete_treatment, Booking, :company_id => user.company_id
         can :delete_client_treatment, Booking, :company_id => user.company_id
@@ -930,7 +997,21 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Staff").id
 
+        can :summary, Booking, :company_id => user.company_id
+        can :chart, Booking, :company_id => user.company_id
+        can :print, Client, :company_id => user.company_id
+        can :print, Chart, :company_id => user.company_id
+
+        can :bookings, Chart, :company_id => user.company_id
+        can :summary, Chart, :company_id => user.company_id
+        can :read, Chart, :company_id => user.company_id
+        can :destroy, Chart, :company_id => user.company_id
+        can :create, Chart, :company_id => user.company_id
+        can :update, Chart, :company_id => user.company_id
+        can :edit_form, Chart, :company_id => user.company_id
+
         can :get_attribute_categories, Attribute, :company_id => user.company_id
+        can :get_chart_categories, ChartField, :company_id => user.company_id
         can :update_custom_attributes, Client, :company_id => user.company_id
 
         can :get_custom_attributes, Client, :company_id => user.company_id
@@ -1032,6 +1113,8 @@ class Ability
         can :emails, Client, :company_id => user.company_id
         can :emails_content, Client, :company_id => user.company_id
         can :last_payments, Client, :company_id => user.company_id
+        can :charts, Client, :company_id => user.company_id
+        can :charts_content, Client, :company_id => user.company_id
 
         can :update_custom_attributes, Client, :company_id => user.company_id
         can :create_comment, Client
@@ -1046,7 +1129,17 @@ class Ability
 
     elsif user.role_id == Role.find_by_name("Staff (sin edición)").id
 
+        can :summary, Booking, :company_id => user.company_id
+        can :chart, Booking, :company_id => user.company_id
+        can :print, Client, :company_id => user.company_id
+        can :print, Chart, :company_id => user.company_id
+
+        can :bookings, Chart, :company_id => user.company_id
+        can :summary, Chart, :company_id => user.company_id
+        can :read, Chart, :company_id => user.company_id
+
         can :get_attribute_categories, Attribute, :company_id => user.company_id
+        can :get_chart_categories, ChartField, :company_id => user.company_id
         can :update_custom_attributes, Client, :company_id => user.company_id
 
         can :get_custom_attributes, Client, :company_id => user.company_id

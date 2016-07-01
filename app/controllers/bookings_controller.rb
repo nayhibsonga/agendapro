@@ -1,5 +1,5 @@
 class BookingsController < ApplicationController
-  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form, :get_treatment_info, :delete_treatment, :get_email_logs]
+  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form, :get_treatment_info, :delete_treatment, :get_email_logs, :summary, :chart]
   before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :confirm_error, :confirm_success, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours, :hours_test, :available_hours]
   before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :confirm_error, :confirm_success, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours, :hours_test, :available_hours]
   before_action :verify_disabled, only: [:index, :fixed_index]
@@ -119,7 +119,13 @@ class BookingsController < ApplicationController
     after_book_date = DateTime.now + u.service.company.company_setting.after_booking.months
     after_book_date = I18n.l after_book_date.to_date, format: :day
 
-    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id, :custom_attributes => u.client.get_custom_attributes, :bundled => u.bundled}
+    has_chart = !u.chart.nil?
+    chart_fields = []
+    if has_chart
+      chart_fields = u.chart.get_chart_fields
+    end
+
+    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id, :custom_attributes => u.client.get_custom_attributes, :bundled => u.bundled, :has_chart => has_chart, :chart_fields => chart_fields, :chart => u.chart}
     respond_to do |format|
       format.html { }
       format.json { render :json => @booking_json }
@@ -1413,6 +1419,26 @@ class BookingsController < ApplicationController
           @booking.save
         end
 
+        #Use the client check to decide on charts logic
+        #Cases:
+        # 1 Client is the same
+        # => 1.1 Booking had no chart
+        #        If chart_create, then create it associated to this booking.
+        #        Else, nothing to do.
+        # => 1.2 Booking had a chart
+        #        If chart_create, update chart (remember to set last_modifier).
+        #        Else, deassociate chart from the booking (¡don't delete the chart! that should be done on the client view, not from a booking)
+        #
+        # 2 Client is different
+        # => 2.1 Booking had no chart
+        #        If chart_create, then create it for the new_client associated to this booking.
+        #        Else, nothing to do.
+        # => 2.2 Booking had a chart
+        #        If chart_create, create it for the new_client associated to this booking. Deattach former chart from this booking.
+        #        Else, deassociate chart from the booking (¡don't delete the chart! that should be done on the client view, not from a booking)
+
+        logger.debug "Create chart:" + params[:chart][:create_chart]
+
         if @booking.client_id == old_client_id
           if was_session
             if @booking.service_id != old_service_id
@@ -1667,6 +1693,29 @@ class BookingsController < ApplicationController
               logger.debug "They are equal"
             end
           end
+
+          #Chart revision
+          if @booking.chart.nil?
+            if params[:chart][:create_chart] == "true"
+              chart = Chart.create(company_id: current_user.company_id, client_id: @booking.client_id, booking_id: @booking.id, user_id: current_user.id, date: params[:chart][:date])
+              chart.save_chart_fields(params[:chart_fields])
+            end
+          else
+            if params[:chart][:create_chart] == "true"
+              logger.debug "Enters wrongly"
+              chart = @booking.chart
+              chart.last_modifier_id = current_user.id
+              chart.date = params[:chart][:date]
+              chart.save
+              chart.save_chart_fields(params[:chart_fields])
+            else
+              logger.debug "Enters correctly"
+              chart = @booking.chart
+              chart.booking_id = nil
+              chart.save
+            end
+          end
+
         else
 
           if was_session
@@ -2068,6 +2117,27 @@ class BookingsController < ApplicationController
               logger.debug "They are equal"
             end
           end
+
+          #Chart revision
+          if @booking.chart.nil?
+            if params[:chart][:create_chart] == "true"
+              chart = Chart.create(company_id: current_user.company_id, client_id: @booking.client_id, booking_id: @booking.id, user_id: current_user.id, date: params[:chart][:date])
+              chart.save_chart_fields(params[:chart_fields])
+            end
+          else
+            if params[:chart][:create_chart] == "true"
+              chart = @booking.chart
+              chart.booking_id = nil
+              chart.save
+              new_chart = Chart.create(company_id: current_user.company_id, client_id: @booking.client_id, booking_id: @booking.id, user_id: current_user.id, date: params[:chart][:date])
+              new_chart.save_chart_fields(params[:chart_fields])
+            else
+              chart = @booking.chart
+              chart.booking_id = nil
+              chart.save
+            end
+          end
+
         end
 
         ############
@@ -7827,6 +7897,20 @@ class BookingsController < ApplicationController
 
     render  :json => { panel_body: week_blocks, days_row: days_row, days_count: days_count, book_summaries: book_summaries, current_date: current_date}
 
+  end
+
+  def summary
+    render '_summary', layout: false
+  end
+
+  def chart
+    chart = @booking.chart
+    has_chart = !chart.nil?
+    chart_fields = []
+    if has_chart
+      chart_fields = chart.get_chart_fields
+    end
+    render :json => {:has_chart => has_chart, :chart_fields => chart_fields, :chart => @booking.chart}
   end
 
   private

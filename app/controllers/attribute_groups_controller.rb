@@ -29,14 +29,22 @@ class AttributeGroupsController < ApplicationController
   def create
     @attribute_group = AttributeGroup.new(attribute_group_params)
     @attribute_group.save
-    flash[:success] = "Categoría creada." if @attribute_group.save
+    if @attribute_group.save
+      flash[:success] = "Categoría creada."
+    else
+      flash[:alert] = @attribute_group.errors.full_messages.first
+    end
     respond_with(@attribute_group) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
     end
   end
 
   def update
-    flash[:success] = "Categoría editada." if @attribute_group.update(attribute_group_params)
+    if @attribute_group.update(attribute_group_params)
+      flash[:success] = "Categoría editada."
+    else
+      flash[:alert] = @attribute_group.errors.full_messages.firsts
+    end
     respond_with(@attribute_group) do |format|
       format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'clients') }
     end

@@ -19,6 +19,7 @@ class Client < ActiveRecord::Base
   has_many :categoric_attributes, dependent: :destroy
   has_many :product_logs, dependent: :nullify
   has_many :treatment_logs, dependent: :nullify
+  has_many :charts, dependent: :destroy
   has_many :client_email_logs, dependent: :nullify
   has_many :mock_bookings, dependent: :nullify
   has_many :ratings, dependent: :nullify
@@ -1288,6 +1289,7 @@ class Client < ActiveRecord::Base
     client.ratings.update_all(client_id: self.id)
     client.session_bookings.update_all(client_id: self.id)
     client.treatment_logs.update_all(client_id: self.id)
+    client.charts.update_all(client_id: self.id)
 
     s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
 
@@ -1311,7 +1313,9 @@ class Client < ActiveRecord::Base
 
         obj.move_to({bucket: ENV['S3_BUCKET'], key: obj_name}, {acl: 'public-read', content_type: content_type})
 
-        client_file.update_columns(client_id: self.id, full_path: obj_name, public_url: obj.public_url)
+        new_obj = s3_bucket.object(obj_name)
+
+        client_file.update_columns(client_id: self.id, full_path: obj_name, public_url: new_obj.public_url)
       else
         client_file.delete
       end

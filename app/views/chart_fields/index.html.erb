@@ -1,0 +1,41 @@
+<h1>Listing chart_fields</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Chart group</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Datatype</th>
+      <th>Slug</th>
+      <th>Mandatory</th>
+      <th>Order</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @chart_fields.each do |chart_field| %>
+      <tr>
+        <td><%= chart_field.company %></td>
+        <td><%= chart_field.chart_group %></td>
+        <td><%= chart_field.name %></td>
+        <td><%= chart_field.description %></td>
+        <td><%= chart_field.datatype %></td>
+        <td><%= chart_field.slug %></td>
+        <td><%= chart_field.mandatory %></td>
+        <td><%= chart_field.order %></td>
+        <td><%= link_to 'Show', chart_field %></td>
+        <td><%= link_to 'Edit', edit_chart_field_path(chart_field) %></td>
+        <td><%= link_to 'Destroy', chart_field, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Chart field', new_chart_field_path %>
