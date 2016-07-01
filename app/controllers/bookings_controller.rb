@@ -1437,8 +1437,6 @@ class BookingsController < ApplicationController
         #        If chart_create, create it for the new_client associated to this booking. Deattach former chart from this booking.
         #        Else, deassociate chart from the booking (¡don't delete the chart! that should be done on the client view, not from a booking)
 
-        logger.debug "Create chart:" + params[:chart][:create_chart]
-
         if @booking.client_id == old_client_id
           if was_session
             if @booking.service_id != old_service_id
