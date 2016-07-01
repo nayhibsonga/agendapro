@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
 
-  layout "home" #:layout
+  layout :layout
 
   include UrlHelper
   # Prevent CSRF attacks by raising an exception.
@@ -138,6 +138,10 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def layout
+    devise_controller? ? "login" : "home"
+  end
 
   def after_sign_out_path_for(resource_or_scope)
     localized_root_path
