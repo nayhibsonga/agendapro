@@ -825,7 +825,7 @@ class Ability
         can :edit_file, Client, :company_id => user.company_id
 
         can :get_attribute_categories, Attribute, :company_id => user.company_id
-        can :get_chart_categories, ChartField, :company_id => user.company_i
+        can :get_chart_categories, ChartField, :company_id => user.company_id
         can :update_custom_attributes, Client, :company_id => user.company_id
 
     elsif user.role_id == Role.find_by_name("Recepcionista").id
