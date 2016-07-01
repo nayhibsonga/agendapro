@@ -22,6 +22,10 @@ Agendapro::Application.routes.draw do
     resources :attribute_categories
     resources :attributes
     resources :attribute_groups
+    resources :charts
+    resources :chart_fields
+    resources :chart_groups
+    resources :chart_categories
 
     resources :countries
     resources :regions
@@ -197,6 +201,7 @@ Agendapro::Application.routes.draw do
       get '/book_session_form', action: 'book_session_form'
       post '/update_book_session', action: 'update_book_session'
       get '/sessions_calendar', action: 'sessions_calendar'
+      get '/booking_summary', action: 'summary'
     end
 
 
@@ -570,6 +575,8 @@ Agendapro::Application.routes.draw do
     post '/move_company_file', :to => 'companies#move_file'
     post '/change_company_file', :to => 'companies#edit_file'
     post '/client_update_attributes', :to => 'clients#update_custom_attributes'
+    get '/get_chart_categories', :to => 'chart_fields#get_chart_categories'
+    get '/chart_field_edit_form', :to => 'chart_fields#edit_form'
 
     post '/upload_client_file', :to => 'clients#upload_file'
     post '/create_client_folder', :to => 'clients#create_folder'
@@ -582,6 +589,10 @@ Agendapro::Application.routes.draw do
     get '/company_clients_base', :to => 'companies#generate_clients_base'
     get '/client_bookings_content', :to => 'clients#bookings_content'
     get '/client_treatments_content', :to => 'clients#treatments_content'
+    get '/chart_bookings', :to => 'charts#bookings'
+    get '/chart_summary', :to => 'charts#summary'
+    get '/chart_edit_form', :to => 'charts#edit_form'
+    get '/booking_chart', :to => 'bookings#chart'
 
     get '/billing_info_admin_form', :to => 'billing_infos#super_admin_form'
     get '/billing_info_admin_edit', :to => 'billing_infos#super_admin_edit'
@@ -592,6 +603,8 @@ Agendapro::Application.routes.draw do
     get '/edit_filter_form', :to => 'custom_filters#edit_filter_form'
     post '/rearrange_attributes', :to => 'attributes#rearrange'
     post '/rearrange_attribute_groups', :to => 'attribute_groups#rearrange'
+    post '/rearrange_chart_fields', :to => 'chart_fields#rearrange'
+    post '/rearrange_chart_groups', :to => 'chart_groups#rearrange'
 
     post '/select_default_plan', :to => 'companies#select_default_plan'
 
@@ -617,6 +630,10 @@ Agendapro::Application.routes.draw do
     get '/clients/:id/emails', :to => 'clients#emails', :as => 'client_emails'
     get '/clients/:id/emails_content', :to => 'clients#emails_content', :as => 'client_emails_content'
     get '/clients/:id/last_payments', :to => 'clients#last_payments', :as => 'clients_last_payments'
+    get '/clients/:id/charts', :to => 'clients#charts', :as => 'client_charts'
+    get '/client_charts_content', :to => 'clients#charts_content'
+    get '/clients/:id/print', :to => 'clients#print', :as => 'client_print'
+    get '/charts/:id/print', :to => 'charts#print', :as => 'chart_print'
 
     get '/hours_test', :to => 'bookings#hours_test'
 

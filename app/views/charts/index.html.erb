@@ -1,0 +1,35 @@
+<h1>Listing charts</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Client</th>
+      <th>Booking</th>
+      <th>User</th>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @charts.each do |chart| %>
+      <tr>
+        <td><%= chart.company %></td>
+        <td><%= chart.client %></td>
+        <td><%= chart.booking %></td>
+        <td><%= chart.user %></td>
+        <td><%= chart.date %></td>
+        <td><%= link_to 'Show', chart %></td>
+        <td><%= link_to 'Edit', edit_chart_path(chart) %></td>
+        <td><%= link_to 'Destroy', chart, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Chart', new_chart_path %>

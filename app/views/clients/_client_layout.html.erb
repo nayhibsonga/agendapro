@@ -15,6 +15,8 @@
           <%= link_to '<i class="fa fa-money"></i> <span class="hidden-xs">Historial de pagos</span>'.html_safe, client_payments_path(@client), :class => current_page?(client_payments_path(@client)) ? "btn btn-green btn-sm" : "btn btn-white btn-sm", :style => "min-width: 100px;" %>
           <%= link_to '<i class="fa fa-envelope-o"></i> <span class="hidden-xs">Historial de Emails</span>'.html_safe, client_emails_path(@client), :class => current_page?(client_emails_path(@client)) ? "btn btn-green btn-sm" : "btn btn-white btn-sm", :style => "min-width: 100px;" %>
           <%= link_to '<i class="fa fa-calendar"></i> <span class="hidden-xs">Historial Completo</span>'.html_safe, client_history_path(@client), :class => current_page?(client_history_path(@client)) ? "btn btn-green btn-sm" : "btn btn-white btn-sm", :style => "min-width: 100px;" %>
+          <%= link_to '<i class="fa fa-file-text-o"></i> <span class="hidden-xs">Fichas</span>'.html_safe, client_charts_path(@client), :class => current_page?(client_charts_path(@client)) ? "btn btn-green btn-sm" : "btn btn-white btn-sm", :style => "min-width: 100px;" %>
+          <%= link_to '<i class="fa fa-print"></i> <span class="hidden-xs">Imprimir</span>'.html_safe, client_print_path(@client, format: "pdf"), :class => "btn btn-white btn-sm", :style => "min-width: 100px;" %>
         </h2>
       </div>
     </div>

@@ -28,6 +28,8 @@ class HomeController < ApplicationController
 
 		if params[:source] == "search"
 			redirect_to root_path, notice: "¡Gracias por contactarnos! Te responderemos a la brevedad."
+		elsif params[:source] == "features"
+			redirect_to features_path, notice: "¡Gracias por contactarnos! Te responderemos a la brevedad."
 		else
 			redirect_to contact_path, notice: "¡Gracias por contactarnos! Te responderemos a la brevedad."
 		end

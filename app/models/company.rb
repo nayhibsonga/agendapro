@@ -17,6 +17,10 @@ class Company < ActiveRecord::Base
 	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
 	has_many :attribute_groups
 
+	has_many :chart_fields
+	has_many :chart_groups
+	has_many :charts
+
 	has_many :custom_filters, dependent: :destroy
 
 	has_many :super_admin_logs

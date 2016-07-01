@@ -1488,7 +1488,7 @@ tr[class*="break"] {
   font-size: 16px;
 }
 
-#paymentClientPastBookings{
+#paymentClientPastBookings, #chartBookings{
   border: 1px solid #949292;
 }
 
@@ -2261,11 +2261,11 @@ tr[class*="break"] {
   border-bottom: 3px solid #CCC;
 }
 
-.move-attribute-group{
+.move-attribute-group, .move-chart-group{
   cursor: pointer;
 }
 
-.move-attribute{
+.move-attribute, .move-chart-field{
   cursor: pointer;
 }
 
@@ -2551,6 +2551,46 @@ tr[class*="break"] {
   font-size: 18px;
   padding-left: 20%;
   color: #22c488;
+}
+
+.selected-booking{
+  display: none;
+}
+
+.addChartBooking, .editAddChartBooking{
+  background-color: #f5f5f5;
+  color: #1ba970;
+  text-align: center;
+  border: none !important;
+  margin-left: 20px;
+}
+
+.addChartBooking:hover, .editAddChartBooking:hover{
+  background-color: #f5f5f5;
+  color: #1ba970;
+  text-align: center;
+  border: none !important;
+  margin-left: 20px;
+}
+
+.addChartBooking:focus, .editAddChartBooking:focus{
+  background-color: #f5f5f5;
+  color: #1ba970;
+  text-align: center;
+  border: none !important;
+  margin-left: 20px;
+}
+
+.addChartBooking:active, .editAddChartBooking:active{
+  background-color: #f5f5f5;
+  color: #1ba970;
+  text-align: center;
+  border: none !important;
+  margin-left: 20px;
+}
+
+.charts-pane .help-block{
+  font-size: 14px;
 }
 
 .merge-btn{

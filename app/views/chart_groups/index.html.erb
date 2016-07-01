@@ -1,0 +1,31 @@
+<h1>Listing chart_groups</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Company</th>
+      <th>Name</th>
+      <th>Order</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @chart_groups.each do |chart_group| %>
+      <tr>
+        <td><%= chart_group.company %></td>
+        <td><%= chart_group.name %></td>
+        <td><%= chart_group.order %></td>
+        <td><%= link_to 'Show', chart_group %></td>
+        <td><%= link_to 'Edit', edit_chart_group_path(chart_group) %></td>
+        <td><%= link_to 'Destroy', chart_group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Chart group', new_chart_group_path %>

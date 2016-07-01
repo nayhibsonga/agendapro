@@ -99,6 +99,14 @@ section.plans {
   .pricing-section, .pricing-icon {
     color: $light-green;
   }
+  .pricing-compact {
+    display: none;
+    span {
+      font-size: 24px;
+      font-weight: bold;
+      color: $light-green;
+    }
+  }
   @media (min-width: 992px) {
     .pricing-col {
       display: initial;
@@ -131,6 +139,12 @@ section.plans {
       -webkit-box-shadow: 0px 10px 10px -5px rgba(50, 50, 50, 0.25);
       -moz-box-shadow:    0px 10px 10px -5px rgba(50, 50, 50, 0.25);
       box-shadow:         0px 10px 10px -5px rgba(50, 50, 50, 0.25);
+      .pricing-circle, .pricing-down {
+        display: none;
+      }
+      .pricing-compact {
+        display: block;
+      }
     }
     .fill {
       height: 170px;
