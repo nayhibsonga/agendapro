@@ -745,7 +745,7 @@ class Client < ActiveRecord::Base
           elsif !date_filter.exclusive1 && date_filter.exclusive2
             clients = clients.where(id: date_attribute.where('value >= ? and value < ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           else
-            clients = clients.where(id: date_attribute.where('value => ? and value <= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+            clients = clients.where(id: date_attribute.where('value >= ? and value <= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           end
         elsif date_filter.option == "out"
           #Check for exclusive optionss
