@@ -74,7 +74,7 @@
       </div>
       <div class="row">
         <div class="col-xs-1">
-          <a id="msprev" class="cfs-arrow pull-left" href="#"><%= image_tag "search/prev_arrow.png", alt: "Prev Arrow" %></a>
+          <a id="msprev" class="cfs-arrow pull-left" href="#"><%= image_tag "home/index/v2.png", alt: "Prev Arrow", size: "39x39" %></a>
         </div>
         <div class="col-xs-10">
           <div id="carousel">
@@ -84,7 +84,7 @@
           </div>
         </div>
         <div class="col-xs-1">
-          <a id="msnext" class="cfs-arrow pull-right" href="#"><%= image_tag "search/next_arrow.png", alt: "Next Arrow" %></a>
+          <a id="msnext" class="cfs-arrow pull-right" href="#"><%= image_tag "home/index/v1.png", alt: "Next Arrow", size: "39x39" %></a>
         </div>
       </div>
     </div>
@@ -145,6 +145,34 @@
           </div>
         </div>
       </div>
+  </section>
+  <section>
+    <div class="container">
+      <div class="marketing">
+        <div class="row row-padded">
+          <div class="contact_form col-md-6">
+            <h2>¡Solicita tu demo personalizada!</h2>
+
+            <!--[if lte IE 8]>
+            <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
+            <![endif]-->
+            <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+            <script>
+              hbspt.forms.create({
+                portalId: '2356021',
+                formId: '7acac227-a73f-45e8-8cdf-607f914d8d7a'
+              });
+            </script>
+
+          </div>
+          <div class="col-md-6">
+            <h2>¿Listo para comenzar?</h2>
+            <p><%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:company => true), :class => "btn btn-lg btn-orange" %>
+              <br />No se requiere tarjeta de crédito</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
 </div>

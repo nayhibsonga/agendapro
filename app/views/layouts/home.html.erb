@@ -94,8 +94,111 @@
     </div>
     <!-- end: content -->
 
-    <div class="">
-
+    <div class="home-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12">
+            <%= image_tag 'logos/logo1.png', :alt => 'AgendaPro', :size => "127x43", class: "" %>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4 padded-col">
+            <div class="row">
+              <div class="col-xs-12">
+                <p><strong>Información Adicional:</strong></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <hr class="short-break">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <p>
+                  <%= link_to "Agrega tu Empresa", home_path %><br>
+                  <%= link_to "Sobre Nosotros", aboutus_path %><br>
+                  <%= link_to "Tutoriales", tutorials_path %><br>
+                  <%= link_to "Contacto", contact_path %><br>
+                  <%= link_to 'Términos y Condiciones', asset_url('pdf/Term_y_Cond_AgendaPro052016.pdf'), target: :blank %>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 padded-col">
+            <div class="row">
+              <div class="col-xs-12">
+                <p><strong>Síguenos:</strong></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <hr class="short-break">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <p>
+                  <%= link_to image_tag('home/index/facebook.png', size: "39x39"), 'https://www.facebook.com/agendapro' %>
+                  <%= link_to image_tag('home/index/twitter.png', size: "39x39"), 'https://twitter.com/agendapro_cl' %>
+                  <%= link_to image_tag('home/index/instagram.png', size: "39x39"), 'https://www.instagram.com/agendapro_co' %>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 padded-col bordered-col">
+            <div class="row">
+              <div class="col-xs-12">
+                <p><strong>Contáctanos:</strong></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <hr class="short-break">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-1">
+                <%= image_tag 'home/index/telefono.png', :alt => 'AgendaPro', :size => "18x26", style: "margin-top: 10px;" %>
+              </div>
+              <div class="col-xs-11">
+                <p>Ventas: <%= t('phones.sales') %><br />Soporte: <%= t('phones.support') %></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-xs-1">
+                <%= image_tag 'home/index/mail.png', :alt => 'AgendaPro', :size => "18x14" %>
+              </div>
+              <div class="col-xs-11">
+                <p>contacto@agendapro.cl</p>
+              </div>
+              <div class="col-xs-1">
+                <%= image_tag 'home/index/location.png', :alt => 'AgendaPro', :size => "18x27" %>
+              </div>
+              <div class="col-xs-11">
+                <p>Ana María Carrera 5210, Las Condes - Santiago, Chile</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-lg-5 copyright-footer">
+            <i class="fa fa-copyright"></i> Copyright 2013 | Gunei Investment SpA | Todos los derechos reservados
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <%= image_tag 'home/index/corfo.png', :alt => 'Corfo', :size => "207x72" %>
+            <%= image_tag 'home/index/semilla.png', :alt => 'Corfo', :size => "137x72" %>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            &nbsp;
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- <div class="above-navbar">
