@@ -1,14 +1,13 @@
-<section class="background fill" id="home-cover-image" style="height: 500px; background-color: #646464; background-image: url(<%= asset_path 'search/fondo'+rand(2..11).to_s+'.png' %>);">
+<section class="background fill" id="home-cover-image" style="height: 500px; background-color: #646464; background-image: url(<%= asset_path 'home/index/banner0'+rand(1..9).to_s+'.png' %>);">
   <div class="container">
-    <div class="row below-navbar">
+    <div class="row">
       <div class="col-xs-12 col-md-9 col-lg-8">
-        <h1>¡Comienza a <span>disfrutar</span><br>
-        tu trabajo y no pierdas más tiempo!</h1>
+        <h1>¡Comienza a <span>disfrutar</span> tu trabajo<br>y no pierdas más tiempo!</h1>
       </div>
     </div>
     <div class="row">
       <div class="col-xs-12">
-        <hr>
+        <hr class="short-break">
       </div>
     </div>
     <div class="row">
@@ -20,11 +19,187 @@
     </div>
   </div>
 </section>
+<div class="home-info">
+  <section class="features-preview">
+    <div class="container">
+      <div class="row below-home-navbar">
+        <div class="col-xs-12">
+          <h1>Con <span>AgendaPro</span> podrás simplificar tus tareas del día</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <hr class="short-break">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 col-md-3 feature-preview">
+          <%= image_tag "home/index/01.png", class: "img-responsive", size: "62x59" %>
+          <h3>Reservas y recordatorios en línea con tu negocio</h3>
+          <p>Con AgendaPro, tus clientes pueden reservar sus citas desde cualquier dispositivo y recibir correos que le recuerden confirmar y asistir.<br>Aumenta tus ingresos en más del 10% con sólo esta mejora de gestión.</p>
+          <%= link_to 'Más Información', features_path, :class => "btn btn-lg btn-green" %>
+        </div>
+        <div class="col-sm-6 col-md-3 feature-preview">
+          <%= image_tag "home/index/02.png", class: "img-responsive", size: "62x59" %>
+          <h3>Sistema de caja e inventario</h3>
+          <p>Lleva el control de los ingresos de tu negocio, filtra las recaudaciones por servicios o productos. Lleva el control del stock de los productos que comercializas.</p>
+          <%= link_to 'Más Información', features_path, :class => "btn btn-lg btn-green" %>
+        </div>
+        <div class="col-sm-6 col-md-3 feature-preview">
+          <%= image_tag "home/index/03.png", class: "img-responsive", size: "62x59" %>
+          <h3>Marketing inteligente y promociones</h3>
+          <p>Fideliza a tus clientes enviando campañas o información especialmente dirigida vía e-mail. Puedes controlar la efectividad de envío de manera simple.</p>
+          <%= link_to 'Más Información', features_path, :class => "btn btn-lg btn-green" %>
+        </div>
+        <div class="col-sm-6 col-md-3 feature-preview">
+          <%= image_tag "home/index/04.png", class: "img-responsive", size: "62x59" %>
+          <h3>Reportes de Gestión</h3>
+          <p>En una sola vista analiza la gestión de tu negocio. Podrás ver el comportamiento de tus clientes, el servicio más vendido, los días más activos de trabajo y los horarios de mayores reservas.</p>
+          <%= link_to 'Más Información', features_path, :class => "btn btn-lg btn-green" %>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="container">
+      <div class="row below-navbar">
+        <div class="col-xs-12">
+          <h1 class="">Nuestros Clientes</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <hr class="short-break">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-1">
+          <a id="msprev" class="cfs-arrow pull-left" href="#"><%= image_tag "home/index/v2.png", alt: "Prev Arrow", size: "39x39" %></a>
+        </div>
+        <div class="col-xs-10">
+          <div id="carousel">
+            <% @companies.each do |company| %>
+              <a href="http://<%= company.web_address %>.agendapro<%= company.country.domain %>/"><%= image_tag company.logo.page.url.to_s, :size => "169x169", :alt => company.name %></a>
+            <% end %>
+          </div>
+        </div>
+        <div class="col-xs-1">
+          <a id="msnext" class="cfs-arrow pull-right" href="#"><%= image_tag "home/index/v1.png", alt: "Next Arrow", size: "39x39" %></a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="green-background">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <h1 class="">Comentarios de nuestros clientes</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <hr class="short-break">
+        </div>
+      </div>
+      <div class="row below-navbar">
+        <div class="col-xs-12 col-md-4">
+          <div class="media">
+            <a href="#" class="media-left">
+              <%= image_tag "search/slopez.jpg", class: "img-circle", size: "80x80" %>
+            </a>
+            <div class="media-body">
+              <h4 class="media-heading">
+                Sebastián López</br>
+                <small><a href="http://labanqueta.agendapro.cl">La Banqueta Peluquería</a></small>
+              </h4>
+              <p align="justify">Estamos con AgendaPro desde sus inicios y la verdad es que no para de sorprendernos. Nuestros clientes reservan sus horas y llegan siempre sin la necesidad de que estemos pendientes. Además, la visibilidad de nuestra peluquería se ha visto aumentada por toda la gente que busca.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-4">
+          <div class="media">
+            <a href="#" class="media-left">
+              <%= image_tag "search/minata.png", class: "img-circle", size: "80x80" %>
+            </a>
+            <div class="media-body">
+              <h4 class="media-heading">
+                Minata Rodríguez</br>
+                <small><a href="http://minatarodriguez.blogspot.com/" target="blank">Blogger</a></small>
+              </h4>
+              <p align="justify">Con AgendaPro reservo todas mis horas sin la necesidad de llamar. Ya no pierdo tiempo llamando y esperando que me contesten. Además, con los recordatorios que me envían, siempre me acuerdo de ir. ¡De esta forma no pierdo nunca mis horas!</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-4">
+          <div class="media">
+            <a href="#" class="media-left">
+              <%= image_tag "search/sferrer.png", class: "img-circle", size: "80x80" %>
+            </a>
+            <div class="media-body">
+              <h4 class="media-heading">
+                Sebastián Ferrer</br>
+                <small><a href="http://theboss.agendapro.cl">The Boss Hair Club & Spa</a></small>
+              </h4>
+              <p align="justify">De los muchos sistemas que he utilizado durante mi trayectoria, AgendaPro ha sido el único que ha logrado realmente ayudarnos como Peluquería a ofrecer un mejor servicio a nuestros clientes.<br />Además, el soporte que entregan y las mejoras constantes, hacen que su servicio sea realmente el mejor disponible.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+  <section>
+    <div class="container">
+      <div class="marketing">
+        <div class="row row-padded">
+          <div class="contact_form col-md-6">
+            <h2>¡Solicita tu demo personalizada!</h2>
+
+            <!--[if lte IE 8]>
+            <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
+            <![endif]-->
+            <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+            <script>
+              hbspt.forms.create({
+                portalId: '2356021',
+                formId: '7acac227-a73f-45e8-8cdf-607f914d8d7a'
+              });
+            </script>
+
+          </div>
+          <div class="col-md-6">
+            <h2>¿Listo para comenzar?</h2>
+            <p><%= link_to "¡Pruébalo Gratis Ahora!", new_user_registration_path(:company => true), :class => "btn btn-lg btn-orange" %>
+              <br />No se requiere tarjeta de crédito</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
 
 <% content_for :scripts do %>
+<%= javascript_include_tag 'jquery.carouFredSel-6.2.1'  %>
 <script>
   $(function() {
-      $("#c_home").addClass("active")
+    $("#c_home").addClass("active");
+    $('#carousel').carouFredSel({
+        items : 4,
+        circular : true,
+        infinity : true,
+        // responsive : true,
+        width : "100%",
+        scroll : {
+            items           : 1,
+            duration        : 500,
+            pauseOnHover    : true
+        },
+        prev: {
+               button  : "#msprev"
+        },
+        next: {
+               button  : "#msnext"
+        }
+    });
   });
 </script>
 <% end %>
