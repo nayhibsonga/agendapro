@@ -34,6 +34,11 @@ class Client < ActiveRecord::Base
   after_update :client_notification
   after_create :check_gender
   after_save :check_gender
+  before_save :check_birthdate
+
+  def check_birthdate
+
+  end
 
   def check_gender
     if self.gender.nil?
@@ -49,8 +54,12 @@ class Client < ActiveRecord::Base
     end
 
     #Unnecesary, just in case we wanted to change birthday format
-    birth_date = Date.new(self.birth_year, self.birth_month, self.birth_day)
-    return birth_date.strftime("%d/%m/%Y")
+    if Date.valid_date?(self.birth_year, self.birth_month, self.birth_day)
+      birth_date = Date.new(self.birth_year, self.birth_month, self.birth_day)
+      return birth_date.strftime("%d/%m/%Y")
+    else
+      return "---"
+    end
   end
 
   def get_storage_occupation
