@@ -66,7 +66,7 @@
 
               <% if current_user.company_id || current_user.role_id == Role.find_by(:name => 'Super Admin').id %>
 
-                <li><%= link_to '<i class="fa fa-desktop fa-fw"></i> Ver Sitio'.html_safe, url_for(:subdomain => current_user.company.web_address, controller: 'companies', action: 'overview', locale: current_user.company.country.locale) %></li>
+                <li><%= link_to '<i class="fa fa-desktop fa-fw"></i> Ver Sitio'.html_safe, url_for(:subdomain => current_user.company.web_address, controller: 'companies', action: 'overview', locale: current_user.company.country.locale), :target => '_blank' %></li>
 
               <% end %>
 
