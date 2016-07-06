@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160623175444) do
+ActiveRecord::Schema.define(version: 20160706181031) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "attribute_categories", force: true do |t|
@@ -547,7 +547,7 @@ ActiveRecord::Schema.define(version: 20160623175444) do
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
     t.integer  "trial_months_left",   default: 0
-    t.integer  "default_plan_id",     default: 15
+    t.integer  "default_plan_id",     default: 11
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
@@ -893,6 +893,19 @@ ActiveRecord::Schema.define(version: 20160623175444) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "employee_codes", force: true do |t|
+    t.string   "name"
+    t.string   "code"
+    t.integer  "company_id"
+    t.boolean  "active"
+    t.boolean  "staff"
+    t.boolean  "cashier"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "employee_codes", ["company_id"], name: "index_employee_codes_on_company_id", using: :btree
 
   create_table "facebook_pages", force: true do |t|
     t.integer  "company_id"
@@ -1770,7 +1783,7 @@ ActiveRecord::Schema.define(version: 20160623175444) do
 
   create_table "regions", force: true do |t|
     t.string   "name",       null: false
-    t.integer  "country_id"
+    t.integer  "country_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

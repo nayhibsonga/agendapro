@@ -40,6 +40,7 @@
           <li role="presentation"><a id="blocked_clients_link" href="#" class="locked-section">Clientes<i class="fa fa-lock fa-1 lock-image"></i></a></li>
           <li role="presentation"><a id="blocked_charts_link" href="#" class="locked-section">Fichas<i class="fa fa-lock fa-1 lock-image"></i></a></li>
         <% end %>
+        <li role="presentation"><a id="codes_link" href="#employee-codes" role="tab" data-toggle="pill" data-title="Permisos de empleados" data-description="Configura códigos y permisos para tu equipo.">Permisos</a></li>
       </ul>
     </div>
     <!-- Panels -->
@@ -136,6 +137,16 @@
                   </div>
                   <div class="media-body">
                     <span class="text-green">Fichas históricas:</span> crea fichas históricas para llevar un seguimiento de tus pacientes.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div onclick="$('#codes_link').click();" class="media">
+                  <div class="media-left">
+                    <%= image_tag 'admin/charts.png', class: 'media-object media-image' %>
+                  </div>
+                  <div class="media-body">
+                    <span class="text-green">Códigos de permisos:</span> configura códigos y permisos para tu equipo.
                   </div>
                 </div>
               </div>
