@@ -433,7 +433,7 @@
                             <% punto_pago_fail = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
                             <tr style="background-color: #fd633f;">
                               
-                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
                               <td><%= log.payment %></td>
                               <td><%= log.amount %></td>
                               <% if punto_pago_fail.nil? %>
@@ -450,7 +450,7 @@
                           <% elsif punto_pago.present? %>
                             <tr>
                               
-                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
                               <td><%= log.payment %></td>
                               <td><%= log.amount %></td>
                               <td><%= punto_pago.dues_number %></td>
@@ -461,7 +461,7 @@
                           <% elsif pay_u.present? %>
                             <tr>
                               
-                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
                               <td><%= log.payment %></td>
                               <td><%= log.amount %></td>
                               <td></td>
@@ -501,7 +501,7 @@
                             <% punto_pago_fail = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
                             <tr style="background-color: #fd633f;">
                               
-                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
                               <td><%= log.amount.to_s %></td>
                               <% if punto_pago_fail.nil? %>
                                 <td></td>
@@ -517,7 +517,7 @@
                           <% else %>
                             <tr>
                               
-                              <td><%= log.created_at.strftime('%d/%m/%Y %R') %></td>
+                              <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
                               <td><%= log.amount.to_s %></td>
                               <td><%= punto_pago.dues_number %></td>
                               <td><%= punto_pago.operation_number %></td>
