@@ -77,6 +77,7 @@ class ServicesController < ApplicationController
     respond_to do |format|
       if @service.save
         format.html { redirect_to services_path, success: 'Servicio creado exitosamente.' }
+        flash[:success] = 'Servicio creado exitosamente.'
         flash.keep(:success)
         format.json { render action: 'show', status: :created, location: @service }
       else
@@ -156,6 +157,7 @@ class ServicesController < ApplicationController
           @service.check_online_discount
           @service_times.destroy_all
           format.html { redirect_to services_path, success: 'Servicio actualizado exitosamente.' }
+          flash[:success] = 'Servicio actualizado exitosamente.'
           flash.keep(:success)
           format.json { head :no_content }
         else
