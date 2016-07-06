@@ -692,6 +692,8 @@ function editBookingModal(eventId) {
             $('#booking_service_id option[value="'+booking.service_id+'"]').attr("selected",true);
           }
 
+          $("#booking_service_id").trigger("chosen:updated");
+
         });
       }
       setAge();
@@ -1026,6 +1028,7 @@ function createBookingModal(date, provider_id) {
           });
           $('#booking_service_id').removeAttr('disabled');
           $('#booking_service_id option').first().attr("selected", true);
+          $("#booking_service_id").trigger("chosen:updated");
           modalChange();
           checkClientSessions(true);
         });
@@ -1094,6 +1097,7 @@ function createBookingModal(date, provider_id) {
             });
             $('#booking_service_id').removeAttr('disabled');
             $('#booking_service_id option').first().attr("selected", true);
+            $("#booking_service_id").trigger("chosen:updated");
             modalChange();
             checkClientSessions(true);
           });
@@ -3804,6 +3808,7 @@ $(function() {
       });
       $('#booking_service_id').removeAttr('disabled');
       $('#booking_service_id option[value="' + selectedService + '"]').prop('selected', true);
+      $("#booking_service_id").trigger("chosen:updated");
       modalChange();
       checkClientSessions(true);
     });
@@ -4009,6 +4014,13 @@ $(function() {
         dayNamesMin: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
         today: 'Hoy',
         clear: ''
+  });
+
+  $('#booking_service_id').chosen({
+    inherit_select_classes: true,
+    no_results_text: "Sin resultados",
+    placeholder_text_single: "Elige un servicio",
+    search_contains: true
   });
 
 });
