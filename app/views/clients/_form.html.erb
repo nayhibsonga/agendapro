@@ -8,15 +8,17 @@
   <div class="row">
     <% if @client.id %>
       <div class="tab-margin">
-        <ul id="editTab" class="nav nav-tabs" role="tablist">
-          <li class="active"><a href="#personalTab" role="tab" data-toggle="tab" class="tab_index">Datos personales</a></li>
-          <li class=""><a href="#commentsTab" role="tab" data-toggle="tab" class="tab_index">Comentarios</a></li>
-          <li class=""><a href="#historyTab" role="tab" data-toggle="tab" class="tab_index">Historial</a></li>
+        <ul id="editTab1" class="nav nav-tabs" role="tablist">
+          <li class="active edit-tab-li"><a href="#personalTab" role="tab" data-toggle="tab" class="tab_index">Datos personales</a></li>
+          <li class="edit-tab-li"><a href="#commentsTab" role="tab" data-toggle="tab" class="tab_index">Comentarios</a></li>
+          <li class="edit-tab-li"><a href="#historyTab" role="tab" data-toggle="tab" class="tab_index">Historial</a></li>
           <% if @company.is_plan_capable("Premium") %>
-            <li class=""><a href="#filesTab" role="tab" data-toggle="tab" class="tab_index">Archivos</a></li>
+            <li class="edit-tab-li"><a href="#filesTab" role="tab" data-toggle="tab" class="tab_index">Archivos</a></li>
+            </ul>
+            <ul id="editTab2" class="nav nav-tabs" role="tablist">
             <% @company.attribute_groups.each do |attribute_group| %>
               <% if attribute_group.custom_attributes.count > 0 %>
-                <li class=""><a href="#group-<%= attribute_group.id.to_s %>-tab" role="tab" data-toggle="tab" class="tab_index"><%= attribute_group.name %></a></li>
+                <li class="edit-tab-li"><a href="#group-<%= attribute_group.id.to_s %>-tab" role="tab" data-toggle="tab" class="tab_index"><%= attribute_group.name %></a></li>
               <% end %>
             <% end %>
           <% end %>

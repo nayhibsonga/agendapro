@@ -366,4 +366,8 @@ $(function() {
     }
   });
 
+  $('.edit-tab-li').on('click', function(){
+    $('.edit-tab-li.active').removeClass("active");
+  });
+
 });
