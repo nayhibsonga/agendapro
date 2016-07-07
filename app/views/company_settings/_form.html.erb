@@ -1750,7 +1750,7 @@
               <div class="background-grey">
                 <h3 class="text-green">
                   Listado de códigos
-                  <button class="btn btn-green pull-right" id="new_cashier_button"><i class="fa fa-plus"></i> Agregar código</button>
+                  <button class="btn btn-green pull-right" id="new_employee_code_button"><i class="fa fa-plus"></i> Agregar código</button>
                 </h3>
               </div>
               <table class="table table-hover table-green">
@@ -1779,7 +1779,7 @@
                         <% if employee_code.active %>
                           <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_employee_code_path(id: employee_code.id), method: :patch, data: { confirm: '¿Estás seguro de desactivar el código seleccionado?' }, class: 'btn btn-red' %>
                         <% else %>
-                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_employee_code_path(id: cashier.id), method: :patch, data: { confirm: '¿Estás seguro de activar el código seleccionado?' }, class: 'btn btn-green' %>
+                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_employee_code_path(id: employee_code.id), method: :patch, data: { confirm: '¿Estás seguro de activar el código seleccionado?' }, class: 'btn btn-green' %>
                         <% end %>
 
                       </td>

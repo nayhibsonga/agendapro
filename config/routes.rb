@@ -472,6 +472,10 @@ Agendapro::Application.routes.draw do
     patch '/cashiers/:id/deactivate', :to => 'cashiers#deactivate', :as => 'deactivate_cashier'
     get '/get_cashier_by_code', :to => 'cashiers#get_by_code'
 
+    patch '/employee_codes/:id/activate', :to => 'employee_codes#activate', :as => 'activate_employee_code'
+    patch '/employee_codes/:id/deactivate', :to => 'employee_codes#deactivate', :as => 'deactivate_employee_code'
+    get '/get_employee_by_code', :to => 'employee_codes#get_by_code'
+
     get '/receipt_pdf', :to => 'payments#receipt_pdf'
     get '/payment_pdf', :to => 'payments#payment_pdf'
 

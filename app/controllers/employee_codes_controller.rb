@@ -1,5 +1,9 @@
 class EmployeeCodesController < ApplicationController
-  before_action :set_employee_code, only: [:show, :edit, :update, :destroy]
+  before_action :set_employee_code, only: [:show, :edit, :update, :destroy, :activate, :deactivate]
+  before_action :authenticate_user!
+  before_action :quick_add
+  layout "admin"
+  load_and_authorize_resource
 
   respond_to :html
 
@@ -22,18 +26,55 @@ class EmployeeCodesController < ApplicationController
 
   def create
     @employee_code = EmployeeCode.new(employee_code_params)
-    @employee_code.save
-    respond_with(@employee_code)
+    flash[:success] = "Código creado." if @employee_code.save
+    respond_with(@employee_code) do |format|
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'employee-codes') }
+    end
   end
 
   def update
-    @employee_code.update(employee_code_params)
-    respond_with(@employee_code)
+    flash[:success] = "Código editado." if @employee_code.update(employee_code_params)
+    respond_with(@employee_code) do |format|
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'employee-codes') }
+    end
   end
 
   def destroy
-    @employee_code.destroy
-    respond_with(@employee_code)
+    flash[:success] = "Código eliminado." if @employee_code.destroy
+    respond_with(@employee_code) do |format|
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'employee-codes') }
+    end
+  end
+
+  def activate
+    @employee_code.active = true
+    flash[:success] = "Código activado." if @employee_code.save
+    respond_with(@employee_code) do |format|
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'employee-codes') }
+    end
+  end
+
+  def deactivate
+    @employee_code.active = false
+    flash[:success] = "Código desactivado." if @employee_code.save
+    respond_with(@employee_code) do |format|
+      format.html { redirect_to edit_company_setting_path(current_user.company.company_setting, anchor: 'employee-codes') }
+    end
+  end
+
+  def get_by_code
+
+    employee_code = EmployeeCode.where(code: params[:employee_code_code], company_id: current_user.company_id, :active => true).first
+
+    return_array = []
+    if employee_code.nil?
+      return_array << "error"
+    else
+      return_array << employee_code
+    end
+
+    render :json => return_array
+
   end
 
   private

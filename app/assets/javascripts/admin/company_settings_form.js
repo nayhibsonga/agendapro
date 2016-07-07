@@ -373,6 +373,34 @@ $(function () {
     $('#cashierModal').modal('show');
   });
 
+  $('#new_employee_code_button').on('click', function(e){
+    $('form.employee_code_form').attr('action', '/employee_codes');
+    $('form.employee_code_form').attr('id', 'new_employee_code');
+    $('form.employee_code_form').removeClass('edit_employee_code');
+    $('form.employee_code_form input[name="_method"]').remove();
+    $('#employee_code_name').val('');
+    $('#employee_code_active').attr('checked', true);
+    $('#employee_code_code').attr('checked', true);
+    $('#employee_code_staff').attr('checked', false);
+    $('#employee_code_cashier').attr('checked', false);
+    $('#employeeCodeModal').modal('show');
+  });
+
+  $('.edit_employee_code_button').click(function(e) {
+    $('form.employee_code_form').attr('action', '/employee_codes/' + $(e.currentTarget).data('id'));
+    $('form.employee_code_form').attr('id', 'edit_employee_code_' + $(e.currentTarget).data('id'));
+    $('form.employee_code_form').addClass('edit_employee_code');
+    if ($('form.employee_code_form input[name="_method"]').length < 1) {
+      $('form.employee_code_form').append('<input name="_method" type="hidden" value="patch">');
+    }
+    $('#employee_code_name').val($(e.currentTarget).data('name'));
+    $('#employee_code_active').attr('checked', $(e.currentTarget).data('active'));
+    $('#employee_code_code').val($(e.currentTarget).data('code'));
+    $('#employee_code_staff').val($(e.currentTarget).data('staff'));
+    $('#employee_code_cashier').val($(e.currentTarget).data('cashier'));
+    $('#employeeCodeModal').modal('show');
+  });
+
   $('#new_attribute_button').on('click', function(){
     $('#attributeModal').modal('show');
   });
