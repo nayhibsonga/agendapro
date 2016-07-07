@@ -59,6 +59,7 @@ class Company < ActiveRecord::Base
 	has_many :product_categories, dependent: :destroy
 	has_many :billing_wire_transfers
 	has_many :downgrade_logs
+	has_many :employee_codes, dependent: :destroy
 
 	has_one :company_plan_setting
 

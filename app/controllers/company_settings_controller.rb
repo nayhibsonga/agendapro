@@ -82,6 +82,10 @@ class CompanySettingsController < ApplicationController
     # Extended Schedule
     @open_end = LocationTime.where(location_id: @company.locations).order(open: :asc).first.open.hour
     @close_start = LocationTime.where(location_id: @company.locations).order(close: :desc).first.close.hour
+
+    @employee_codes = @company.employee_codes
+    @employee_code = EmployeeCode.new
+
   end
 
   # POST /company_settings
