@@ -27,7 +27,7 @@ class Attribute < ActiveRecord::Base
 	after_destroy :check_left
 
 	def name_uniqueness
-	    Attribute.where(name: self.name, company_id: self.company_id).each do |attribute|
+	    ::Attribute.where(name: self.name, company_id: self.company_id).each do |attribute|
 	      	if attribute != self
 	        	errors.add(:base, "No se pueden crear dos campos con el mismo nombre.")
 	      	end

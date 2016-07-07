@@ -3015,11 +3015,11 @@ function checkClientSessions(service_change) {
             {
               if (sessions_bookings.length > 0)
               {
-                $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+                $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar un nuevo tratamiento y agendar la primera sesión de ' + service.sessions_amount + '.');
               }
               else
               {
-                $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+                $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar un nuevo tratamiento y agendar la primera sesión de ' + service.sessions_amount + '.');
               }
               $("#sessions-row").show();
               $("#add-service-btn").hide();
@@ -3070,7 +3070,7 @@ function checkClientSessions(service_change) {
           {
             if(service.has_sessions)
             {
-              $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar una nueva reserva y agendar la primera sesión.');
+              $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar un nuevo tratamiento y agendar la primera sesión de ' + service.sessions_amount + '.');
               $("#sessions-row").show();
               $("#add-service-btn").hide();
               $("#has_sessions").val("1");
@@ -3148,11 +3148,11 @@ function checkClientSessions(service_change) {
                 {
                   if (sessions_bookings.length > 0)
                   {
-                    $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+                    $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" />&nbsp;Generar un nuevo tratamiento y agendar la primera sesión de ' + service.sessions_amount + '.');
                   }
                   else
                   {
-                    $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar una nueva reserva y agendar la primera sesión.');
+                    $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Generar un nuevo tratamiento y agendar la primera sesión de ' + service.sessions_amount + '.');
                   }
                   $("#sessions-row").show();
                   $("#add-service-btn").hide();
@@ -3200,7 +3200,7 @@ function checkClientSessions(service_change) {
             {
               if(service.has_sessions)
               {
-                $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar una nueva reserva y agendar la primera sesión.');
+                $("#sessions-info").append('<div session_booking_id="0"><input type="radio" name="sessions-choice" value="0" checked>&nbsp;Este servicio es por sesiones. Generar un nuevo tratamiento y agendar la primera sesión de ' + service.sessions_amount + '.');
                 $("#sessions-row").show();
                 $("#add-service-btn").hide();
                 $("#has_sessions").val("1");

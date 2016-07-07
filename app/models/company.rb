@@ -895,7 +895,7 @@ class Company < ActiveRecord::Base
 		end
 
 		if !bl.nil?
-		  date1 = bl.created_at
+		  date1 = bl.created_at + self.country.timezone_offset.hours
 		end
 		if !rec.nil?
 		  date2 = rec.date.to_datetime
@@ -904,7 +904,7 @@ class Company < ActiveRecord::Base
 		  date3 = bwt.payment_date
 		end
 		if !pl.nil?
-		  date4 = pl.created_at
+		  date4 = pl.created_at + self.country.timezone_offset.hours
 		end
 
 		if date1 >= date2 && date1 >= date3 && date1 >= date4
