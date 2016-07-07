@@ -42,9 +42,6 @@ $(function() {
 			'booking_deal_code': {
 				required: $('#calendar-data').data('deal-required')
 			},
-			'booking[service_id]': {
-				required: true
-			},
 			'booking[price]': {
 				required: true,
 				number: true,

@@ -908,7 +908,7 @@ class Company < ActiveRecord::Base
 		end
 
 		if date1 >= date2 && date1 >= date3 && date1 >= date4
-		  last_payment_date = bl.created_at.strftime('%d/%m/%Y %R')
+		  last_payment_date = (bl.created_at + self.country.timezone_offset.hours).strftime('%d/%m/%Y %R')
 		  paid_amount = "$" + bl.payment.to_s
 		  last_payment_method = "Automático"
 		elsif date2 >= date1 && date2 >= date3 && date2 >= date4
@@ -920,7 +920,7 @@ class Company < ActiveRecord::Base
 		  paid_amount = "$" + bwt.amount.to_s
 		  last_payment_method = "Transferencia"
 		else
-		  last_payment_date = pl.created_at.strftime('%d/%m/%Y %R')
+		  last_payment_date = (pl.created_at + self.country.timezone_offset.hours).strftime('%d/%m/%Y %R')
 		  paid_amount = "$" + pl.amount.to_s
 		  last_payment_method = "Automático"
 		end
