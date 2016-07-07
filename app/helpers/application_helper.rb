@@ -404,7 +404,7 @@ module ApplicationHelper
 		ranking.each do |rank|
 			top3_count += rank[1]
 		end
-		total = booking_count(from, to, status, option, company_id)
+		total = booking_count(from, to, status, option, company_id, location_ids)
 		top3 = Hash[ ranking.first(10).map{ |c| [Service.find(c[0]).name,c[1]] } ]
 		puts top3.inspect
 		return top3.merge({ "Otros" => (total - top3_count) })
