@@ -124,7 +124,7 @@ class ApplicationController < ActionController::Base
   def verify_is_local_admin
     host = request.host_with_port
     @url = host[host.index(request.domain)..host.length]
-    redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Administrador Local").id)
+    redirect_to "/403" unless (current_user.role_id == Role.find_by_name("Administrador Local").id) || (current_user.role_id == Role.find_by_name("Administrador General").id)
   end
 
   def verify_is_staff
