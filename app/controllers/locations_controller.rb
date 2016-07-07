@@ -720,7 +720,7 @@ class LocationsController < ApplicationController
 
     @response_array = []
 
-    @location.service_providers.where(active: true).each do |service_provider|
+    @location.service_providers.where(active: true).order(:order, :public_name).each do |service_provider|
 
       new_seller ={
         :id => service_provider.id,
