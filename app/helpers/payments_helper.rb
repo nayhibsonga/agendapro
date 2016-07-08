@@ -103,7 +103,7 @@ module PaymentsHelper
 
 	end
 
-	def cashier_sales(cashier_ids, from, to, time_option)
+	def employee_code_sales(employee_code_ids, from, to, time_option)
 
 		current_date = from.utc
 		products = Hash.new
@@ -112,7 +112,7 @@ module PaymentsHelper
 
 			if time_option.nil? || !time_option || time_option == 0
 
-				products_amount = PaymentProduct.where(seller_id: cashier_ids, seller_type: 2, payment_id: Payment.where(payment_date: current_date).pluck(:id)).sum(:price)
+				products_amount = PaymentProduct.where(seller_id: employee_code_ids, seller_type: 2, payment_id: Payment.where(payment_date: current_date).pluck(:id)).sum(:price)
 
 				products[current_date.beginning_of_day] = products_amount
 
@@ -125,7 +125,7 @@ module PaymentsHelper
 					next_week = to
 				end
 
-				products_amount = PaymentProduct.where(seller_id: cashier_ids, seller_type: 2, payment_id: Payment.where(payment_date: current_date..next_week).pluck(:id)).sum(:price)
+				products_amount = PaymentProduct.where(seller_id: employee_code_ids, seller_type: 2, payment_id: Payment.where(payment_date: current_date..next_week).pluck(:id)).sum(:price)
 
 				products[current_date.beginning_of_day] = products_amount
 

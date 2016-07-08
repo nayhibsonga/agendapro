@@ -111,22 +111,22 @@ function loadUsersReport()
 
 function loadCashiersReport()
 {
-	var cashier_ids = []
+	var employee_code_ids = []
 	$('#render_content').empty();
 
-	if($('[name="person_type"]:checked').val() != "cashier")
+	if($('[name="person_type"]:checked').val() != "employee_code")
 	{
 		return;
 	}
 
-	$("#cashiersMultiSelect option").each(function(){
+	$("#employeeCodesMultiSelect option").each(function(){
 		if ($(this).is(':selected'))
 		{
-		  	cashier_ids.push($(this).val());
+		  	employee_code_ids.push($(this).val());
 		}
 	});
 
-	if(cashier_ids.length == 0)
+	if(employee_code_ids.length == 0)
 	{
 		$('#loader-div').hide();
 		return;
@@ -137,8 +137,8 @@ function loadCashiersReport()
 	var ajax_turn = requestAjaxTurn(ajax_name);
 
 	$.ajax({
-		url: 'cashiers_report',
-		data: {cashier_ids: cashier_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
+		url: 'employee_codes_report',
+		data: {employee_code_ids: employee_code_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
 		  	swal({
@@ -304,7 +304,7 @@ $(document).ready(function(){
 	    }
 	});
 
-	$('#cashiersMultiSelect').multiselect({
+	$('#employeeCodesMultiSelect').multiselect({
 	    includeSelectAllOption: true,
 	    selectAllText: 'Todos',
 	    buttonContainer: '<div style="margin-top: 8px;"></div>',
@@ -339,7 +339,7 @@ $(document).ready(function(){
 	    	loadReport();
 	    },
 	    onInitialized: function(select, container){
-	    	$('#cashiersMultiSelect').show();
+	    	$('#employeeCodesMultiSelect').show();
 	    }
 	});
 

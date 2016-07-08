@@ -746,11 +746,11 @@ class LocationsController < ApplicationController
 
     end
 
-    @location.company.cashiers.where(active: true).each do |cashier|
+    @location.company.employee_codes.where(active: true, cashier: true).each do |employee_code|
       new_seller ={
-        :id => cashier.id,
+        :id => employee_code.id,
         :seller_type => 2,
-        :full_name => cashier.name,
+        :full_name => employee_code.name,
         :role_name => "Cajero"
       }
 

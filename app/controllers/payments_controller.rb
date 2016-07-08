@@ -483,11 +483,11 @@ class PaymentsController < ApplicationController
       payment.client_id = nil
     end
 
-    if params[:cashier_id].present?
-      payment.cashier_id = params[:cashier_id]
+    if params[:employee_code_id].present?
+      payment.employee_code_id = params[:employee_code_id]
     else
       if !current_user.company.company_setting.require_cashier_code
-        payment.cashier_id = nil
+        payment.employee_code_id = nil
       else
         @errors << "No se pudo guardar el pago sin cajero."
         @json_response[0] = "error"
@@ -745,7 +745,7 @@ class PaymentsController < ApplicationController
   #
   # Almost equal to create_new_payment.
   # Just deletes/disassociates items and reconstructs them.
-  # Obviously, updates all params concerning the payment (client, cashier, date, payment_method, amount, etc.)
+  # Obviously, updates all params concerning the payment (client, employee_code, date, payment_method, amount, etc.)
   #
 
   def update_payment
@@ -815,11 +815,11 @@ class PaymentsController < ApplicationController
       end
     end
 
-    if params[:cashier_id].present?
-      payment.cashier_id = params[:cashier_id]
+    if params[:employee_code_id].present?
+      payment.employee_code_id = params[:employee_code_id]
     else
       if !current_user.company.company_setting.require_cashier_code
-        payment.cashier_id = nil
+        payment.employee_code_id = nil
       else
         @errors << "No se pudo guardar el pago sin cajero."
         @json_response[0] = "error"
@@ -1164,15 +1164,15 @@ class PaymentsController < ApplicationController
   end
 
   #
-  # Returns payment's cashier, client and date
+  # Returns payment's employee_code, client and date
   #
   def get_intro_info
 
     @payment = Payment.find(params[:payment_id])
     @client = @payment.client
-    @cashier = @payment.cashier
+    @employee_code = @payment.employee_code
 
-    render :json => {payment: @payment, client: @client, cashier: @cashier}
+    render :json => {payment: @payment, client: @client, employee_code: @employee_code}
 
   end
 
@@ -1212,10 +1212,10 @@ class PaymentsController < ApplicationController
       payment.client_id = nil
     end
 
-    if params[:cashier_id].present?
-      payment.cashier_id = params[:cashier_id]
+    if params[:employee_code_id].present?
+      payment.employee_code_id = params[:employee_code_id]
     else
-      payment.cashier_id = nil
+      payment.employee_code_id = nil
     end
     payment.payment_date = params[:payment_date].to_datetime
 
@@ -1722,7 +1722,7 @@ class PaymentsController < ApplicationController
       @json_response[1] = "No se ingresaron correctamente los datos."
       render :json => @json_response
       return
-    elsif params[:cashier_id].blank? && current_user.company.company_setting.require_cashier_code
+    elsif params[:employee_code_id].blank? && current_user.company.company_setting.require_cashier_code
       @json_response[0] = "error"
       @json_response[1] = "No se ingresaron correctamente los datos."
       render :json => @json_response
@@ -1752,13 +1752,13 @@ class PaymentsController < ApplicationController
     end
 
     if current_user.company.company_setting.require_cashier_code
-      if params[:cashier_id].present? && Cashier.where(id: params[:cashier_id]).count > 0
-        internal_sale.cashier_id = params[:cashier_id]
+      if params[:employee_code_id].present? && Cashier.where(id: params[:employee_code_id]).count > 0
+        internal_sale.employee_code_id = params[:employee_code_id]
       else
         @errors << "No existe el cajero ingresado."
       end
     else
-      internal_sale.cashier_id = nil
+      internal_sale.employee_code_id = nil
     end
 
     if params[:buyer_id].blank? || params[:buyer_type].blank?
@@ -2737,18 +2737,18 @@ class PaymentsController < ApplicationController
 
     @locations = []
     @service_providers = []
-    @cashiers = []
+    @employee_codes = []
     @users = []
 
     if current_user.role_id == Role.find_by_name("Administrador General").id
       @locations = current_user.company.locations
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
-      @cashiers = current_user.company.cashiers
+      @employee_codes = current_user.company.employee_codes
       @users = current_user.company.users
     elsif current_user.role_id == Role.find_by_name("Administrador Local").id
       @locations = current_user.locations
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
-      @cashiers = current_user.company.cashiers
+      @employee_codes = current_user.company.employee_codes
       @users = User.where(id: UserLocation.where(location_id: @locations.pluck(:id)).pluck(:user_id))
     elsif current_user.role_id == Role.find_by_name("Recepcionista").id
       @locations = current_user.locations
@@ -2865,10 +2865,10 @@ class PaymentsController < ApplicationController
 
   end
 
-  def cashiers_report
+  def employee_codes_report
 
-    cashier_ids = params[:cashier_ids]
-    @cashiers = Cashier.where(id: cashier_ids)
+    employee_code_ids = params[:employee_code_ids]
+    @employee_codes = Cashier.where(id: employee_code_ids)
 
     @from = params[:from].to_datetime
     @to = params[:to].to_datetime
@@ -2884,7 +2884,7 @@ class PaymentsController < ApplicationController
       location = current_user.company.locations
     end
 
-    payment_products = PaymentProduct.where(seller_id: cashier_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: locations.pluck(:id)).pluck(:id))
+    payment_products = PaymentProduct.where(seller_id: employee_code_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: locations.pluck(:id)).pluck(:id))
 
     @products_amount = 0.0
 
@@ -2898,7 +2898,7 @@ class PaymentsController < ApplicationController
     @total_amount = @products_amount
 
     respond_to do |format|
-      format.html { render :partial => 'cashiers_report' }
+      format.html { render :partial => 'employee_codes_report' }
       format.json { render json: @users }
     end
 

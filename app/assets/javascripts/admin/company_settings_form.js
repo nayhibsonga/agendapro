@@ -329,7 +329,7 @@ $(function () {
     $('#payment_method').modal('show');
   });
 
-  $('#NewStaffCode').click(function() {
+  /*$('#NewStaffCode').click(function() {
     $('#staffCode form').attr('action', '/staff_codes');
     $('#staffCode form').attr('id', 'new_staff_code');
     $('#staffCode form input[name="_method"]').remove();
@@ -371,7 +371,7 @@ $(function () {
     $('#cashier_active').attr('checked', $(e.currentTarget).data('active'));
     $('#cashier_code').val($(e.currentTarget).data('code'));
     $('#cashierModal').modal('show');
-  });
+  });*/
 
   $('#new_employee_code_button').on('click', function(e){
     $('form.employee_code_form').attr('action', '/employee_codes');
@@ -396,8 +396,8 @@ $(function () {
     $('#employee_code_name').val($(e.currentTarget).data('name'));
     $('#employee_code_active').attr('checked', $(e.currentTarget).data('active'));
     $('#employee_code_code').val($(e.currentTarget).data('code'));
-    $('#employee_code_staff').val($(e.currentTarget).data('staff'));
-    $('#employee_code_cashier').val($(e.currentTarget).data('cashier'));
+    $('#employee_code_staff').attr('checked', $(e.currentTarget).data('staff'));
+    $('#employee_code_cashier').attr('checked', $(e.currentTarget).data('cashier'));
     $('#employeeCodeModal').modal('show');
   });
 

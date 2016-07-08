@@ -11,7 +11,8 @@ class Company < ActiveRecord::Base
 	has_many :company_countries
 	has_many :countries, :through => :company_countries
 
-	has_many :cashiers, dependent: :destroy
+	#has_many :cashiers, dependent: :destroy
+	has_many :employee_codes, dependent: :destroy
 	has_many :email_contents, dependent: :destroy, class_name: 'Email::Content'
 
 	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
@@ -49,7 +50,7 @@ class Company < ActiveRecord::Base
 	has_one :billing_info, dependent: :destroy
 	belongs_to :bank
 	has_many :company_from_email, dependent: :destroy
-	has_many :staff_codes, dependent: :destroy
+	#has_many :staff_codes, dependent: :destroy
 	has_many :deals, dependent: :destroy
 	has_many :company_payment_methods, dependent: :destroy
 	has_many :payment_accounts, dependent: :destroy
