@@ -1752,10 +1752,10 @@ class PaymentsController < ApplicationController
     end
 
     if current_user.company.company_setting.require_cashier_code
-      if params[:employee_code_id].present? && Cashier.where(id: params[:employee_code_id]).count > 0
+      if params[:employee_code_id].present? && EmployeeCode.where(id: params[:employee_code_id], cashier: true).count > 0
         internal_sale.employee_code_id = params[:employee_code_id]
       else
-        @errors << "No existe el cajero ingresado."
+        @errors << "No existe el cajero ingresado o no tiene permisos."
       end
     else
       internal_sale.employee_code_id = nil
@@ -1988,7 +1988,7 @@ class PaymentsController < ApplicationController
         return
       end
     elsif transactioner_type == 2
-      if Cashier.where(:id => transactioner_id).count == 0
+      if EmployeeCode.where(:id => transactioner_id, :cashier => true).count == 0
         @json_response << "error"
         @json_response << "El autor de la transacción es inválido."
         render :json => @json_response
@@ -2089,7 +2089,7 @@ class PaymentsController < ApplicationController
       end
     elsif transactioner_type == 2
       if current_user.company.company_setting.require_cashier_code
-        if Cashier.where(:id => transactioner_id).count == 0
+        if EmployeeCode.where(:id => transactioner_id, :cashier => true).count == 0
           @json_response << "error"
           @json_response << "El autor de la transacción es inválido."
           render :json => @json_response
@@ -2743,12 +2743,12 @@ class PaymentsController < ApplicationController
     if current_user.role_id == Role.find_by_name("Administrador General").id
       @locations = current_user.company.locations
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
-      @employee_codes = current_user.company.employee_codes
+      @employee_codes = current_user.company.employee_codes.where(cashier: true)
       @users = current_user.company.users
     elsif current_user.role_id == Role.find_by_name("Administrador Local").id
       @locations = current_user.locations
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
-      @employee_codes = current_user.company.employee_codes
+      @employee_codes = current_user.company.employee_codes.where(cashier: true)
       @users = User.where(id: UserLocation.where(location_id: @locations.pluck(:id)).pluck(:user_id))
     elsif current_user.role_id == Role.find_by_name("Recepcionista").id
       @locations = current_user.locations
@@ -2868,7 +2868,7 @@ class PaymentsController < ApplicationController
   def employee_codes_report
 
     employee_code_ids = params[:employee_code_ids]
-    @employee_codes = Cashier.where(id: employee_code_ids)
+    @employee_codes = EmployeeCode.where(id: employee_code_ids)
 
     @from = params[:from].to_datetime
     @to = params[:to].to_datetime

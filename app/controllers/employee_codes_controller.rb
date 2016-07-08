@@ -62,9 +62,10 @@ class EmployeeCodesController < ApplicationController
     end
   end
 
+  #Get a cashier by code
   def get_by_code
 
-    employee_code = EmployeeCode.where(code: params[:employee_code_code], company_id: current_user.company_id, :active => true).first
+    employee_code = EmployeeCode.where(code: params[:employee_code_code], company_id: current_user.company_id, :active => true, cashier: true).first
 
     return_array = []
     if employee_code.nil?
@@ -75,6 +76,11 @@ class EmployeeCodesController < ApplicationController
 
     render :json => return_array
 
+  end
+
+  def check_staff_code
+    @employee_code = EmployeeCode.where(code: params[:booking_employee_code], company_id: current_user.company_id, active: true, staff: true).first
+    render :json => !@employee_code.nil?
   end
 
   private

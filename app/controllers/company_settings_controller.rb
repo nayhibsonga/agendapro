@@ -31,12 +31,12 @@ class CompanySettingsController < ApplicationController
     @banks = Bank.all
     @emails = current_user.company.company_from_email
     @company_from_email = CompanyFromEmail.new
-    @staff_codes = current_user.company.staff_codes.order(active: :desc)
-    @staff_code = StaffCode.new
+    #@staff_codes = current_user.company.staff_codes.order(active: :desc)
+    #@staff_code = StaffCode.new
     @deals = current_user.company.deals
     @deal = Deal.new
-    @cashiers = current_user.company.cashiers
-    @cashier = Cashier.new
+    #@cashiers = current_user.company.cashiers
+    #@cashier = Cashier.new
     @company_setting = @company.company_setting
     @online_cancelation_policy = OnlineCancelationPolicy.new
     if(!@company_setting.online_cancelation_policy.nil?)
@@ -83,7 +83,7 @@ class CompanySettingsController < ApplicationController
     @open_end = LocationTime.where(location_id: @company.locations).order(open: :asc).first.open.hour
     @close_start = LocationTime.where(location_id: @company.locations).order(close: :desc).first.close.hour
 
-    @employee_codes = @company.employee_codes
+    @employee_codes = @company.employee_codes.order(active: :desc)
     @employee_code = EmployeeCode.new
 
   end
@@ -130,8 +130,8 @@ class CompanySettingsController < ApplicationController
           @company = Company.find(current_user.company_id)
           @emails = current_user.company.company_from_email
           @company_from_email = CompanyFromEmail.new
-          @staff_codes = current_user.company.staff_codes
-          @staff_code = StaffCode.new
+          #@staff_codes = current_user.company.staff_codes
+          #@staff_code = StaffCode.new
           @deals = current_user.company.deals
           @deal = Deal.new
           @company_setting = @company.company_setting

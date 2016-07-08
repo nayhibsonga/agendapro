@@ -21,7 +21,7 @@ class CustomTimezone
 
     def from_booking_history(booking_history)
       entity = booking_history.user ||
-               booking_history.staff_code ||
+               booking_history.employee_code ||
                booking_history.service_provider
       self.from_company(entity.company)
     end

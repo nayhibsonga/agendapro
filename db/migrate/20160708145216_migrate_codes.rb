@@ -14,20 +14,19 @@ class MigrateCodes < ActiveRecord::Migration
 
   	Cashier.all.each do |cashier|
   		employee_code = EmployeeCode.create(company_id: cashier.company_id, name: cashier.name, code: cashier.code, active: cashier.active, cashier: true, staff: false)
-  		PaymentProduct.where(seller_type: 2, seller_id: cashier.id).update_all(seller_id: employee_code_id)
-  		PettyTransaction.where(transactioner_type: 2, transactioner_id: cashier.id).update_all(transactioner_id: employee_code_id)
+  		PaymentProduct.where(seller_type: 2, seller_id: cashier.id).update_all(seller_id: employee_code.id)
+  		PettyTransaction.where(transactioner_type: 2, transactioner_id: cashier.id).update_all(transactioner_id: employee_code.id)
   		StaffCode.where(company_id: cashier.company_id, code: cashier.code).each do |staff_code|
   			employee_code.update_column(:staff, true)
-  			BookingHistory.where(staff_code_id: staff_code.id).update_all(employee_code_id: staff_code_id, staff_code_id: nil)
+  			BookingHistory.where(staff_code_id: staff_code.id).update_all(employee_code_id: employee_code.id, staff_code_id: nil)
   			staff_code.delete
   		end
   	end
 
   	StaffCode.all.each do |staff_code|
-  		employee_code = EmployeeCode.create(company_id: staff_code.company_id, name: staff_code.name, code: staff_code.code, active: staff_code.active, cashier: false, staff: true)
-  		BookingHistory.where(staff_code_id: staff_code.id).update_all(employee_code_id: staff_code_id, staff_code_id: nil)
-  			staff_code.delete
-  		end
+  		employee_code = EmployeeCode.create(company_id: staff_code.company_id, name: staff_code.staff, code: staff_code.code, active: staff_code.active, cashier: false, staff: true)
+  		BookingHistory.where(staff_code_id: staff_code.id).update_all(employee_code_id: employee_code.id, staff_code_id: nil)
+  		staff_code.delete
   	end
 
   	remove_column :payments, :cashier_id, :integer

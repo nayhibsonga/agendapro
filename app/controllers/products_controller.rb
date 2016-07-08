@@ -146,19 +146,19 @@ class ProductsController < ApplicationController
       @user_sellers << user_tuple
     end
 
-    @cashier_sellers = []
-    @company.cashiers.each do |cashier|
+    @employee_code_sellers = []
+    @company.employee_codes.each do |employee_code|
       product_price_sum = 0
       product_quantity_sum = 0
-      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids]).pluck(:id), seller_type: 2, seller_id: cashier.id).each do |pp|
+      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids]).pluck(:id), seller_type: 2, seller_id: employee_code.id).each do |pp|
         product_quantity_sum += pp.quantity
         product_price_sum += pp.quantity * pp.price
       end
-      cashier_tuple = [cashier, product_price_sum, product_quantity_sum]
-      @cashier_sellers << cashier_tuple
+      employee_code_tuple = [employee_code, product_price_sum, product_quantity_sum]
+      @employee_code_sellers << employee_code_tuple
     end
 
-    @sellers = @provider_sellers + @user_sellers + @cashier_sellers
+    @sellers = @provider_sellers + @user_sellers + @employee_code_sellers
 
     respond_to do |format|
       format.html { render :partial => 'locations_stats' }
@@ -220,19 +220,19 @@ class ProductsController < ApplicationController
       @user_sellers << user_tuple
     end
 
-    @cashier_sellers = []
-    @company.cashiers.each do |cashier|
+    @employee_code_sellers = []
+    @company.employee_codes.each do |employee_code|
       product_price_sum = 0
       product_quantity_sum = 0
-      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids].split(",")).pluck(:id), seller_type: 2, seller_id: cashier.id).each do |pp|
+      PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids].split(",")).pluck(:id), seller_type: 2, seller_id: employee_code.id).each do |pp|
         product_quantity_sum += pp.quantity
         product_price_sum += pp.quantity * pp.price
       end
-      cashier_tuple = [cashier, product_price_sum, product_quantity_sum]
-      @cashier_sellers << cashier_tuple
+      employee_code_tuple = [employee_code, product_price_sum, product_quantity_sum]
+      @employee_code_sellers << employee_code_tuple
     end
 
-    @sellers = @provider_sellers + @user_sellers + @cashier_sellers
+    @sellers = @provider_sellers + @user_sellers + @employee_code_sellers
 
     respond_to do |format|
       format.xls
@@ -259,7 +259,7 @@ class ProductsController < ApplicationController
     elsif params[:seller_type].to_i == 1
       @seller = User.find(params[:seller_id])
     else
-      @seller = Cashier.find(params[:seller_id])
+      @seller = EmployeeCode.find(params[:seller_id])
     end
 
     @payment_products = PaymentProduct.where(payment_id: Payment.where(payment_date: @from..@to, location_id: params[:location_ids]), seller_type: params[:seller_type], seller_id: params[:seller_id]).order('(quantity * price) desc')

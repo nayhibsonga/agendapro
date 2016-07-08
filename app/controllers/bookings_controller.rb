@@ -178,8 +178,8 @@ class BookingsController < ApplicationController
     should_create_sessions = false
 
     booking_buffer_params[:bookings].each do |pos, buffer_params|
-      staff_code = nil
-      new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :session_booking_id, :has_sessions)
+      employee_code = nil
+      new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code, :session_booking_id, :has_sessions)
 
       @booking = Booking.new(new_booking_params)
 
@@ -278,8 +278,8 @@ class BookingsController < ApplicationController
       end
 
       if @company_setting.staff_code
-        if !buffer_params[:staff_code].blank? && StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).count > 0
-          staff_code = StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).first.id
+        if !buffer_params[:employee_code].blank? && EmployeeCode.where(company_id: current_user.company_id, code: buffer_params[:employee_code], active: true, staff: true).count > 0
+          employee_code = EmployeeCode.where(company_id: current_user.company_id, code: buffer_params[:employee_code], active: true).first.id
         else
           @errors << {
             :booking => pos,
@@ -561,7 +561,7 @@ class BookingsController < ApplicationController
           :location_id => u.location_id
         }
 
-        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
+        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, employee_code_id: employee_code, notes: @booking.notes, company_comment: @booking.company_comment)
       else
         @errors << {
             :booking => pos,
@@ -635,8 +635,8 @@ class BookingsController < ApplicationController
     should_create_sessions = false
 
     booking_buffer_params[:bookings].each do |pos, buffer_params|
-      staff_code = nil
-      new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code)
+      employee_code = nil
+      new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code)
       @booking = Booking.new(new_booking_params)
 
       if @booking.price.nil?
@@ -716,8 +716,8 @@ class BookingsController < ApplicationController
       end
 
       if @company_setting.staff_code
-        if !buffer_params[:staff_code].blank? && StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).count > 0
-          staff_code = StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).first.id
+        if !buffer_params[:employee_code].blank? && EmployeeCode.where(company_id: current_user.company_id, code: buffer_params[:employee_code], active: true, staff: true).count > 0
+          employee_code = EmployeeCode.where(company_id: current_user.company_id, code: buffer_params[:employee_code], active: true).first.id
         else
           @errors << {
             :booking => pos,
@@ -992,7 +992,7 @@ class BookingsController < ApplicationController
           :bundled => u.bundled
         }
 
-        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
+        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, employee_code_id: employee_code, notes: @booking.notes, company_comment: @booking.company_comment)
       else
         @errors << {
             :booking => pos,
@@ -1030,11 +1030,11 @@ class BookingsController < ApplicationController
   def booking_valid
     @company = Company.find(current_user.company_id)
     @company_setting = @company.company_setting
-    staff_code = nil
-    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code)
+    employee_code = nil
+    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_record, :client_second_phone, :client_gender, :employee_code, :deal_code)
     if @company_setting.staff_code
-      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).count > 0
-        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).first.id
+      if booking_params[:employee_code] && !booking_params[:employee_code].empty? && EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true, staff: true).count > 0
+        employee_code = EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true).first.id
       else
         render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
         return
@@ -1171,7 +1171,7 @@ class BookingsController < ApplicationController
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
         @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings }
-        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
+        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, employee_code_id: employee_code, notes: @booking.notes, company_comment: @booking.company_comment)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
         format.json { render :json => @booking_json }
         format.js { }
@@ -1188,13 +1188,13 @@ class BookingsController < ApplicationController
   def update
     @company = Company.find(current_user.company_id)
     @company_setting = @company.company_setting
-    staff_code = nil
+    employee_code = nil
     old_client_id = @booking.client_id
     sessions_created = false
-    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code)
+    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code, :deal_code)
     if @company_setting.staff_code
-      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).count > 0
-        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).first.id
+      if booking_params[:employee_code] && !booking_params[:employee_code].empty? && EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true, staff: true).count > 0
+        employee_code = EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true).first.id
       else
         render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
         return
@@ -2318,7 +2318,7 @@ class BookingsController < ApplicationController
           :bundled => u.bundled,
           :location_id => u.location_id
         }
-        BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
+        BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, employee_code_id: employee_code, notes: @booking.notes, company_comment: @booking.company_comment)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking_json }
         format.js { }
@@ -2335,8 +2335,8 @@ class BookingsController < ApplicationController
   def destroy
     @company_setting = current_user.company.company_setting
     if @company_setting.staff_code
-      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).count > 0
-        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).first.id
+      if booking_params[:employee_code] && !booking_params[:employee_code].empty? && EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true, staff: true).count > 0
+        employee_code = EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true).first.id
       else
         render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
         return
@@ -2612,13 +2612,13 @@ class BookingsController < ApplicationController
   end
 
   def booking_history
-    staff_code = '-'
+    employee_code = '-'
     user = '-'
     bookings = []
     BookingHistory.where(booking_id: params[:booking_id]).order(created_at: :desc).each do |booking_history|
       if current_user.role_id == Role.find_by_name('Administrador General').id || current_user.role_id == Role.find_by_name('Administrador Local').id || current_user.role_id == Role.find_by_name('Recepcionista').id
-        if booking_history.staff_code
-          staff_code = booking_history.staff_code.staff
+        if booking_history.employee_code
+          employee_code = booking_history.employee_code.name
         end
         user = 'Usuario no registrado'
         if booking_history.user_id && booking_history.user_id > 0 && booking_history.user
@@ -2626,7 +2626,7 @@ class BookingsController < ApplicationController
         end
       end
       timezone = CustomTimezone.from_booking_history(booking_history)
-      bookings.push( { action: booking_history.action, created: booking_history.created_at, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code, notes: booking_history.notes, company_comment: booking_history.company_comment, time_offset: timezone.offseti } )
+      bookings.push( { action: booking_history.action, created: booking_history.created_at, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, employee_code: employee_code, notes: booking_history.notes, company_comment: booking_history.company_comment, time_offset: timezone.offseti } )
     end
     render :json => bookings
   end
@@ -7922,10 +7922,10 @@ class BookingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def booking_params
-      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code, :session_booking_id, :payed_state, :bundled, :bundle_id, :bundled_delete)
+      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code, :deal_code, :session_booking_id, :payed_state, :bundled, :bundle_id, :bundled_delete)
     end
 
     def booking_buffer_params
-      params.permit(bookings: [:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :session_booking_id, :payed_state, :bundled, :bundle_id])
+      params.permit(bookings: [:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code, :session_booking_id, :payed_state, :bundled, :bundle_id])
     end
 end

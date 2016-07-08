@@ -584,7 +584,7 @@ function editBookingModal(eventId) {
       $('#booking_client_gender option[value="'+booking.gender+'"]').attr("selected",true);
       $('#booking_notes').val(booking.notes);
       $('#booking_company_comment').val(booking.company_comment);
-      $('#booking_staff_code').val('');
+      $('#booking_employee_code').val('');
       $('#booking_deal_code').val(booking.deal_code);
       if (booking.provider_lock) {
         $('#booking_provider_lock').prop('checked', true);
@@ -1068,7 +1068,7 @@ function createBookingModal(date, provider_id) {
       $('#booking_send_mail').val(0);
       $('#booking_send_mail').prop('checked', false);
       $('#booking_send_mail').prop('disabled', true);
-      $('#booking_staff_code').val('');
+      $('#booking_employee_code').val('');
       $('#booking_deal_code').val('');
       if (!$('label[for=booking_send_mail]').hasClass('disabled')) {
         $('label[for=booking_send_mail]').addClass('disabled');
@@ -1229,7 +1229,7 @@ function deleteTreatment(eventId){
         swal.showInputError("El código no puede estar en blanco.");
         return false;
       };
-      $('#booking_staff_code').val(inputValue);
+      $('#booking_employee_code').val(inputValue);
       $('.booking-button').attr("disabled", "disabled");
       $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
       //saveBooking('DELETE','/'+eventId, bundled);
@@ -1312,7 +1312,7 @@ function deleteBooking(eventId, bundled) {
         swal.showInputError("El código no puede estar en blanco.");
         return false;
       };
-      $('#booking_staff_code').val(inputValue);
+      $('#booking_employee_code').val(inputValue);
       $('.booking-button').attr("disabled", "disabled");
       $( '<span id="small_loader"><i class="fa fa-spinner fa-spin"></i> </span>' ).insertBefore( $( ".btn-close" ) );
       saveBooking('DELETE','/'+eventId, bundled);
@@ -1399,7 +1399,7 @@ function jsonBooking() {
     "company_comment": $('#booking_company_comment').val(),
     "send_mail": $('#booking_send_mail').prop('checked'),
     "provider_lock": $('#booking_provider_lock').prop('checked'),
-    "staff_code": $('#booking_staff_code').val(),
+    "employee_code": $('#booking_employee_code').val(),
     "deal_code": $('#booking_deal_code').val(),
     "payed_state": $('#booking_payed_state').val()
   };
@@ -1543,7 +1543,7 @@ function editDrag(event) {
           swal.showInputError("El código no puede estar en blanco.");
           return false;
         };
-        $.extend(eventJSON, {staff_code: inputValue});
+        $.extend(eventJSON, {employee_code: inputValue});
         $.ajax({
           type: 'PATCH',
           url: '/bookings/'+ event.id +'.json',
@@ -3245,7 +3245,7 @@ function loadClientHistory(booking_id) {
         $.each(bookings_history, function (key, booking_history) {
           var staffCode = '';
           if ($('#calendar-data').data('staff-code')) {
-            staffCode = '<td>'+booking_history.staff_code+'</td>';
+            staffCode = '<td>'+booking_history.employee_code+'</td>';
           }
           var created = new Date(booking_history.created);
           offsetDate(created, booking_history.time_offset);

@@ -564,41 +564,7 @@
               <% end %>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="background-grey">
-                <h3 class="text-green">
-                  Códigos de Staff
-                  <button id="NewStaffCode" class="btn btn-green pull-right" data-toggle="modal" data-target="#staffCode">Agregar código</button>
-                </h3>
-              </div>
-              <table class="table table-hover table-green">
-                <thead>
-                  <tr>
-                    <th>Staff</th>
-                    <th>Código</th>
-                    <th>Opciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @staff_codes.each do |staff_code| %>
-                    <tr>
-                      <td><%= staff_code.staff %></td>
-                      <td><%= staff_code.code %></td>
-                      <td>
-                        <button class="btn btn-orange edit_staff_code_button" data-staff="<%= staff_code.staff %>" data-active="<%= staff_code.active %>" data-code="<%= staff_code.code %>" data-id="<%= staff_code.id %>" data-toggle="modal" data-target="#staffCode"><i class="fa fa-pencil"></i></button>
-                        <% if staff_code.active %>
-                          <%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, deactivate_staff_code_path(:id => staff_code.id), method: :patch, data: { confirm: '¿Estás seguro de desactivar el Código seleccionado?' }, class: 'btn btn-red' %>
-                        <% else %>
-                          <%= link_to '<i class="fa fa-check"></i>'.html_safe, activate_staff_code_path(:id => staff_code.id), method: :patch, :class => "btn btn-green", data: { confirm: '¿Estás seguro de re-activar el Código seleccionado?' } %>
-                        <% end %>
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
-          </div>
+
         </div>
         <!-- Emails -->
         <div class="tab-pane" id="emails">
@@ -1231,50 +1197,6 @@
             </div>
           </div>
 
-          <!-- Cashiers -->
-
-          <div class="row" style="margin-top: 40px;">
-            <div class="col-md-12">
-              <div class="background-grey">
-                <h3 class="text-green">
-                  Listado de cajeros
-                  <button class="btn btn-green pull-right" id="new_cashier_button"><i class="fa fa-plus"></i> Agregar cajero</button>
-                </h3>
-              </div>
-              <table class="table table-hover table-green">
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Activo</th>
-                    <th>Código</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @cashiers.each do |cashier| %>
-                    <tr>
-                      <td><%= cashier.name %></td>
-                      <td><%= cashier.active ? "Activo" : "Inactivo" %></td>
-                      <td><%= cashier.code %></td>
-                      <td><button class="btn btn-orange edit_cashier_button" data-name="<%= cashier.name %>" data-active="<%= cashier.active %>" data-code="<%= cashier.code %>" data-id="<%= cashier.id %>"><i class="fa fa-pencil"></i> Editar</button>
-
-                        <!-- link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, cashier, method: :delete, data: { confirm: '¿Estás seguro de eliminar el cajero seleccionado?' }, class: 'btn btn-red' -->
-
-                        <% if cashier.active %>
-                          <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_cashier_path(id: cashier.id), method: :patch, data: { confirm: '¿Estás seguro de desactivar el cajero seleccionado?' }, class: 'btn btn-red' %>
-                        <% else %>
-                          <%= link_to '<i class="fa fa-check"></i>  Activar'.html_safe, activate_cashier_path(id: cashier.id), method: :patch, data: { confirm: '¿Estás seguro de activar el cajero seleccionado?' }, class: 'btn btn-green' %>
-                        <% end %>
-
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- End cashiers -->
 
         </div>
         <!-- Notifications -->
@@ -1829,42 +1751,6 @@
     </div>
   </div>
 
-  <div class="modal fade" id="staffCode" tabindex="-1" role="dialog" aria-labelledby="staffCodeLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title" id="staffCodeLabel">Agregar Código de Empleado</h4>
-        </div>
-        <%= form_for @staff_code, :html => {:class => 'form-horizontal'} do |f| %>
-          <div class="modal-body">
-            <%= f.hidden_field :company_id, :value => current_user.company.id %>
-            <%= f.hidden_field :active %>
-            <div class="form-group has-feedback">
-              <%= f.label :staff, 'Staff', :class => 'control-label col-xs-2' %>
-              <div class="col-xs-10">
-                <%= f.text_field :staff, :class => 'form-control' %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= f.label :code, 'Código', :class => 'control-label col-xs-2' %>
-              <div class="col-xs-10">
-                <%= f.text_field :code, :class => 'form-control' %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
 
   <div class="modal fade" id="deal" tabindex="-1" role="dialog" aria-labelledby="dealLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -1960,48 +1846,6 @@
     </div>
   </div>
 
-  <div class="modal fade" id="cashierModal" tabindex="-1" role="dialog" aria-labelledby="cashierModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title" id="cashierModalLabel">Cajero</h4>
-        </div>
-        <%= form_for @cashier, :html => {:class => 'form-horizontal cashier_form', :id => 'cashier_form'} do |f| %>
-          <div class="modal-body">
-            <%= f.hidden_field :company_id, :value => current_user.company.id %>
-            <div class="form-group has-feedback">
-              <%= f.label :name, 'Nombre', :class => 'control-label col-xs-4' %>
-              <div class="col-xs-8">
-                <%= f.text_field :name, :class => 'form-control' %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="col-xs-offset-4 col-xs-8">
-                <label>
-                  <%= f.check_box :active %> Activar cajero
-                </label>
-              </div>
-            </div>
-            <div class="form-group has-feedback">
-              <%= f.label :code, 'Código', :class => 'control-label col-xs-4' %>
-              <div class="col-xs-8">
-                <%= f.text_field :code, :class => 'form-control' %>
-                <span class="help-block"></span>
-                <span class="form-control-feedback"></span>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-            <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
 
 
   <div class="modal fade" id="employeeCodeModal" tabindex="-1" role="dialog" aria-labelledby="employeeCodeModalLabel" aria-hidden="true">

@@ -177,7 +177,7 @@ Agendapro::Application.routes.draw do
     get '/client_loader', :to => 'clients#client_loader'
     post '/merge_clients', :to => 'clients#merge'
 
-    get '/check_staff_code', :to => 'staff_codes#check_staff_code'
+    get '/check_staff_code', :to => 'employee_codes#check_staff_code'
     get '/get_staff_by_code', :to => 'staff_codes#get_staff_by_code'
 
     get '/provider_services', :to => 'service_providers#provider_service'
@@ -470,11 +470,10 @@ Agendapro::Application.routes.draw do
 
     patch '/cashiers/:id/activate', :to => 'cashiers#activate', :as => 'activate_cashier'
     patch '/cashiers/:id/deactivate', :to => 'cashiers#deactivate', :as => 'deactivate_cashier'
-    get '/get_cashier_by_code', :to => 'cashiers#get_by_code'
+    get '/get_cashier_by_code', :to => 'employee_codes#get_by_code'
 
     patch '/employee_codes/:id/activate', :to => 'employee_codes#activate', :as => 'activate_employee_code'
     patch '/employee_codes/:id/deactivate', :to => 'employee_codes#deactivate', :as => 'deactivate_employee_code'
-    get '/get_employee_by_code', :to => 'employee_codes#get_by_code'
 
     get '/receipt_pdf', :to => 'payments#receipt_pdf'
     get '/payment_pdf', :to => 'payments#payment_pdf'

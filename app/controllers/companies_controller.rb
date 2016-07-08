@@ -1628,7 +1628,7 @@ class CompaniesController < ApplicationController
 	end
 
 	def get_employee_codes_by_code
-		@employee_code = Cashier.find_by_code(params[:employee_code_code])
+		@employee_code = EmployeeCode.find_by_code(params[:employee_code_code])
 		render :json => @employee_code
 	end
 

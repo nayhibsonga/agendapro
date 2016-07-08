@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160706181031) do
+ActiveRecord::Schema.define(version: 20160708145216) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -151,7 +151,6 @@ ActiveRecord::Schema.define(version: 20160706181031) do
   create_table "booking_histories", force: true do |t|
     t.integer  "booking_id"
     t.string   "action"
-    t.integer  "staff_code_id"
     t.datetime "start"
     t.integer  "status_id"
     t.integer  "service_id"
@@ -161,13 +160,14 @@ ActiveRecord::Schema.define(version: 20160706181031) do
     t.integer  "user_id"
     t.text     "notes",               default: ""
     t.text     "company_comment",     default: ""
+    t.integer  "employee_code_id"
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
   add_index "booking_histories", ["created_at"], name: "index_booking_histories_on_created_at", order: {"created_at"=>:desc}, using: :btree
+  add_index "booking_histories", ["employee_code_id"], name: "index_booking_histories_on_employee_code_id", using: :btree
   add_index "booking_histories", ["service_id"], name: "index_booking_histories_on_service_id", using: :btree
   add_index "booking_histories", ["service_provider_id"], name: "index_booking_histories_on_service_provider_id", using: :btree
-  add_index "booking_histories", ["staff_code_id"], name: "index_booking_histories_on_staff_code_id", using: :btree
   add_index "booking_histories", ["status_id"], name: "index_booking_histories_on_status_id", using: :btree
   add_index "booking_histories", ["user_id"], name: "index_booking_histories_on_user_id", using: :btree
 
@@ -992,7 +992,6 @@ ActiveRecord::Schema.define(version: 20160706181031) do
 
   create_table "internal_sales", force: true do |t|
     t.integer  "location_id"
-    t.integer  "cashier_id"
     t.integer  "service_provider_id"
     t.integer  "product_id"
     t.integer  "quantity",            default: 1
@@ -1004,10 +1003,11 @@ ActiveRecord::Schema.define(version: 20160706181031) do
     t.datetime "date",                default: '2015-10-27 17:17:43'
     t.integer  "user_id"
     t.text     "notes",               default: ""
+    t.integer  "employee_code_id"
   end
 
-  add_index "internal_sales", ["cashier_id"], name: "index_internal_sales_on_cashier_id", using: :btree
   add_index "internal_sales", ["date"], name: "index_internal_sales_on_date", order: {"date"=>:desc}, using: :btree
+  add_index "internal_sales", ["employee_code_id"], name: "index_internal_sales_on_employee_code_id", using: :btree
   add_index "internal_sales", ["location_id"], name: "index_internal_sales_on_location_id", using: :btree
   add_index "internal_sales", ["product_id"], name: "index_internal_sales_on_product_id", using: :btree
   add_index "internal_sales", ["service_provider_id"], name: "index_internal_sales_on_service_provider_id", using: :btree
@@ -1444,25 +1444,25 @@ ActiveRecord::Schema.define(version: 20160706181031) do
 
   create_table "payments", force: true do |t|
     t.integer  "company_id"
-    t.float    "amount",        default: 0.0
-    t.boolean  "payed",         default: false
-    t.datetime "payment_date",  default: '2015-11-10 14:59:37'
+    t.float    "amount",           default: 0.0
+    t.boolean  "payed",            default: false
+    t.datetime "payment_date",     default: '2015-11-10 14:59:37'
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "discount",      default: 0.0
-    t.text     "notes",         default: ""
+    t.float    "discount",         default: 0.0
+    t.text     "notes",            default: ""
     t.integer  "location_id"
     t.integer  "client_id"
-    t.integer  "quantity",      default: 0
-    t.float    "paid_amount",   default: 0.0
-    t.float    "change_amount", default: 0.0
-    t.integer  "cashier_id"
+    t.integer  "quantity",         default: 0
+    t.float    "paid_amount",      default: 0.0
+    t.float    "change_amount",    default: 0.0
+    t.integer  "employee_code_id"
   end
 
-  add_index "payments", ["cashier_id"], name: "index_payments_on_cashier_id", where: "(cashier_id IS NOT NULL)", using: :btree
   add_index "payments", ["client_id"], name: "index_payments_on_client_id", using: :btree
   add_index "payments", ["company_id"], name: "index_payments_on_company_id", using: :btree
   add_index "payments", ["created_at"], name: "index_payments_on_created_at", order: {"created_at"=>:desc}, using: :btree
+  add_index "payments", ["employee_code_id"], name: "index_payments_on_employee_code_id", using: :btree
   add_index "payments", ["location_id"], name: "index_payments_on_location_id", using: :btree
   add_index "payments", ["payment_date"], name: "index_payments_on_payment_date", order: {"payment_date"=>:desc}, using: :btree
 
