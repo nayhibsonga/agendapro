@@ -353,6 +353,15 @@
 				                service_category = booking.service.service_category.name
 				            end
 
+				            receipt_notes = ""
+			                receipt_number = ""
+			                if !booking.receipt.nil? && !booking.receipt.notes.nil?
+			                	receipt_notes = booking.receipt.notes
+			                end
+			                if !booking.receipt.nil? && !booking.receipt.number.nil?
+			                	receipt_number = booking.receipt.number
+			                end
+
 		        		%>
 
 	        				<Row>
@@ -365,8 +374,8 @@
 					          	<Cell><Data ss:Type="Number"><%= booking.price %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= booking.get_commission %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
-					          	<Cell><Data ss:Type="String"><%= booking.receipt.notes %></Data></Cell>
-					          	<Cell><Data ss:Type="String"><%= booking.receipt.number %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= receipt_notes %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= receipt_number %></Data></Cell>
 					        </Row>
 
 		        		<%
@@ -395,6 +404,15 @@
 			                  provider_name = mock_booking.service_provider.public_name
 			                end
 
+			                receipt_notes = ""
+			                receipt_number = ""
+			                if !mock_booking.receipt.nil? && !mock_booking.receipt.notes.nil?
+			                	receipt_notes = mock_booking.receipt.notes
+			                end
+			                if !mock_booking.receipt.nil? && !mock_booking.receipt.number.nil?
+			                	receipt_number = mock_booking.receipt.number
+			                end
+
 		        		%>
 
 	        				<Row>
@@ -407,8 +425,8 @@
 					          	<Cell><Data ss:Type="Number"><%= mock_booking.price %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= mock_booking.get_commission %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
-					          	<Cell><Data ss:Type="String"><%= mock_booking.receipt.notes %></Data></Cell>
-					          	<Cell><Data ss:Type="String"><%= mock_booking.receipt.number %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= receipt_notes %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= receipt_number %></Data></Cell>
 					        </Row>
 
 		        		<%
@@ -444,6 +462,15 @@
 			                  		provider_name = "Sin información"
 			                  	end
 			                end
+			                receipt_notes = ""
+			                receipt_number = ""
+			                if !payment_product.receipt.nil? && !payment_product.receipt.notes.nil?
+			                	receipt_notes = payment_product.receipt.notes
+			                end
+			                if !payment_product.receipt.nil? && !payment_product.receipt.number.nil?
+			                	receipt_number = payment_product.receipt.number
+			                end
+
 		        		%>
 
 	        				<Row>
@@ -456,8 +483,8 @@
 					          	<Cell><Data ss:Type="Number"><%= payment_product.price * payment_product.quantity %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= payment_product.product.get_commission * payment_product.quantity %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
-					          	<Cell><Data ss:Type="String"><%= payment_product.receipt.notes %></Data></Cell>
-					          	<Cell><Data ss:Type="String"><%= payment_product.receipt.number %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= receipt_notes %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= receipt_number %></Data></Cell>
 					        </Row>
 
 		        		<%
@@ -643,6 +670,15 @@
                   client_name = payment_product.payment.client.full_name
                 end
 
+                receipt_notes = ""
+                receipt_number = ""
+                if !payment_product.receipt.nil? && !payment_product.receipt.notes.nil?
+                	receipt_notes = payment_product.receipt.notes
+                end
+                if !payment_product.receipt.nil? && !payment_product.receipt.number.nil?
+                	receipt_number = payment_product.receipt.number
+                end
+
               %>
 
               <Row>
@@ -657,8 +693,8 @@
                 <Cell><Data ss:Type="Number"><%= payment_product.quantity %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= payment_product.product.get_commission * payment_product.quantity %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= payment_product.receipt.notes %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= payment_product.receipt.number %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= receipt_notes %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= receipt_number %></Data></Cell>
               </Row>
             <% end %>
 
@@ -729,6 +765,15 @@
                   client_name = mock_booking.payment.client.full_name
                 end
 
+                receipt_notes = ""
+                receipt_number = ""
+                if !mock_booking.receipt.nil? && !mock_booking.receipt.notes.nil?
+                	receipt_notes = mock_booking.receipt.notes
+                end
+                if !mock_booking.receipt.nil? && !mock_booking.receipt.number.nil?
+                	receipt_number = mock_booking.receipt.number
+                end
+
               %>
 
               <Row>
@@ -739,8 +784,8 @@
                 <Cell><Data ss:Type="Number"><%= mock_booking.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= mock_booking.get_commission %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= mock_booking.receipt.notes %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= mock_booking.receipt.number %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= receipt_notes %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= receipt_number %></Data></Cell>
               </Row>
             <% end %>
 
@@ -803,6 +848,15 @@
                 provided_services_hash[booking.service_id][0] += booking.price
                 provided_services_hash[booking.service_id][1] += booking.get_commission
 
+                receipt_notes = ""
+                receipt_number = ""
+                if !booking.receipt.nil? && !booking.receipt.notes.nil?
+                	receipt_notes = booking.receipt.notes
+                end
+                if !booking.receipt.nil? && !booking.receipt.number.nil?
+                	receipt_number = booking.receipt.number
+                end
+
               %>
 
               <Row>
@@ -814,8 +868,8 @@
                 <Cell><Data ss:Type="Number"><%= booking.price %></Data></Cell>
                 <Cell><Data ss:Type="Number"><%= booking.get_commission %></Data></Cell>
                 <Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= booking.receipt.notes %></Data></Cell>
-                <Cell><Data ss:Type="String"><%= booking.receipt.number %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= receipt_notes %></Data></Cell>
+                <Cell><Data ss:Type="String"><%= receipt_number %></Data></Cell>
               </Row>
             <% end %>
 
