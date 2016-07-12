@@ -50,7 +50,7 @@ every 1.days, :at => '6:30 am' do
 	runner "NotificationEmail.booking_summary"
 end
 
-every 1.days, :at => '6:00 am' do
+every 1.days, :at => '4:00 am' do
 	runner "StatsCompany.update_stats"
 end
 
@@ -62,12 +62,16 @@ every 1.days, :at => '2:30 am' do
   runner 'Location.stock_reminders'
 end
 
-every 1.days, :at => '0:15 am' do
+every 1.days, :at => '0:30 am' do
   runner 'SalesCash.check_close'
 end
 
 every 1.days, :at => '0:15 am' do
   runner 'PettyCash.close_on_schedule'
+end
+
+every 1.minutes do
+  runner 'SparkpostEmailLog.update_logs'
 end
 
 environment = ENV['RAILS_ENV'] || 'production'
