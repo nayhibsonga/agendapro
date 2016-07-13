@@ -9,7 +9,7 @@ function loadPettyCash()
   if($('#require_employee_code_code').val() == "1")
   {
     var employee_code_code = $("#petty_cash_employee_code_code").val();
-    $.getJSON('/get_employee_code_by_code', {payment_employee_code_code: employee_code_code }, function (response) {
+    $.getJSON('/get_cashier_by_code', {payment_employee_code_code: employee_code_code }, function (response) {
       if(response[0] != "error")
       {
         $("#petty_cash_employee_code_name").val(response[0]['name']);
@@ -535,7 +535,7 @@ $(function() {
 
     var employee_code_code = $(this).val();
 
-    $.getJSON('/get_employee_code_by_code', {payment_employee_code_code: employee_code_code }, function (response) {
+    $.getJSON('/get_cashier_by_code', {payment_employee_code_code: employee_code_code }, function (response) {
       if(response[0] != "error")
       {
         $("#petty_cash_employee_code_name").val(response[0]['name']);

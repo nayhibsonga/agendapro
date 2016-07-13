@@ -597,9 +597,15 @@ class BookingsController < ApplicationController
       else
         if !session_booking.nil?
           session_booking.delete
+          logger.info "Treatment delete: #{session_booking.id}. Reason: Admin create failed."
         end
         @bookings.each do |book|
           Booking.find(book[:id]).destroy
+          logger.info "Booking delete: #{book[:id]}. Reason: Admin create failed"
+        end
+        logger.info "Errors: "
+        @errors.each do |error_message|
+          logger.info error_message
         end
 
         format.html { render action: 'new' }
@@ -1461,6 +1467,8 @@ class BookingsController < ApplicationController
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).last
                     discharged_booking.delete
 
+                    logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
+
                     session_booking.sessions_taken += 1
                     session_booking.save
 
@@ -1607,6 +1615,7 @@ class BookingsController < ApplicationController
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).last
                     discharged_booking.delete
+                    logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
 
                     session_booking.sessions_taken += 1
                     session_booking.save
@@ -1735,6 +1744,7 @@ class BookingsController < ApplicationController
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).last
                     discharged_booking.delete
+                    logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
 
                     session_booking.sessions_taken += 1
                     session_booking.save
@@ -1884,6 +1894,7 @@ class BookingsController < ApplicationController
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).last
                     discharged_booking.delete
+                    logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
 
                     session_booking.sessions_taken = session_booking.bookings.where(is_session_booked: true).count
                     session_booking.save
@@ -2031,6 +2042,7 @@ class BookingsController < ApplicationController
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).last
                     discharged_booking.delete
+                    logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
 
                     session_booking.sessions_taken += 1
                     session_booking.save
@@ -2421,6 +2433,9 @@ class BookingsController < ApplicationController
     booking_ids = @session_booking.bookings.pluck(:id)
     respond_to do |format|
       if @session_booking.destroy
+        booking_ids.each do |booking_id|
+          logger.info "Booking delete: #{booking_id}. Reason: Treatment delete."
+        end
         TreatmentLog.create(client_id: @session_booking.client_id, user_id: current_user.id, service_id: @session_booking.service_id, detail: "Eliminado por calendario.")
         format.html { redirect_to bookings_url }
         format.json { render :json => {id: @session_booking.id, bookings: booking_ids} }
@@ -2438,6 +2453,9 @@ class BookingsController < ApplicationController
     booking_ids = @session_booking.bookings.pluck(:id)
     respond_to do |format|
       if @session_booking.destroy
+        booking_ids.each do |booking_id|
+          logger.info "Booking delete: #{booking_id}. Reason: Treatment delete."
+        end
         TreatmentLog.create(client_id: @session_booking.client_id, user_id: current_user.id, service_id: @session_booking.service_id, detail: "Eliminado por calendario.")
         format.html { redirect_to bookings_url }
         format.json { render :json => {id: @session_booking.id, bookings: booking_ids} }
@@ -2465,6 +2483,9 @@ class BookingsController < ApplicationController
 
 
     if @session_booking.destroy
+      booking_ids.each do |booking_id|
+        logger.info "Booking delete: #{booking_id}. Reason: Treatment delete."
+      end
       @json_response << "ok"
       @json_response << @booking
       render :json => @json_response
@@ -3631,9 +3652,11 @@ class BookingsController < ApplicationController
       else
         if @has_session_booking && !@session_booking.nil?
           @session_booking.delete
+          logger.info "Treatment delete: #{@session_booking.id}. Reason: PuntoPagos failed)."
         end
         @bookings.each do |booking|
             booking.delete
+            logger.info "Booking delete: #{booking.id}. Reason: PuntoPagos failed)."
         end
         puts resp.get_error
         redirect_to punto_pagos_failure_path and return
@@ -3793,9 +3816,11 @@ class BookingsController < ApplicationController
       end
 
       session_booking.delete
+      logger.info "Treatment delete: #{session_booking.id}. Reason: Reached book_error."
 
       @tried_bookings.each do |booking|
         booking.delete
+        logger.info "Booking delete: #{booking.id}. Reason: Reached book_error."
       end
 
     else
@@ -3806,6 +3831,7 @@ class BookingsController < ApplicationController
           service_promo.save
         end
         booking.delete
+        logger.info "Booking delete: #{booking.id}. Reason: Reached book_error."
       end
     end
 
