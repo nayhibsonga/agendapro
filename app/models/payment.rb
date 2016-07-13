@@ -25,9 +25,17 @@ class Payment < ActiveRecord::Base
   #after_save :set_numbers
 
   def employee_code_details
-    details_str = "Sin información."
+    details_str = "Sin información"
     if !self.employee_code_id.nil? && EmployeeCode.where(id: self.employee_code_id).count > 0
-      details_str = self.employee_code.name + "."
+      details_str = self.employee_code.name
+    end
+    return details_str
+  end
+
+  def cashier_details
+    details_str = "Sin información"
+    if !self.employee_code_id.nil? && EmployeeCode.where(id: self.employee_code_id).count > 0
+      details_str = self.employee_code.name
     end
     return details_str
   end

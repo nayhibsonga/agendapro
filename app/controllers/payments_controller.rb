@@ -2865,7 +2865,7 @@ class PaymentsController < ApplicationController
 
   end
 
-  def employee_codes_report
+  def cashiers_report
 
     employee_code_ids = params[:employee_code_ids]
     @employee_codes = EmployeeCode.where(id: employee_code_ids)
@@ -2881,24 +2881,29 @@ class PaymentsController < ApplicationController
 
     locations = current_user.locations
     if current_user.role_id == Role.find_by_name("Administrador General").id
-      location = current_user.company.locations
+      locations = current_user.company.locations
     end
+
+    logger.debug "employee_code_ids"
+    logger.debug employee_code_ids.inspect
 
     payment_products = PaymentProduct.where(seller_id: employee_code_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: locations.pluck(:id)).pluck(:id))
 
-    @products_amount = 0.0
+    logger.debug "Payment products:"
+    logger.debug payment_products.inspect
+
+    @products_amount = payment_products.sum('price * quantity')
 
     @commissions_amount = 0.0
 
     payment_products.each do |payment_product|
       @commissions_amount += payment_product.quantity * payment_product.product.get_commission
-      @products_amount += payment_product.quantity * payment_product.price
     end
 
     @total_amount = @products_amount
 
     respond_to do |format|
-      format.html { render :partial => 'employee_codes_report' }
+      format.html { render :partial => 'cashiers_report' }
       format.json { render json: @users }
     end
 

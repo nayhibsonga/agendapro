@@ -233,6 +233,7 @@ class Ability
         can :sellers, Location, :company_id => user.company_id
         can :get_by_code, Cashier, :company_id => user.company_id
         can :get_by_code, EmployeeCode, :company_id => user.company_id
+        can :check_staff_code, EmployeeCode, :company_id => user.company_id
         can :receipt_pdf, Payment, :company_id => user.company_id
         can :payment_pdf, Payment, :company_id => user.company_id
         can :send_receipts_email, Payment, :company_id => user.company_id
@@ -655,6 +656,7 @@ class Ability
         can :sellers, Location, :company_id => user.company_id
         can :get_by_code, Cashier, :company_id => user.company_id
         can :get_by_code, EmployeeCode, :company_id => user.company_id
+        can :check_staff_code, EmployeeCode, :company_id => user.company_id
         can :receipt_pdf, Payment, :company_id => user.company_id
         can :payment_pdf, Payment, :company_id => user.company_id
         can :send_receipts_email, Payment, :company_id => user.company_id
@@ -953,6 +955,7 @@ class Ability
         can :create_new_payment, Payment, :company_id => user.company_id
         can :get_by_code, Cashier, :company_id => user.company_id
         can :get_by_code, EmployeeCode, :company_id => user.company_id
+        can :check_staff_code, EmployeeCode, :company_id => user.company_id
         can :receipt_pdf, Payment, :company_id => user.company_id
         can :payment_pdf, Payment, :company_id => user.company_id
         can :send_receipts_email, Payment, :company_id => user.company_id
@@ -1080,6 +1083,7 @@ class Ability
         can :create_new_payment, Payment, :company_id => user.company_id
         can :get_by_code, Cashier, :company_id => user.company_id
         can :get_by_code, EmployeeCode, :company_id => user.company_id
+        can :check_staff_code, EmployeeCode, :company_id => user.company_id
         can :receipt_pdf, Payment, :company_id => user.company_id
         can :payment_pdf, Payment, :company_id => user.company_id
         can :send_receipts_email, Payment, :company_id => user.company_id

@@ -65,7 +65,7 @@ class EmployeeCodesController < ApplicationController
   #Get a cashier by code
   def get_by_code
 
-    employee_code = EmployeeCode.where(code: params[:employee_code_code], company_id: current_user.company_id, :active => true, cashier: true).first
+    employee_code = EmployeeCode.where(code: params[:payment_employee_code_code], company_id: current_user.company_id, :active => true, cashier: true).first
 
     return_array = []
     if employee_code.nil?

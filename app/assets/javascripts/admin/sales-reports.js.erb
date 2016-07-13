@@ -28,7 +28,7 @@ function loadProvidersReport()
 	var ajax_turn = requestAjaxTurn(ajax_name);
 
 	$.ajax({
-		url: 'service_providers_report',
+		url: '/service_providers_report',
 		data: {service_provider_ids: provider_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
@@ -82,7 +82,7 @@ function loadUsersReport()
 	var ajax_turn = requestAjaxTurn(ajax_name);
 
 	$.ajax({
-		url: 'users_report',
+		url: '/users_report',
 		data: {user_ids: user_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
@@ -113,9 +113,11 @@ function loadCashiersReport()
 {
 	var employee_code_ids = []
 	$('#render_content').empty();
+	console.log("Enters");
 
 	if($('[name="person_type"]:checked').val() != "employee_code")
 	{
+		console.log("Gets to 1");
 		return;
 	}
 
@@ -128,16 +130,19 @@ function loadCashiersReport()
 
 	if(employee_code_ids.length == 0)
 	{
+		console.log("Gets to 2");
 		$('#loader-div').hide();
 		return;
 	}
+
+	console.log("Goes on");
 
 	$('#loader-div').show();
 
 	var ajax_turn = requestAjaxTurn(ajax_name);
 
 	$.ajax({
-		url: 'employee_codes_report',
+		url: '/cashiers_report',
 		data: {employee_code_ids: employee_code_ids, from: $("#reports_start").val(), to: $("#reports_end").val()},
 		type: 'get',
 		error: function(response){
