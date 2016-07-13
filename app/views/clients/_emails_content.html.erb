@@ -16,7 +16,7 @@
           <% @emails.each do |email| %>
           <tr>
             <td><%= email.status %></td>
-            <td><%= l email.timestamp, format: :long %></td>
+            <td><%= l email.timestamp + @timezone, format: :long %></td>
             <td><%= email.subject %></td>
             <td><%= email.recipient %></td>
             <td><%= email.opens %></td>

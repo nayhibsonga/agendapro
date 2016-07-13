@@ -3,7 +3,11 @@ module Webhooks
     http_basic_authenticate_with name: "sparkpost_webhook", password: "8j1fm7b6h5ovdxhltpy0por3l5nkwxh4yi2d"
 
     def consume_raw
-      SparkpostEmailLog.create(raw_message: params.inspect, pending_process: true)
+      sparkpost_email_log = SparkpostEmailLog.create(raw_message: params.inspect, pending_process: true)
+
+      if sparkpost_email_log
+        sparkpost_email_log.delay.process_log
+      end
 
       # json = params["_json"]
 
