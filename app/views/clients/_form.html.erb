@@ -16,7 +16,7 @@
             <li class="edit-tab-li"><a href="#filesTab" role="tab" data-toggle="tab" class="tab_index">Archivos</a></li>
             </ul>
             <ul id="editTab2" class="nav nav-tabs" role="tablist">
-            <% @company.attribute_groups.each do |attribute_group| %>
+            <% @company.attribute_groups.order(:order).each do |attribute_group| %>
               <% if attribute_group.custom_attributes.count > 0 %>
                 <li class="edit-tab-li"><a href="#group-<%= attribute_group.id.to_s %>-tab" role="tab" data-toggle="tab" class="tab_index"><%= attribute_group.name %></a></li>
               <% end %>
@@ -384,7 +384,7 @@
               </div>
             </div>
 
-            <% @company.attribute_groups.each do |attribute_group| %>
+            <% @company.attribute_groups.order(:order).each do |attribute_group| %>
               <% if attribute_group.custom_attributes.count > 0 %>
                 <div class="tab-pane fade in" id="group-<%= attribute_group.id.to_s %>-tab">
                   <%= form_tag client_update_attributes_path, multipart: true, class: 'form-horizontal update-custom-group-form', id: 'update-custom-group-#{attribute_group.id}' do %>
