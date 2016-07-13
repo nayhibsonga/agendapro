@@ -112,7 +112,7 @@
               <button class="btn btn-default btn-xs" onclick="openPaymentSummary(<%= payment.id %>);"><i class="fa fa-search-plus"></i></button>
               <button class="btn btn-dark-green btn-xs" onclick="openPaymentPdfs(<%= payment.id %>);"><i class="fa fa-file-pdf-o"></i></button>
               <button class="btn btn-orange btn-xs" onclick="openPaymentMailer(<%= payment.id %>);"><i class="fa fa-envelope"></i></button>
-              <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
+              <% if current_user.role_id == Role.find_by_name("Administrador General").id || current_user.role_id == Role.find_by_name("Administrador Local").id %>
                 <button class="btn btn-warning btn-xs" onclick="editPayment(<%= payment.id %>);"><i class="fa fa-pencil"></i></button>
                 <button class="btn btn-red btn-xs" onclick="deletePayment(<%= payment.id %>);"><i class="fa fa-trash-o"></i></button>
               <% end %>
@@ -222,7 +222,7 @@
               <td><%= internal_sale.discount.round(2) %> %</td>
               <td><%= internal_sale.get_notes %></td>
               <td>
-                <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
+                <% if current_user.role_id == Role.find_by_name("Administrador General").id || current_user.role_id == Role.find_by_name("Administrador Local").id %>
                   <button class="btn btn-default btn-xs" onclick="openInternalSaleSummary(<%= internal_sale.id %>);"><i class="fa fa-search-plus"></i></button>
                   <button class="btn btn-warning btn-xs" onclick="editInternalSale(<%= internal_sale.id %>);"><i class="fa fa-pencil"></i></button>
                   <button class="btn btn-red btn-xs" onclick="deleteInternalSale(<%= internal_sale.id %>);"><i class="fa fa-trash-o"></i></button>
@@ -279,7 +279,7 @@
               <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td>
-                <% if current_user.role_id == Role.find_by_name("Administrador General").id && sales_cash_transaction.open %>
+                <% if (current_user.role_id == Role.find_by_name("Administrador General").id  || current_user.role_id == Role.find_by_name("Administrador Local").id) && sales_cash_transaction.open %>
                   <button class="btn btn-default btn-xs" onclick="openSalesCashTransactionSummary(<%= sales_cash_transaction.id %>);"><i class="fa fa-search-plus"></i></button>
                   <button class="btn btn-warning btn-xs" onclick="editSalesCashTransaction(<%= sales_cash_transaction.id %>);"><i class="fa fa-pencil"></i></button>
                   <button class="btn btn-red btn-xs" onclick="deleteSalesCashTransaction(<%= sales_cash_transaction.id %>);"><i class="fa fa-trash-o"></i></button>
@@ -323,7 +323,7 @@
               <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td>
-                <% if current_user.role_id == Role.find_by_name("Administrador General").id && sales_cash_income.open %>
+                <% if (current_user.role_id == Role.find_by_name("Administrador General").id  || current_user.role_id == Role.find_by_name("Administrador Local").id) && sales_cash_income.open %>
                   <button class="btn btn-default btn-xs" onclick="openSalesCashIncomeSummary(<%= sales_cash_income.id %>);"><i class="fa fa-search-plus"></i></button>
                   <button class="btn btn-warning btn-xs" onclick="editSalesCashIncome(<%= sales_cash_income.id %>);"><i class="fa fa-pencil"></i></button>
                   <button class="btn btn-red btn-xs" onclick="deleteSalesCashIncome(<%= sales_cash_income.id %>);"><i class="fa fa-trash-o"></i></button>
