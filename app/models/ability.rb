@@ -785,8 +785,11 @@ class Ability
         can :client_sessions, Payment
         can :index_content, Payment
         can :read, Payment, :company_id => user.company_id
+        can :destroy, Payment, :company_id => user.company_id
         can :create, Payment, :company_id => user.company_id
-        can :sellers, Location, :company_id => user.company_id
+        can :update, Payment, :company_id => user.company_id
+        can :delete_payment, Payment, :company_id => user.company_id
+        can :update_payment, Payment, :company_id => user.company_id
 
         can :compose_mail, Client, :company_id => user.company_id
         can :send_mail, Client, :company_id => user.company_id
