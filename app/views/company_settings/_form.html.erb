@@ -1696,8 +1696,6 @@
                       <td><%= employee_code.cashier ? "Permitido" : "Denegado" %></td>
                       <td><button class="btn btn-orange edit_employee_code_button" data-name="<%= employee_code.name %>" data-active="<%= employee_code.active %>" data-code="<%= employee_code.code %>" data-id="<%= employee_code.id %>" data-staff="<%= employee_code.staff %>" data-cashier="<%= employee_code.cashier %>"><i class="fa fa-pencil"></i> Editar</button>
 
-                        <!-- link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, cashier, method: :delete, data: { confirm: '¿Estás seguro de eliminar el cajero seleccionado?' }, class: 'btn btn-red' -->
-
                         <% if employee_code.active %>
                           <%= link_to '<i class="fa fa-ban"></i> Desactivar'.html_safe, deactivate_employee_code_path(id: employee_code.id), method: :patch, data: { confirm: '¿Estás seguro de desactivar el código seleccionado?' }, class: 'btn btn-red' %>
                         <% else %>

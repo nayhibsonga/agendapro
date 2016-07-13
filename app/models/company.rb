@@ -86,7 +86,7 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
-	after_create :create_cashier, :create_plan_setting, :create_attribute_group,
+	after_create :create_plan_setting, :create_attribute_group,
 
 	WORKER = 'CompanyEmailWorker'
 
@@ -159,10 +159,6 @@ class Company < ActiveRecord::Base
 		used_storage += self.company_files.sum(:size)
 		used_storage += self.client_files.sum(:size)
 
-	end
-
-	def create_cashier
-		cashier = Cashier.create(company_id: self.id, name: "Cajero 1", code: "12345678", active: true)
 	end
 
 	def plan_settings
