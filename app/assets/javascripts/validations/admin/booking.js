@@ -35,7 +35,7 @@ $(function() {
 			'booking[service_provider_id]': {
 				required: true
 			},
-			'booking_staff_code': {
+			'booking_employee_code': {
 				required: true,
 				remote: '/check_staff_code'
 			},
@@ -66,7 +66,7 @@ $(function() {
 			'booking[end_minutes]': {
 				require_from_group: 'Debe elegir una hora.\n'
 			},
-			'booking_staff_code': {
+			'booking_employee_code': {
 				remote: 'El código es incorrecto, por favor inténtalo nuevamente.'
 			}
 		},
@@ -95,7 +95,7 @@ $(function() {
 			};
 		},
 		rules: {
-			'booking_staff_code': {
+			'booking_employee_code': {
 				required: true,
 				remote: '/check_staff_code'
 			},
@@ -129,7 +129,7 @@ $(function() {
 			}
 		},
 		messages: {
-			'booking_staff_code': {
+			'booking_employee_code': {
 				remote: 'El código es incorrecto, por favor inténtalo nuevamente.'
 			}
 		},

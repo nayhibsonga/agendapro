@@ -1627,9 +1627,9 @@ class CompaniesController < ApplicationController
 	    end
 	end
 
-	def get_cashiers_by_code
-		@cashier = Cashier.find_by_code(params[:cashier_code])
-		render :json => @cashier
+	def get_employee_codes_by_code
+		@employee_code = EmployeeCode.find_by_code(params[:employee_code_code])
+		render :json => @employee_code
 	end
 
 	#Company files that are not associated against any client

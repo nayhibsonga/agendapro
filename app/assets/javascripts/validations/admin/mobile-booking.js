@@ -17,7 +17,7 @@ $(function() {
 			'booking[service_provider]': {
 				required: true
 			},
-			'booking_staff_code': {
+			'booking_employee_code': {
 				required: true,
 				remote: '/check_staff_code'
 			},
@@ -33,7 +33,7 @@ $(function() {
 			}
 		},
 		messages: {
-			'booking_staff_code': {
+			'booking_employee_code': {
 				remote: 'El código es incorrecto, por favor inténtalo nuevamente.'
 			}
 		},

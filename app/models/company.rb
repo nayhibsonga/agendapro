@@ -11,7 +11,8 @@ class Company < ActiveRecord::Base
 	has_many :company_countries
 	has_many :countries, :through => :company_countries
 
-	has_many :cashiers, dependent: :destroy
+	#has_many :cashiers, dependent: :destroy
+	has_many :employee_codes, dependent: :destroy
 	has_many :email_contents, dependent: :destroy, class_name: 'Email::Content'
 
 	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
@@ -49,7 +50,7 @@ class Company < ActiveRecord::Base
 	has_one :billing_info, dependent: :destroy
 	belongs_to :bank
 	has_many :company_from_email, dependent: :destroy
-	has_many :staff_codes, dependent: :destroy
+	#has_many :staff_codes, dependent: :destroy
 	has_many :deals, dependent: :destroy
 	has_many :company_payment_methods, dependent: :destroy
 	has_many :payment_accounts, dependent: :destroy
@@ -59,6 +60,7 @@ class Company < ActiveRecord::Base
 	has_many :product_categories, dependent: :destroy
 	has_many :billing_wire_transfers
 	has_many :downgrade_logs
+	has_many :employee_codes, dependent: :destroy
 
 	has_one :company_plan_setting
 
@@ -84,7 +86,7 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
-	after_create :create_cashier, :create_plan_setting, :create_attribute_group,
+	after_create :create_plan_setting, :create_attribute_group,
 
 	WORKER = 'CompanyEmailWorker'
 
@@ -157,10 +159,6 @@ class Company < ActiveRecord::Base
 		used_storage += self.company_files.sum(:size)
 		used_storage += self.client_files.sum(:size)
 
-	end
-
-	def create_cashier
-		cashier = Cashier.create(company_id: self.id, name: "Cajero 1", code: "12345678", active: true)
 	end
 
 	def plan_settings

@@ -232,6 +232,8 @@ class Ability
         can :save_stock_alarm, Location, :company_id => user.company_id
         can :sellers, Location, :company_id => user.company_id
         can :get_by_code, Cashier, :company_id => user.company_id
+        can :get_by_code, EmployeeCode, :company_id => user.company_id
+        can :check_staff_code, EmployeeCode, :company_id => user.company_id
         can :receipt_pdf, Payment, :company_id => user.company_id
         can :payment_pdf, Payment, :company_id => user.company_id
         can :send_receipts_email, Payment, :company_id => user.company_id
@@ -449,6 +451,13 @@ class Ability
         can :activate, Cashier, :company_id => user.company_id
         can :deactivate, Cashier, :company_id => user.company_id
 
+        can :show, EmployeeCode, :company_id => user.company_id
+        can :create, EmployeeCode, :company_id => user.company_id
+        can :update, EmployeeCode, :company_id => user.company_id
+        can :destroy, EmployeeCode, :company_id => user.company_id
+        can :activate, EmployeeCode, :company_id => user.company_id
+        can :deactivate, EmployeeCode, :company_id => user.company_id
+
         can :show, Attribute, :company_id => user.company_id
         can :create, Attribute, :company_id => user.company_id
         can :update, Attribute, :company_id => user.company_id
@@ -646,6 +655,8 @@ class Ability
         can :save_stock_alarm, Location, :company_id => user.company_id
         can :sellers, Location, :company_id => user.company_id
         can :get_by_code, Cashier, :company_id => user.company_id
+        can :get_by_code, EmployeeCode, :company_id => user.company_id
+        can :check_staff_code, EmployeeCode, :company_id => user.company_id
         can :receipt_pdf, Payment, :company_id => user.company_id
         can :payment_pdf, Payment, :company_id => user.company_id
         can :send_receipts_email, Payment, :company_id => user.company_id
@@ -948,6 +959,8 @@ class Ability
         can :get_staff_by_code, StaffCode, :company_id => user.company_id
         can :create_new_payment, Payment, :company_id => user.company_id
         can :get_by_code, Cashier, :company_id => user.company_id
+        can :get_by_code, EmployeeCode, :company_id => user.company_id
+        can :check_staff_code, EmployeeCode, :company_id => user.company_id
         can :receipt_pdf, Payment, :company_id => user.company_id
         can :payment_pdf, Payment, :company_id => user.company_id
         can :send_receipts_email, Payment, :company_id => user.company_id
@@ -1076,6 +1089,8 @@ class Ability
         can :get_staff_by_code, StaffCode, :company_id => user.company_id
         can :create_new_payment, Payment, :company_id => user.company_id
         can :get_by_code, Cashier, :company_id => user.company_id
+        can :get_by_code, EmployeeCode, :company_id => user.company_id
+        can :check_staff_code, EmployeeCode, :company_id => user.company_id
         can :receipt_pdf, Payment, :company_id => user.company_id
         can :payment_pdf, Payment, :company_id => user.company_id
         can :send_receipts_email, Payment, :company_id => user.company_id

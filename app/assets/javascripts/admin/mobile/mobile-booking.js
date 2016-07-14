@@ -68,7 +68,7 @@ function saveBooking (typeURL, booking_id) {
     'client_phone': $('#phone').val(),
     'send_mail': $('#send_mail').prop('checked'),
     "client_identification_number": $('#identification_number').val(),
-    "staff_code": $('#booking_staff_code').val(),
+    "employee_code": $('#booking_employee_code').val(),
     "notes": $('#booking_notes').val(),
     "company_comment": $('#booking_company_comment').val()
   }

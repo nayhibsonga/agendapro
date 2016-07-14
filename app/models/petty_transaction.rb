@@ -28,7 +28,7 @@ class PettyTransaction < ActiveRecord::Base
 	    elsif self.transactioner_type == 1
 	      return User.find(self.transactioner_id)
 	    else
-	      return Cashier.find(self.transactioner_id)
+	      return EmployeeCode.find(self.transactioner_id)
 	    end
 
 	end

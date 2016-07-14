@@ -33,7 +33,7 @@ class PaymentProduct < ActiveRecord::Base
     elsif self.seller_type == 1
       return User.find(self.seller_id)
     else
-      return Cashier.find(self.seller_id)
+      return EmployeeCode.find(self.seller_id)
     end
 
   end

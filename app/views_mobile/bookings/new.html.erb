@@ -66,9 +66,9 @@
         </div>
         <% if @company.company_setting.staff_code %>
         <div class="form-group">
-          <%= label_tag :booking_staff_code, "Código de Empleado", class: "control-label col-xs-3" %>
+          <%= label_tag :booking_employee_code, "Código de Empleado", class: "control-label col-xs-3" %>
           <div class="col-xs-9">
-            <%= text_field_tag :booking_staff_code, '',{class: "form-control", required: true} %>
+            <%= text_field_tag :booking_employee_code, '',{class: "form-control", required: true} %>
             <span class="help-block"></span>
           </div>
         </div>

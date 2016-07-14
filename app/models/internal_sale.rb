@@ -1,6 +1,7 @@
 class InternalSale < ActiveRecord::Base
 	belongs_to :location
-	belongs_to :cashier
+	#belongs_to :cashier
+  belongs_to :employee_code
 	belongs_to :service_provider
 	belongs_to :product
 	belongs_to :user
@@ -23,8 +24,8 @@ class InternalSale < ActiveRecord::Base
 
   def cashier_details
     details_str = "Sin información."
-    if !self.cashier_id.nil? && Cashier.where(id: self.cashier_id).count > 0
-      details_str = self.cashier.name + "."
+    if !self.employee_code_id.nil? && EmployeeCode.where(id: self.employee_code_id).count > 0
+      details_str = self.employee_code.name + "."
     end
     return details_str
   end
