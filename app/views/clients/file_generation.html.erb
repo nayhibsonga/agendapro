@@ -9,7 +9,10 @@
 </div>
 <div style="margin: auto; width: 480px;">
 	<p style="text-align: center; font-size: 18px;">
-		El archivo se está generando. Una vez listo, se abrirá un diálogo o se descargará automáticamente según tus configuraciones de navegador.
+		El archivo se está generando. Una vez listo, aparecerá un enlace de descarga.
+	</p>
+	<p style="text-align: center; font-size: 18px;">
+		<button class="btn btn-green" style="display: none;"><a href="#" id="download-link">Descargar</a></button>
 	</p>
 </div>
 <%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_download_path(format: "xls", attendance: params[:attendance], search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], range_from: params[:range_from], range_to: params[:range_to], custom_filters: params[:custom_filters]), class: "btn btn-white", id: "download-link", style: "display: none" %>

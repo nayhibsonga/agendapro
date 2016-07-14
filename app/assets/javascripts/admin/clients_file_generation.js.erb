@@ -2,8 +2,17 @@
 	$('#download-link').load(function(){		
 		$('#download-link')[0].click();
 	});
+
+	<%= link_to '<i class="fa fa-download"></i> Excel'.html_safe, clients_download_path(format: "xls", attendance: params[:attendance], search: params[:search], locations: params[:locations], providers: params[:providers], services: params[:services], statuses: params[:statuses], gender: params[:gender], birth_from: params[:birth_from], birth_to: params[:birth_to], range_from: params[:range_from], range_to: params[:range_to], custom_filters: params[:custom_filters]), class: "btn btn-white", id: "download-link", style: "display: none" %>
+	
 });*/
 
 $(document).ready(function(){
-	$('#download-link')[0].click();
+	//$('#download-link')[0].click();
+	$.ajax({
+		url: '/clients_file_generation.xls',
+		method: 'get',
+		dataType: 'json',
+		data: 
+	})
 });

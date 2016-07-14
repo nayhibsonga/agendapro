@@ -128,9 +128,11 @@ class ClientsController < ApplicationController
     filepath = "#{Rails.root}/public/clients_files/clientes_" + current_user.company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
     Company.generate_clients_file(current_user.company_id, @clients_export, filepath)
 
-    send_file filepath, filename: "clientes.xls"
+    #send_file filepath, filename: "clientes.xls"
 
     Company.delay(run_at: 2.hours.from_now).delete_booking_file(filepath)
+
+    render :json => {file_uri: filepath}
 
   end
 
