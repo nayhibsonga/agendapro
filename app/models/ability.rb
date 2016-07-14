@@ -986,6 +986,8 @@ class Ability
         can :sales_reports, Payment, :company_id => user.company_id
         can :users_report, Payment, :company_id => user.company_id
         can :service_providers_report, Payment, :company_id => user.company_id
+        can :service_providers_report_file, Payment, :company_id => user.company_id
+
 
         can :read, ClientFile, :client => {:company_id => user.company_id}
         can :create, ClientFile, :client => {:company_id => user.company_id}
