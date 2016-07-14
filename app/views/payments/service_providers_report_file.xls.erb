@@ -310,6 +310,7 @@
 	          	<Cell><Data ss:Type="String">Categoría</Data></Cell>
 	          	<Cell><Data ss:Type="String">Nombre</Data></Cell>
 	          	<Cell><Data ss:Type="String">Monto</Data></Cell>
+	          	<Cell><Data ss:Type="String">Dscto. aplicado</Data></Cell>
 	          	<Cell><Data ss:Type="String">Comisión</Data></Cell>
 	          	<Cell><Data ss:Type="String">Medios de pago</Data></Cell>
 	          	<Cell><Data ss:Type="String">Comentario</Data></Cell>
@@ -362,6 +363,14 @@
 			                	receipt_number = booking.receipt.number
 			                end
 
+			                discount = "0%"
+			                if !booking.discount.nil? && booking.discount > 0
+			                	discount = booking.discount.round(1).to_s + "%"
+			                elsif !booking.price.nil? && !booking.list_price.nil? && booking.list_price > booking.price
+			                	discount = ((booking.list_price - booking.price).to_f/booking.list_price)*100
+			                	discount = discount.round(1).to_s + "%"
+			                end
+
 		        		%>
 
 	        				<Row>
@@ -372,6 +381,7 @@
 					          	<Cell><Data ss:Type="String"><%= service_category %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= booking.price %></Data></Cell>
+					          	<Cell><Data ss:Type="Number"><%= discount %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= booking.get_commission %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= receipt_notes %></Data></Cell>
