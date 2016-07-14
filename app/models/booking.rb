@@ -155,6 +155,7 @@ class Booking < ActiveRecord::Base
       if self.is_session && !self.session_booking_id.nil?
         if SessionBooking.where(id: self.session_booking_id).count > 0
           session_booking = SessionBooking.find(self.session_booking_id)
+          puts "Treatment delete: #{session_booking.id}. Reason: Payment timeout."
           session_booking.delete
           if !self.service_promo_id.nil? && ServicePromo.where(id: self.service_promo_id).count > 0
             service_promo = ServicePromo.find(self.service_promo_id)
@@ -163,6 +164,7 @@ class Booking < ActiveRecord::Base
           end
         end
       end
+      puts "Booking delete: #{self.id}. Reason: Payment timeout."
       self.delete
     end
   end

@@ -452,9 +452,11 @@ class PayUController < ApplicationController
             end
 
             session_booking.delete
+            logger.info "Treatment delete: #{session_booking.id}. Reason: PayU failed."
 
             bookings.each do |booking|
               booking.delete
+              logger.info "Booking delete: #{booking.id}. Reason: PayU failed."
             end
 
           else
@@ -465,6 +467,7 @@ class PayUController < ApplicationController
                 service_promo.save
               end
               booking.delete
+              logger.info "Booking delete: #{booking.id}. Reason: PayU failed."
             end
           end
 
@@ -496,9 +499,11 @@ class PayUController < ApplicationController
           end
 
           session_booking.delete
+          logger.info "Treatment delete: #{session_booking.id}. Reason: PayU failed."
 
           bookings.each do |booking|
             booking.delete
+            logger.info "Booking delete: #{booking.id}. Reason: PayU failed."
           end
 
         else
@@ -509,6 +514,7 @@ class PayUController < ApplicationController
               service_promo.save
             end
             booking.delete
+            logger.info "Booking delete: #{booking.id}. Reason: PayU failed."
           end
         end
 
