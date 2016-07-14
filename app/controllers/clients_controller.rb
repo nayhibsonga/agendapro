@@ -125,14 +125,16 @@ class ClientsController < ApplicationController
     @clients_export = @clients.order(sort_column + " " + sort_direction)
     @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
 
-    filepath = "#{Rails.root}/public/clients_files/clientes_" + current_user.company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+    relative_path = "/clients_files/clientes_" + current_user.company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+
+    filepath = "#{Rails.root}/public" + relative_path
     Company.generate_clients_file(current_user.company_id, @clients_export, filepath)
 
     #send_file filepath, filename: "clientes.xls"
 
     Company.delay(run_at: 2.hours.from_now).delete_booking_file(filepath)
 
-    render :json => {file_uri: filepath}
+    render :json => {file_uri: relative_path}
 
   end
 
