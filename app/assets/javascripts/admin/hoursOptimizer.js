@@ -327,7 +327,7 @@ function resetForm () {
   $(userForm + '#xButton').prop('disabled', true);
   $(userForm + '#booking_notes').val();
   $(userForm + '#booking_company_comment').val();
-  $(userForm + '#booking_staff_code').val();
+  $(userForm + '#booking_employee_code').val();
 }
 
 function loadBookingBuffer () {
@@ -357,7 +357,7 @@ function loadBookingBuffer () {
       send_mail: $(userForm + '#booking_send_mail').prop('checked'),
       service_id: booking.service,
       service_provider_id: booking.provider,
-      staff_code: $(userForm + '#booking_staff_code').val(),
+      employee_code: $(userForm + '#booking_employee_code').val(),
       start: booking.start,
       status_id: $(userForm + '#booking_status_id').val()
     });

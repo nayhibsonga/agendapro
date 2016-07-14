@@ -13,7 +13,8 @@ class Payment < ActiveRecord::Base
 
   has_many :payment_sendings, dependent: :destroy
 
-  belongs_to :cashier
+  #belongs_to :cashier
+  belongs_to :employee_code
 
   accepts_nested_attributes_for :payment_products, :reject_if => :all_blank, :allow_destroy => true
   accepts_nested_attributes_for :bookings, :reject_if => :all_blank
@@ -23,10 +24,18 @@ class Payment < ActiveRecord::Base
 
   #after_save :set_numbers
 
+  def employee_code_details
+    details_str = "Sin información"
+    if !self.employee_code_id.nil? && EmployeeCode.where(id: self.employee_code_id).count > 0
+      details_str = self.employee_code.name
+    end
+    return details_str
+  end
+
   def cashier_details
-    details_str = "Sin información."
-    if !self.cashier_id.nil? && Cashier.where(id: self.cashier_id).count > 0
-      details_str = self.cashier.name + "."
+    details_str = "Sin información"
+    if !self.employee_code_id.nil? && EmployeeCode.where(id: self.employee_code_id).count > 0
+      details_str = self.employee_code.name
     end
     return details_str
   end

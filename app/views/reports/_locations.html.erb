@@ -15,7 +15,7 @@
             </tr>
           </thead>
           <tbody>
-            <% Location.where(company_id: current_user.company_id, active: true).order(:name).each do |location| %>
+            <% Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:order, :name).each do |location| %>
               <tr>
                 <td><%= location.name %></td>
                 <td><%= location_booking_count(@from, @to, @status_ids, @option, location.id) %></td>
@@ -33,11 +33,11 @@
           <tfoot>
             <tr>
               <td>Total</td>
-              <td><%= booking_count(@from, @to, @status_ids, @option, current_user.company_id) %></td>
-              <td><%= number_to_currency(booking_revenue(@from, @to, @status_ids, @option, current_user.company_id), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
+              <td><%= booking_count(@from, @to, @status_ids, @option, current_user.company_id, Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).pluck(:id)) %></td>
+              <td><%= number_to_currency(booking_revenue(@from, @to, @status_ids, @option, current_user.company_id, Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).pluck(:id)), currency: ' $', separator: ',', delimeter: '.', precision: 0) %></td>
               <td>
                 <% if @option == 1 %>
-                  <%= number_to_percentage(booking_occupation(@from, @to, @status_ids, @option, current_user.company_id) * 100.0, precision: 2) %>
+                  <%= number_to_percentage(booking_occupation(@from, @to, @status_ids, @option, current_user.company_id, Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).pluck(:id)) * 100.0, precision: 2) %>
                 <% else %>
                   No aplica
                 <% end %>
@@ -52,6 +52,6 @@
 
 <div class="row">
   <div class="col-md-12">
-    <%= line_chart Location.where(company_id: current_user.company_id, active: true).map{|sp| {name: sp.name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
+    <%= line_chart Location.accessible_by(current_ability).where(company_id: current_user.company_id, active: true).order(:order, :name).map{|sp| {name: sp.name, data: sp.bookings.group_by_week(:start, range: 2.months.ago.midnight..2.months.from_now).count} }, library: {hAxis: {title: "Semana", format: "MMM d, yy" }, vAxis: {title: "# Reservas", format: "#"}, title: "Cantidad de Reservas Semanales" } %>
   </div>
 </div>

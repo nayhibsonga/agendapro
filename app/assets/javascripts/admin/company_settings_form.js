@@ -329,7 +329,7 @@ $(function () {
     $('#payment_method').modal('show');
   });
 
-  $('#NewStaffCode').click(function() {
+  /*$('#NewStaffCode').click(function() {
     $('#staffCode form').attr('action', '/staff_codes');
     $('#staffCode form').attr('id', 'new_staff_code');
     $('#staffCode form input[name="_method"]').remove();
@@ -371,14 +371,50 @@ $(function () {
     $('#cashier_active').attr('checked', $(e.currentTarget).data('active'));
     $('#cashier_code').val($(e.currentTarget).data('code'));
     $('#cashierModal').modal('show');
+  });*/
+
+  $('#new_employee_code_button').on('click', function(e){
+    $('form.employee_code_form').attr('action', '/employee_codes');
+    $('form.employee_code_form').attr('id', 'new_employee_code');
+    $('form.employee_code_form').removeClass('edit_employee_code');
+    $('form.employee_code_form input[name="_method"]').remove();
+    $('#employee_code_name').val('');
+    $('#employee_code_active').attr('checked', true);
+    $('#employee_code_code').attr('checked', true);
+    $('#employee_code_staff').attr('checked', false);
+    $('#employee_code_cashier').attr('checked', false);
+    $('#employeeCodeModal').modal('show');
+  });
+
+  $('.edit_employee_code_button').click(function(e) {
+    $('form.employee_code_form').attr('action', '/employee_codes/' + $(e.currentTarget).data('id'));
+    $('form.employee_code_form').attr('id', 'edit_employee_code_' + $(e.currentTarget).data('id'));
+    $('form.employee_code_form').addClass('edit_employee_code');
+    if ($('form.employee_code_form input[name="_method"]').length < 1) {
+      $('form.employee_code_form').append('<input name="_method" type="hidden" value="patch">');
+    }
+    $('#employee_code_name').val($(e.currentTarget).data('name'));
+    $('#employee_code_active').attr('checked', $(e.currentTarget).data('active'));
+    $('#employee_code_code').val($(e.currentTarget).data('code'));
+    $('#employee_code_staff').attr('checked', $(e.currentTarget).data('staff'));
+    $('#employee_code_cashier').attr('checked', $(e.currentTarget).data('cashier'));
+    $('#employeeCodeModal').modal('show');
   });
 
   $('#new_attribute_button').on('click', function(){
     $('#attributeModal').modal('show');
   });
 
+  $('#new_chart_field_button').on('click', function(){
+    $('#chartFieldModal').modal('show');
+  });
+
   $('#new_attribute_group_button').on('click', function(){
     $('#attributeGroupModal').modal('show');
+  });
+
+  $('#new_chart_group_button').on('click', function(){
+    $('#chartGroupModal').modal('show');
   });
 
   $('#attribute_datatype').on('change', function(){
@@ -389,6 +425,17 @@ $(function () {
     else
     {
       $('.attribute-show-option').show();
+    }
+  });
+
+  $('#chart_field_datatype').on('change', function(){
+    if($(this).val() == "file")
+    {
+      $('.chart-field-show-option').hide();
+    }
+    else
+    {
+      $('.chart-field-show-option').show();
     }
   });
 
@@ -427,6 +474,41 @@ $(function () {
     $('#attributeCategoryModal').modal('show');
   });
 
+  $('.add_chart_category_button').on('click', function(e){
+    var chart_field_id = $(e.currentTarget).data('chartfieldid');
+    $('#existing_chart_categories_subdiv').empty();
+    $('#chart_category_chart_field_id').val(chart_field_id)
+    $.ajax({
+      url: '/get_chart_categories',
+      method: 'get',
+      dataType: 'json',
+      data: {chart_field_id: chart_field_id},
+      error: function(response){
+        swal({
+            title: "Error",
+            text: "Se produjo un error",
+            type: "error"
+          });
+      },
+      success: function(response){
+        $.each(response, function(i, chart_category){
+
+          /*if(attribute_category.category != "Otra")
+          {
+  */
+            $('#existing_chart_categories_subdiv').append('<div class="chart-category-div" chart_category_id="' + chart_category.id + '">' + chart_category.name + '<a style="float: right;" class="btn btn-red btn-xs chart-category-delete" data-confirm="¿Estás seguro de eliminar la categoría?" data-method="delete" data-remote="true" data-type="json" href="/chart_categories/' + chart_category.id + '" rel="nofollow"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</a></div>');
+          /*}
+          else
+          {
+            $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + attribute_category.id + '">' + attribute_category.category + '</div>');
+          }*/
+
+        });
+      }
+    })
+    $('#chartCategoryModal').modal('show');
+  });
+
   $('.edit_attribute_btn').on('click', function(e){
     var attribute_id = $(e.currentTarget).data('attributeid');
     $('#editAttributeModal .modal-content').empty();
@@ -448,6 +530,27 @@ $(function () {
     })
   });
 
+  $('.edit_chart_field_btn').on('click', function(e){
+    var chart_field_id = $(e.currentTarget).data('chartfieldid');
+    $('#editChartFieldModal .modal-content').empty();
+    $.ajax({
+      url: '/chart_field_edit_form',
+      data: {id: chart_field_id},
+      method: 'get',
+      error: function(response){
+        swal({
+          title: "Error",
+          text: "Se produjo un error",
+          type: "error"
+        });
+      },
+      success: function(response){
+        $('#editChartFieldModal .modal-content').append(response);
+        $('#editChartFieldModal').modal('show');
+      }
+    })
+  });
+
   $('.edit_attribute_group_btn').on('click', function(e){
     var attribute_group_id = $(e.currentTarget).data('attributegroupid');
     $('#editAttributeGroupModal .modal-content').empty();
@@ -464,6 +567,26 @@ $(function () {
       success: function(response){
         $('#editAttributeGroupModal .modal-content').append(response);
         $('#editAttributeGroupModal').modal('show');
+      }
+    })
+  });
+
+  $('.edit_chart_group_btn').on('click', function(e){
+    var chart_group_id = $(e.currentTarget).data('chartgroupid');
+    $('#editChartGroupModal .modal-content').empty();
+    $.ajax({
+      url: '/chart_groups/' + chart_group_id + '/edit',
+      method: 'get',
+      error: function(response){
+        swal({
+          title: "Error",
+          text: "Se produjo un error",
+          type: "error"
+        });
+      },
+      success: function(response){
+        $('#editChartGroupModal .modal-content').append(response);
+        $('#editChartGroupModal').modal('show');
       }
     })
   });
@@ -496,10 +619,56 @@ $(function () {
     });
   });
 
+  $("#chart_category_form").on("ajax:success", function(e, data, status, xhr){
+
+    /*if(data.category != "Otra")
+    {
+    */
+      $('#existing_chart_categories_subdiv').append('<div class="chart-category-div" chart_category_id="' + data.id + '">' + data.name + '<a style="float: right;" class="btn btn-red btn-xs chart-category-delete" data-confirm="¿Estás seguro de eliminar la categoría?" data-method="delete" data-remote="true" data-type="json" href="/chart_categories/' + data.id + '" rel="nofollow"><i class="fa fa-trash-o"></i>&nbsp;Eliminar</a></div>');
+    /*}
+    else
+    {
+      $('#existing_categories_subdiv').append('<div class="attribute-category-div" attribute_category_id="' + data.id + '">' + data.category + '</div>');
+    }*/
+
+    $('#chart_category_name').val("");
+
+    swal({
+      title: "Éxito",
+      text: "Categoría agregada.",
+      type: "success"
+    });
+  }).on("ajax:error", function(e, xhr, status, error){
+    console.log(xhr.responseText)
+    swal({
+      title: "Error",
+      text: "Se produjo un error",
+      type: "error"
+    });
+  });
+
   $('body').on("ajax:success", ".category-delete", function(e, data, status, xhr){
     console.log(data);
     var cat_id = data.id;
     $('.attribute-category-div[attribute_category_id="' + cat_id + '"]').remove();
+    swal({
+        title: "Éxito",
+        text: "Categoría eliminada.",
+        type: "success"
+    });
+  }).on("ajax:error", function(e, xhr, status, error){
+    console.log(xhr.responseText)
+    swal({
+      title: "Error",
+      text: "Se produjo un error",
+      type: "error"
+    });
+  });
+
+  $('body').on("ajax:success", ".chart-category-delete", function(e, data, status, xhr){
+    console.log(data);
+    var cat_id = data.id;
+    $('.chart-category-div[chart_category_id="' + cat_id + '"]').remove();
     swal({
         title: "Éxito",
         text: "Categoría eliminada.",
@@ -583,6 +752,52 @@ $(function () {
 
   });
 
+  $("#chart-groups-tbody").sortable({
+    revert: true,
+    axis: "y",
+    handle: ".move-chart-group",
+    containment: "#chart-groups-tbody",
+    tolerance: 'pointer',
+    scroll: true,
+    stop: function(){
+
+      var rearrangement = [];
+      var index = 0;
+      $('#chart-groups-tbody').children().each(function(){
+        rearrangement[index] = $(this).attr("chart_group_id");
+        index++;
+      });
+
+      company_id = $('#company_id').val();
+
+      $.ajax({
+        url: '/rearrange_chart_groups',
+        method: 'post',
+        dataType: 'json',
+        data: {company_id: company_id, rearrangement: rearrangement},
+        error: function(response){
+          swal({
+            title: "Error",
+            text: "Se produjo un error al reordenar.",
+            type: "error"
+          });
+        },
+        success: function(response){
+          if(response[0] != "ok")
+          {
+            swal({
+              title: "Error",
+              text: "Se produjo un error al reordenar.",
+              type: "error"
+            });
+          }
+        }
+      });
+
+    }
+
+  });
+
   $(".attributes-tbody").sortable({
     revert: true,
     axis: "y",
@@ -603,6 +818,52 @@ $(function () {
 
       $.ajax({
         url: '/rearrange_attributes',
+        method: 'post',
+        dataType: 'json',
+        data: {company_id: company_id, rearrangement: rearrangement},
+        error: function(response){
+          swal({
+            title: "Error",
+            text: "Se produjo un error al reordenar.",
+            type: "error"
+          });
+        },
+        success: function(response){
+          if(response[0] != "ok")
+          {
+            swal({
+              title: "Error",
+              text: "Se produjo un error al reordenar.",
+              type: "error"
+            });
+          }
+        }
+      });
+
+    }
+
+  });
+
+  $(".chart-fields-tbody").sortable({
+    revert: true,
+    axis: "y",
+    handle: ".move-chart-field",
+    containment: "parent",
+    tolerance: 'pointer',
+    scroll: true,
+    stop: function(){
+
+      var rearrangement = [];
+      var index = 0;
+      $(this).children().each(function(){
+        rearrangement[index] = $(this).attr("chart_field_id");
+        index++;
+      });
+
+      company_id = $('#company_id').val();
+
+      $.ajax({
+        url: '/rearrange_chart_fields',
         method: 'post',
         dataType: 'json',
         data: {company_id: company_id, rearrangement: rearrangement},

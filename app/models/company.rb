@@ -11,11 +11,16 @@ class Company < ActiveRecord::Base
 	has_many :company_countries
 	has_many :countries, :through => :company_countries
 
-	has_many :cashiers, dependent: :destroy
+	#has_many :cashiers, dependent: :destroy
+	has_many :employee_codes, dependent: :destroy
 	has_many :email_contents, dependent: :destroy, class_name: 'Email::Content'
 
 	has_many :custom_attributes, foreign_key: 'company_id', class_name: 'Attribute'
 	has_many :attribute_groups
+
+	has_many :chart_fields
+	has_many :chart_groups
+	has_many :charts
 
 	has_many :custom_filters, dependent: :destroy
 
@@ -45,7 +50,7 @@ class Company < ActiveRecord::Base
 	has_one :billing_info, dependent: :destroy
 	belongs_to :bank
 	has_many :company_from_email, dependent: :destroy
-	has_many :staff_codes, dependent: :destroy
+	#has_many :staff_codes, dependent: :destroy
 	has_many :deals, dependent: :destroy
 	has_many :company_payment_methods, dependent: :destroy
 	has_many :payment_accounts, dependent: :destroy
@@ -55,7 +60,8 @@ class Company < ActiveRecord::Base
 	has_many :product_categories, dependent: :destroy
 	has_many :billing_wire_transfers
 	has_many :downgrade_logs
-	has_many :app_feeds
+	has_many :app_feeds, dependent: :destroy
+	has_many :employee_codes, dependent: :destroy
 
 	has_one :company_plan_setting
 
@@ -81,7 +87,7 @@ class Company < ActiveRecord::Base
 
 	after_update :update_online_payment, :update_stats
 
-	after_create :create_cashier, :create_plan_setting, :create_attribute_group,
+	after_create :create_plan_setting, :create_attribute_group,
 
 	WORKER = 'CompanyEmailWorker'
 
@@ -154,10 +160,6 @@ class Company < ActiveRecord::Base
 		used_storage += self.company_files.sum(:size)
 		used_storage += self.client_files.sum(:size)
 
-	end
-
-	def create_cashier
-		cashier = Cashier.create(company_id: self.id, name: "Cajero 1", code: "12345678", active: true)
 	end
 
 	def plan_settings
@@ -247,7 +249,7 @@ class Company < ActiveRecord::Base
 	def self.payment_inactive
 		where(payment_status_id: PaymentStatus.find_by_name("Bloqueado").id).where('due_date < ?', (1.months+15.days).ago).each do |company|
 			company.payment_status_id = PaymentStatus.find_by_name("Inactivo").id
-			company.due_amount = 0.0
+			# company.due_amount = 0.0
 			company.active = false
 			if company.save
 				CompanyCronLog.create(company_id: company.id, action_ref: 4, details: "OK payment_inactive")
@@ -892,7 +894,7 @@ class Company < ActiveRecord::Base
 		end
 
 		if !bl.nil?
-		  date1 = bl.created_at
+		  date1 = bl.created_at + self.country.timezone_offset.hours
 		end
 		if !rec.nil?
 		  date2 = rec.date.to_datetime
@@ -901,11 +903,11 @@ class Company < ActiveRecord::Base
 		  date3 = bwt.payment_date
 		end
 		if !pl.nil?
-		  date4 = pl.created_at
+		  date4 = pl.created_at + self.country.timezone_offset.hours
 		end
 
 		if date1 >= date2 && date1 >= date3 && date1 >= date4
-		  last_payment_date = bl.created_at.strftime('%d/%m/%Y %R')
+		  last_payment_date = (bl.created_at + self.country.timezone_offset.hours).strftime('%d/%m/%Y %R')
 		  paid_amount = "$" + bl.payment.to_s
 		  last_payment_method = "Automático"
 		elsif date2 >= date1 && date2 >= date3 && date2 >= date4
@@ -917,7 +919,7 @@ class Company < ActiveRecord::Base
 		  paid_amount = "$" + bwt.amount.to_s
 		  last_payment_method = "Transferencia"
 		else
-		  last_payment_date = pl.created_at.strftime('%d/%m/%Y %R')
+		  last_payment_date = (pl.created_at + self.country.timezone_offset.hours).strftime('%d/%m/%Y %R')
 		  paid_amount = "$" + pl.amount.to_s
 		  last_payment_method = "Automático"
 		end

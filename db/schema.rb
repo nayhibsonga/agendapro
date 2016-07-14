@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20160613163022) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "app_feeds", force: true do |t|
@@ -164,7 +164,6 @@ ActiveRecord::Schema.define(version: 20160613163022) do
   create_table "booking_histories", force: true do |t|
     t.integer  "booking_id"
     t.string   "action"
-    t.integer  "staff_code_id"
     t.datetime "start"
     t.integer  "status_id"
     t.integer  "service_id"
@@ -172,15 +171,16 @@ ActiveRecord::Schema.define(version: 20160613163022) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes"
-    t.text     "company_comment"
+    t.text     "notes",               default: ""
+    t.text     "company_comment",     default: ""
+    t.integer  "employee_code_id"
   end
 
   add_index "booking_histories", ["booking_id"], name: "index_booking_histories_on_booking_id", using: :btree
   add_index "booking_histories", ["created_at"], name: "index_booking_histories_on_created_at", order: {"created_at"=>:desc}, using: :btree
+  add_index "booking_histories", ["employee_code_id"], name: "index_booking_histories_on_employee_code_id", using: :btree
   add_index "booking_histories", ["service_id"], name: "index_booking_histories_on_service_id", using: :btree
   add_index "booking_histories", ["service_provider_id"], name: "index_booking_histories_on_service_provider_id", using: :btree
-  add_index "booking_histories", ["staff_code_id"], name: "index_booking_histories_on_staff_code_id", using: :btree
   add_index "booking_histories", ["status_id"], name: "index_booking_histories_on_status_id", using: :btree
   add_index "booking_histories", ["user_id"], name: "index_booking_histories_on_user_id", using: :btree
 
@@ -311,6 +311,159 @@ ActiveRecord::Schema.define(version: 20160613163022) do
   add_index "categoric_custom_filters", ["attribute_id"], name: "index_categoric_custom_filters_on_attribute_id", using: :btree
   add_index "categoric_custom_filters", ["custom_filter_id"], name: "index_categoric_custom_filters_on_custom_filter_id", using: :btree
 
+  create_table "chart_categories", force: true do |t|
+    t.integer  "chart_field_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_categories", ["chart_field_id"], name: "index_chart_categories_on_chart_field_id", using: :btree
+
+  create_table "chart_field_booleans", force: true do |t|
+    t.integer  "chart_field_id"
+    t.boolean  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "chart_id"
+  end
+
+  add_index "chart_field_booleans", ["chart_field_id"], name: "index_chart_field_booleans_on_chart_field_id", using: :btree
+  add_index "chart_field_booleans", ["chart_id"], name: "index_chart_field_booleans_on_chart_id", using: :btree
+
+  create_table "chart_field_categorics", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "chart_category_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "chart_id"
+  end
+
+  add_index "chart_field_categorics", ["chart_category_id"], name: "index_chart_field_categorics_on_chart_category_id", using: :btree
+  add_index "chart_field_categorics", ["chart_field_id"], name: "index_chart_field_categorics_on_chart_field_id", using: :btree
+  add_index "chart_field_categorics", ["chart_id"], name: "index_chart_field_categorics_on_chart_id", using: :btree
+
+  create_table "chart_field_dates", force: true do |t|
+    t.integer  "chart_field_id"
+    t.date     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "chart_id"
+  end
+
+  add_index "chart_field_dates", ["chart_field_id"], name: "index_chart_field_dates_on_chart_field_id", using: :btree
+  add_index "chart_field_dates", ["chart_id"], name: "index_chart_field_dates_on_chart_id", using: :btree
+
+  create_table "chart_field_datetimes", force: true do |t|
+    t.integer  "chart_field_id"
+    t.datetime "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "chart_id"
+  end
+
+  add_index "chart_field_datetimes", ["chart_field_id"], name: "index_chart_field_datetimes_on_chart_field_id", using: :btree
+  add_index "chart_field_datetimes", ["chart_id"], name: "index_chart_field_datetimes_on_chart_id", using: :btree
+
+  create_table "chart_field_files", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "client_file_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "chart_id"
+  end
+
+  add_index "chart_field_files", ["chart_field_id"], name: "index_chart_field_files_on_chart_field_id", using: :btree
+  add_index "chart_field_files", ["chart_id"], name: "index_chart_field_files_on_chart_id", using: :btree
+  add_index "chart_field_files", ["client_file_id"], name: "index_chart_field_files_on_client_file_id", using: :btree
+
+  create_table "chart_field_floats", force: true do |t|
+    t.integer  "chart_field_id"
+    t.float    "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "chart_id"
+  end
+
+  add_index "chart_field_floats", ["chart_field_id"], name: "index_chart_field_floats_on_chart_field_id", using: :btree
+  add_index "chart_field_floats", ["chart_id"], name: "index_chart_field_floats_on_chart_id", using: :btree
+
+  create_table "chart_field_integers", force: true do |t|
+    t.integer  "chart_field_id"
+    t.integer  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "chart_id"
+  end
+
+  add_index "chart_field_integers", ["chart_field_id"], name: "index_chart_field_integers_on_chart_field_id", using: :btree
+  add_index "chart_field_integers", ["chart_id"], name: "index_chart_field_integers_on_chart_id", using: :btree
+
+  create_table "chart_field_textareas", force: true do |t|
+    t.integer  "chart_field_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "chart_id"
+  end
+
+  add_index "chart_field_textareas", ["chart_field_id"], name: "index_chart_field_textareas_on_chart_field_id", using: :btree
+  add_index "chart_field_textareas", ["chart_id"], name: "index_chart_field_textareas_on_chart_id", using: :btree
+
+  create_table "chart_field_texts", force: true do |t|
+    t.integer  "chart_field_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "chart_id"
+  end
+
+  add_index "chart_field_texts", ["chart_field_id"], name: "index_chart_field_texts_on_chart_field_id", using: :btree
+  add_index "chart_field_texts", ["chart_id"], name: "index_chart_field_texts_on_chart_id", using: :btree
+
+  create_table "chart_fields", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "chart_group_id"
+    t.string   "name"
+    t.text     "description"
+    t.string   "datatype"
+    t.string   "slug"
+    t.boolean  "mandatory"
+    t.integer  "order"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_fields", ["chart_group_id"], name: "index_chart_fields_on_chart_group_id", using: :btree
+  add_index "chart_fields", ["company_id"], name: "index_chart_fields_on_company_id", using: :btree
+
+  create_table "chart_groups", force: true do |t|
+    t.integer  "company_id"
+    t.string   "name"
+    t.integer  "order"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chart_groups", ["company_id"], name: "index_chart_groups_on_company_id", using: :btree
+
+  create_table "charts", force: true do |t|
+    t.integer  "company_id"
+    t.integer  "client_id"
+    t.integer  "booking_id"
+    t.integer  "user_id"
+    t.datetime "date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "last_modifier_id"
+  end
+
+  add_index "charts", ["booking_id"], name: "index_charts_on_booking_id", using: :btree
+  add_index "charts", ["client_id"], name: "index_charts_on_client_id", using: :btree
+  add_index "charts", ["company_id"], name: "index_charts_on_company_id", using: :btree
+  add_index "charts", ["last_modifier_id"], name: "index_charts_on_last_modifier_id", using: :btree
+  add_index "charts", ["user_id"], name: "index_charts_on_user_id", using: :btree
+
   create_table "cities", force: true do |t|
     t.string   "name",       null: false
     t.integer  "region_id",  null: false
@@ -407,7 +560,7 @@ ActiveRecord::Schema.define(version: 20160613163022) do
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
     t.integer  "trial_months_left",   default: 0
-    t.integer  "default_plan_id",     default: 10
+    t.integer  "default_plan_id",     default: 11
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
@@ -542,7 +695,7 @@ ActiveRecord::Schema.define(version: 20160613163022) do
     t.boolean  "can_edit",                    default: true
     t.boolean  "can_cancel",                  default: true
     t.boolean  "use_identification_number",   default: false
-    t.string   "preset_notes"
+    t.text     "preset_notes"
     t.boolean  "payment_client_required",     default: true
     t.boolean  "show_cashes",                 default: false
     t.boolean  "editable_payment_prices",     default: true
@@ -759,6 +912,19 @@ ActiveRecord::Schema.define(version: 20160613163022) do
     t.datetime "updated_at"
   end
 
+  create_table "employee_codes", force: true do |t|
+    t.string   "name"
+    t.string   "code"
+    t.integer  "company_id"
+    t.boolean  "active"
+    t.boolean  "staff"
+    t.boolean  "cashier"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "employee_codes", ["company_id"], name: "index_employee_codes_on_company_id", using: :btree
+
   create_table "facebook_pages", force: true do |t|
     t.integer  "company_id"
     t.string   "facebook_page_id"
@@ -844,7 +1010,6 @@ ActiveRecord::Schema.define(version: 20160613163022) do
 
   create_table "internal_sales", force: true do |t|
     t.integer  "location_id"
-    t.integer  "cashier_id"
     t.integer  "service_provider_id"
     t.integer  "product_id"
     t.integer  "quantity",            default: 1
@@ -856,10 +1021,11 @@ ActiveRecord::Schema.define(version: 20160613163022) do
     t.datetime "date",                default: '2015-10-30 21:54:55'
     t.integer  "user_id"
     t.text     "notes",               default: ""
+    t.integer  "employee_code_id"
   end
 
-  add_index "internal_sales", ["cashier_id"], name: "index_internal_sales_on_cashier_id", using: :btree
   add_index "internal_sales", ["date"], name: "index_internal_sales_on_date", order: {"date"=>:desc}, using: :btree
+  add_index "internal_sales", ["employee_code_id"], name: "index_internal_sales_on_employee_code_id", using: :btree
   add_index "internal_sales", ["location_id"], name: "index_internal_sales_on_location_id", using: :btree
   add_index "internal_sales", ["product_id"], name: "index_internal_sales_on_product_id", using: :btree
   add_index "internal_sales", ["service_provider_id"], name: "index_internal_sales_on_service_provider_id", using: :btree
@@ -1301,20 +1467,20 @@ ActiveRecord::Schema.define(version: 20160613163022) do
     t.datetime "payment_date",  default: '2015-11-12 13:16:44'
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "discount",      default: 0.0
-    t.text     "notes",         default: ""
+    t.float    "discount",         default: 0.0
+    t.text     "notes",            default: ""
     t.integer  "location_id"
     t.integer  "client_id"
-    t.integer  "quantity",      default: 0
-    t.float    "paid_amount",   default: 0.0
-    t.float    "change_amount", default: 0.0
-    t.integer  "cashier_id"
+    t.integer  "quantity",         default: 0
+    t.float    "paid_amount",      default: 0.0
+    t.float    "change_amount",    default: 0.0
+    t.integer  "employee_code_id"
   end
 
-  add_index "payments", ["cashier_id"], name: "index_payments_on_cashier_id", where: "(cashier_id IS NOT NULL)", using: :btree
   add_index "payments", ["client_id"], name: "index_payments_on_client_id", using: :btree
   add_index "payments", ["company_id"], name: "index_payments_on_company_id", using: :btree
   add_index "payments", ["created_at"], name: "index_payments_on_created_at", order: {"created_at"=>:desc}, using: :btree
+  add_index "payments", ["employee_code_id"], name: "index_payments_on_employee_code_id", using: :btree
   add_index "payments", ["location_id"], name: "index_payments_on_location_id", using: :btree
   add_index "payments", ["payment_date"], name: "index_payments_on_payment_date", order: {"payment_date"=>:desc}, using: :btree
 
@@ -1923,6 +2089,7 @@ ActiveRecord::Schema.define(version: 20160613163022) do
     t.text     "raw_message"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "pending_process", default: false
   end
 
   create_table "sparkpost_statuses", force: true do |t|

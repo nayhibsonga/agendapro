@@ -74,7 +74,7 @@ class PayUController < ApplicationController
     month_days = Time.now.days_in_month
     accepted_amounts = [1,2,3,4,6,9,12]
 
-    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || @company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || @company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
+    if company.payment_status_id == PaymentStatus.find_by_name("Trial").id || company.payment_status_id == PaymentStatus.find_by_name("Bloqueado").id || company.payment_status_id == PaymentStatus.find_by_name("Inactivo").id
       price = ((month_days - day_number + 1).to_f / month_days.to_f) * price
     end
 
@@ -452,9 +452,11 @@ class PayUController < ApplicationController
             end
 
             session_booking.delete
+            logger.info "Treatment delete: #{session_booking.id}. Reason: PayU failed."
 
             bookings.each do |booking|
               booking.delete
+              logger.info "Booking delete: #{booking.id}. Reason: PayU failed."
             end
 
           else
@@ -465,6 +467,7 @@ class PayUController < ApplicationController
                 service_promo.save
               end
               booking.delete
+              logger.info "Booking delete: #{booking.id}. Reason: PayU failed."
             end
           end
 
@@ -496,9 +499,11 @@ class PayUController < ApplicationController
           end
 
           session_booking.delete
+          logger.info "Treatment delete: #{session_booking.id}. Reason: PayU failed."
 
           bookings.each do |booking|
             booking.delete
+            logger.info "Booking delete: #{booking.id}. Reason: PayU failed."
           end
 
         else
@@ -509,6 +514,7 @@ class PayUController < ApplicationController
               service_promo.save
             end
             booking.delete
+            logger.info "Booking delete: #{booking.id}. Reason: PayU failed."
           end
         end
 
@@ -533,6 +539,7 @@ class PayUController < ApplicationController
       if BillingLog.find_by_trx_id(confirmation_params[:reference_sale])
         billing_log = BillingLog.find_by_trx_id(confirmation_params[:reference_sale])
         company = Company.find(billing_log.company_id)
+        company.active = true
         company.months_active_left += billing_log.amount
         company.due_amount = 0.0
         company.due_date = nil
@@ -546,6 +553,7 @@ class PayUController < ApplicationController
       elsif PlanLog.find_by_trx_id(confirmation_params[:reference_sale])
         plan_log = PlanLog.find_by_trx_id(confirmation_params[:reference_sale])
         company = Company.find(plan_log.company_id)
+        company.active = true
         company.plan_id = plan_log.new_plan_id
         company.months_active_left = 1.0
         company.due_amount = 0.0

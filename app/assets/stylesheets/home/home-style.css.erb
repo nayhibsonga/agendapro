@@ -1,8 +1,12 @@
 @charset "UTF-8";
 /*CSS anterior*/
 .main {
-	margin-top: 50px;
+	margin-top: 35px;
 	margin-bottom: 30px;
+}
+
+.main-home {
+  margin-top: 65px;
 }
 
 a {
@@ -192,6 +196,32 @@ footer a:active {
 .txt-footer{
 	display:inline-block;
 	margin-right: 165px;
+}
+
+.home-footer {
+  background-color: #363636;
+  color: #ffffff;
+}
+
+.home-footer a {
+  color: #ffffff;
+}
+
+.home-footer > .container > .row {
+  margin-top: 20px;
+}
+
+.home-footer .padded-col {
+  padding: 20px;
+}
+
+.home-footer .bordered-col {
+  border: 2px solid #ffffff;
+}
+
+.home-footer a:hover, .home-footer a:focus {
+  opacity: 0.7;
+  filter: alpha(opacity=70);
 }
 
 .copyright {
@@ -512,6 +542,41 @@ body {
   color: #ffffff;
   background-color: #fd9610;
 }
+
+#home-navbar {
+  height: 90px;
+  background-color: #ffffff;
+}
+
+#home-navbar .green-navbar {
+  background-color: #22c488;
+  color: #ffffff;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+#home-navbar .green-navbar a, #home-navbar .green-navbar a:hover , #home-navbar .green-navbar a:focus {
+  color: #ffffff;
+}
+
+#home-navbar .green-navbar ul li, #home-navbar .green-navbar ul li a {
+  color: #646464;
+}
+
+#home-navbar .green-navbar li {
+  width: 160px;
+  list-style-type: none;
+}
+
+#home-navbar .upper-menu {
+  margin-left: 20px;
+}
+
+#home-navbar .navbar-nav > li > a,
+#home-navbar .navbar-nav > li > a:focus {
+  font-weight: 900;
+}
+
 .email-dropdown {
   text-overflow: clip;
   text-overflow: ellipsis;
@@ -569,11 +634,10 @@ body {
 .navbar-home .navbar-nav > li > a:focus {
   color: #646464;
 }
-.navbar-home .navbar-nav > li > a:hover,
 .navbar-home .navbar-nav > .active > a,
 .navbar-home .navbar-nav > .active > a:hover,
 .navbar-home .navbar-nav > .active > a:focus {
-  color: #cccccc;
+  color: #22c488;
 }
 .navbar-home .navbar-toggle {
   border-color: #777777;
@@ -646,6 +710,9 @@ body {
 .below-navbar {
 	padding-top: 50px;
 }
+.below-home-navbar {
+  padding-top: 30px;
+}
 .above-navbar {
 	padding-bottom: 50px;
 }
@@ -663,6 +730,11 @@ body {
 }
 .search-pull-up {
 	margin-top: -100px;
+}
+.features-preview h1 span {
+  color: #22c488;
+  font-weight: 900;
+  font-style: italic;
 }
 /*Search Text*/
 h1, h2, h3, h4, h5, h6,
@@ -1037,6 +1109,70 @@ h1.search-text {
 	line-height: 1.25;
 }
 
+#home-cover-image .container {
+  padding-top: 30px;
+}
+
+#home-cover-image h1 {
+  font-size: 48px;
+}
+
+#home-cover-image h1 span {
+  font-weight: 900;
+  font-style: italic;
+}
+
+#home-cover-image p {
+  font-size: 20px;
+  font-weight: 900;
+  text-align: justify;
+}
+
+#home-cover-image h3 {
+  font-size: 24px;
+  font-weight: 900;
+}
+
+#home-cover-image .btn {
+  border-radius: 0;
+  font-weight: 900;
+  margin: 10px 20px 10px 0;
+  padding: 15px 45px 15px 45px;
+}
+
+#home-cover-image .btn-green {
+  color: #ffffff;
+  background-color: #22c488;
+}
+
+#home-cover-image .btn-transparent {
+  color: #ffffff;
+  background-color: transparent;
+  border: 2px solid #ffffff;
+}
+
+#home-cover-image a:hover, #home-cover-image a:focus {
+  opacity: 0.7;
+  filter: alpha(opacity=70);
+}
+
+.feature-preview .btn {
+  border-radius: 0;
+  font-weight: 900;
+}
+
+.feature-preview .btn-green {
+  color: #ffffff;
+  background-color: #22c488;
+}
+
+hr.short-break {
+  float: left;
+  width: 3%;
+  border-top: 3px solid;
+  margin-top: 10px;
+}
+
 .btn-orange {
   	color: #ffffff;
   	background-color: #fd9610;
@@ -1048,8 +1184,8 @@ h1.search-text {
 
 .btn-orange:hover,
 .btn-orange:focus {
-  	color: #ffffff;
-  	background-color: #db7400;
+  color: #ffffff;
+  background-color: #db7400;
 	border: 2px solid #db7400;
 }
 
@@ -1081,9 +1217,13 @@ h1.search-text {
   /* Disable click events */
   pointer-events: none;
 }
+section {
+  margin-bottom: 20px;
+}
 
 section.green-background {
   background-color: #22c488;
+  color: #ffffff;
 }
 .vcenter {
     display: inline-block;
@@ -1199,7 +1339,7 @@ div.row.row-padded {
 }
 
 .cfs-arrow {
-	padding-top: 25px;
+	padding-top: 50px;
 }
 
 .well-square {
@@ -1490,4 +1630,7 @@ div.row.row-padded {
 	.sector_search_agenda span {
 		font-size: 7px;
 	}
+  #home-cover-image h1 {
+    font-size: 36px;
+  }
 }

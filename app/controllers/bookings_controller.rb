@@ -1,5 +1,5 @@
 class BookingsController < ApplicationController
-  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form, :get_treatment_info, :delete_treatment, :get_email_logs]
+  before_action :set_booking, only: [:show, :edit, :update, :destroy, :delete_session_booking, :validate_session_booking, :session_booking_detail, :book_session_form, :get_treatment_info, :delete_treatment, :get_email_logs, :summary, :chart]
   before_action :authenticate_user!, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :confirm_error, :confirm_success, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours, :hours_test, :available_hours]
   before_action :quick_add, except: [:create, :force_create, :booking_valid, :provider_booking, :book_service, :book_error, :remove_bookings, :edit_booking, :edit_booking_post, :cancel_booking, :cancel_all_booking, :confirm_booking, :confirm_all_bookings, :confirm_error, :confirm_success, :check_user_cross_bookings, :blocked_edit, :blocked_cancel, :optimizer_hours, :optimizer_data, :transfer_error_cancel, :promotion_hours, :hours_test, :available_hours]
   before_action :verify_disabled, only: [:index, :fixed_index]
@@ -119,7 +119,13 @@ class BookingsController < ApplicationController
     after_book_date = DateTime.now + u.service.company.company_setting.after_booking.months
     after_book_date = I18n.l after_book_date.to_date, format: :day
 
-    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id, :custom_attributes => u.client.get_custom_attributes, :bundled => u.bundled}
+    has_chart = !u.chart.nil?
+    chart_fields = []
+    if has_chart
+      chart_fields = u.chart.get_chart_fields
+    end
+
+    @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :price => u.price, :status_id => u.status_id, :client_id => u.client.id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :identification_number => u.client.identification_number, :send_mail => u.send_mail, :provider_lock => u.provider_lock, :notes => u.notes,  :company_comment => u.company_comment, :service_provider_active => u.service_provider.active, :service_active => u.service.active, :service_provider_name => u.service_provider.public_name, :service_name => u.service.name, :address => u.client.address, :district => u.client.district, :city => u.client.city, :birth_day => u.client.birth_day, :birth_month => u.client.birth_month, :birth_year => u.client.birth_year, :age => u.client.age, :record => u.client.record, :second_phone => u.client.second_phone, :gender => u.client.gender, deal_code: @booking.deal.nil? ? nil : @booking.deal.code, :payed => is_payed, :is_session => u.is_session, :sessions_ratio => sessions_ratio, :location_id => u.location_id, :provider_preference => u.location.company.company_setting.provider_preference, :after_date => after_book_date, :after_booking => u.service.company.company_setting.after_booking, :session_booking_id => u.session_booking_id, :payed_state => u.payed_state, :payment_id => u.payment_id, :payed_booking_id => u.payed_booking_id, :custom_attributes => u.client.get_custom_attributes, :bundled => u.bundled, :has_chart => has_chart, :chart_fields => chart_fields, :chart => u.chart}
     respond_to do |format|
       format.html { }
       format.json { render :json => @booking_json }
@@ -172,8 +178,8 @@ class BookingsController < ApplicationController
     should_create_sessions = false
 
     booking_buffer_params[:bookings].each do |pos, buffer_params|
-      staff_code = nil
-      new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :session_booking_id, :has_sessions)
+      employee_code = nil
+      new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code, :session_booking_id, :has_sessions)
 
       @booking = Booking.new(new_booking_params)
 
@@ -272,8 +278,8 @@ class BookingsController < ApplicationController
       end
 
       if @company_setting.staff_code
-        if !buffer_params[:staff_code].blank? && StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).count > 0
-          staff_code = StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).first.id
+        if !buffer_params[:employee_code].blank? && EmployeeCode.where(company_id: current_user.company_id, code: buffer_params[:employee_code], active: true, staff: true).count > 0
+          employee_code = EmployeeCode.where(company_id: current_user.company_id, code: buffer_params[:employee_code], active: true).first.id
         else
           @errors << {
             :booking => pos,
@@ -555,7 +561,7 @@ class BookingsController < ApplicationController
           :location_id => u.location_id
         }
 
-        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
+        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, employee_code_id: employee_code, notes: @booking.notes, company_comment: @booking.company_comment)
       else
         @errors << {
             :booking => pos,
@@ -591,9 +597,15 @@ class BookingsController < ApplicationController
       else
         if !session_booking.nil?
           session_booking.delete
+          logger.info "Treatment delete: #{session_booking.id}. Reason: Admin create failed."
         end
         @bookings.each do |book|
           Booking.find(book[:id]).destroy
+          logger.info "Booking delete: #{book[:id]}. Reason: Admin create failed"
+        end
+        logger.info "Errors: "
+        @errors.each do |error_message|
+          logger.info error_message
         end
 
         format.html { render action: 'new' }
@@ -629,8 +641,8 @@ class BookingsController < ApplicationController
     should_create_sessions = false
 
     booking_buffer_params[:bookings].each do |pos, buffer_params|
-      staff_code = nil
-      new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code)
+      employee_code = nil
+      new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code)
       @booking = Booking.new(new_booking_params)
 
       if @booking.price.nil?
@@ -710,8 +722,8 @@ class BookingsController < ApplicationController
       end
 
       if @company_setting.staff_code
-        if !buffer_params[:staff_code].blank? && StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).count > 0
-          staff_code = StaffCode.where(company_id: current_user.company_id, code: buffer_params[:staff_code], active: true).first.id
+        if !buffer_params[:employee_code].blank? && EmployeeCode.where(company_id: current_user.company_id, code: buffer_params[:employee_code], active: true, staff: true).count > 0
+          employee_code = EmployeeCode.where(company_id: current_user.company_id, code: buffer_params[:employee_code], active: true).first.id
         else
           @errors << {
             :booking => pos,
@@ -986,7 +998,7 @@ class BookingsController < ApplicationController
           :bundled => u.bundled
         }
 
-        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
+        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, employee_code_id: employee_code, notes: @booking.notes, company_comment: @booking.company_comment)
       else
         @errors << {
             :booking => pos,
@@ -1024,11 +1036,11 @@ class BookingsController < ApplicationController
   def booking_valid
     @company = Company.find(current_user.company_id)
     @company_setting = @company.company_setting
-    staff_code = nil
-    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code)
+    employee_code = nil
+    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_record, :client_second_phone, :client_gender, :employee_code, :deal_code)
     if @company_setting.staff_code
-      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).count > 0
-        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).first.id
+      if booking_params[:employee_code] && !booking_params[:employee_code].empty? && EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true, staff: true).count > 0
+        employee_code = EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true).first.id
       else
         render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
         return
@@ -1165,7 +1177,7 @@ class BookingsController < ApplicationController
         u = @booking
         if u.warnings then warnings = u.warnings.full_messages else warnings = [] end
         @booking_json = { :id => u.id, :start => u.start, :end => u.end, :service_id => u.service_id, :service_provider_id => u.service_provider_id, :status_id => u.status_id, :first_name => u.client.first_name, :last_name => u.client.last_name, :email => u.client.email, :phone => u.client.phone, :notes => u.notes,  :company_comment => u.company_comment, :provider_lock => u.provider_lock, :service_name => u.service.name, :warnings => warnings }
-        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
+        BookingHistory.create(booking_id: @booking.id, action: "Creada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, employee_code_id: employee_code, notes: @booking.notes, company_comment: @booking.company_comment)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully created.' }
         format.json { render :json => @booking_json }
         format.js { }
@@ -1182,13 +1194,13 @@ class BookingsController < ApplicationController
   def update
     @company = Company.find(current_user.company_id)
     @company_setting = @company.company_setting
-    staff_code = nil
+    employee_code = nil
     old_client_id = @booking.client_id
     sessions_created = false
-    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code)
+    new_booking_params = booking_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code, :deal_code)
     if @company_setting.staff_code
-      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).count > 0
-        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).first.id
+      if booking_params[:employee_code] && !booking_params[:employee_code].empty? && EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true, staff: true).count > 0
+        employee_code = EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true).first.id
       else
         render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
         return
@@ -1413,6 +1425,24 @@ class BookingsController < ApplicationController
           @booking.save
         end
 
+        #Use the client check to decide on charts logic
+        #Cases:
+        # 1 Client is the same
+        # => 1.1 Booking had no chart
+        #        If chart_create, then create it associated to this booking.
+        #        Else, nothing to do.
+        # => 1.2 Booking had a chart
+        #        If chart_create, update chart (remember to set last_modifier).
+        #        Else, deassociate chart from the booking (¡don't delete the chart! that should be done on the client view, not from a booking)
+        #
+        # 2 Client is different
+        # => 2.1 Booking had no chart
+        #        If chart_create, then create it for the new_client associated to this booking.
+        #        Else, nothing to do.
+        # => 2.2 Booking had a chart
+        #        If chart_create, create it for the new_client associated to this booking. Deattach former chart from this booking.
+        #        Else, deassociate chart from the booking (¡don't delete the chart! that should be done on the client view, not from a booking)
+
         if @booking.client_id == old_client_id
           if was_session
             if @booking.service_id != old_service_id
@@ -1436,6 +1466,8 @@ class BookingsController < ApplicationController
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).last
                     discharged_booking.delete
+
+                    logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
 
                     session_booking.sessions_taken += 1
                     session_booking.save
@@ -1583,6 +1615,7 @@ class BookingsController < ApplicationController
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).last
                     discharged_booking.delete
+                    logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
 
                     session_booking.sessions_taken += 1
                     session_booking.save
@@ -1667,6 +1700,29 @@ class BookingsController < ApplicationController
               logger.debug "They are equal"
             end
           end
+
+          #Chart revision
+          if @booking.chart.nil?
+            if params[:chart] && params[:chart][:create_chart] == "true"
+              chart = Chart.create(company_id: current_user.company_id, client_id: @booking.client_id, booking_id: @booking.id, user_id: current_user.id, date: params[:chart][:date])
+              chart.save_chart_fields(params[:chart_fields])
+            end
+          else
+            if params[:chart] && params[:chart][:create_chart] == "true"
+              logger.debug "Enters wrongly"
+              chart = @booking.chart
+              chart.last_modifier_id = current_user.id
+              chart.date = params[:chart][:date]
+              chart.save
+              chart.save_chart_fields(params[:chart_fields])
+            else
+              logger.debug "Enters correctly"
+              chart = @booking.chart
+              chart.booking_id = nil
+              chart.save
+            end
+          end
+
         else
 
           if was_session
@@ -1688,6 +1744,7 @@ class BookingsController < ApplicationController
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).last
                     discharged_booking.delete
+                    logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
 
                     session_booking.sessions_taken += 1
                     session_booking.save
@@ -1837,6 +1894,7 @@ class BookingsController < ApplicationController
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).last
                     discharged_booking.delete
+                    logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
 
                     session_booking.sessions_taken = session_booking.bookings.where(is_session_booked: true).count
                     session_booking.save
@@ -1984,6 +2042,7 @@ class BookingsController < ApplicationController
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).last
                     discharged_booking.delete
+                    logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
 
                     session_booking.sessions_taken += 1
                     session_booking.save
@@ -2068,6 +2127,27 @@ class BookingsController < ApplicationController
               logger.debug "They are equal"
             end
           end
+
+          #Chart revision
+          if @booking.chart.nil?
+            if params[:chart][:create_chart] == "true"
+              chart = Chart.create(company_id: current_user.company_id, client_id: @booking.client_id, booking_id: @booking.id, user_id: current_user.id, date: params[:chart][:date])
+              chart.save_chart_fields(params[:chart_fields])
+            end
+          else
+            if params[:chart][:create_chart] == "true"
+              chart = @booking.chart
+              chart.booking_id = nil
+              chart.save
+              new_chart = Chart.create(company_id: current_user.company_id, client_id: @booking.client_id, booking_id: @booking.id, user_id: current_user.id, date: params[:chart][:date])
+              new_chart.save_chart_fields(params[:chart_fields])
+            else
+              chart = @booking.chart
+              chart.booking_id = nil
+              chart.save
+            end
+          end
+
         end
 
         ############
@@ -2250,7 +2330,7 @@ class BookingsController < ApplicationController
           :bundled => u.bundled,
           :location_id => u.location_id
         }
-        BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, staff_code_id: staff_code, notes: @booking.notes, company_comment: @booking.company_comment)
+        BookingHistory.create(booking_id: @booking.id, action: "Modificada por Calendario", start: @booking.start, status_id: @booking.status_id, service_id: @booking.service_id, service_provider_id: @booking.service_provider_id, user_id: current_user.id, employee_code_id: employee_code, notes: @booking.notes, company_comment: @booking.company_comment)
         format.html { redirect_to bookings_path, notice: 'Booking was successfully updated.' }
         format.json { render :json => @booking_json }
         format.js { }
@@ -2267,8 +2347,8 @@ class BookingsController < ApplicationController
   def destroy
     @company_setting = current_user.company.company_setting
     if @company_setting.staff_code
-      if booking_params[:staff_code] && !booking_params[:staff_code].empty? && StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).count > 0
-        staff_code = StaffCode.where(company_id: current_user.company_id, code: booking_params[:staff_code], active: true).first.id
+      if booking_params[:employee_code] && !booking_params[:employee_code].empty? && EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true, staff: true).count > 0
+        employee_code = EmployeeCode.where(company_id: current_user.company_id, code: booking_params[:employee_code], active: true).first.id
       else
         render :json => { :errors => ["El código de empleado ingresado no es correcto."] }, :status => 422
         return
@@ -2353,6 +2433,9 @@ class BookingsController < ApplicationController
     booking_ids = @session_booking.bookings.pluck(:id)
     respond_to do |format|
       if @session_booking.destroy
+        booking_ids.each do |booking_id|
+          logger.info "Booking delete: #{booking_id}. Reason: Treatment delete."
+        end
         TreatmentLog.create(client_id: @session_booking.client_id, user_id: current_user.id, service_id: @session_booking.service_id, detail: "Eliminado por calendario.")
         format.html { redirect_to bookings_url }
         format.json { render :json => {id: @session_booking.id, bookings: booking_ids} }
@@ -2370,6 +2453,9 @@ class BookingsController < ApplicationController
     booking_ids = @session_booking.bookings.pluck(:id)
     respond_to do |format|
       if @session_booking.destroy
+        booking_ids.each do |booking_id|
+          logger.info "Booking delete: #{booking_id}. Reason: Treatment delete."
+        end
         TreatmentLog.create(client_id: @session_booking.client_id, user_id: current_user.id, service_id: @session_booking.service_id, detail: "Eliminado por calendario.")
         format.html { redirect_to bookings_url }
         format.json { render :json => {id: @session_booking.id, bookings: booking_ids} }
@@ -2397,6 +2483,9 @@ class BookingsController < ApplicationController
 
 
     if @session_booking.destroy
+      booking_ids.each do |booking_id|
+        logger.info "Booking delete: #{booking_id}. Reason: Treatment delete."
+      end
       @json_response << "ok"
       @json_response << @booking
       render :json => @json_response
@@ -2544,13 +2633,13 @@ class BookingsController < ApplicationController
   end
 
   def booking_history
-    staff_code = '-'
+    employee_code = '-'
     user = '-'
     bookings = []
     BookingHistory.where(booking_id: params[:booking_id]).order(created_at: :desc).each do |booking_history|
       if current_user.role_id == Role.find_by_name('Administrador General').id || current_user.role_id == Role.find_by_name('Administrador Local').id || current_user.role_id == Role.find_by_name('Recepcionista').id
-        if booking_history.staff_code
-          staff_code = booking_history.staff_code.staff
+        if booking_history.employee_code
+          employee_code = booking_history.employee_code.name
         end
         user = 'Usuario no registrado'
         if booking_history.user_id && booking_history.user_id > 0 && booking_history.user
@@ -2558,7 +2647,7 @@ class BookingsController < ApplicationController
         end
       end
       timezone = CustomTimezone.from_booking_history(booking_history)
-      bookings.push( { action: booking_history.action, created: booking_history.created_at, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, staff_code: staff_code, notes: booking_history.notes, company_comment: booking_history.company_comment, time_offset: timezone.offseti } )
+      bookings.push( { action: booking_history.action, created: booking_history.created_at, start: booking_history.start, service: booking_history.service.name, provider: booking_history.service_provider.public_name, status: booking_history.status.name, user: user, employee_code: employee_code, notes: booking_history.notes, company_comment: booking_history.company_comment, time_offset: timezone.offseti } )
     end
     render :json => bookings
   end
@@ -3563,9 +3652,11 @@ class BookingsController < ApplicationController
       else
         if @has_session_booking && !@session_booking.nil?
           @session_booking.delete
+          logger.info "Treatment delete: #{@session_booking.id}. Reason: PuntoPagos failed)."
         end
         @bookings.each do |booking|
             booking.delete
+            logger.info "Booking delete: #{booking.id}. Reason: PuntoPagos failed)."
         end
         puts resp.get_error
         redirect_to punto_pagos_failure_path and return
@@ -3725,9 +3816,11 @@ class BookingsController < ApplicationController
       end
 
       session_booking.delete
+      logger.info "Treatment delete: #{session_booking.id}. Reason: Reached book_error."
 
       @tried_bookings.each do |booking|
         booking.delete
+        logger.info "Booking delete: #{booking.id}. Reason: Reached book_error."
       end
 
     else
@@ -3738,6 +3831,7 @@ class BookingsController < ApplicationController
           service_promo.save
         end
         booking.delete
+        logger.info "Booking delete: #{booking.id}. Reason: Reached book_error."
       end
     end
 
@@ -7829,6 +7923,20 @@ class BookingsController < ApplicationController
 
   end
 
+  def summary
+    render '_summary', layout: false
+  end
+
+  def chart
+    chart = @booking.chart
+    has_chart = !chart.nil?
+    chart_fields = []
+    if has_chart
+      chart_fields = chart.get_chart_fields
+    end
+    render :json => {:has_chart => has_chart, :chart_fields => chart_fields, :chart => @booking.chart}
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_booking
@@ -7840,10 +7948,10 @@ class BookingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def booking_params
-      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :deal_code, :session_booking_id, :payed_state, :bundled, :bundle_id, :bundled_delete)
+      params.require(:booking).permit(:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code, :deal_code, :session_booking_id, :payed_state, :bundled, :bundle_id, :bundled_delete)
     end
 
     def booking_buffer_params
-      params.permit(bookings: [:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :staff_code, :session_booking_id, :payed_state, :bundled, :bundle_id])
+      params.permit(bookings: [:start, :end, :notes, :service_provider_id, :service_id, :price, :user_id, :status_id, :promotion_id, :client_id, :client_first_name, :client_last_name, :client_email, :client_phone, :confirmation_code, :company_comment, :web_origin, :provider_lock, :send_mail, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code, :session_booking_id, :payed_state, :bundled, :bundle_id])
     end
 end

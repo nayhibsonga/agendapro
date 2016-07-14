@@ -1,0 +1,12 @@
+<%= simple_form_for(@chart_category) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :chart_category_id %>
+    <%= f.input :name %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

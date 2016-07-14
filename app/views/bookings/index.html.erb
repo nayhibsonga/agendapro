@@ -115,6 +115,9 @@
                 <% if @company_setting.booking_history %>
                 <li id="changes-li" class=""><a href="#changes-pane" role="tab" data-toggle="tab" class="tab_index" id="changes-tab">Modificaciones Reserva</a></li>
                 <% end %>
+                <% if current_user.company.is_plan_capable("Premium") %>
+                  <li id="charts-li" class=""><a href="#charts-pane" role="tab" data-toggle="tab" class="tab_index" id="charts-tab">Ficha</a></li>
+                <% end %>
               </ul>
               <br />
               <div id="myTabContent" class="tab-content">
@@ -234,7 +237,7 @@
                       <div class="form-group has-feedback">
                         <%= f.label :service, "Servicio", class: "col-sm-4 control-label" %>
                         <div class="col-sm-8">
-                          <select class="form-control" id="booking_service_id" name="booking[service_id]" disabled></select>
+                          <select style="width: 216px;" id="booking_service_id" name="booking[service_id]" disabled></select>
                           <span class="help-block"></span>
                           <span class="form-control-feedback"></span>
                         </div>
@@ -396,9 +399,9 @@
                   <div class="row">
                     <div class="col-md-12">
                       <div class="form-group has-feedback">
-                        <%= label_tag :booking_staff_code, "Código de Empleado", class: "col-sm-2 control-label" %>
+                        <%= label_tag :booking_employee_code, "Código de Empleado", class: "col-sm-2 control-label" %>
                         <div class="col-sm-10">
-                          <%= password_field_tag :booking_staff_code, '',{class: "form-control", required: true} %>
+                          <%= password_field_tag :booking_employee_code, '',{class: "form-control", required: true} %>
                           <span class="help-block"></span>
                           <span class="form-control-feedback"></span>
                         </div>
@@ -962,6 +965,287 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="tab-pane" id="charts-pane">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="chart[create_chart]" id="create_chart" value="0" />Crear o actualizar ficha asociada a esta reserva
+                          </label>
+                          <span class="create_chart_explanation" style="color: #22c488;" title="Advertencia: Si existe una ficha asociada a esta reserva, desmarcas esta opción y luego guardas, la ficha seǵuirá existiendo pero ya no estará asociada a la reserva.">&nbsp;&nbsp;<i class="fa fa-question-circle"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <ul id="client-chart-fields-tab" class="nav nav-pills nav-stacked" role="tablist">
+                      <li id="client-chart-general-li" class="booking-client-li active"><a href="#chart-general" role="tab" data-toggle="tab" class="client_tab_index">General</a></li>
+                      <% @company.chart_groups.each_with_index do |chart_group, index| %>
+                        <% if chart_group.chart_fields.count > 0 %>
+                          <li id="client-chart-fields<%= chart_group.id %>-li" class="booking-client-li"><a href="#client-chart-fields-<%= chart_group.id %>" role="tab" data-toggle="tab" class="client_tab_index" id="client-chart-fields-<%= chart_group.id %>-tab"><%= chart_group.name %></a></li>
+                        <% end %>
+                      <% end %>
+
+
+                    </ul>
+                  </div>
+                  <div class="col-md-10">
+
+
+
+                        <div id="clientTabContent" class="tab-content">
+
+                          <div class="tab-pane active" id="chart-general">
+                            
+                            <div class="form-group">
+                              <label for="chart_date" class="col-xs-2 col-md-2 control-label left-label">Fecha</label>
+                              <div class="col-xs-4 col-md-4">
+                                <input type="hidden" name="chart[client_id]" id="chart_client_id" value="" />
+                                <input type="hidden" name="chart[company_id]" id="chart_company_id" value="<%= current_user.company_id %>" />
+                                <input type="hidden" name="chart[user_id]" id="chart_user_id" value="" />
+                                <input type="hidden" name="chart[last_modifier_id]" id="chart_last_modifier_id" value="<%= current_user.id %>" />
+                                <input type="hidden" name="chart[date]" id="chart_date" value="" /> 
+                                <input type="text" class="form-control chart_field_datepicker" id="aux_date" value="<%= (DateTime.now + @company.country.timezone_offset.hours).strftime('%d/%m/%Y') %>" autocomplete="off" />
+                              </div>
+                              <div class="col-xs-4" style="text-align: right;">
+                                <select class="form-control" style="width: 45% !important; display: inline;" id="aux_hour">
+                                  <%
+                                    for i in 0..23
+                                      str_hour = i.to_s
+                                      if str_hour.length == 1
+                                        str_hour = "0" + str_hour
+                                      end
+
+                                      %>
+                                        <option value="<%= str_hour %>"><%= str_hour %></option>
+                                      <%
+
+                                    end
+                                  %>
+                                </select>
+                                &nbsp;:&nbsp;
+                                <select class="form-control" style="width: 45% !important; display: inline;" id="aux_minute">
+                                  <%
+                                    for i in 0..59
+                                      str_hour = i.to_s
+                                      if str_hour.length == 1
+                                        str_hour = "0" + str_hour
+                                      end
+
+                                      %>
+                                        <option value="<%= str_hour %>"><%= str_hour %></option>
+                                      <%
+
+                                    end
+                                  %>
+                                </select>
+                              </div>
+                              <div class="col-xs-2">
+
+                              </div>
+
+                            </div>
+
+                          </div>
+
+                          <!--
+                            Chart fields
+                          -->
+                          
+                            <% @company.chart_groups.order(:order).each_with_index do |chart_group, index| %>
+                              <% if chart_group.chart_fields.count > 0 %>
+                                <div class="tab-pane charts-pane" id="client-chart-fields-<%= chart_group.id %>">
+                                  
+
+                                    <% chart_group.chart_fields.order(:order).each do |chart_field| %>
+
+                                      <%
+                                        if (chart_field.datatype == "categoric" && (chart_field.chart_categories.nil? || chart_field.chart_categories.count < 1)) || chart_field.datatype == "file"
+                                          next
+                                        end
+                                      %>
+
+                                      <div class="col-md-6">
+
+                                        <% if chart_field.datatype == "float" %>
+                                          
+                                              <div class="form-group has-feedback">
+                                                <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
+                                                  <%= chart_field.name %>
+                                                </label>
+                                                <div class="col-sm-8">
+                                                  <input type="number" class="form-control chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_chart_field" value="" <%= "required" if chart_field.mandatory %> />
+                                                  <span class="help-block"></span>
+                                                  <span class="form-control-feedback"></span>
+                                                </div>
+                                              </div>
+                                            
+                                        <% elsif chart_field.datatype == "integer" %>
+                                          
+                                              <div class="form-group has-feedback">
+                                                <label for="<%= chart_field.slug %>_chart_field" class="col-sm-4 control-label">
+                                                  <%= chart_field.name %>
+                                                </label>
+                                                <div class="col-sm-8">
+                                                  <input type="number" class="form-control chart-field" title="<%= chart_field.description %>" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_chart_field" value="" <%= "required" if chart_field.mandatory %> />
+                                                  <span class="help-block"></span>
+                                                  <span class="form-control-feedback"></span>
+                                                </div>
+                                              </div>
+                                            
+                                        <% elsif chart_field.datatype == "text" %>
+
+                                          
+                                              <div class="form-group has-feedback">
+                                                <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
+                                                  <%= chart_field.name %>
+                                                </label>
+                                                <div class="col-sm-8">
+                                                  <input type="text" class="form-control chart-field" title="<%= chart_field.description %>" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_chart_field" value="" <%= "required" if chart_field.mandatory %> />
+                                                  <span class="help-block"></span>
+                                                  <span class="form-control-feedback"></span>
+                                                </div>
+                                              </div>
+                                            
+
+                                        <% elsif chart_field.datatype == "textarea" %>
+
+                                          
+                                              <div class="form-group has-feedback">
+                                                <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
+                                                  <%= chart_field.name %>
+                                                </label>
+                                                <div class="col-sm-8">
+                                                  <textarea class="form-control chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_chart_field" <%= "required" if chart_field.mandatory %> /></textarea>
+                                                  <span class="help-block"></span>
+                                                  <span class="form-control-feedback"></span>
+                                                </div>
+                                              </div>
+                                            
+
+                                        <% elsif chart_field.datatype == "boolean" %>
+
+                                          
+                                              <div class="form-group has-feedback">
+                                                <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
+                                                  <%= chart_field.name %>
+                                                </label>
+                                                <div class="col-sm-8">
+                                                  <select class="form-control chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_chart_field">
+                                                      <option value="1" selected>Sí</option>
+                                                      <option value="0">No</option>
+                                                  </select>
+                                                  <span class="help-block"></span>
+                                                </div>
+                                              </div>
+                                            
+
+                                        <% elsif chart_field.datatype == "date" %>
+
+                                          
+                                              <div class="form-group has-feedback">
+                                                <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
+                                                  <%= chart_field.name %>
+                                                </label>
+                                                <div class="col-sm-8">
+                                                  <input type="text" class="form-control chart_field_datepicker chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_chart_field" value="" <%= "required" if chart_field.mandatory %> />
+                                                  <span class="help-block"></span>
+                                                  <span class="form-control-feedback"></span>
+                                                </div>
+                                              </div>
+                                            
+
+                                        <% elsif chart_field.datatype == "datetime" %>
+
+                                          
+                                            <div class="form-group">
+                                              <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
+                                                <%= chart_field.name %>
+                                              </label>
+                                              <div class="col-sm-8" style="padding: 0px !important;">
+                                                <div class="col-sm-12">
+                                                  <input type="text" class="form-control chart_field_datepicker chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_chart_field" value="" <%= "required" if chart_field.mandatory %> />
+                                                </div>
+                                                <div class="col-sm-5" style="padding-right: 0px;">
+                                                  <select class="form-control chart-field" name="<%= chart_field.slug %>_chart_field_hour" id="<%= chart_field.slug %>_chart_field_hour">
+                                                    <%
+                                                      for i in 0..23
+                                                        str_hour = i.to_s
+                                                        if str_hour.length == 1
+                                                          str_hour = "0" + str_hour
+                                                        end
+
+                                                        %>
+                                                          <option value="<%= str_hour %>"><%= str_hour %></option>
+                                                        <%
+
+                                                      end
+                                                    %>
+                                                  </select>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                :
+                                                </div>
+                                                <div class="col-sm-5" style="padding-left: 0px;">
+                                                  <select class="form-control chart-field" name="<%= chart_field.slug %>_chart_field_minute" id="<%= chart_field.slug %>_chart_field_minute">
+                                                    <%
+                                                      for i in 0..59
+                                                        str_minute = i.to_s
+                                                        if str_minute.length == 1
+                                                          str_minute = "0" + str_minute
+                                                        end
+
+                                                        %>
+                                                          <option value="<%= str_minute %>"><%= str_minute %></option>
+                                                        <%
+
+                                                      end
+                                                    %>
+                                                  </select>
+                                                </div>
+                                                <span class="help-block"><%= chart_field.description %></span>
+                                                <span class="form-control-feedback"></span>
+                                              </div>
+                                            </div>
+                                            
+
+                                        <% elsif chart_field.datatype == "categoric" %>
+
+                                          
+                                            <div class="form-group has-feedback">
+                                              <label for="<%= chart_field.slug %>_chart_field" title="<%= chart_field.description %>" class="col-sm-4 control-label">
+                                                <%= chart_field.name %>
+                                              </label>
+                                              <div class="col-sm-8">
+                                                <select class="form-control chart-field" name="<%= chart_field.slug %>_chart_field" id="<%= chart_field.slug %>_chart_field">
+                                                  <% chart_field.chart_categories.each do |category| %>
+                                                    <option value="<%= category.id %>"><%= category.name %></option>
+                                                  <% end %>
+                                                </select>
+                                                <span class="help-block"></span>
+                                              </div>
+                                            </div>
+                                            
+
+                                        <% end %>
+                                      </div>
+                                    <% end %>
+
+                                  
+                                </div>
+                              <% end %>
+                            <% end %>
+
+                          
+                        </div>
+
+                    
+                    <!--<p><strong>Nota:</strong> Si modificas estos datos, al guardar la reserva, se actualizarán los datos del cliente.</p>-->
+                  </div>
+                </div>
+
                 <div class="tab-pane" id="history-pane">
                   <div class="fixed-table">
                     <h4>Últimas reservas del cliente (máx. 10 reservas):</h4>
@@ -1326,9 +1610,9 @@
             </div>
             <% if @company_setting.staff_code %>
               <div class="form-group has-feedback">
-                <%= label_tag :booking_staff_code, "Código de Empleado", class: "col-md-4 control-label" %>
+                <%= label_tag :booking_employee_code, "Código de Empleado", class: "col-md-4 control-label" %>
                 <div class="col-md-8">
-                  <%= text_field_tag :booking_staff_code, '',{class: "form-control", required: true} %>
+                  <%= text_field_tag :booking_employee_code, '',{class: "form-control", required: true} %>
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>

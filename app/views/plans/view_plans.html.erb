@@ -33,7 +33,8 @@
                 <p class="price"><%= number_to_currency(t "plans.normal") %></p>
                 <p>+ IVA</p>
               </div>
-              <p>Por mes</p>
+              <div class="pricing-compact"><span><%= number_to_currency(t "plans.normal") %></span> / mes</div>
+              <p class="pricing-down">Por mes</p>
             </div>
             <div class="pricing-col active" data-plan="premium">
               <p class="pricing-plan">Premium</p>
@@ -42,7 +43,8 @@
                 <p class="price"><%= number_to_currency(t "plans.premium") %></p>
                 <p>+ IVA</p>
               </div>
-              <p>Por mes</p>
+              <div class="pricing-compact"><span><%= number_to_currency(t "plans.premium") %></span> / mes</div>
+              <p class="pricing-down">Por mes</p>
             </div>
             <div class="pricing-col" data-plan="pro">
               <p class="pricing-plan">Pro</p>
@@ -51,7 +53,8 @@
                 <p class="price"><%= number_to_currency(t "plans.pro") %></p>
                 <p>+ IVA</p>
               </div>
-              <p>Por mes</p>
+              <div class="pricing-compact"><span><%= number_to_currency(t "plans.pro") %></span> / mes</div>
+              <p class="pricing-down">Por mes</p>
             </div>
           </div>
         </div>
@@ -84,6 +87,54 @@
               </div>
             </div>
           </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Costo Sucursal Extra
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p>
+                  <%= number_to_currency(t "plan_extra_location.normal") %>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p>
+                  <%= number_to_currency(t "plan_extra_location.premium") %>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p>
+                  <%= number_to_currency(t "plan_extra_location.pro") %>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                E-Mails publicitarios incluídos
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p>
+                  5.000
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p>
+                  10.000
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p>
+                  15.000
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="col-xs-12">
@@ -94,31 +145,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Reservas Internas desde Calendario
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Buscador de Horas automático<span class="pull-right" data-toggle="tooltip" data-placement="top" title="El sistema AgendaPro busca en tu agenda las próximas horas disponibles, para que puedas generar las reservas de forma rápida cuando te llaman o pasan a reservar."><i class="fa fa-question-circle fa-lg"></i></span>
+                Manejo de agenda y buscador de horas <span class="pull-right" data-toggle="tooltip" data-placement="top" title="Ordena y organiza a tu equipo completo en una sola vista. Además, el sistema AgendaPro busca en tu agenda las próximas horas disponibles, para que puedas generar las reservas de forma rápida cuando te llaman o pasan a reservar."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -166,7 +193,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Confirmaciones Automáticas<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Sistema de confirmaciones automáticas, para recordarles las citas a tus clientes."><i class="fa fa-question-circle fa-lg"></i></span>
+                Confirmaciones Automáticas<span class="pull-right" data-toggle="tooltip" data-placement="top" title="No pierdas más tiempo y recuérdales a tus clientes sus próximas citas de forma automática por medio de un correo electrónico personalizado."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -190,31 +217,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Reservas Web 24/7<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Desde tu propia web, tus clientes podrán reservar las 24 horas del día, los 7 días de la semana. Aprovecha de recibir reservas incluso cuando estás cerrado."><i class="fa fa-question-circle fa-lg"></i></span>
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Reservas desde Facebook<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Puedes agregar una app especial a tu Fanpage de Facebook, para que tus clientes reserven desde tu perfil de Facebook."><i class="fa fa-question-circle fa-lg"></i></span>
+                Reservas en línea y desde Facebook <span class="pull-right" data-toggle="tooltip" data-placement="top" title="Tus clientes podrán reservar los 7 días de la semana desde tu página web o desde tu fanpage en Facebook. Aprovecha de recibir reservas incluso cuando estés descansando."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -334,130 +337,10 @@
         </div>
       </div>
       <div class="col-xs-12">
-        <h3 class="pricing-section">Sistema de Búsqueda y Gestión de Promociones</h3>
+        <h3 class="pricing-section">Búsqueda y Gestión de Promociones</h3>
       </div>
       <div class="col-xs-12">
         <div class="border">
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Buscador AgendaPro
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Lugar en portal Horachic.com
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Promociones tradicionales
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Promociones por baja demanda
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Promociones última hora
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
@@ -485,13 +368,61 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Aplicación móvil HoraChic
+                Promociones tradicionales<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Con AgendaPro podrás seleccionar 1 o más servicios, asignarles un descuento y notificarlo a todos tus clientes. Todo esto en tres simples pasos."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
               <div class="pricing-col" data-plan="normal">
                 <p class="pricing-icon">
                   <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Promociones por baja demanda<span class="pull-right" data-toggle="tooltip" data-placement="top" title="AgendaPro te permite detectar tus días y horas con menos demanda. Podrás generar promociones especiales en estos horarios de forma de aumentar tus ventas sin disminuir tu rentabilidad."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Promociones última hora<span class="pull-right" data-toggle="tooltip" data-placement="top" title="¿Tienes una hora disponible ahora?, con AgendaPro puedes ofrecerla a todos tus clientes y no quedarte con las manos cruzadas."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
                 </p>
               </div>
               <div class="pricing-col active" data-plan="premium">
@@ -516,7 +447,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Perfil de Usuario para Staff
+                Perfil especial para profesional con código de verificación<span class="pull-right" data-toggle="tooltip" data-placement="top" title="AgendaPro te permite habilitar una cuenta para cada profesional. Éste podrá administrar sus horarios si tu lo permites. Para mayor control puedes asignar un código a cada uno y enterarte de todos los cambios efectuados en la agenda."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -540,7 +471,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Código de empleado / + control
+                Administración de Recursos<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Con nuestra plataforma podrás ordenar el uso de tus recursos. Si tienes 2 salas y 3 profesionales, AgendaPro se preocupará de asignar correctamente el uso de tus salas para que no tengas ningún tipo de problemas."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -564,7 +495,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Administración de Recursos
+                Base de Clientes<span class="pull-right" data-toggle="tooltip" data-placement="top" title="En AgendaPro quedarán guardados todos tus clientes con sus datos y preferencias. Puedes importar y exportar la base de datos cuando tu quieras."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -588,7 +519,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Impresión de Horario
+                Envío de Correos Masivos<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Envía correos electrónicos a tus clientes desde nuestro sistema. AgendaPro te permite seleccionar un grupo de clientes a quien quieras enviar información, redactar un correo y enviarlo."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -612,31 +543,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Fichas de Clientes
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p>
-                  Básicas
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p>
-                  Pro
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p>
-                  Pro
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Exportación/Importación base de datos
+                Reportes de Gestión<span class="pull-right" data-toggle="tooltip" data-placement="top" title="En una sola vista analiza la gestión de tu negocio. Podrás ver el comportamiento de tus clientes, el servicio más vendido, los días más activos de trabajo y los horarios de mayores reservas."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -660,31 +567,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Mailing PRO
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p>
-                  Básico
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p>
-                  Pro
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p>
-                  Pro
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Reporting
+                Sistema de Caja y Cálculo de Comisiones<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Con AgendaPro puedes ingresar los pagos que realizan tus clientes a diario, ver las recaudaciones y obtener reportes detallados de tu caja. Asigna los porcentajes de comisión y la plataforma calculará automáticamente cuánto dinero le corresponde a cada profesional."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -708,7 +591,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Sistema de Caja
+                Inventario<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Registra los productos que tienes a la venta y los que utilizas para trabajar con el stock correspondiente. AgendaPro descuenta unidades automáticamente tras efectuar las ventas. Puedes activar alarmas de stock que te avisarán cuando queden pocos productos para que nunca tengas quiebres."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -732,55 +615,7 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Pago de Comisiones
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Inventario
-              </p>
-            </div>
-            <div class="pricing-cols">
-              <div class="pricing-col" data-plan="normal">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col active" data-plan="premium">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-              <div class="pricing-col" data-plan="pro">
-                <p class="pricing-icon">
-                  <i class="fa fa-check"></i>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pricing-row">
-            <div class="pricing-description">
-              <p>
-                Packs de servicios (grupos de servicios con distintos profesionales)
+                Fichas personalizadas por cliente<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Crea tu ficha de trabajo a tu medida. No te adaptes a un sistema, el sistema se adapta a ti."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -804,7 +639,103 @@
           <div class="pricing-row">
             <div class="pricing-description">
               <p>
-                Personalización del sistema
+                Plantillas prediseñadas y Reportes de campañas<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Podrás seleccionar alguna de nuestras plantillas base especialmente diseñadas para correos masivos. Además revisa el resultado de cada uno de tus envíos directamente desde la plataforma (¿A cuántas personas les llegó?, ¿Cuántas personas lo vieron?, ¿Cuántas personas hicieron click?)."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Reportes de Ventas de Productos<span class="pull-right" data-toggle="tooltip" data-placement="top" title="AgendaPro te permite ver en detalle, cuántas ventas de productos se han efectuado en el periodo de tiempo que quieras consultar. Además te mostrará quién es el mejor vendedor, cuál es el producto más vendido, y cuál es el más rentable."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Packs de servicios<span class="pull-right" data-toggle="tooltip" data-placement="top" title="El sistema de permite crear packs de servicios en simples pasos. Puedes seleccionar los servicios a incorporar en el pack y asignarle un precio especial. Esto facilitará el agendamiento de dos servicios juntos tanto para tus clientes como para tu empresa, optimizando tu agenda."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Servicios con Horarios<span class="pull-right" data-toggle="tooltip" data-placement="top" title="Con AgendaPro puedes asignar un día y una hora determinada a un servicio. Esta herramienta es especial para servicios como talleres o clases, en donde los servicios se realizan a una hora especial."><i class="fa fa-question-circle fa-lg"></i></span>
+              </p>
+            </div>
+            <div class="pricing-cols">
+              <div class="pricing-col" data-plan="normal">
+                <p class="pricing-icon">
+                  &nbsp;
+                </p>
+              </div>
+              <div class="pricing-col active" data-plan="premium">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+              <div class="pricing-col" data-plan="pro">
+                <p class="pricing-icon">
+                  <i class="fa fa-check"></i>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pricing-row">
+            <div class="pricing-description">
+              <p>
+                Personalización del sistema<span class="pull-right" data-toggle="tooltip" data-placement="top" title="¿Quieres un sistema de gestión con tu logo y colores corporativos?, AgendaPro puede diseñarlo para tí. Además, te asesoraremos constantemente en cómo utilizar de la mejor forma posible tu plataforma, de forma de que tus ventas aumenten y tus costos disminuyan."><i class="fa fa-question-circle fa-lg"></i></span>
               </p>
             </div>
             <div class="pricing-cols">
@@ -828,7 +759,7 @@
         </div>
       </div>
       <div class="col-xs-12">
-        <h3 class="pricing-section">Soporte para el Cliente</h3>
+        <h3 class="pricing-section">Soporte Usuarios</h3>
       </div>
       <div class="col-xs-12">
         <div class="border">
@@ -966,7 +897,7 @@
     });
 
     var header = $('.pricing-header');
-    var headerY = header.offset().top - 60/* Navbar height */;
+    var headerY = header.offset().top + 25/* Navbar height */;
     var isFloating = false;
     var $w = $(window);
     $w.scroll(function() {

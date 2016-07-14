@@ -6,14 +6,14 @@
 function loadPettyCash()
 {
 
-  if($('#require_cashier_code').val() == "1")
+  if($('#require_employee_code_code').val() == "1")
   {
-    var cashier_code = $("#petty_cash_cashier_code").val();
-    $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
+    var employee_code_code = $("#petty_cash_employee_code_code").val();
+    $.getJSON('/get_cashier_by_code', {payment_employee_code_code: employee_code_code }, function (response) {
       if(response[0] != "error")
       {
-        $("#petty_cash_cashier_name").val(response[0]['name']);
-        $("#petty_cash_cashier_id").val(response[0]['id']);
+        $("#petty_cash_employee_code_name").val(response[0]['name']);
+        $("#petty_cash_employee_code_id").val(response[0]['id']);
         $("#pettyCashModalIntro").modal('hide');
         getPettyCash();
       }
@@ -25,8 +25,8 @@ function loadPettyCash()
           type: "error"
         });
 
-        $("#petty_cash_cashier_name").val("");
-        $("#petty_cash_cashier_id").val("");
+        $("#petty_cash_employee_code_name").val("");
+        $("#petty_cash_employee_code_id").val("");
       }
     });
   }
@@ -424,7 +424,7 @@ function openClosePettyCash()
   var petty_cash_id = $("#petty_cash_id").val();
   var new_cash = $("#petty_new_cash").val();
   var option = $("#openCloseOption").val();
-  var transactioner = $("#petty_cash_cashier_id").val() + '_2';
+  var transactioner = $("#petty_cash_employee_code_id").val() + '_2';
 
   $.ajax({
     url: '/open_close_petty_cash',
@@ -525,21 +525,21 @@ $(function() {
   */
 
   $("#pettyCashBtn").on('click', function(){
-    $("#petty_cash_cashier_code").val("");
-    $("#petty_cash_cashier_id").val("");
-    $("#petty_cash_cashier_name").val("");
+    $("#petty_cash_employee_code_code").val("");
+    $("#petty_cash_employee_code_id").val("");
+    $("#petty_cash_employee_code_name").val("");
     $("#pettyCashModalIntro").modal('show');
   });
 
-  $("#petty_cash_cashier_code").on('focusout', function(){
+  $("#petty_cash_employee_code_code").on('focusout', function(){
 
-    var cashier_code = $(this).val();
+    var employee_code_code = $(this).val();
 
-    $.getJSON('/get_cashier_by_code', {payment_cashier_code: cashier_code }, function (response) {
+    $.getJSON('/get_cashier_by_code', {payment_employee_code_code: employee_code_code }, function (response) {
       if(response[0] != "error")
       {
-        $("#petty_cash_cashier_name").val(response[0]['name']);
-        $("#petty_cash_cashier_id").val(response[0]['id']);
+        $("#petty_cash_employee_code_name").val(response[0]['name']);
+        $("#petty_cash_employee_code_id").val(response[0]['id']);
       }
       else
       {
@@ -547,8 +547,8 @@ $(function() {
           title: "El código de cajero ingresado es incorrecto.",
           type: "error"
         });
-        $("#petty_cash_cashier_name").val("");
-        $("#petty_cash_cashier_id").val("");
+        $("#petty_cash_employee_code_name").val("");
+        $("#petty_cash_employee_code_id").val("");
       }
     });
 

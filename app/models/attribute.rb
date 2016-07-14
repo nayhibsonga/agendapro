@@ -20,9 +20,19 @@ class Attribute < ActiveRecord::Base
 	has_many :text_custom_filters, dependent: :destroy
 	has_many :boolean_custom_filters, dependent: :destroy
 
+	validate :name_uniqueness
+
 	after_create :create_clients_attributes
 	after_save :check_file, :generate_slug, :rearrange
 	after_destroy :check_left
+
+	def name_uniqueness
+	    ::Attribute.where(name: self.name, company_id: self.company_id).each do |attribute|
+	      	if attribute != self
+	        	errors.add(:base, "No se pueden crear dos campos con el mismo nombre.")
+	      	end
+	    end
+	end
 
 	def check_left
 		if self.company.custom_attributes.count < 1

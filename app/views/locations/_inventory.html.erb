@@ -61,15 +61,15 @@
               <td><%= location_product.product.product_display.name %></td>
               <td><%= location_product.stock %></td>
               <% if current_user.role_id == Role.find_by_name("Administrador General").id ||  current_user.role_id == Role.find_by_name("Administrador Local").id %>
-                <td style="text-align: center;"><button class="btn add-stock-btn" product_id="<%= location_product.product.id %>">+</button>&nbsp;&nbsp;<button class="btn substract-stock-btn" product_id="<%= location_product.product.id %>">-</button></td>
+                <td style="text-align: center;"><button class="btn add-stock-btn" product_id="<%= location_product.product.id %>">+</button><button class="btn substract-stock-btn" product_id="<%= location_product.product.id %>">-</button></td>
               <% end %>
               <td>
                 <% if current_user.role_id == Role.find_by_name("Administrador General").id ||  current_user.role_id == Role.find_by_name("Administrador Local").id %>
-                  <a href="#" class="btn btn-sm btn-alarm btn-green" location_product_id="<%= location_product.id %>" product_id="<%= location_product.product.id %>"><i class="fa fa-exclamation-triangle"></i> Alarma</a>
-                  <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_product_path(location_product.product), :class => "btn btn-sm btn-orange" %>
+                  <a href="#" class="btn btn-sm btn-alarm btn-green inventory-options-btn" location_product_id="<%= location_product.id %>" product_id="<%= location_product.product.id %>"><i class="fa fa-exclamation-triangle"></i> Alarma</a>
+                  <%= link_to '<i class="fa fa-pencil"></i> Editar'.html_safe, edit_product_path(location_product.product), :class => "btn btn-sm btn-orange inventory-options-btn" %>
                 <% end %>
                 <% if current_user.role_id == Role.find_by_name("Administrador General").id %>
-                  <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, location_product.product, :class => "btn btn-sm btn-red", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Producto seleccionado?' } %>
+                  <%= link_to '<i class="fa fa-trash-o"></i> Eliminar'.html_safe, location_product.product, :class => "btn btn-sm btn-red inventory-options-btn", method: :delete, data: { confirm: '¿Estás seguro de eliminar el Producto seleccionado? Se eliminarán también los registros de ventas de este producto.' } %>
                 <% end %>
               </td>
             </tr>

@@ -483,11 +483,11 @@ class PaymentsController < ApplicationController
       payment.client_id = nil
     end
 
-    if params[:cashier_id].present?
-      payment.cashier_id = params[:cashier_id]
+    if params[:employee_code_id].present?
+      payment.employee_code_id = params[:employee_code_id]
     else
       if !current_user.company.company_setting.require_cashier_code
-        payment.cashier_id = nil
+        payment.employee_code_id = nil
       else
         @errors << "No se pudo guardar el pago sin cajero."
         @json_response[0] = "error"
@@ -745,7 +745,7 @@ class PaymentsController < ApplicationController
   #
   # Almost equal to create_new_payment.
   # Just deletes/disassociates items and reconstructs them.
-  # Obviously, updates all params concerning the payment (client, cashier, date, payment_method, amount, etc.)
+  # Obviously, updates all params concerning the payment (client, employee_code, date, payment_method, amount, etc.)
   #
 
   def update_payment
@@ -815,11 +815,11 @@ class PaymentsController < ApplicationController
       end
     end
 
-    if params[:cashier_id].present?
-      payment.cashier_id = params[:cashier_id]
+    if params[:employee_code_id].present?
+      payment.employee_code_id = params[:employee_code_id]
     else
       if !current_user.company.company_setting.require_cashier_code
-        payment.cashier_id = nil
+        payment.employee_code_id = nil
       else
         @errors << "No se pudo guardar el pago sin cajero."
         @json_response[0] = "error"
@@ -1164,15 +1164,15 @@ class PaymentsController < ApplicationController
   end
 
   #
-  # Returns payment's cashier, client and date
+  # Returns payment's employee_code, client and date
   #
   def get_intro_info
 
     @payment = Payment.find(params[:payment_id])
     @client = @payment.client
-    @cashier = @payment.cashier
+    @employee_code = @payment.employee_code
 
-    render :json => {payment: @payment, client: @client, cashier: @cashier}
+    render :json => {payment: @payment, client: @client, employee_code: @employee_code}
 
   end
 
@@ -1212,10 +1212,10 @@ class PaymentsController < ApplicationController
       payment.client_id = nil
     end
 
-    if params[:cashier_id].present?
-      payment.cashier_id = params[:cashier_id]
+    if params[:employee_code_id].present?
+      payment.employee_code_id = params[:employee_code_id]
     else
-      payment.cashier_id = nil
+      payment.employee_code_id = nil
     end
     payment.payment_date = params[:payment_date].to_datetime
 
@@ -1722,7 +1722,7 @@ class PaymentsController < ApplicationController
       @json_response[1] = "No se ingresaron correctamente los datos."
       render :json => @json_response
       return
-    elsif params[:cashier_id].blank? && current_user.company.company_setting.require_cashier_code
+    elsif params[:employee_code_id].blank? && current_user.company.company_setting.require_cashier_code
       @json_response[0] = "error"
       @json_response[1] = "No se ingresaron correctamente los datos."
       render :json => @json_response
@@ -1752,13 +1752,13 @@ class PaymentsController < ApplicationController
     end
 
     if current_user.company.company_setting.require_cashier_code
-      if params[:cashier_id].present? && Cashier.where(id: params[:cashier_id]).count > 0
-        internal_sale.cashier_id = params[:cashier_id]
+      if params[:employee_code_id].present? && EmployeeCode.where(id: params[:employee_code_id], cashier: true).count > 0
+        internal_sale.employee_code_id = params[:employee_code_id]
       else
-        @errors << "No existe el cajero ingresado."
+        @errors << "No existe el cajero ingresado o no tiene permisos."
       end
     else
-      internal_sale.cashier_id = nil
+      internal_sale.employee_code_id = nil
     end
 
     if params[:buyer_id].blank? || params[:buyer_type].blank?
@@ -1988,7 +1988,7 @@ class PaymentsController < ApplicationController
         return
       end
     elsif transactioner_type == 2
-      if Cashier.where(:id => transactioner_id).count == 0
+      if EmployeeCode.where(:id => transactioner_id, :cashier => true).count == 0
         @json_response << "error"
         @json_response << "El autor de la transacción es inválido."
         render :json => @json_response
@@ -2089,7 +2089,7 @@ class PaymentsController < ApplicationController
       end
     elsif transactioner_type == 2
       if current_user.company.company_setting.require_cashier_code
-        if Cashier.where(:id => transactioner_id).count == 0
+        if EmployeeCode.where(:id => transactioner_id, :cashier => true).count == 0
           @json_response << "error"
           @json_response << "El autor de la transacción es inválido."
           render :json => @json_response
@@ -2737,18 +2737,18 @@ class PaymentsController < ApplicationController
 
     @locations = []
     @service_providers = []
-    @cashiers = []
+    @employee_codes = []
     @users = []
 
     if current_user.role_id == Role.find_by_name("Administrador General").id
       @locations = current_user.company.locations
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
-      @cashiers = current_user.company.cashiers
+      @employee_codes = current_user.company.employee_codes.where(cashier: true)
       @users = current_user.company.users
     elsif current_user.role_id == Role.find_by_name("Administrador Local").id
       @locations = current_user.locations
       @service_providers = ServiceProvider.where(location_id: @locations.pluck(:id))
-      @cashiers = current_user.company.cashiers
+      @employee_codes = current_user.company.employee_codes.where(cashier: true)
       @users = User.where(id: UserLocation.where(location_id: @locations.pluck(:id)).pluck(:user_id))
     elsif current_user.role_id == Role.find_by_name("Recepcionista").id
       @locations = current_user.locations
@@ -2867,8 +2867,8 @@ class PaymentsController < ApplicationController
 
   def cashiers_report
 
-    cashier_ids = params[:cashier_ids]
-    @cashiers = Cashier.where(id: cashier_ids)
+    employee_code_ids = params[:employee_code_ids]
+    @employee_codes = EmployeeCode.where(id: employee_code_ids)
 
     @from = params[:from].to_datetime
     @to = params[:to].to_datetime
@@ -2881,18 +2881,23 @@ class PaymentsController < ApplicationController
 
     locations = current_user.locations
     if current_user.role_id == Role.find_by_name("Administrador General").id
-      location = current_user.company.locations
+      locations = current_user.company.locations
     end
 
-    payment_products = PaymentProduct.where(seller_id: cashier_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: locations.pluck(:id)).pluck(:id))
+    logger.debug "employee_code_ids"
+    logger.debug employee_code_ids.inspect
 
-    @products_amount = 0.0
+    payment_products = PaymentProduct.where(seller_id: employee_code_ids, seller_type: 2, payment_id: Payment.where(payment_date: @from.beginning_of_day..@to.end_of_day, location_id: locations.pluck(:id)).pluck(:id))
+
+    logger.debug "Payment products:"
+    logger.debug payment_products.inspect
+
+    @products_amount = payment_products.sum('price * quantity')
 
     @commissions_amount = 0.0
 
     payment_products.each do |payment_product|
       @commissions_amount += payment_product.quantity * payment_product.product.get_commission
-      @products_amount += payment_product.quantity * payment_product.price
     end
 
     @total_amount = @products_amount

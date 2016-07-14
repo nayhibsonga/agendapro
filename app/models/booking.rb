@@ -16,6 +16,7 @@ class Booking < ActiveRecord::Base
   has_many :booking_histories, dependent: :destroy
   has_many :booking_email_logs, dependent: :destroy
   has_many :sendings, class_name: 'Email::Sending', as: :sendable
+  has_one :chart
 
   validates :start, :end, :service_provider_id, :service_id, :status_id, :location_id, :client_id, :presence => true
 
@@ -134,7 +135,7 @@ class Booking < ActiveRecord::Base
       #Check for price and divide it by number of sessions if it's the original price or there is a discount.
       if self.price == self.service.price
         self.update_column(:price, self.price / self.session_booking.sessions_amount)
-      elsif self.discount > 0
+      elsif !self.discount.nil? && self.discount > 0
         if self.price.round == (self.service.price*(100-self.discount)/100).round
           self.update_column(:price, self.price / self.session_booking.sessions_amount)
         end
@@ -154,6 +155,7 @@ class Booking < ActiveRecord::Base
       if self.is_session && !self.session_booking_id.nil?
         if SessionBooking.where(id: self.session_booking_id).count > 0
           session_booking = SessionBooking.find(self.session_booking_id)
+          puts "Treatment delete: #{session_booking.id}. Reason: Payment timeout."
           session_booking.delete
           if !self.service_promo_id.nil? && ServicePromo.where(id: self.service_promo_id).count > 0
             service_promo = ServicePromo.find(self.service_promo_id)
@@ -162,6 +164,7 @@ class Booking < ActiveRecord::Base
           end
         end
       end
+      puts "Booking delete: #{self.id}. Reason: Payment timeout."
       self.delete
     end
   end

@@ -1,5 +1,5 @@
 class ClientsController < ApplicationController
-  before_action :set_client, only: [:show, :edit, :update, :destroy, :payments_content, :emails_content, :payments, :emails, :last_payments, :get_custom_attributes]
+  before_action :set_client, only: [:show, :edit, :update, :destroy, :payments_content, :emails_content, :payments, :emails, :last_payments, :get_custom_attributes, :charts, :charts_content, :bookings, :print]
   before_action :authenticate_user!, except: [:client_loader]
   before_action :quick_add
   before_action -> (source = "clients") { verify_free_plan source }, except: [:history, :bookings_history, :check_sessions, :suggestion, :name_suggestion, :rut_suggestion, :new, :edit, :create, :update]
@@ -96,6 +96,12 @@ class ClientsController < ApplicationController
 
   end
 
+  def file_generation
+    respond_to do |format|
+      format.html
+    end
+  end
+
   def download
 
     selected_custom_filters = []
@@ -119,12 +125,16 @@ class ClientsController < ApplicationController
     @clients_export = @clients.order(sort_column + " " + sort_direction)
     @clients = @clients.order(sort_column + " " + sort_direction).paginate(:page => params[:page], :per_page => 25)
 
-    filepath = "#{Rails.root}/public/clients_files/clientes_" + current_user.company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+    relative_path = "/clients_files/clientes_" + current_user.company_id.to_s + "_" + DateTime.now.to_i.to_s + ".xls"
+
+    filepath = "#{Rails.root}/public" + relative_path
     Company.generate_clients_file(current_user.company_id, @clients_export, filepath)
 
-    send_file filepath, filename: "clientes.xls"
+    #send_file filepath, filename: "clientes.xls"
 
     Company.delay(run_at: 2.hours.from_now).delete_booking_file(filepath)
+
+    render :json => {file_uri: relative_path}
 
   end
 
@@ -870,6 +880,8 @@ class ClientsController < ApplicationController
 
     obj = s3_bucket.object(@client_file.full_path)
 
+    content_type = obj.content_type
+
     obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
 
     obj.move_to({bucket: ENV['S3_BUCKET'], key: new_folder_path + obj_name}, {acl: 'public-read', content_type: content_type})
@@ -922,6 +934,8 @@ class ClientsController < ApplicationController
       s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
 
       obj = s3_bucket.object(@client_file.full_path)
+
+      content_type = obj.content_type
 
       obj_name = obj.key[obj.key.rindex("/")+1, obj.key.length]
 
@@ -1063,6 +1077,63 @@ class ClientsController < ApplicationController
     @emails.sort_by(&:timestamp)
 
     render "_emails_content", layout: false
+  end
+
+  def charts
+    @start_date = DateTime.now - 1.months
+
+    @end_date = DateTime.now
+
+    @start_date = @start_date.strftime("%d/%m/%Y")
+    @end_date = @end_date.strftime("%d/%m/%Y")
+
+    @company = @client.company
+
+    @chart = Chart.new
+
+  end
+
+  def charts_content
+    @timezone = CustomTimezone.from_company(@company)
+
+    @from = params[:from].to_datetime.beginning_of_day + @timezone.offset
+    @to = params[:to].to_datetime.end_of_day + @timezone.offset
+
+    @option = params[:option]
+    if params[:field_ids].present?
+      @field_ids = params[:field_ids].split(",")
+    end
+
+    @charts = Chart.where(client_id: @client.id).where(date: @from..@to).order(date: :desc)
+
+    render "_charts_content", layout: false
+  end
+
+  def print
+
+    @filename = "Resumen de cliente"
+    date = DateTime.now
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = PrintClientPdf.new(@client.id)
+        send_data pdf.render, filename: @filename + "_" + date.to_s[0,10] + '.pdf', type: 'application/pdf'
+      end
+    end
+
+  end
+
+  def merge
+    json_reponse = ["ok"]
+    @client = Client.find(params[:target_id])
+    clients_ids = params[:origin_ids]
+    if !clients_ids.nil?
+      clients_ids.each do |client_id|
+        @client.merge(client_id)
+      end
+    end
+    render :json => json_reponse
   end
 
   private

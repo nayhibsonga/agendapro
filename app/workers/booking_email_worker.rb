@@ -123,8 +123,8 @@ class BookingEmailWorker < BaseEmailWorker
 
     def self.perform_multiple(booking, method)
       bookings = case method
-      when "multiple_booking" then Booking.where(location: booking.location, booking_group: booking.booking_group).order(:start)
-      when "reminder_multiple_booking" then Booking.where(location: booking.location, client: booking.client, start: CustomTimezone.from_booking(booking).offset.ago...(96.hours + CustomTimezone.from_booking(booking).offset).from_now).where.not(status: Status.find_by_name("Cancelado")).where('(is_session = false or (is_session = true and is_session_booked = true))').order(:start)
+      when "multiple_booking" then Booking.where(location_id: booking.location.id, client_id: booking.client.id, booking_group: booking.booking_group).where.not(status_id: Status.find_by_name("Cancelado").id).order(:start)
+      when "reminder_multiple_booking" then Booking.where(location_id: booking.location.id, client_id: booking.client.id, reminder_group: booking.reminder_group, start: booking.start.beginning_of_day..booking.start.end_of_day).where.not(status_id: Status.find_by_name("Cancelado").id).order(:start)
       end
       send_mail = bookings.reduce{ |t, b| t &&= b.send_mail }
 

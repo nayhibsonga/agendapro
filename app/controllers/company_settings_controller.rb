@@ -31,12 +31,12 @@ class CompanySettingsController < ApplicationController
     @banks = Bank.all
     @emails = current_user.company.company_from_email
     @company_from_email = CompanyFromEmail.new
-    @staff_codes = current_user.company.staff_codes.order(active: :desc)
-    @staff_code = StaffCode.new
+    #@staff_codes = current_user.company.staff_codes.order(active: :desc)
+    #@staff_code = StaffCode.new
     @deals = current_user.company.deals
     @deal = Deal.new
-    @cashiers = current_user.company.cashiers
-    @cashier = Cashier.new
+    #@cashiers = current_user.company.cashiers
+    #@cashier = Cashier.new
     @company_setting = @company.company_setting
     @online_cancelation_policy = OnlineCancelationPolicy.new
     if(!@company_setting.online_cancelation_policy.nil?)
@@ -64,6 +64,15 @@ class CompanySettingsController < ApplicationController
     @attributes = @company.custom_attributes.joins(:attribute_group).order('attribute_groups.order asc').order('attributes.order asc').order('name asc')
     @attribute_groups = @company.attribute_groups.order(order: :asc).order(name: :asc)
 
+    @chart_field = ChartField.new
+    @chart_category = ChartCategory.new
+    @chart_group = ChartGroup.new
+
+    @chart_group_otros = ChartGroup.where(name: "Otros", company_id: @company.id).first
+
+    @chart_fields = @company.chart_fields.joins(:chart_group).order('chart_groups.order asc').order('chart_fields.order asc').order('name asc')
+    @chart_groups = @company.chart_groups.order(order: :asc).order(name: :asc)
+
     @custom_filter = CustomFilter.new
     @custom_filters = @company.custom_filters
 
@@ -73,6 +82,10 @@ class CompanySettingsController < ApplicationController
     # Extended Schedule
     @open_end = LocationTime.where(location_id: @company.locations).order(open: :asc).first.open.hour
     @close_start = LocationTime.where(location_id: @company.locations).order(close: :desc).first.close.hour
+
+    @employee_codes = @company.employee_codes.order(active: :desc)
+    @employee_code = EmployeeCode.new
+
   end
 
   # POST /company_settings
@@ -117,8 +130,8 @@ class CompanySettingsController < ApplicationController
           @company = Company.find(current_user.company_id)
           @emails = current_user.company.company_from_email
           @company_from_email = CompanyFromEmail.new
-          @staff_codes = current_user.company.staff_codes
-          @staff_code = StaffCode.new
+          #@staff_codes = current_user.company.staff_codes
+          #@staff_code = StaffCode.new
           @deals = current_user.company.deals
           @deal = Deal.new
           @company_setting = @company.company_setting

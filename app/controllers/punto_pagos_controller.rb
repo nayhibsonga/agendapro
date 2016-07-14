@@ -502,6 +502,7 @@ class PuntoPagosController < ApplicationController
       if BillingLog.find_by_trx_id(params[:trx_id])
         billing_log = BillingLog.find_by_trx_id(params[:trx_id])
         company = Company.find(billing_log.company_id)
+        company.active = true
         company.months_active_left += billing_log.amount
         company.due_amount = 0.0
         company.due_date = nil
@@ -515,6 +516,7 @@ class PuntoPagosController < ApplicationController
       elsif PlanLog.find_by_trx_id(params[:trx_id])
         plan_log = PlanLog.find_by_trx_id(params[:trx_id])
         company = Company.find(plan_log.company_id)
+        company.active = true
         company.plan_id = plan_log.new_plan_id
         company.months_active_left = 1.0
         company.due_amount = 0.0
@@ -556,12 +558,12 @@ class PuntoPagosController < ApplicationController
         payment.paid_amount = params[:monto]
         payment.change_amount = 0.0
 
-        #cashier = first_booking.service.company.cashiers.first
-        #if cashier.nil?
-        #  cashier = Cashier.create(company_id: first_booking.service.company.id, name: "Cajero por defecto", active: true, code: "12345678")
+        #employee_code = first_booking.service.company.employee_codes.first
+        #if employee_code.nil?
+        #  employee_code = Cashier.create(company_id: first_booking.service.company.id, name: "Cajero por defecto", active: true, code: "12345678")
         #end
 
-        payment.cashier_id = nil
+        payment.employee_code_id = nil
 
         payment_transaction = PaymentTransaction.new
 

@@ -19,6 +19,12 @@ class Client < ActiveRecord::Base
   has_many :categoric_attributes, dependent: :destroy
   has_many :product_logs, dependent: :nullify
   has_many :treatment_logs, dependent: :nullify
+  has_many :charts, dependent: :destroy
+  has_many :client_email_logs, dependent: :nullify
+  has_many :mock_bookings, dependent: :nullify
+  has_many :ratings, dependent: :nullify
+  has_many :client_comments, dependent: :destroy
+
 
   scope :from_company, -> (id) { where(company_id: id) if id.present? }
 
@@ -28,6 +34,11 @@ class Client < ActiveRecord::Base
   after_update :client_notification
   after_create :check_gender
   after_save :check_gender
+  before_save :check_birthdate
+
+  def check_birthdate
+
+  end
 
   def check_gender
     if self.gender.nil?
@@ -43,8 +54,12 @@ class Client < ActiveRecord::Base
     end
 
     #Unnecesary, just in case we wanted to change birthday format
-    birth_date = Date.new(self.birth_year, self.birth_month, self.birth_day)
-    return birth_date.strftime("%d/%m/%Y")
+    if Date.valid_date?(self.birth_year, self.birth_month, self.birth_day)
+      birth_date = Date.new(self.birth_year, self.birth_month, self.birth_day)
+      return birth_date.strftime("%d/%m/%Y")
+    else
+      return "---"
+    end
   end
 
   def get_storage_occupation
@@ -509,7 +524,7 @@ class Client < ActiveRecord::Base
 
           booking_confirmation_time = booking.location.company.company_setting.booking_confirmation_time
 
-          if ((Time.now + booking_confirmation_time.days + timezone.offset)..(Time.now + booking_confirmation_time.days + 1.days + timezone.offset)).cover?(booking.start) && booking.send_mail
+          if ((Time.now + booking_confirmation_time.days + timezone.offset)..(Time.now + booking_confirmation_time.days + 1.days + timezone.offset)).cover?(booking.start) && booking.send_mail && booking.reminder_group.nil?
 
             if booking.is_session
               if booking.is_session_booked and booking.user_session_confirmed
@@ -739,7 +754,7 @@ class Client < ActiveRecord::Base
           elsif !date_filter.exclusive1 && date_filter.exclusive2
             clients = clients.where(id: date_attribute.where('value >= ? and value < ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           else
-            clients = clients.where(id: date_attribute.where('value => ? and value <= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
+            clients = clients.where(id: date_attribute.where('value >= ? and value <= ?', date_filter.date1, date_filter.date2).pluck(:client_id))
           end
         elsif date_filter.option == "out"
           #Check for exclusive optionss
@@ -1266,6 +1281,59 @@ class Client < ActiveRecord::Base
     filter_service( params[:services], attendance )
     filter_status( params[:statuses] )
     filter_range( params[:range_from], params[:range_to], attendance )
+  end
+
+  #Merges a client into self
+  def merge(client_id)
+
+    client = Client.find(client_id)
+
+    #Transfer all client's elements to self, except for personal data and custom_attributes
+    client.bookings.update_all(client_id: self.id)
+    client.client_comments.update_all(client_id: self.id)
+    client.client_email_logs.update_all(client_id: self.id)
+    client.mock_bookings.update_all(client_id: self.id)
+    client.payments.update_all(client_id: self.id)
+    client.product_logs.update_all(client_id: self.id)
+    client.ratings.update_all(client_id: self.id)
+    client.session_bookings.update_all(client_id: self.id)
+    client.treatment_logs.update_all(client_id: self.id)
+    client.charts.update_all(client_id: self.id)
+
+    s3_bucket = Aws::S3::Resource.new.bucket(ENV['S3_BUCKET'])
+
+    new_path = 'companies/' +  self.company.id.to_s + '/clients/' + self.id.to_s + '/'
+    old_path = 'companies/' +  client.company.id.to_s + '/clients/' + client.id.to_s + '/'
+
+    puts "Old path: " + old_path
+    puts "New path: " + new_path
+
+    client.client_files.each do |client_file|
+
+      obj = s3_bucket.object(client_file.full_path)
+
+      if obj.exists?
+        content_type = obj.content_type
+
+        obj_name = obj.key.gsub(old_path, new_path)
+
+        puts "Old key: " + obj.key
+        puts "New key: " + obj_name
+
+        obj.move_to({bucket: ENV['S3_BUCKET'], key: obj_name}, {acl: 'public-read', content_type: content_type})
+
+        new_obj = s3_bucket.object(obj_name)
+
+        client_file.update_columns(client_id: self.id, full_path: obj_name, public_url: new_obj.public_url)
+      else
+        client_file.delete
+      end
+
+    end
+
+    client.delete
+
+
   end
 
 end

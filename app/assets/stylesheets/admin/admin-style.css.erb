@@ -1488,7 +1488,7 @@ tr[class*="break"] {
   font-size: 16px;
 }
 
-#paymentClientPastBookings{
+#paymentClientPastBookings, #chartBookings{
   border: 1px solid #949292;
 }
 
@@ -2261,11 +2261,56 @@ tr[class*="break"] {
   border-bottom: 3px solid #CCC;
 }
 
-.move-attribute-group{
+#editTab1{
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 1px;
+  border-bottom: 1px solid #505050;
+}
+
+#editTab1 .tab_index{
+  text-decoration: none;
+  border: none;
+  color: #505050;
+}
+
+#editTab1 li{
+  color: #505050;
+}
+
+#editTab1 li.active a{
+  color: #22c488;
+  border-bottom: 3px solid #CCC;
+}
+
+#editTab2{
+  margin-top: 8px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 1px;
+  border-bottom: 1px solid #505050;
+}
+
+#editTab2 .tab_index{
+  text-decoration: none;
+  border: none;
+  color: #505050;
+}
+
+#editTab2 li{
+  color: #505050;
+}
+
+#editTab2 li.active a{
+  color: #22c488;
+  border-bottom: 3px solid #CCC;
+}
+
+.move-attribute-group, .move-chart-group{
   cursor: pointer;
 }
 
-.move-attribute{
+.move-attribute, .move-chart-field{
   cursor: pointer;
 }
 
@@ -2367,6 +2412,8 @@ tr[class*="break"] {
   border: 1px solid #22c488;
   text-align: center;
   padding: 0px;
+  margin-top: 3px;
+  margin-right: 4px;
 }
 
 .add-stock-btn:hover{
@@ -2384,6 +2431,7 @@ tr[class*="break"] {
   font-weight: bold;
   text-align: center;
   padding: 0px;
+  margin-top: 3px;
 }
 
 .substract-stock-btn:hover{
@@ -2551,4 +2599,78 @@ tr[class*="break"] {
   font-size: 18px;
   padding-left: 20%;
   color: #22c488;
+}
+
+.selected-booking{
+  display: none;
+}
+
+.addChartBooking, .editAddChartBooking{
+  background-color: #f5f5f5;
+  color: #1ba970;
+  text-align: center;
+  border: none !important;
+  margin-left: 20px;
+}
+
+.addChartBooking:hover, .editAddChartBooking:hover{
+  background-color: #f5f5f5;
+  color: #1ba970;
+  text-align: center;
+  border: none !important;
+  margin-left: 20px;
+}
+
+.addChartBooking:focus, .editAddChartBooking:focus{
+  background-color: #f5f5f5;
+  color: #1ba970;
+  text-align: center;
+  border: none !important;
+  margin-left: 20px;
+}
+
+.addChartBooking:active, .editAddChartBooking:active{
+  background-color: #f5f5f5;
+  color: #1ba970;
+  text-align: center;
+  border: none !important;
+  margin-left: 20px;
+}
+
+.charts-pane .help-block{
+  font-size: 14px;
+}
+
+.merge-btn{
+  background-color: #0f91cf;
+  color: #fff;
+}
+
+.merge-btn:hover, .merge-btn:active{
+  background-color: #0b5876;
+  color: #fff;
+}
+
+#toggleMerge.inactive:hover{
+  background-color: #d1d1d1;
+}
+
+#toggleMerge.active{
+  background-color: #d1d1d1;
+}
+
+#toggleMerge.inactive{
+  background-color: #fff;
+}
+
+.combination-checkbox{
+  cursor: pointer;
+}
+
+.combination-explanation{
+  display: none;
+}
+
+.inventory-options-btn{
+  margin-top: 3px;
 }

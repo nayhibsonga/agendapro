@@ -2,6 +2,7 @@ class HomeController < ApplicationController
 	layout "home"
 
 	def index
+		@companies =  Company.where(id: CompanySetting.where(activate_search: true, activate_workflow: true).pluck(:company_id), country_id: Country.find_by(locale: I18n.locale.to_s), payment_status_id: [PaymentStatus.find_by_name("Activo"), PaymentStatus.find_by_name("Convenio PAC"), PaymentStatus.find_by_name("Emitido"), PaymentStatus.find_by_name("Vencido")]).where.not(logo: nil)
 	end
 
 	def features
@@ -28,6 +29,8 @@ class HomeController < ApplicationController
 
 		if params[:source] == "search"
 			redirect_to root_path, notice: "¡Gracias por contactarnos! Te responderemos a la brevedad."
+		elsif params[:source] == "features"
+			redirect_to features_path, notice: "¡Gracias por contactarnos! Te responderemos a la brevedad."
 		else
 			redirect_to contact_path, notice: "¡Gracias por contactarnos! Te responderemos a la brevedad."
 		end
