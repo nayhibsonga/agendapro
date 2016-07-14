@@ -8,7 +8,7 @@
             <input type="hidden" name="id" value="<%= @company.id %>" />
 
           <% if current_user.role_id == Role.find_by_name("Super Admin").id %>
-            <button type="submit" class="btn btn-red" id="deactivateBtn">Desactivar</button>
+            <button class="btn btn-red" id="deactivateBtn">Desactivar</button>
             <% end %>
           <% end %>
         <% end %>
@@ -263,7 +263,7 @@
                     <h4 class="panel-title">Facturación</h4>
                   </div>
                   <div class="panel-body panel-scrollable">
-                    
+
                     <% if @billing_info.company_id.nil? %>
 
                       <%= form_for @billing_info, url: { controller: "billing_infos", action: "super_admin_create" }, :html => {:class => 'form-horizontal tab-margin', :multipart => true} do |f| %>
@@ -402,7 +402,7 @@
                         </div>
                       <% end %>
 
-                    <% end %> 
+                    <% end %>
 
                   </div>
                 </div>
@@ -432,7 +432,7 @@
                           <% if punto_pago.blank? && pay_u.blank? %>
                             <% punto_pago_fail = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
                             <tr style="background-color: #fd633f;">
-                              
+
                               <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
                               <td><%= log.payment %></td>
                               <td><%= log.amount %></td>
@@ -449,7 +449,7 @@
                             </tr>
                           <% elsif punto_pago.present? %>
                             <tr>
-                              
+
                               <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
                               <td><%= log.payment %></td>
                               <td><%= log.amount %></td>
@@ -460,7 +460,7 @@
                             </tr>
                           <% elsif pay_u.present? %>
                             <tr>
-                              
+
                               <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
                               <td><%= log.payment %></td>
                               <td><%= log.amount %></td>
@@ -471,7 +471,7 @@
                             </tr>
                           <% end %>
                         <% end %>
-                        
+
                       </tbody>
                     </table>
                   </div>
@@ -500,7 +500,7 @@
                           <% if punto_pago.nil? %>
                             <% punto_pago_fail = PuntoPagosConfirmation.find_by_trx_id(log.trx_id) %>
                             <tr style="background-color: #fd633f;">
-                              
+
                               <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
                               <td><%= log.amount.to_s %></td>
                               <% if punto_pago_fail.nil? %>
@@ -516,7 +516,7 @@
                             </tr>
                           <% else %>
                             <tr>
-                              
+
                               <td><%= (log.created_at + @company.country.timezone_offset.hours).strftime('%d/%m/%Y %R') %></td>
                               <td><%= log.amount.to_s %></td>
                               <td><%= punto_pago.dues_number %></td>
@@ -595,7 +595,7 @@
                               <%= form_tag({ :controller => 'companies', :action => 'delete_payment'}, method: "post") do %>
                                 <input type="hidden" name="record_id" value="<%= record.id %>" />
                                 <input type="hidden" name="id" value="<%= @company.id %>" />
-                                <button type="submit" class="btn btn-red btn-sm" id="deletePayment">Eliminar</button>
+                                <button class="btn btn-red btn-sm" id="deletePayment">Eliminar</button>
                               <% end %>
                             </td>
                           </tr>
@@ -796,10 +796,10 @@
                   <div class="form-group">
                     <label class="col-md-2 control-label">Última fecha de pago</label>
                     <div class="col-md-4">
-                      
+
 
                         <p class="form-control-static"><%= @company.last_payment_detail[0] %></p>
-                      
+
                     </div>
                     <div class="col-md-4">
                       <%= link_to "Agregar pago", {controller: "companies", action: "new_payment", id: @company.id}, class: "btn btn-white" %>
@@ -886,7 +886,7 @@
       },
       function (isConfirm) {
         if (isConfirm) {
-          $('#deactivateBtn').closest("form").submit();
+          $('#deletePayment').closest("form").submit();
         };
       });
     });

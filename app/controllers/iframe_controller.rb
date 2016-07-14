@@ -777,6 +777,7 @@ class IframeController < ApplicationController
       else
         @bookings.each do |booking|
             booking.delete
+            logger.info "Booking delete: #{booking.id}. Reason: PuntoPagos failed."
         end
         puts resp.get_error
         redirect_to punto_pagos_failure_path and return
@@ -908,12 +909,14 @@ class IframeController < ApplicationController
     if @payment == "payment"
       @tried_bookings.each do |booking|
         booking.delete
+        logger.info "Booking delete: #{booking.id}. Reason: PuntoPagos failed."
       end
     else #Create fake bookings and delete the real ones
       @tried_bookings.each do |booking|
         fake_booking = Booking.new(booking.attributes.to_options)
         @bookings << fake_booking
         booking.delete
+        logger.info "Booking delete: #{booking.id}. Reason: Reached book_error."
       end
     end
 

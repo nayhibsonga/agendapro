@@ -734,6 +734,7 @@ module ApiViews
 		        end
 		      else
 		        @bookings.each do |booking|
+		        	logger.info "Booking delete: #{booking.id}. Reason: PuntoPagos failed."
 		            booking.delete
 		        end
 		        puts resp.get_error
