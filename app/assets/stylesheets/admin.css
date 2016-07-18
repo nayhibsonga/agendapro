@@ -6,4 +6,6 @@
  *= require clients/clients
  * require editor/toastr.min
  *= require payments.css
+ *= require chosen
+ *= require chosen-bootstrap
  */

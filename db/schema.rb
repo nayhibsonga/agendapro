@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160712155209) do
+ActiveRecord::Schema.define(version: 20160714114120) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
+  enable_extension "fuzzystrmatch"
   enable_extension "unaccent"
 
   create_table "app_feeds", force: true do |t|
@@ -171,8 +171,8 @@ ActiveRecord::Schema.define(version: 20160712155209) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.text     "notes",               default: ""
-    t.text     "company_comment",     default: ""
+    t.text     "notes"
+    t.text     "company_comment"
     t.integer  "employee_code_id"
   end
 
@@ -560,7 +560,7 @@ ActiveRecord::Schema.define(version: 20160712155209) do
     t.boolean  "activate_i18n",       default: false
     t.integer  "sales_user_id"
     t.integer  "trial_months_left",   default: 0
-    t.integer  "default_plan_id",     default: 11
+    t.integer  "default_plan_id",     default: 10
   end
 
   add_index "companies", ["country_id"], name: "index_companies_on_country_id", using: :btree
@@ -1462,9 +1462,9 @@ ActiveRecord::Schema.define(version: 20160712155209) do
 
   create_table "payments", force: true do |t|
     t.integer  "company_id"
-    t.float    "amount",        default: 0.0
-    t.boolean  "payed",         default: false
-    t.datetime "payment_date",  default: '2015-11-12 13:16:44'
+    t.float    "amount",           default: 0.0
+    t.boolean  "payed",            default: false
+    t.datetime "payment_date",     default: '2015-11-12 13:16:44'
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "discount",         default: 0.0
