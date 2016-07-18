@@ -261,6 +261,7 @@ GEM
       fog-core
       nokogiri (~> 1.5, >= 1.5.11)
     formatador (0.2.5)
+    gem-licenses (0.2.1)
     geocoder (1.2.7)
     groupdate (2.4.0)
       activesupport (>= 3)
@@ -281,6 +282,8 @@ GEM
     json (1.8.3)
     jwt (1.2.1)
     libv8 (3.16.14.7)
+    license-list (1.0.1)
+      rails (>= 3.2)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -498,10 +501,12 @@ DEPENDENCIES
   fb_graph
   fbgraph
   fog
+  gem-licenses
   geocoder
   groupdate
   jbuilder (~> 1.2)
   jquery-rails
+  license-list (~> 1.0, >= 1.0.1)
   mandrill-api
   mini_magick
   mobu

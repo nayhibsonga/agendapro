@@ -207,3 +207,9 @@ gem 'pg_array_parser'
 
 #validador de correos
 gem 'rfc822'
+
+#Lista de licencias
+group :development, :test do
+  gem 'gem-licenses'
+  gem 'license-list', '~> 1.0', '>= 1.0.1'
+end

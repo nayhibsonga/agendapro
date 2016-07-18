@@ -310,6 +310,7 @@
 	          	<Cell><Data ss:Type="String">Categoría</Data></Cell>
 	          	<Cell><Data ss:Type="String">Nombre</Data></Cell>
 	          	<Cell><Data ss:Type="String">Monto</Data></Cell>
+	          	<Cell><Data ss:Type="String">Dscto. aplicado</Data></Cell>
 	          	<Cell><Data ss:Type="String">Comisión</Data></Cell>
 	          	<Cell><Data ss:Type="String">Medios de pago</Data></Cell>
 	          	<Cell><Data ss:Type="String">Comentario</Data></Cell>
@@ -362,6 +363,14 @@
 			                	receipt_number = booking.receipt.number
 			                end
 
+			                discount = "0%"
+			                if !booking.discount.nil? && booking.discount > 0
+			                	discount = booking.discount.round(1).to_s + "%"
+			                elsif !booking.price.nil? && !booking.list_price.nil? && booking.list_price > booking.price
+			                	discount = ((booking.list_price - booking.price).to_f/booking.list_price)*100
+			                	discount = discount.round(1).to_s + "%"
+			                end
+
 		        		%>
 
 	        				<Row>
@@ -372,6 +381,7 @@
 					          	<Cell><Data ss:Type="String"><%= service_category %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= booking.price %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= discount %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= booking.get_commission %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= receipt_notes %></Data></Cell>
@@ -413,6 +423,14 @@
 			                	receipt_number = mock_booking.receipt.number
 			                end
 
+			                discount = "0%"
+			                if !mock_booking.discount.nil? && mock_booking.discount > 0
+			                	discount = mock_booking.discount.round(1).to_s + "%"
+			                elsif !mock_booking.price.nil? && !mock_booking.list_price.nil? && mock_booking.list_price > mock_booking.price
+			                	discount = ((mock_booking.list_price - mock_booking.price).to_f/mock_booking.list_price)*100
+			                	discount = discount.round(1).to_s + "%"
+			                end
+
 		        		%>
 
 	        				<Row>
@@ -423,6 +441,7 @@
 					          	<Cell><Data ss:Type="String"><%= service_category %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= service_name %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= mock_booking.price %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= discount %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= mock_booking.get_commission %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= receipt_notes %></Data></Cell>
@@ -471,6 +490,14 @@
 			                	receipt_number = payment_product.receipt.number
 			                end
 
+			                discount = "0%"
+			                if !payment_product.discount.nil? && payment_product.discount > 0
+			                	discount = payment_product.discount.round(1).to_s + "%"
+			                elsif !payment_product.price.nil? && !payment_product.list_price.nil? && payment_product.list_price > payment_product.price
+			                	discount = ((payment_product.list_price - payment_product.price).to_f/payment_product.list_price)*100
+			                	discount = discount.round(1).to_s + "%"
+			                end
+
 		        		%>
 
 	        				<Row>
@@ -481,6 +508,7 @@
 					          	<Cell><Data ss:Type="String"><%= product_category %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= product_name %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= payment_product.price * payment_product.quantity %></Data></Cell>
+					          	<Cell><Data ss:Type="String"><%= discount %></Data></Cell>
 					          	<Cell><Data ss:Type="Number"><%= payment_product.product.get_commission * payment_product.quantity %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= payment_methods %></Data></Cell>
 					          	<Cell><Data ss:Type="String"><%= receipt_notes %></Data></Cell>
