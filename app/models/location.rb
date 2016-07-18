@@ -69,7 +69,7 @@ class Location < ActiveRecord::Base
   end
 
   after_commit :extended_schedule
-  after_create :add_products, :create_location_process
+  after_create :add_products, :create_location_process, :create_sales_cashes
   after_update :update_location_process
   after_destroy :destroy_location_process
 
@@ -130,6 +130,11 @@ class Location < ActiveRecord::Base
   :ignoring => :accents
 
   WORKER = 'StockEmailWorker'
+
+    def create_sales_cashes
+      sales_cash = SalesCash.create(:location_id => self.id, :cash => 0, :last_reset_date => DateTime.now)
+      petty_cash = PettyCash.create(:location_id => self.id, :cash => 0, :open => true)
+    end
 
   	#Add due if plan is not custom and locations increased by one
   	def add_due
