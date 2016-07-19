@@ -60,21 +60,21 @@
           </div>
         <% end %>
 
-        <% if @cashiers.count > 0 %>
+        <% if @employee_codes.count > 0 %>
           <div class="col-sm-4">
-            <input type="radio" id="person_type_cashier" name="person_type" value="cashier" />&nbsp;&nbsp;<label for="person_type_cashier" class="control-label" style="margin-top: 5px; cursor:pointer;">Cajeros:</label>
-            <select id="cashiersMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
+            <input type="radio" id="person_type_employee_code" name="person_type" value="employee_code" />&nbsp;&nbsp;<label for="person_type_employee_code" class="control-label" style="margin-top: 5px; cursor:pointer;">Cajeros:</label>
+            <select id="employeeCodesMultiSelect" multiple="multiple" style="margin-top: 7px;" hidden>
               <optgroup label="Activos">
-                <% @cashiers.where(active: true).each do |cashier| %>
-                  <option value="<%= cashier.id %>">
-                    <%= cashier.name %>
+                <% @employee_codes.where(active: true).each do |employee_code| %>
+                  <option value="<%= employee_code.id %>">
+                    <%= employee_code.name %>
                   </option>
                 <% end %>
               </optgroup>
               <optgroup label="Inactivos">
-                <% @cashiers.where(active: false).each do |cashier| %>
-                  <option value="<%= cashier.id %>">
-                    <%= cashier.name %>
+                <% @employee_codes.where(active: false).each do |employee_code| %>
+                  <option value="<%= employee_code.id %>">
+                    <%= employee_code.name %>
                   </option>
                 <% end %>
               </optgroup>

@@ -2,8 +2,28 @@
 	$('#download-link').load(function(){		
 		$('#download-link')[0].click();
 	});
+	
 });*/
 
 $(document).ready(function(){
-	$('#download-link')[0].click();
+	//$('#download-link')[0].click();
+	var generation_href = $('#file-generation-link').attr("href");
+	generation_href = generation_href.replace("/es_CL", "");
+	generation_href = generation_href.replace("/es_CO", "");
+	console.log(generation_href);
+	$.ajax({
+		url: generation_href,
+		method: 'get',
+		dataType: 'json',
+		error: function(response){
+			console.log("Error");
+		},
+		success: function(response){
+			console.log(response);
+			$('#file-loader-span').hide();
+			$('#download-link').attr("href", response.file_uri);
+			$('#download-link').show();
+			$('#download-message').html("El archivo se ha generado. Haz click en el botón para comenzar la descarga. Puedes cerrar esta pestaña luego de descargarlo.")
+		}
+	})
 });

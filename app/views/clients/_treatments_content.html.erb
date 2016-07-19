@@ -81,7 +81,7 @@
                     <% if @client.company.company_setting.staff_code %>
                       <td>
                         <% if booking.status_id == Status.find_by_name("Cancelado").id || booking.is_session_booked %>
-                          <%= if booking.booking_histories.count > 0 && booking.booking_histories.order(:created_at).last.staff_code_id && StaffCode.find_by(id: booking.booking_histories.order(:created_at).last.staff_code_id) then StaffCode.find(booking.booking_histories.order(:created_at).last.staff_code_id).staff end %><%= if booking.booking_histories.count > 0 then (' <small>(' + booking.booking_histories.order(:created_at).last.action + ')</small>').html_safe end %>
+                          <%= if booking.booking_histories.count > 0 && booking.booking_histories.order(:created_at).last.employee_code_id && EmployeeCode.find_by(id: booking.booking_histories.order(:created_at).last.employee_code_id) then EmployeeCode.find(booking.booking_histories.order(:created_at).last.employee_code_id).name end %><%= if booking.booking_histories.count > 0 then (' <small>(' + booking.booking_histories.order(:created_at).last.action + ')</small>').html_safe end %>
                         <% end %>
                       </td>
                     <% end %>

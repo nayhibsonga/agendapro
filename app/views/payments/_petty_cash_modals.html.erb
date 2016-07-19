@@ -26,9 +26,9 @@
 
             <% if current_user.company.company_setting.require_cashier_code %>
               <div class="payment-form-div form-group has-feedback">
-                <label for="petty_cash_cashier_code" class="col-xs-3 control-label">Código Cajero</label>
+                <label for="petty_cash_employee_code_code" class="col-xs-3 control-label">Código Cajero</label>
                 <div class="col-xs-9">
-                  <input type="password" class="form-control" id="petty_cash_cashier_code" name="petty_cash_cashier_code" value="" />
+                  <input type="password" class="form-control" id="petty_cash_employee_code_code" name="petty_cash_employee_code_code" value="" />
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
@@ -36,10 +36,10 @@
               </div>
 
               <div class="payment-form-div form-group has-feedback">
-                <input type="hidden" id="petty_cash_cashier_id" value="" />
-                <label for="petty_cash_cashier_name" class="col-xs-3 control-label">Nombre</label>
+                <input type="hidden" id="petty_cash_employee_code_id" value="" />
+                <label for="petty_cash_employee_code_name" class="col-xs-3 control-label">Nombre</label>
                 <div class="col-xs-9">
-                  <input type="text" class="form-control" id="petty_cash_cashier_name" name="petty_cash_cashier_name" value="" disabled />
+                  <input type="text" class="form-control" id="petty_cash_employee_code_name" name="petty_cash_employee_code_name" value="" disabled />
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
@@ -47,9 +47,9 @@
               </div>
             <% else %>
               <div class="payment-form-div form-group has-feedback" hidden>
-                <label for="petty_cash_cashier_code" class="col-xs-3 control-label">Código Cajero</label>
+                <label for="petty_cash_employee_code_code" class="col-xs-3 control-label">Código Cajero</label>
                 <div class="col-xs-9">
-                  <input type="password" class="form-control" id="petty_cash_cashier_code" name="petty_cash_cashier_code" value="" />
+                  <input type="password" class="form-control" id="petty_cash_employee_code_code" name="petty_cash_employee_code_code" value="" />
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>
@@ -57,10 +57,10 @@
               </div>
 
               <div class="payment-form-div form-group has-feedback" hidden>
-                <input type="hidden" id="petty_cash_cashier_id" value="" />
-                <label for="petty_cash_cashier_name" class="col-xs-3 control-label">Nombre</label>
+                <input type="hidden" id="petty_cash_employee_code_id" value="" />
+                <label for="petty_cash_employee_code_name" class="col-xs-3 control-label">Nombre</label>
                 <div class="col-xs-9">
-                  <input type="text" class="form-control" id="petty_cash_cashier_name" name="petty_cash_cashier_name" value="" disabled />
+                  <input type="text" class="form-control" id="petty_cash_employee_code_name" name="petty_cash_employee_code_name" value="" disabled />
                   <span class="help-block"></span>
                   <span class="form-control-feedback"></span>
                 </div>

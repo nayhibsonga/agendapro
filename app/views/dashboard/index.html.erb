@@ -116,7 +116,7 @@
                 <td>
                   <span class="label <%= label_class(booking) %>"><%= booking.status.name %></span>
                 </td>
-                <td><%= booking.start.strftime("%I:%M%p") %> - <%= booking.end.strftime("%I:%M%p") %></td>
+                <td><%= booking.start.strftime("%H:%M") %> - <%= booking.end.strftime("%H:%M") %></td>
                 <td><%= booking.client.first_name %> <%= booking.client.last_name %></td>
                 <td><%= booking.client.phone %></td>
                 <td><%= booking.service.name %></td>
