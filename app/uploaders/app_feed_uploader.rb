@@ -18,7 +18,7 @@ class AppFeedUploader < CarrierWave::Uploader::Base
   end
 
   process :convert => 'png'
-  process :resize_and_pad => [1000, 1000]
+  process :resize_to_fill => [554, 302]
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
   # def default_url
