@@ -6,7 +6,8 @@ class PayedBookingEmailWorker < BaseEmailWorker
 
     payed_booking = PayedBooking.find(sending.sendable_id)
     client = payed_booking.bookings.first.client
-    owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
+    #owner = User.find_by_company_id(payed_booking.bookings.first.location.company.id)
+    owner = payed_booking.bookings.first.location.company.users.where(role_id: 2).first
 
     targets += [client.email].size
     recipients = filter_mails([client.email])
