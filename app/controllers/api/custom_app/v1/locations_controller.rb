@@ -3,7 +3,7 @@ module Api
   module V1
   	class LocationsController < V1Controller
       def index
-      	@lat = "-33.4052419" 
+      	@lat = "-33.4052419"
 				@lng = "-70.597557"
 
 				if params[:latitude] &&  params[:latitude] != ""
@@ -62,9 +62,10 @@ module Api
 									end
 								end
 							end
-						end						
+						end
 					end
 				end
+				@app_feeds = @api_company.app_feeds
       end
 
       def show
