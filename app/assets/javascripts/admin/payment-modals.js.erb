@@ -822,6 +822,10 @@ function loadInternalSale(internal_sale)
   loadInternalSaleProviders(internal_sale);
 
   var currentDate = new Date();
+  var date_str = currentDate.toJSON().split("T")[0];
+  var date_arr = date_str.split("-");
+  var date_str_format = date_arr[2] + "/" + date_arr[1] + "/" + date_arr[0];
+  $('#internal_sale_date').val(date_str_format);
   var new_hour = currentDate.getHours();
   var new_minute = currentDate.getMinutes();
   if(new_hour < 10)
@@ -1625,6 +1629,12 @@ function loadPaymentIntro(payment_id) {
   }
 
   var currentDate = new Date();
+
+  var date_str = currentDate.toJSON().split("T")[0];
+  var date_arr = date_str.split("-");
+  var date_str_format = date_arr[2] + "/" + date_arr[1] + "/" + date_arr[0];
+  $('#payment_date').val(date_str_format);
+
   var new_hour = currentDate.getHours();
   var new_minute = currentDate.getMinutes();
   if(new_hour < 10)
