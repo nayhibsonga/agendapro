@@ -79,7 +79,7 @@
                   <div class="payment-form-div form-group">
                     <label for="payment_date" class="col-xs-4 col-md-3 control-label left-label">Fecha</label>
                     <div class="col-xs-3 col-md-4">
-                      <input type="text" class="form-control payment_date_ignore" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date) %>" autocomplete="off" />
+                      <input type="text" class="form-control payment_date_ignore" id="payment_date" name="payment_date" value="<%= I18n.l(DateTime.now.to_date + current_user.company.country.timezone_offset.hours) %>" autocomplete="off" />
                     </div>
                     <div class="col-xs-5" style="text-align: right;">
                       <%= time_select 'payment_date', 'time', {minute_step: 1}, {:class => 'form-control payment-date-select payment_date_ignore', required: true} %>
