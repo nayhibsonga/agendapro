@@ -195,7 +195,7 @@
                       <div class="comment-date">
                         <p><%= l client_comment.created_at + CustomTimezone.from_company(@company).offset, format: :long %></p>
                       </div>
-                      <div class="comment-detail">
+                      <div class="comment-detail" id="comment<%= client_comment.id %>">
                         <%= client_comment.comment.gsub("\n", "<br />").html_safe %>
                       </div>
                       <div class="comment-options">
