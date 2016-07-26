@@ -89,7 +89,7 @@
                   <li class="<%= 'active' if current_page?(home_path) %>"><%= link_to "Inicio", home_path %></li>
                   <li class="<%= 'active' if current_page?(features_path) %>"><%= link_to "Características", features_path %></li>
                   <li class="<%= 'active' if current_page?(view_plans_path) %>"><%= link_to "Planes", view_plans_path %></li>
-                  <li class="<%= 'active' if current_page?(tutorials_path) %>"><%= link_to "Tutoriales", tutorials_path %></li>
+                  <li class="<%= 'active' if current_page?(tutorials_path) %>"><%= link_to "Blog", 'http://blog.agendapro.co' %></li>
                   <li class="<%= 'active' if current_page?(contact_path) %>"><%= link_to "Contacto", contact_path %></li>
                   <%= render 'layouts/flag_dropdown' %>
                 </ul>
@@ -132,6 +132,7 @@
               <div class="col-xs-12">
                 <p>
                   <%= link_to "Agrega tu Empresa", home_path %><br>
+                  <%= link_to "Tutoriales", tutorials_path %><br>
                   <%= link_to "Sobre Nosotros", aboutus_path %><br>
                   <%= link_to "Tutoriales", tutorials_path %><br>
                   <%= link_to "Contacto", contact_path %><br>
