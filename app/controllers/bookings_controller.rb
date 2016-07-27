@@ -600,7 +600,7 @@ class BookingsController < ApplicationController
           logger.info "Treatment delete: #{session_booking.id}. Reason: Admin create failed."
         end
         @bookings.each do |book|
-          Booking.find(book[:id]).destroy
+          Booking.find(book[:id]).delete
           logger.info "Booking delete: #{book[:id]}. Reason: Admin create failed"
         end
         logger.info "Errors: "
@@ -1462,12 +1462,14 @@ class BookingsController < ApplicationController
 
 
                     #There is session_booking, book a session, unbook for old_treatment
-                    @booking.session_booking_id = session_booking.id
+                    
 
-                    discharged_booking = session_booking.bookings.where(is_session_booked: false).last
-                    discharged_booking.delete
+                    discharged_booking = session_booking.bookings.where(is_session_booked: false).where.not(id: @booking.id).last
+                    discharged_booking.destroy
 
                     logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
+
+                    @booking.session_booking_id = session_booking.id
 
                     session_booking.sessions_taken += 1
                     session_booking.save
@@ -1610,12 +1612,12 @@ class BookingsController < ApplicationController
                   session_booking = SessionBooking.find(booking_params[:session_booking_id])
 
                   if !session_booking.nil?
-                    @booking.session_booking_id = session_booking.id
 
-
-                    discharged_booking = session_booking.bookings.where(is_session_booked: false).last
-                    discharged_booking.delete
+                    discharged_booking = session_booking.bookings.where(is_session_booked: false).where.not(id: @booking.id).last
+                    discharged_booking.destroy
                     logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
+
+                    @booking.session_booking_id = session_booking.id
 
                     session_booking.sessions_taken += 1
                     session_booking.save
@@ -1740,11 +1742,12 @@ class BookingsController < ApplicationController
                   if !session_booking.nil?
 
                     #There is session_booking, book a session, unbook for old_treatment
-                    @booking.session_booking_id = session_booking.id
 
-                    discharged_booking = session_booking.bookings.where(is_session_booked: false).last
-                    discharged_booking.delete
+                    discharged_booking = session_booking.bookings.where(is_session_booked: false).where.not(id: @booking.id).last
+                    discharged_booking.destroy
                     logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
+
+                    @booking.session_booking_id = session_booking.id
 
                     session_booking.sessions_taken += 1
                     session_booking.save
@@ -1890,11 +1893,13 @@ class BookingsController < ApplicationController
                   if !session_booking.nil?
 
                     #There is session_booking, book a session, unbook for old_treatment
-                    @booking.session_booking_id = session_booking.id
+                    
 
-                    discharged_booking = session_booking.bookings.where(is_session_booked: false).last
-                    discharged_booking.delete
+                    discharged_booking = session_booking.bookings.where(is_session_booked: false).where.not(id: @booking.id).last
+                    discharged_booking.destroy
                     logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
+
+                    @booking.session_booking_id = session_booking.id
 
                     session_booking.sessions_taken = session_booking.bookings.where(is_session_booked: true).count
                     session_booking.save
@@ -2037,12 +2042,14 @@ class BookingsController < ApplicationController
                   session_booking = SessionBooking.find(booking_params[:session_booking_id])
 
                   if !session_booking.nil?
-                    @booking.session_booking_id = session_booking.id
+                    
 
 
-                    discharged_booking = session_booking.bookings.where(is_session_booked: false).last
-                    discharged_booking.delete
+                    discharged_booking = session_booking.bookings.where(is_session_booked: false).where.not(id: @booking.id).last
+                    discharged_booking.destroy
                     logger.info "Booking delete: #{discharged_booking.id}. Reason: Admin modification of a booked session (should be restored with another id)."
+
+                    @booking.session_booking_id = session_booking.id
 
                     session_booking.sessions_taken += 1
                     session_booking.save
@@ -3651,12 +3658,14 @@ class BookingsController < ApplicationController
         end
       else
         if @has_session_booking && !@session_booking.nil?
-          @session_booking.delete
+          @session_booking.destroy
           logger.info "Treatment delete: #{@session_booking.id}. Reason: PuntoPagos failed)."
         end
         @bookings.each do |booking|
-            booking.delete
+          if !booking.nil?
+            booking.destroy
             logger.info "Booking delete: #{booking.id}. Reason: PuntoPagos failed)."
+          end
         end
         puts resp.get_error
         redirect_to punto_pagos_failure_path and return
@@ -3815,12 +3824,14 @@ class BookingsController < ApplicationController
         treatment_promo.save
       end
 
-      session_booking.delete
+      session_booking.destroy
       logger.info "Treatment delete: #{session_booking.id}. Reason: Reached book_error."
 
       @tried_bookings.each do |booking|
-        booking.delete
-        logger.info "Booking delete: #{booking.id}. Reason: Reached book_error."
+        if !booking.nil?
+          booking.destroy
+          logger.info "Booking delete: #{booking.id}. Reason: Reached book_error."
+        end
       end
 
     else
@@ -3830,7 +3841,7 @@ class BookingsController < ApplicationController
           service_promo.max_bookings = service_promo.max_bookings + 1
           service_promo.save
         end
-        booking.delete
+        booking.destroy
         logger.info "Booking delete: #{booking.id}. Reason: Reached book_error."
       end
     end
