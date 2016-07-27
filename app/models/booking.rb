@@ -737,6 +737,7 @@ class Booking < ActiveRecord::Base
         else
           #if (changed_attributes['start'] || changed_attributes['is_session_booked']) && self.user_session_confirmed
           if self.is_session_booked_changed?
+            puts self.inspect
             sendings.build(method: 'new_booking').save
           else
             if self.status_id_changed? && self.status_id == Status.find_by_name("Confirmado").id
