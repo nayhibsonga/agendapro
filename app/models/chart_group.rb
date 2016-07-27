@@ -7,7 +7,7 @@ class ChartGroup < ActiveRecord::Base
 
   validate :name_uniqueness
 
-  def transfer_attributes
+  def transfer_chart_fields
     group_otros = ChartGroup.where(name: "Otros", company_id: self.company.id).first
     self.chart_fields.each do |chart_field|
       chart_field.chart_group_id = group_otros.id
