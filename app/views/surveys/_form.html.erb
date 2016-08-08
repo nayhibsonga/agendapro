@@ -1,0 +1,14 @@
+<%= form_for @survey  do |f| %>
+
+
+  <div class="form-inputs">
+    <%= f.text_field :quality %>
+    <%= f.text_field :style %>
+    <%= f.text_field :satisfaction %>
+    <%= f.text_area :comment %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit :submit %>
+  </div>
+<% end %>

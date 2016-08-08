@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160714114120) do
+ActiveRecord::Schema.define(version: 20160802212156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_trgm"
   enable_extension "fuzzystrmatch"
+  enable_extension "pg_trgm"
   enable_extension "unaccent"
 
   create_table "app_feeds", force: true do |t|
@@ -1046,6 +1046,18 @@ ActiveRecord::Schema.define(version: 20160714114120) do
     t.datetime "updated_at"
   end
 
+  create_table "location_open_days", force: true do |t|
+    t.integer  "location_id"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "location_open_days", ["end_time"], name: "index_location_open_days_on_end_time", using: :btree
+  add_index "location_open_days", ["location_id"], name: "index_location_open_days_on_location_id", using: :btree
+  add_index "location_open_days", ["start_time"], name: "index_location_open_days_on_start_time", using: :btree
+
   create_table "location_products", force: true do |t|
     t.integer  "product_id"
     t.integer  "location_id"
@@ -1704,6 +1716,18 @@ ActiveRecord::Schema.define(version: 20160714114120) do
   add_index "provider_groups", ["company_id"], name: "index_provider_groups_on_company_id", using: :btree
   add_index "provider_groups", ["location_id"], name: "index_provider_groups_on_location_id", using: :btree
 
+  create_table "provider_open_days", force: true do |t|
+    t.integer  "service_provider_id"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "provider_open_days", ["end_time"], name: "index_provider_open_days_on_end_time", using: :btree
+  add_index "provider_open_days", ["service_provider_id"], name: "index_provider_open_days_on_service_provider_id", using: :btree
+  add_index "provider_open_days", ["start_time"], name: "index_provider_open_days_on_start_time", using: :btree
+
   create_table "provider_times", force: true do |t|
     t.time     "open",                null: false
     t.time     "close",               null: false
@@ -2180,6 +2204,18 @@ ActiveRecord::Schema.define(version: 20160714114120) do
 
   add_index "super_admin_logs", ["company_id"], name: "index_super_admin_logs_on_company_id", using: :btree
   add_index "super_admin_logs", ["user_id"], name: "index_super_admin_logs_on_user_id", using: :btree
+
+  create_table "surveys", force: true do |t|
+    t.integer  "quality"
+    t.integer  "style"
+    t.integer  "satisfaction"
+    t.text     "comment"
+    t.integer  "client_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "surveys", ["client_id"], name: "index_surveys_on_client_id", using: :btree
 
   create_table "tags", force: true do |t|
     t.string   "name",               null: false

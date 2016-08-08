@@ -1,7 +1,7 @@
 Agendapro::Application.routes.draw do
 
 
-  resources :employee_codes
+  
 
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
@@ -18,6 +18,10 @@ Agendapro::Application.routes.draw do
     get 'mandrill/confirm_unsubscribe', :as => 'unsubscribe'
     post "mandrill/unsubscribe"
     get "mandrill/resuscribe"
+
+    resources :surveys
+
+    resources :employee_codes
 
     resources :custom_filters
     resources :company_plan_settings

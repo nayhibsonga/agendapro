@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Quality:</strong>
+  <%= @survey.quality %>
+</p>
+
+<p>
+  <strong>Style:</strong>
+  <%= @survey.style %>
+</p>
+
+<p>
+  <strong>Satisfaction:</strong>
+  <%= @survey.satisfaction %>
+</p>
+
+<p>
+  <strong>Comment:</strong>
+  <%= @survey.comment %>
+</p>
+
+<p>
+  <strong>Client:</strong>
+  <%= @survey.client %>
+</p>
+
+<%= link_to 'Edit', edit_survey_path(@survey) %> |
+<%= link_to 'Back', surveys_path %>
