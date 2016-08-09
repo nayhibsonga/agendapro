@@ -6,61 +6,75 @@
 # #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 # #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-# # => Roles de la Aplicación 
-# 	roles = Role.create([
-# 		{name: "Super Admin", description: "Administrador de la aplicaión AgendaPro"},
-# 		{name: "Administrador General", description: "Administrador de empresa inscrita en AgendaPro"},
-# 		{name: "Administrador Local", description: "Administrador de local"},
-# 		{name: "Staff", description: "Usuario con atribuciones de atención en su local"},
-# 		{name: "Staff (sin edición)", description: "Usuario con atribuciones de ver sus reservas"},
-# 		{name: "Usuario Registrado", description: "Usuario con cuenta registrada y accesible"},
-# 		{name: "Recepcionista", description: "Usuario frontdesk de una empresa"}
-# 	])
+ # => Roles de la Aplicación 
+ 	roles = Role.create([
+ 		{name: "Super Admin", description: "Administrador de la aplicaión AgendaPro"},
+ 		{name: "Administrador General", description: "Administrador de empresa inscrita en AgendaPro"},
+ 		{name: "Administrador Local", description: "Administrador de local"},
+ 		{name: "Staff", description: "Usuario con atribuciones de atención en su local"},
+ 		{name: "Staff (sin edición)", description: "Usuario con atribuciones de ver sus reservas"},
+ 		{name: "Usuario Registrado", description: "Usuario con cuenta registrada y accesible"},
+ 		{name: "Recepcionista", description: "Usuario frontdesk de una empresa"},
+ 		{name: "Ventas", description: "Ventas AgendaPro"}
+ 	])
 
-# 	super_admin = User.create(first_name: 'Sebastián', last_name: 'Hevia', email: 'shevia@agendapro.cl', phone: '+56 9 9477 5641', role: Role.find_by_name('Super Admin'), password: '12345678', password_confirmation: '12345678')
+ 	super_admin = User.create(first_name: 'Sebastián', last_name: 'Hevia', email: 'shevia@agendapro.cl', phone: '+56 9 9477 5641', role: Role.find_by_name('Super Admin'), password: '12345678', password_confirmation: '12345678')
 
-# # => Configuraciones Globales de la Aplicación
-# 	iva = NumericParameter.create(name: "sales_tax", value: 0.19)
-# 	cuatro_meses = NumericParameter.create(name: "4_month_discount", value: 0.05)
-# 	seis_meses = NumericParameter.create(name: "6_month_discount", value: 0.1)
-# 	nueve_meses = NumericParameter.create(name: "9_month_discount", value: 0.15)
-# 	doce_meses = NumericParameter.create(name: "12_month_discount", value: 0.2)
+ # => Configuraciones Globales de la Aplicación
+ 	iva = NumericParameter.create(name: "sales_tax", value: 0.19)
+ 	cuatro_meses = NumericParameter.create(name: "4_month_discount", value: 0.05)
+ 	seis_meses = NumericParameter.create(name: "6_month_discount", value: 0.1)
+ 	nueve_meses = NumericParameter.create(name: "9_month_discount", value: 0.15)
+ 	doce_meses = NumericParameter.create(name: "12_month_discount", value: 0.2)
+ 	sucursales = NumericParameter.create(name: "locations_multiplier", value: 0.5)
+
 
 # # => Dias
-# 	days = Day.create([{name: "Lunes"}, {name: "Martes"}, {name: "Miércoles"}, {name: "Jueves"}, {name: "Viernes"}, {name: "Sábado"}, {name: "Domingo"}])
+ 	days = Day.create([{name: "Lunes"}, {name: "Martes"}, {name: "Miércoles"}, {name: "Jueves"}, {name: "Viernes"}, {name: "Sábado"}, {name: "Domingo"}])
 
 # # => Status de las Reservas
-# 	reservado = Status.create(name: "Reservado", description: "Reserva agendada")
-# 	bloqueado = Status.create(name: "Confirmado", description: "Reserva confirmada por el Usuario")
-# 	asiste = Status.create(name: "Asiste", description: "Reserva completada con el cliente")
-# 	cancelado = Status.create(name: "Cancelado", description: "Reserva sólo ha sido agendada")
-# 	no_asiste = Status.create(name: "No Asiste", description: "Cliente no llego a la cita")
+ 	reservado = Status.create(name: "Reservado", description: "Reserva agendada")
+ 	bloqueado = Status.create(name: "Confirmado", description: "Reserva confirmada por el Usuario")
+ 	asiste = Status.create(name: "Asiste", description: "Reserva completada con el cliente")
+ 	cancelado = Status.create(name: "Cancelado", description: "Reserva sólo ha sido agendada")
+ 	no_asiste = Status.create(name: "No Asiste", description: "Cliente no llego a la cita")
 
 # # => Forma de pago de las Empresas
-# 	webpay = TransactionType.create(name: "Webpay", description: "El usuario paga por Webpay")
-# 	transferencia = TransactionType.create(name: "Transferencia", description: "El usuario paga por trasferencia bancaria")
+ 	webpay = TransactionType.create(name: "Webpay", description: "El usuario paga por Webpay")
+ 	transferencia = TransactionType.create(name: "Transferencia", description: "El usuario paga por trasferencia bancaria")
 
 # # => Estado de Pago de las Empresas
-# 	activo = PaymentStatus.create(name: "Activo", description: "La empresa tiene todos los pagos al día")
-# 	inactivo = PaymentStatus.create(name: "Inactivo", description: "Empresa inactivada por no pago/uso")
-# 	emitido = PaymentStatus.create(name: "Emitido", description: "La empresa tiene un pago emitido vigente, aún no vencido")
-# 	bloqueado = PaymentStatus.create(name: "Bloqueado", description: "La empresa está bloqueada por no pago del plan")
-# 	trial = PaymentStatus.create(name: "Trial", description: "La empresa está en período de prueba")
-# 	vencido = PaymentStatus.create(name: "Vencido", description: "La empresa está atrasada en el pago del mes en curso")
-# 	vacia = PaymentStatus.create(name: "Admin", description: "Empresa Vacía")
+ 	activo = PaymentStatus.create(name: "Activo", description: "La empresa tiene todos los pagos al día")
+ 	inactivo = PaymentStatus.create(name: "Inactivo", description: "Empresa inactivada por no pago/uso")
+ 	emitido = PaymentStatus.create(name: "Emitido", description: "La empresa tiene un pago emitido vigente, aún no vencido")
+ 	bloqueado = PaymentStatus.create(name: "Bloqueado", description: "La empresa está bloqueada por no pago del plan")
+ 	trial = PaymentStatus.create(name: "Trial", description: "La empresa está en período de prueba")
+ 	vencido = PaymentStatus.create(name: "Vencido", description: "La empresa está atrasada en el pago del mes en curso")
+ 	vacia = PaymentStatus.create(name: "Admin", description: "Empresa Vacía")
+ 	pac = PaymentStatus.create(name: "Convenio PAC", description: "Convenio PAC")
 
-# # => Sectores Eonómicos de las Empresas
-# 	estetica = EconomicSector.create(name: "Centros de Estética")
-# 	med_alt = EconomicSector.create(name: "Medicina Alternativa")
-# 	sicologia = EconomicSector.create(name: "Psicología")
-# 	dentistas = EconomicSector.create(name: "Odontología")
-# 	mecanicos = EconomicSector.create(name: "Talleres Mecánicos")
-# 	podologia = EconomicSector.create(name: "Centros de Podología")
-# 	artes_mariales = EconomicSector.create(name: "Artes Marciales")
-# 	yoga = EconomicSector.create(name: "Centros de Yoga")
-# 	centros_deportivos = EconomicSector.create(name: "Centros Deportivos")
-# 	kinesiologia = EconomicSector.create(name: "Kinesiología")
-# 	spas = EconomicSector.create(name: "SPA")
+ 	TransactionType.create(name: "Transferencia Formulario", description: "Transferencia manual")
+ 	TransactionType.create(name: "Otros", description: "Transferencia manual")
+ 	
+# # => Metodos de Pago
+	cheque = PaymentMethod.create(name: "Cheque")
+	efectivo = PaymentMethod.create(name: "Efectivo")
+	tdc = PaymentMethod.create(name: "Tarjeta de Crédito")
+	tdd = PaymentMethod.create(name: "Tarjeta de Débito")
+	otro = PaymentMethod.create(name: "Otro")
+
+ # => Sectores Eonómicos de las Empresas
+ 	estetica = EconomicSector.create(name: "Centros de Estética")
+ 	med_alt = EconomicSector.create(name: "Medicina Alternativa")
+ 	sicologia = EconomicSector.create(name: "Psicología")
+ 	dentistas = EconomicSector.create(name: "Odontología")
+ 	mecanicos = EconomicSector.create(name: "Talleres Mecánicos")
+ 	podologia = EconomicSector.create(name: "Centros de Podología")
+ 	artes_mariales = EconomicSector.create(name: "Artes Marciales")
+ 	yoga = EconomicSector.create(name: "Centros de Yoga")
+ 	centros_deportivos = EconomicSector.create(name: "Centros Deportivos")
+ 	kinesiologia = EconomicSector.create(name: "Kinesiología")
+ 	spas = EconomicSector.create(name: "SPA")
 
 # # => Diccionatio Sector Economico
 # 	estetica_dic = EconomicSectorsDictionary.create([
@@ -239,8 +253,8 @@
 # 	reduccion_spa_dic = Dictionary.create(name: "Reduccion", tag_id: reduccion_spa.id)
 
 
-# # => Países Activos
-# 	countries = Country.create(name: "Chile")
+ # => Países Activos
+ 	countries = Country.create([{name: "Chile", locale: "es_CL", flag_photo: "es_CL_flag.png", currency_code: "CLP", latitude: -33.4052419, longitude: -70.597557, formatted_address: "Santiago, Región Metropolitana, Chile", domain: ".cl", sales_tax: 0.19, timezone_name: "CLT", timezone_offset: -3.0},{name: "Colombia", locale: "es_CO", flag_photo: "es_CO_flag.png", currency_code: "COP", latitude: 4.677994, longitude: -74.052486, formatted_address: "Bogotá, Bogotá, Colombia", domain: ".com.co", sales_tax: 0.0, timezone_name: "COT", timezone_offset: -5.0}])
 
 # # => Regiones de los países activos 
 # 	regions = Region.create(name: "Metropolitana", country: countries)
@@ -259,15 +273,35 @@
 # 	la_reina = District.create(name: "La Reina", city: cities)
 
 # # => Planes Disponibles
-# 	plan_personal = Plan.create(name: "Personal", locations: 1, service_providers: 1, custom: false, price: 14900, special: false)
-# 	plan_basico = Plan.create(name: "Básico", locations: 1, service_providers: 30, custom: false, price: 24900, special: false)
-# 	plan_normal = Plan.create(name: "Normal", locations: 2, service_providers: 60, custom: false, price: 39900, special: false)
-# 	plan_premium = Plan.create(name: "Premium", locations: 3, service_providers: 90, custom: false, price: 49900, special: false)
-# 	plan_trial = Plan.create(name: "Trial", locations: 5, service_providers: 90, custom: true, price: 0, special: false)
-# 	plan_admin = Plan.create(name: "Admin", locations: 30, service_providers: 1, custom: true, price: 0, special: false) 
-# 	# Plan para las personas que partieron con nosotros antes en la Beta y no se han querido cambiar...
-# 	plan_beta = Plan.create(name: "Beta", locations: 1, service_providers: 2, custom: true, price: 14900, special: false)
+ 	plan_basico = Plan.create(name: "Básico", locations: 1, service_providers: 30, custom: false, special: false, monthly_mails: 2000)
+ 	plan_normal = Plan.create(name: "Normal", locations: 2, service_providers: 60, custom: false, special: false, monthly_mails: 5000)
+ 	plan_premium = Plan.create(name: "Premium", locations: 3, service_providers: 90, custom: false, special: false, monthly_mails: 10000)
+ 	plan_pro = Plan.create(name: "Pro", locations: 3, service_providers: 90, custom: false, special: false, monthly_mails: 20000)
+ 	plan_trial = Plan.create(name: "Trial", locations: 5, service_providers: 90, custom: true, special: false)
+ 	plan_admin = Plan.create(name: "Admin", locations: 30, service_providers: 1, custom: true, special: false)
+ 	plan_gratis = Plan.create(name: "Gratis", locations: 5, service_providers: 90, custom: true, special: false)
+ 	plan_personal = Plan.create(name: "Personal", locations: 5, service_providers: 90, custom: true, special: false)
 
+  	plan_gratis_chile = PlanCountry.create(plan_id: plan_gratis.id, country_id: 1, price: 0)
+ 	plan_gratis_colombia = PlanCountry.create(plan_id: plan_gratis.id, country_id: 2, price: 0)
+
+ 	plan_normal_chile = PlanCountry.create(plan_id: plan_normal.id, country_id: 1, price: 29900)
+ 	plan_normal_colombia = PlanCountry.create(plan_id: plan_normal.id, country_id: 2, price: 120000)
+
+ 	plan_premium_chile = PlanCountry.create(plan_id: plan_premium.id, country_id: 1, price: 49900)
+ 	plan_premium_colombia = PlanCountry.create(plan_id: plan_premium.id, country_id: 2, price: 200000)
+
+ 	plan_pro_chile = PlanCountry.create(plan_id: plan_pro.id, country_id: 1, price: 99900)
+ 	plan_pro_colombia = PlanCountry.create(plan_id: plan_pro.id, country_id: 2, price: 400000)
+
+  	plan_trial_chile = PlanCountry.create(plan_id: plan_trial.id, country_id: 1, price: 0)
+ 	plan_trial_colombia = PlanCountry.create(plan_id: plan_trial.id, country_id: 2, price: 0)
+
+  	plan_admin_chile = PlanCountry.create(plan_id: plan_admin.id, country_id: 1, price: 0)
+ 	plan_admin_colombia = PlanCountry.create(plan_id: plan_admin.id, country_id: 2, price: 0)
+
+  	plan_personal_chile = PlanCountry.create(plan_id: plan_personal.id, country_id: 1, price: 0)
+ 	plan_personal_colombia = PlanCountry.create(plan_id: plan_personal.id, country_id: 2, price: 0)
 
 # # => Test Company
 # 	# test_company = Company.create(name: 'Test Company', web_address: 'test', economic_sector_id: 1, plan_id: 2, payment_status_id: 1, description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pharetra quam neque, eget condimentum purus semper id. In porta ut mauris id congue. Quisque accumsan mauris nec turpis tincidunt, quis rhoncus augue porttitor. Mauris quis malesuada sem. Donec nisi metus.", cancellation_policy: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam tincidunt rutrum sapien vel ultricies. Sed.")

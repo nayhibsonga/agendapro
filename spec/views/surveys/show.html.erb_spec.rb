@@ -5,7 +5,7 @@ RSpec.describe "surveys/show", :type => :view do
     @survey = assign(:survey, Survey.create!(
       :quality => 1,
       :style => 2,
-      :satisfaction => 3,
+      :satifaction => 3,
       :comment => "MyText",
       :client => nil
     ))

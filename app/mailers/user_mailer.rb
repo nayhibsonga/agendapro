@@ -24,7 +24,6 @@ class UserMailer < Base::CustomMailer
       template_path: "mailers/#{path}"
       )
   end
-
   private
     def attacht_logo(url=nil)
       url ||= "app/assets/images/logos/logodoble2.png"

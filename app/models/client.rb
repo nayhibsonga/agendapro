@@ -2,7 +2,7 @@ class Client < ActiveRecord::Base
   include Filter::Clients
 
   belongs_to :company
-
+  has_many :surveys
   has_many :client_comments, dependent: :destroy
   has_many :session_bookings, dependent: :destroy
   has_many :bookings, dependent: :destroy

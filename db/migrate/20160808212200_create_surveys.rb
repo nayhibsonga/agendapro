@@ -3,7 +3,7 @@ class CreateSurveys < ActiveRecord::Migration
     create_table :surveys do |t|
       t.integer :quality
       t.integer :style
-      t.integer :satisfaction
+      t.integer :satifaction
       t.text :comment
       t.references :client, index: true
 

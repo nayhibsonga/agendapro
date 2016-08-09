@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160802212156) do
+ActiveRecord::Schema.define(version: 20160809184343) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -887,6 +887,13 @@ ActiveRecord::Schema.define(version: 20160802212156) do
 
   add_index "email_contents", ["company_id"], name: "index_email_contents_on_company_id", using: :btree
   add_index "email_contents", ["template_id"], name: "index_email_contents_on_template_id", using: :btree
+
+  create_table "email_exclusions", force: true do |t|
+    t.string   "domain"
+    t.boolean  "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "email_sendings", force: true do |t|
     t.integer  "sendable_id"
@@ -2208,7 +2215,7 @@ ActiveRecord::Schema.define(version: 20160802212156) do
   create_table "surveys", force: true do |t|
     t.integer  "quality"
     t.integer  "style"
-    t.integer  "satisfaction"
+    t.integer  "satifaction"
     t.text     "comment"
     t.integer  "client_id"
     t.datetime "created_at"

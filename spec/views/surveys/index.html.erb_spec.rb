@@ -6,14 +6,14 @@ RSpec.describe "surveys/index", :type => :view do
       Survey.create!(
         :quality => 1,
         :style => 2,
-        :satisfaction => 3,
+        :satifaction => 3,
         :comment => "MyText",
         :client => nil
       ),
       Survey.create!(
         :quality => 1,
         :style => 2,
-        :satisfaction => 3,
+        :satifaction => 3,
         :comment => "MyText",
         :client => nil
       )

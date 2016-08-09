@@ -1,14 +1,15 @@
-<%= form_for @survey  do |f| %>
-
+<%= simple_form_for(@survey) do |f| %>
+  <%= f.error_notification %>
 
   <div class="form-inputs">
-    <%= f.text_field :quality %>
-    <%= f.text_field :style %>
-    <%= f.text_field :satisfaction %>
-    <%= f.text_area :comment %>
+    <%= f.input :quality %>
+    <%= f.input :style %>
+    <%= f.input :satifaction %>
+    <%= f.input :comment %>
+    <%= f.association :client %>
   </div>
 
   <div class="form-actions">
-    <%= f.submit :submit %>
+    <%= f.button :submit %>
   </div>
 <% end %>

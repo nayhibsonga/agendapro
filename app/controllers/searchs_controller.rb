@@ -24,6 +24,10 @@ class SearchsController < ApplicationController
 			@formatted_address = cookies[:formatted_address].unpack("C*").pack("U*")
 		end
 		@companies =  Company.where(id: CompanySetting.where(activate_search: true, activate_workflow: true).pluck(:company_id), country_id: Country.find_by(locale: I18n.locale.to_s), payment_status_id: [PaymentStatus.find_by_name("Activo"), PaymentStatus.find_by_name("Convenio PAC"), PaymentStatus.find_by_name("Emitido"), PaymentStatus.find_by_name("Vencido")]).where.not(logo: nil)
+		#@clients = Client.last
+		@booking = Booking.first.service
+		@clients = Booking.first.client
+	  SurveyMailer.survey(@clients, @booking).deliver
 		render layout: "search"
 	end
 
