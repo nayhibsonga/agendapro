@@ -3,6 +3,7 @@
 //= require sweetalert.min
 //= require ckeditor/init
 //= require toastr.min
+//= require surveys
 // require toastr.js.map
 
 //por defecto:

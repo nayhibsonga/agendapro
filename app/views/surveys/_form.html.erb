@@ -1,15 +1,20 @@
-<%= simple_form_for(@survey) do |f| %>
-  <%= f.error_notification %>
+<div class="container-fluid tab-margin">
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4">
+      <%= form_for(@survey) do |f| %>
+        <div class="form-group">
+          <%= f.select(:quality, options_for_select([["1 estrella", 1], ["2 estrellas",2], ["3 estrellas",2], ["4 estrellas",2], ["5 estrellas",2]]),{},{:class => 'form-control'})  %>
+          <%= f.select :style, options_for_select([["1 estrella", 1], ["2 estrellas",2], ["3 estrellas",2], ["4 estrellas",2], ["5 estrellas",2]]),{},{:class => 'form-control'} %>
+          <%= f.select :satifaction, options_for_select([["1 estrella", 1], ["2 estrellas",2], ["3 estrellas",2], ["4 estrellas",2], ["5 estrellas",2]]),{},{:class => 'form-control'} %>
+          <%= f.text_area :comment,:class => 'form-control' %>
+          <%= f.hidden_field :client_id,value: @booking.client.id %>
+        </div>
 
-  <div class="form-inputs">
-    <%= f.input :quality %>
-    <%= f.input :style %>
-    <%= f.input :satifaction %>
-    <%= f.input :comment %>
-    <%= f.association :client %>
+        <div class="form-actions">
+          <%= f.button :submit,:class => 'form-control' %>
+        </div>
+      <% end %>
+    </div>
   </div>
-
-  <div class="form-actions">
-    <%= f.button :submit %>
-  </div>
-<% end %>
+  <p>Booking: <%= @booking.service.name %></p>
+</div>

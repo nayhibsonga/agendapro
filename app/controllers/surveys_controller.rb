@@ -1,11 +1,9 @@
 class SurveysController < ApplicationController
   before_action :set_survey, only: [:show, :edit, :update, :destroy]
 
-  respond_to :html
-
   def index
     @surveys = Survey.all
-    respond_with(@surveys)
+
   end
 
   def show
@@ -14,7 +12,9 @@ class SurveysController < ApplicationController
 
   def new
     @survey = Survey.new
-    respond_with(@survey)
+    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+    id = crypt.decrypt_and_verify(params[:confirmation_code])
+    @booking = Booking.find(id)
   end
 
   def edit
@@ -22,8 +22,15 @@ class SurveysController < ApplicationController
 
   def create
     @survey = Survey.new(survey_params)
-    @survey.save
-    respond_with(@survey)
+    if @survey.save
+      respond_to do |format|
+        format.json {render json: @survey}
+      end
+    else
+      respond_to do |format|
+        format.json {render json: @survey.errors}
+      end
+    end
   end
 
   def update
