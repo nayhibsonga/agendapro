@@ -3,6 +3,8 @@ Agendapro::Application.routes.draw do
 
 
 
+
+
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -19,7 +21,11 @@ Agendapro::Application.routes.draw do
     post "mandrill/unsubscribe"
     get "mandrill/resuscribe"
 
+    #Surveys
     resources :surveys
+    resources :survey_questions
+    resources :survey_constructs
+    resources :survey_categories
 
     resources :employee_codes
 

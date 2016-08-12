@@ -1,0 +1,2 @@
+module SurveyCategoriesHelper
+end

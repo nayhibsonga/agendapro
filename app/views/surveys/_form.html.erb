@@ -1,20 +1,189 @@
-<div class="container-fluid tab-margin">
+<style type="text/css">
+  .nopadding {
+    padding: 0 !important;
+  }
+  label{
+    color:#d2d2d2;
+    font-size: 30px;
+    margin-top: 10px;
+  }
+  input[type = "radio"]{
+    display:none;
+  }
+  .form_survey {
+    font-family: 'Roboto Condensed', sans-serif;
+  }
+  .clasificacion{
+    direction: rtl;
+    unicode-bidi: bidi-override;
+    margin-top: 10px;
+  }
+  label:hover{
+    color:#ffd865;
+  }
+  label:hover ~ label{
+    color:#ffd865;
+  }
+  input[type = "radio"]:checked ~ label{
+    color:#ffd865;
+  }
+  form {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 25px auto;
+  }
+  form .img_email {
+    width: 30px;
+    height: auto;
+    display: inline-block;
+    margin-right: 5px;
+  }
+  form .img_logo {
+    width: 165px;
+    height: auto;
+  }
+  form p{
+    font-size: 12px;
+    line-height: 12px;
+    margin: 0;
+    color: #666;
+    font-weight: normal;
+  }
+  form textarea{
+    height: 100px !important;
+    resize: none;
+  }
+  form .header p{
+    display: inline-block;
+  }
+  form .circles span{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #22c488;
+    border-radius: 100%;
+    margin: 4px;
+    float: right;
+  }
+  form .separator{
+    height: 1px;
+    background: #d2d2d2;
+    margin: 20px 0;
+  }
+  form ol {
+    color: #000;
+    font-weight: bold;
+    padding-left: 20px;
+    font-size: 16px;
+  }
+  form ol li {
+    margin-top: 10px;
+  }
+  form ol li p{
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 15px;
+  }
+
+  form .btn_green {
+    background-color: #22c488;
+    color: #fff;
+    width: 100%;
+    max-width: 100px;
+    margin-top: 10px;
+    display: inline-block;
+  }
+  form .button_right {
+    text-align: right;
+  }
+  .invalid {
+    background-color: rgba(214,0,0,1);
+    height: 50px;
+    font-size: 20px;
+    display: block;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    margin: 30px auto;
+    line-height: 49px;
+    box-shadow: 1px 1px 2px #ccc;
+  }
+</style>
+<div class="container-fluid tab-margin form_survey">
   <div class="row">
-    <div class="col-md-4 col-md-offset-4">
+    <div class="col-md-6 col-md-offset-3 ">
+    <% if @found %>
       <%= form_for(@survey) do |f| %>
-        <div class="form-group">
-          <%= f.select(:quality, options_for_select([["1 estrella", 1], ["2 estrellas",2], ["3 estrellas",2], ["4 estrellas",2], ["5 estrellas",2]]),{},{:class => 'form-control'})  %>
-          <%= f.select :style, options_for_select([["1 estrella", 1], ["2 estrellas",2], ["3 estrellas",2], ["4 estrellas",2], ["5 estrellas",2]]),{},{:class => 'form-control'} %>
-          <%= f.select :satifaction, options_for_select([["1 estrella", 1], ["2 estrellas",2], ["3 estrellas",2], ["4 estrellas",2], ["5 estrellas",2]]),{},{:class => 'form-control'} %>
+        <div class="col-md-12 nopadding header">
+          <div class="col-md-5 nopadding"><%= image_tag "mailers/icono_mail.png", alt:"Correo", class:"img_email"%><p>Escribenos a contacto@agendapro.cl</p></div>
+          <div class="col-md-4 nopadding"><%= image_tag "logos/logo2.png", alt:"Logo AgendaPro", class:"img_logo"%></div>
+          <div class="col-md-3 nopadding circles"><span></span><span></span><span></span></div>
+        </div>
+        <div class="col-md-12 separator"></div>
+        <div class="col-md-12 nopadding">
+          <ol>
+            <li>Calidad
+              <p class="clasificacion">
+                <%= f.radio_button :quality, 5, {id:"quality1"} %>
+                <%= f.label :quality,"★",{for:"quality1"} %>
+                <%= f.radio_button :quality, 4, {id:"quality2"} %>
+                <%= f.label :quality,"★",{for:"quality2"} %>
+                <%= f.radio_button :quality, 3, {id:"quality3"} %>
+                <%= f.label :quality,"★",{for:"quality3"} %>
+                <%= f.radio_button :quality, 2, {id:"quality4"} %>
+                <%= f.label :quality,"★",{for:"quality4"} %>
+                <%= f.radio_button :quality, 1, {id:"quality5", checked:"checked"} %>
+                <%= f.label :quality,"★",{for:"quality5"} %>
+              </p>
+              <p>Vestibulum suscipit arcu sed posuere semper. Cras laoreet ante a egestas viverra. Quisque ut diam purus. Praesent ut sollicitudin tellus. Sed placerat nulla a tellus porttitor mollis. Proin pulvinar viverra cursus. Nunc vitae mauris leo. Nunc ac erat quis ipsum rutrum efficitur ac sed neque.</p>
+            </li>
+            <li>Estilo
+              <p class="clasificacion">
+                <%= f.radio_button :style, 5, {id:"style1"} %>
+                <%= f.label :style,"★",{for:"style1"} %>
+                <%= f.radio_button :style, 4, {id:"style2"} %>
+                <%= f.label :style,"★",{for:"style2"} %>
+                <%= f.radio_button :style, 3, {id:"style3"} %>
+                <%= f.label :style,"★",{for:"style3"} %>
+                <%= f.radio_button :style, 2, {id:"style4"} %>
+                <%= f.label :style,"★",{for:"style4"} %>
+                <%= f.radio_button :style, 1, {id:"style5", checked:"checked"} %>
+                <%= f.label :style,"★",{for:"style5"} %>
+              </p>
+              <p>Vestibulum suscipit arcu sed posuere semper. Cras laoreet ante a egestas viverra. Quisque ut diam purus. Praesent ut sollicitudin tellus. Sed placerat nulla a tellus porttitor mollis. Proin pulvinar viverra cursus. Nunc vitae mauris leo. Nunc ac erat quis ipsum rutrum efficitur ac sed neque.</p>
+            </li>
+            <li>Satisfacción
+              <p class="clasificacion">
+                <%= f.radio_button :satifaction, 5, {id:"satifaction1"} %>
+                <%= f.label :satifaction,"★",{for:"satifaction1"} %>
+                <%= f.radio_button :satifaction, 4, {id:"satifaction2"} %>
+                <%= f.label :satifaction,"★",{for:"satifaction2"} %>
+                <%= f.radio_button :satifaction, 3, {id:"satifaction3"} %>
+                <%= f.label :satifaction,"★",{for:"satifaction3"} %>
+                <%= f.radio_button :satifaction, 2, {id:"satifaction4"} %>
+                <%= f.label :satifaction,"★",{for:"satifaction4"} %>
+                <%= f.radio_button :satifaction, 1, {id:"satifaction5", checked:"checked"} %>
+                <%= f.label :satifaction,"★",{for:"satifaction5"} %>
+              </p>
+              <p>Vestibulum suscipit arcu sed posuere semper. Cras laoreet ante a egestas viverra. Quisque ut diam purus. Praesent ut sollicitudin tellus. Sed placerat nulla a tellus porttitor mollis. Proin pulvinar viverra cursus. Nunc vitae mauris leo. Nunc ac erat quis ipsum rutrum efficitur ac sed neque.</p>
+            </li>
+            <li>Dejanos un comentario
+
+            </li>
+          </ol>
           <%= f.text_area :comment,:class => 'form-control' %>
-          <%= f.hidden_field :client_id,value: @booking.client.id %>
         </div>
 
-        <div class="form-actions">
-          <%= f.button :submit,:class => 'form-control' %>
+        <div class="form-group">
+          <%= f.hidden_field :booking_id,value: params[:confirmation_code] %>
+        </div>
+        <div class="form-actions button_right">
+          <%= f.button("Enviar",{:class => 'form-control btn_green'}) %>
         </div>
       <% end %>
     </div>
   </div>
-  <p>Booking: <%= @booking.service.name %></p>
+  <% else %>
+    <p class="invalid"><%= @error %></p>
+  <%end%>
 </div>

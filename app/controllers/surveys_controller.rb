@@ -3,7 +3,6 @@ class SurveysController < ApplicationController
 
   def index
     @surveys = Survey.all
-
   end
 
   def show
@@ -12,23 +11,39 @@ class SurveysController < ApplicationController
 
   def new
     @survey = Survey.new
-    crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
-    id = crypt.decrypt_and_verify(params[:confirmation_code])
-    @booking = Booking.find(id)
+    @error = "Booking no invalido."
+    decrypt(params[:confirmation_code])
+    if @booking
+      @found = true
+    else
+      @found = false
+    end
   end
 
   def edit
   end
 
   def create
-    @survey = Survey.new(survey_params)
-    if @survey.save
-      respond_to do |format|
-        format.json {render json: @survey}
+    @params = survey_params
+    decrypt(@params[:booking_id])
+    if @booking
+      @params[:booking_id] = @booking.id
+      @params[:client_id] = @booking.client.id
+      @survey = Survey.new(@params)
+      if @survey.save
+        respond_to do |format|
+          format.json {render json: @survey, :status => :created}
+        end
+        @booking.update(survey_id:@survey.id)
+
+      else
+        respond_to do |format|
+          format.json {render json: @survey.errors, :status => :unauthorized}
+        end
       end
     else
       respond_to do |format|
-        format.json {render json: @survey.errors}
+        format.json {render json: @booking, :status => :not_found}
       end
     end
   end
@@ -49,6 +64,18 @@ class SurveysController < ApplicationController
     end
 
     def survey_params
-      params.require(:survey).permit(:quality, :style, :satifaction, :comment, :client_id)
+      params.require(:survey).permit(:quality, :style, :satifaction, :comment, :booking_id)
     end
+    def decrypt(key)
+      begin
+        crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
+        id = crypt.decrypt_and_verify(key)
+        @booking = Booking.find_by(id:id)
+      rescue
+        @error
+      rescue Exception
+        @error
+      end
+    end
+
 end

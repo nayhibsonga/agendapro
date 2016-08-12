@@ -307,6 +307,11 @@ class Ability
         can :get_product_brands_for_payment_or_sale, Payment, :company_id => user.company_id
         can :get_product_categories_for_payment_or_sale, Payment, :company_id => user.company_id
 
+        #Surveys
+        can :read, SurveyConstruct, :company_id => user.company_id
+        can :destroy, SurveyConstruct, :company_id => user.company_id
+        can :create, SurveyConstruct, :company_id => user.company_id
+        can :update, SurveyConstruct, :company_id => user.company_id
         # can :read, CompanyFromEmail
         # can :destroy, CompanyFromEmail
         # can :create, CompanyFromEmail

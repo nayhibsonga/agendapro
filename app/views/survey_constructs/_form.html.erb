@@ -1,0 +1,116 @@
+<style type="text/css">
+  #add_question{
+    cursor: pointer;
+    font-size: 30px;
+    color: #22c488;
+  }
+  .content_questions {
+      border-top: 1px solid #d2d2d2;
+      padding-top: 15px;
+  }
+</style>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="well">
+        <%= form_for @survey_construct, :html => {:class => 'form-horizontal'} do |f| %>
+          <% if @survey_construct.errors.any? %>
+            <% content_for :scripts do %>
+              <% message = '' %>
+              <% @survey_construct.errors.full_messages.each do |msg| %>
+                <% message += '* ' + msg + '\n' %>
+              <% end %>
+              <script type="text/javascript">
+                swal({
+                  title: "Error al guardar la categoría",
+                  text: "<%= message %>",
+                  type: "error"
+                });
+              </script>
+            <% end %>
+          <% end %>
+
+          <div class="form-group has-feedback">
+            <%= f.label :name, 'Título', :class => 'col-md-3 control-label' %>
+            <div class="col-md-5">
+              <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Título' %>
+              <span class="help-block"></span>
+              <span class="form-control-feedback"></span>
+            </div>
+            <i id="add_question" class='fa fa-plus-circle' title="añadir nueva pregunta"></i>
+          </div>
+          <% if @survey_question.kind_of?(ActiveRecord::Relation) %>
+            <% @survey_question.each do |survey_question| %>
+              <%= fields_for(survey_question) do |u| %>
+              <div class="content_questions">
+                <div class="form-group has-feedback">
+                  <%= u.label :question, 'Pregunta', :class => 'col-md-3 control-label' %>
+                  <div class="col-md-5">
+                    <%= u.text_field :question, name:"survey_question[question][]", :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Pregunta' %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
+                <div class="form-group has-feedback">
+                  <%= u.label :description, 'Descripción', :class => 'col-md-3 control-label' %>
+                  <div class="col-md-5">
+                    <%= u.text_area :description, name:"survey_question[description][]", :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Descripción' %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
+                <div class="form-group has-feedback">
+                  <%= u.label :type_question, 'Tipo', :class => 'col-md-3 control-label' %>
+                  <div class="col-md-5">
+                    <%= u.select :type_question, ([["Estrellas",1],["Comentario",2]]),{}, {:name => "survey_question[type_question][]", :class => 'form-control', :placeholder => 'Pregunta'} %>
+                    <span class="help-block"></span>
+                    <span class="form-control-feedback"></span>
+                  </div>
+                </div>
+              </div>
+              <% end %>
+            <% end %>
+            <% else %>
+              <%= fields_for @survey_question, @survey_construct do |u| %>
+                  <%= render 'for' %>
+              <% end %>
+          <% end %>
+          <p><%= link_to_add_fields "Agregar Servicio", f, @survey_question %></p>
+          <div class="form-group">
+            <div class="col-md-offset-3 col-md-5">
+              <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+              <%= link_to 'Cancelar', survey_constructs_path, class: "btn btn-white" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="partial" style="display:none">
+  <div class="form-group has-feedback">
+    <%= label :question, 'Pregunta', :class => 'col-md-3 control-label' %>
+    <div class="col-md-5">
+      <%= text_field :question,nil, name:"survey_question[question][]", :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Pregunta' %>
+      <span class="help-block"></span>
+      <span class="form-control-feedback"></span>
+    </div>
+  </div>
+  <div class="form-group has-feedback">
+    <%= label :description, 'Descripción', :class => 'col-md-3 control-label' %>
+    <div class="col-md-5">
+      <%= text_area :description,nil, name:"survey_question[description][]", :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Descripción' %>
+      <span class="help-block"></span>
+      <span class="form-control-feedback"></span>
+    </div>
+  </div>
+  <div class="form-group has-feedback">
+    <%= label :type, 'Tipo', :class => 'col-md-3 control-label' %>
+    <div class="col-md-5">
+      <%= select :type,nil, ([["Estrellas",1],["Comentario",2]]),{}, {:name => "survey_question[type][]", :class => 'form-control', :placeholder => 'Pregunta'} %>
+      <span class="help-block"></span>
+      <span class="form-control-feedback"></span>
+    </div>
+  </div>
+</div>
+

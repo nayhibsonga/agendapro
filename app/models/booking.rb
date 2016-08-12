@@ -12,7 +12,7 @@ class Booking < ActiveRecord::Base
   belongs_to :session_booking
   belongs_to :service_promo
   belongs_to :receipt
-
+  belongs_to :survey
   has_many :booking_histories, dependent: :destroy
   has_many :booking_email_logs, dependent: :destroy
   has_many :sendings, class_name: 'Email::Sending', as: :sendable

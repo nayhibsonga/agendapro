@@ -12,6 +12,9 @@ $('form#new_survey').submit(function(e){
           title: "Enviada exitosamente.",
           type: "success"
         });
+        console.log(data)
+        console.log(textStatus)
+        //window.location.assign(window.location.hostname)
     },
     error: function(xhr, textStatus, errorThrown){
        console.log(errorThrown)
