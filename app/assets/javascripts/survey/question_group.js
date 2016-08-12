@@ -22,3 +22,8 @@ $(function () {
 $('#add_question').click(function(e){
   $(".content_questions").append($(".partial").html())
 })
+function add_fields(link, association, content) {
+  var new_id = new Date().getTime();
+  var regexp = new RegExp("new_" + association, "g")
+  $(link).parent().before(content.replace(regexp, new_id));
+}

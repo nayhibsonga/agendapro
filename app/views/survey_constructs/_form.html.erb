@@ -71,11 +71,11 @@
               <% end %>
             <% end %>
             <% else %>
-              <%= fields_for @survey_question, @survey_construct do |u| %>
-                  <%= render 'for' %>
+              <%= fields_for @survey_question do |u| %>
+                  <%= render 'for' , :f => u %>
               <% end %>
           <% end %>
-          <p><%= link_to_add_fields "Agregar Servicio", f, @survey_question %></p>
+          <p><%= link_to_add_fields_survey "Agregar Servicio", f, :fors %></p>
           <div class="form-group">
             <div class="col-md-offset-3 col-md-5">
               <%= f.submit 'Guardar', :class => 'btn btn-green' %>
