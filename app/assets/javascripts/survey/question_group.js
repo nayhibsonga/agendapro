@@ -1,7 +1,7 @@
-$(function () {
-  $('.well').sortable({
+$(window).load(function(){
+  $('.content_questions').sortable({
     axis: 'y',
-    handle: '.content_questions',
+    handle: '.fa-bars',
     helper: function(e, tr) {
       var $originals = tr.children();
       var $helper = tr.clone();
@@ -19,11 +19,12 @@ $(function () {
     }
   });
 });
-$('#add_question').click(function(e){
-  $(".content_questions").append($(".partial").html())
+$(document).on('click','#delete',function(e){
+  $(this).parents(".well").remove();
 })
 function add_fields(link, association, content) {
   var new_id = new Date().getTime();
   var regexp = new RegExp("new_" + association, "g")
-  $(link).parent().before(content.replace(regexp, new_id));
+
+  $('.content_questions').append(content.replace(regexp, new_id));
 }

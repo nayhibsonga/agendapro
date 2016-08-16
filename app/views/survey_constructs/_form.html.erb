@@ -8,11 +8,13 @@
       border-top: 1px solid #d2d2d2;
       padding-top: 15px;
   }
+  .fa-bars {
+    cursor: pointer;
+  }
 </style>
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
-      <div class="well">
         <%= form_for @survey_construct, :html => {:class => 'form-horizontal'} do |f| %>
           <% if @survey_construct.errors.any? %>
             <% content_for :scripts do %>
@@ -37,7 +39,7 @@
               <span class="help-block"></span>
               <span class="form-control-feedback"></span>
             </div>
-            <i id="add_question" class='fa fa-plus-circle' title="añadir nueva pregunta"></i>
+            <%= link_to_add_fields_survey "Agregar Pregunta", f, :for %>
           </div>
           <% if @survey_question.kind_of?(ActiveRecord::Relation) %>
             <% @survey_question.each do |survey_question| %>
@@ -71,11 +73,13 @@
               <% end %>
             <% end %>
             <% else %>
+              <div class="content_questions">
               <%= fields_for @survey_question do |u| %>
                   <%= render 'for' , :f => u %>
               <% end %>
+              </div>
           <% end %>
-          <p><%= link_to_add_fields_survey "Agregar Servicio", f, :fors %></p>
+          <p></p>
           <div class="form-group">
             <div class="col-md-offset-3 col-md-5">
               <%= f.submit 'Guardar', :class => 'btn btn-green' %>
@@ -83,7 +87,6 @@
             </div>
           </div>
         <% end %>
-      </div>
     </div>
   </div>
 </div>
