@@ -785,7 +785,7 @@ class Booking < ActiveRecord::Base
   def send_survey
     booking = self
     if booking.status_id == 3
-      booking.last.service.service_survey_constructs.last.survey_construct.sendings.build(method: 'survey').save
+      Booking.last.service.service_survey_constructs.last.survey_construct.sendings.build(method: 'survey').save
     end
   end
   def create_sendable_survey
