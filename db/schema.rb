@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160812192752) do
+ActiveRecord::Schema.define(version: 20160817154204) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -226,7 +226,7 @@ ActiveRecord::Schema.define(version: 20160812192752) do
     t.integer  "last_minute_promo_id"
     t.boolean  "bundled",                default: false
     t.integer  "bundle_id"
-    t.integer  "survey_id"
+    t.integer  "survey_construct_id"
   end
 
   add_index "bookings", ["bundle_id"], name: "index_bookings_on_bundle_id", using: :btree
@@ -240,7 +240,7 @@ ActiveRecord::Schema.define(version: 20160812192752) do
   add_index "bookings", ["session_booking_id"], name: "index_bookings_on_session_booking_id", using: :btree
   add_index "bookings", ["start"], name: "index_bookings_on_start", using: :btree
   add_index "bookings", ["status_id"], name: "index_bookings_on_status_id", using: :btree
-  add_index "bookings", ["survey_id"], name: "index_bookings_on_survey_id", using: :btree
+  add_index "bookings", ["survey_construct_id"], name: "index_bookings_on_survey_construct_id", using: :btree
   add_index "bookings", ["user_id"], name: "index_bookings_on_user_id", using: :btree
 
   create_table "boolean_attributes", force: true do |t|
@@ -710,6 +710,8 @@ ActiveRecord::Schema.define(version: 20160812192752) do
     t.string   "color_light"
     t.string   "color_normal"
     t.string   "color_dark"
+    t.integer  "after_survey"
+    t.integer  "activate_survey"
   end
 
   add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
@@ -2040,6 +2042,16 @@ ActiveRecord::Schema.define(version: 20160812192752) do
   add_index "service_staffs", ["service_id"], name: "index_service_staffs_on_service_id", using: :btree
   add_index "service_staffs", ["service_provider_id"], name: "index_service_staffs_on_service_provider_id", using: :btree
 
+  create_table "service_survey_constructs", force: true do |t|
+    t.integer  "service_id"
+    t.integer  "survey_construct_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "service_survey_constructs", ["service_id"], name: "index_service_survey_constructs_on_service_id", using: :btree
+  add_index "service_survey_constructs", ["survey_construct_id"], name: "index_service_survey_constructs_on_survey_construct_id", using: :btree
+
   create_table "service_tags", force: true do |t|
     t.integer  "service_id"
     t.integer  "tag_id"
@@ -2239,6 +2251,7 @@ ActiveRecord::Schema.define(version: 20160812192752) do
     t.datetime "updated_at"
     t.integer  "survey_construct_id"
     t.integer  "type_question"
+    t.integer  "order"
   end
 
   add_index "survey_questions", ["survey_construct_id"], name: "index_survey_questions_on_survey_construct_id", using: :btree

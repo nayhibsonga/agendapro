@@ -41,6 +41,7 @@
           <li role="presentation"><a id="blocked_charts_link" href="#" class="locked-section">Fichas<i class="fa fa-lock fa-1 lock-image"></i></a></li>
         <% end %>
         <li role="presentation"><a id="codes_link" href="#employee-codes" role="tab" data-toggle="pill" data-title="Permisos de empleados" data-description="Configura códigos y permisos para tu equipo.">Permisos</a></li>
+        <li role="presentation"><a id="encuestas_link" href="#encuestas" role="tab" data-toggle="pill" data-title="Encuestas" data-description="Configuración básica para tus encuestas.">Encuestas</a></li>
       </ul>
     </div>
     <!-- Panels -->
@@ -209,6 +210,45 @@
                 </div>
               </div>
             <% end %>
+          </div>
+        </div>
+        <!-- Encuestas -->
+        <div class="tab-pane" id="encuestas">
+          <div class="row">
+            <div class="col-md-12">
+              <%= form_for @company_setting, :html => {:class => 'company-form', :id => '#times-form'} do |f| %>
+                <input type="hidden" name="origin" id="origin" value="encuestas">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <div class="checkbox">
+                        <label>
+                          <%= f.check_box :activate_survey %> Activar Encuestas
+                        </label>
+                        <span class="help-block">Habilita esta opción para que tus clientes reciban encuestas de tu negocio.</span>
+                      </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                      <%= f.label :after_survey, 'Tiempo para envio de Encuesta' %>
+                      <span class="help-block">Indique cuantas horas después de terminar un servicio se debe enviar la encuesta al cliente.</span>
+                      <div class="input-group">
+                        <%= f.select :after_survey, options_for_select([["Inmediatamente", 0], ["1 hora después", 1], ["2 horas después", 2], ["3 horas después", 3], ["4 horas después", 4], ["5 horas después", 5]], selected: @company_setting.after_survey), {}, {:class => 'form-control'} %>
+                        <span class="input-group-addon">Horas</span>
+                      </div>
+                      <span class="help-block"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                      <%= link_to 'Cancelar', dashboard_path, :class => "btn btn-default" %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
           </div>
         </div>
         <!-- Company -->

@@ -651,12 +651,6 @@ module ApplicationHelper
     end
     link_to_function(('<i class="fa fa-plus"></i> ' + name).html_safe, "add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")", class: "btn btn-sm btn-green")
 	end
-	def link_to_add_fields_survey(name, f, association)
-    fields = f.fields_for(association, :child_index => "new_#{association}") do |builder|
-      render(association.to_s.singularize, :f => builder)
-    end
-    link_to_function(('<i class="fa fa-plus"></i> ' + name).html_safe, "add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")", class: "btn btn-sm btn-green")
-	end
 	def code_to_payment_method(code)
 
 		return_str = "Sin información"

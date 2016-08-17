@@ -16,6 +16,9 @@ class Service < ActiveRecord::Base
   has_many :service_bundles, dependent: :destroy
   has_many :services, through: :service_bundles
 
+  has_many :service_survey_constructs, dependent: :destroy
+  has_many :survey_constructs, through: :service_survey_constructs
+
 	has_many :bookings, dependent: :destroy
 	has_many :service_staffs, dependent: :destroy
 	has_many :service_providers, :through => :service_staffs

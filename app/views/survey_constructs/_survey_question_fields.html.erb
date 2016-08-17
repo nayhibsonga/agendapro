@@ -1,18 +1,19 @@
-<div class="well">
+<div class="well" data-order=''>
   <div class="form-group has-feedback">
     <%= f.label :question, 'Pregunta', :class => 'col-md-3 control-label' %>
     <div class="col-md-5">
-      <%= f.text_field :question, name:"survey_question[question][]", :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Pregunta' %>
+      <%= f.text_field :question, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Pregunta' %>
       <span class="help-block"></span>
       <span class="form-control-feedback"></span>
     </div>
       <i class="fa fa-bars col-md-2" title="Manten presionado y arrastra para cambiar el orden de las preguntas"></i>
-      <i class="fa fa-trash-o" id="delete">Eliminar</i>
+
+      <%= link_to_remove_fields "Eliminar", f %>
   </div>
   <div class="form-group has-feedback">
     <%= f.label :description, 'Descripción', :class => 'col-md-3 control-label' %>
     <div class="col-md-5">
-      <%= f.text_area :description, name:"survey_question[description][]", :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Descripción' %>
+      <%= f.text_area :description, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Descripción' %>
       <span class="help-block"></span>
       <span class="form-control-feedback"></span>
     </div>
@@ -20,10 +21,10 @@
   <div class="form-group has-feedback">
     <%= f.label :type_question, 'Tipo', :class => 'col-md-3 control-label' %>
     <div class="col-md-5">
-      <%= f.select :type_question, ([["Estrellas",1],["Comentario",2]]),{}, {:name => "survey_question[type_question][]", :class => 'form-control', :placeholder => 'Pregunta'} %>
+      <%= f.select :type_question, ([["Estrellas",1],["Comentario",2]]),{}, { :class => 'form-control', :placeholder => 'Pregunta'} %>
       <span class="help-block"></span>
       <span class="form-control-feedback"></span>
     </div>
   </div>
-
+  <%= f.hidden_field :order, class:"order" %>
 </div>

@@ -12,7 +12,7 @@ class Booking < ActiveRecord::Base
   belongs_to :session_booking
   belongs_to :service_promo
   belongs_to :receipt
-  belongs_to :survey
+  has_one :survey_construct
   has_many :booking_histories, dependent: :destroy
   has_many :booking_email_logs, dependent: :destroy
   has_many :sendings, class_name: 'Email::Sending', as: :sendable
@@ -34,8 +34,8 @@ class Booking < ActiveRecord::Base
 
   after_commit validate :bookings_overlap, :bookings_resources, :bookings_deal
 
-  after_create :send_booking_mail, :wait_for_payment, :check_session
-  after_update :send_update_mail, :check_session
+  after_create :send_booking_mail, :wait_for_payment, :check_session, :create_sendable_survey
+  after_update :send_update_mail, :check_session, :send_survey
 
   #after_destroy :check_treatment
 
@@ -782,6 +782,16 @@ class Booking < ActiveRecord::Base
     end
   end
 
+  def send_survey
+    booking = self
+    if booking.status_id == 3
+      booking.last.service.service_survey_constructs.last.survey_construct.sendings.build(method: 'survey').save
+    end
+  end
+  def create_sendable_survey
+    booking = self
+    booking.survey_construct.create
+  end
   def self.booking_reminder
     where(:start => CustomTimezone.first_timezone.offset.ago...(96.hours + CustomTimezone.last_timezone.offset).from_now).each do |booking|
       unless booking.status == Status.find_by(:name => "Cancelado")
