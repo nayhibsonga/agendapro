@@ -5,6 +5,8 @@ Agendapro::Application.routes.draw do
 
 
 
+
+
   devise_for :users, skip: [:session, :password, :registration, :confirmation], :controllers => { omniauth_callbacks: "omniauth_callbacks" }
 
   scope "(:locale)", locale: /es|es_CL|es_CO|es_PA|es_VE|es_GT/ do
@@ -26,6 +28,7 @@ Agendapro::Application.routes.draw do
     resources :survey_questions
     resources :survey_constructs
     resources :survey_categories
+    resources :survey_answers
 
     resources :employee_codes
 

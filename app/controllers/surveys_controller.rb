@@ -10,9 +10,10 @@ class SurveysController < ApplicationController
   end
 
   def new
-    @survey = Survey.new
-    @error = "Booking no invalido."
     decrypt(params[:confirmation_code])
+    @survey = Survey.find(@booking.survey_id)
+    @survey_answer = SurveyAnswer.new
+    @error = "Booking no invalido."
     if @booking
       @found = true
     else
@@ -69,8 +70,8 @@ class SurveysController < ApplicationController
     def decrypt(key)
       begin
         crypt = ActiveSupport::MessageEncryptor.new(Agendapro::Application.config.secret_key_base)
-        id = crypt.decrypt_and_verify(key)
-        @booking = Booking.find_by(id:id)
+        @id = crypt.decrypt_and_verify(key)
+        @booking = Booking.find_by(id:@id)
       rescue
         @error
       rescue Exception

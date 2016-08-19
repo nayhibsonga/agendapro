@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160817154204) do
+ActiveRecord::Schema.define(version: 20160818200508) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -226,7 +226,7 @@ ActiveRecord::Schema.define(version: 20160817154204) do
     t.integer  "last_minute_promo_id"
     t.boolean  "bundled",                default: false
     t.integer  "bundle_id"
-    t.integer  "survey_construct_id"
+    t.integer  "survey_id"
   end
 
   add_index "bookings", ["bundle_id"], name: "index_bookings_on_bundle_id", using: :btree
@@ -240,7 +240,7 @@ ActiveRecord::Schema.define(version: 20160817154204) do
   add_index "bookings", ["session_booking_id"], name: "index_bookings_on_session_booking_id", using: :btree
   add_index "bookings", ["start"], name: "index_bookings_on_start", using: :btree
   add_index "bookings", ["status_id"], name: "index_bookings_on_status_id", using: :btree
-  add_index "bookings", ["survey_construct_id"], name: "index_bookings_on_survey_construct_id", using: :btree
+  add_index "bookings", ["survey_id"], name: "index_bookings_on_survey_id", using: :btree
   add_index "bookings", ["user_id"], name: "index_bookings_on_user_id", using: :btree
 
   create_table "boolean_attributes", force: true do |t|
@@ -2226,6 +2226,16 @@ ActiveRecord::Schema.define(version: 20160817154204) do
   add_index "super_admin_logs", ["company_id"], name: "index_super_admin_logs_on_company_id", using: :btree
   add_index "super_admin_logs", ["user_id"], name: "index_super_admin_logs_on_user_id", using: :btree
 
+  create_table "survey_answers", force: true do |t|
+    t.integer  "survey_id"
+    t.integer  "stars"
+    t.text     "answer"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "survey_answers", ["survey_id"], name: "index_survey_answers_on_survey_id", using: :btree
+
   create_table "survey_categories", force: true do |t|
     t.string   "name"
     t.integer  "company_id"
@@ -2257,17 +2267,12 @@ ActiveRecord::Schema.define(version: 20160817154204) do
   add_index "survey_questions", ["survey_construct_id"], name: "index_survey_questions_on_survey_construct_id", using: :btree
 
   create_table "surveys", force: true do |t|
-    t.integer  "quality"
-    t.integer  "style"
-    t.integer  "satifaction"
-    t.text     "comment"
     t.integer  "client_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "booking_id"
+    t.integer  "appreciation"
   end
 
-  add_index "surveys", ["booking_id"], name: "index_surveys_on_booking_id", using: :btree
   add_index "surveys", ["client_id"], name: "index_surveys_on_client_id", using: :btree
 
   create_table "tags", force: true do |t|

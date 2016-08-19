@@ -176,13 +176,14 @@ class BookingsController < ApplicationController
 
     session_booking = nil
     should_create_sessions = false
-
+    survey = Survey.new
+    survey.save
     booking_buffer_params[:bookings].each do |pos, buffer_params|
       employee_code = nil
       new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code, :session_booking_id, :has_sessions)
 
       @booking = Booking.new(new_booking_params)
-
+      @booking.survey_id = survey.id
       if @booking.price.nil?
         @booking.price = 0
       end
@@ -202,6 +203,7 @@ class BookingsController < ApplicationController
           @booking.payed_state = buffer_params[:payed_state]
           @booking.company_comment = buffer_params[:company_comment]
           @booking.notes = buffer_params[:notes]
+          @booking.survey_id = survey.id
 
           #Set list_price to it's service price
           if @booking.service.price != 0
@@ -1462,7 +1464,7 @@ class BookingsController < ApplicationController
 
 
                     #There is session_booking, book a session, unbook for old_treatment
-                    
+
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).where.not(id: @booking.id).last
                     discharged_booking.destroy
@@ -1893,7 +1895,7 @@ class BookingsController < ApplicationController
                   if !session_booking.nil?
 
                     #There is session_booking, book a session, unbook for old_treatment
-                    
+
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).where.not(id: @booking.id).last
                     discharged_booking.destroy
@@ -2042,7 +2044,7 @@ class BookingsController < ApplicationController
                   session_booking = SessionBooking.find(booking_params[:session_booking_id])
 
                   if !session_booking.nil?
-                    
+
 
 
                     discharged_booking = session_booking.bookings.where(is_session_booked: false).where.not(id: @booking.id).last
@@ -2346,6 +2348,7 @@ class BookingsController < ApplicationController
         format.json { render :json => { :errors => @booking.errors.full_messages }, :status => 422 }
         format.js { }
       end
+      @booking.send_survey
     end
   end
 

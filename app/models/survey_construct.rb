@@ -6,9 +6,6 @@ class SurveyConstruct < ActiveRecord::Base
 
   has_many :survey_questions, dependent: :destroy, :inverse_of => :survey_construct
 
-  has_many :sendings, class_name: 'Email::Sending', as: :sendable
-
   accepts_nested_attributes_for :survey_questions, :allow_destroy => true
 
-  WORKER = 'SurveyConstructEmailWorker'
 end

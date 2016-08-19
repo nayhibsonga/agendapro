@@ -120,63 +120,9 @@
           <div class="col-md-3 nopadding circles"><span></span><span></span><span></span></div>
         </div>
         <div class="col-md-12 separator"></div>
-        <div class="col-md-12 nopadding">
-          <ol>
-            <li>Calidad
-              <p class="clasificacion">
-                <%= f.radio_button :quality, 5, {id:"quality1"} %>
-                <%= f.label :quality,"★",{for:"quality1"} %>
-                <%= f.radio_button :quality, 4, {id:"quality2"} %>
-                <%= f.label :quality,"★",{for:"quality2"} %>
-                <%= f.radio_button :quality, 3, {id:"quality3"} %>
-                <%= f.label :quality,"★",{for:"quality3"} %>
-                <%= f.radio_button :quality, 2, {id:"quality4"} %>
-                <%= f.label :quality,"★",{for:"quality4"} %>
-                <%= f.radio_button :quality, 1, {id:"quality5", checked:"checked"} %>
-                <%= f.label :quality,"★",{for:"quality5"} %>
-              </p>
-              <p>Vestibulum suscipit arcu sed posuere semper. Cras laoreet ante a egestas viverra. Quisque ut diam purus. Praesent ut sollicitudin tellus. Sed placerat nulla a tellus porttitor mollis. Proin pulvinar viverra cursus. Nunc vitae mauris leo. Nunc ac erat quis ipsum rutrum efficitur ac sed neque.</p>
-            </li>
-            <li>Estilo
-              <p class="clasificacion">
-                <%= f.radio_button :style, 5, {id:"style1"} %>
-                <%= f.label :style,"★",{for:"style1"} %>
-                <%= f.radio_button :style, 4, {id:"style2"} %>
-                <%= f.label :style,"★",{for:"style2"} %>
-                <%= f.radio_button :style, 3, {id:"style3"} %>
-                <%= f.label :style,"★",{for:"style3"} %>
-                <%= f.radio_button :style, 2, {id:"style4"} %>
-                <%= f.label :style,"★",{for:"style4"} %>
-                <%= f.radio_button :style, 1, {id:"style5", checked:"checked"} %>
-                <%= f.label :style,"★",{for:"style5"} %>
-              </p>
-              <p>Vestibulum suscipit arcu sed posuere semper. Cras laoreet ante a egestas viverra. Quisque ut diam purus. Praesent ut sollicitudin tellus. Sed placerat nulla a tellus porttitor mollis. Proin pulvinar viverra cursus. Nunc vitae mauris leo. Nunc ac erat quis ipsum rutrum efficitur ac sed neque.</p>
-            </li>
-            <li>Satisfacción
-              <p class="clasificacion">
-                <%= f.radio_button :satifaction, 5, {id:"satifaction1"} %>
-                <%= f.label :satifaction,"★",{for:"satifaction1"} %>
-                <%= f.radio_button :satifaction, 4, {id:"satifaction2"} %>
-                <%= f.label :satifaction,"★",{for:"satifaction2"} %>
-                <%= f.radio_button :satifaction, 3, {id:"satifaction3"} %>
-                <%= f.label :satifaction,"★",{for:"satifaction3"} %>
-                <%= f.radio_button :satifaction, 2, {id:"satifaction4"} %>
-                <%= f.label :satifaction,"★",{for:"satifaction4"} %>
-                <%= f.radio_button :satifaction, 1, {id:"satifaction5", checked:"checked"} %>
-                <%= f.label :satifaction,"★",{for:"satifaction5"} %>
-              </p>
-              <p>Vestibulum suscipit arcu sed posuere semper. Cras laoreet ante a egestas viverra. Quisque ut diam purus. Praesent ut sollicitudin tellus. Sed placerat nulla a tellus porttitor mollis. Proin pulvinar viverra cursus. Nunc vitae mauris leo. Nunc ac erat quis ipsum rutrum efficitur ac sed neque.</p>
-            </li>
-            <li>Dejanos un comentario
-
-            </li>
-          </ol>
-          <%= f.text_area :comment,:class => 'form-control' %>
-        </div>
-
-        <div class="form-group">
-          <%= f.hidden_field :booking_id,value: params[:confirmation_code] %>
-        </div>
+        <%= f.fields_for @survey, @survey.bookings.first.service.service_survey_constructs.first.survey_construct.survey_questions.sort_by(&:order) do |u| %>
+          <%= render 'questions_fields' , :f => u %>
+        <% end %>
         <div class="form-actions button_right">
           <%= f.button("Enviar",{:class => 'form-control btn_green'}) %>
         </div>
