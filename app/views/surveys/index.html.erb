@@ -17,11 +17,6 @@
   <tbody>
     <% @surveys.each do |survey| %>
       <tr>
-        <td><%= survey.quality %></td>
-        <td><%= survey.style %></td>
-        <td><%= survey.satifaction %></td>
-        <td><%= survey.comment %></td>
-        <td><%= survey.client %></td>
         <td><%= link_to 'Show', survey %></td>
         <td><%= link_to 'Edit', edit_survey_path(survey) %></td>
         <td><%= link_to 'Destroy', survey, method: :delete, data: { confirm: 'Are you sure?' } %></td>

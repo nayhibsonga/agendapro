@@ -29,7 +29,6 @@ class SurveyConstructsController < ApplicationController
     @survey_construct.company_id = current_user.company_id
     @survey_construct.save
     @survey_construct.service_survey_constructs.create
-    raise "end"
     respond_to do |format|
       format.html {redirect_to survey_constructs_path, notice: "Tu encuesta se ha creado."}
     end
