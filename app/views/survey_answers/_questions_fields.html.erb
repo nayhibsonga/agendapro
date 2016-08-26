@@ -10,9 +10,10 @@
       <%= fields_for @survey_answer do |a| %>
         <% if f.object.type_question == 1 %>
           <p class="clasificacion">
-            <% (-5..-1).each do |i| %>
-              <%= a.radio_button :answer, i.abs, :class => 'form-control', :id => "radio_#{i.abs}_#{@book.id.to_s}", :name => "survey_answer[][answer_#{@book.id.to_s}]" %>
-              <%= a.label "★", :for => "radio_#{i.abs}_#{@book.id.to_s}", :title => i.abs %>
+            <% (1..5).each do |i| %>
+              <%= a.radio_button :answer, i.abs, :class => 'form-control', :id => "radio_#{@i}_#{@book.id.to_s}", :name => "survey_answer[][answer_#{@i}_#{@book.id.to_s}]" %>
+              <%= a.label "★", :for => "radio_#{@i}_#{@book.id.to_s}" %>
+              <% @i = @i + 1 %>
             <% end %>
           </p>
         <% else %>

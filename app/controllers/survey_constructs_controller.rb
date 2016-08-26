@@ -16,6 +16,7 @@ class SurveyConstructsController < ApplicationController
   def new
     @survey_construct = SurveyConstruct.new
     @service_categories = ServiceCategory.where(company_id: current_user.company_id).order(:order, :name)
+    @survey_attributes = SurveyAttribute.new
     survey_questions = @survey_construct.survey_questions.build
     respond_with(@survey_construct)
   end

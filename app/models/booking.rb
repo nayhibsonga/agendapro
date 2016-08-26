@@ -12,7 +12,7 @@ class Booking < ActiveRecord::Base
   belongs_to :session_booking
   belongs_to :service_promo
   belongs_to :receipt
-  has_one :survey
+  belongs_to :survey
   has_many :survey_answers
   has_many :booking_histories, dependent: :destroy
   has_many :booking_email_logs, dependent: :destroy
@@ -35,7 +35,7 @@ class Booking < ActiveRecord::Base
 
   after_commit validate :bookings_overlap, :bookings_resources, :bookings_deal
 
-  after_create :send_booking_mail, :wait_for_payment, :check_session
+  after_create :send_booking_mail, :wait_for_payment, :check_session, :send_survey
   after_update :send_update_mail, :check_session
 
   #after_destroy :check_treatment
@@ -785,11 +785,67 @@ class Booking < ActiveRecord::Base
 
   def send_survey
     if self.status_id == 3
-      Survey.find(self.survey_id).sendings.build(method: 'survey').save
-      puts "Survey Mailer"
+      if self.survey_id.nil?
+        find_bookings_today = Booking.where("start >= ?", Time.zone.now.beginning_of_day).where("start <= ?", Time.zone.now.beginning_of_day.tomorrow).where(client_id: self.client_id).where("is_session = false or (is_session = true and is_session_booked = true)")
+        find_bookings_attend = Booking.where("start >= ?", Time.zone.now.beginning_of_day).where("start <= ?", Time.zone.now.beginning_of_day.tomorrow).where(client_id: self.client_id).where("status_id = ?", 3).where("is_session = false or (is_session = true and is_session_booked = true)")
+        find_bookings_surveys = Booking.where("start >= ?", Time.zone.now.beginning_of_day).where("start <= ?", Time.zone.now.beginning_of_day.tomorrow).where(client_id: self.client_id).where("survey_id IS NOT NULL")
+        if find_bookings_today.count == find_bookings_attend.count
+          if find_bookings_surveys.count == 0
+            survey_id = Survey.new
+            survey_id.save
+          else
+            if !find_bookings_surveys.last.survey.nil?
+              if !find_bookings_surveys.last.survey.mail_sent.nil?
+                survey_id = Survey.new
+                survey_id.save
+              else
+                survey_id = find_bookings_surveys.first.survey_id
+              end
+            else
+              survey_id = find_bookings_surveys.first.survey_id
+            end
+          end
+          bookings_count = Booking.where(survey_id:survey_id).count
+          if bookings_count == 0 && find_bookings_attend.count > 1 && find_bookings_surveys.count == 0
+            find_bookings_attend.each do |booking|
+              if check_is_session_survey(booking)
+                @booking = booking
+                booking.update_columns(survey_id: survey_id.id)
+              end
+            end
+            if check_is_session_survey(self)
+              self.update_columns(survey_id: survey_id.id)
+            end
+          else
+            if check_is_session_survey(self)
+              self.update_columns(survey_id: survey_id.id)
+            end
+          end
+          survey = self.survey
+          if survey.nil?
+            survey = @booking.survey
+          end
+          if survey.mail_sent.nil?
+            if survey.sendings.build(method: 'survey').save
+              survey.mail_sent = true
+              survey.save
+              puts "Petición de Survey"
+            end
+          end
+        end
+      end
     end
   end
-
+  def check_is_session_survey(booking)
+    if booking.is_session
+      if booking.session_booking.sessions_taken == booking.session_booking.sessions_amount
+        response = true
+      end
+    else
+      response = true
+    end
+    return response
+  end
   def self.booking_reminder
     where(:start => CustomTimezone.first_timezone.offset.ago...(96.hours + CustomTimezone.last_timezone.offset).from_now).each do |booking|
       unless booking.status == Status.find_by(:name => "Cancelado")

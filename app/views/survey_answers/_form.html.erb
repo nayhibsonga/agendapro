@@ -177,12 +177,13 @@
         <div class="col-md-12 separator"></div>
         <% @survey.bookings.each do |s|%>
           <% @book = s %>
-          <%= f.hidden_field :booking, :value => @book.id, :name =>"survey_answer[][booking_id]"  %>
-          <% if !s.service.service_survey_constructs.nil? %>
+          <% if !s.service.service_survey_constructs.nil? && s.service.service_survey_constructs.count > 0 %>
             <ol class="container_question col-md-12">
             <h3>Con respecto a su cita <%= s.service.name %></h3>
               <% s.service.service_survey_constructs.each do |c| %>
                 <% c.survey_construct.survey_questions.sort_by(&:order).each do |q| %>
+                <%= f.hidden_field :booking, :value => @book.id, :name =>"survey_answer[][booking_id]"  %>
+                <%= f.hidden_field :survey_question, :value => q.id, :name =>"survey_answer[][survey_question_id]"  %>
                   <%= fields_for :survey_questions, q do |u| %>
                     <%= render 'questions_fields' , :f => u %>
                   <% end %>

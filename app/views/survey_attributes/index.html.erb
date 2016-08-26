@@ -1,0 +1,29 @@
+<h1>Listing survey_attributes</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @survey_attributes.each do |survey_attribute| %>
+      <tr>
+        <td><%= survey_attribute.name %></td>
+        <td><%= survey_attribute.description %></td>
+        <td><%= link_to 'Show', survey_attribute %></td>
+        <td><%= link_to 'Edit', edit_survey_attribute_path(survey_attribute) %></td>
+        <td><%= link_to 'Destroy', survey_attribute, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Survey attribute', new_survey_attribute_path %>

@@ -1,30 +1,40 @@
-<div class="well" data-order=''>
-  <div class="form-group has-feedback">
-    <%= f.label :question, 'Pregunta', :class => 'col-md-3 control-label' %>
-    <div class="col-md-5">
-      <%= f.text_field :question, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Pregunta' %>
-      <span class="help-block"></span>
-      <span class="form-control-feedback"></span>
+<div class="" data-order=''>
+  <div class="row">
+    <div class="form-group has-feedback">
+      <%= f.label :survey_attribute_id, 'Atributo a medir', :class => 'col-md-12 control-label' %>
+      <div class="col-md-12">
+        <%= f.select :survey_attribute_id, options_from_collection_for_select(SurveyAttribute.all, :id, :name) ,{},{ :class => 'form-control', :placeholder => 'Atributo'}%>
+        <span class="help-block"></span>
+        <span class="form-control-feedback"></span>
+      </div>
     </div>
-      <i class="fa fa-bars col-md-2" title="Manten presionado y arrastra para cambiar el orden de las preguntas"></i>
+    <div class="form-group has-feedback ">
+      <%= f.label :type_question, 'Tipo', :class => 'col-md-12  control-label' %>
+      <div class="col-md-12">
+        <%= f.select :type_question, ([["Estrellas",1],["Comentario",2]]),{}, { :class => 'form-control ', :placeholder => 'Pregunta'} %>
+        <span class="help-block"></span>
+        <span class="form-control-feedback"></span>
+      </div>
+    </div>
+    <div class="form-group has-feedback">
+      <%= f.label :question, 'Pregunta', :class => 'col-md-12 control-label' %>
+      <div class="col-md-12">
+        <%= f.text_field :question, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Pregunta', :dataQuestion => "question" %>
+        <span class="help-block"></span>
+        <span class="form-control-feedback"></span>
+      </div>
+       <!--<i class="fa fa-bars col-md-2" title="Manten presionado y arrastra para cambiar el orden de las preguntas"></i> -->
 
-      <%= link_to_remove_fields "Eliminar", f %>
-  </div>
-  <div class="form-group has-feedback">
-    <%= f.label :description, 'Descripción', :class => 'col-md-3 control-label' %>
-    <div class="col-md-5">
-      <%= f.text_area :description, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Descripción' %>
-      <span class="help-block"></span>
-      <span class="form-control-feedback"></span>
+        <!-- <%= link_to_remove_fields "Eliminar", f %> -->
     </div>
-  </div>
-  <div class="form-group has-feedback">
-    <%= f.label :type_question, 'Tipo', :class => 'col-md-3 control-label' %>
-    <div class="col-md-5">
-      <%= f.select :type_question, ([["Estrellas",1],["Comentario",2]]),{}, { :class => 'form-control', :placeholder => 'Pregunta'} %>
-      <span class="help-block"></span>
-      <span class="form-control-feedback"></span>
+    <div class="form-group has-feedback">
+      <%= f.label :description, 'Descripción', :class => 'col-md-12 control-label' %>
+      <div class="col-md-12">
+        <%= f.text_area :description, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Descripción' %>
+        <span class="help-block"></span>
+        <span class="form-control-feedback"></span>
+      </div>
     </div>
+    <%= f.hidden_field :order, class:"order" %>
   </div>
-  <%= f.hidden_field :order, class:"order" %>
 </div>

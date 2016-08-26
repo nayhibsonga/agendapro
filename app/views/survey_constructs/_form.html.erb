@@ -8,8 +8,24 @@
       border-top: 1px solid #d2d2d2;
       padding-top: 15px;
   }
+  .question {
+    background: #f5f5f5;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  .editQuestion {
+
+  }
   .fa-bars {
     cursor: pointer;
+  }
+  .hidden_fields {
+    display: none !important;
+  }
+  .inline-right {
+    text-align: right;
   }
 </style>
 <div class="container-fluid">
@@ -31,18 +47,38 @@
               </script>
             <% end %>
           <% end %>
-          <div class="form-group has-feedback">
-            <%= f.label :name, 'Título', :class => 'col-md-3 control-label' %>
-            <div class="col-md-5">
-              <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Título' %>
-              <span class="help-block"></span>
-              <span class="form-control-feedback"></span>
+          <div class="col-md-6">
+            <div class="form-group has-feedback">
+              <%= f.label :name, 'Título', :class => 'col-md-1 control-label' %>
+              <div class="col-md-11">
+                <%= f.text_field :name, :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Título' %>
+                <span class="help-block"></span>
+                <span class="form-control-feedback"></span>
+              </div>
+              <div class="col-md-offset-10 col-md-2 inline-right"><%= link_to_add_fields "Agregar Pregunta", f, :survey_questions %></div>
             </div>
-            <div class="col-md-1"><%= link_to_add_fields "Agregar Pregunta", f, :survey_questions %></div>
+            <% if !@survey_construct.new_record? %>
+              <div class="content_questions">
+                <%= f.fields_for :survey_questions, @survey_construct.survey_questions.sort_by(&:order) do |u| %>
+                  <div class="question col-md-12">
+                    <div class="title"><h4><%= u.object.question %></h4></div>
+                    <div class="hidden_fields" data-question="<%= u.object.id %>">
+                      <%= render 'survey_question_fields' , :f => u %>
+                    </div>
+                    <div class="col-md-offset-10 col-md-2 inline-right"><%= link_to_remove_fields "", u %><a href="#" class="btn btn-orange" onclick="editQuestion(this)" style="margin-left:10px;"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>
+                  </div>
+                <% end %>
+              </div>
+              <% else %>
+              <div class="content_questions">
+                <h3 id="messageEmpty">Aún no registra ninguna pregunta, haga click en "Agregar pregunta" para iniciar.</h3>
+
+              </div>
+            <% end %>
           </div>
-          <div class="content_questions">
+          <div class="col-md-6">
             <div class="form-group">
-              <%= f.label :service_ids, "Selecciona los servicios", class: "col-md-2 control-label" %>
+              <%= f.label :service_ids, "Selecciona los servicios", class: "col-md-3" %>
               <div class="col-md-12">
                 <div class="panel-group" id="service-accordion">
                   <% @service_categories.each do |service_category| %>
@@ -71,45 +107,56 @@
                 </div>
               </div>
             </div>
-          <%= f.fields_for :survey_questions, @survey_construct.survey_questions.sort_by(&:order) do |u| %>
-              <%= render 'survey_question_fields' , :f => u %>
-          <% end %>
-          </div>
-          <p></p>
-          <div class="form-group">
-            <div class="col-md-offset-3 col-md-5">
-              <%= f.submit 'Guardar', :class => 'btn btn-green' %>
-              <%= link_to 'Cancelar', survey_constructs_path, class: "btn btn-white" %>
+            <div class="form-group">
+              <div class="col-md-offset-9 col-md-3 inline-right">
+                <%= f.submit 'Guardar', :class => 'btn btn-green' %>
+                <%= link_to 'Cancelar', survey_constructs_path, class: "btn btn-white" %>
+              </div>
             </div>
           </div>
+          <p></p>
+
         <% end %>
     </div>
   </div>
 </div>
-<div class="partial" style="display:none">
-  <div class="form-group has-feedback">
-    <%= label :question, 'Pregunta', :class => 'col-md-3 control-label' %>
-    <div class="col-md-5">
-      <%= text_field :question,nil, name:"survey_question[question][]", :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Pregunta' %>
-      <span class="help-block"></span>
-      <span class="form-control-feedback"></span>
-    </div>
-  </div>
-  <div class="form-group has-feedback">
-    <%= label :description, 'Descripción', :class => 'col-md-3 control-label' %>
-    <div class="col-md-5">
-      <%= text_area :description,nil, name:"survey_question[description][]", :autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Descripción' %>
-      <span class="help-block"></span>
-      <span class="form-control-feedback"></span>
-    </div>
-  </div>
-  <div class="form-group has-feedback">
-    <%= label :type, 'Tipo', :class => 'col-md-3 control-label' %>
-    <div class="col-md-5">
-      <%= select :type,nil, ([["Estrellas",1],["Comentario",2]]),{}, {:name => "survey_question[type][]", :class => 'form-control', :placeholder => 'Pregunta'} %>
-      <span class="help-block"></span>
-      <span class="form-control-feedback"></span>
+<!-- Modal -->
+<div id="modalQuestion" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Arma tu encuesta</h4>
+      </div>
+      <div class="modal-body questions_recommended ">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelModal">Cancelar</button>
+        <button type="submit" class="btn btn-default" data-dismiss="modal" id="acceptModal">Aceptar</button>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- Modal -->
+<div id="modalEditQuestion" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Arma tu encuesta</h4>
+      </div>
+      <div class="modal-body questions_recommended ">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelModalEdit">Cancelar</button>
+        <button type="button" class="btn btn-default" id="acceptModalEdit">Aceptar</button>
+      </div>
+    </div>
+
+  </div>
+</div>

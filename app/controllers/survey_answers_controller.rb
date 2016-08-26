@@ -15,14 +15,32 @@ class SurveyAnswersController < ApplicationController
 
   def new
     decrypt(params[:confirmation_code])
-    @survey = Survey.find(@booking.survey_id)
-    @survey_answer = SurveyAnswer.new
-    @logo = @survey.bookings.first.client.company.logo.url
-    @company = @survey.bookings.first.client.company.name
-    @error = "Booking no valido."
     if @booking
-      @found = true
+      if @booking.survey.status == "respond"
+        @found = false
+        @error = "Encuesta ya respondida."
+        flash[:error] = "Encuesta ya respondida."
+      else
+        @found = true
+        @i = 1;
+        @survey = @booking.survey
+        @booking_client_id = @booking.client.id
+        @valoration = params[:valoration]
+        @survey_answer = SurveyAnswer.new
+        @logo = @survey.bookings.first.client.company.logo.url
+        @company = @survey.bookings.first.client.company.name
+        if (1..5).include?(@valoration.to_i)
+          if @survey.appreciation.nil?
+            flash[:notice] = "Valoración recibida."
+            @survey.appreciation = @valoration.to_i
+            @survey.client_id = @booking_client_id
+          end
+        end
+        @survey.save
+      end
     else
+      @error = "Booking no válido."
+      flash[:error] = "Booking no válido."
       @found = false
     end
     respond_with(@survey_answer)
@@ -32,13 +50,23 @@ class SurveyAnswersController < ApplicationController
   end
 
   def create
-    survey_answer_params.each do |key,value|
-      hash =  Hash.new {hash[key] = value }
-      @survey_answer = SurveyAnswer.new(hash)
-      @survey_answer.save
+    survey_answer_params.each do |answers|
+      answers.each do |key, value|
+        if key == "booking_id"
+          @booking_id = value
+        elsif key == "survey_question_id"
+          @survey_question_id = value
+        else
+          answer = value
+          @survey_answer = SurveyAnswer.new(:booking_id => @booking_id, :answer => answer, :survey_question_id => @survey_question_id)
+          @survey_answer.save
+        end
+      end
     end
+    @survey = Booking.find(@booking_id).survey
+    @survey.status = "respond"
+    @survey.save
     respond_with(@survey_answer)
-    raise "asdf"
   end
 
   def update

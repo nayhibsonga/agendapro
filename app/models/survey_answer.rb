@@ -1,4 +1,4 @@
 class SurveyAnswer < ActiveRecord::Base
   belongs_to :booking
-  has_many :questions
+  belongs_to :survey_question
 end

@@ -3,7 +3,7 @@ class Survey < ActiveRecord::Base
   has_many :bookings
 
   has_many :sendings, class_name: 'Email::Sending', as: :sendable
-
+  #validates_inclusion_of :appreciation, :in => 1..5, on: :update
   WORKER = 'SurveyEmailWorker'
 
   def confirmation_code

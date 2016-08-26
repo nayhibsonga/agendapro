@@ -176,21 +176,20 @@ class BookingsController < ApplicationController
 
     session_booking = nil
     should_create_sessions = false
-    survey = Survey.new
-    survey.save
+
     booking_buffer_params[:bookings].each do |pos, buffer_params|
       employee_code = nil
       new_booking_params = buffer_params.except(:client_first_name, :client_last_name, :client_phone, :client_email, :client_identification_number, :client_address, :client_district, :client_city, :client_birth_day, :client_birth_month, :client_birth_year, :client_age, :client_record, :client_second_phone, :client_gender, :employee_code, :session_booking_id, :has_sessions)
 
+
       @booking = Booking.new(new_booking_params)
-      @booking.survey_id = survey.id
       if @booking.price.nil?
         @booking.price = 0
       end
 
-
       if buffer_params[:session_booking_id]
         if buffer_params[:session_booking_id] != "0" && buffer_params[:session_booking_id] != 0
+
           session_booking = SessionBooking.find(buffer_params[:session_booking_id])
           #session_booking.sessions_taken = session_booking.sessions_taken + 1
           @booking = Booking.where(:session_booking_id => session_booking.id, :is_session_booked => false).first
@@ -203,7 +202,6 @@ class BookingsController < ApplicationController
           @booking.payed_state = buffer_params[:payed_state]
           @booking.company_comment = buffer_params[:company_comment]
           @booking.notes = buffer_params[:notes]
-          @booking.survey_id = survey.id
 
           #Set list_price to it's service price
           if @booking.service.price != 0
@@ -277,6 +275,7 @@ class BookingsController < ApplicationController
             end
           end
         end
+
       end
 
       if @company_setting.staff_code
@@ -614,6 +613,7 @@ class BookingsController < ApplicationController
         format.json { render :json => { :errors => @errors }, :status => 422 }
         format.js { }
       end
+      @booking.send_survey
     end
   end
 

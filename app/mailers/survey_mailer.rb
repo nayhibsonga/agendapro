@@ -1,5 +1,5 @@
 class SurveyMailer < Base::CustomMailer
-  layout "mailers/green"
+  layout "mailers/survey"
   def survey(book, recipient, options = {})
     @title = "Encuenta de Satisfacción"
     @company = book.location.company
