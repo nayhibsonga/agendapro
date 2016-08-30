@@ -10,7 +10,7 @@
   }
   .question {
     background: #f5f5f5;
-    padding: 10px 20px;
+    padding: 15px 20px 25px 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
     margin-bottom: 20px;
@@ -26,6 +26,9 @@
   }
   .inline-right {
     text-align: right;
+  }
+  .type {
+    font-size: 27px;
   }
 </style>
 <div class="container-fluid">
@@ -61,9 +64,14 @@
               <div class="content_questions">
                 <%= f.fields_for :survey_questions, @survey_construct.survey_questions.sort_by(&:order) do |u| %>
                   <div class="question col-md-12">
+                    <div class="type"><% if u.object.type_question == 2 %><i class="fa fa-file-text-o" aria-hidden="true"></i><% else %><i class="fa fa-star-o" aria-hidden="true"></i><% end %></div>
                     <div class="title"><h4><%= u.object.question %></h4></div>
                     <div class="hidden_fields" data-question="<%= u.object.id %>">
-                      <%= render 'survey_question_fields' , :f => u %>
+                      <%= u.hidden_field :survey_attribute_id, dataQuestion:"attribute"  %>
+                      <%= u.hidden_field :type_question, dataQuestion:"type" %>
+                      <%= u.hidden_field :question, dataQuestion:"question" %>
+                      <%= u.hidden_field :description, dataQuestion:"description" %>
+                      <%= u.hidden_field :order, dataQuestion:"order" %>
                     </div>
                     <div class="col-md-offset-10 col-md-2 inline-right"><%= link_to_remove_fields "", u %><a href="#" class="btn btn-orange" onclick="editQuestion(this)" style="margin-left:10px;"><i class="fa fa-pencil" aria-hidden="true"></i></a></div>
                   </div>
@@ -150,7 +158,10 @@
         <h4 class="modal-title">Arma tu encuesta</h4>
       </div>
       <div class="modal-body questions_recommended ">
-
+        <%= select_tag :survey_attribute_id, options_from_collection_for_select(SurveyAttribute.all, :id, :name) ,{ :class => 'form-control', :placeholder => 'Atributo', :dataQuestion => "attribute"}%>
+        <%= select_tag :type_question, options_for_select([["Estrellas",1],["Comentario",2]]), { :class => 'form-control ', :placeholder => 'Pregunta', :dataQuestion => "type"} %>
+        <%= text_field_tag :question, nil,{:autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Pregunta', :dataQuestion => "question"} %>
+        <%= text_area_tag :description,nil, {:autofocus => true, :required => true, :class => 'form-control', :placeholder => 'Descripción', :dataQuestion => "description"} %>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelModalEdit">Cancelar</button>

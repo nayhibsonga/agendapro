@@ -56,7 +56,7 @@ class SurveyConstructsController < ApplicationController
     end
 
     def survey_construct_params
-      params.require(:survey_construct).permit(:name, :service_ids => [], survey_questions_attributes: [:id,:question,:description,:type_question,:order,:_destroy])
+      params.require(:survey_construct).permit(:name, :service_ids => [], survey_questions_attributes: [:id,:question,:description,:survey_attribute_id,:type_question,:order,:_destroy])
     end
 
 end
